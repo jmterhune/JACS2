@@ -55,7 +55,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public override IList<SearchDocument> GetModifiedSearchDocuments(ModuleInfo moduleInfo, DateTime beginDate)
         {
             var searchDocuments = new List<SearchDocument>();
-            var controller = new ItemController();
+            var controller = new JudgeReferralController();
             var items = controller.GetItems(moduleInfo.ModuleID);
 
             foreach (var item in items)
@@ -94,17 +94,17 @@ namespace tjc.Modules.JudgeVacation.Components
         /// -----------------------------------------------------------------------------
         public string ExportModule(int moduleId)
         {
-            var controller = new ItemController();
+            var controller = new JudgeReferralController();
             var items = controller.GetItems(moduleId);
             var sb = new StringBuilder();
 
-            var itemList = items as IList<Item> ?? items.ToList();
+            var itemList = items as IList<JudgeReferral> ?? items.ToList();
 
             if (!itemList.Any()) return string.Empty;
 
             sb.Append("<Items>");
 
-            foreach (Item item in itemList)
+            foreach (JudgeReferral item in itemList)
             {
                 sb.Append("<Item>");
 
@@ -139,7 +139,7 @@ namespace tjc.Modules.JudgeVacation.Components
         /// -----------------------------------------------------------------------------
         public void ImportModule(int moduleId, string content, string version, int userId)
         {
-            var controller = new ItemController();
+            var controller = new JudgeReferralController();
             var items = DotNetNuke.Common.Globals.GetContent(content, "Items");
             var xmlNodeList = items.SelectNodes("Item");
 
@@ -147,7 +147,7 @@ namespace tjc.Modules.JudgeVacation.Components
 
             foreach (XmlNode item in xmlNodeList)
             {
-                var newItem = new Item()
+                var newItem = new JudgeReferral()
                 {
                     ModuleId = moduleId,
                     // assigning everything to the current UserID, because this might be a new DNN installation

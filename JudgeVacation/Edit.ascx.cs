@@ -48,7 +48,7 @@ namespace tjc.Modules.JudgeVacation
                     //ItemId is defined in the ItemModuleBase.cs file
                     if (ItemId > 0)
                     {
-                        var tc = new ItemController();
+                        var tc = new JudgeReferralController();
 
                         var t = tc.GetItem(ItemId, ModuleId);
                         if (t != null)
@@ -71,8 +71,8 @@ namespace tjc.Modules.JudgeVacation
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            var t = new Item();
-            var tc = new ItemController();
+            var t = new JudgeReferral();
+            var tc = new JudgeReferralController();
 
             if (ItemId > 0)
             {
@@ -85,7 +85,7 @@ namespace tjc.Modules.JudgeVacation
             }
             else
             {
-                t = new Item()
+                t = new JudgeReferral()
                 {
                     AssignedUserId = (ddlAssignedUser.SelectedValue == "") ? 0 : Convert.ToInt32(ddlAssignedUser.SelectedValue),
                     CreatedByUserId = UserId,

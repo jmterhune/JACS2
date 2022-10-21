@@ -41,7 +41,7 @@ namespace tjc.Modules.JudgeVacation
         {
             try
             {
-                var tc = new ItemController();
+                var tc = new JudgeReferralController();
                 rptItemList.DataSource = tc.GetItems(ModuleId);
                 rptItemList.DataBind();
             }
@@ -60,7 +60,7 @@ namespace tjc.Modules.JudgeVacation
 
                 var pnlAdminControls = e.Item.FindControl("pnlAdmin") as Panel;
 
-                var t = (Item)e.Item.DataItem;
+                var t = (JudgeReferral)e.Item.DataItem;
 
                 if (IsEditable && lnkDelete != null && lnkEdit != null && pnlAdminControls != null)
                 {
@@ -89,7 +89,7 @@ namespace tjc.Modules.JudgeVacation
 
             if (e.CommandName == "Delete")
             {
-                var tc = new ItemController();
+                var tc = new JudgeReferralController();
                 tc.DeleteItem(Convert.ToInt32(e.CommandArgument), ModuleId);
             }
             Response.Redirect(DotNetNuke.Common.Globals.NavigateURL());

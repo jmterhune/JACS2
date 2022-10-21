@@ -10,66 +10,65 @@
 ' 
 */
 using DotNetNuke.Data;
+using System;
 using System.Collections.Generic;
 
-namespace tjc.Modules.JudgeVacation.Components
+namespace tjc.Modules.JudicialReferral.Components
 {
-    internal class ItemController
+    internal class CaseTypeController
     {
-        public void CreateItem(Item t)
+        public void CreateCaseType(CaseType t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Item>();
+                var rep = ctx.GetRepository<CaseType>();
                 rep.Insert(t);
             }
         }
 
-        public void DeleteItem(int itemId, int moduleId)
+        public void DeleteCaseType(int caseTypeId)
         {
-            var t = GetItem(itemId, moduleId);
-            DeleteItem(t);
+            var t = GetCaseType(caseTypeId);
+            DeleteCaseType(t);
         }
 
-        public void DeleteItem(Item t)
+        public void DeleteCaseType(CaseType t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Item>();
+                var rep = ctx.GetRepository<CaseType>();
                 rep.Delete(t);
             }
         }
 
-        public IEnumerable<Item> GetItems(int moduleId)
+        public IEnumerable<CaseType> GetCaseTypes()
         {
-            IEnumerable<Item> t;
+            IEnumerable<CaseType> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Item>();
-                t = rep.Get(moduleId);
+                var rep = ctx.GetRepository<CaseType>();
+                t = rep.Get();
             }
             return t;
         }
-
-        public Item GetItem(int itemId, int moduleId)
+       
+        public CaseType GetCaseType(int caseTypeId)
         {
-            Item t;
+            CaseType t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Item>();
-                t = rep.GetById(itemId, moduleId);
+                var rep = ctx.GetRepository<CaseType>();
+                t = rep.GetById(caseTypeId);
             }
             return t;
         }
-
-        public void UpdateItem(Item t)
+        public void UpdateCaseType(CaseType t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Item>();
+                var rep = ctx.GetRepository<CaseType>();
                 rep.Update(t);
             }
         }
-
     }
 }

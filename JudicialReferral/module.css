@@ -1,0 +1,27 @@
+.list-group-horizontal-sm .list-group-item {
+    padding: 0.375rem 0.75rem !important;
+}
+label em {
+    color: #dc3545 !important
+}
+#dropOnMe {
+    height: 100px;
+    padding: 10px;
+    border: 2px dotted #666;
+    background-color: #ddd;
+    border-radius: .5em;
+}
+.center-text {
+    margin: auto;
+    width: 50%;
+    padding: 15px;
+}
+
+.motion-list {
+    margin-left: 20px;
+    margin-bottom:0px
+}
+
+.custom-validator {
+    font-weight: bold
+}
