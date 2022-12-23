@@ -95,5 +95,11 @@ namespace tjc.Modules.JudicialReferral
                 return UserInfo.IsInRole(CounselRole);
             }
         }
+        public long MaxRequestLength {
+            get { return DotNetNuke.Common.Utilities.Config.GetMaxUploadSize(); } }
+        public string MaxFileSize
+        {
+            get { return string.Format("{0}MB",DotNetNuke.Common.Utilities.Config.GetMaxUploadSize() / 1000000); }
+        }
     }
 }

@@ -76,7 +76,7 @@
                             <ul>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <li><a href='/portals/0/<%# Eval("Path") %>'><%# Eval("FileName") %></a></li>
+                        <li><a href='<%# Eval("Path") %>'><%# Eval("FileName") %></a></li>
                     </ItemTemplate>
                     <FooterTemplate>
                         </ul></div>

@@ -40,6 +40,7 @@ namespace tjc.Modules.JudicialReferral
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
+       
         protected void Page_Load(object sender, EventArgs e)
         {
             try

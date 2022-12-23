@@ -16,6 +16,7 @@ namespace tjc.Modules.JudicialReferral
 
         public void ProcessRequest(HttpContext context)
         {
+            List<string> errorMessage = new List<string>();
             if (context.Request.Files.Count > 0)
             {
                 int moduleId = System.Convert.ToInt32(context.Request.Params["mid"]);
@@ -29,7 +30,7 @@ namespace tjc.Modules.JudicialReferral
                 var portalsettings = DotNetNuke.Common.Globals.GetPortalSettings();
 
                 HttpFileCollection files = context.Request.Files;
-                List<string> errorMessage = new List<string>();
+                
                 List<int> attachmentIds = new List<int>();
                 foreach (string key in files)
                 {
@@ -52,8 +53,8 @@ namespace tjc.Modules.JudicialReferral
             }
             else
             {
-                context.Response.ContentType = "text/plain";
-                context.Response.Write("No Files Uploaded");
+                context.Response.ContentType = "application/json";
+                context.Response.Write(GetJsonReturnValue(null, errorMessage));
             }
         }
         public int InsertAttachment(HttpPostedFile file, int portalId, string targetFolder)

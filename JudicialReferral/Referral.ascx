@@ -100,19 +100,24 @@
         <div class="row">
             <div class="form-group">
                 <div class="col-md-6">
+                    <fieldset class="fieldset-border">
+                        <legend>File Upload</legend>
+                        <div>
+                            <label for="fileselect">Files to upload:</label>
+                            <input type="file" id="fileselect" name="fileselect[]" multiple="multiple" />
+                            <div id="filedrag">or drop files here</div>
+                        </div>
 
-                    <div id="dropOnMe" draggable="false" class="text-center"><span class="center-text text-center">Drop Files Here!</span></div>
-                    <div id="fileCount" draggable="false"></div>
-                    <input id="upload" draggable="false" class="btn btn-dark mt-2" type="button"
-                        value="Upload Selected Files" />
-                    <div draggable="false">
-                        <ol draggable="false" id="myFileList"></ol>
-                    </div>
-                    <div id="results"></div>
-                    <asp:HiddenField ID="hdAttachmentIds" runat="server" />
+                    </fieldset>
+                </div>
+                <div class="col-md-6">
+                        <div id="messages">
+                        </div>
+                        <div id="progress"></div>
                 </div>
             </div>
         </div>
+        <asp:HiddenField ID="hdAttachmentIds" runat="server" />
 
         <div>
             <div class="form-check mb-2">
@@ -176,70 +181,6 @@
         if (typeof (window.FileReader) == 'undefined') {
             alert('Browser does not support HTML5 file uploads!');
         }
-
-        dropOnMe.addEventListener("drop", dropHandler, false);
-
-        dropOnMe.addEventListener("dragover", function (ev) {
-            $("#dropOnMe").css("background-color", "lightgoldenrodyellow;");
-            ev.preventDefault();
-        }, false);
-
-        function dropHandler(ev) {
-            // Prevent default processing.
-            ev.preventDefault();
-
-            // Get the file(s) that are dropped.
-            var filelist = ev.dataTransfer.files;
-            if (!filelist) return;  // if null, exit now
-            totalFiles += filelist.length;
-            $("#dropOnMe").text(totalFiles +
-                " file(s) selected for uploading!");
-            for (var i = 0; i < filelist.length; i++) {
-                $("#dropOnMe").append("<br />" + filelist[i].name);
-            }
-            $("#upload").click(function () {
-                var message = "";
-                var data = new FormData();
-                data.append("mid",<%=ModuleId%>);
-                data.append("tid",<%=TabId%>)
-                for (var i = 0; i < filelist.length; i++) {
-                    data.append(filelist[i].name, filelist[i]);
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "<%=TemplateSourceDirectory %>/FileHandler.ashx",
-                    contentType: false,
-                    processData: false,
-                    data: data,
-                    success: function (result) {
-                        if (result.idList.length > 0) {
-                            $("#<%=hdAttachmentIds.ClientID%>").val(String(result.idList));
-                            alert($("#<%=hdAttachmentIds.ClientID%>").val());
-                            message = "Files Uploaded";
-                            WriteMessage(false, message);
-                        }
-                        if (result.errorList.length > 0) {
-                            while (i < result.errorList.length) {
-                                message += result.errorList[i] + "<br />";
-                                i++;
-                            }
-                            WriteMessage(true, message);
-                        }
-                    },
-                    error: function () {
-                        alert("There was error uploading files!");
-                    }
-
-                });
-            });
-        }
-
-        dropOnMe.addEventListener("dragend", function (ev) {
-            $("#dropOnMe").css("background-color", "lightgray;");
-            $("#dropOnMe").text("");
-            $("upload").click(function () { });
-            ev.preventDefault();
-        }, false);
     });
     function DisableButton() {
         document.getElementById("<%=cmdSave.ClientID %>").disabled = true;
@@ -275,12 +216,133 @@
         }
 
     }
-    function WriteMessage(isError, message) {
-        if (isError) {
-            $("#results").html("<p class='text-danger'>" + message + "</p>");
-        } else {
-            $("#fileAttachmentWarning").fadeOut();
-            $("#results").html("<p class='text-success'>" + message + "</p>");
+    var extensionHash = {
+        '.pdf': 1,
+        '.xls': 1,
+        '.xlsx': 1,
+        '.docx': 1,
+        '.doc': 1,
+    };
+    function $id(id) {
+        return document.getElementById(id);
+    }
+
+    // output information
+    function Output(msg) {
+        var m = $id("messages");
+        m.innerHTML = msg + m.innerHTML;
+    }
+
+    // file drag hover
+    function FileDragHover(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.target.className = (e.type == "dragover" ? "hover" : "");
+    }
+    function FileSelectHandler(e) {
+
+        // cancel event and hover styling
+        FileDragHover(e);
+
+        // fetch FileList object
+        var files = e.target.files || e.dataTransfer.files;
+
+        // process all File objects
+        for (var i = 0, f; f = files[i]; i++) {
+            if (ValidateFile(f)) {
+                // ParseFile(f);
+                UploadFile(f);
+            }
         }
+    }
+
+    function ValidateFile(file) {
+        if (CheckExtension(file.name) && CheckFileSize(file)) {
+            return true;
+        }
+        return false;
+    }
+    function CheckExtension(filename) {
+        var re = /\..+$/;
+        var ext = filename.match(re);
+        if (extensionHash[ext]) {
+            return true;
+        } else {
+            Output("<p class='alert alert-danger'><i class='fa fa-warning'></i> " + filename + " has an invalid file type, please choose a document with a doc, docx, xsl, xslx, or pdf extension!</p>");
+            return false;
+        }
+    }
+    function CheckFileSize(file) {
+        var size = "<%=MaxRequestLength%>";
+        if (file.size <= size) { return true; } else {
+            Output("<p class='alert alert-danger'><i class='fa fa-warning'></i> " + file.name + " is larger than the Maximum file size of <%=MaxFileSize%>!</p>");
+        }
+    }
+
+    // file selection
+    // upload files
+    function UploadFile(file) {
+        var data = new FormData();
+        data.append("mid",<%=ModuleId%>);
+        data.append("tid",<%=TabId%>);
+        data.append(file.name, file);
+        var xhr = new XMLHttpRequest();
+        if (xhr.upload && file.size <= <%=MaxRequestLength%>) {
+
+            // create progress bar
+            var o = $id("progress");
+            var progress = o.appendChild(document.createElement("p"));
+            progress.appendChild(document.createTextNode(file.name));
+            // progress bar
+            xhr.upload.addEventListener("progress", function (e) {
+                var pc = parseInt(100 - (e.loaded / e.total * 100));
+                progress.style.backgroundPosition = pc + "% 0";
+            }, false);
+            // file received/failed
+            xhr.onreadystatechange = function (e) {
+                if (xhr.readyState == 4) {
+                    progress.className = (xhr.status == 200 ? "success" : "failure");
+                    var data = xhr.responseText;
+                    var jsonResponse = JSON.parse(data);
+                    if (jsonResponse.idList.length > 0) {
+                        var newId = String(jsonResponse.idList);
+                        var oldvalue = $("#<%=hdAttachmentIds.ClientID%>").val();
+                        if (oldvalue != "") { newId = oldvalue + "," + newId; }
+                        $("#<%=hdAttachmentIds.ClientID%>").val(newId);
+                    }
+                }
+            };
+            // start upload
+            xhr.open("POST", "<%=TemplateSourceDirectory %>/FileHandler.ashx", true);
+            xhr.setRequestHeader("X-FILENAME", file.name);
+            xhr.send(data);
+
+        }
+
+    }
+    // initialize
+    function Init() {
+
+        var fileselect = $id("fileselect"),
+            filedrag = $id("filedrag");
+
+        // file select
+        fileselect.addEventListener("change", FileSelectHandler, false);
+
+        // is XHR2 available?
+        var xhr = new XMLHttpRequest();
+        if (xhr.upload) {
+
+            // file drop
+            filedrag.addEventListener("dragover", FileDragHover, false);
+            filedrag.addEventListener("dragleave", FileDragHover, false);
+            filedrag.addEventListener("drop", FileSelectHandler, false);
+            filedrag.style.display = "block";
+        }
+
+    }
+    // call initialization file
+    if (window.File && window.FileList && window.FileReader) {
+        Init();
     }
 </script>

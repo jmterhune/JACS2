@@ -122,7 +122,7 @@
             $(".datepicker").datepicker();
             var table = $('#table-referrals').DataTable({
 
-                "order": [[4, "desc"]],
+                "order": [[3, "desc"]],
                 "oLanguage": {
 
                     "sSearch": "Filter by Text"

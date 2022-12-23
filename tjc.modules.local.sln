@@ -10,23 +10,29 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "http://localhost", "http://
 		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost"
-		Debug.AspNetCompiler.PhysicalPath = "..\Intranet-new\"
+		Debug.AspNetCompiler.PhysicalPath = "..\Intranet\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost"
-		Release.AspNetCompiler.PhysicalPath = "..\Intranet-new\"
+		Release.AspNetCompiler.PhysicalPath = "..\Intranet\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		SlnRelativePath = "..\Intranet-new\"
+		SlnRelativePath = "..\Intranet\"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JudicialReferral", "JudicialReferral\JudicialReferral.csproj", "{F8296DD1-CFFF-47A4-84F1-55DFB1158ABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtCounsel", "CourtCounsel\CourtCounsel.csproj", "{5D523859-E977-4AE1-B7BF-9B580703FDE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Authentication.Azure", "AzureProvider\DotNetNuke.Authentication.Azure\DotNetNuke.Authentication.Azure.csproj", "{F5BB1B82-D843-4709-A57E-3A9CC290403F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intranet.API", "Intranet.API\Intranet.API.csproj", "{77FCD3FC-3851-4858-8E31-DD633DB72303}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +52,18 @@ Global
 		{F8296DD1-CFFF-47A4-84F1-55DFB1158ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8296DD1-CFFF-47A4-84F1-55DFB1158ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8296DD1-CFFF-47A4-84F1-55DFB1158ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
