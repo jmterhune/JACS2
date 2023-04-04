@@ -519,7 +519,7 @@ namespace tjc.Modules.CourtCounsel
         private void PopulateDropDowns()
         {
             txtReminderDays.Text = "10";
-            var countyCtl = new CountyController();
+            var countyCtl = new tjc.Modules.Globals.CountyController();
             var memberCtl = new MemberController();
             var timeCtl = new TimeSpanController();
             var statusCtl = new PhaseController();

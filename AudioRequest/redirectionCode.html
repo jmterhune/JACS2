@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <p><a class="btn btn-primary btn-lg" data-target="#requestForm" data-toggle="modal" href="">Request Court Recording</a></p>
+
+    <div aria-hidden="true" aria-labelledby="requestFormLabel" class="modal fade" id="requestForm" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button aria-hidden="true" class="close" data-dismiss="modal" type="button">&times;</button>
+
+                    <h4 class="modal-title" id="requestFormLabel">Court Recording Request</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div type="post">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-6"><label>Case Number *</label> <input class="form-control" data-error="Case Number is Required" id="casenumber" maxlength="100" name="casenumber" required="" type="text" /></div>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-6"><label>Your Email Address *</label> <input class="form-control" data-error="Email is Required" id="email" maxlength="100" name="email" required="" type="email" /></div>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer"><button class="btn btn-primary pull-left" type="submit" data-loading-text="Loading..." id="formSubmit">Submit</button><button class="btn btn-default" data-dismiss="modal" id="formCancel" type="button">Cancel</button></div>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="noticeModalLabel" class="modal fade" id="noticeModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button aria-hidden="true" class="close" data-dismiss="modal" type="button">&times;</button>
+
+                    <h4 class="modal-title" id="noticeModalLabel">Order Transcript</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>To order a transcript of this case please email <a href="/Contact-Us?eid=c21hcnRpbg%3d%3d-x2oX3jY7Cv4%3d">Sarah Martin</a> or call her at (941) 749-3661</p>
+                </div>
+
+                <div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" type="button">Close</button></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('#Form').validator().on('submit', function (e) {
+            if (!e.isDefaultPrevented()) {
+                e.preventDefault();
+                var url = SelectWorkFlow();
+                if (url != "") {
+                    window.location.href = url;
+                } else {
+                    $('#requestForm').modal('toggle');
+                    $('#noticeModal').modal('toggle');
+                }
+
+            } else {
+                $('#Form').validator('destroy');
+            }
+        });
+        function SelectWorkFlow() {
+            var email = $("#email").val().toLowerCase();
+            var urlEmail = encodeURIComponent(email);
+            var casenumber = $("#casenumber").val().toUpperCase();
+            var urlCasenumber = encodeURIComponent(casenumber);
+
+            var domains = ['scgov', 'mymanatee', 'flrc2', 'jud12', 'desotoclerk'];
+            if (casenumber.indexOf("CF") >= 0) {
+                if (IsInternal(email,domains)) {
+                    return "/Programs/Court-Reporting-Recording/Audio-Request-Form?casenumber=" + urlCasenumber + "&email=" + urlEmail;
+                   
+                } else {
+                    return "" /*"/Programs/Court-Reporting-Recording/Recording-Inquiry-Form?casenumber=" + urlCasenumber + "&email=" + urlEmail*/;
+                }
+            } else {
+                if (IsInternal(email,domains)) {
+                    return "/Programs/Court-Reporting-Recording/Audio-Request-Form?casenumber=" + urlCasenumber + "&email=" + urlEmaill;
+                } else {
+                    return "/Programs/Court-Reporting-Recording/Public-Audio-Request?casenumber=" + urlCasenumber + "&email=" + urlEmail;
+                }
+            }
+        }
+
+        function IsInternal(email, domains) {
+            var searchExp = new RegExp(domains.join("|"), "gi");
+            return (searchExp.test(email));
+        }
+    </script>
+
+</body>
+</html>

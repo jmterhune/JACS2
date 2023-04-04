@@ -54,11 +54,13 @@
       <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Abstractions, Version=9.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <Private>False</Private>
+    <Reference Include="DotNetNuke.Abstractions, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNuke.Web, Version=9.11.0.0, Culture=neutral, PublicKeyToken=null">
-      <Private>False</Private>
+    <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -213,8 +215,6 @@
     </Compile>
     <Compile Include="Components\ApiResponse.cs" />
     <Compile Include="Components\AsyncHelper.cs" />
-    <Compile Include="Components\CountyController.cs" />
-    <Compile Include="Components\County.cs" />
     <Compile Include="Components\LogEntryListController.cs" />
     <Compile Include="Components\Pagination.cs" />
     <Compile Include="Components\Parameters.cs" />
@@ -332,6 +332,10 @@
       <Project>{f5bb1b82-d843-4709-a57e-3a9cc290403f}</Project>
       <Name>DotNetNuke.Authentication.Azure</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Globals\Globals.csproj">
+      <Project>{7066eacb-e672-4110-b73d-c1a230b16eab}</Project>
+      <Name>Globals</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

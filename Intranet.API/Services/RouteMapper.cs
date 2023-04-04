@@ -42,7 +42,23 @@ namespace tjc.Intranet.API.Services
                 defaults: new { caseNumber = RouteParameter.Optional },
                 namespaces: new[] { "tjc.Intranet.API.Services" });
 
-
+            mapRouteManager.MapHttpRoute(
+                moduleFolderName: "directory/data",
+                routeName: "EmployeePersonalData",
+                url: "{controller}/{action}/{emailAddress}",
+                defaults: new { emailAddress = RouteParameter.Optional },
+                namespaces: new[] { "tjc.Intranet.API.Services" });
+            mapRouteManager.MapHttpRoute(
+                moduleFolderName: "directory",
+                routeName: "EmployeeUpdates",
+                url: "{controller}/{action}",
+                namespaces: new[] { "tjc.Intranet.API.Services" });
+            mapRouteManager.MapHttpRoute(
+               moduleFolderName: "directory/lists",
+               routeName: "EmployeeLists",
+               url: "{controller}/{action}/{employeeId}",
+               defaults: new { employeeId = RouteParameter.Optional },
+               namespaces: new[] { "tjc.Intranet.API.Services" });
         }
     }
 

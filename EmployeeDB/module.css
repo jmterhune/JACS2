@@ -1,0 +1,8 @@
+.command-icon {
+    cursor: pointer;
+    max-width:16px;
+    
+}
+.phone, .custom-control-label {
+    cursor: pointer;
+}

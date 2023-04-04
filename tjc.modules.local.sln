@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.2.32630.192
+VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JudgeVacation", "JudgeVacation\JudgeVacation.csproj", "{7D61A32C-0F21-453F-A981-BD8E5A3A5304}"
 EndProject
@@ -10,20 +10,20 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "http://localhost", "http://
 		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost"
-		Debug.AspNetCompiler.PhysicalPath = "..\Intranet\"
+		Debug.AspNetCompiler.PhysicalPath = "..\www.dnndev.me\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost"
-		Release.AspNetCompiler.PhysicalPath = "..\Intranet\"
+		Release.AspNetCompiler.PhysicalPath = "..\www.dnndev.me\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		SlnRelativePath = "..\Intranet\"
+		SlnRelativePath = "..\www.dnndev.me\"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JudicialReferral", "JudicialReferral\JudicialReferral.csproj", "{F8296DD1-CFFF-47A4-84F1-55DFB1158ABE}"
@@ -33,6 +33,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Authentication.Azure", "AzureProvider\DotNetNuke.Authentication.Azure\DotNetNuke.Authentication.Azure.csproj", "{F5BB1B82-D843-4709-A57E-3A9CC290403F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intranet.API", "Intranet.API\Intranet.API.csproj", "{77FCD3FC-3851-4858-8E31-DD633DB72303}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManateeJacsCaseMaintenace", "ManateeJacsCaseMaintenace\ManateeJacsCaseMaintenace.csproj", "{7140211D-1C7E-4A85-B6A7-EF22320CC126}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reports", "Reports\Reports.csproj", "{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeDB", "EmployeeDB\EmployeeDB.csproj", "{03F91FA2-3625-43B0-9F2F-563C65A82C89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Globals", "Globals\Globals.csproj", "{7066EACB-E672-4110-B73D-C1A230B16EAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +72,22 @@ Global
 		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7140211D-1C7E-4A85-B6A7-EF22320CC126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7140211D-1C7E-4A85-B6A7-EF22320CC126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7140211D-1C7E-4A85-B6A7-EF22320CC126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7140211D-1C7E-4A85-B6A7-EF22320CC126}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03F91FA2-3625-43B0-9F2F-563C65A82C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03F91FA2-3625-43B0-9F2F-563C65A82C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03F91FA2-3625-43B0-9F2F-563C65A82C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03F91FA2-3625-43B0-9F2F-563C65A82C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7066EACB-E672-4110-B73D-C1A230B16EAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7066EACB-E672-4110-B73D-C1A230B16EAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7066EACB-E672-4110-B73D-C1A230B16EAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7066EACB-E672-4110-B73D-C1A230B16EAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

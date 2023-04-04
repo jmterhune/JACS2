@@ -1,0 +1,55 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_dcr_Proceeding]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}tjc_dcr_Proceeding]
+GO
+
+CREATE TABLE {databaseOwner}{objectQualifier}tjc_dcr_Proceeding
+(
+	[ProceedingId] [int] IDENTITY(1,1) NOT NULL,
+	[ModuleId][int] NOT NULL,
+    [Requestor] [nvarchar](50) NOT NULL,
+	[Address] [nvarchar](50) NOT NULL,
+	[City] [nvarchar](50) NOT NULL,
+	[State] [nchar](2) NOT NULL,
+	[Zip] [nvarchar](11) NOT NULL,
+	[Phone] [nvarchar](50) NOT NULL,
+	[Fax] [nvarchar](50) NULL,
+	[Email] [nvarchar](100) NULL,
+	[RequestorId] [int] NOT NULL,
+	[RequestedDate] [smalldatetime] NOT NULL,
+	[CDPreference] [nvarchar](25) NULL,
+	[Jurisdiction] [nvarchar](10) NOT NULL,
+	[CaseName] [nvarchar](250) NOT NULL,
+	[CaseNumber] [nvarchar](20) NOT NULL,
+	[Judge] [nvarchar](50) NOT NULL,
+	[ProceedingDate] [nvarchar](50) NOT NULL,
+	[ProceedingTime] [nvarchar](100) NULL,
+	[Location] [nvarchar](10) NOT NULL,
+	[ProceedingType] [nvarchar](250) NOT NULL,
+	[Involvement] [nvarchar](50) NOT NULL,
+	[Instructions] [nvarchar](750) NULL,
+	[TranscriptionList] [nvarchar](3) NULL,
+	[DeliveryMethod] [nvarchar](50) NULL,
+	[Agency] [bit] NOT NULL,
+	[CA] [bit] NOT NULL,
+	[Closed] [bit] NOT NULL,
+	[Paid] [bit] NOT NULL
+)
+GO
+
+
+ALTER TABLE {databaseOwner}[{objectQualifier}tjc_dcr_Proceeding] ADD CONSTRAINT [PK_{objectQualifier}tjc_dcr_Proceeding] PRIMARY KEY CLUSTERED ([ProceedingId])
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

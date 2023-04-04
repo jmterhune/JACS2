@@ -18,7 +18,7 @@ namespace tjc.Intranet.API.Services
         {
             List<ViewModels.CourtCounsel.LogEntryViewModel> logEntries=new List<ViewModels.CourtCounsel.LogEntryViewModel>();
 
-            var ctl = new Components.LogEntryController();
+            var ctl = new Components.CourtCounsel.LogEntryController();
             logEntries = ctl.GetLogEntrysByCaseNumber(caseNumber).Select(logEntry => new ViewModels.CourtCounsel.LogEntryViewModel(logEntry)).ToList();
 
             return Request.CreateResponse(logEntries);

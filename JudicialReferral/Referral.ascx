@@ -111,13 +111,15 @@
                     </fieldset>
                 </div>
                 <div class="col-md-6">
-                        <div id="messages">
-                        </div>
-                        <div id="progress"></div>
+                    <div id="messages">
+                    </div>
+                    <div id="progress"></div>
                 </div>
             </div>
         </div>
         <asp:HiddenField ID="hdAttachmentIds" runat="server" />
+        <asp:CustomValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ID="CustomValidator1" runat="server" ErrorMessage="You must select at least one of the seven options"
+            ClientValidationFunction="DirectedMotionCheck"></asp:CustomValidator>
 
         <div>
             <div class="form-check mb-2">

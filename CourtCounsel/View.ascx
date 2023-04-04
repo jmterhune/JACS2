@@ -93,7 +93,6 @@
                 <table id="log-list" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>&nbsp;</th>
                             <th>Case Number</th>
                             <th>Case Name</th>
                             <th>Case Type</th>
@@ -101,7 +100,6 @@
                             <th>Motion Filed</th>
                             <th>Responsible</th>
                             <th>Status</th>
-                            <th>&nbsp;</th>
 
                         </tr>
                     </thead>
@@ -110,15 +108,13 @@
 
             <ItemTemplate>
                 <tr data-id="<%#DataBinder.Eval(Container.DataItem,"LogId").ToString() %>">
-                    <td class="command-icon"><a href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><i title="View Assignment Record" class="fa fa-pencil-alt"></i></a></td>
-                    <td><%#DataBinder.Eval(Container.DataItem,"CaseNumber") %></td>
+                    <td><a href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><i title="View Assignment Record" class="pe-2 fa fa-pencil-alt"></i></a><%#DataBinder.Eval(Container.DataItem,"CaseNumber") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"Description") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"CaseTypeName") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"DateReceived", "{0:M/d/yy}") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"MotionFiled", "{0:M/d/yy}") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"AttorneyName") %></td>
-                    <td><%#DataBinder.Eval(Container.DataItem,"PhaseName") %></td>
-                    <td class="command-icon"><a href="<%#EditUrl("lid",DataBinder.Eval(Container.DataItem,"LogId").ToString(),"caseview") %>"><i title="View Related Assignment Records" class="fa fa-arrow-circle-down"></i></a></td>
+                    <td><%#DataBinder.Eval(Container.DataItem,"PhaseName") %><a href="<%#EditUrl("lid",DataBinder.Eval(Container.DataItem,"LogId").ToString(),"caseview") %>"><i title="View Related Assignment Records" class="float-end fa fa-arrow-circle-down"></i></a></td>
 
                 </tr>
 

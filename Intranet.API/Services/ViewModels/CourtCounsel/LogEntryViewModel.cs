@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using tjc.Intranet.API.Components;
+using tjc.Intranet.API.Components.CourtCounsel;
 namespace tjc.Intranet.API.Services.ViewModels.CourtCounsel
 {
     [JsonObject(MemberSerialization.OptIn)]

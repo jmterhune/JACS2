@@ -1,0 +1,59 @@
+.subscribe {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.dnnFileUploadFolder > span {
+    width: 60px !important;
+}
+
+.dnnFormRadioButtons {
+    float: none !important;
+    border-radius: 4px;
+    background-color: #fff !important;
+    display: block;
+    width: 100%;
+    padding: 8px 10px !important;
+    margin: 0px !important;
+    border: 1px solid #ccc !important;
+}
+    .dnnFormRadioButtons input {
+        margin-right: 4px !important;
+    }
+
+    .dnnFormRadioButtons td {
+        padding-right: 25px;
+        padding-bottom: 5px;
+    }
+
+label em,em.lbl {
+    color: red;
+}
+span.text-lg {
+    font-size: .9rem !important;
+    display: inline-block;
+}
+
+.italic {
+    font-style: italic;
+}
+.form-group input:focus, .form-group textarea:focus, .dnnFormRadioButtons:focus {
+    border: 1px solid #5e81b5;
+}
+
+.delete-proceeding {
+    margin-top: -32px;
+}
+
+
+@media (min-width: 767px) {
+
+    ul.dnnFormRadioButtons {
+        -webkit-columns: 3;
+        -moz-columns: 3;
+        columns: 3;
+        list-style-position: inside;
+    }
+}
+    
