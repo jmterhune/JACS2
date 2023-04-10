@@ -13,15 +13,15 @@ namespace tjc.Modules.EmployeeDB.Components
     {
         public int ClassId { get; set; }
 
-        public string ClassCode { get; set; }
+        public int ClassCode { get; set; }
 
         public string ClassName { get; set; }
 
-        public string PayGrade { get; set; }
+        public int PayGrade { get; set; }
 
         public string FLSA { get; set; }
 
-        public string EEO { get; set; }
+        public int EEO { get; set; }
 
         public decimal? MMax { get; set; }
 

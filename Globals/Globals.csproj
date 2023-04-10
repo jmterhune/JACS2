@@ -72,11 +72,11 @@
     <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\DepartmentController.cs" />
-    <Compile Include="Components\Department.cs" />
     <Compile Include="Components\County.cs" />
     <Compile Include="Components\CountyController.cs" />
     <Compile Include="Components\EntityBase.cs" />
+    <Compile Include="Components\Group.cs" />
+    <Compile Include="Components\GroupController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

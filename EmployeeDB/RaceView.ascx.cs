@@ -10,20 +10,13 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Abstractions;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using System;
-using System.Web.UI.WebControls;
-using Microsoft.Extensions.DependencyInjection;
 using tjc.Modules.EmployeeDB.Components;
-using System.Collections.Generic;
 using System.Linq;
-using tjc.Modules.Globals;
+using System.Reflection;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -42,48 +35,20 @@ namespace tjc.Modules.EmployeeDB
     /// -----------------------------------------------------------------------------
     public partial class RaceView : EmployeeDBModuleBase
     {
-        #region Members
-        public string DrpSortHtml;
-        private readonly INavigationManager _navigationManager;
-        private bool ShowActive { get { if (ViewState["ShowActive"] != null) { return Convert.ToBoolean(ViewState["ShowActive"]); } return true; } set { ViewState["ShowActive"] = value; } }
-        #endregion
 
         #region Events
-
-        #endregion
-
-        #region Methods
-        public RaceView()
-        {
-            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-        }
-        private void PopulateEmployeeList()
-        {
-            var ctl = new EmployeeController();
-            rptEmployees.DataSource = ctl.GetEmployeeListItems(ShowActive);
-            rptEmployees.DataBind();
-        }
-        private void PopulateSectionDropdown()
-        {
-            DrpSortHtml = "<label class='mr-2'>Filter by Department <select id='drpfilter' class='form-control input-sm' aria-controls='employees'><option value='-1'>All</option>";
-            var ctl = new GroupController();
-
-            IEnumerable<Group> departments = ctl.GetGroups().Where(x => x.GroupType == Convert.ToInt32(Group.GroupTypeName.Internal));
-            foreach (Group department in departments)
-            {
-                DrpSortHtml += "<option value='" + department.GroupId.ToString() + "'>" + department.GroupName + "</option>";
-            }
-            DrpSortHtml += "</select></label>";
-        }
-        #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack)
                 {
-                    PopulateSectionDropdown();
-                    PopulateEmployeeList();
+                    if (DotNetNuke.Framework.AJAX.IsInstalled())
+                    {
+                        DotNetNuke.Framework.AJAX.RegisterScriptManager();
+                    }
+
+                    PopulateRaceList();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -91,21 +56,83 @@ namespace tjc.Modules.EmployeeDB
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-        protected void chkInactiveEmployees_CheckedChanged(object sender, EventArgs e)
+        protected void rptRaces_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            if (ShowActive)
+            int raceId = Convert.ToInt32(e.CommandArgument);
+            var ctl = new RaceController();
+            if (e.CommandName == "delete")
             {
-                ShowActive = false;
-                lblInactiveEmployees.Text = "Toggle On for Active Employees";
+
+                ctl.DeleteRace(raceId);
+                PopulateRaceList();
+            }
+            if (e.CommandName == "edit")
+            {
+                Race race = ctl.GetRace(raceId);
+
+                hdRaceId.Value = raceId.ToString();
+                txtDescription.Text = race.Description;
+                txtRaceCode.Text = race.RaceCode;
+
+                ScriptManager.RegisterStartupScript(rptRaces, rptRaces.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
+            }
+        }
+        protected void cmdSave_Click(object sender, EventArgs e)
+        {
+            var ctl = new RaceController();
+            Race race = new Race();
+            bool isNew = true;
+            if (hdRaceId.Value != "")
+            {
+                isNew = false;
+                race = ctl.GetRace(Convert.ToInt32(hdRaceId.Value));
+            }
+            race.Description = txtDescription.Text;
+            race.RaceCode = txtRaceCode.Text;
+            race.LastModifiedDate = DateTime.Now;
+            race.LastModifiedById = UserId;
+            if (isNew)
+            {
+                race.CreatedById = UserId;
+                race.CreatedDate = DateTime.Now;
+                ctl.CreateRace(race);
             }
             else
             {
-                ShowActive = true;
-                lblInactiveEmployees.Text = "Toggle Off for Inactive Employees";
+                ctl.UpdateRace(race);
             }
-            PopulateEmployeeList();
-
+            hdRaceId.Value = "";
+            PopulateRaceList();
         }
+        protected void pnlRaces_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
+        }
+        protected void rptRaces_ItemCreated(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
+
+                LinkButton cmdEdit = (LinkButton)e.Item.FindControl("cmdEdit");
+                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
+                scriptMan.RegisterAsyncPostBackControl(cmdDelete);
+                scriptMan.RegisterAsyncPostBackControl(cmdEdit);
+            }
+        }
+
+        #endregion
+
+        #region Methods
+        private void PopulateRaceList()
+        {
+            var ctl = new RaceController();
+            rptRaces.DataSource = ctl.GetRaces();
+            rptRaces.DataBind();
+        }
+        #endregion
+
     }
 }

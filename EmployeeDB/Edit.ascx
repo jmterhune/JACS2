@@ -1,46 +1,343 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Edit.ascx.cs" Inherits="tjc.Modules.EmployeeDB.Edit" %>
-<%@ Register TagPrefix="dnn" TagName="label" Src="~/controls/LabelControl.ascx" %>
-<div class="dnnForm dnnEditBasicSettings" id="dnnEditBasicSettings">
-    <div class="dnnFormExpandContent dnnRight "><a href=""><%=LocalizeString("ExpandAll")%></a></div>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<div class="tabs">
+    <ul class="nav nav-tabs">
+        <li class="nav-item active">
+            <a class="nav-link" href="#detail" data-toggle="tab"><i class="fas fa-user-edit"></i>&nbsp;Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#phones" data-toggle="tab"><i class="fas fa-phone"></i>&nbsp;Phone Numbers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#groups" data-toggle="tab"><i class="fas fa-users"></i>&nbsp;Groups</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#employment" data-toggle="tab"><i class="fas fa-user-clock"></i>&nbsp;Employment History</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#photo" data-toggle="tab"><i class="fas fa-camera"></i>&nbsp;Photo ID</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#contacts" data-toggle="tab"><i class="fas fa-address-book"></i>&nbsp;Emergency Contacts</a>
+        </li>
+    </ul>
+    <div class="tab-content edit-form">
+        <div id="detail" class="tab-pane active">
+            <div class="row">
+                <div class="col-4">
+                    <fieldset>
+                        <legend>Personal Info</legend>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name<em>*</em>" ToolTip="Required" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtFirstName"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="First Name is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name<em>*</em>" ToolTip="Required" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtLastName"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Last Name is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtMiddleInitial" Text="Middle Initial" />
+                            <asp:TextBox runat="server" CssClass="form-control col-2" MaxLength="2" ID="txtMiddleInitial" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtTitle" Text="Title" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtTitle" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtSSN" Text="Social Security Number<em>*</em>" ToolTip="Required" />
+                            <asp:TextBox runat="server" CssClass="form-control ssn" MaxLength="9" ID="txtSSN" />
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtSSN"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="SSN is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtBirthDate" Text="Birth Date<em>*</em>" ToolTip="Required" />
+                            <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="50" ID="txtBirthDate" />
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtBirthDate"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Birth Date is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpRace" Text="Race<em>*</em>" ToolTip="Required" />
+                            <asp:DropDownList ID="drpRace" runat="server" CssClass="form-control" DataTextField="Description" DataValueField="RaceId" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select Race>" Value="" />
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="drpRace"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Race is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="rblGender" Text="Gender<em>*</em>" ToolTip="Required" />
+                            <asp:RadioButtonList ID="rblGender" RepeatLayout="Flow" CssClass="radio-button-list" RepeatDirection="Horizontal" runat="server">
+                                <asp:ListItem Text="Male" Value="M" />
+                                <asp:ListItem Text="Female" Value="F" />
+                            </asp:RadioButtonList>
+                            <asp:RequiredFieldValidator Visible="false" ID="valGender" runat="server" ControlToValidate="rblGender"
+                                Display="Dynamic" ErrorMessage="Gender is Required" CssClass="label label-danger" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" RepeatLayout="Flow" AssociatedControlID="rblWorksFor" Text="Employee of<em>*</em>" ToolTip="Required" />
+                            <asp:RadioButtonList ID="rblWorksFor" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="radio-button-list" runat="server">
+                                <asp:ListItem Text="County" Value="C" />
+                                <asp:ListItem Text="State" Value="S" />
+                                <asp:ListItem Text="Other" Value="O" />
+                            </asp:RadioButtonList>
+                            <asp:RequiredFieldValidator Visible="false" ID="valEmpOf" runat="server" CssClass="label label-danger" ControlToValidate="rblWorksFor"
+                                Display="Dynamic" ErrorMessage="Employee of is Required" />
+                        </div>
+                        <div class="custom-control custom-switch">
+                            <asp:CheckBox ID="chkActive" Checked="true" runat="server" Text="Active" />
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-4">
+                    <fieldset>
+                        <legend>Address / Contact</legend>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtAddress" Text="Street Address" />
+                            <asp:TextBox runat="server" CssClass="form-control" TextMode="MultiLine" Rows="2" MaxLength="300" ID="txtAddress" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtCity" Text="City" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="30" ID="txtCity" />
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-7">
+                                    <asp:Label runat="server" AssociatedControlID="drpState" Text="State" />
+                                    <asp:DropDownList ID="drpState" runat="server" CssClass="form-control">
+                                        <asp:ListItem Value="" Text="" />
+                                        <asp:ListItem Value="AL" Text="Alabama" />
+                                        <asp:ListItem Value="AK" Text="Alaska" />
+                                        <asp:ListItem Value="AZ" Text="Arizona" />
+                                        <asp:ListItem Value="AR" Text="Arkansas" />
+                                        <asp:ListItem Value="CA" Text="California" />
+                                        <asp:ListItem Value="CO" Text="Colorado" />
+                                        <asp:ListItem Value="CT" Text="Connecticut" />
+                                        <asp:ListItem Value="DE" Text="Delaware" />
+                                        <asp:ListItem Value="DC" Text="District of Columbia" />
+                                        <asp:ListItem Value="FL" Text="Florida" />
+                                        <asp:ListItem Value="GA" Text="Georgia" />
+                                        <asp:ListItem Value="HI" Text="Hawaii" />
+                                        <asp:ListItem Value="ID" Text="Idaho" />
+                                        <asp:ListItem Value="IL" Text="Illinois" />
+                                        <asp:ListItem Value="IN" Text="Indiana" />
+                                        <asp:ListItem Value="IA" Text="Iowa" />
+                                        <asp:ListItem Value="KS" Text="Kansas" />
+                                        <asp:ListItem Value="KY" Text="Kentucky" />
+                                        <asp:ListItem Value="LA" Text="Louisiana" />
+                                        <asp:ListItem Value="ME" Text="Maine" />
+                                        <asp:ListItem Value="MD" Text="Maryland" />
+                                        <asp:ListItem Value="MA" Text="Massachusetts" />
+                                        <asp:ListItem Value="MI" Text="Michigan" />
+                                        <asp:ListItem Value="MN" Text="Minnesota" />
+                                        <asp:ListItem Value="MS" Text="Mississippi" />
+                                        <asp:ListItem Value="MO" Text="Missouri" />
+                                        <asp:ListItem Value="MT" Text="Montana" />
+                                        <asp:ListItem Value="NE" Text="Nebraska" />
+                                        <asp:ListItem Value="NV" Text="Nevada" />
+                                        <asp:ListItem Value="NH" Text="New Hampshire" />
+                                        <asp:ListItem Value="NJ" Text="New Jersey" />
+                                        <asp:ListItem Value="NM" Text="New Mexico" />
+                                        <asp:ListItem Value="NY" Text="New York" />
+                                        <asp:ListItem Value="NC" Text="North Carolina" />
+                                        <asp:ListItem Value="ND" Text="North Dakota" />
+                                        <asp:ListItem Value="OH" Text="Ohio" />
+                                        <asp:ListItem Value="OK" Text="Oklahoma" />
+                                        <asp:ListItem Value="OR" Text="Oregon" />
+                                        <asp:ListItem Value="PA" Text="Pennsylvania" />
+                                        <asp:ListItem Value="RI" Text="Rhode Island" />
+                                        <asp:ListItem Value="SC" Text="South Carolina" />
+                                        <asp:ListItem Value="SD" Text="South Dakota" />
+                                        <asp:ListItem Value="TN" Text="Tennessee" />
+                                        <asp:ListItem Value="TX" Text="Texas" />
+                                        <asp:ListItem Value="UT" Text="Utah" />
+                                        <asp:ListItem Value="VT" Text="Vermont" />
+                                        <asp:ListItem Value="VA" Text="Virginia" />
+                                        <asp:ListItem Value="WA" Text="Washington" />
+                                        <asp:ListItem Value="WV" Text="West Virginia" />
+                                        <asp:ListItem Value="WI" Text="Wisconsin" />
+                                        <asp:ListItem Value="WY" Text="Wyoming" />
+                                    </asp:DropDownList>
 
-    <h2 id="dnnSitePanel-BasicSettings" class="dnnFormSectionHead dnnClear">
-        <a href="" class="dnnSectionExpanded">
-            <%=LocalizeString("BasicSettings")%></a></h2>
-    <fieldset>
-        <div class="dnnFormItem">
-            <dnn:label ID="lblName" runat="server" />
-            <asp:TextBox ID="txtName" runat="server" />
-        </div>
-        <div class="dnnFormItem">
+                                </div>
+                                <div class="col-5">
+                                    <asp:Label runat="server" AssociatedControlID="txtZip" Text="Zip Code" />
+                                    <asp:TextBox runat="server" CssClass="form-control zip" MaxLength="12" ID="txtZip" />
 
-            <dnn:label ID="lblDescription" runat="server" />
-            <asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine" Rows="5" Columns="20" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtPersonalEmail" Text="Personal Email" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="250" ID="txtPersonalEmail" />
+                            <asp:RegularExpressionValidator ID="valPersonalEmail" runat="server" CssClass="label label-danger" ControlToValidate="txtPersonalEmail"
+                                Display="Dynamic" ErrorMessage="Incorrect e-mail format" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Work Email" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="250" ID="txtEmail" />
+                            <asp:RegularExpressionValidator ID="valEmail" runat="server" ControlToValidate="txtEmail"
+                                Display="Dynamic" CssClass="label label-danger" ErrorMessage="Incorrect e-mail format" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpLocation" Text="Office Location" />
+                            <asp:DropDownList ID="drpLocation" runat="server" CssClass="form-control" DataTextField="Description" DataValueField="OfficeLocationId" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select Location>" Value="" />
+                            </asp:DropDownList>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mt-2">
+                        <legend>Transferred Leave Balances</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-7">
+                                    <asp:Label runat="server" AssociatedControlID="txtAnnualLeave" Text="Annual Leave" />
+                                    <asp:TextBox runat="server" CssClass="form-control" TextMode="Number" ID="txtAnnualLeave" />
+                                </div>
+                                <div class="col-5">
+                                    <asp:Label runat="server" AssociatedControlID="txtSickLeave" Text="Sick Leave" />
+                                    <asp:TextBox runat="server" CssClass="form-control" TextMode="Number" ID="txtSickLeave" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+                    <fieldset class="mt-2">
+                        <legend>Access Card Info</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-7">
+                                    <asp:Label runat="server" AssociatedControlID="txtDeSotoAccess" Text="DeSoto" />
+                                    <asp:TextBox runat="server" MaxLength="50" CssClass="form-control" ID="txtDeSotoAccess" />
+                                </div>
+                                <div class="col-5">
+                                    <asp:Label runat="server" AssociatedControlID="txtSarasotaAccess" Text="Sarasota" />
+                                    <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtSarasotaAccess" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="custom-control custom-switch">
+                            <asp:CheckBox ID="chkManateeAccess" runat="server" Text="Manatee" />
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-4">
+                    <fieldset class="mt-2">
+                        <legend>Employment Info</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-6">
+                                    <asp:Label runat="server" AssociatedControlID="txtHireDate" Text="Hire Date<em>*</em>" ToolTip="Required" />
+                                    <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="10" ID="txtHireDate" />
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtHireDate"
+                                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Hire Date is Required" />
+                                </div>
+                                <div class="col-6">
+                                    <asp:Label runat="server" AssociatedControlID="txtServiceDate" Text="Service Date" />
+                                    <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="10" ID="txtServiceDate" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtTerminationDate" Text="Termination Date" />
+                            <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="10" ID="txtTerminationDate" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpSupervisor" Text="Supervisor" />
+                            <asp:DropDownList ID="drpSupervisor" runat="server" CssClass="form-control" DataTextField="DataText" DataValueField="DataValue" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select Supervisor>" Value="" />
+                            </asp:DropDownList>
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpDepartment" Text="Department / Unit / Group<em>*</em>" ToolTip="Required" />
+                            <asp:DropDownList ID="drpDepartment" runat="server" CssClass="form-control" DataTextField="GroupName" DataValueField="GroupId" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select Race>" Value="" />
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="drpDepartment"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Department is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpJobGroup" Text="Job Category<em>*</em>" ToolTip="Required" />
+                            <asp:DropDownList ID="drpJobGroup" runat="server" CssClass="form-control" DataTextField="Description" DataValueField="JobGroupId" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select Category>" Value="" />
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="drpJobGroup"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Job Category is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpJobClass" Text="Job Class<em>*</em>" ToolTip="Required" />
+                            <asp:DropDownList ID="drpJobClass" runat="server" CssClass="form-control" DataTextField="ClassName" DataValueField="ClassId" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select Job Class>" Value="" />
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="drpJobClass"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Job Class is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtPosition" Text="Position Number" />
+                            <asp:TextBox runat="server" CssClass="form-control" MaxLength="150" ID="txtPosition" />
+                        </div>
+
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpCounty" Text="County Works<em>*</em>" ToolTip="Required" />
+                            <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control" DataTextField="CountyName" DataValueField="CountyId" AppendDataBoundItems="true">
+                                <asp:ListItem Text="<Select County>" Value="" />
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCounty"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="County is Required" />
+                        </div>
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpEmploymentType" Text="Employment Type<em>*</em>" ToolTip="Required" />
+                            <asp:DropDownList ID="drpEmploymentType" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="<Select Employment Type>" Value="" />
+                                <asp:ListItem Text="Full-Time" Value="Full-Time" />
+                                <asp:ListItem Text="Part-Time" Value="Part-Time" />
+                                <asp:ListItem Text="OPS" Value="OPS" />
+                                <asp:ListItem Text="Intern" Value="Intern" />
+                                <asp:ListItem Text="Contract" Value="Contract" />
+                                <asp:ListItem Text="Other" Value="Other" />
+
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="drpEmploymentType"
+                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Employment Type is Required" />
+                        </div>
+                         <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="txtSalary" Text="Salary" />
+                            <asp:TextBox runat="server" CssClass="form-control" data-mask="$000,000,000.00" MaxLength="50" ID="txtSalary" />
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
         </div>
-        <div class="dnnFormItem">
-            <dnn:label ID="lblAssignedUser" runat="server" />
-            <asp:DropDownList ID="ddlAssignedUser" runat="server" />
+        <div id="phones" class="tab-pane">
         </div>
-    </fieldset>
+        <div id="groups" class="tab-pane"></div>
+        <div id="employment" class="tab-pane"></div>
+        <div id="photo" class="tab-pane"></div>
+        <div id="contacts" class="tab-pane"></div>
+    </div>
 </div>
-<asp:LinkButton ID="btnSubmit" runat="server"
-    OnClick="btnSubmit_Click" resourcekey="btnSubmit" CssClass="dnnPrimaryAction" />
-<asp:LinkButton ID="btnCancel" runat="server"
-    OnClick="btnCancel_Click" resourcekey="btnCancel" CssClass="dnnSecondaryAction" />
+<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */
     (function ($, Sys) {
-        function dnnEditBasicSettings() {
-            $('#dnnEditBasicSettings').dnnPanels();
-            $('#dnnEditBasicSettings .dnnFormExpandContent a').dnnExpandAll({ expandText: '<%=Localization.GetString("ExpandAll", LocalResourceFile)%>', collapseText: '<%=Localization.GetString("CollapseAll", LocalResourceFile)%>', targetArea: '#dnnEditBasicSettings' });
-        }
 
         $(document).ready(function () {
-            dnnEditBasicSettings();
+            PageInit();
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
-                dnnEditBasicSettings();
+
             });
         });
 
     }(jQuery, window.Sys));
+    function PageInit() {
+        $(".datepicker").datepicker();
+        $('.ssn').mask('000-00-0000');
+        $('.zip').mask('00000-000');
+    }
 </script>

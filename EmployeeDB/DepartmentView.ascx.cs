@@ -83,8 +83,7 @@ namespace tjc.Modules.EmployeeDB
                 txtDescription.Text = group.GroupName;
                 drpType.SelectedValue = group.GroupType.ToString();
                 chkIsSWNGroup.Checked = group.IsSwnGroup;
-                ScriptManager.RegisterStartupScript(rptDepartments, rptDepartments.GetType(), "ShowForm", "ShowEditForm()", true);
-
+                ScriptManager.RegisterStartupScript(rptDepartments, rptDepartments.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
             }
         }
         protected void cmdSave_Click(object sender, EventArgs e)
@@ -100,14 +99,19 @@ namespace tjc.Modules.EmployeeDB
             group.GroupName = txtDescription.Text;
             group.GroupType = Convert.ToInt32(drpType.SelectedValue);
             group.IsSwnGroup = chkIsSWNGroup.Checked;
+            group.LastModifiedDate = DateTime.Now;
+            group.LastModifiedById = UserId;
             if (isNew)
             {
+                group.CreatedById = UserId;
+                group.CreatedDate = DateTime.Now;
                 ctl.CreateGroup(group);
             }
             else
             {
                 ctl.UpdateGroup(group);
             }
+            hdDepartmentId.Value = "";
             PopulateDepartmentList();
         }
         protected void pnlDepartments_Unload(object sender, EventArgs e)

@@ -43,5 +43,16 @@ namespace tjc.Modules.EmployeeDB
         public string RaceUrl { get { return EditUrl("Race"); } }
         public string CountyUrl { get { return EditUrl("County"); } }
         public string LocationUrl { get { return EditUrl("Location"); } }
+
+        public string SupervisorRole
+        {
+            get
+            {
+                if (Settings.Contains("SupervisorRole"))
+                    return Settings["SupervisorRole"].ToString();
+
+                return "Supervisor";
+            }
+        }
     }
 }

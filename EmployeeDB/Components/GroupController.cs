@@ -10,10 +10,8 @@
 ' 
 */
 using DotNetNuke.Data;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace tjc.Modules.EmployeeDB.Components
 {
@@ -53,8 +51,17 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        
-        
+        public IEnumerable<Group> GetGroups(int groupType)
+        {
+            IEnumerable<Group> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Group>();
+                t = rep.Find("Where GroupType=@0",groupType);
+            }
+            return t;
+        }
+
         public Group GetGroup(int groupId)
         {
             Group t;

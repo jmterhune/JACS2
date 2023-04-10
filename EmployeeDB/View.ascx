@@ -3,25 +3,25 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#Employees"><i class="fas fa-user"></i> Employees</a>
+            <a class="nav-link" href="<%=EmployeeUrl%>"><i class="fas fa-user"></i>&nbsp;Employees</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=DepartmentUrl%>"><i class="fas fa-sitemap"></i> Departments</a>
-        </li>
-                <li class="nav-item">
-            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i> Job Groups</a>
+            <a class="nav-link" href="<%=DepartmentUrl%>"><i class="fas fa-sitemap"></i>Departments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=JobClassUrl%>"><i class="fas fa-user-tag"></i> Job Classes</a>
-        </li>
-                <li class="nav-item">
-            <a class="nav-link" href="<%=RaceUrl%>"><i class="fas fa-users-cog"></i> Race</a>
+            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>Job Groups</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=CountyUrl%>" ><i class="fas fa-map-marked-alt"></i> Counties</a>
+            <a class="nav-link" href="<%=JobClassUrl%>"><i class="fas fa-user-tag"></i>Job Classes</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=LocationUrl%>"><i class="fas fa-building"></i> Locations</a>
+            <a class="nav-link" href="<%=RaceUrl%>"><i class="fas fa-users-cog"></i>Race</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=CountyUrl%>"><i class="fas fa-map-marked-alt"></i>Counties</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=LocationUrl%>"><i class="fas fa-building"></i>Locations</a>
         </li>
 
     </ul>

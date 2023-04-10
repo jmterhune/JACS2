@@ -3,13 +3,13 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="#Employees"><i class="fas fa-user"></i>&nbsp;Employees</a>
+            <a class="nav-link" href="<%=EmployeeUrl%>"><i class="fas fa-user"></i>&nbsp;Employees</a>
         </li>
         <li class="nav-item active">
             <a class="nav-link" href="<%=DepartmentUrl%>"><i class="fas fa-sitemap"></i>&nbsp;Departments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>&nbsp;Job Groups</a>
+            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>&nbsp;Job Categories</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=JobClassUrl%>"><i class="fas fa-user-tag"></i>&nbsp;Job Classes</a>
@@ -27,9 +27,7 @@
     </ul>
     <div class="tab-content">
         <div id="Departments" class="tab-pane active">
-            <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#EditDepartmentModal">
-                <i class="fa fa-plus"></i>&nbsp;Add Department
-            </button>
+
             <asp:UpdatePanel ID="pnlDepartments" runat="server" RenderMode="Block" OnUnload="pnlDepartments_Unload">
                 <ContentTemplate>
                     <asp:UpdateProgress ID="upProgressEvent" runat="server">
@@ -103,7 +101,7 @@
 
                                 </div>
                                 <div class="modal-footer">
-                                    <asp:Button CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -128,6 +126,7 @@
         $(document).ready(function () {
             Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
+
         });
     }(jQuery, window.Sys));
     function PageInit() {
@@ -144,6 +143,9 @@
                 { "bSortable": false }]
 
         });
+        $("#tblDepartments_length").prepend('<button class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#EditDepartmentModal"><i class="fa fa-plus"></i>&nbsp;Add Department</button>');
+        table.draw();
+
         $(".confirm").dnnConfirm({
 
             text: 'Are you sure you wish to delete this Department?',
@@ -156,10 +158,21 @@
 
         });
     }
-    function ShowEditForm() {
+    function ToggleEditForm(toggleValue) {
+        if (toggleValue) {
+            $('#EditDepartmentModal').modal('show');
+        } else {
+            if (typeof (Page_ClientValidate) == 'function') {
+                Page_ClientValidate();
+            }
 
-        $('#EditDepartmentModal').modal('show');
+            if (Page_IsValid) {
+                $('#EditDepartmentModal').modal('hide');
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            }
+        }
+
         return true;
     }
-
 </script>

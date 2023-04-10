@@ -10,20 +10,13 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Abstractions;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using System;
-using System.Web.UI.WebControls;
-using Microsoft.Extensions.DependencyInjection;
 using tjc.Modules.EmployeeDB.Components;
-using System.Collections.Generic;
 using System.Linq;
-using tjc.Modules.Globals;
+using System.Reflection;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -43,47 +36,21 @@ namespace tjc.Modules.EmployeeDB
     public partial class LocationView : EmployeeDBModuleBase
     {
         #region Members
-        public string DrpSortHtml;
-        private readonly INavigationManager _navigationManager;
-        private bool ShowActive { get { if (ViewState["ShowActive"] != null) { return Convert.ToBoolean(ViewState["ShowActive"]); } return true; } set { ViewState["ShowActive"] = value; } }
         #endregion
 
         #region Events
-
-        #endregion
-
-        #region Methods
-        public LocationView()
-        {
-            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-        }
-        private void PopulateEmployeeList()
-        {
-            var ctl = new EmployeeController();
-            rptEmployees.DataSource = ctl.GetEmployeeListItems(ShowActive);
-            rptEmployees.DataBind();
-        }
-        private void PopulateSectionDropdown()
-        {
-            DrpSortHtml = "<label class='mr-2'>Filter by Department <select id='drpfilter' class='form-control input-sm' aria-controls='employees'><option value='-1'>All</option>";
-            var ctl = new GroupController();
-
-            IEnumerable<Group> departments = ctl.GetGroups().Where(x => x.GroupType == Convert.ToInt32(Group.GroupTypeName.Internal));
-            foreach (Group department in departments)
-            {
-                DrpSortHtml += "<option value='" + department.GroupId.ToString() + "'>" + department.GroupName + "</option>";
-            }
-            DrpSortHtml += "</select></label>";
-        }
-        #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack)
                 {
-                    PopulateSectionDropdown();
-                    PopulateEmployeeList();
+                    if (DotNetNuke.Framework.AJAX.IsInstalled())
+                    {
+                        DotNetNuke.Framework.AJAX.RegisterScriptManager();
+                    }
+
+                    PopulateOfficeLocationList();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -91,21 +58,80 @@ namespace tjc.Modules.EmployeeDB
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-        protected void chkInactiveEmployees_CheckedChanged(object sender, EventArgs e)
+        protected void rptOfficeLocations_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            if (ShowActive)
+            int officeOfficeLocationId = Convert.ToInt32(e.CommandArgument);
+            var ctl = new OfficeLocationController();
+            if (e.CommandName == "delete")
             {
-                ShowActive = false;
-                lblInactiveEmployees.Text = "Toggle On for Active Employees";
+
+                ctl.DeleteOfficeLocation(officeOfficeLocationId);
+                PopulateOfficeLocationList();
+            }
+            if (e.CommandName == "edit")
+            {
+                OfficeLocation officeOfficeLocation = ctl.GetOfficeLocation(officeOfficeLocationId);
+
+                hdOfficeLocationId.Value = officeOfficeLocationId.ToString();
+                txtDescription.Text = officeOfficeLocation.Description;
+                ScriptManager.RegisterStartupScript(rptOfficeLocations, rptOfficeLocations.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
+            }
+        }
+        protected void cmdSave_Click(object sender, EventArgs e)
+        {
+            var ctl = new OfficeLocationController();
+            OfficeLocation officeOfficeLocation = new OfficeLocation();
+            bool isNew = true;
+            if (hdOfficeLocationId.Value != "")
+            {
+                isNew = false;
+                officeOfficeLocation = ctl.GetOfficeLocation(Convert.ToInt32(hdOfficeLocationId.Value));
+            }
+            officeOfficeLocation.Description = txtDescription.Text;
+            officeOfficeLocation.LastModifiedDate = DateTime.Now;
+            officeOfficeLocation.LastModifiedById = UserId;
+            if (isNew)
+            {
+                officeOfficeLocation.CreatedById = UserId;
+                officeOfficeLocation.CreatedDate = DateTime.Now;
+                ctl.CreateOfficeLocation(officeOfficeLocation);
             }
             else
             {
-                ShowActive = true;
-                lblInactiveEmployees.Text = "Toggle Off for Inactive Employees";
+                ctl.UpdateOfficeLocation(officeOfficeLocation);
             }
-            PopulateEmployeeList();
-
+            hdOfficeLocationId.Value = "";
+            PopulateOfficeLocationList();
         }
+        protected void pnlOfficeLocations_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
+        }
+        protected void rptOfficeLocations_ItemCreated(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
+
+                LinkButton cmdEdit = (LinkButton)e.Item.FindControl("cmdEdit");
+                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
+                scriptMan.RegisterAsyncPostBackControl(cmdDelete);
+                scriptMan.RegisterAsyncPostBackControl(cmdEdit);
+            }
+        }
+
+        #endregion
+
+        #region Methods
+        private void PopulateOfficeLocationList()
+        {
+            var ctl = new OfficeLocationController();
+            rptOfficeLocations.DataSource = ctl.GetOfficeLocations();
+            rptOfficeLocations.DataBind();
+        }
+        #endregion
+
     }
 }

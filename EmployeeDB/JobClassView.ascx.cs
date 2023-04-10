@@ -10,20 +10,13 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Abstractions;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using System;
-using System.Web.UI.WebControls;
-using Microsoft.Extensions.DependencyInjection;
 using tjc.Modules.EmployeeDB.Components;
-using System.Collections.Generic;
 using System.Linq;
-using tjc.Modules.Globals;
+using System.Reflection;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -42,48 +35,20 @@ namespace tjc.Modules.EmployeeDB
     /// -----------------------------------------------------------------------------
     public partial class JobClassView : EmployeeDBModuleBase
     {
-        #region Members
-        public string DrpSortHtml;
-        private readonly INavigationManager _navigationManager;
-        private bool ShowActive { get { if (ViewState["ShowActive"] != null) { return Convert.ToBoolean(ViewState["ShowActive"]); } return true; } set { ViewState["ShowActive"] = value; } }
-        #endregion
 
         #region Events
-
-        #endregion
-
-        #region Methods
-        public JobClassView()
-        {
-            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-        }
-        private void PopulateEmployeeList()
-        {
-            var ctl = new EmployeeController();
-            rptEmployees.DataSource = ctl.GetEmployeeListItems(ShowActive);
-            rptEmployees.DataBind();
-        }
-        private void PopulateSectionDropdown()
-        {
-            DrpSortHtml = "<label class='mr-2'>Filter by Department <select id='drpfilter' class='form-control input-sm' aria-controls='employees'><option value='-1'>All</option>";
-            var ctl = new GroupController();
-
-            IEnumerable<Group> departments = ctl.GetGroups().Where(x => x.GroupType == Convert.ToInt32(Group.GroupTypeName.Internal));
-            foreach (Group department in departments)
-            {
-                DrpSortHtml += "<option value='" + department.GroupId.ToString() + "'>" + department.GroupName + "</option>";
-            }
-            DrpSortHtml += "</select></label>";
-        }
-        #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack)
                 {
-                    PopulateSectionDropdown();
-                    PopulateEmployeeList();
+                    if (DotNetNuke.Framework.AJAX.IsInstalled())
+                    {
+                        DotNetNuke.Framework.AJAX.RegisterScriptManager();
+                    }
+
+                    PopulateJobClassList();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -91,21 +56,96 @@ namespace tjc.Modules.EmployeeDB
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
-        protected void chkInactiveEmployees_CheckedChanged(object sender, EventArgs e)
+        protected void rptJobClasss_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            if (ShowActive)
+            int classId = Convert.ToInt32(e.CommandArgument);
+            var ctl = new JobClassController();
+            if (e.CommandName == "delete")
             {
-                ShowActive = false;
-                lblInactiveEmployees.Text = "Toggle On for Active Employees";
+
+                ctl.DeleteJobClass(classId);
+                PopulateJobClassList();
+            }
+            if (e.CommandName == "edit")
+            {
+                JobClass jobClass = ctl.GetJobClass(classId);
+
+                hdClassId.Value = classId.ToString();
+                txtClassName.Text = jobClass.ClassName;
+                txtClassCode.Text = jobClass.ClassCode.ToString();
+                txtPayGrade.Text = jobClass.PayGrade.ToString();
+                txtFLSA.Text=jobClass.FLSA;
+                txtEEO.Text=jobClass.EEO.ToString();
+                txtMMax.Text = jobClass.MMax.ToString();
+                txtMMin.Text = jobClass.MMin.ToString();
+                txtAMax.Text = jobClass.AMax.ToString();
+                txtAMin.Text = jobClass.AMin.ToString();
+                ScriptManager.RegisterStartupScript(rptJobClasss, rptJobClasss.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
+            }
+        }
+        protected void cmdSave_Click(object sender, EventArgs e)
+        {
+            var ctl = new JobClassController();
+            JobClass jobClass = new JobClass();
+            bool isNew = true;
+            if (hdClassId.Value != "")
+            {
+                isNew = false;
+                jobClass = ctl.GetJobClass(Convert.ToInt32(hdClassId.Value));
+            }
+            jobClass.ClassName = txtClassName.Text;
+            jobClass.ClassCode =Int32.Parse(txtClassCode.Text);
+            jobClass.PayGrade = Int32.Parse(txtPayGrade.Text);
+            jobClass.FLSA = txtFLSA.Text;
+            jobClass.EEO = Int32.Parse(txtEEO.Text);
+            jobClass.MMax = Decimal.Parse(txtMMax.Text);
+            jobClass.MMin = Decimal.Parse(txtMMin.Text);
+            jobClass.AMax = Decimal.Parse(txtAMax.Text);
+            jobClass.AMin = Decimal.Parse(txtAMin.Text);
+            jobClass.LastModifiedDate = DateTime.Now;
+            jobClass.LastModifiedById = UserId;
+            if (isNew)
+            {
+                jobClass.CreatedById = UserId;
+                jobClass.CreatedDate = DateTime.Now;
+                ctl.CreateJobClass(jobClass);
             }
             else
             {
-                ShowActive = true;
-                lblInactiveEmployees.Text = "Toggle Off for Inactive Employees";
+                ctl.UpdateJobClass(jobClass);
             }
-            PopulateEmployeeList();
-
+            hdClassId.Value = "";
+            PopulateJobClassList();
         }
+        protected void pnlJobClasss_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
+        }
+        protected void rptJobClasss_ItemCreated(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
+
+                LinkButton cmdEdit = (LinkButton)e.Item.FindControl("cmdEdit");
+                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
+                scriptMan.RegisterAsyncPostBackControl(cmdDelete);
+                scriptMan.RegisterAsyncPostBackControl(cmdEdit);
+            }
+        }
+
+        #endregion
+
+        #region Methods
+        private void PopulateJobClassList()
+        {
+            var ctl = new JobClassController();
+            rptJobClasss.DataSource = ctl.GetJobClasses();
+            rptJobClasss.DataBind();
+        }
+        #endregion
+
     }
 }

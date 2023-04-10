@@ -124,10 +124,10 @@ namespace tjc.Modules.EmployeeDB.Components
             JobGroup jobGroup = ctl.GetJobGroup(jobGroupId);
             return jobGroup?? jobGroup;
         }
-        private JobClass GetEmployeeJobClass(int jobClassId)
+        private JobClass GetEmployeeJobClass(int ClassId)
         {
             var ctl = new JobClassController();
-            JobClass jobClass = ctl.GetJobClass(jobClassId);
+            JobClass jobClass = ctl.GetJobClass(ClassId);
             return jobClass?? jobClass;
         }
         private OfficeLocation GetEmployeeOfficeLocation(int officeLocationId)

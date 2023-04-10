@@ -85,6 +85,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\DropDownItem.cs" />
     <Compile Include="Components\EmergencyContactController.cs" />
     <Compile Include="Components\EmployeeListItem.cs" />
     <Compile Include="Components\Helper.cs" />
@@ -111,6 +112,41 @@
     <Compile Include="Components\JobClass.cs" />
     <Compile Include="Components\EmployeeController.cs" />
     <Compile Include="Components\Employee.cs" />
+    <Compile Include="CountyView.ascx.cs">
+      <DependentUpon>CountyView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CountyView.ascx.designer.cs">
+      <DependentUpon>CountyView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="JobClassView.ascx.cs">
+      <DependentUpon>JobClassView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobClassView.ascx.designer.cs">
+      <DependentUpon>JobClassView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RaceView.ascx.cs">
+      <DependentUpon>RaceView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RaceView.ascx.designer.cs">
+      <DependentUpon>RaceView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LocationView.ascx.cs">
+      <DependentUpon>LocationView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LocationView.ascx.designer.cs">
+      <DependentUpon>LocationView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="JobGroupView.ascx.cs">
+      <DependentUpon>JobGroupView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JobGroupView.ascx.designer.cs">
+      <DependentUpon>JobGroupView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="EmployeeDBModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -148,6 +184,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CountyView.ascx" />
+    <Content Include="JobClassView.ascx" />
+    <Content Include="RaceView.ascx" />
+    <Content Include="LocationView.ascx" />
+    <Content Include="JobGroupView.ascx" />
     <Content Include="Edit.ascx" />
     <Content Include="License.txt" />
     <Content Include="module.css" />

@@ -15,30 +15,57 @@ namespace tjc.Modules.EmployeeDB
     {
 
         /// <summary>
-        /// rptEmployees control.
+        /// pnlOfficeLocations control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptEmployees;
+        protected global::System.Web.UI.UpdatePanel pnlOfficeLocations;
 
         /// <summary>
-        /// chkInactiveEmployees control.
+        /// upProgressEvent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkInactiveEmployees;
+        protected global::System.Web.UI.UpdateProgress upProgressEvent;
 
         /// <summary>
-        /// lblInactiveEmployees control.
+        /// rptOfficeLocations control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblInactiveEmployees;
+        protected global::System.Web.UI.WebControls.Repeater rptOfficeLocations;
+
+        /// <summary>
+        /// txtDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDescription;
+
+        /// <summary>
+        /// hdOfficeLocationId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdOfficeLocationId;
+
+        /// <summary>
+        /// cmdSave control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button cmdSave;
     }
 }

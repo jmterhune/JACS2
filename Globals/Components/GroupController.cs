@@ -1,5 +1,5 @@
 ﻿/*
-' Copyright (c) 2022 Joe Terhune
+' Copyright (c) 2023 Joe Terhune
 '  All rights reserved.
 ' 
 ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -10,74 +10,65 @@
 ' 
 */
 using DotNetNuke.Data;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace tjc.Modules.Globals
 {
-    public class CountyController
+    internal class GroupController
     {
-        
-        public void CreateCounty(County t)
+        public void CreateGroup(Group t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<County>();
+                var rep = ctx.GetRepository<Group>();
                 rep.Insert(t);
             }
         }
 
-        public void DeleteCounty(int countyId)
+        public void DeleteGroup(int groupId)
         {
-            var t = GetCounty(countyId);
-            DeleteCounty(t);
+            var t = GetGroup(groupId);
+            DeleteGroup(t);
         }
 
-        public void DeleteCounty(County t)
+        public void DeleteGroup(Group t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<County>();
+                var rep = ctx.GetRepository<Group>();
                 rep.Delete(t);
             }
         }
 
-        public IEnumerable<County> GetCounties()
+        public IEnumerable<Group> GetGroups()
         {
-            IEnumerable<County> t;
+            IEnumerable<Group> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<County>();
+                var rep = ctx.GetRepository<Group>();
                 t = rep.Get();
             }
             return t;
         }
-        public bool CountyExists(int countyId)
+        
+        
+        public Group GetGroup(int groupId)
         {
-            County t;
+            Group t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<County>();
-                t = rep.GetById(countyId);
-            }
-            return t.CountyId > 0;
-        }
- 
-        public County GetCounty(int countyId)
-        {
-            County t;
-            using (IDataContext ctx = DataContext.Instance())
-            {
-                var rep = ctx.GetRepository<County>();
-                t = rep.GetById(countyId);
+                var rep = ctx.GetRepository<Group>();
+                t = rep.GetById(groupId);
             }
             return t;
         }
-        public void UpdateCounty(County t)
+
+        public void UpdateGroup(Group t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<County>();
+                var rep = ctx.GetRepository<Group>();
                 rep.Update(t);
             }
         }

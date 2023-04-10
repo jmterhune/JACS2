@@ -80,6 +80,16 @@ namespace tjc.Modules.EmployeeDB.Components
                 rep.Update(t);
             }
         }
+        public IEnumerable<DropDownItem> GetEmployeeDropDown(string rolename)
+        {
+            IEnumerable<DropDownItem> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<DropDownItem>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_employee_dropdown", rolename);
+            }
+            return t;
+        }
+
 
     }
 }
