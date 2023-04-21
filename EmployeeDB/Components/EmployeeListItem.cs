@@ -30,15 +30,19 @@ namespace tjc.Modules.EmployeeDB.Components
         private string GetPhoneListFromString()
         {
             string phoneList=PhoneList.TrimEnd('|');
+            if (phoneList.Length == 0 )
+            {
+                return "";
+            }
             string outputList = "";
-            List<Phone> phoneObjectList = new List<Phone>();
+            List<PhoneListItem> phoneObjectList = new List<PhoneListItem>();
             string[] phoneArray = phoneList.Split('|');
             foreach (string phone in phoneArray)
             {
                 string[] phoneFields = phone.Split(',');
-                phoneObjectList.Add(new Phone { PhoneType = phoneFields[0], PhoneNumber = phoneFields[1], Extension = phoneFields[2], OfficeLocationName = phoneFields[3] });
+                phoneObjectList.Add(new PhoneListItem { PhoneType = phoneFields[0], PhoneNumber = phoneFields[1], Extension = phoneFields[2], OfficeLocationName = phoneFields[3] });
             }
-            foreach (Phone phone in phoneObjectList) {
+            foreach (PhoneListItem phone in phoneObjectList) {
                 outputList += phone.FormattedPhone + "<br />";
             }
             outputList = outputList.Substring(0, outputList.LastIndexOf("<br />"));

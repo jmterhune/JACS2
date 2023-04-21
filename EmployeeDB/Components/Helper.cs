@@ -10,9 +10,14 @@ namespace tjc.Modules.EmployeeDB.Components
     {
         private static Regex digitsOnly = new Regex(@"[^\d]");
 
+
         public static string CleanPhone(string phone)
         {
             return digitsOnly.Replace(phone, "");
+        }
+        public static string CleanDecimal(string input)
+        {
+            return Regex.Replace(input, "[^.0-9]", "");
         }
     }
 }

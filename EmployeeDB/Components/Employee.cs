@@ -44,7 +44,7 @@ namespace tjc.Modules.EmployeeDB.Components
 
         public string Zip { get; set; }
 
-        public string PhotoUrl { get; set; }
+        public int PhotoFileId { get; set; }
 
         public DateTime? HireDate { get; set; }
 

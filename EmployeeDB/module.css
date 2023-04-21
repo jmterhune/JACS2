@@ -59,3 +59,46 @@ border-radius:5px;
     font-size: 1rem;
     font-weight:700;
 }
+.dnnFileUploadScope{float:none !important}
+    .dnnFileUploadScope .dnnFormItem span{min-width:4rem;}
+
+label em{ color:red}
+.group-list{
+    min-width:13rem; padding:.5rem;
+}
+#groups label{display:block}
+.list-commands i {
+    font-size: 2rem;
+}
+.employee-thumb img{
+    max-height:32px !important;
+}
+
+.modal-progress {
+    position: fixed;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: Black;
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+    -moz-opacity: 0.8;
+}
+
+.center-progress {
+    z-index: 1000;
+    margin: 300px auto;
+    padding: 10px;
+    width: 50px;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -moz-opacity: 1;
+}
+.ui-widget-overlay {
+z-index:1051 !important;
+}
+.ui-widget-content {
+    z-index: 1052 !important;
+}

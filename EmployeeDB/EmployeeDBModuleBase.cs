@@ -14,6 +14,7 @@ using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Web.UI;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -25,16 +26,15 @@ namespace tjc.Modules.EmployeeDB
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
 
-        public int ItemId
+        public int EmployeeId
         {
             get
             {
-                var qs = Request.QueryString["tid"];
+                var qs = Request.QueryString["eid"];
                 if (qs != null)
                     return Convert.ToInt32(qs);
                 return -1;
             }
-
         }
         public string EmployeeUrl { get { return _navigationManager.NavigateURL(); } }
         public string DepartmentUrl { get { return EditUrl("Department"); } }
@@ -43,6 +43,10 @@ namespace tjc.Modules.EmployeeDB
         public string RaceUrl { get { return EditUrl("Race"); } }
         public string CountyUrl { get { return EditUrl("County"); } }
         public string LocationUrl { get { return EditUrl("Location"); } }
+        public string PhoneUrl { get { return EditUrl("eid",EmployeeId.ToString(),"Phone"); } }
+        public string EmploymentUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Employment"); } }
+        public string ContactUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Contact"); } }
+        public string DetailUrl { get { return EditUrl("eid", EmployeeId.ToString()); } }
 
         public string SupervisorRole
         {

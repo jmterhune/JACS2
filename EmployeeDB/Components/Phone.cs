@@ -34,10 +34,18 @@ namespace tjc.Modules.EmployeeDB.Components
         public bool SwnCall { get; set; }
 
         public bool SwnExcludeExtension { get; set; }
+       
+
+    }
+    [TableName("tjc_employee_phone_list")]
+    //setup the primary key for table
+    [PrimaryKey("PhoneId", AutoIncrement = true)]
+    //configure caching using PetaPoco
+    internal class PhoneListItem : Phone
+    {
+        public string OfficeLocationName { get; set; }
         [IgnoreColumn]
         public string FormattedPhone { get { return FormatPhone(); } }
-        [IgnoreColumn]
-        public string OfficeLocationName { get; set; }
 
         #region Methods
         private string FormatPhone()
@@ -63,12 +71,11 @@ namespace tjc.Modules.EmployeeDB.Components
                     tempPhone = Regex.Replace(PhoneNumber, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
                     tempPhoneExtention = Helper.CleanPhone(PhoneNumber);
                 }
-                phoneFormatted = OfficeLocationName != "" ?  string.Format(phoneUrl, tempPhoneExtention, tempPhone, OfficeLocationName, "phone phone-location") : string.Format(phoneUrl, tempPhoneExtention, tempPhone,"Office Phone","phone") ;
+                phoneFormatted = OfficeLocationName != "" ? string.Format(phoneUrl, tempPhoneExtention, tempPhone, OfficeLocationName, "phone phone-location") : string.Format(phoneUrl, tempPhoneExtention, tempPhone, "Office Phone", "phone");
             }
 
             return phoneFormatted;
         }
         #endregion
-
     }
 }

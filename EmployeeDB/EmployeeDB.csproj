@@ -58,6 +58,10 @@
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.DependencyInjection.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
@@ -118,6 +122,20 @@
     </Compile>
     <Compile Include="CountyView.ascx.designer.cs">
       <DependentUpon>CountyView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Employment.ascx.cs">
+      <DependentUpon>Employment.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Employment.ascx.designer.cs">
+      <DependentUpon>Employment.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Phones.ascx.cs">
+      <DependentUpon>Phones.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Phones.ascx.designer.cs">
+      <DependentUpon>Phones.ascx</DependentUpon>
     </Compile>
     <Compile Include="JobClassView.ascx.cs">
       <DependentUpon>JobClassView.ascx</DependentUpon>
@@ -185,6 +203,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CountyView.ascx" />
+    <Content Include="Employment.ascx" />
+    <Content Include="Phones.ascx" />
     <Content Include="JobClassView.ascx" />
     <Content Include="RaceView.ascx" />
     <Content Include="LocationView.ascx" />

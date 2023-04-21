@@ -91,6 +91,15 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
+        public IEnumerable<Group> GetGroupsExcludingMembership(int employeeId)
+        {
+            IEnumerable<Group> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<Group>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_groups_membership_excluded", employeeId);
+            }
+            return t;
+        }
         public GroupMembership GetGroupMembership(int employeeId,int groupId)
         {
             GroupMembership t;

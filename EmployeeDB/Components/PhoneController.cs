@@ -50,12 +50,12 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        public IEnumerable<Phone> GetPhonesByEmployee(int employeeId)
+        public IEnumerable<PhoneListItem> GetPhonesByEmployee(int employeeId)
         {
-            IEnumerable<Phone> t;
+            IEnumerable<PhoneListItem> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Phone>();
+                var rep = ctx.GetRepository<PhoneListItem>();
                 t = rep.Find("Where EmployeeId=@0",employeeId);
             }
             return t;
