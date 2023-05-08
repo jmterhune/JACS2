@@ -12,6 +12,7 @@
 
 using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Web.UI;
@@ -24,6 +25,7 @@ namespace tjc.Modules.EmployeeDB
         public EmployeeDBModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
         }
 
         public int EmployeeId
@@ -46,7 +48,7 @@ namespace tjc.Modules.EmployeeDB
         public string PhoneUrl { get { return EditUrl("eid",EmployeeId.ToString(),"Phone"); } }
         public string EmploymentUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Employment"); } }
         public string ContactUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Contact"); } }
-        public string DetailUrl { get { return EditUrl("eid", EmployeeId.ToString()); } }
+        public string DetailUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Employee"); } }
 
         public string SupervisorRole
         {

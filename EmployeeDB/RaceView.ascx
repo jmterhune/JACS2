@@ -132,7 +132,7 @@
                 { "bSortable": false },
             ]
         });
-        $("#tblRaces_length").prepend('<button class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#EditRaceModal"><i class="fa fa-plus"></i>&nbsp;Add Race Entry</button>');
+        $("#tblRaces_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditRaceModal"><i class="fa fa-plus"></i>&nbsp;Add Race Entry</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

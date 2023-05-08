@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.EmployeeDB.Components;
@@ -38,6 +39,8 @@ namespace tjc.Modules.EmployeeDB
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
+                    lnkHome.NavigateUrl = _navigationManager.NavigateURL();
+
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();
@@ -85,7 +88,7 @@ namespace tjc.Modules.EmployeeDB
                 phone = ctl.GetPhone(Convert.ToInt32(hdPhoneId.Value));
             }
             phone.PhoneType = drpType.SelectedValue;
-            phone.PhoneNumber = txtNumber.Text;
+            phone.PhoneNumber = Regex.Replace(txtNumber.Text, @"[^\d]", "");
             phone.PhoneCascade = txtCascade.Text;
             phone.EmployeeId = EmployeeId;
             phone.Extension = txtExtension.Text;

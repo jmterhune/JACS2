@@ -1,5 +1,7 @@
-﻿using DotNetNuke.Framework.JavaScriptLibraries;
+﻿using DotNetNuke.Abstractions;
+using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,11 +29,19 @@ namespace tjc.Modules.EmployeeDB
     /// -----------------------------------------------------------------------------
     public partial class Edit : EmployeeDBModuleBase
     {
+        private readonly INavigationManager _navigationManager;
+        public Edit()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+
         #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
+                cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
+
                 string ImagePath = "Images/Staff"; // Set default value for folder
                 CheckImagePath(ImagePath);
 
@@ -47,10 +57,10 @@ namespace tjc.Modules.EmployeeDB
 
                 if (!Page.IsPostBack)
                 {
-                    chkActive.InputAttributes.Add("class", "custom-control-input");
-                    chkActive.LabelAttributes.Add("class", "custom-control-label");
-                    chkManateeAccess.InputAttributes.Add("class", "custom-control-input");
-                    chkManateeAccess.LabelAttributes.Add("class", "custom-control-label");
+                    chkActive.InputAttributes.Add("class", "form-check-input");
+                    chkActive.LabelAttributes.Add("class", "form-check-label");
+                    chkManateeAccess.InputAttributes.Add("class", "form-check-input");
+                    chkManateeAccess.LabelAttributes.Add("class", "form-check-label");
                     JavaScript.RequestRegistration(CommonJs.jQuery);
                     PopulateDropDowns();
                     var ctl = new EmployeeController();
@@ -326,7 +336,7 @@ namespace tjc.Modules.EmployeeDB
             var dCtl = new GroupController();
             drpDepartment.DataSource = dCtl.GetGroups(0).OrderBy(x => x.GroupName);
             drpDepartment.DataBind();
-            PopulateGroupLists(dCtl);
+            
 
             var gCtl = new JobGroupController();
             drpJobGroup.DataSource = gCtl.GetJobGroups().OrderBy(x => x.Description);
@@ -343,6 +353,7 @@ namespace tjc.Modules.EmployeeDB
             var eCtl = new EmployeeController();
             drpSupervisor.DataSource = eCtl.GetEmployeeDropDown(SupervisorRole).OrderBy(x => x.DataText);
             drpSupervisor.DataBind();
+PopulateGroupLists(dCtl);
         }
         #endregion
 

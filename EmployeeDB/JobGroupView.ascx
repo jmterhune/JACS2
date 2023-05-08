@@ -123,7 +123,7 @@
                 { "bSortable": false }]
 
         });
-        $("#tblJobGroups_length").prepend('<button class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#EditJobGroupModal"><i class="fa fa-plus"></i>&nbsp;Add Job Category</button>');
+        $("#tblJobGroups_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditJobGroupModal"><i class="fa fa-plus"></i>&nbsp;Add Job Category</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

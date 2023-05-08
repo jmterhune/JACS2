@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\Attachment.cs" />
+    <Compile Include="Components\EntityBase.cs" />
     <Compile Include="Components\JudicialReferral.cs" />
     <Compile Include="Components\AttachmentController.cs" />
     <Compile Include="Components\JudicialReferralController.cs" />

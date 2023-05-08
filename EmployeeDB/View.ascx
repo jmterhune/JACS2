@@ -6,22 +6,22 @@
             <a class="nav-link" href="<%=EmployeeUrl%>"><i class="fas fa-user"></i>&nbsp;Employees</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=DepartmentUrl%>"><i class="fas fa-sitemap"></i>Departments</a>
+            <a class="nav-link" href="<%=DepartmentUrl%>"><i class="fas fa-sitemap"></i>&nbsp;Departments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>Job Groups</a>
+            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>&nbsp;Job Groups</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=JobClassUrl%>"><i class="fas fa-user-tag"></i>Job Classes</a>
+            <a class="nav-link" href="<%=JobClassUrl%>"><i class="fas fa-user-tag"></i>&nbsp;Job Classes</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=RaceUrl%>"><i class="fas fa-users-cog"></i>Race</a>
+            <a class="nav-link" href="<%=RaceUrl%>"><i class="fas fa-users-cog"></i>&nbsp;Race</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=CountyUrl%>"><i class="fas fa-map-marked-alt"></i>Counties</a>
+            <a class="nav-link" href="<%=CountyUrl%>"><i class="fas fa-map-marked-alt"></i>&nbsp;Counties</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=LocationUrl%>"><i class="fas fa-building"></i>Locations</a>
+            <a class="nav-link" href="<%=LocationUrl%>"><i class="fas fa-building"></i>&nbsp;Locations</a>
         </li>
 
     </ul>
@@ -46,7 +46,7 @@
                 <ItemTemplate>
                     <tr>
                         <td class="command-icon">
-                            <asp:HyperLink runat="server" ID="cmdEdit" Target="_blank" NavigateUrl='<%#EditUrl("eid",DataBinder.Eval(Container.DataItem,"EmployeeId").ToString()) %>' ToolTip="Edit Employee Record"><i class="fa fa-pencil-alt"></i></asp:HyperLink>
+                            <asp:HyperLink runat="server" ID="cmdEdit" NavigateUrl='<%#EditUrl("eid",DataBinder.Eval(Container.DataItem,"EmployeeId").ToString(),"Employee") %>' ToolTip="Edit Employee Record"><i class="fa fa-pencil-alt"></i></asp:HyperLink>
                         </td>
                         <td><%#DataBinder.Eval(Container.DataItem,"FullName") %></td>
                         <td><a href='mailto:<%#DataBinder.Eval(Container.DataItem,"Email") %>'><%#DataBinder.Eval(Container.DataItem,"Email") %></a></td>
@@ -60,10 +60,9 @@
                     </tbody></table><hr />
                 </FooterTemplate>
             </asp:Repeater>
-            <div id="swActive" class="input-group ml-md switch">
-                <div class="custom-control custom-switch">
-                    <asp:CheckBox ID="chkInactiveEmployees" Checked="true" AutoPostBack="true" OnCheckedChanged="chkInactiveEmployees_CheckedChanged" ClientIDMode="Static" runat="server" />
-                    <asp:Label CssClass="custom-control-label" runat="server" ID="lblInactiveEmployees" AssociatedControlID="chkInactiveEmployees">Active Employees</asp:Label>
+            <div id="swActive" class="input-group ms-md switch">
+                <div class="form-check form-switch">
+                    <asp:CheckBox ID="chkInactiveEmployees" Checked="true" AutoPostBack="true" OnCheckedChanged="chkInactiveEmployees_CheckedChanged" ClientIDMode="Static" runat="server" Text="Active Employees" />
                 </div>
             </div>
         </div>

@@ -96,8 +96,7 @@
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtClassName"
                                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Job Class Name is Required" />
                                     </div>
-                                    <div class="row">
-                                        <div class="form-group">
+                                        <div class="form-group row">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtClassCode" Text="Job Class Code<em>*</em>" ToolTip="required" />
                                                 <asp:TextBox runat="server" TextMode="Number" CssClass="form-control" ID="txtClassCode" />
@@ -111,9 +110,7 @@
                                                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Pay Grade Required" />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group">
+                                        <div class="form-group row">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtFLSA" Text="FLSA<em>*</em>" ToolTip="required" />
                                                 <asp:TextBox runat="server" CssClass="form-control" MaxLength="2" ID="txtFLSA" />
@@ -127,9 +124,7 @@
                                                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="EEO is Required" />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group">
+                                        <div class="form-group row">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtMMax" Text="MMax<em>*</em>" ToolTip="required" />
                                                 <asp:TextBox runat="server" CssClass="form-control" ID="txtMMax" TextMode="Number" />
@@ -143,9 +138,7 @@
                                                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="MMin is Required" />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group">
+                                        <div class="form-group row">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtAMax" Text="AMax<em>*</em>" ToolTip="required" />
                                                 <asp:TextBox runat="server" CssClass="form-control" ID="txtAMax" TextMode="Number" />
@@ -160,7 +153,6 @@
                                                 <asp:HiddenField ID="hdClassId" runat="server" />
                                             </div>
                                         </div>
-                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
@@ -211,7 +203,7 @@
                 { "bSortable": false },
             ]
         });
-        $("#tblJobClasses_length").prepend('<button class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#EditJobClassModal"><i class="fa fa-plus"></i>&nbsp;Add Job Class </button>');
+        $("#tblJobClasses_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditJobClassModal"><i class="fa fa-plus"></i>&nbsp;Add Job Class </button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

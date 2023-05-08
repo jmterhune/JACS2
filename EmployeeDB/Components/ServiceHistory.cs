@@ -10,7 +10,7 @@ namespace tjc.Modules.EmployeeDB.Components
     //configure caching using PetaPoco
     [Cacheable("ServiceHistories", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
-    internal class ServiceHistory
+    internal class ServiceHistory:EmployeeBase
     {
         public int ServiceId { get; set; }
 

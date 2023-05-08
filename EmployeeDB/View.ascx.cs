@@ -75,7 +75,7 @@ namespace tjc.Modules.EmployeeDB
         private string GetDepartmentFilterHtml()
         {
             string filterHtml="";
-            filterHtml = "<label class='mr-2'>Filter by Department <select id='drpfilter' class='form-control input-sm' aria-controls='employees'><option value='-1'>All</option>";
+            filterHtml = "<label class='me-2'>Filter by Department <select id='drpfilter' class='form-control input-sm' aria-controls='employees'><option value='-1'>All</option>";
             var ctl = new GroupController();
 
             IEnumerable<Group> departments = ctl.GetGroups().Where(x => x.GroupType == Convert.ToInt32(Group.GroupTypes.Internal));
@@ -96,8 +96,9 @@ namespace tjc.Modules.EmployeeDB
                     PopulateEmployeeList(); 
                     DepartmentFilterHtml=GetDepartmentFilterHtml();
                 }
-                chkInactiveEmployees.InputAttributes.Add("class", "custom-control-input");
-               
+                chkInactiveEmployees.InputAttributes.Add("class", "form-check-input");
+                chkInactiveEmployees.LabelAttributes.Add("class", "form-check-label");
+
 
             }
             catch (Exception exc) //Module failed to load
@@ -111,12 +112,12 @@ namespace tjc.Modules.EmployeeDB
             if (ShowActive)
             {
                 ShowActive = false;
-                lblInactiveEmployees.Text = "Inactive Employees";
+                chkInactiveEmployees.Text = "Inactive Employees";
             }
             else
             {
                 ShowActive = true;
-                lblInactiveEmployees.Text = "Active Employees";
+                chkInactiveEmployees.Text = "Active Employees";
             }
             PopulateEmployeeList();
 

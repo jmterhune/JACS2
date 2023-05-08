@@ -18,6 +18,7 @@ namespace tjc.Modules.Reports.Components
     internal class ReportController
     {
         private const string CONN_INTRANET = "Intranet"; //Connection
+        private const string CONN_JACS_DESOTO = "JacsDesoto";
         public IEnumerable<BirthDayEmployees> GetBirthDates(int month, string county)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
@@ -37,6 +38,20 @@ namespace tjc.Modules.Reports.Components
             using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
             {
                 return ctx.ExecuteQuery<TerminatedEmployees>(System.Data.CommandType.StoredProcedure, "Emp_GetTerminatedEmployeesReport", startDate,endDate);
+            }
+        }
+        public IEnumerable<JacsJudge> GetJacsJudges(string county)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS_DESOTO))
+            {
+                return ctx.ExecuteQuery<JacsJudge>(System.Data.CommandType.StoredProcedure, "tjc_get_judges", county);
+            }
+        }
+        public IEnumerable<WeekdayHearing> GetWeekdayHearingCounts(string county,DateTime startDate,DateTime endDate,string judgeId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS_DESOTO))
+            {
+                return ctx.ExecuteQuery<WeekdayHearing>(System.Data.CommandType.StoredProcedure, "jacs.tjc_get_most_popular_day_schedule", county,startDate,endDate,judgeId);
             }
         }
     }

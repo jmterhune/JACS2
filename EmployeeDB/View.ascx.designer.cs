@@ -31,14 +31,5 @@ namespace tjc.Modules.EmployeeDB
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkInactiveEmployees;
-
-        /// <summary>
-        /// lblInactiveEmployees control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblInactiveEmployees;
     }
 }

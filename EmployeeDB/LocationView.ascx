@@ -123,7 +123,7 @@
                 { "bSortable": false }]
 
         });
-        $("#tblOfficeLocations_length").prepend('<button class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#EditOfficeLocationModal"><i class="fa fa-plus"></i>&nbsp;Add Location</button>');
+        $("#tblOfficeLocations_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditOfficeLocationModal"><i class="fa fa-plus"></i>&nbsp;Add Location</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

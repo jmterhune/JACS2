@@ -7,7 +7,7 @@ using System.Web;
 
 namespace tjc.Intranet.API.Components.Employee
 {
-    [TableName("Emp_Phones")]
+    [TableName("tjc_employee_phone")]
     [PrimaryKey("PhoneId", AutoIncrement = true)]
     public class Phone
     {

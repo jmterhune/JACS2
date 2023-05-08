@@ -97,7 +97,7 @@
                                     </div>
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtNumber" Text="Phone<em>*</em>" ToolTip="required" />
-                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="20" ID="txtNumber" />
+                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtNumber" />
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtNumber"
                                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Phone Number is Required" />
                                     </div>
@@ -138,6 +138,8 @@
                 </Triggers>
 
             </asp:UpdatePanel>
+                        <p><asp:HyperLink ID="lnkHome" cssclass="btn btn-default" runat="server">Return to Employee List</asp:HyperLink></p>
+
         </div>
     </div>
 </div>
@@ -157,6 +159,7 @@
 
     }(jQuery, window.Sys));
     function PageInit() {
+        $('.phone').mask('(000) 000-0000');
         var table = $('#tblPhones').DataTable({
             "order": [[1, "asc"]],
             "oLanguage": {
@@ -173,7 +176,7 @@
                 { "bSortable": false },
             ]
         });
-        $("#tblPhones_length").prepend('<button class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#EditPhoneModal"><i class="fa fa-plus"></i>&nbsp;Add Phone</button>');
+        $("#tblPhones_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditPhoneModal"><i class="fa fa-plus"></i>&nbsp;Add Phone</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

@@ -25,7 +25,7 @@
                     <fieldset>
                         <legend>Personal Info</legend>
                         <div class="mb-3">
-                            <button class="btn btn-primary btn-lg " data-toggle="modal" data-target="#photoModal">
+                            <button class="btn btn-primary btn-lg " data-bs-toggle="modal" data-bs-target="#photoModal">
                                 Select Employee Photo 
                             </button>
                             <asp:HyperLink runat="server" ID="lnkThumbnail" data-plugin-options="{'type':'image'}" ClientIDMode="Static" CssClass="employee-thumb img-thumbnail img-thumbnail-hover-icon lightbox">
@@ -91,7 +91,7 @@
                             <asp:RequiredFieldValidator Visible="false" ID="valEmpOf" runat="server" CssClass="label label-danger" ControlToValidate="rblWorksFor"
                                 Display="Dynamic" ErrorMessage="Employee of is Required" />
                         </div>
-                        <div class="custom-control custom-switch">
+                        <div class="form-check form-switch">
                             <asp:CheckBox ID="chkActive" Checked="true" runat="server" Text="Active" />
                         </div>
                     </fieldset>
@@ -107,8 +107,7 @@
                             <asp:Label runat="server" AssociatedControlID="txtCity" Text="City" />
                             <asp:TextBox runat="server" CssClass="form-control" MaxLength="30" ID="txtCity" />
                         </div>
-                        <div class="row">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-7">
                                     <asp:Label runat="server" AssociatedControlID="drpState" Text="State" />
                                     <asp:DropDownList ID="drpState" runat="server" CssClass="form-control">
@@ -173,7 +172,6 @@
 
                                 </div>
                             </div>
-                        </div>
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="txtPersonalEmail" Text="Personal Email" />
                             <asp:TextBox runat="server" CssClass="form-control" MaxLength="250" ID="txtPersonalEmail" />
@@ -195,8 +193,7 @@
                     </fieldset>
                     <fieldset class="mt-2">
                         <legend>Transferred Leave Balances</legend>
-                        <div class="row">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-7">
                                     <asp:Label runat="server" AssociatedControlID="txtAnnualLeave" Text="Annual Leave" />
                                     <asp:TextBox runat="server" CssClass="form-control" TextMode="Number" ID="txtAnnualLeave" />
@@ -206,12 +203,10 @@
                                     <asp:TextBox runat="server" CssClass="form-control" TextMode="Number" ID="txtSickLeave" />
                                 </div>
                             </div>
-                        </div>
                     </fieldset>
                     <fieldset class="mt-2">
                         <legend>Access Card Info</legend>
-                        <div class="row">
-                            <div class="form-group">
+                            <div class="form-group row">
                                 <div class="col-7">
                                     <asp:Label runat="server" AssociatedControlID="txtDeSotoAccess" Text="DeSoto" />
                                     <asp:TextBox runat="server" MaxLength="50" CssClass="form-control" ID="txtDeSotoAccess" />
@@ -221,8 +216,7 @@
                                     <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtSarasotaAccess" />
                                 </div>
                             </div>
-                        </div>
-                        <div class="custom-control custom-switch">
+                        <div class="form-check form-switch">
                             <asp:CheckBox ID="chkManateeAccess" runat="server" Text="Manatee" />
                         </div>
                     </fieldset>
@@ -231,8 +225,8 @@
                     <fieldset>
                         <legend>Employment Info</legend>
 
-                        <div class="row">
-                            <div class="form-group">
+                        
+                            <div class="form-group row">
                                 <div class="col-6">
                                     <asp:Label runat="server" AssociatedControlID="txtHireDate" Text="Hire Date<em>*</em>" ToolTip="Required" />
                                     <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="10" ID="txtHireDate" />
@@ -244,7 +238,7 @@
                                     <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="10" ID="txtServiceDate" />
                                 </div>
                             </div>
-                        </div>
+                        
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="txtTerminationDate" Text="Termination Date" />
                             <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="10" ID="txtTerminationDate" />
@@ -316,7 +310,7 @@
             </div>
             <hr />
             <p>
-                <asp:LinkButton ID="cmdSave" runat="server" CssClass="btn btn-primary mr-md" Text="Save" OnClick="cmdSave_Click" />
+                <asp:LinkButton ID="cmdSave" runat="server" CssClass="btn btn-primary me-md" Text="Save" OnClick="cmdSave_Click" />
                 <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
             </p>
 
@@ -377,7 +371,9 @@
                 </ContentTemplate>
 
             </asp:UpdatePanel>
-        </div>
+        </div>                               
+
+
     </div>
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />

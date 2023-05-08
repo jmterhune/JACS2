@@ -68,6 +68,10 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
@@ -122,6 +126,13 @@
     </Compile>
     <Compile Include="CountyView.ascx.designer.cs">
       <DependentUpon>CountyView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EmergencyContacts.ascx.cs">
+      <DependentUpon>EmergencyContacts.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmergencyContacts.ascx.designer.cs">
+      <DependentUpon>EmergencyContacts.ascx</DependentUpon>
     </Compile>
     <Compile Include="Employment.ascx.cs">
       <DependentUpon>Employment.ascx</DependentUpon>
@@ -203,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CountyView.ascx" />
+    <Content Include="EmergencyContacts.ascx" />
     <Content Include="Employment.ascx" />
     <Content Include="Phones.ascx" />
     <Content Include="JobClassView.ascx" />

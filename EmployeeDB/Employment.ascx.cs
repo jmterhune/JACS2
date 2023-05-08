@@ -3,6 +3,7 @@ using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Web.UI;
@@ -52,10 +53,17 @@ namespace tjc.Modules.EmployeeDB
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
+                    lnkHome.NavigateUrl = _navigationManager.NavigateURL();
                     Employee employee = ctl.GetEmployee(EmployeeId);
                     if (employee != null)
                     {
                         SSN = employee.SocialSecurityNumber;
+                        if(string.IsNullOrEmpty(SSN))
+                        {
+                            ltMessage.Text = string.Format(ltMessage.Text, "The User must have a Social Security Number in order to add work history. Return to the Details tab and enter a Social Security Number and update the record.");
+                            pnlPositionHistory.Attributes.Add("disabled","true") ;
+                            pnlServiceHistory.Attributes.Add("disabled", "true");
+                        }
                     }
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
@@ -63,6 +71,7 @@ namespace tjc.Modules.EmployeeDB
                     }
                     JavaScript.RequestRegistration(CommonJs.jQuery);
                     PopulatePositionList();
+                    PopulateServiceList();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -77,6 +86,12 @@ namespace tjc.Modules.EmployeeDB
             rptPositionHistory.DataSource = ctl.GetPositionHistoriesByEmployee(SSN);
             rptPositionHistory.DataBind();
         }
+        private void PopulateServiceList()
+        {
+            var ctl = new ServiceHistoryController();
+            rptServiceHistory.DataSource = ctl.GetServiceHistoriesByEmployee(SSN);
+            rptServiceHistory.DataBind();
+        }
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
@@ -88,19 +103,14 @@ namespace tjc.Modules.EmployeeDB
                 isNew = false;
                 positionHistory = ctl.GetPositionHistory(Convert.ToInt32(hdPositionHistoryId.Value));
             }
-            positionHistory.PositionHistoryType = drpType.SelectedValue;
-            positionHistory.PositionHistoryNumber = txtNumber.Text;
-            positionHistory.PositionHistoryCascade = txtCascade.Text;
-            positionHistory.EmployeeId = EmployeeId;
-            positionHistory.Extension = txtExtension.Text;
-            if (drpLocation.SelectedValue != "")
-            {
-                Int32.TryParse(drpLocation.SelectedValue, out int locationId);
-                positionHistory.OfficeLocationId = locationId;
-            }
-            positionHistory.SwnCall = chkSWNCall.Checked;
-            positionHistory.SwnExcludeExtension = chkExcludeExt.Checked;
-            positionHistory.SwnText = chkSWNText.Checked;
+            positionHistory.EntryType = drpType.SelectedValue;
+            positionHistory.Description = txtPosition.Text;
+            positionHistory.IsInternal = drpExternal.SelectedValue=="Internal";
+            positionHistory.SocialSecurityNumber = SSN;
+            if(DateTime.TryParse(txtStartDate.Text, out DateTime startDate))
+            positionHistory.StartDate = startDate;
+            if (DateTime.TryParse(txtEndDate.Text, out DateTime endDate))
+            positionHistory.EndDate = endDate;
             positionHistory.LastModifiedDate = DateTime.Now;
             positionHistory.LastModifiedById = UserId;
             if (isNew)
@@ -113,7 +123,7 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdatePositionHistory(positionHistory);
             }
-            hdPositionHistoryId.Value = "";
+            ClearPositionHistoryForm();
             PopulatePositionList();
         }
 
@@ -131,22 +141,24 @@ namespace tjc.Modules.EmployeeDB
             if (e.CommandName == "delete")
             {
                 ctl.DeletePositionHistory(positionHistoryId);
-                PopulatePositionList();
             }
             if (e.CommandName == "edit")
             {
                 PositionHistory positionHistory = ctl.GetPositionHistory(positionHistoryId);
                 hdPositionHistoryId.Value = positionHistoryId.ToString();
-                txtNumber.Text = positionHistory.PositionHistoryNumber;
-                txtExtension.Text = positionHistory.Extension;
-                txtCascade.Text = positionHistory.PositionHistoryCascade;
-                drpLocation.SelectedValue = positionHistory.OfficeLocationId.ToString();
-                drpType.SelectedValue = positionHistory.PositionHistoryType;
-                chkExcludeExt.Checked = positionHistory.SwnExcludeExtension;
-                chkSWNCall.Checked = positionHistory.SwnCall;
-                chkSWNText.Checked = positionHistory.SwnText;
-                ScriptManager.RegisterStartupScript(rptPositionHistorys, rptPositionHistorys.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
+                txtPosition.Text = positionHistory.Description;
+                drpExternal.SelectedValue = "Internal";
+                if (!positionHistory.IsInternal)
+                    drpExternal.SelectedValue = "External";
+                if (positionHistory.StartDate.HasValue)
+                txtStartDate.Text = positionHistory.StartDate.Value.ToShortDateString();
+                if(positionHistory.EndDate.HasValue)
+                txtEndDate.Text = positionHistory.EndDate.Value.ToShortDateString();
+                drpType.SelectedValue = positionHistory.EntryType;
+                ScriptManager.RegisterStartupScript(rptPositionHistory, rptPositionHistory.GetType(), "ToggleForm", "TogglePositionForm(true)", true);
             }
+            PopulatePositionList();
+
         }
 
         protected void rptPositionHistory_ItemCreated(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
@@ -159,6 +171,99 @@ namespace tjc.Modules.EmployeeDB
                 scriptMan.RegisterAsyncPostBackControl(cmdDelete);
                 scriptMan.RegisterAsyncPostBackControl(cmdEdit);
             }
+        }
+
+        protected void rptServiceHistory_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            int serviceHistoryId = Convert.ToInt32(e.CommandArgument);
+            var ctl = new ServiceHistoryController();
+            if (e.CommandName == "delete")
+            {
+                ctl.DeleteServiceHistory(serviceHistoryId);
+            }
+            if (e.CommandName == "edit")
+            {
+                ServiceHistory serviceHistory = ctl.GetServiceHistory(serviceHistoryId);
+                hdServiceHistoryId.Value = serviceHistoryId.ToString();
+                txtCompany.Text= serviceHistory.CompanyName;
+                txtLastPayRate.Text = serviceHistory.LastPayRate.Value.ToString("C", CultureInfo.CurrentCulture);
+                if (serviceHistory.HireDate.HasValue)
+                    txtHireDate.Text = serviceHistory.HireDate.Value.ToShortDateString();
+                if (serviceHistory.TerminationDate.HasValue)
+                    txtTerminationDate.Text = serviceHistory.TerminationDate.Value.ToShortDateString();
+                ScriptManager.RegisterStartupScript(rptServiceHistory, rptServiceHistory.GetType(), "ToggleForm", "ToggleServiceForm(true)", true);
+            }
+            PopulateServiceList();
+        }
+
+        protected void rptServiceHistory_ItemCreated(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
+                LinkButton cmdEdit = (LinkButton)e.Item.FindControl("cmdEdit");
+                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
+                scriptMan.RegisterAsyncPostBackControl(cmdDelete);
+                scriptMan.RegisterAsyncPostBackControl(cmdEdit);
+            }
+        }
+
+        protected void cmdSaveService_Click(object sender, EventArgs e)
+        {
+            var ctl = new ServiceHistoryController();
+            ServiceHistory serviceHistory = new ServiceHistory();
+            bool isNew = true;
+            if (hdServiceHistoryId.Value != "")
+            {
+                isNew = false;
+                serviceHistory = ctl.GetServiceHistory(Convert.ToInt32(hdServiceHistoryId.Value));
+            }
+            serviceHistory.CompanyName = txtCompany.Text;
+            Decimal.TryParse(Helper.CleanDecimal(txtLastPayRate.Text), out decimal payRate);
+            if (payRate > 0)
+            {
+                serviceHistory.LastPayRate = payRate;
+            }
+            serviceHistory.SocialSecurityNumber = SSN;
+            if (DateTime.TryParse(txtHireDate.Text, out DateTime hireDate))
+                serviceHistory.HireDate = hireDate;
+            if (DateTime.TryParse(txtTerminationDate.Text, out DateTime terminationDate))
+                serviceHistory.TerminationDate = terminationDate;
+            serviceHistory.LastModifiedDate = DateTime.Now;
+            serviceHistory.LastModifiedById = UserId;
+            if (isNew)
+            {
+                serviceHistory.CreatedById = UserId;
+                serviceHistory.CreatedDate = DateTime.Now;
+                ctl.CreateServiceHistory(serviceHistory);
+            }
+            else
+            {
+                ctl.UpdateServiceHistory(serviceHistory);
+            }
+            ClearPositionHistoryForm();
+            PopulateServiceList();
+        }
+        private void ClearPositionHistoryForm()
+        {
+            drpType.SelectedIndex = 0;
+            txtPosition.Text = string.Empty;
+            drpExternal.SelectedIndex = 0;
+            txtStartDate.Text = string.Empty;
+            txtEndDate.Text = string.Empty;
+            hdPositionHistoryId.Value=string.Empty;
+            hdServiceHistoryId.Value=string.Empty;
+            txtCompany.Text = string.Empty;
+            txtHireDate.Text = string.Empty;
+            txtTerminationDate.Text = string.Empty;
+            txtLastPayRate.Text = string.Empty;
+        }
+
+        protected void pnlServiceHistory_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
         }
     }
 }
