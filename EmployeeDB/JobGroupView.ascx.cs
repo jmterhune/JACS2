@@ -100,9 +100,10 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdateJobGroup(jobGroup);
             }
-            hdJobGroupId.Value = "";
+            ClearForm();
             PopulateJobGroupList();
         }
+
         protected void pnlJobGroups_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -125,6 +126,11 @@ namespace tjc.Modules.EmployeeDB
         #endregion
 
         #region Methods
+        private void ClearForm()
+        {
+            hdJobGroupId.Value = string.Empty;
+            txtDescription.Text = string.Empty;
+        }
         private void PopulateJobGroupList()
         {
             var ctl = new JobGroupController();

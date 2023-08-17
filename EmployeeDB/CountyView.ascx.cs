@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Security.Authentication.ExtendedProtection;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -97,9 +98,16 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdateCounty(county);
             }
-            hdCountyId.Value = "";
+            ClearForm();
             PopulateCountyList();
         }
+
+        private void ClearForm()
+        {
+            hdCountyId.Value = string.Empty;
+            txtDescription.Text = string.Empty;
+        }
+
         protected void pnlCounties_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();

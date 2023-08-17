@@ -25,7 +25,7 @@ namespace tjc.Modules.EmployeeDB.Components
             }
         }
 
-        public void DeleteEEO(int eeoId)
+        public void DeleteEEO(long eeoId)
         {
             var t = GetEEO(eeoId);
             DeleteEEO(t);
@@ -50,8 +50,9 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
+      
 
-        public EEO GetEEO(int eeoId)
+        public EEO GetEEO(long eeoId)
         {
             EEO t;
             using (IDataContext ctx = DataContext.Instance())
@@ -81,5 +82,17 @@ namespace tjc.Modules.EmployeeDB.Components
             }
         }
 
+    }
+    internal class EEOListController {
+        public IEnumerable<EeoListItem> GetEeoList()
+        {
+            IEnumerable<EeoListItem> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<EeoListItem>();
+                t = rep.Get();
+            }
+            return t;
+        }
     }
 }

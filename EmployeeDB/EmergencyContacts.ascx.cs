@@ -42,8 +42,6 @@ namespace tjc.Modules.EmployeeDB
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
-                    lnkHome.NavigateUrl = _navigationManager.NavigateURL();
-
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();

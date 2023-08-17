@@ -3,13 +3,16 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="<%=EmployeeUrl%>"><i class="fas fa-user"></i>&nbsp;Employees</a>
+            <a class="nav-link" href="<%=EmployeeUrl%>"><i class="fas fa-id-badge"></i>&nbsp;Employees</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=ContactUrl%>"><i class="fas fa-user"></i>&nbsp;Contacts</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=DepartmentUrl%>"><i class="fas fa-sitemap"></i>&nbsp;Department</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>&nbsp;Job Categories</a>
+            <a class="nav-link" href="<%=JobGroupUrl%>"><i class="fas fa-users"></i>&nbsp;Job Groups</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=JobClassUrl%>"><i class="fas fa-user-tag"></i>&nbsp;Job Classes</a>
@@ -23,7 +26,9 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=LocationUrl%>"><i class="fas fa-building"></i>&nbsp;Locations</a>
         </li>
-
+        <li class="nav-item">
+            <a class="nav-link" href="<%=SwnLogUrl%>"><i class="fas fa-exclamation-circle"></i>&nbsp;SWN Interface Log</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div id="JobGroups" class="tab-pane active">
@@ -71,7 +76,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditJobGroupModalLabel">Add / Edit Job Group</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
@@ -84,7 +89,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -99,8 +104,9 @@
     </div>
 </div>
 
-<dnn:dnnjsInclude runat="server" FilePath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js" />
-<dnn:dnncssInclude runat="server" FilePath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
 
@@ -123,7 +129,7 @@
                 { "bSortable": false }]
 
         });
-        $("#tblJobGroups_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditJobGroupModal"><i class="fa fa-plus"></i>&nbsp;Add Job Category</button>');
+        $("#tblJobGroups_length").prepend('<button class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditJobGroupModal"><i class="fa fa-plus"></i>&nbsp;Add Job Category</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

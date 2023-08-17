@@ -8,12 +8,16 @@
     cursor: pointer;
 }
 .form-check input[type='checkbox']{margin-right:8px}
+.form-check label{margin-bottom:0 !important}
+.form-check {
+    min-height: 0rem !important
+}
 #drpfilter{
-    max-width:150px;
+    max-width:150px ;
 }
 .radio-button-list{display:block;}
 .radio-button-list label{
-    padding: 0 8px 0 5px
+    padding: 0 8px 0 5px;
 }
 .edit-form fieldset {
     padding: 10px 5px 5px 5px;
@@ -36,11 +40,12 @@ border-radius:5px;
     padding:0 5px;
     font-size: 1rem;
     font-weight:700;
+    float:none;
 }
 .dnnFileUploadScope{float:none !important}
     .dnnFileUploadScope .dnnFormItem span{min-width:4rem;}
 
-label em{ color:red}
+label em{color:red !important}
 .group-list{
     min-width:13rem; padding:.5rem;
 }
@@ -74,9 +79,20 @@ label em{ color:red}
     opacity: 1;
     -moz-opacity: 1;
 }
-.ui-widget-overlay {
+/*.ui-widget-overlay {
 z-index:1051 !important;
 }
 .ui-widget-content {
     z-index: 1052 !important;
+}
+*/div.dataTables_wrapper div.dataTables_filter select {
+    margin-left: 0.5em;
+    display: inline-block;
+    width: auto;
+}
+.dnnFormPopup .ui-dialog-titlebar{
+    padding: 0.5rem
+}
+.date-filter input {
+    width: 7rem !important;
 }

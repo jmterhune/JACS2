@@ -8,7 +8,7 @@ namespace tjc.Modules.EmployeeDB.Components
     //setup the primary key for table
     [PrimaryKey("GroupId", AutoIncrement = true)]
     //configure caching using PetaPoco
-    [Cacheable("Groups", CacheItemPriority.Default, 20)]
+    [Cacheable("EmployeeGroups", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class Group : EmployeeBase
     {

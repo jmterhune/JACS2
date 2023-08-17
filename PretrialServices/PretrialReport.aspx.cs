@@ -1062,7 +1062,10 @@ namespace tjc.Modules.PretrialServices
             else if (reportType == ReportType.weekly)
             {
                 int firstDay = GetWeekStartDay(reportDate);
+                int lastDayMonth = GetLastDayOfMonth(reportDate).Day;
                 int lastDay = firstDay + 6;
+                if(lastDay>lastDayMonth)
+                    lastDay = lastDayMonth;
                 beginningDate = new DateTime(reportDate.Year, reportDate.Month, firstDay).ToShortDateString();
                 enddingDate = new DateTime(reportDate.Year, reportDate.Month, lastDay).ToShortDateString();
                 reportName = string.Format("pts-CRTK-{0}-{1}-{2}-{3}.pdf", CountyId, GetWeekTextValue(reportDate).Replace(" ", "-"), reportDate.Month.ToString(), reportDate.Year.ToString());

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props" Condition="Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props')" />
+  <Import Project="..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props" Condition="Exists('..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props')" />
+  <Import Project="..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props" Condition="Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -24,6 +27,8 @@
     <RestorePackages>true</RestorePackages>
     <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +66,7 @@
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -71,16 +77,29 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.OpenApi, Version=1.6.4.0, Culture=neutral, PublicKeyToken=3f5743946376f042, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.OpenApi.1.6.4\lib\netstandard2.0\Microsoft.OpenApi.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
@@ -96,7 +115,11 @@
     <Compile Include="Components\DropDownItem.cs" />
     <Compile Include="Components\EmergencyContactController.cs" />
     <Compile Include="Components\EmployeeListItem.cs" />
+    <Compile Include="Components\SwnContact.cs" />
+    <Compile Include="Components\SwnLogController.cs" />
+    <Compile Include="Components\SwnLog.cs" />
     <Compile Include="Components\Helper.cs" />
+    <Compile Include="Components\ModuleSecurity.cs" />
     <Compile Include="Components\RaceController.cs" />
     <Compile Include="Components\ServiceHistoryController.cs" />
     <Compile Include="Components\PositionHistoryController.cs" />
@@ -120,6 +143,22 @@
     <Compile Include="Components\JobClass.cs" />
     <Compile Include="Components\EmployeeController.cs" />
     <Compile Include="Components\Employee.cs" />
+    <Compile Include="Components\SwnInterface.cs" />
+    <Compile Include="Components\SwnPhone.cs" />
+    <Compile Include="EditContact.ascx.cs">
+      <DependentUpon>EditContact.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditContact.ascx.designer.cs">
+      <DependentUpon>EditContact.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EeoSetup.ascx.cs">
+      <DependentUpon>EeoSetup.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EeoSetup.ascx.designer.cs">
+      <DependentUpon>EeoSetup.ascx</DependentUpon>
+    </Compile>
     <Compile Include="CountyView.ascx.cs">
       <DependentUpon>CountyView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -141,6 +180,7 @@
     <Compile Include="Employment.ascx.designer.cs">
       <DependentUpon>Employment.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Components\SwnClient.cs" />
     <Compile Include="Phones.ascx.cs">
       <DependentUpon>Phones.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -204,6 +244,27 @@
     <Compile Include="DepartmentView.ascx.designer.cs">
       <DependentUpon>DepartmentView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="SwnList.aspx.cs">
+      <DependentUpon>SwnList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SwnList.aspx.designer.cs">
+      <DependentUpon>SwnList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewContacts.ascx.cs">
+      <DependentUpon>ViewContacts.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewContacts.ascx.designer.cs">
+      <DependentUpon>ViewContacts.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLog.ascx.cs">
+      <DependentUpon>ViewLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewLog.ascx.designer.cs">
+      <DependentUpon>ViewLog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="View.ascx.cs">
       <DependentUpon>View.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -213,6 +274,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="EditContact.ascx" />
+    <Content Include="EeoSetup.ascx" />
     <Content Include="CountyView.ascx" />
     <Content Include="EmergencyContacts.ascx" />
     <Content Include="Employment.ascx" />
@@ -227,6 +290,9 @@
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
     <Content Include="DepartmentView.ascx" />
+    <Content Include="SwnList.aspx" />
+    <Content Include="ViewContacts.ascx" />
+    <Content Include="ViewLog.ascx" />
     <Content Include="View.ascx" />
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +320,11 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\..\Workspace\OnSolve Public API.openapi.json">
+      <Link>OpenAPIs\OnSolve Public API.openapi.json</Link>
+      <CodeGenerator>NSwagCSharp</CodeGenerator>
+    </Content>
+    <Content Include="AddContactRequest.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -304,4 +375,16 @@
   <Import Project="BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
   </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets'))" />
+    <Error Condition="!Exists('..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props'))" />
+    <Error Condition="!Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props'))" />
+    <Error Condition="!Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets" Condition="Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets')" />
+  <Import Project="..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets" Condition="Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets')" />
 </Project>

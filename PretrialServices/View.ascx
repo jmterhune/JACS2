@@ -41,13 +41,16 @@
         </div>
 
         <div id="report" class="input-group" role="group" aria-label="Report Group">
-            <div class="input-group-text" id="lblReportType">Report Type:</div>
-            <asp:DropDownList ID="drpReportType" ClientIDMode="Static" CausesValidation="false" runat="server" CssClass="form-control input-item-lg">
-                <asp:ListItem Value="0">Daily</asp:ListItem>
-                <asp:ListItem Value="1">Weekly</asp:ListItem>
-                <asp:ListItem Value="2">Monthly</asp:ListItem>
-                <asp:ListItem Value="3">Yearly</asp:ListItem>
-            </asp:DropDownList>
+            <button id="btnReportType" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Report Type
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnReportType">
+                <li><a class="dropdown-item" href="#" onclick="SetReportType('0',event)">Daily</a></li>
+                <li><a class="dropdown-item" href="#" onclick="SetReportType('1',event)">Weekly</a></li>
+                <li><a class="dropdown-item" href="#" onclick="SetReportType('2',event)">Monthly</a></li>
+                <li><a class="dropdown-item" href="#" onclick="SetReportType('3',event)">Yearly</a></li>
+
+            </ul>
             <asp:Button ID="cmdReport" CausesValidation="false" CssClass="btn btn-quaternary" runat="server" Text="Get Report" OnClick="cmdReport_Click" />
         </div>
     </div>
@@ -129,6 +132,7 @@
             </asp:Repeater>
             <asp:HiddenField ID="hdIntakeDate" runat="server" ClientIDMode="Static" />
             <asp:HiddenField ID="hdSearchType" runat="server" ClientIDMode="Static" Value="0" />
+            <asp:HiddenField ID="hdReportType" runat="server" ClientIDMode="Static" Value="0" />
             <asp:Panel runat="server" ID="pnlIntakeForm" CssClass="intake-form mx-auto" Enabled="false">
                 <div class="alert alert-info"><i class="fa fa-info-circle"></i>This section is only active on the 7<sup>th</sup>, 14<sup>th</sup>, 21<sup>st</sup>, 28<sup>th</sup>, or last day of the month</div>
                 <h4>Week End Intake Log</h4>
@@ -276,7 +280,7 @@
                                         </asp:RadioButtonList>
                                     </div>
                                     <div class="col-6">
-                                        <asp:Label runat="server"  CssClass="col-form-label" AssociatedControlID="rblBwOrdered" Text="Bench Warrant Ordered?" />
+                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblBwOrdered" Text="Bench Warrant Ordered?" />
                                         <asp:RadioButtonList ID="rblBwOrdered" runat="server" RepeatLayout="Flow" CssClass="radio-button-list bw-ordered" RepeatDirection="Horizontal">
                                             <asp:ListItem Text="Yes" Value="1" />
                                             <asp:ListItem Text="No" Value="0" />
@@ -285,7 +289,7 @@
 
 
                                     <div class="col-6">
-                                        <asp:Label runat="server"  CssClass="col-form-label" AssociatedControlID="rblCompletion" Text="Successful Completion?" />
+                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblCompletion" Text="Successful Completion?" />
                                         <asp:RadioButtonList ID="rblCompletion" runat="server" RepeatLayout="Flow" CssClass="radio-button-list completion" RepeatDirection="Horizontal">
                                             <asp:ListItem Text="Yes" Value="1" />
                                             <asp:ListItem Text="No" Value="0" />
@@ -293,7 +297,7 @@
 
                                     </div>
                                     <div class="col-6">
-                                        <asp:Label runat="server"  CssClass="col-form-label" AssociatedControlID="rblIndigent" Text="Indigent?" />
+                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblIndigent" Text="Indigent?" />
                                         <asp:RadioButtonList ID="rblIndigent" runat="server" RepeatLayout="Flow" CssClass="radio-button-list indigent" RepeatDirection="Horizontal">
                                             <asp:ListItem Text="Yes" Value="1" />
                                             <asp:ListItem Text="No" Value="0" />
@@ -495,6 +499,37 @@
             default:
         }
     }
+    function SetReportType(reportType, e) {
+        var firstTime = false;
+        if (e != null) {
+            e.preventDefault();
+        }
+        if (reportType === null) {
+            reportType = $("#hdReportType").val();
+            firstTime = true;
+        }
+        else {
+            $("#hdReportType").val(reportType);
+        }
+        switch (reportType) {
+            case "0":
+                $("#btnReportType").text("Daily Report");
+                if (!firstTime) {
+                    $('#cmdReport').trigger('click');
+                }
+                break;
+            case "1":
+                $("#btnReportType").text("Weekly Report");
+                break;
+            case "2":
+                $("#btnReportType").text("Monthly Report");
+                break;
+            case "3":
+                $("#btnReportType").text("Yearly Report");
+                break;
+            default:
+        }
+    }
     function ValidateCompletionDate(sender, args) {
         args.IsValid = true;
         var indigent = $('.indigent input:checked').val();
@@ -506,7 +541,7 @@
             args.IsValid = false;
         }
     }
-    
+
     function ToggleVisibility(fType) {
         if (fType == 0) {
             $("#lblYear").fadeIn();

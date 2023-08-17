@@ -100,7 +100,7 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdateOfficeLocation(officeOfficeLocation);
             }
-            hdOfficeLocationId.Value = "";
+            ClearForm();
             PopulateOfficeLocationList();
         }
         protected void pnlOfficeLocations_Unload(object sender, EventArgs e)
@@ -125,6 +125,11 @@ namespace tjc.Modules.EmployeeDB
         #endregion
 
         #region Methods
+        private void ClearForm()
+        {
+            hdOfficeLocationId.Value = string.Empty;
+            txtDescription.Text = string.Empty;
+        }
         private void PopulateOfficeLocationList()
         {
             var ctl = new OfficeLocationController();

@@ -15,6 +15,24 @@ namespace tjc.Modules.EmployeeDB
     {
 
         /// <summary>
+        /// upEmployee control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upEmployee;
+
+        /// <summary>
+        /// upEmployeeProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdateProgress upEmployeeProgress;
+
+        /// <summary>
         /// lnkThumbnail control.
         /// </summary>
         /// <remarks>
@@ -393,13 +411,31 @@ namespace tjc.Modules.EmployeeDB
         protected global::System.Web.UI.WebControls.PlaceHolder phFileUpload;
 
         /// <summary>
-        /// upProgress control.
+        /// upGroups control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdateProgress upProgress;
+        protected global::System.Web.UI.UpdatePanel upGroups;
+
+        /// <summary>
+        /// upGroupProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdateProgress upGroupProgress;
+
+        /// <summary>
+        /// ltMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltMessage;
 
         /// <summary>
         /// lblMembership control.

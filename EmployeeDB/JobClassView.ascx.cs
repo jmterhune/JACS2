@@ -114,7 +114,7 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdateJobClass(jobClass);
             }
-            hdClassId.Value = "";
+            ClearForm();
             PopulateJobClassList();
         }
         protected void pnlJobClasss_Unload(object sender, EventArgs e)
@@ -139,6 +139,19 @@ namespace tjc.Modules.EmployeeDB
         #endregion
 
         #region Methods
+        private void ClearForm()
+        {
+            hdClassId.Value = string.Empty;
+            txtAMax.Text = string.Empty;
+            txtAMin.Text = string.Empty;
+            txtClassCode.Text = string.Empty;
+            txtClassName.Text = string.Empty;
+            txtEEO.Text = string.Empty;
+            txtFLSA.Text = string.Empty;
+            txtMMax.Text = string.Empty;
+            txtMMin.Text = string.Empty;
+            txtPayGrade.Text = string.Empty;
+        }
         private void PopulateJobClassList()
         {
             var ctl = new JobClassController();

@@ -12,11 +12,14 @@
 
 using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
-using System;
 using Microsoft.Extensions.DependencyInjection;
-using tjc.Modules.EmployeeDB.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Web.UI;
+using tjc.Modules.EmployeeDB.Components;
+using tjc.Modules.EmployeeDB.Components.Services;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -55,10 +58,15 @@ namespace tjc.Modules.EmployeeDB
             }
             set { ViewState["DepartmentFilterHtml"] = value; }
         }
-        #endregion
-
-        #region Events
-
+        public List<string> ContactIds
+        {
+            get
+            {
+                if (ViewState["ContactIds"] != null) { return (List<string>)ViewState["ContactIds"]; }
+                return null;
+            }
+            set { ViewState["ContactIds"] = value; }
+        }
         #endregion
 
         #region Methods
@@ -69,13 +77,13 @@ namespace tjc.Modules.EmployeeDB
         private void PopulateEmployeeList()
         {
             var ctl = new EmployeeController();
-            rptEmployees.DataSource = ctl.GetEmployeeListItems(ShowActive);
+            rptEmployees.DataSource = ctl.GetEmployeeListItems(ShowActive, true);
             rptEmployees.DataBind();
         }
         private string GetDepartmentFilterHtml()
         {
-            string filterHtml="";
-            filterHtml = "<label class='me-2'>Filter by Department <select id='drpfilter' class='form-control input-sm' aria-controls='employees'><option value='-1'>All</option>";
+            string filterHtml = "";
+            filterHtml = "<label class='me-2'>Filter by Department<select id='drpfilter' class='form-control form-control-sm' aria-controls='employees'><option value='-1'>All</option>";
             var ctl = new GroupController();
 
             IEnumerable<Group> departments = ctl.GetGroups().Where(x => x.GroupType == Convert.ToInt32(Group.GroupTypes.Internal));
@@ -87,19 +95,22 @@ namespace tjc.Modules.EmployeeDB
             return filterHtml;
         }
         #endregion
+
+        #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack)
                 {
-                    PopulateEmployeeList(); 
-                    DepartmentFilterHtml=GetDepartmentFilterHtml();
+                    PopulateEmployeeList();
+                    DepartmentFilterHtml = GetDepartmentFilterHtml();
                 }
                 chkInactiveEmployees.InputAttributes.Add("class", "form-check-input");
                 chkInactiveEmployees.LabelAttributes.Add("class", "form-check-label");
-
-
+                lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
+                lnkEeoReport.NavigateUrl = EEOUrl;
+                lnkSwnList.NavigateUrl = string.Format("{0}/SwnList.aspx", TemplateSourceDirectory);
             }
             catch (Exception exc) //Module failed to load
             {
@@ -109,6 +120,7 @@ namespace tjc.Modules.EmployeeDB
 
         protected void chkInactiveEmployees_CheckedChanged(object sender, EventArgs e)
         {
+            ltMessage.Text = "";
             if (ShowActive)
             {
                 ShowActive = false;
@@ -122,5 +134,125 @@ namespace tjc.Modules.EmployeeDB
             PopulateEmployeeList();
 
         }
+
+        protected void cmdAddContacts_Click(object sender, EventArgs e)
+        {
+            ltMessage.Text = "";
+
+            var ctl = new EmployeeController();
+            LoginRequest loginRequest = new LoginRequest { Password = SwnPassword, Username = SwnUsername };
+            string token = SwnInterface.GetToken(SwnServiceIdentifier, SwnSubscriptionKey, loginRequest);
+            SwgGroupMemberResponse contactIds = SwnInterface.GetSwnContactIds(SwnServiceIdentifier, SwnSubscriptionKey, token);
+
+            if (cmdAddContacts.Text.Contains("Show Missing SWN Contacts"))
+            {
+                if (contactIds.contacts.Count > 0)
+                {
+                    IEnumerable<EmployeeListItem> missingContacts = ctl.GetContactListItems(ShowActive).Where(x => !contactIds.contacts.Contains(x.EmployeeId.ToString()));
+                    if (missingContacts.Count() > 0)
+                    {
+                        ContactIds = contactIds.contacts;
+                        cmdAddContacts.Text = "<i class=\"fas fa-address-book\"></i> Add Users to SWN Contacts";
+                        lnkEeoReport.Enabled = false;
+                        lnkSwnList.Enabled = false;
+                        cmdSyncAll.Enabled = false;
+                        lnkCancel.Visible = true;
+                        chkInactiveEmployees.Enabled = false;
+                        rptEmployees.DataSource = missingContacts;
+                        rptEmployees.DataBind();
+                        ltMessage.Text = "<div class='alert alert-warning'><i class='fa fa-warning'></i> <strong>Please Note:</strong> This list includes all Contacts, including Non Employees</div>";
+
+                    }
+                    else
+                    {
+                        ltMessage.Text = "<div class='alert alert-warning'><i class='fa fa-warning'></i> All Active Employees & Contacts Exist in SWN</div>";
+                    }
+                }
+                else
+                {
+                    ltMessage.Text = "<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> Unable to retrieve contacts from SWN</div>";
+                }
+            }
+            else
+            {
+                IEnumerable<Employee> missingEmployees = ctl.GetActiveContacts().Where(x => !contactIds.contacts.Contains(x.EmployeeId.ToString()));
+                cmdAddContacts.Text = "<i class=\"fas fa-address-book\"></i> Show Missing SWN Contacts";
+                lnkEeoReport.Enabled = true;
+                lnkSwnList.Enabled = true;
+                cmdSyncAll.Enabled = true;
+                lnkCancel.Visible = false;
+                chkInactiveEmployees.Enabled = true;
+                List<string> successList = new List<string>();
+                List<string> messageList = new List<string>();
+                if (missingEmployees != null)
+                {
+                    foreach (Employee employee in missingEmployees)
+                    {
+                        try
+                        {
+                            SwnInterface.AddUpdateSwnContact(employee, SwnServiceIdentifier, SwnSubscriptionKey, token);
+                            successList.Add(string.Format("<li>{0}</li>", employee.FullName));
+
+                        }
+                        catch (Exception exc)
+                        {
+                            messageList.Add(string.Format("<li>{0}</li>", employee.FullName));
+                            string process = string.Format("Add {0} as SWN Contact ", employee.FullName);
+                            SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                            var logCtl = new SwnLogController();
+                            logCtl.CreateSwnLog(swnLog);
+                        }
+                    }
+                    ltMessage.Text += string.Format("<div class='alert alert-success'><h5><i class='far fa-thumbs-up'></i> The following contacts were successfully added</h5><ul>{0}</ul></div>", string.Join("",successList));
+                }
+                if (messageList.Count > 0)
+                {
+                    ltMessage.Text += string.Format("<div class='alert alert-danger'><h5 class='alert-danger'><i class='fas fa-exclamation-circle'></i> The following contacts where not added</h5><ul>{0}</ul></div>", string.Join("", messageList));
+                }
+            }
+        }
+
+        protected void cmdSyncAll_Click(object sender, EventArgs e)
+        {
+            ltMessage.Text = "";
+            var ctl = new EmployeeController();
+            LoginRequest loginRequest = new LoginRequest { Password = SwnPassword, Username = SwnUsername };
+            string token = SwnInterface.GetToken(SwnServiceIdentifier, SwnSubscriptionKey, loginRequest);
+            IEnumerable<Employee> activeContacts = ctl.GetActiveContacts();
+            List<string> succeses = new List<string>();
+            List<string> message = new List<string>();
+            if (activeContacts != null)
+            {
+                foreach (Employee employee in activeContacts)
+                {
+                    try
+                    {
+                        SwnInterface.AddUpdateSwnContact(employee, SwnServiceIdentifier, SwnSubscriptionKey, token);
+                        succeses.Add(string.Format("<li>{0}</li>", employee.FullName));
+                    }
+                    catch (Exception exc)
+                    {
+                        message.Add(string.Format("<li>{0}</li>", employee.FullName));
+                        string process = string.Format("Update {0} SWN Contact Information", employee.FullName);
+                        SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                        var logCtl = new SwnLogController();
+                        logCtl.CreateSwnLog(swnLog);
+                    }
+                }
+                ltMessage.Text += string.Format("<div class='alert alert-success'><h5><i class='far fa-thumbs-up'></i> The following contacts were successfully updated</h5><ul>{0}</ul></div>", succeses.ToString());
+            }
+            if (message.Count > 0)
+            {
+                ltMessage.Text += string.Format("<div class='alert alert-danger'><h5 class='alert-danger'><i class='fas fa-exclamation-circle'></i> The following contacts where not updated</h5><ul>{0}</ul></div>", message.ToString());
+            }
+
+        }        
+        protected void pnlEmployees_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
+        }
+        #endregion
     }
 }

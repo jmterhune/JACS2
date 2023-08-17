@@ -53,7 +53,6 @@ namespace tjc.Modules.EmployeeDB
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
-                    lnkHome.NavigateUrl = _navigationManager.NavigateURL();
                     Employee employee = ctl.GetEmployee(EmployeeId);
                     if (employee != null)
                     {

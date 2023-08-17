@@ -4,6 +4,9 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
+            <a class="nav-link" href="<%=EmployeeUrl %>"><i class="fas fa-list"></i>&nbsp;Back to  List</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=DetailUrl%>"><i class="fas fa-user-edit"></i>&nbsp;Details</a>
         </li>
         <li class="nav-item">
@@ -16,7 +19,7 @@
             <a class="nav-link" href="<%=EmploymentUrl%>"><i class="fas fa-user-clock"></i>&nbsp;Employment History</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="<%=ContactUrl%>"><i class="fas fa-address-book"></i>&nbsp;Emergency Contacts</a>
+            <a class="nav-link" href="<%=EmergencyContactUrl%>"><i class="fas fa-address-book"></i>&nbsp;Emergency Contacts</a>
         </li>
     </ul>
     <div class="tab-content edit-form">
@@ -73,38 +76,38 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditEmergencyContactModalLabel">Add / Edit Position History</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtFirstName" ClientIDMode="Static" />
                                     </div>
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtLastName" ClientIDMode="Static" />
                                     </div>
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtRelationship" Text="Relationship" />
-                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtRelationship" />
+                                        <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtRelationship" ClientIDMode="Static" />
                                     </div>
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtHomePhone" Text="Home Phone" />
-                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtHomePhone" />
+                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtHomePhone" ClientIDMode="Static" />
                                     </div>
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtWorkPhone" Text="Work Phone" />
-                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtWorkPhone" />
+                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtWorkPhone" ClientIDMode="Static" />
                                     </div>
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtMobilePhone" Text="Mobile Phone" />
-                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtMobilePhone" />
+                                        <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtMobilePhone" ClientIDMode="Static" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <asp:HiddenField ID="hdEmergencyContactId" runat="server" />
+                                    <asp:HiddenField ID="hdEmergencyContactId" runat="server" ClientIDMode="Static" />
                                     <asp:Button OnClientClick="ToggleForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -115,14 +118,14 @@
                 </Triggers>
 
             </asp:UpdatePanel>
-                        <p><asp:HyperLink ID="lnkHome" cssclass="btn btn-default" runat="server">Return to Employee List</asp:HyperLink></p>
         </div>
     </div>
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */
@@ -151,27 +154,31 @@
                 { "bSortable": false },
             ]
         });
-        $("#tblEmergencyContact_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditEmergencyContactModal"><i class="fa fa-plus"></i>&nbsp;Add Contact</button>');
+        $("#tblEmergencyContact_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditEmergencyContactModal"><i class="fa fa-plus"></i>&nbsp;Add Contact</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({
-
             text: 'Are you sure you wish to delete this Contact?',
-
             yesText: 'Yes',
-
             noText: 'No',
-
             title: 'Delete Contact?'
-
         });
+    }
+    function ClearForm() {
+        $('#txtFirstName').val("");
+        $('#txtLastName').val("");
+        $('#txtRelationship').val("");
+        $('#txtHomePhone').val("");
+        $('#txtWorkPhone').val("");
+        $('#txtMobilePhone').val("");
+        $('#hdEmergencyContactId').val("");
+        return false;
     }
     function ToggleForm(toggleValue) {
         if (toggleValue) {
             $('#EditEmergencyContactModal').modal('show');
-        } 
-        else 
-        {
+        }
+        else {
             $('#EditEmergencyContactModal').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();

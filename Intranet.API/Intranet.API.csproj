@@ -48,11 +48,13 @@
     <Reference Include="DotNetNuke, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Abstractions, Version=9.11.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -63,7 +65,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
-    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -74,38 +78,38 @@
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
       <Private>True</Private>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -123,12 +127,22 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Mediation\AttorneyListItemController.cs" />
+    <Compile Include="Components\Mediation\AttorneyListItem.cs" />
+    <Compile Include="Components\Mediation\CaseListItem.cs" />
+    <Compile Include="Components\Mediation\CaseListItemController.cs" />
+    <Compile Include="Components\Mediation\EntityBase.cs" />
     <Compile Include="Components\Employee\EmergencyContact.cs" />
     <Compile Include="Components\Employee\Employee.cs" />
     <Compile Include="Components\CourtCounsel\Event.cs" />
     <Compile Include="Components\CourtCounsel\File.cs" />
     <Compile Include="Components\Employee\EmployeeController.cs" />
     <Compile Include="Components\Employee\Phone.cs" />
+    <Compile Include="Components\FamilySelfHelp\Client.cs" />
+    <Compile Include="Components\FamilySelfHelp\ClientController.cs" />
+    <Compile Include="Services\AttorneyListItemAPIController .cs" />
+    <Compile Include="Services\CaseListItemAPIController.cs" />
+    <Compile Include="Services\ClientNameAPIController.cs" />
     <Compile Include="Services\LogEntryAPIController.cs" />
     <Compile Include="Components\CourtCounsel\EntityBase.cs" />
     <Compile Include="Components\CourtCounsel\LogEntry.cs" />
@@ -140,6 +154,9 @@
     <Compile Include="Services\ViewModels\Employee\EmergencyContactViewModel.cs" />
     <Compile Include="Services\ViewModels\Employee\PhoneViewModel.cs" />
     <Compile Include="Services\ViewModels\Employee\EmployeeViewModel.cs" />
+    <Compile Include="Services\ViewModels\FamilySelfHelp\ClientNameViewModel.cs" />
+    <Compile Include="Services\ViewModels\Mediation\CaseListItemViewModel.cs" />
+    <Compile Include="Services\ViewModels\Mediation\AttorneyListItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BuildScripts\ModulePackage.targets" />

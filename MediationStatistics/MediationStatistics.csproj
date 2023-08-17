@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{406093C8-126A-41F4-9983-75947209A425}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>tjc.Modules.MediationStatistics</RootNamespace>
+    <AssemblyName>tjc.Modules.MediationStatistics</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DotNetNuke, Version=9.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.Abstractions, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Abstractions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.DependencyInjection, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\ReportController.cs" />
+    <Compile Include="Components\Report.cs" />
+    <Compile Include="Report.ascx.cs">
+      <DependentUpon>Report.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Report.ascx.designer.cs">
+      <DependentUpon>Report.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditFamilyPreFile.ascx.cs">
+      <DependentUpon>EditFamilyPreFile.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditFamilyPreFile.ascx.designer.cs">
+      <DependentUpon>EditFamilyPreFile.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditSmallClaims.ascx.cs">
+      <DependentUpon>EditSmallClaims.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditSmallClaims.ascx.designer.cs">
+      <DependentUpon>EditSmallClaims.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditJuvenile.ascx.cs">
+      <DependentUpon>EditJuvenile.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditJuvenile.ascx.designer.cs">
+      <DependentUpon>EditJuvenile.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditFamily.ascx.cs">
+      <DependentUpon>EditFamily.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditFamily.ascx.designer.cs">
+      <DependentUpon>EditFamily.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditDependency.ascx.cs">
+      <DependentUpon>EditDependency.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditDependency.ascx.designer.cs">
+      <DependentUpon>EditDependency.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditCountyClaims.ascx.cs">
+      <DependentUpon>EditCountyClaims.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditCountyClaims.ascx.designer.cs">
+      <DependentUpon>EditCountyClaims.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EditCDSP.ascx.cs">
+      <DependentUpon>EditCDSP.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditCDSP.ascx.designer.cs">
+      <DependentUpon>EditCDSP.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="GroupEdit.ascx.cs">
+      <DependentUpon>GroupEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GroupEdit.ascx.designer.cs">
+      <DependentUpon>GroupEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="GroupList.ascx.cs">
+      <DependentUpon>GroupList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GroupList.ascx.designer.cs">
+      <DependentUpon>GroupList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CaseTypeList.ascx.cs">
+      <DependentUpon>CaseTypeList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CaseTypeList.ascx.designer.cs">
+      <DependentUpon>CaseTypeList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="AppearanceList.ascx.cs">
+      <DependentUpon>AppearanceList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppearanceList.ascx.designer.cs">
+      <DependentUpon>AppearanceList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ActionList.ascx.cs">
+      <DependentUpon>ActionList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ActionList.ascx.designer.cs">
+      <DependentUpon>ActionList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IssueList.ascx.cs">
+      <DependentUpon>IssueList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IssueList.ascx.designer.cs">
+      <DependentUpon>IssueList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RegionList.ascx.cs">
+      <DependentUpon>RegionList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RegionList.ascx.designer.cs">
+      <DependentUpon>RegionList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Appearance.cs" />
+    <Compile Include="Components\AppearanceController.cs" />
+    <Compile Include="Components\Attorney.cs" />
+    <Compile Include="Components\EntityBase.cs" />
+    <Compile Include="Components\StageActionController.cs" />
+    <Compile Include="Components\SessionController.cs" />
+    <Compile Include="Components\RegionController.cs" />
+    <Compile Include="Components\IssueController.cs" />
+    <Compile Include="Components\GroupController.cs" />
+    <Compile Include="Components\EventController.cs" />
+    <Compile Include="Components\CaseTypeController.cs" />
+    <Compile Include="Components\CaseController.cs" />
+    <Compile Include="Components\AttorneyController.cs" />
+    <Compile Include="Components\Case.cs" />
+    <Compile Include="Components\CaseType.cs" />
+    <Compile Include="Components\Event.cs" />
+    <Compile Include="Components\Group.cs" />
+    <Compile Include="Components\Helper.cs" />
+    <Compile Include="Components\Issue.cs" />
+    <Compile Include="Components\Region.cs" />
+    <Compile Include="Components\Session.cs" />
+    <Compile Include="Components\StageAction.cs" />
+    <Compile Include="MediationStatisticsModuleBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MediationStatisticsModuleSettingsBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.ascx.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Settings.ascx.designer.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="AttorneyList.ascx.cs">
+      <DependentUpon>AttorneyList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AttorneyList.ascx.designer.cs">
+      <DependentUpon>AttorneyList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="View.ascx.cs">
+      <DependentUpon>View.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="View.ascx.designer.cs">
+      <DependentUpon>View.ascx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Report.ascx" />
+    <Content Include="EditFamilyPreFile.ascx" />
+    <Content Include="EditSmallClaims.ascx" />
+    <Content Include="EditJuvenile.ascx" />
+    <Content Include="EditFamily.ascx" />
+    <Content Include="EditDependency.ascx" />
+    <Content Include="EditCountyClaims.ascx" />
+    <Content Include="EditCDSP.ascx" />
+    <Content Include="GroupEdit.ascx" />
+    <Content Include="GroupList.ascx" />
+    <Content Include="CaseTypeList.ascx" />
+    <Content Include="AppearanceList.ascx" />
+    <Content Include="ActionList.ascx" />
+    <Content Include="IssueList.ascx" />
+    <Content Include="RegionList.ascx" />
+    <Content Include="Documentation\Documentation.css" />
+    <Content Include="Documentation\Documentation.html" />
+    <Content Include="License.txt" />
+    <Content Include="module.css" />
+    <Content Include="ReleaseNotes.txt" />
+    <Content Include="Settings.ascx" />
+    <Content Include="AttorneyList.ascx" />
+    <Content Include="View.ascx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MediationStatistics.dnn" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BuildScripts\ModulePackage.targets" />
+    <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\View.ascx.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_LocalResources\Edit.ascx.resx" />
+    <Content Include="App_LocalResources\Settings.ascx.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bundleconfig.json" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>
+          </DevelopmentServerVPath>
+          <IISUrl>http://localhost:50972/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>MediationStatistics</DNNFileName>
+    <PackageName>MediationStatistics</PackageName>
+    <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <Import Project="BuildScripts\ModulePackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="PackageModule">
+  </Target>
+</Project>

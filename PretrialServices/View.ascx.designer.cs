@@ -60,15 +60,6 @@ namespace tjc.Modules.PretrialServices
         protected global::System.Web.UI.WebControls.Button cmdSearch;
 
         /// <summary>
-        /// drpReportType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpReportType;
-
-        /// <summary>
         /// cmdReport control.
         /// </summary>
         /// <remarks>
@@ -121,6 +112,15 @@ namespace tjc.Modules.PretrialServices
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdSearchType;
+
+        /// <summary>
+        /// hdReportType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdReportType;
 
         /// <summary>
         /// pnlIntakeForm control.

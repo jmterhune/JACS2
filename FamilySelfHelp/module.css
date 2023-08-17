@@ -1,0 +1,74 @@
+.text-left {
+    text-align: left !important
+}
+
+.call-to-action .call-to-action-btn {
+    top: 78px !important;
+}
+
+.command-icon {
+    width: 20px;
+}
+.radio-button-list {
+    display: block;
+}
+
+    .radio-button-list label {
+        padding: 0 8px 0 5px;
+        margin-bottom:0 !important
+    }
+    .radio-button-list li {
+        list-style: none;
+        
+    }
+
+ul.radio-button-list {
+   padding-left: 0;
+}
+.column-2 {
+    column-count: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
+}
+.column-4 {
+    column-count: 4;
+    -webkit-columns: 4;
+    -moz-columns: 4;
+}
+
+label em {
+    color: red
+}
+
+.fieldset-bordered {
+    padding: 10px 5px 5px 5px;
+    display: inline-block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ced4da;
+    border-radius: .25rem;
+}
+
+    .fieldset-bordered legend {
+        width: auto;
+        display: inline-block;
+        padding: 0 5px;
+        font-size: 1rem;
+        font-weight:normal;
+        float: none !important;
+    }
+
+.data-list {
+    margin-bottom: 0
+}
+
+    .data-list dt, .data-list dd {
+        display: inline-block !important;
+    }

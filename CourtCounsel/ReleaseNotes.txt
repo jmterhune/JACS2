@@ -22,3 +22,4 @@
 	</ul>
 	
 </div>
+Add file icon if has attachments. Filter dropdown for calendar to active users.

@@ -48,8 +48,9 @@
       <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Abstractions, Version=9.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <Private>False</Private>
+    <Reference Include="DotNetNuke.Abstractions, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="DotNetNuke.Web, Version=9.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

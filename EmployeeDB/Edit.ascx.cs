@@ -3,15 +3,14 @@ using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Web.Security;
+using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.EmployeeDB.Components;
+using tjc.Modules.EmployeeDB.Components.Services;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -54,13 +53,13 @@ namespace tjc.Modules.EmployeeDB
                 _fileControl.ViewStateMode = System.Web.UI.ViewStateMode.Enabled;
                 _fileControl.UsePersonalFolder = false;
                 _fileControl.User = null;
+                chkActive.InputAttributes.Add("class", "form-check-input");
+                chkActive.LabelAttributes.Add("class", "form-check-label");
+                chkManateeAccess.InputAttributes.Add("class", "form-check-input");
+                chkManateeAccess.LabelAttributes.Add("class", "form-check-label");
 
                 if (!Page.IsPostBack)
                 {
-                    chkActive.InputAttributes.Add("class", "form-check-input");
-                    chkActive.LabelAttributes.Add("class", "form-check-label");
-                    chkManateeAccess.InputAttributes.Add("class", "form-check-input");
-                    chkManateeAccess.LabelAttributes.Add("class", "form-check-label");
                     JavaScript.RequestRegistration(CommonJs.jQuery);
                     PopulateDropDowns();
                     var ctl = new EmployeeController();
@@ -72,8 +71,12 @@ namespace tjc.Modules.EmployeeDB
                         {
                             txtBirthDate.Text = employee.BirthDate.Value.ToShortDateString();
                         }
-                        imgEmployee.ImageUrl = string.Format("/DnnImageHandler.ashx?mode=securefile&fileId={0}&MaxHeight=25", employee.PhotoFileId);
-                        lnkThumbnail.NavigateUrl = imgEmployee.ImageUrl;
+                        if (employee.PhotoFileId > 0)
+                        {
+                            imgEmployee.ImageUrl = string.Format("/DnnImageHandler.ashx?mode=securefile&fileId={0}&MaxHeight=25", employee.PhotoFileId);
+                            lnkThumbnail.NavigateUrl = imgEmployee.ImageUrl;
+                        }
+
                         if (employee.HireDate.HasValue)
                         {
                             txtHireDate.Text = employee.HireDate.Value.ToShortDateString();
@@ -162,6 +165,9 @@ namespace tjc.Modules.EmployeeDB
         protected void cmdAddGroup_Click(object sender, EventArgs e)
         {
             var ctl = new GroupController();
+            List<string> groups = new List<string>();
+            LoginRequest loginRequest = new LoginRequest { Password = SwnPassword, Username = SwnUsername };
+            string token = SwnInterface.GetToken(SwnServiceIdentifier, SwnSubscriptionKey, loginRequest);
             foreach (ListItem item in lsGroups.Items)
             {
                 if (item.Selected)
@@ -171,13 +177,34 @@ namespace tjc.Modules.EmployeeDB
                     lsMembership.Items.Add(item);
                     GroupMembership groupMembership = new GroupMembership { EmployeeId = EmployeeId, GroupId = groupId, CreatedById = UserId, CreatedDate = DateTime.Now, LastModifiedById = UserId, LastModifiedDate = DateTime.Now };
                     ctl.CreateGroupMembership(groupMembership);
+                    Components.Group group = ctl.GetGroup(groupId);
+                    if (group != null && group.IsSwnGroup)
+                        groups.Add(groupId.ToString());
                 }
+            }
+            try
+            {
+                SwnInterface.AddContactToSwnGroup(groups.ToList(), EmployeeId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
+
+            }
+            catch (Exception exc)
+            {
+                ltMessage.Text = "<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> Failed to Add Contact to SWN Group</div>";
+
+                string process = string.Format("Add groups to EmployeeId:{0} Groups to Add:{1}", EmployeeId, groups.ToString());
+                SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                var logCtl = new SwnLogController();
+                logCtl.CreateSwnLog(swnLog);
             }
             PopulateGroupLists(ctl);
         }
+
         protected void cmdRemoveGroup_Click(object sender, EventArgs e)
         {
             var ctl = new GroupController();
+            LoginRequest loginRequest = new LoginRequest { Password = SwnPassword, Username = SwnUsername };
+            string token = SwnInterface.GetToken(SwnServiceIdentifier, SwnSubscriptionKey, loginRequest);
+
             foreach (ListItem item in lsMembership.Items)
             {
                 if (item.Selected)
@@ -189,6 +216,20 @@ namespace tjc.Modules.EmployeeDB
                     if (groupMembership != null)
                     {
                         ctl.DeleteGroupMembership(groupMembership);
+                        Components.Group group = ctl.GetGroup(groupId);
+                        try
+                        {
+                            if (group != null && group.IsSwnGroup)
+                                SwnInterface.RemoveContactFromSwnGroup(groupId.ToString(), EmployeeId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
+                        }
+                        catch (Exception exc)
+                        {
+                            ltMessage.Text = "<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> Failed to Remove Contact from SWN Group</div>";
+                            string process = string.Format("Remove Group Id:{0} from Employee Id:{1}", groupId, EmployeeId);
+                            SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                            var logCtl = new SwnLogController();
+                            logCtl.CreateSwnLog(swnLog);
+                        }
                     }
                 }
             }
@@ -196,6 +237,7 @@ namespace tjc.Modules.EmployeeDB
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
+            ltMessage.Text = "";
             var t = new Employee();
             var tc = new EmployeeController();
 
@@ -286,27 +328,74 @@ namespace tjc.Modules.EmployeeDB
             t.Position = txtPosition.Text;
             t.Race = drpRace.SelectedValue;
             t.SarasotaAccess = txtSarasotaAccess.Text;
-            t.SocialSecurityNumber = txtSSN.Text.Replace("-","");
+            t.SocialSecurityNumber = txtSSN.Text.Replace("-", "");
             t.State = drpState.SelectedValue;
             t.Zip = txtZip.Text;
             t.IsActive = chkActive.Checked;
             t.IsEmployee = true;
-            if (EmployeeId == 0)
+            LoginRequest loginRequest = new LoginRequest { Password = SwnPassword, Username = SwnUsername };
+            string token = SwnInterface.GetToken(SwnServiceIdentifier, SwnSubscriptionKey, loginRequest);
+            if (EmployeeId <= 0)
             {
                 t.CreatedDate = DateTime.Now;
                 t.CreatedById = UserId;
                 tc.CreateEmployee(t);
-                Response.Redirect(EditUrl("eid", t.EmployeeId.ToString()), true);
             }
             else
             {
                 tc.UpdateEmployee(t);
             }
+            if (chkActive.Checked)
+            {
+                try
+                {
+                    SwnInterface.AddUpdateSwnContact(t, SwnServiceIdentifier, SwnSubscriptionKey, token);
+                }
+                catch (Exception exc)
+                {
+                    ltMessage.Text = "<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> Failed to sync contact in SWN</div>";
+                    string process = string.Format("{1} {0} SWN Contact Information", t.FullName, EmployeeId > 0 ? "Update" : "Add");
+                    SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                    var logCtl = new SwnLogController();
+                    logCtl.CreateSwnLog(swnLog);
+                }
+            }
+            else
+            {
+                try
+                {
+                    SwnInterface.DeleteSwnContactById(t.EmployeeId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
+                }
+                catch (Exception exc)
+                {
+                    ltMessage.Text = "<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> Failed to removed contact from SWN</div>";
+                    string process = string.Format("Remove {0} from SWN", t.FullName);
+                    SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                    var logCtl = new SwnLogController();
+                    logCtl.CreateSwnLog(swnLog);
+                }
+            }
+            if (EmployeeId <= 0)
+                Response.Redirect(EditUrl("eid", t.EmployeeId.ToString(), "EditContact"), true);
         }
+        protected void upEmployee_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
 
+        }
+        protected void upGroups_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
+
+        }
         #endregion
 
         #region Methods
+
         private void CheckImagePath(string imagePath)
         {
             DotNetNuke.Services.FileSystem.FolderManager objFolder = new DotNetNuke.Services.FileSystem.FolderManager();
@@ -336,7 +425,7 @@ namespace tjc.Modules.EmployeeDB
             var dCtl = new GroupController();
             drpDepartment.DataSource = dCtl.GetGroups(0).OrderBy(x => x.GroupName);
             drpDepartment.DataBind();
-            
+
 
             var gCtl = new JobGroupController();
             drpJobGroup.DataSource = gCtl.GetJobGroups().OrderBy(x => x.Description);
@@ -353,9 +442,11 @@ namespace tjc.Modules.EmployeeDB
             var eCtl = new EmployeeController();
             drpSupervisor.DataSource = eCtl.GetEmployeeDropDown(SupervisorRole).OrderBy(x => x.DataText);
             drpSupervisor.DataBind();
-PopulateGroupLists(dCtl);
+            PopulateGroupLists(dCtl);
         }
+
         #endregion
+
 
     }
 }

@@ -15,6 +15,42 @@ namespace tjc.Modules.EmployeeDB
     {
 
         /// <summary>
+        /// lnkDetails control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDetails;
+
+        /// <summary>
+        /// liGroups control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liGroups;
+
+        /// <summary>
+        /// liHistory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liHistory;
+
+        /// <summary>
+        /// liEmergencyContacts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liEmergencyContacts;
+
+        /// <summary>
         /// pnlPhones control.
         /// </summary>
         /// <remarks>
@@ -31,6 +67,15 @@ namespace tjc.Modules.EmployeeDB
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.UpdateProgress upProgressEvent;
+
+        /// <summary>
+        /// ltMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltMessage;
 
         /// <summary>
         /// rptPhones control.
@@ -132,12 +177,12 @@ namespace tjc.Modules.EmployeeDB
         protected global::System.Web.UI.WebControls.Button cmdSave;
 
         /// <summary>
-        /// lnkHome control.
+        /// cmdFixSort control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkHome;
+        protected global::System.Web.UI.WebControls.LinkButton cmdFixSort;
     }
 }

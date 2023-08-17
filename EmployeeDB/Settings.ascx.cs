@@ -61,6 +61,17 @@ namespace tjc.Modules.EmployeeDB
                     drpSupervisor.Items.Insert(0, new ListItem("< Select Role >", ""));
                     if (TabModuleSettings.Contains("SupervisorRole"))
                         drpSupervisor.SelectedValue = Convert.ToString(TabModuleSettings["SupervisorRole"]);
+                    if (TabModuleSettings.Contains("SwnUsername"))
+                        txtUsername.Text= Convert.ToString(TabModuleSettings["SwnUsername"]);
+                    if (TabModuleSettings.Contains("SwnPassword"))
+                        txtPassword.Text = Convert.ToString(TabModuleSettings["SwnPassword"]);
+                    if (TabModuleSettings.Contains("SwnSubscriptionKey"))
+                        txtSubscriptionKey.Text = Convert.ToString(TabModuleSettings["SwnSubscriptionKey"]);
+                    if (TabModuleSettings.Contains("SwnServiceIdentifier"))
+                        txtServiceIdentifier.Text = Convert.ToString(TabModuleSettings["SwnServiceIdentifier"]);
+                    if (TabModuleSettings.Contains("SwnBaseUrl"))
+                        txtBaseUrl.Text = Convert.ToString(TabModuleSettings["SwnBaseUrl"]);
+
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -82,7 +93,16 @@ namespace tjc.Modules.EmployeeDB
                 string SupervisorRole=drpSupervisor.SelectedValue;
                 if (!string.IsNullOrEmpty(SupervisorRole.Trim()))
                     objModules.UpdateTabModuleSetting(TabModuleId, "SergeantRole", SupervisorRole.Trim());
-
+                if(!string.IsNullOrEmpty(txtPassword.Text.Trim()))
+                    objModules.UpdateTabModuleSetting(TabModuleId, "SwnPassword", txtPassword.Text.Trim());
+                if (!string.IsNullOrEmpty(txtUsername.Text.Trim()))
+                    objModules.UpdateTabModuleSetting(TabModuleId, "SwnUsername", txtUsername.Text.Trim());
+                if (!string.IsNullOrEmpty(txtSubscriptionKey.Text.Trim()))
+                    objModules.UpdateTabModuleSetting(TabModuleId, "SwnSubscriptionKey", txtSubscriptionKey.Text.Trim());
+                if (!string.IsNullOrEmpty(txtServiceIdentifier.Text.Trim()))
+                    objModules.UpdateTabModuleSetting(TabModuleId, "SwnServiceIdentifier", txtServiceIdentifier.Text.Trim());
+                if (!string.IsNullOrEmpty(txtServiceIdentifier.Text.Trim()))
+                    objModules.UpdateTabModuleSetting(TabModuleId, "SwnBaseUrl", txtBaseUrl.Text.Trim());
             }
             catch (Exception exc) //Module failed to load
             {

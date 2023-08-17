@@ -51,6 +51,17 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
+        public IEnumerable<Group> GetSwnGroups()
+        {
+            IEnumerable<Group> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Group>();
+                t = rep.Find("Where IsSwnGroup = 1");
+            }
+            return t;
+        }
+        
         public IEnumerable<Group> GetGroups(int groupType)
         {
             IEnumerable<Group> t;
@@ -61,7 +72,25 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
+        public IEnumerable<Group> GetEmployeeSwnGroups(long employeeId)
+        {
+            IEnumerable<Group> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t= ctx.ExecuteQuery<Group>(System.Data.CommandType.Text, "select g.* from tjc_gl_group g inner join tjc_employee_group_membership gm on g.GroupId=gm.GroupId Where g.IsSwnGroup=1 And gm.EmployeeId=@0", employeeId);
+            }
+            return t;
+        }
+        public int GetMaxGroup()
+        {
+            int groupCount = 0;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                groupCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "Select Max(GroupCount) from (select count(employeeId) as GroupCount from tjc_gl_group g inner join tjc_employee_group_membership gm on g.GroupId=gm.GroupId Where g.IsSwnGroup=1 Group by gm.EmployeeId) t");
 
+            }
+            return groupCount;
+        }
         public Group GetGroup(int groupId)
         {
             Group t;
@@ -82,7 +111,7 @@ namespace tjc.Modules.EmployeeDB.Components
             }
         }
 
-        public IEnumerable<Group> GetGroupMemberships(int employeeId)
+        public IEnumerable<Group> GetGroupMemberships(long employeeId)
         {
             IEnumerable<Group> t;
             using (IDataContext ctx = DataContext.Instance())
@@ -91,7 +120,16 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        public IEnumerable<Group> GetGroupsExcludingMembership(int employeeId)
+        public IEnumerable<string> GetSwnGroupMembers(int groupId)
+        {
+            IEnumerable<string> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<string>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_swn_group_members", groupId);
+            }
+            return t;
+        }
+        public IEnumerable<Group> GetGroupsExcludingMembership(long employeeId)
         {
             IEnumerable<Group> t;
             using (IDataContext ctx = DataContext.Instance())
@@ -100,7 +138,7 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        public GroupMembership GetGroupMembership(int employeeId,int groupId)
+        public GroupMembership GetGroupMembership(long employeeId,int groupId)
         {
             GroupMembership t;
             using (IDataContext ctx = DataContext.Instance())

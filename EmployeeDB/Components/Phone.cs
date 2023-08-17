@@ -27,7 +27,7 @@ namespace tjc.Modules.EmployeeDB.Components
 
         public bool IsMain { get; set; }
 
-        public string PhoneCascade { get; set; }
+        public int PhoneCascade { get; set; }
 
         public bool SwnText { get; set; }
 

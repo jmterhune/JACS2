@@ -14,12 +14,13 @@ namespace tjc.Modules.EmployeeDB.Components
         public string Email { get; set; }
         public string FullName { get; set; }
         public string Department { get; set; }
+        public string JobTitle { get; set; }
         public DateTime? HireDate { get; set; }
 
         public DateTime? BirthDate { get; set; }
 
         public bool IsActive { get; set; }
-
+        public bool IsEmployee { get; set; }
         public string PhoneList { get; set; }
         public int DepartmentId { get; set; }
         
@@ -48,7 +49,6 @@ namespace tjc.Modules.EmployeeDB.Components
             outputList = outputList.Substring(0, outputList.LastIndexOf("<br />"));
             return outputList;
         }
-
         #endregion
     }
 }

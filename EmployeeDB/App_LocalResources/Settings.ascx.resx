@@ -59,7 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xms-msdata">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -120,10 +120,40 @@
   <data name="ControlTitle_settings.Text" xml:space="preserve">
     <value>Employee DB Settings</value>
   </data>
+  <data name="lblBaseUrl.Help" xml:space="preserve">
+    <value>Enter the Base Url for the SWN API</value>
+  </data>
+  <data name="lblBaseUrl.Text" xml:space="preserve">
+    <value>Base Url</value>
+  </data>
+  <data name="lblPassword.Help" xml:space="preserve">
+    <value>Enter the SWN Password</value>
+  </data>
+  <data name="lblPassword.Text" xml:space="preserve">
+    <value>SWN Password</value>
+  </data>
+  <data name="lblSubscriptionKey.Help" xml:space="preserve">
+    <value>Enter the SWN Subscription Key available at https://developer.onsolve.com/</value>
+  </data>
+  <data name="lblSubscriptionKey.Text" xml:space="preserve">
+    <value>SWN Subscription Key</value>
+  </data>
   <data name="lblSupervisor.Help" xml:space="preserve">
     <value>Select the Role for Supervisors</value>
   </data>
   <data name="lblSupervisor.Text" xml:space="preserve">
     <value>Supervisor Role</value>
+  </data>
+  <data name="lblUsername.Help" xml:space="preserve">
+    <value>Enter the SWN Username</value>
+  </data>
+  <data name="lblUsername.Text" xml:space="preserve">
+    <value>SWN Username</value>
+  </data>
+  <data name="lbServiceIdentifier.Help" xml:space="preserve">
+    <value>Enter the Service Identifier. Should be SWN</value>
+  </data>
+  <data name="lbServiceIdentifier.Text" xml:space="preserve">
+    <value>Service Identifier</value>
   </data>
 </root>

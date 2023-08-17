@@ -101,7 +101,7 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdateRace(race);
             }
-            hdRaceId.Value = "";
+            ClearForm();
             PopulateRaceList();
         }
         protected void pnlRaces_Unload(object sender, EventArgs e)
@@ -122,10 +122,15 @@ namespace tjc.Modules.EmployeeDB
                 scriptMan.RegisterAsyncPostBackControl(cmdEdit);
             }
         }
-
         #endregion
 
         #region Methods
+        private void ClearForm()
+        {
+            hdRaceId.Value = string.Empty;
+            txtDescription.Text = string.Empty;
+            txtRaceCode.Text = string.Empty;
+        }
         private void PopulateRaceList()
         {
             var ctl = new RaceController();

@@ -20,6 +20,10 @@ using System.Linq;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using tjc.Modules.EmployeeDB.Components.Services;
+using System.Collections.ObjectModel;
 
 namespace tjc.Modules.EmployeeDB
 {
@@ -71,9 +75,9 @@ namespace tjc.Modules.EmployeeDB
             var ctl = new GroupController();
             if (e.CommandName == "delete")
             {
-
                 ctl.DeleteGroup(groupId);
                 PopulateDepartmentList();
+                RemoveSwnGroup(groupId.ToString());
             }
             if (e.CommandName == "edit")
             {
@@ -111,9 +115,12 @@ namespace tjc.Modules.EmployeeDB
             {
                 ctl.UpdateGroup(group);
             }
-            hdDepartmentId.Value = "";
+            if (group.IsSwnGroup)
+                SyncSwnGroup(group);
+            ClearForm();
             PopulateDepartmentList();
         }
+
         protected void pnlDepartments_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -136,6 +143,13 @@ namespace tjc.Modules.EmployeeDB
         #endregion
 
         #region Methods
+        private void ClearForm()
+        {
+            hdDepartmentId.Value = string.Empty;
+            txtDescription.Text = string.Empty;
+            drpType.SelectedIndex = 0;
+            chkIsSWNGroup.Checked = false;
+        }
         public DepartmentView()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
@@ -145,6 +159,65 @@ namespace tjc.Modules.EmployeeDB
             var ctl = new GroupController();
             rptDepartments.DataSource = ctl.GetGroups();
             rptDepartments.DataBind();
+        }
+        private void RemoveSwnGroup(string groupId)
+        {
+            try
+            {
+                TokenInformation sessionToken = SessionVariables.SwnToken;
+                if (sessionToken == null)
+                {
+                    sessionToken = Helper.CreateSwnToken(SwnServiceIdentifier, SwnSubscriptionKey, new LoginRequest { Password = SwnPassword, Username = SwnUsername });
+                    SessionVariables.SwnToken = sessionToken;
+                }
+                SwnClient client = new SwnClient(new HttpClient());
+                var authorization = new AuthenticationHeaderValue("Bearer", sessionToken.Token);
+                var result = client.DELETEGroupsIdAsync(groupId, SwnServiceIdentifier, SwnSubscriptionKey, authorization);
+                result.Wait();
+            }
+            catch (Exception exc)
+            {
+                ltMessage.Text = string.Format("<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> The Following Error Occured. <strong class='d-block ms-4'>{0}</strong><span class='d-block'>Please review the {1} Group on the <a href='https://idsrv.sendwordnow.com/account/signin'>Send Word Now</a> site to ensure that it was deleted correctly.</span></div>", exc.InnerException.Message);
+            }
+        }
+        private void SyncSwnGroup(Group group)
+        {
+            string process = "Sync SWN Group";
+            try
+            {
+                LoginRequest loginRequest = new LoginRequest { Password = SwnPassword, Username = SwnUsername };
+                string token = SwnInterface.GetToken(SwnServiceIdentifier, SwnSubscriptionKey, loginRequest);
+
+                var ctl = new GroupController();
+                SwgGroupDetails groupDetails = new SwgGroupDetails();
+                IEnumerable<string> groupMembers = ctl.GetSwnGroupMembers(group.GroupId);
+                try
+                {
+                    groupDetails = SwnInterface.GetSwnGroup(group.GroupId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
+                }
+                catch { }
+                ICollection<string> members = groupMembers.ToList();
+                GroupMemberModel model = new GroupMemberModel { Contacts = members };
+                if (groupDetails != null && string.IsNullOrEmpty(groupDetails.Id))
+                {
+                    process = String.Format("Added {0} Group to SWN", group.GroupName);
+                    var addedGroup = SwnInterface.AddSwnGroup(group, model, SwnServiceIdentifier, SwnSubscriptionKey, token, true);
+                    ltMessage.Text = string.Format("<div class='alert alert-success'><i class='fas fa-thumbs-up'></i> Successfully added {0} group to SWN</div>", group.GroupName);
+                }
+                else
+                {
+                    process = String.Format("Updated {0} Group", group.GroupName);
+                    var updatedGroup = SwnInterface.AddSwnGroup(group, model, SwnServiceIdentifier, SwnSubscriptionKey, token, false);
+                    ltMessage.Text = string.Format("<div class='alert alert-success'><i class='fas fa-thumbs-up'></i> Successfully updated {0} group in SWN</div>", group.GroupName);
+                }
+            }
+            catch (Exception exc)
+            {
+                SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
+                var ctl = new SwnLogController();
+                ctl.CreateSwnLog(swnLog);
+                ltMessage.Text = string.Format("<div class='alert alert-danger'><i class='fas fa-exclamation-circle'></i> The Following Error Occured. <strong class='d-block ms-4'>{0}</strong><span class='d-block'>Please review the {1} Group on the <a href='https://idsrv.sendwordnow.com/account/signin'>Send Word Now</a> site to ensure that it was updated correctly.</span></div>", exc.InnerException.Message);
+            }
         }
         #endregion
 

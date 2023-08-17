@@ -220,27 +220,27 @@ namespace tjc.Modules.PretrialServices
         protected void cmdReport_Click(object sender, EventArgs e)
         {
             string reportUrl = string.Format("{0}/PretrialReport.aspx?cid={1}&mid={2}&indate={3}", TemplateSourceDirectory, CountyId, ModuleId, IntakeDate.ToShortDateString());
-            switch (drpReportType.SelectedIndex)
+            switch (hdReportType.Value)
             {
-                case 0:
+                case "0":
                     {
                         Response.Redirect(string.Format("{0}&rid={1}", reportUrl, "daily"), true);
                         break;
                     }
 
-                case 1:
-                    {
-                        Response.Redirect(string.Format("{0}&rid={1}", reportUrl, "monthly"), true);
-                        break;
-                    }
-
-                case 2:
+                case "1":
                     {
                         Response.Redirect(string.Format("{0}&rid={1}", reportUrl, "weekly"), true);
                         break;
                     }
 
-                case 3:
+                case "2":
+                    {
+                        Response.Redirect(string.Format("{0}&rid={1}", reportUrl, "monthly"), true);
+                        break;
+                    }
+
+                case "3":
                     {
                         Response.Redirect(string.Format("{0}&rid={1}", reportUrl, "yearly"), true);
                         break;
