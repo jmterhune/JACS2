@@ -17,14 +17,14 @@
                     <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" placeholder="NC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field"  ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
                 </div>
             </div>
             <fieldset class="outline-fieldset mb-0">
-                <legend>Claimant</legend>
+                <legend>Plaintiff</legend>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -53,7 +53,7 @@
                         <asp:ListItem Text="CDSPF" title="Citizen's Dispute Settlement Program Family" />
                     </asp:DropDownList>
                     <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                     <asp:DropDownList ID="drpCountyLetter" runat="server" ToolTip="County" CssClass="form-control location-field" ClientIDMode="Static">
                         <asp:ListItem Text="" Value=""></asp:ListItem>
                         <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
@@ -67,7 +67,7 @@
                 </div>
             </div>
             <fieldset class="outline-fieldset mb-0">
-                <legend>Respondent</legend>
+                <legend>Defendant</legend>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -112,7 +112,7 @@
                 </div>
             </div>
             <fieldset class="outline-fieldset">
-                <legend>Petitioner's Attorney</legend>
+                <legend>Plaintiff's Attorney</legend>
                 <asp:HiddenField ID="hdPetitionerAttorneyId" runat="server" ClientIDMode="Static" />
                 <div class="row">
                     <div class="col-auto">
@@ -158,7 +158,7 @@
                 </div>
             </fieldset>
             <fieldset class="outline-fieldset">
-                <legend>Respondent's Attorney</legend>
+                <legend>Defendant's Attorney</legend>
                 <asp:HiddenField ID="hdRespondentAttorneyId" runat="server" ClientIDMode="Static" />
                 <div class="row">
                     <div class="col-auto">
@@ -243,8 +243,8 @@
                             <asp:Label runat="server" AssociatedControlID="rblPtcOrdered" Text="Mediation Forum" />
                             <asp:RadioButtonList ID="rblPtcOrdered" CssClass="form-control radio-buttons" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
                                 <asp:ListItem Text="None" Value="N" />
-                                <asp:ListItem Text="Full" Value="F" />
-                                <asp:ListItem Text="Partial/Temporary" Value="C" />
+                                <asp:ListItem Text="PTC" Value="PTC" />
+                                <asp:ListItem Text="Court Ordered" Value="Court Ordered" />
                             </asp:RadioButtonList>
                         </div>
                     </div>
@@ -262,89 +262,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </fieldset>
-            <fieldset class="outline-fieldset">
-                <legend>Fee Information</legend>
-                <div class="row">
-                    <div class="col-auto">
-                        <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Amount" />
-                            <asp:DropDownList runat="server" ID="drpFeeAmount" CssClass="form-control">
-                                <asp:ListItem Text="< Select Fee Amount >" Value="" />
-                                <asp:ListItem Text="$60" Value="$60" />
-                                <asp:ListItem Text="Indigent" Value="Indigent" />
-                                <asp:ListItem Text="Eviction" Value="Eviction" />
-                            </asp:DropDownList>
+                     <div class="col-auto pt-4">
+                        <div class="form-group pt-2">
+                            <div class="form-check form-switch ">
+                                <asp:CheckBox ID="chkInterpreterRequested" runat="server" Text="Interpreter Requested" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-auto">
-                        <fieldset class="outline-fieldset">
-                            <legend class="small">Fee's Paid By</legend>
-                            <div class="row">
-                                <div class="col-auto">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="drpPetitionerFeesPaid" Text="Petitioner" />
-                                        <asp:DropDownList ID="drpPetitionerFeesPaid" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Fee Paid >" Value="" />
-                                            <asp:ListItem Text="$0" />
-                                            <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Indigent" />
-                                        </asp:DropDownList>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="drpRespondentFeesPaid" Text="Respondent" />
-                                        <asp:DropDownList ID="drpRespondentFeesPaid" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Fee Paid >" Value="" />
-                                            <asp:ListItem Text="$0" />
-                                            <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Indigent" />
-                                        </asp:DropDownList>
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="col-auto">
-                        <fieldset class="outline-fieldset">
-                            <legend class="small">Fee's Owed By</legend>
-                            <div class="row">
-                                <div class="col-auto">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="drpPetitionerFeesOwed" Text="Petitioner" />
-                                        <asp:DropDownList ID="drpPetitionerFeesOwed" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Fee Owed >" Value="" />
-                                            <asp:ListItem Text="$0" />
-                                            <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Certificate of Indigency" />
-                                        </asp:DropDownList>
-                                    </div>
-                                </div>
-                                <div class="col-auto pt-4">
-                                    <div class="form-check form-switch mt-2">
-                                        <asp:CheckBox ID="chkPetitionerFta" Text="P-FTA" ToolTip="Petitioner Failure to Appear" runat="server" />
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="drpRespondentFeesOwed" Text="Respondent" />
-                                        <asp:DropDownList ID="drpRespondentFeesOwed" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Fee Owed >" Value="" />
-                                            <asp:ListItem Text="$0" />
-                                            <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Certificate of Indigency" />
-                                        </asp:DropDownList>
-                                    </div>
-                                </div>
-                                <div class="col-auto pt-4">
-                                    <div class="form-check form-switch mt-2">
-                                        <asp:CheckBox ID="chkRespondentFta" ToolTip="Respondent Failure to Appear" Text="R-FTA" runat="server" />
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
                     </div>
                 </div>
             </fieldset>
@@ -390,7 +313,7 @@
                                     <div class="form-group">
                                         <div class="form-check form-switch mt-4">
                                             <input class="form-check-input" type="checkbox" id="chkMeetingHeld" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkMeetingHeld">Meeting Held</label>
+                                            <label class="form-check-label" for="chkMeetingHeld">Mediation Held</label>
                                         </div>
                                         <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>
@@ -437,7 +360,7 @@
                                     <div class="form-group">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemaining" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
-                                            <label class="form-check-label me-3" for="chkPreparedAttorney">Adjouned with Time Remaining</label>
+                                            <label class="form-check-label me-3" for="chkPreparedAttorney">Adjourned with Time Remaining</label>
                                         </div>
                                     </div>
                                 </div>

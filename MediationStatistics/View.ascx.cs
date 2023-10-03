@@ -132,37 +132,12 @@ namespace tjc.Modules.MediationStatistics
 
         private string GetCaseNumber()
         {
-            string caseNumber = "";
-            caseNumber += txtCaseYear.Text;
-
-            var year = txtCaseYear.Text;
-            var code = txtCaseType.Text;
-            var number = txtCaseSequence.Text;
-            var suffix = txtSuffix.Text;
-            if (year.Length == 2)
-                year = "20" + year;
-            if (number.Length > 0)
-                number = number.ToString().PadRight(6, '0');
-            if (year.Length > 0 & code.Length > 0 && number.Length > 0)
-                caseNumber = string.Format("{0} {1} {2} {3}", year, code.ToUpper(), number, suffix.ToUpper());
-            return caseNumber;
+          return  Helper.GetCaseFormatted(txtCaseYear.Text,txtCaseType.Text,txtCaseSequence.Text,txtSuffix.Text);
         }
+        
         private string GetCDSPNumber()
         {
-            string cdspNumber = "";
-            var type = drpCDSPType.SelectedValue;
-            var year = txtCDSPYear.Text;
-            var number = txtCDSPNumber.Text;
-            var location = drpCountyLetter.SelectedValue;
-            if (type.Length > 0) { cdspNumber += "-"; } else { return null; }
-            if (year.Length > 0) { cdspNumber += year + "-"; } else { return null; }
-            if (number.Length > 0) { cdspNumber += number + "-"; } else { return null; }
-            if (location.Length > 0)
-                cdspNumber += location;
-            if (cdspNumber != null && cdspNumber.EndsWith("-"))
-                cdspNumber = cdspNumber.Trim('-');
-
-            return cdspNumber;
+          return  Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
         }
         private void NavigateToCase(GroupType selectedCaseType, int selectedCaseId)
         {

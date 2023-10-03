@@ -105,7 +105,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\PhotoID.cs" />
     <Compile Include="Components\JacsReportObjects.cs" />
+    <Compile Include="Components\PhotoIDController.cs" />
     <Compile Include="Components\ReportController.cs" />
     <Compile Include="Components\Employee.cs" />
     <Compile Include="ReportsModuleBase.cs">
@@ -121,6 +123,13 @@
     </Compile>
     <Compile Include="Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DataCardView.ascx.cs">
+      <DependentUpon>DataCardView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DataCardView.ascx.designer.cs">
+      <DependentUpon>DataCardView.ascx</DependentUpon>
     </Compile>
     <Compile Include="WeekDayHearings.ascx.cs">
       <DependentUpon>WeekDayHearings.ascx</DependentUpon>
@@ -144,6 +153,7 @@
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
+    <Content Include="DataCardView.ascx" />
     <Content Include="WeekDayHearings.ascx" />
     <Content Include="View.ascx" />
   </ItemGroup>

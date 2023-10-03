@@ -4,6 +4,8 @@
         <li><a href="/12th-Circuit-Services/Human-Resources/Employee-Reports/rid/1"><i class="fas fa-birthday-cake"></i> Birthday Report</a></li>
         <li><a href="/12th-Circuit-Services/Human-Resources/Employee-Reports/rid/2"><i class="fas fa-star"></i> Service Reports</a></li>
         <li><a href="/12th-Circuit-Services/Human-Resources/Employee-Reports/rid/3"><i class="fas fa-user-minus"></i> Termination Report</a></li>
+        <li>
+            <asp:HyperLink ID="lnkDataCard" runat="server"><i class="fas fa-id-badge"></i> Data Card</asp:HyperLink></li>
 
     </ul>
 </asp:Panel>

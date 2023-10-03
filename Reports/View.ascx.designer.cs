@@ -24,6 +24,15 @@ namespace tjc.Modules.Reports
         protected global::System.Web.UI.WebControls.Panel pnlReportList;
 
         /// <summary>
+        /// lnkDataCard control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDataCard;
+
+        /// <summary>
         /// pnlBirthdays control.
         /// </summary>
         /// <remarks>

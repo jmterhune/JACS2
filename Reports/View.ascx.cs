@@ -45,6 +45,7 @@ namespace tjc.Modules.Reports
         {
             try
             {
+                lnkDataCard.NavigateUrl = EditUrl("DataCard");
                 if (ReportId > 0)
                 {
                     pnlReportList.Visible = false;

@@ -150,7 +150,6 @@ namespace tjc.Modules.MediationStatistics
         }
         private void PopulateCaseInformation()
         {
-            txtBusinessName.Text = _currentCase.p1_business;
             txtFirstName.Text = _currentCase.p1_FirstName;
             txtLastName.Text = _currentCase.p1_LastName;
             string delimiter;
@@ -289,7 +288,6 @@ namespace tjc.Modules.MediationStatistics
         {
             var ctl = new CaseController();
             _currentCase.LastModifiedDate = DateTime.Now;
-            _currentCase.p1_business = txtBusinessName.Text;
             _currentCase.p1_FirstName = txtFirstName.Text;
             _currentCase.p1_LastName = txtLastName.Text;
             _currentCase.RegionId = _regionId;

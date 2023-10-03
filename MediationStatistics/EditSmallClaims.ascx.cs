@@ -249,13 +249,12 @@ namespace tjc.Modules.MediationStatistics
                     txtOrderReferral.Text = session.ReferralDate.Value.ToShortDateString();
                 chkTelephoneSession.Checked = session.HeldByPhone;
                 chkArbitrationReferral.Checked = session.ArbitrationReferral;
+               
                 txtComments.Text = session.Comment;
                 chkProSePetitioner.Checked = session.p1_ProSe;
                 chkProSeRespondent.Checked = session.p2_ProSe;
-                if (session.p1_FTA.HasValue)
-                    chkPetitionerFta.Checked = session.p2_FTA.Value;
-                if (session.p2_FTA.HasValue)
-                    chkRespondentFta.Checked = session.p2_FTA.Value;
+                if(session.Interpreter.HasValue)
+                    chkInterpreterRequested.Checked = session.Interpreter.Value;
                 if (session.p1_AttorneyId.HasValue)
                 {
                     hdPetitionerAttorneyId.Value = session.p1_AttorneyId.ToString();
@@ -294,11 +293,6 @@ namespace tjc.Modules.MediationStatistics
                         txtRespondentExtension.Text = string.Empty;
                     }
                 }
-                drpFeeAmount.SelectedValue = session.FeeAmount;
-                drpRespondentFeesOwed.SelectedValue = session.p2_FeesOwed;
-                drpRespondentFeesPaid.SelectedValue = session.p2_FeesPaid;
-                drpPetitionerFeesOwed.SelectedValue = session.p1_FeesOwed;
-                drpPetitionerFeesPaid.SelectedValue = session.p1_FeesPaid;
                 rblPtcOrdered.SelectedValue = session.PTC_CourtOrdered;
                 foreach (Issue issue in session.SessionIssues)
                 {
@@ -442,16 +436,10 @@ namespace tjc.Modules.MediationStatistics
                 session.LastModifiedDate = DateTime.Now;
                 session.p1_ProSe = chkProSePetitioner.Checked;
                 session.p2_ProSe = chkProSeRespondent.Checked;
-                session.p1_FTA = chkPetitionerFta.Checked;
-                session.p2_FTA = chkRespondentFta.Checked;
                 session.Mediator = drpMediator.SelectedValue;
                 session.HeldByPhone = chkTelephoneSession.Checked;
                 session.ArbitrationReferral = chkArbitrationReferral.Checked;
-                session.FeeAmount = drpFeeAmount.SelectedValue;
-                session.p1_FeesOwed = drpPetitionerFeesOwed.SelectedValue;
-                session.p1_FeesPaid = drpPetitionerFeesPaid.SelectedValue;
-                session.p2_FeesOwed = drpRespondentFeesOwed.SelectedValue;
-                session.p2_FeesPaid = drpRespondentFeesPaid.SelectedValue;
+                session.Interpreter=chkInterpreterRequested.Checked;
             }
             if (session.SessionId > 0)
             {
@@ -524,14 +512,12 @@ namespace tjc.Modules.MediationStatistics
                 chkProSePetitioner.LabelAttributes.Add("class", "form-check-label");
                 chkProSeRespondent.InputAttributes.Add("class", "form-check-input");
                 chkProSeRespondent.LabelAttributes.Add("class", "form-check-label");
-                chkPetitionerFta.InputAttributes.Add("class", "form-check-input");
-                chkPetitionerFta.LabelAttributes.Add("class", "form-check-label");
-                chkRespondentFta.InputAttributes.Add("class", "form-check-input");
-                chkRespondentFta.LabelAttributes.Add("class", "form-check-label");
                 chkTelephoneSession.InputAttributes.Add("class", "form-check-input");
                 chkTelephoneSession.LabelAttributes.Add("class", "form-check-label");
                 chkArbitrationReferral.InputAttributes.Add("class", "form-check-input");
                 chkArbitrationReferral.LabelAttributes.Add("class", "form-check-label");
+                chkInterpreterRequested.InputAttributes.Add("class", "form-check-input");
+                chkInterpreterRequested.LabelAttributes.Add("class", "form-check-label");
                 if (!Page.IsPostBack)
                 {
                     if (_regionId > 0)

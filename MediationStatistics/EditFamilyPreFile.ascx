@@ -17,7 +17,7 @@
                     <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" placeholder="NC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field"  ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
@@ -53,7 +53,7 @@
                         <asp:ListItem Text="CDSPF" title="Citizen's Dispute Settlement Program Family" />
                     </asp:DropDownList>
                     <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                     <asp:DropDownList ID="drpCountyLetter" runat="server" ToolTip="County" CssClass="form-control location-field" ClientIDMode="Static">
                         <asp:ListItem Text="" Value=""></asp:ListItem>
                         <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
@@ -189,7 +189,7 @@
                                     <div class="form-group">
                                         <div class="form-check form-switch mt-4">
                                             <input class="form-check-input" type="checkbox" id="chkMeetingHeld" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkMeetingHeld">Meeting Held</label>
+                                            <label class="form-check-label" for="chkMeetingHeld">Mediation Held</label>
                                         </div>
                                         <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>

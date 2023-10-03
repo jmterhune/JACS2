@@ -249,112 +249,112 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.LinkButton cmdDeleteSession;
 
         /// <summary>
-        /// hdPetitionerAttorneyId control.
+        /// hdPlaintiffAttorneyId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdPetitionerAttorneyId;
+        protected global::System.Web.UI.WebControls.HiddenField hdPlaintiffAttorneyId;
 
         /// <summary>
-        /// chkProSePetitioner control.
+        /// chkProSePlaintiff control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkProSePetitioner;
+        protected global::System.Web.UI.WebControls.CheckBox chkProSePlaintiff;
 
         /// <summary>
-        /// txtPetitionerFirstName control.
+        /// txtPlaintiffFirstName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPetitionerFirstName;
+        protected global::System.Web.UI.WebControls.TextBox txtPlaintiffFirstName;
 
         /// <summary>
-        /// txtPetitionerLastName control.
+        /// txtPlaintiffLastName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPetitionerLastName;
+        protected global::System.Web.UI.WebControls.TextBox txtPlaintiffLastName;
 
         /// <summary>
-        /// txtPetitionerPhone control.
+        /// txtPlaintiffPhone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPetitionerPhone;
+        protected global::System.Web.UI.WebControls.TextBox txtPlaintiffPhone;
 
         /// <summary>
-        /// txtPetitionerExtension control.
+        /// txtPlaintiffExtension control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPetitionerExtension;
+        protected global::System.Web.UI.WebControls.TextBox txtPlaintiffExtension;
 
         /// <summary>
-        /// hdRespondentAttorneyId control.
+        /// hdDefendantAttorneyId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdRespondentAttorneyId;
+        protected global::System.Web.UI.WebControls.HiddenField hdDefendantAttorneyId;
 
         /// <summary>
-        /// chkProSeRespondent control.
+        /// chkProSeDefendant control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkProSeRespondent;
+        protected global::System.Web.UI.WebControls.CheckBox chkProSeDefendant;
 
         /// <summary>
-        /// txtRespondentFirstName control.
+        /// txtDefendantFirstName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRespondentFirstName;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantFirstName;
 
         /// <summary>
-        /// txtRespondentLastName control.
+        /// txtDefendantLastName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRespondentLastName;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantLastName;
 
         /// <summary>
-        /// txtRespondentPhone control.
+        /// txtDefendantPhone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRespondentPhone;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantPhone;
 
         /// <summary>
-        /// txtRespondentExtension control.
+        /// txtDefendantExtension control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRespondentExtension;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantExtension;
 
         /// <summary>
         /// drpCaseType control.
@@ -411,6 +411,15 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.CheckBox chkFeeAgreementEntered;
 
         /// <summary>
+        /// chkInterpreterRequested control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkInterpreterRequested;
+
+        /// <summary>
         /// chkDepartmentFeeWaiver control.
         /// </summary>
         /// <remarks>
@@ -465,58 +474,58 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.DropDownList drpFeeAmount;
 
         /// <summary>
-        /// drpPetitionerFeesPaid control.
+        /// drpPlaintiffFeesPaid control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpPetitionerFeesPaid;
+        protected global::System.Web.UI.WebControls.DropDownList drpPlaintiffFeesPaid;
 
         /// <summary>
-        /// drpRespondentFeesPaid control.
+        /// drpDefendantFeesPaid control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpRespondentFeesPaid;
+        protected global::System.Web.UI.WebControls.DropDownList drpDefendantFeesPaid;
 
         /// <summary>
-        /// drpPetitionerFeesOwed control.
+        /// drpPlaintiffFeesOwed control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpPetitionerFeesOwed;
+        protected global::System.Web.UI.WebControls.DropDownList drpPlaintiffFeesOwed;
 
         /// <summary>
-        /// chkPetitionerFta control.
+        /// chkPlaintiffFta control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPetitionerFta;
+        protected global::System.Web.UI.WebControls.CheckBox chkPlaintiffFta;
 
         /// <summary>
-        /// drpRespondentFeesOwed control.
+        /// drpDefendantFeesOwed control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpRespondentFeesOwed;
+        protected global::System.Web.UI.WebControls.DropDownList drpDefendantFeesOwed;
 
         /// <summary>
-        /// chkRespondentFta control.
+        /// chkDefendantFta control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkRespondentFta;
+        protected global::System.Web.UI.WebControls.CheckBox chkDefendantFta;
 
         /// <summary>
         /// fsSecondaryIssues control.

@@ -268,8 +268,6 @@
     <Content Include="ActionList.ascx" />
     <Content Include="IssueList.ascx" />
     <Content Include="RegionList.ascx" />
-    <Content Include="Documentation\Documentation.css" />
-    <Content Include="Documentation\Documentation.html" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />

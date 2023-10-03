@@ -87,6 +87,15 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.TextBox txtSuffix;
 
         /// <summary>
+        /// txtLastName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLastName;
+
+        /// <summary>
         /// txtFirstName control.
         /// </summary>
         /// <remarks>
@@ -177,13 +186,13 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.DropDownList drpMediator;
 
         /// <summary>
-        /// chkTelephoneSession control.
+        /// txtOrderReferral control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkTelephoneSession;
+        protected global::System.Web.UI.WebControls.TextBox txtOrderReferral;
 
         /// <summary>
         /// txtMediationDate control.
@@ -195,13 +204,31 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.TextBox txtMediationDate;
 
         /// <summary>
-        /// txtOrderReferral control.
+        /// chkTelephoneSession control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOrderReferral;
+        protected global::System.Web.UI.WebControls.CheckBox chkTelephoneSession;
+
+        /// <summary>
+        /// chkInmate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkInmate;
+
+        /// <summary>
+        /// chkInterpreterRequested control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkInterpreterRequested;
 
         /// <summary>
         /// fsSecondaryIssues control.

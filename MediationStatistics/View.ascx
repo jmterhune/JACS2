@@ -16,7 +16,7 @@
     <div class="tab-content">
         <div id="caseSearch" class="tab-pane active">
             <div class="toggle toggle-quaternary" data-plugin-toggle="toggle">
-                <section class="toggle">
+                <section class="toggle active">
                     <button class="toggle-heading" type="button">Expand for Search / Add Case</button>
                     <div class="toggle-content">
                         <asp:ValidationSummary ValidationGroup="CaseSearch" CssClass="med_ErrorList" ID="valSummaryCaseSearch"
@@ -54,7 +54,7 @@
                                             <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                                             <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                                             <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" placeholder="NC" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field"  ClientIDMode="Static"></asp:TextBox>
                                             <div class="input-group-append">
                                                 <small class="input-group-text form-control" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                                             </div>
@@ -70,7 +70,7 @@
                                                 <asp:ListItem Text="CDSPF" />
                                             </asp:DropDownList>
                                             <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                                             <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control location-field" ClientIDMode="Static">
                                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                                 <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>

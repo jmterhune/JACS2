@@ -17,7 +17,7 @@
                     <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" placeholder="NC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
@@ -28,9 +28,14 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
+                            <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
+                            <asp:TextBox runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                        </div>
+                        <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
                             <asp:TextBox runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
+
                     </div>
                 </div>
             </fieldset>
@@ -72,21 +77,30 @@
 
                         </asp:DropDownList>
                     </div>
-                    <div class="form-check form-switch mt-4">
-                        <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Telephonic Session" />
-                    </div>
-                </div>
-                <div class="col-auto">
-
-                    <div class="form-group">
-                        <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
-                    </div>
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtOrderReferral" Text="Order of Referral" />
                         <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
                     </div>
+
                 </div>
+                <div class="col-auto">
+                    <div class="form-group">
+                        <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
+                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                    </div>
+                    <div class="pt-4">
+                        <div class="form-check form-switch d-inline-block me-2 mt-1">
+                            <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Telephonic Session" />
+                        </div>
+                        <div class="form-check form-switch d-inline-block me-2 mt-1">
+                            <asp:CheckBox ID="chkInmate" runat="server" Text="Inmate" />
+                        </div>
+                        <div class="form-check form-switch d-inline-block mt-1">
+                            <asp:CheckBox ID="chkInterpreterRequested" runat="server" Text="Interpreter Requested" />
+                        </div>
+                    </div>
+                </div>
+
                 <fieldset class="outline-fieldset" id="fsSecondaryIssues" runat="server">
                     <legend>Case Types</legend>
                     <asp:CheckBoxList ID="clsSecondaryIssues" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list column-4 form-check form-switch" RepeatLayout="UnorderedList">
@@ -129,7 +143,7 @@
                                     <div class="form-group">
                                         <div class="form-check form-switch mt-4">
                                             <input class="form-check-input" type="checkbox" id="chkMeetingHeld" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkMeetingHeld">Meeting Held</label>
+                                            <label class="form-check-label" for="chkMeetingHeld">Mediation Held</label>
                                         </div>
                                         <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>

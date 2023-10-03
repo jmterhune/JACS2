@@ -420,67 +420,13 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.CheckBox chkArbitrationReferral;
 
         /// <summary>
-        /// drpFeeAmount control.
+        /// chkInterpreterRequested control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpFeeAmount;
-
-        /// <summary>
-        /// drpPetitionerFeesPaid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpPetitionerFeesPaid;
-
-        /// <summary>
-        /// drpRespondentFeesPaid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpRespondentFeesPaid;
-
-        /// <summary>
-        /// drpPetitionerFeesOwed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpPetitionerFeesOwed;
-
-        /// <summary>
-        /// chkPetitionerFta control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPetitionerFta;
-
-        /// <summary>
-        /// drpRespondentFeesOwed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpRespondentFeesOwed;
-
-        /// <summary>
-        /// chkRespondentFta control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkRespondentFta;
+        protected global::System.Web.UI.WebControls.CheckBox chkInterpreterRequested;
 
         /// <summary>
         /// fsSecondaryIssues control.

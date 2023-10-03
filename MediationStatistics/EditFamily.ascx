@@ -17,14 +17,14 @@
                     <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" placeholder="NC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field"  ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
                 </div>
             </div>
             <fieldset class="outline-fieldset mb-0">
-                <legend>Claimant</legend>
+                <legend>Petitioner</legend>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
@@ -53,7 +53,7 @@
                         <asp:ListItem Text="CDSPF" title="Citizen's Dispute Settlement Program Family" />
                     </asp:DropDownList>
                     <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                     <asp:DropDownList ID="drpCountyLetter" runat="server" ToolTip="County" CssClass="form-control location-field" ClientIDMode="Static">
                         <asp:ListItem Text="" Value=""></asp:ListItem>
                         <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
@@ -301,12 +301,12 @@
                 <div class="row">
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Amount" />
+                            <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Range" />
                             <asp:DropDownList runat="server" ID="drpFeeAmount" CssClass="form-control">
-                                <asp:ListItem Text="< Select Fee Amount >" Value="" />
-                                <asp:ListItem Text="$60" Value="$60" />
+                                <asp:ListItem Text="< Select Fee Range >" Value="" />
                                 <asp:ListItem Text="Indigent" Value="Indigent" />
-                                <asp:ListItem Text="Eviction" Value="Eviction" />
+                                <asp:ListItem Text="$0-$50" Value="$0-$50" />
+                                <asp:ListItem Text="$50-$100" Value="$50-$100" />
                             </asp:DropDownList>
                         </div>
                     </div>
@@ -319,9 +319,10 @@
                                         <asp:Label runat="server" AssociatedControlID="drpPetitionerFeesPaid" Text="Petitioner" />
                                         <asp:DropDownList ID="drpPetitionerFeesPaid" runat="server" CssClass="form-control">
                                             <asp:ListItem Text="< Select Fee Paid >" Value="" />
+                                            <asp:ListItem Text="Certificate of Indigency" />
                                             <asp:ListItem Text="$0" />
                                             <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Indigent" />
+                                             <asp:ListItem Text="$120" />
                                         </asp:DropDownList>
                                     </div>
                                 </div>
@@ -330,9 +331,10 @@
                                         <asp:Label runat="server" AssociatedControlID="drpRespondentFeesPaid" Text="Respondent" />
                                         <asp:DropDownList ID="drpRespondentFeesPaid" runat="server" CssClass="form-control">
                                             <asp:ListItem Text="< Select Fee Paid >" Value="" />
+                                            <asp:ListItem Text="Certificate of Indigency" />
                                             <asp:ListItem Text="$0" />
                                             <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Indigent" />
+                                             <asp:ListItem Text="$120" />
                                         </asp:DropDownList>
                                     </div>
                                 </div>
@@ -348,9 +350,10 @@
                                         <asp:Label runat="server" AssociatedControlID="drpPetitionerFeesOwed" Text="Petitioner" />
                                         <asp:DropDownList ID="drpPetitionerFeesOwed" runat="server" CssClass="form-control">
                                             <asp:ListItem Text="< Select Fee Owed >" Value="" />
+                                            <asp:ListItem Text="Certificate of Indigency" />
                                             <asp:ListItem Text="$0" />
                                             <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Certificate of Indigency" />
+                                             <asp:ListItem Text="$120" />
                                         </asp:DropDownList>
                                     </div>
                                 </div>
@@ -364,9 +367,10 @@
                                         <asp:Label runat="server" AssociatedControlID="drpRespondentFeesOwed" Text="Respondent" />
                                         <asp:DropDownList ID="drpRespondentFeesOwed" runat="server" CssClass="form-control">
                                             <asp:ListItem Text="< Select Fee Owed >" Value="" />
+                                            <asp:ListItem Text="Certificate of Indigency" />
                                             <asp:ListItem Text="$0" />
                                             <asp:ListItem Text="$60" />
-                                            <asp:ListItem Text="Certificate of Indigency" />
+                                             <asp:ListItem Text="$120" />
                                         </asp:DropDownList>
                                     </div>
                                 </div>
@@ -422,7 +426,7 @@
                                     <div class="form-group">
                                         <div class="form-check form-switch mt-4">
                                             <input class="form-check-input" type="checkbox" id="chkMeetingHeld" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkMeetingHeld">Meeting Held</label>
+                                            <label class="form-check-label" for="chkMeetingHeld">Mediation Held</label>
                                         </div>
                                         <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>
@@ -469,7 +473,7 @@
                                     <div class="form-group">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemaining" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
-                                            <label class="form-check-label me-3" for="chkPreparedAttorney">Adjouned with Time Remaining</label>
+                                            <label class="form-check-label me-3" for="chkPreparedAttorney">Adjourned with Time Remaining</label>
                                         </div>
                                     </div>
                                 </div>

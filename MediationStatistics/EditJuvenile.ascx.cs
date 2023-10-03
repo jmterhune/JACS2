@@ -152,6 +152,7 @@ namespace tjc.Modules.MediationStatistics
         private void PopulateCaseInformation()
         {
             txtFirstName.Text = _currentCase.p1_FirstName;
+            txtLastName.Text = _currentCase.p1_LastName;
             string delimiter;
             if (_currentCase.CaseNumber.Contains("-")) { delimiter = "-"; } else { delimiter = " "; }
             string[] caseNumber = _currentCase.CaseNumber.Split(char.Parse(delimiter));
@@ -212,6 +213,10 @@ namespace tjc.Modules.MediationStatistics
                     txtOrderReferral.Text = session.ReferralDate.Value.ToShortDateString();
                 chkTelephoneSession.Checked = false;
                 chkTelephoneSession.Checked = session.HeldByPhone;
+                if (session.Interpreter.HasValue)
+                    chkInterpreterRequested.Checked = session.Interpreter.Value;
+                if (session.Inmate.HasValue)
+                    chkInmate.Checked = session.Inmate.Value;
                 txtComments.Text = session.Comment;
                 foreach (Issue issue in session.SessionIssues)
                 {
@@ -235,7 +240,7 @@ namespace tjc.Modules.MediationStatistics
 
             lstEvents.DataBind();
         }
-        
+
         private void AddNewSession()
         {
             Session newSession = new Session
@@ -272,6 +277,7 @@ namespace tjc.Modules.MediationStatistics
             var ctl = new CaseController();
             _currentCase.LastModifiedDate = DateTime.Now;
             _currentCase.p1_FirstName = txtFirstName.Text;
+            _currentCase.p1_LastName = txtLastName.Text;
             _currentCase.RegionId = _regionId;
             _currentCase.GroupId = (int)_caseTypeGroup;
             _currentCase.CaseNumber = Helper.GetCaseFormatted(txtCaseYear.Text.Trim(), txtCaseType.Text.Trim(), txtCaseSequence.Text.Trim(), txtSuffix.Text.Trim());
@@ -310,6 +316,8 @@ namespace tjc.Modules.MediationStatistics
                 if (!string.IsNullOrEmpty(txtOrderReferral.Text))
                     session.ReferralDate = DateTime.Parse(txtOrderReferral.Text);
                 session.HeldByPhone = chkTelephoneSession.Checked;
+                session.Inmate = chkInmate.Checked;
+                session.Interpreter = chkInterpreterRequested.Checked;
                 session.Comment = txtComments.Text;
                 session.LastModifiedById = UserId;
                 session.LastModifiedDate = DateTime.Now;
@@ -382,6 +390,10 @@ namespace tjc.Modules.MediationStatistics
                 }
                 chkTelephoneSession.InputAttributes.Add("class", "form-check-input");
                 chkTelephoneSession.LabelAttributes.Add("class", "form-check-label");
+                chkInterpreterRequested.InputAttributes.Add("class", "form-check-input");
+                chkInterpreterRequested.LabelAttributes.Add("class", "form-check-label");
+                chkInmate.InputAttributes.Add("class", "form-check-input");
+                chkInmate.LabelAttributes.Add("class", "form-check-label");
                 if (!Page.IsPostBack)
                 {
                     if (_regionId > 0)

@@ -249,63 +249,65 @@ namespace tjc.Modules.MediationStatistics
                     txtOrderReferral.Text = session.ReferralDate.Value.ToShortDateString();
                 chkTelephoneSession.Checked = session.HeldByPhone;
                 txtComments.Text = session.Comment;
-                chkProSePetitioner.Checked = session.p1_ProSe;
-                chkProSeRespondent.Checked = session.p2_ProSe;
+                chkProSePlaintiff.Checked = session.p1_ProSe;
+                chkProSeDefendant.Checked = session.p2_ProSe;
                 if (session.OTS.HasValue)
                     chkOTSC.Checked = session.OTS.Value;
                 if (session.p1_FTA.HasValue)
-                    chkPetitionerFta.Checked = session.p2_FTA.Value;
+                    chkPlaintiffFta.Checked = session.p2_FTA.Value;
                 if (session.p2_FTA.HasValue)
-                    chkRespondentFta.Checked = session.p2_FTA.Value;
+                    chkDefendantFta.Checked = session.p2_FTA.Value;
                 if (session.p1_AttorneyId.HasValue)
                 {
-                    hdPetitionerAttorneyId.Value = session.p1_AttorneyId.ToString();
-                    Attorney petitionerAttorney = ctl.GetAttorney(session.p1_AttorneyId.Value);
-                    if (petitionerAttorney != null)
+                    hdPlaintiffAttorneyId.Value = session.p1_AttorneyId.ToString();
+                    Attorney PlaintiffAttorney = ctl.GetAttorney(session.p1_AttorneyId.Value);
+                    if (PlaintiffAttorney != null)
                     {
-                        txtPetitionerFirstName.Text = petitionerAttorney.FirstName;
-                        txtPetitionerLastName.Text = petitionerAttorney.LastName;
-                        txtPetitionerPhone.Text = petitionerAttorney.Phone;
-                        txtPetitionerExtension.Text = petitionerAttorney.Extension;
+                        txtPlaintiffFirstName.Text = PlaintiffAttorney.FirstName;
+                        txtPlaintiffLastName.Text = PlaintiffAttorney.LastName;
+                        txtPlaintiffPhone.Text = PlaintiffAttorney.Phone;
+                        txtPlaintiffExtension.Text = PlaintiffAttorney.Extension;
                     }
                     else
                     {
-                        txtPetitionerFirstName.Text = string.Empty;
-                        txtPetitionerLastName.Text = string.Empty;
-                        txtPetitionerPhone.Text = string.Empty;
-                        txtPetitionerExtension.Text = string.Empty;
+                        txtPlaintiffFirstName.Text = string.Empty;
+                        txtPlaintiffLastName.Text = string.Empty;
+                        txtPlaintiffPhone.Text = string.Empty;
+                        txtPlaintiffExtension.Text = string.Empty;
                     }
                 }
                 if (session.p2_AttorneyId.HasValue)
                 {
-                    hdRespondentAttorneyId.Value = session.p2_AttorneyId.ToString();
-                    Attorney respondentAttorney = ctl.GetAttorney(session.p2_AttorneyId.Value);
-                    if (respondentAttorney != null)
+                    hdDefendantAttorneyId.Value = session.p2_AttorneyId.ToString();
+                    Attorney DefendantAttorney = ctl.GetAttorney(session.p2_AttorneyId.Value);
+                    if (DefendantAttorney != null)
                     {
-                        txtRespondentFirstName.Text = respondentAttorney.FirstName;
-                        txtRespondentLastName.Text = respondentAttorney.LastName;
-                        txtRespondentPhone.Text = respondentAttorney.Phone;
-                        txtRespondentExtension.Text = respondentAttorney.Extension;
+                        txtDefendantFirstName.Text = DefendantAttorney.FirstName;
+                        txtDefendantLastName.Text = DefendantAttorney.LastName;
+                        txtDefendantPhone.Text = DefendantAttorney.Phone;
+                        txtDefendantExtension.Text = DefendantAttorney.Extension;
                     }
                     else
                     {
-                        txtRespondentFirstName.Text = string.Empty;
-                        txtRespondentLastName.Text = string.Empty;
-                        txtRespondentPhone.Text = string.Empty;
-                        txtRespondentExtension.Text = string.Empty;
+                        txtDefendantFirstName.Text = string.Empty;
+                        txtDefendantLastName.Text = string.Empty;
+                        txtDefendantPhone.Text = string.Empty;
+                        txtDefendantExtension.Text = string.Empty;
                     }
                 }
                 drpFeeAmount.SelectedValue = session.FeeAmount;
-                drpRespondentFeesOwed.SelectedValue = session.p2_FeesOwed;
-                drpRespondentFeesPaid.SelectedValue = session.p2_FeesPaid;
-                drpPetitionerFeesOwed.SelectedValue = session.p1_FeesOwed;
-                drpPetitionerFeesPaid.SelectedValue = session.p1_FeesPaid;
+                drpDefendantFeesOwed.SelectedValue = session.p2_FeesOwed;
+                drpDefendantFeesPaid.SelectedValue = session.p2_FeesPaid;
+                drpPlaintiffFeesOwed.SelectedValue = session.p1_FeesOwed;
+                drpPlaintiffFeesPaid.SelectedValue = session.p1_FeesPaid;
                 if (session.FeeAgreement.HasValue)
                     chkFeeAgreementEntered.Checked = session.FeeAgreement.Value;
                 if (session.FeeJudgement.HasValue)
                     chkFeeJudgmentEntered.Checked = session.FeeJudgement.Value;
                 if (session.FeeWaiver.HasValue)
                     chkDepartmentFeeWaiver.Checked = session.FeeWaiver.Value;
+                if(session.Interpreter.HasValue)
+                    chkInterpreterRequested.Checked = session.Interpreter.Value;
                 chkArbitrationReferral.Checked = session.ArbitrationReferral;
                 chkCircuitCivilReferal.Checked = session.CircuitCivilReferral;
                 foreach (Issue issue in session.SessionIssues)
@@ -434,10 +436,10 @@ namespace tjc.Modules.MediationStatistics
             if (_currentCase.CaseId >= 0)
             {
                 session.Mediator = drpMediator.SelectedValue;
-                if (!string.IsNullOrEmpty(hdPetitionerAttorneyId.Value))
-                    session.p1_AttorneyId = Int32.Parse(hdPetitionerAttorneyId.Value);
-                if (!string.IsNullOrEmpty(hdRespondentAttorneyId.Value))
-                    session.p2_AttorneyId = Int32.Parse(hdRespondentAttorneyId.Value);
+                if (!string.IsNullOrEmpty(hdPlaintiffAttorneyId.Value))
+                    session.p1_AttorneyId = Int32.Parse(hdPlaintiffAttorneyId.Value);
+                if (!string.IsNullOrEmpty(hdDefendantAttorneyId.Value))
+                    session.p2_AttorneyId = Int32.Parse(hdDefendantAttorneyId.Value);
                 if (drpCaseType.SelectedIndex > 0)
                     session.PrimaryCaseType = Int32.Parse(drpCaseType.SelectedValue);
                 if (!string.IsNullOrEmpty(txtMediationDate.Text))
@@ -447,23 +449,24 @@ namespace tjc.Modules.MediationStatistics
                 session.FeeAgreement = chkFeeAgreementEntered.Checked;
                 session.FeeJudgement = chkFeeJudgmentEntered.Checked;
                 session.FeeWaiver = chkDepartmentFeeWaiver.Checked;
+                session.Interpreter=chkInterpreterRequested.Checked;
                 session.Comment = txtComments.Text;
                 session.LastModifiedById = UserId;
                 session.LastModifiedDate = DateTime.Now;
-                session.p1_ProSe = chkProSePetitioner.Checked;
-                session.p2_ProSe = chkProSeRespondent.Checked;
-                session.p1_FTA = chkPetitionerFta.Checked;
-                session.p2_FTA = chkRespondentFta.Checked;
+                session.p1_ProSe = chkProSePlaintiff.Checked;
+                session.p2_ProSe = chkProSeDefendant.Checked;
+                session.p1_FTA = chkPlaintiffFta.Checked;
+                session.p2_FTA = chkDefendantFta.Checked;
                 session.OTS = chkOTSC.Checked;
                 session.Mediator = drpMediator.SelectedValue;
                 session.HeldByPhone = chkTelephoneSession.Checked;
                 session.ArbitrationReferral = chkArbitrationReferral.Checked;
                 session.CircuitCivilReferral = chkCircuitCivilReferal.Checked;
                 session.FeeAmount = drpFeeAmount.SelectedValue;
-                session.p1_FeesOwed = drpPetitionerFeesOwed.SelectedValue;
-                session.p1_FeesPaid = drpPetitionerFeesPaid.SelectedValue;
-                session.p2_FeesOwed = drpRespondentFeesOwed.SelectedValue;
-                session.p2_FeesPaid = drpRespondentFeesPaid.SelectedValue;
+                session.p1_FeesOwed = drpPlaintiffFeesOwed.SelectedValue;
+                session.p1_FeesPaid = drpPlaintiffFeesPaid.SelectedValue;
+                session.p2_FeesOwed = drpDefendantFeesOwed.SelectedValue;
+                session.p2_FeesPaid = drpDefendantFeesPaid.SelectedValue;
             }
             if (session.SessionId > 0)
             {
@@ -532,14 +535,14 @@ namespace tjc.Modules.MediationStatistics
                 {
                     _regionId = _currentCase.RegionId.Value;
                 }
-                chkProSePetitioner.InputAttributes.Add("class", "form-check-input");
-                chkProSePetitioner.LabelAttributes.Add("class", "form-check-label");
-                chkProSeRespondent.InputAttributes.Add("class", "form-check-input");
-                chkProSeRespondent.LabelAttributes.Add("class", "form-check-label");
-                chkPetitionerFta.InputAttributes.Add("class", "form-check-input");
-                chkPetitionerFta.LabelAttributes.Add("class", "form-check-label");
-                chkRespondentFta.InputAttributes.Add("class", "form-check-input");
-                chkRespondentFta.LabelAttributes.Add("class", "form-check-label");
+                chkProSePlaintiff.InputAttributes.Add("class", "form-check-input");
+                chkProSePlaintiff.LabelAttributes.Add("class", "form-check-label");
+                chkProSeDefendant.InputAttributes.Add("class", "form-check-input");
+                chkProSeDefendant.LabelAttributes.Add("class", "form-check-label");
+                chkPlaintiffFta.InputAttributes.Add("class", "form-check-input");
+                chkPlaintiffFta.LabelAttributes.Add("class", "form-check-label");
+                chkDefendantFta.InputAttributes.Add("class", "form-check-input");
+                chkDefendantFta.LabelAttributes.Add("class", "form-check-label");
                 chkTelephoneSession.InputAttributes.Add("class", "form-check-input");
                 chkTelephoneSession.LabelAttributes.Add("class", "form-check-label");
                 chkArbitrationReferral.InputAttributes.Add("class", "form-check-input");
@@ -547,7 +550,10 @@ namespace tjc.Modules.MediationStatistics
                 chkCircuitCivilReferal.InputAttributes.Add("class", "form-check-input");
                 chkCircuitCivilReferal.LabelAttributes.Add("class", "form-check-label");
                 chkDepartmentFeeWaiver.InputAttributes.Add("class", "form-check-input");
+                
                 chkDepartmentFeeWaiver.LabelAttributes.Add("class", "form-check-label");
+                chkInterpreterRequested.InputAttributes.Add("class", "form-check-input");
+                chkInterpreterRequested.LabelAttributes.Add("class", "form-check-label");
                 chkFeeAgreementEntered.InputAttributes.Add("class", "form-check-input");
                 chkFeeAgreementEntered.LabelAttributes.Add("class", "form-check-label");
                 chkFeeJudgmentEntered.InputAttributes.Add("class", "form-check-input");
