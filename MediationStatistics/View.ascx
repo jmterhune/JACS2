@@ -113,7 +113,7 @@
                         <p>
                             <button type="button" class="btn btn-primary me-2" id="cmdSearch">Search</button>
                             <asp:HyperLink runat="server" ID="lnkReset" CssClass="btn btn-secondary">Reset</asp:HyperLink>
-                            <asp:Button Text="Add Case" OnClientClick="return fnJSOnFormSubmit()" CssClass="btn btn-success float-end" ValidationGroup="CaseNew" ID="cmdAddCase" OnClick="cmdAddCase_Click" runat="server" />
+                            <asp:Button Text="Add Case" OnClientClick="return fnJSOnFormSubmit()" UseSubmitBehavior="false" CssClass="btn btn-success float-end" ValidationGroup="CaseNew" ID="cmdAddCase" OnClick="cmdAddCase_Click" runat="server" />
                         </p>
                     </div>
                 </section>
@@ -171,6 +171,16 @@
         });
     }(jQuery, window.Sys));
 
+    // Execute a function when the user presses a key on the keyboard
+    document.addEventListener("keypress", function (event) {
+        // If the user presses the "Enter" key on the keyboard
+        if (event.key === "Enter") {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+            document.getElementById("cmdSearch").click();
+        }
+    });
     function PageInit() {
         var restUrl = `/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/GetCaseListItems/${recordCount}`;
         var deleteUrl = "/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/Delete/";
