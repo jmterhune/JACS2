@@ -44,6 +44,7 @@
 <asp:Panel runat="server" ID="pnlServiceAward" Visible="false">
     <div class="mb-md">
         <div class="btn-group" role="group" aria-label="Search">
+            <div class="input-group"> <asp:TextBox runat="server" ID="txtYear" CssClass="form-control" aria-label="Year" TextMode="Number" Width="70" /></div>
             <div id="swServiceMonth" class="input-group">
                 <asp:DropDownList ID="drpServiceMonth" runat="server"  CssClass="form-control" aria-label="Select Month" ClientIDMode="Static">
                     <asp:ListItem Text="January" Value="1" />

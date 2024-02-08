@@ -43,6 +43,8 @@ namespace tjc.Modules.Reports
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+                txtYear.Text = DateTime.Now.Year.ToString();
             try
             {
                 lnkDataCard.NavigateUrl = EditUrl("DataCard");
@@ -51,13 +53,13 @@ namespace tjc.Modules.Reports
                     pnlReportList.Visible = false;
                     DotNetNuke.Framework.CDefault myPage = new DotNetNuke.Framework.CDefault();
                     myPage = (CDefault)this.Page;
-                    
+
                     lnkReport.NavigateUrl = _navigationManager.NavigateURL();
                     if (ReportId == 1)
                     {
-                        
+
                         pnlBirthdays.Visible = true;
-                        hdTitle.Value= "Birthday Report";
+                        hdTitle.Value = "Birthday Report";
                         myPage.Title = "Birthday Report";
                     }
                     else if (ReportId == 2)
@@ -72,6 +74,7 @@ namespace tjc.Modules.Reports
                         hdTitle.Value = "Termination Report";
                         myPage.Title = "Termination Report";
                     }
+
                 }
                 else
                 {
@@ -146,7 +149,7 @@ namespace tjc.Modules.Reports
                         var headerCell = e.Row.Controls[i] as DataControlFieldHeaderCell;
                         if (i == 0)
                         {
-                            headerCell.HorizontalAlign= HorizontalAlign.Center;
+                            headerCell.HorizontalAlign = HorizontalAlign.Center;
                             headerCell.Text = "State<br />or<br />County";
                         }
                         if (i == 1)
@@ -163,7 +166,7 @@ namespace tjc.Modules.Reports
                         }
                         if (i == 4)
                         {
-                            
+
                             headerCell.Text = string.Format("Years<br />of<br />{0}", drpReportType.SelectedValue == "1" ? "Service" : "Employment");
                         }
                     }
@@ -214,10 +217,11 @@ namespace tjc.Modules.Reports
         protected void cmdSubmitServiceReport_Click(object sender, EventArgs e)
         {
             int reportType = Convert.ToInt32(drpReportType.SelectedValue);
-            string reportTitle = "";
             int month = Convert.ToInt32(drpServiceMonth.SelectedValue);
-            int year = DateTime.Now.Year;
+            Int32.TryParse(txtYear.Text, out int textYear);
+            int year = textYear > 0 ? textYear : DateTime.Now.Year;
             var ctl = new ReportController();
+            string reportTitle;
             if (reportType == 1)
             {
                 reportTitle = "Service Award for";
