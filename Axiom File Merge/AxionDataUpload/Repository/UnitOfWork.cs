@@ -13,7 +13,6 @@ namespace AxionDataUpload.Repository
         private string _connectionString = Helper.Helper.GetConnectionStringByName("Intranet");
         public AxiomExportRepository AxiomExportRepository { get; }
         public ErrorLogRepository ErrorLogRepository { get; }
-
         public UnitOfWork(string connectionString)
         {
             _dbConnection = new SqlConnection(connectionString);
@@ -22,6 +21,16 @@ namespace AxionDataUpload.Repository
             AxiomExportRepository = new AxiomExportRepository(_dbConnection);
             ErrorLogRepository = new ErrorLogRepository(_dbConnection);
         }
+        public void DeleteExistingFiles()
+        {
+            string localDirectory = _appSettings.LocalDirectoryPath;
+            DirectoryInfo directoryInfo = new DirectoryInfo(localDirectory);
+            foreach (var file in directoryInfo.EnumerateFiles())
+            {
+                file.Delete();
+            }
+        }
+
         public string DownloadFiles()
         {
             using var unitOfWork = new UnitOfWork(_connectionString);
@@ -148,7 +157,6 @@ namespace AxionDataUpload.Repository
                 ErrorLogRepository.CreateEvent(Helper.Helper.PopulateErrorLog(ex));
             }
         }
-
         public void UploadFile(string localFilePath, string remoteDirectory, string remoteFileName)
         {
             try
@@ -172,7 +180,6 @@ namespace AxionDataUpload.Repository
                 ErrorLogRepository.CreateEvent(Helper.Helper.PopulateErrorLog(ex));
             }
         }
-
         public void Dispose()
         {
             if (_dbConnection != null && _dbConnection.State == ConnectionState.Open)

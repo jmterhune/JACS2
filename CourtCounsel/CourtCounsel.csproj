@@ -328,11 +328,6 @@
     <Content Include="View.ascx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AzureProvider\DotNetNuke.Authentication.Azure\DotNetNuke.Authentication.Azure.csproj">
-      <Project>{f5bb1b82-d843-4709-a57e-3a9cc290403f}</Project>
-      <Name>DotNetNuke.Authentication.Azure</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Globals\Globals.csproj">
       <Project>{7066eacb-e672-4110-b73d-c1a230b16eab}</Project>
       <Name>Globals</Name>

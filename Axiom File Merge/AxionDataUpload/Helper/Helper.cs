@@ -10,35 +10,29 @@ namespace AxionDataUpload.Helper
     {
         public static EventLog PopulateEventLog(string description, string message) => new() { EventDate = DateTime.Now, EventType = EventType.Event, EventDescription = description, EventName = message, Source = "Process Event" };
         public static EventLog PopulateErrorLog(Exception ex) => new() { EventDate = DateTime.Now, EventType = EventType.Error, EventDescription = ex.StackTrace.ToString(), EventName = ex.Message, Source = "Program Error" };
-
         public static string GetConnectionStringByName(string name)
         {
-            // Look for the name in the connectionStrings section.
             ConnectionStringSettings settings =
                 ConfigurationManager.ConnectionStrings[name];
 
-            // If found, return the connection string (otherwise return null)
             return settings.ConnectionString;
         }
         public static List<AxiomExport> ReadPipeDelimitedFile(string filePath)
         {
             string connectionString = GetConnectionStringByName("Intranet");
-
             using var unitOfWork = new UnitOfWork(connectionString);
             List<AxiomExport> data = new();
-
             try
             {
                 using (StreamReader reader = new(filePath))
                 {
                     if(!reader.EndOfStream)
                     {
-                        reader.ReadLine();
+                        reader.ReadLine(); //First Row is header so read past it
                     }
                     while (!reader.EndOfStream)
                     {
-                        
-                        string line = reader.ReadLine();
+                        string line = reader.ReadLine(); 
                         string[] fields = line.Split('|');
                         AxiomExport record = new()
                         {

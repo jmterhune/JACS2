@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JudicialReferral", "Judicia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtCounsel", "CourtCounsel\CourtCounsel.csproj", "{5D523859-E977-4AE1-B7BF-9B580703FDE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetNuke.Authentication.Azure", "AzureProvider\DotNetNuke.Authentication.Azure\DotNetNuke.Authentication.Azure.csproj", "{F5BB1B82-D843-4709-A57E-3A9CC290403F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intranet.API", "Intranet.API\Intranet.API.csproj", "{77FCD3FC-3851-4858-8E31-DD633DB72303}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManateeJacsCaseMaintenace", "ManateeJacsCaseMaintenace\ManateeJacsCaseMaintenace.csproj", "{7140211D-1C7E-4A85-B6A7-EF22320CC126}"
@@ -35,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AxionDataUpload", "Axiom Fi
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Axiom Setup", "Axiom Setup\Axiom Setup.vdproj", "{0222C6AD-B51E-45D1-996F-F7A830F85275}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Purchasing", "Purchasing\Purchasing.csproj", "{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +53,6 @@ Global
 		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D523859-E977-4AE1-B7BF-9B580703FDE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5BB1B82-D843-4709-A57E-3A9CC290403F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77FCD3FC-3851-4858-8E31-DD633DB72303}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -103,6 +99,10 @@ Global
 		{253578C7-2790-4271-834E-F766073EF98C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0222C6AD-B51E-45D1-996F-F7A830F85275}.Debug|Any CPU.ActiveCfg = Debug
 		{0222C6AD-B51E-45D1-996F-F7A830F85275}.Release|Any CPU.ActiveCfg = Release
+		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

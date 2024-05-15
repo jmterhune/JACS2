@@ -18,6 +18,7 @@ namespace tjc.axion.console
             try
             {
                 unitOfWork.AxiomExportRepository.ClearExports();
+                unitOfWork.DeleteExistingFiles();
                 string peopleFirstFileName = unitOfWork.DownloadFiles();
                 unitOfWork.ImportPeopleSoft(peopleFirstFileName); 
                 unitOfWork.ImportEmployees();

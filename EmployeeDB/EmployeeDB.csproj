@@ -68,10 +68,8 @@
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DotNetNuke.WebUtility">
+      <HintPath>..\..\Intranet-new\bin\DotNetNuke.WebUtility.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -90,8 +88,7 @@
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

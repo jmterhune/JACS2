@@ -1,0 +1,128 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}form_order_items]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}form_order_items]
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}form_order_items](
+	[FormID] [int] IDENTITY(1,1) NOT NULL,
+	[OrderID] [int] NULL,
+	[FormNumber] [nvarchar](200) NULL,
+	[FormName] [nvarchar](200) NULL,
+	[Description] [nvarchar](2000) NULL,
+	[Quantity] [int] NULL,
+	[Recipient] [nvarchar](100) NULL,
+	[Comments] [nvarchar](max) NULL,
+	[CreatedDate] [datetime] NULL,
+ CONSTRAINT [PK_{objectQualifier}form_order_items] PRIMARY KEY CLUSTERED 
+(
+	[FormID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+/****** Object:  Table {databaseOwner}[{objectQualifier}form_orders]    Script Date: 4/30/2024 10:49:38 AM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}form_orders]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}form_orders]
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}form_orders](
+	[OrderID] [int] IDENTITY(1,1) NOT NULL,
+	[RequestedName] [nvarchar](100) NULL,
+	[DateRequested] [datetime] NULL,
+	[Location] [nvarchar](150) NULL,
+	[CompletedDate] [datetime] NULL,
+ CONSTRAINT [PK_{objectQualifier}form_orders] PRIMARY KEY CLUSTERED 
+(
+	[OrderID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+/****** Object:  Table {databaseOwner}[{objectQualifier}form_orders_attachments]    Script Date: 4/30/2024 10:49:38 AM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}form_orders_attachments]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}form_orders_attachments]
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}form_orders_attachments](
+	[AttachmentID] [int] IDENTITY(1,1) NOT NULL,
+	[FileID] [int] NULL,
+	[OrderID] [int] NULL,
+	[FormID] [int] NULL,
+	[Path] [nvarchar](2000) NULL,
+	[FileName] [nvarchar](500) NULL,
+ CONSTRAINT [PK_{objectQualifier}form_orders_attachments] PRIMARY KEY CLUSTERED 
+(
+	[AttachmentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+/****** Object:  Table {databaseOwner}[{objectQualifier}supply_order_items]    Script Date: 4/30/2024 10:49:38 AM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}supply_order_items]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}supply_order_items]
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}supply_order_items](
+	[SupplyID] [int] IDENTITY(1,1) NOT NULL,
+	[OrderID] [int] NULL,
+	[ItemNumber] [nvarchar](200) NULL,
+	[Description] [nvarchar](2000) NULL,
+	[Quantity] [int] NULL,
+	[UnitOfMeasure] [nvarchar](50) NULL,
+	[Recipient] [nvarchar](100) NULL,
+	[Comments] [nvarchar](max) NULL,
+	[CreatedDate] [datetime] NULL,
+	[Link] [nvarchar](max) NULL,
+	[Store] [nvarchar](250) NULL,
+ CONSTRAINT [PK_{objectQualifier}supply_order_items] PRIMARY KEY CLUSTERED 
+(
+	[SupplyID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+/****** Object:  Table {databaseOwner}[{objectQualifier}supply_orders]    Script Date: 4/30/2024 10:49:38 AM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}supply_orders]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}supply_orders]
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}supply_orders](
+	[OrderID] [int] IDENTITY(1,1) NOT NULL,
+	[RequestedName] [nvarchar](100) NULL,
+	[DateRequested] [datetime] NULL,
+	[Location] [nvarchar](150) NULL,
+	[CompletedDate] [datetime] NULL,
+ CONSTRAINT [PK_{objectQualifier}supply_orders] PRIMARY KEY CLUSTERED 
+(
+	[OrderID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+/****** Object:  Table {databaseOwner}[{objectQualifier}supply_orders_attachments]    Script Date: 4/30/2024 10:49:38 AM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}supply_orders_attachments]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}supply_orders_attachments]
+GO
+CREATE TABLE {databaseOwner}[{objectQualifier}supply_orders_attachments](
+	[AttachmentID] [int] IDENTITY(1,1) NOT NULL,
+	[FileID] [int] NULL,
+	[Path] [nvarchar](2000) NULL,
+	[OrderID] [int] NULL,
+	[FileName] [nvarchar](500) NULL,
+ CONSTRAINT [PK_{objectQualifier}supply_orders_attachments] PRIMARY KEY CLUSTERED 
+(
+	[AttachmentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

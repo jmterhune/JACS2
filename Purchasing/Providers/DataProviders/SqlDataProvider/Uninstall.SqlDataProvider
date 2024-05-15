@@ -1,0 +1,23 @@
+﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}form_order_items]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}form_order_items]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}form_orders]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}form_orders]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}form_orders_attachments]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}form_orders_attachments]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}supply_order_items]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}supply_order_items]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}supply_orders]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}supply_orders]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}supply_orders_attachments]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}supply_orders_attachments]
+GO
