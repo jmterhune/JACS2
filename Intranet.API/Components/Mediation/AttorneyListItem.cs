@@ -15,7 +15,7 @@ namespace tjc.Intranet.API.Components.Mediation
 {
     [TableName("tjc_med_attorneys")]
     [PrimaryKey("AttorneyId", AutoIncrement = true)]
-    public class AttorneyListItem 
+    public class AttorneyListItem
     {
         public int AttorneyId { get; set; }
         public string FirstName { get; set; }
@@ -23,5 +23,27 @@ namespace tjc.Intranet.API.Components.Mediation
         public string Firm { get; set; }
         public string Phone { get; set; }
         public string Extension { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        [IgnoreColumn]
+        public string AttorneyName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+                    return Firm;
+                else if (!string.IsNullOrEmpty(FirstName) && !string.IsNullOrEmpty(LastName))
+                    return string.Format("{0}, {1}", LastName, FirstName);
+                else if (string.IsNullOrEmpty(FirstName) && !string.IsNullOrEmpty(LastName))
+                    return LastName;
+                else if (!string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+                    return FirstName;
+                else
+                    return string.Empty;
+            }
+        }
     }
 }

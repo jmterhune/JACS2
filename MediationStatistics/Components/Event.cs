@@ -37,7 +37,8 @@ namespace tjc.Modules.MediationStatistics.Components
         public string Comments { get; set; }
 
         public string AgreementType { get; set; }
-
+        public string MediatorType { get; set; }
+        public int MediatorId { get; set; }
         public bool? AgreementSubmittedParties { get; set; }
 
         public bool? AgreementPreparedAttorney { get; set; }
@@ -60,9 +61,27 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public bool? Signed3 { get; set; }
         [IgnoreColumn]
-        public IEnumerable<Appearance> EventAppearances { get { var ctl = new AppearanceController();
+        public IEnumerable<Appearance> EventAppearances
+        {
+            get
+            {
+                var ctl = new AppearanceController();
                 return ctl.GetEventAppearances(EventId);
-            } }
+            }
+        }
+        [IgnoreColumn]
+        public string MediatorName
+        {
+            get
+            {
+                string mediatorName = string.Empty;
+                var ctl = new MediatorController();
+                Mediator mediator = ctl.GetMediator(MediatorId);
+                if (mediator != null)
+                    return mediator.MediatorName;
+                return mediatorName;
+            }
+        }
     }
 
     [TableName("tjc_med_event_appearances")]

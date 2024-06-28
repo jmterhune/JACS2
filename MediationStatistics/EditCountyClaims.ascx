@@ -14,10 +14,10 @@
             <div class="form-group">
                 <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
                 <div class="input-group">
-                    <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field"  ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox TabIndex="1" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox TabIndex="1" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox TabIndex="1" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox TabIndex="1" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
@@ -47,14 +47,14 @@
             <div class="form-group">
                 <asp:Label runat="server" AssociatedControlID="drpCountyLetter" ToolTip="Citizen's Dispute Settlement Program Case Number" Text="CDSP Number" />
                 <div class="input-group">
-                    <asp:DropDownList runat="server" CssClass="form-control" ID="drpCDSPType" ClientIDMode="Static">
+                    <asp:DropDownList TabIndex="1" runat="server" CssClass="form-control" ID="drpCDSPType" ClientIDMode="Static">
                         <asp:ListItem Text="< Select Type >" Value="" />
                         <asp:ListItem Text="CDSP" title="Citizen's Dispute Settlement Program" />
                         <asp:ListItem Text="CDSPF" title="Citizen's Dispute Settlement Program Family" />
                     </asp:DropDownList>
-                    <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:DropDownList ID="drpCountyLetter" runat="server" ToolTip="County" CssClass="form-control location-field" ClientIDMode="Static">
+                    <asp:TextBox TabIndex="1" ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox TabIndex="1" ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:DropDownList TabIndex="1" ID="drpCountyLetter" runat="server" ToolTip="County" CssClass="form-control location-field" ClientIDMode="Static">
                         <asp:ListItem Text="" Value=""></asp:ListItem>
                         <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
                         <asp:ListItem Text="M" Value="M" title="Manatee"></asp:ListItem>
@@ -71,15 +71,15 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-6">
-                            <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
+                            <asp:Label runat="server" AssociatedControlID="txtLastName_p2" Text="Last Name" />
                             <asp:TextBox runat="server" ID="txtLastName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-6">
-                            <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
+                            <asp:Label runat="server" AssociatedControlID="txtFirstName_p2" Text="First Name" />
                             <asp:TextBox runat="server" ID="txtFirstName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-12">
-                            <asp:Label runat="server" AssociatedControlID="txtBusinessName" Text="Business Name" />
+                            <asp:Label runat="server" AssociatedControlID="txtBusinessName_p2" Text="Business Name" />
                             <asp:TextBox runat="server" ID="txtBusinessName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                     </div>
@@ -124,15 +124,15 @@
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffFirstName" Text="First Name" />
-                            <asp:TextBox runat="server" ID="txtPlaintiffFirstName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffName" Text="Plaintiff Name" />
+                            <asp:TextBox runat="server" ID="txtPlaintiffName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
 
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffLastName" Text="Last Name" />
-                            <asp:TextBox runat="server" ID="txtPlaintiffLastName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffEmail" Text="Email" />
+                            <asp:TextBox runat="server" ID="txtPlaintiffEmail" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
@@ -170,14 +170,14 @@
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtDefendantFirstName" Text="First Name" />
-                            <asp:TextBox runat="server" ID="txtDefendantFirstName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtDefendantName" Text="Defendant Name" />
+                            <asp:TextBox runat="server" ID="txtDefendantName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtDefendantLastName" Text="Last Name" />
-                            <asp:TextBox runat="server" ID="txtDefendantLastName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtDefendantEmail" Text="Email" />
+                            <asp:TextBox runat="server" ID="txtDefendantEmail" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
@@ -219,17 +219,7 @@
                             <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="drpMediator" Text="Mediator" />
-                            <asp:DropDownList ID="drpMediator" runat="server" ToolTip="Mediation" CssClass="form-control" ClientIDMode="Static">
-                                <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
-                                <asp:ListItem Text="Contracted" Value="Contracted" />
-                                <asp:ListItem Text="Staff" Value="Staff" />
-                                <asp:ListItem Text="Volunteer" Value="Volunteer" />
-                            </asp:DropDownList>
-                        </div>
-                    </div>
+
                     <div class="col-auto">
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
@@ -269,7 +259,7 @@
                     <div class="col-auto">
                         <div class="form-group">
                             <div class="form-check form-switch ">
-                                <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Telephonic Session" />
+                                <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Virtual Session" />
                             </div>
                         </div>
                     </div>
@@ -386,15 +376,17 @@
                 </asp:CheckBoxList>
             </fieldset>
             <hr />
-            <div class="btn-group mb-3" role="group" aria-label="Session Events Actions">
-                <asp:LinkButton ID="cmdSaveSession" runat="server"
-                    OnClick="cmdSave_Click" CssClass="btn btn-primary"><i class="fas fa-save"></i> Save</asp:LinkButton>
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Session Events Toolbar">
+                <div class="btn-group" role="group" aria-label="Session Events Actions">
+                    <asp:LinkButton ID="cmdSaveSession" runat="server"
+                        OnClick="cmdSave_Click" CssClass="btn btn-primary"><i class="fas fa-save"></i> Save</asp:LinkButton>
 
-                <asp:LinkButton ID="cmdAddEvent" CssClass="btn btn-dark" runat="server" OnClick="cmdAddEvent_Click"><i class="fas fa-plus"></i> New Event</asp:LinkButton>
-                <div class="input-group-text" id="eventInfo">
-                    Session Events
+                    <asp:LinkButton ID="cmdAddEvent" CssClass="btn btn-dark" runat="server" OnClick="cmdAddEvent_Click"><i class="fas fa-plus"></i> New Event</asp:LinkButton>
+                    <div class="input-group-text" id="eventInfo">
+                        Session Events
+                    </div>
+                    <asp:HiddenField ID="hdSessionId" runat="server" />
                 </div>
-                <asp:HiddenField ID="hdSessionId" runat="server" />
             </div>
             <asp:ListView ID="lstEvents" runat="server" InsertItemPosition="None" OnItemCreated="lstEvents_ItemCreated" OnItemDataBound="lstEvents_ItemDataBound" OnItemInserting="lstEvents_ItemInserting" OnItemDeleting="lstEvents_ItemDeleting" OnItemEditing="lstEvents_ItemEditing" OnItemInserted="lstEvents_ItemInserted" OnItemCanceling="lstEvents_ItemCanceling" OnItemCommand="lstEvents_ItemCommand" OnItemUpdating="lstEvents_ItemUpdating">
                 <ItemSeparatorTemplate>
@@ -439,6 +431,19 @@
                                         <input class="form-control" type="text" id="txtAgreementType" value='<%#GetAgreementType(Eval("AgreementType").ToString())%>'>
                                     </div>
                                 </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <label for="txtMediatoryType">Mediator Type</label>
+                                        <input id="txtMediatorType" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <label for="txtMediator">Mediator Name</label>
+                                        <input id="txtMediator" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-auto">
@@ -479,7 +484,7 @@
                                 <%#GetAppearanceItems(Eval("EventID").ToString())%>
                             </fieldset>
                         </fieldset>
-                        <p class="mb-0">
+                        <p class="mb-0 mt-3">
                             <asp:LinkButton ID="lnkUpdate" CssClass="btn btn-primary" CommandName="edit" runat="server"><i class="fas fa-pencil"></i> Edit Event</asp:LinkButton>
                             <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
                         </p>
@@ -531,6 +536,33 @@
                         <div class="row">
                             <div class="col-auto">
                                 <div class="form-group">
+                                    <asp:Label runat="server" AssociatedControlID="drpMediatorType" Text="Mediator Type" />
+                                    <asp:DropDownList ID="drpMediatorType" runat="server" ToolTip="Mediator Type" CssClass="form-control" ClientIDMode="Static" SelectedValue='<%#Bind("MediatorType")%>'>
+                                        <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
+                                        <asp:ListItem Text="Contracted" Value="Contracted" />
+                                        <asp:ListItem Text="Staff" Value="Staff" />
+                                        <asp:ListItem Text="Volunteer" Value="Volunteer" />
+                                    </asp:DropDownList>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
+                                <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
+                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("Mediator")%>' />
+                            </div>
+                            <div class="col-auto pt-4 mt-1">
+                                <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-secondary ms-2" title="Clear Mediator" onclick="ValidateMediatorRemoval(event)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-auto">
+                                <div class="form-group">
                                     <div class="form-check form-switch">
                                         <asp:CheckBox ID="chkSubmittedToParties" Text="Submitted to Parties" runat="server" Checked='<%#Bind("AgreementSubmittedParties")%>' />
                                     </div>
@@ -571,7 +603,7 @@
                             <asp:CheckBoxList ID="cblAppearanceRecord" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list column-4 form-check form-switch" RepeatLayout="UnorderedList" DataTextField="Description" DataValueField="AppearanceId">
                             </asp:CheckBoxList>
                         </fieldset>
-                        <p>
+                        <p class="mt-3">
                             <asp:LinkButton ID="lnkInsert" CssClass="btn btn-primary me-3" CommandName="Insert" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
                             <asp:LinkButton ID="lnkCancel" CssClass="btn btn-secondary" CommandName="cancel" runat="server"><i class="fas fa-redo"></i> Cancel</asp:LinkButton>
                         </p>
@@ -624,6 +656,33 @@
                         <div class="row">
                             <div class="col-auto">
                                 <div class="form-group">
+                                    <asp:Label runat="server" AssociatedControlID="drpMediatorType" Text="Mediator Type" />
+                                    <asp:DropDownList ID="drpMediatorType" runat="server" ToolTip="Mediator Type" CssClass="form-control" ClientIDMode="Static" SelectedValue='<%#Bind("MediatorType")%>'>
+                                        <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
+                                        <asp:ListItem Text="Contracted" Value="Contracted" />
+                                        <asp:ListItem Text="Staff" Value="Staff" />
+                                        <asp:ListItem Text="Volunteer" Value="Volunteer" />
+                                    </asp:DropDownList>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
+                                <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
+                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("Mediator")%>' />
+                            </div>
+                            <div class="col-auto pt-4 mt-1">
+                                <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="btn btn-secondary ms-2" title="Clear Mediator" onclick="ValidateMediatorRemoval(event)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-auto">
+                                <div class="form-group">
                                     <div class="form-check form-switch">
                                         <asp:CheckBox ID="chkSubmittedToParties" Text="Submitted to Parties" runat="server" Checked='<%#Bind("AgreementSubmittedParties")%>' />
                                     </div>
@@ -664,7 +723,7 @@
                             <asp:CheckBoxList ID="cblAppearanceRecord" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list column-4 form-check form-switch" RepeatLayout="UnorderedList" DataTextField="Description" DataValueField="AppearanceId">
                             </asp:CheckBoxList>
                         </fieldset>
-                        <p>
+                        <p class="mt-3">
                             <asp:LinkButton ID="lnkUpdate" CssClass="btn btn-primary me-3" CommandName="update" CommandArgument='<%#Eval("eventId")%>'
                                 runat="server"><i class="fas fa-save"></i> Update Event</asp:LinkButton>
                             <asp:LinkButton ID="lnkCancel" CssClass="btn btn-secondary" CommandName="cancel"
@@ -683,7 +742,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="attorneyModalLabel">Attorney Search</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" onclick="CloseAttorneyModal(event)" aria-hidden="true">&times;</button>
                         </div>
                         <div class="modal-body form-group">
                             <div class="row mb-3">
@@ -703,13 +762,15 @@
                                     <button type="button" class="btn btn-primary" id="cmdSearch">Search</button>
                                 </div>
                             </div>
-                            <table id="tblAttorneys" class="table table-striped">
+                            <button class="btn btn-success btn-sm float-end attorney-add pull-down"><i class="fa fa-plus" aria-hidden="true"></i>Add Attorney</button>
+                            <table id="tblAttorneys" class="table table-striped w-100">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Firm</th>
+                                        <th>Email</th>
                                         <th>Phone</th>
                                         <th>Extension</th>
                                     </tr>
@@ -717,11 +778,203 @@
                             </table>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" onclick="CloseAttorneyModal(event)">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="EditAttorneyModal" tabindex="-1" role="dialog" aria-labelledby="EditAttorneyModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="EditAttorneyModalLabel">Add Attorney</h4>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtFirstNameAdd" Text="First Name" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameAdd" />
+                                </div>
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtLastNameAdd" Text="Last Name" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameAdd" />
+                                </div>
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtFirm" Text="Firm" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirm" />
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Email" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
+                                </div>
+                                <div class="col-4">
+                                    <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhone" />
+                                </div>
+                                <div class="col-4">
+                                    <asp:Label runat="server" AssociatedControlID="txtExtension" Text="Extension" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="10" ID="txtExtension" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <asp:Label runat="server" AssociatedControlID="txtAddress" Text="Address" />
+                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" />
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-5">
+                                    <asp:Label runat="server" AssociatedControlID="txtCity" Text="City" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCity" />
+                                </div>
+                                <div class="col-3">
+                                    <asp:Label runat="server" AssociatedControlID="drpState" Text="State" />
+                                    <asp:DropDownList ID="drpState" ClientIDMode="Static" runat="server" CssClass="form-control">
+                                        <asp:ListItem Value="" Text="" />
+                                        <asp:ListItem Value="AL" Text="Alabama" />
+                                        <asp:ListItem Value="AK" Text="Alaska" />
+                                        <asp:ListItem Value="AZ" Text="Arizona" />
+                                        <asp:ListItem Value="AR" Text="Arkansas" />
+                                        <asp:ListItem Value="CA" Text="California" />
+                                        <asp:ListItem Value="CO" Text="Colorado" />
+                                        <asp:ListItem Value="CT" Text="Connecticut" />
+                                        <asp:ListItem Value="DE" Text="Delaware" />
+                                        <asp:ListItem Value="DC" Text="District of Columbia" />
+                                        <asp:ListItem Value="FL" Text="Florida" />
+                                        <asp:ListItem Value="GA" Text="Georgia" />
+                                        <asp:ListItem Value="HI" Text="Hawaii" />
+                                        <asp:ListItem Value="ID" Text="Idaho" />
+                                        <asp:ListItem Value="IL" Text="Illinois" />
+                                        <asp:ListItem Value="IN" Text="Indiana" />
+                                        <asp:ListItem Value="IA" Text="Iowa" />
+                                        <asp:ListItem Value="KS" Text="Kansas" />
+                                        <asp:ListItem Value="KY" Text="Kentucky" />
+                                        <asp:ListItem Value="LA" Text="Louisiana" />
+                                        <asp:ListItem Value="ME" Text="Maine" />
+                                        <asp:ListItem Value="MD" Text="Maryland" />
+                                        <asp:ListItem Value="MA" Text="Massachusetts" />
+                                        <asp:ListItem Value="MI" Text="Michigan" />
+                                        <asp:ListItem Value="MN" Text="Minnesota" />
+                                        <asp:ListItem Value="MS" Text="Mississippi" />
+                                        <asp:ListItem Value="MO" Text="Missouri" />
+                                        <asp:ListItem Value="MT" Text="Montana" />
+                                        <asp:ListItem Value="NE" Text="Nebraska" />
+                                        <asp:ListItem Value="NV" Text="Nevada" />
+                                        <asp:ListItem Value="NH" Text="New Hampshire" />
+                                        <asp:ListItem Value="NJ" Text="New Jersey" />
+                                        <asp:ListItem Value="NM" Text="New Mexico" />
+                                        <asp:ListItem Value="NY" Text="New York" />
+                                        <asp:ListItem Value="NC" Text="North Carolina" />
+                                        <asp:ListItem Value="ND" Text="North Dakota" />
+                                        <asp:ListItem Value="OH" Text="Ohio" />
+                                        <asp:ListItem Value="OK" Text="Oklahoma" />
+                                        <asp:ListItem Value="OR" Text="Oregon" />
+                                        <asp:ListItem Value="PA" Text="Pennsylvania" />
+                                        <asp:ListItem Value="RI" Text="Rhode Island" />
+                                        <asp:ListItem Value="SC" Text="South Carolina" />
+                                        <asp:ListItem Value="SD" Text="South Dakota" />
+                                        <asp:ListItem Value="TN" Text="Tennessee" />
+                                        <asp:ListItem Value="TX" Text="Texas" />
+                                        <asp:ListItem Value="UT" Text="Utah" />
+                                        <asp:ListItem Value="VT" Text="Vermont" />
+                                        <asp:ListItem Value="VA" Text="Virginia" />
+                                        <asp:ListItem Value="WA" Text="Washington" />
+                                        <asp:ListItem Value="WV" Text="West Virginia" />
+                                        <asp:ListItem Value="WI" Text="Wisconsin" />
+                                        <asp:ListItem Value="WY" Text="Wyoming" />
+                                    </asp:DropDownList>
+                                </div>
+                                <div class="col-4">
+                                    <asp:Label runat="server" AssociatedControlID="txtZip" Text="Zip" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtZip" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="AddAttorney(event)">Save</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="mediatorModal" tabindex="-1" role="dialog" aria-labelledby="mediatorModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="mediatorModalLabel">Mediator Search</h4>
+                            <button type="button" class="close" onclick="CloseMediatorModal(event)" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body form-group">
+                            <div class="row mb-3">
+                                <div class="col-auto">
+                                    <asp:Label runat="server" AssociatedControlID="txtMediatorFirstName" Text="First Name" />
+                                    <asp:TextBox runat="server" ID="txtMediatorFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                </div>
+                                <div class="col-auto">
+                                    <asp:Label runat="server" AssociatedControlID="txtMediatorLastName" Text="Last Name" />
+                                    <asp:TextBox runat="server" ID="txtMediatorLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                </div>
+
+                                <div class="col-auto pt-4">
+                                    <button type="button" class="btn btn-primary" id="cmdMediatorSearch">Search</button>
+                                </div>
+                            </div>
+                            <button class="btn btn-success btn-sm float-end mediator-add pull-down"><i class="fa fa-plus" aria-hidden="true"></i>Add Mediator</button>
+                            <table id="tblMediators" class="table table-striped w-100">
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" onclick="CloseMediatorModal(event)">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="EditMediatorModal" tabindex="-1" role="dialog" aria-labelledby="EditMediatorModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="EditMediatorModalLabel">Add Mediator</h4>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtFirstNameMed" Text="First Name" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameMed" />
+                                </div>
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtLastNameMed" Text="Last Name" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameMed" />
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtEmailMed" Text="Email" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmailMed" />
+                                </div>
+                                <div class="col">
+                                    <asp:Label runat="server" AssociatedControlID="txtPhoneMed" Text="Phone" />
+                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhoneMed" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="AddMediator(event)">Save</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </ContentTemplate>
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="cmdSave" EventName="Click" />
@@ -745,18 +998,39 @@
 <dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
+    var moduleId = <%=ModuleId%>;
     var lastName = null;
     var firstName = null;
+    var lastNameMed = null;
+    var firstNameMed = null;
     var firm = null;
     var pageSize = 10;
     var rowOffset = 0;
     var recordCount = 0;
+    var pageSizeMed = 10;
+    var rowOffsetMed = 0;
+    var recordCountMed = 0;
     var sortDirection = "asc";
     var sortColumnIndex = 1;
+    var sortDirectionMed = "asc";
+    var sortColumnIndexMed = 1;
     var attorneyRole = 0;
+    var attorneyTable = null;
+    var mediatorTable = null;
+    var service = {
+        path: "tjc.Modules/Mediation",
+        framework: $.ServicesFramework(moduleId)
+    };
     /*globals jQuery, window, Sys */
     (function ($, Sys) {
         $(document).ready(function () {
+            $("#txtLastName").focus();
+            $("#txtSuffix").on("blur", function () {
+                $("#txtLastName").focus();
+            });
+            $("#drpCountyLetter").on("change blur", function () {
+                $("#txtLastName_p2").focus();
+            });
             PageInit();
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
                 PageInit();
@@ -765,12 +1039,14 @@
 
     }(jQuery, window.Sys));
     function PageInit() {
-        var restUrl = `/DesktopModules/tjc.Modules/Mediation/api/AttorneyListItem/GetAttorneyListItems/${recordCount}`;
-        var attorneyTable = $('#tblAttorneys').DataTable({
+        service.baseUrl = service.framework.getServiceRoot(service.path);
+        var attyAction = "GetAttorneyListItems";
+        var attyRestUrl = `${service.baseUrl}AttorneyListItem/${attyAction}/${recordCount}`;
+        attorneyTable = $('#tblAttorneys').DataTable({
             "searching": false,
             autoWidth: true,
             ajax: {
-                url: restUrl,
+                url: attyRestUrl,
                 type: "GET",
                 datatype: 'json',
                 data(data) {
@@ -781,12 +1057,13 @@
             },
             columns: [{
                 data: "attorneyid", render: function (data, type, row, meta) {
-                    return `<a title="Select Attorney" data-id="${row.attorneyid}" data-first="${row.firstname}" data-last="${row.lastname}" data-phone="${row.phone}" data-extension="${row.extension}" onclick="SetAttorney(event,this)" href="#"><i class="fas fa-user-tie"></i></a>`;
+                    return `<a title="Select Attorney" data-id="${row.attorneyid}" data-name="${row.attorneyname} " data-first="${row.firstname}" data-last="${row.lastname}" data-phone="${row.phone}" data-email="${row.email}" data-extension="${row.extension}" onclick="SetAttorney(event,this)" href="#"><i class="fas fa-user-tie"></i></a>`;
                 }, className: "command-item", orderable: false
             },
             { data: "firstname" },
             { data: "lastname" },
             { data: "firm" },
+            { data: "email" },
             { data: "phone" },
             { data: "extension" },
             ],
@@ -800,15 +1077,61 @@
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
             pageLength: pageSize,
         });
+        var medAction = "GetMediatorListItems";
+        var medRestUrl = `${service.baseUrl}MediatorListItem/${medAction}/${recordCountMed}`;
+        mediatorTable = $('#tblMediators').DataTable({
+            "searching": false,
+            autoWidth: true,
+            ajax: {
+                url: medRestUrl,
+                type: "GET",
+                datatype: 'json',
+                data(data) {
+                    data.firstName = firstNameMed;
+                    data.lastName = lastNameMed;
+                },
+            },
+            columns: [{
+                data: "mediatorid", render: function (data, type, row, meta) {
+                    return `<a title="Select Mediator" data-id="${row.mediatorid}" data-mediatorname="${row.mediatorname}" data-first="${row.firstname}" data-last="${row.lastname}" onclick="SetMediator(event,this)" href="#"><i class="fas fa-user-tie"></i></a>`;
+                }, className: "command-item", orderable: false
+            },
+            { data: "firstname" },
+            { data: "lastname" },
+            { data: "email" },
+            ],
+            language: {
+                emptyTable: "No Records Available.",
+                zeroRecords: "No records match the search criteria you entered."
+            },
+            order: [[sortColumnIndexMed, sortDirectionMed]],
+            serverSide: true,
+            process: true,
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            pageLength: pageSizeMed,
+        });
         $.fn.dataTable.ext.errMode = () => function (settings, helpPage, message) {
             alert("The Following Error Occurred Loading Attorney List:" + message);
         };
+        $(document).on('show.bs.modal', '.modal', function (event) {
+            var zIndex = 1040 + (10 * $('.modal:visible').length);
+            $(this).css('z-index', zIndex);
+            setTimeout(function () {
+                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+            }, 0);
+        });
         $("#cmdSearch").on("click", function (e) {
             e.preventDefault();
             lastName = $("#txtAttorneyLastName").val();
             firstName = $("#txtAttorneyFirstName").val();
             firm = $("#txtAttorneyFirm").val();
             attorneyTable.draw();
+        });
+        $("#cmdMediatorSearch").on("click", function (e) {
+            e.preventDefault();
+            lastName = $("#txtMediatorLastName").val();
+            firstName = $("#txtMediatorFirstName").val();
+            mediatorTable.draw();
         });
         $(".radio-button-list input").addClass("form-check-input");
         $(".radio-button-list label").addClass("form-check-label");
@@ -849,30 +1172,147 @@
             modal.show();
 
         });
+        $(".attorney-add").on("click", function (e) {
+            e.preventDefault();
+            var attyAddModal = document.querySelector('#EditAttorneyModal');
+            var modal = bootstrap.Modal.getInstance(attyAddModal);
+            if (!modal) {
+                modal = new bootstrap.Modal(document.getElementById('EditAttorneyModal'));
+            }
+            modal.show();
+
+        });
+        $(".mediator-search").on("click", function (e) {
+            e.preventDefault();
+            var attyModal = document.querySelector('#mediatorModal');
+            var modal = bootstrap.Modal.getInstance(attyModal);
+            if (!modal) {
+                modal = new bootstrap.Modal(document.getElementById('mediatorModal'));
+            }
+            modal.show();
+        });
+        $(".mediator-add").on("click", function (e) {
+            e.preventDefault();
+            var medAddModal = document.querySelector('#EditMediatorModal');
+            var modal = bootstrap.Modal.getInstance(medAddModal);
+            if (!modal) {
+                modal = new bootstrap.Modal(document.getElementById('EditMediatorModal'));
+            }
+            modal.show();
+        });
     }
 
-    function hideReason(checkbox) {
-        if (checkbox.checked == 1) {
-            $(".reason").hide();
-            $("select.reason").val('');
-        } else {
-            $(".reason").show();
+    
+    /* Attorney Functions*/
+    function SetAttorney(e, item) {
+        e.preventDefault();
+        ClearAttorney(attorneyRole);
+        var attyid = item.dataset.id;
+        var name = item.dataset.name;
+        var email = item.dataset.email;
+        var phone = item.dataset.phone;
+        var ext = item.dataset.extension;
+        if (attorneyRole == 1) {
+            if (attyid && attyid != "undefined")
+                $("#hdPlaintiffAttorneyId").val(attyid);
+            if (first != "null" && first != "undefined")
+                $("#txtPlaintiffName").val(name);
+            if (last != "null" && last != "undefined")
+                $("#txtPlaintiffEmail").val(email);
+            if (phone != "null" && phone != "undefined")
+                $("#txtPlaintiffPhone").val(phone);
+            if (ext != "null" && ext != "undefined")
+                $("#txtPlaintiffExtension").val(ext);
         }
+        else if (attorneyRole == 2) {
+            if (attyid && attyid != "undefined")
+                $("#hdDefendantAttorneyId").val(attyid);
+            if (first != "null" && first != "undefined")
+                $("#txtDefendantName").val(name);
+            if (last != "null" && last != "undefined")
+                $("#txtDefendantEmail").val(email);
+            if (phone != "null" && phone != "undefined")
+                $("#txtDefendantPhone").val(phone);
+            if (ext != "null" && ext != "undefined")
+                $("#txtDefendantExtension").val(ext);
+        }
+        var attyModal = document.querySelector('#attorneyModal');
+        var modal = bootstrap.Modal.getInstance(attyModal);
+        modal.hide();
+    }
+    function AddAttorney(e) {
+        e.preventDefault();
+        service.baseUrl = service.framework.getServiceRoot(service.path) + "AttorneyListItem/";
+        var action = "CreateAttorney";
+        var attyFirstName = $("#txtFirstNameAdd").val();
+        var attyLastName = $("#txtLastNameAdd").val();
+        var email = $("#txtEmail").val();
+        var attyFirm = $("#txtFirm").val();
+        var phone = $("#txtPhone").val();
+        var extension = $("#txtExtension").val();
+        var city = $("#txtCity").val();
+        var address = $("#txtAddress").val();
+        var state = $("#drpState").val();
+        var zip = $("#txtZip").val();
+        var attroney = { firstname: attyFirstName, lastname: attyLastName, email: email, firm: attyFirm, phone: phone, extension: extension, city: city, address: address, state: state, zip: zip };
+        try {
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: service.baseUrl + action,
+                beforeSend: service.framework.setModuleHeaders,
+                data: (attroney),
+                success: function (result) {
+                    ClearAddAttorneyForm();
+                    var attyAddModal = document.querySelector('#EditAttorneyModal');
+                    var modal = bootstrap.Modal.getInstance(attyAddModal);
+                    if (!modal) {
+                        modal = new bootstrap.Modal(document.getElementById('EditAttorneyModal'));
+                    }
+                    modal.hide();
+                    attorneyTable.ajax.reload();
+                    $("#txtAttorneyLastName").val(attyLastName);
+                    $("#txtAttorneyFirstName").val(attyFirstName);
+                    lastName = attyLastName;
+                    firstName = attyFirstName;
+                    attorneyTable.draw();
+                },
+                error: function (xhr, status, error) {
+                    // alert(xhr.responseText);
+                    alert("Unable to add attorney.\n\nMake sure you are logged in and try again. \n\nError:" + error);
+                }
+            });
+        } catch (e) {
+            alert("Unable to add attorney.\n\nMake sure you are logged in and try again.");
+        }
+        return false;
     }
     function ClearAttorney(attyRole) {
         if (attyRole == 1) {
             $("#hdPlaintiffAttorneyId").val("");
-            $("#txtPlaintiffFirstName").val("");
-            $("#txtPlaintiffLastName").val("");
+            $("#txtPlaintiffName").val("");
+            $("#txtPlaintiffEmail").val("");
             $("#txtPlaintiffPhone").val("");
             $("#txtPlaintiffExtension").val("");
         } else if (attyRole == 2) {
             $("#hdDefendantAttorneyId").val("");
-            $("#txtDefendantFirstName").val("");
-            $("#txtDefendantLastName").val("");
+            $("#txtDefendantName").val("");
+            $("#txtDefendantEmail").val("");
             $("#txtDefendantPhone").val("");
             $("#txtDefendantExtension").val("");
         }
+    }
+    function ClearAddAttorneyForm() {
+        $("#txtFirstNameAdd").val("");
+        $("#txtLastNameAdd").val("");
+        $("#txtEmail").val("");
+        $("#txtFirm").val("");
+        $("#txtPhone").val("");
+        $("#txtExtension").val("");
+        $("#txtCity").val("");
+        $("#txtAddress").val("");
+        $("#drpState").val("");
+        $("#txtZip").val("");
     }
     function ValidateAttorneyRemoval(attyRole) {
         $.dnnConfirm({
@@ -885,41 +1325,101 @@
             }
         });
     }
-    function SetAttorney(e, item) {
+    //* Mediator Functions*/
+    function SetMediator(e, item) {
         e.preventDefault();
-        ClearAttorney(attorneyRole);
-        var attyid = item.dataset.id;
-        var first = item.dataset.first;
-        var last = item.dataset.last;
-        var phone = item.dataset.phone;
-        var ext = item.dataset.extension;
-        if (attorneyRole == 1) {
-            if (attyid && attyid != "undefined")
-                $("#hdPlaintiffAttorneyId").val(attyid);
-            if (first != "null" && first != "undefined")
-                $("#txtPlaintiffFirstName").val(first);
-            if (last != "null" && last != "undefined")
-                $("#txtPlaintiffLastName").val(last);
-            if (phone != "null" && phone != "undefined")
-                $("#txtPlaintiffPhone").val(phone);
-            if (ext != "null" && ext != "undefined")
-                $("#txtPlaintiffExtension").val(ext);
-        }
-        else if (attorneyRole == 2) {
-            if (attyid && attyid != "undefined")
-                $("#hdDefendantAttorneyId").val(attyid);
-            if (first != "null" && first != "undefined")
-                $("#txtDefendantFirstName").val(first);
-            if (last != "null" && last != "undefined")
-                $("#txtDefendantLastName").val(last);
-            if (phone != "null" && phone != "undefined")
-                $("#txtDefendantPhone").val(phone);
-            if (ext != "null" && ext != "undefined")
-                $("#txtDefendantExtension").val(ext);
-        }
-        var attyModal = document.querySelector('#attorneyModal');
-        var modal = bootstrap.Modal.getInstance(attyModal);
+        ClearMediator();
+        var mediatorId = item.dataset.id;
+        var mediatorName = item.dataset.mediatorname;
+        if (mediatorId && mediatorId != "undefined")
+            $("#hdMediatorId").val(mediatorId);
+        if (mediatorName != "null" && mediatorName != "undefined")
+            $("#txtMediator").val(mediatorName);
+        var medModal = document.querySelector('#mediatorModal');
+        var modal = bootstrap.Modal.getInstance(medModal);
         modal.hide();
     }
+    function AddMediator(e) {
+        e.preventDefault();
+        service.baseUrl = service.framework.getServiceRoot(service.path) + "MediatorListItem/";
+        var action = "add-mediator";
+        var firstName = $("#txtFirstNameMed").val();
+        var lastName = $("#txtLastNameMed").val();
+        var email = $("#txtEmailMed").val();
+        var phone = $("#txtPhoneMed").val();
+        var mediator = { firstname: firstName, lastname: lastName, emai: email, phone: phone };
+        try {
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: service.baseUrl + action,
+                beforeSend: service.framework.setModuleHeaders,
+                data: (mediator),
+                success: function (result) {
+                    ClearAddMediatorForm();
+                    var medAddModal = document.querySelector('#EditMediatorModal');
+                    var modal = bootstrap.Modal.getInstance(medAddModal);
+                    if (!modal) {
+                        modal = new bootstrap.Modal(document.getElementById('EditMediatorModal'));
+                    }
+                    modal.hide();
+                    mediatorTable.ajax.reload();
+                    $("#txtMediatorLastName").val(lastName);
+                    $("#txtMediatorFirstName").val(firstName);
+                    lastNameMed = lastName;
+                    firstNameMed = firstName;
+                    mediatorTable.draw();
+                },
+                error: function (xhr, status, error) {
+                    // alert(xhr.responseText);
+                    alert("Unable to add mediator.\n\nMake sure you are logged in and try again.");
+                }
+            });
+        } catch (e) {
+            alert("Unable to add mediator.\n\nMake sure you are logged in and try again.");
+        }
+        return false;
+    }
+    function ClearMediator() {
+        $("#hdMediatorId").val("");
+        $("#txtMediator").val("");
+    }
+    function ClearAddMediatorForm() {
+        $("#txtFirstNameMed").val("");
+        $("#txtLastNameMed").val("");
+        $("#txtEmailMed").val("");
+        $("#txtPhoneMed").val("");
+    }
+    function ValidateMediatorRemoval(e) {
+        e.preventDefault();
+        $.dnnConfirm({
+            text: 'Are you sure you wish to remove this Mediator?',
+            yesText: 'Yes',
+            noText: 'No',
+            title: 'Remove Mediator?',
+            callbackTrue: function () {
+                ClearMediator();
+            }
+        });
+    }
+    function CloseMediatorModal(e) {
+        e.preventDefault();
+        let modal = bootstrap.Modal.getInstance(document.getElementById("mediatorModal"));
+        modal.hide();
+    }
+    function CloseAttorneyModal(e) {
+        e.preventDefault();
+        let modal = bootstrap.Modal.getInstance(document.getElementById("attorneyModal"));
+        modal.hide();
+    }
+    /* Utility Functions*/
 
+    function hideReason(checkbox) {
+        if (checkbox.checked == 1) {
+            $(".reason").hide();
+            $("select.reason").val('');
+        } else {
+            $(".reason").show();
+        }
+    }
 </script>

@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -24,13 +25,31 @@ namespace tjc.Modules.Purchasing
         private readonly INavigationManager _navigationManager;
         private string currentProtocol;
         public string attachmentHandler = "";
-
+        public int OrderId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(hdOrderId.Value))
+                {
+                    return 0;
+                }
+                else
+                {
+                    return Int32.Parse(hdOrderId.Value);
+                }
+            }
+        }
         public FormOrder()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
 
-        #region Event Handlers      
+        #region Event Handlers    
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            Page.Title = "Form Order";
+            PortalSettings.ActiveTab.Title = Page.Title;
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -41,44 +60,42 @@ namespace tjc.Modules.Purchasing
                 {
                     cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
                     lnkCancelLine.NavigateUrl = _navigationManager.NavigateURL();
-                    if (UserInfo != null && UserInfo.IsInRole(AdminRole))
+                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+
+                    if (UserInfo != null)
                     {
-                        lnkAdmin.NavigateUrl = EditUrl("list");
-                        lnkAdmin.Visible = true;
-                        divComments.Visible = true;
+                        txtRequestor.Text = UserInfo.DisplayName;
+                        if (UserInfo.IsInRole(AdminRole))
+                        {
+                            lnkAdmin.NavigateUrl = EditUrl("form-list");
+                            lnkAdmin.Visible = true;
+                            divComments.Visible = true;
+                        }
                     }
                     if (CurrentOrderId > 0)
                     {
-                        lnkCancelLine.NavigateUrl = string.Format("{0}?oid={1}", _navigationManager.NavigateURL(), CurrentOrderId);
                         hdOrderId.Value = CurrentOrderId.ToString();
+                        lnkCancelLine.NavigateUrl = string.Format("{0}?oid={1}", _navigationManager.NavigateURL(), OrderId);
                         if (CurrentItemId > 0)
                         {
                             hdFormId.Value = CurrentItemId.ToString();
                         }
                         var ctl = new FormOrderController();
-                        var order = ctl.GetFormOrder(CurrentOrderId);
+                        var order = ctl.GetFormOrder(OrderId);
                         if (order != null)
                         {
                             txtRequestor.Text = order.RequestedName;
                             drpLocation.SelectedValue = order.Location;
-                            var formItemLine = ctl.GetFormOrderItem(CurrentItemId);
-                            if (formItemLine != null)
-                            {
-                                cmdAddForm.Text = "Add Additional Form";
-                                txtFormNumber.Text = formItemLine.FormNumber;
-                                txtDescription.Text = formItemLine.Description;
-                                txtQuantity.Text = formItemLine.Quantity.ToString();
-                                txtFormName.Text = formItemLine.FormName;
-                                txtRecipient.Text = formItemLine.Recipient;
-                                txtComments.Text = formItemLine.Comments;
-                                cmdAddForm.Text = "Update Item";
-                            }
-                            rptForms.DataSource = ctl.GetFormOrderItemsByOrder(CurrentOrderId);
-                            rptForms.DataBind();
+                            BindFormsList(OrderId);
                             SetTargetFolder();
                         }
+                        else
+                        {
+                            BindFormsList(0);
+                        }
                     }
-                    else if (UserId > 0)
+                    else { BindFormsList(0); }
+                    if (UserId > 0)
                     {
                         txtRequestor.Text = UserInfo.DisplayName;
                     }
@@ -122,6 +139,7 @@ namespace tjc.Modules.Purchasing
             {
                 ctl.CreateFormOrder(order);
                 orderId = order.OrderID;
+                hdOrderId.Value = orderId.ToString();
             }
             FormOrderItem formLine = new FormOrderItem();
             if (formid > 0)
@@ -147,27 +165,30 @@ namespace tjc.Modules.Purchasing
             {
                 formLine.OrderID = orderId;
                 ctl.CreateFormOrderItem(formLine);
+                formid = formLine.FormID;
             }
-            Response.Redirect(EditUrl("oid", CurrentOrderId.ToString(), "detail"), true);
+            AddAttachments(orderId, formid);
+            cmdSave.Visible = true;
+            BindFormsList(orderId);
         }
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            if (CurrentOrderId > 0)
+            if (OrderId > 0)
             {
                 var ctl = new FormOrderController();
-                var order = ctl.GetFormOrder(CurrentOrderId);
+                var order = ctl.GetFormOrder(OrderId);
                 try
                 {
                     order.RequestedName = txtRequestor.Text;
                     order.Location = drpLocation.SelectedValue;
                     ctl.UpdateFormOrder(order);
-                    Response.Redirect(EditUrl("list"), true);
                 }
                 catch (Exception exc)
                 {
                     Exceptions.ProcessModuleLoadException(this, exc);
                 }
+                Response.Redirect(EditUrl("form", "form", "complete"), true);
             }
             else
             {
@@ -183,20 +204,38 @@ namespace tjc.Modules.Purchasing
             {
                 ctl.DeleteFormOrderItem(formId);
             }
-            Response.Redirect(EditUrl("oid", CurrentOrderId.ToString(), "detail"), true);
+            Response.Redirect(EditUrl("oid", OrderId.ToString(), "detail"), true);
+        }
+        protected void valUpload_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = false;
+            if (hdAttachmentIds.Value != string.Empty)
+            {
+                args.IsValid = true;
+            }
         }
 
-        protected void rptForms_ItemDataBound(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
+        protected void rptForms_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            if (rptForms.Items.Count < 1)
             {
-                FormOrderItem item = (FormOrderItem)e.Item.DataItem;
-                HyperLink lnkItemEdit = (HyperLink)e.Item.FindControl("lnkItemEdit");
-                lnkItemEdit.NavigateUrl = EditUrl("oid", CurrentOrderId.ToString(), "detail", "id=" + item.FormID);
+                if (e.Item.ItemType == ListItemType.Footer)
+                {
+                    Literal lblFooter = (Literal)e.Item.FindControl("ltEmptyMessage");
+                    lblFooter.Visible = true;
+                }
             }
         }
         #endregion
         #region Methods
+        protected void BindFormsList(int orderId)
+        {
+            var ctl = new FormOrderController();
+            rptForms.DataSource = ctl.GetFormOrderItemsByOrder(orderId);
+            rptForms.DataBind();
+
+        }
+
         protected void AddAttachments(int orderId, int formId)
         {
             var ctl = new AttachmentController();
@@ -207,6 +246,7 @@ namespace tjc.Modules.Purchasing
                 Attachment attachment = new Attachment { ModuleID = ModuleId, FileID = FileID, FormID = formId, OrderID = orderId };
                 ctl.CreateAttachment(attachment);
             }
+            hdAttachmentIds.Value = string.Empty;
         }
         protected void SetTargetFolder()
         {
@@ -216,8 +256,8 @@ namespace tjc.Modules.Purchasing
                 var folder = dCtl.AddFolder(this.PortalId, this.FoTargetFolder);
             }
         }
-
         #endregion
-    }
 
+
+    }
 }

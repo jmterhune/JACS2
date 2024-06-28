@@ -80,7 +80,6 @@
     </Compile>
     <Compile Include="Edit.ascx.cs">
       <DependentUpon>Edit.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Edit.ascx.designer.cs">
       <DependentUpon>Edit.ascx</DependentUpon>

@@ -10,6 +10,9 @@
             <a class="nav-link" href="#attorneys" data-toggle="tab">Attorneys</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<%=MediatorListUrl %>">Mediators</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=RegionListUrl %>">Regions</a>
         </li>
         <li class="nav-item">
@@ -51,6 +54,7 @@
                                         <th>Name</th>
                                         <th>Firm</th>
                                         <th>Phone</th>
+                                        <th>Email</th>
                                         <th>Address</th>
                                         <th>City</th>
                                         <th>State</th>
@@ -67,6 +71,7 @@
                                 <td><%#Eval("FullName")%></td>
                                 <td><%#Eval("Firm") %></td>
                                 <td><%#Eval("FormattedPhone") %></td>
+                                <td><a href='mailto:<%#Eval("Email") %>'><%#Eval("Email") %></a></td>
                                 <td><%#Eval("Address") %></td>
                                 <td><%#Eval("City") %></td>
                                 <td><%#Eval("State") %></td>
@@ -104,6 +109,10 @@
                                         </div>
                                     </div>
                                     <div class="row g-3">
+                                        <div class="col-4">
+                                            <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Extension" />
+                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
+                                        </div>
                                         <div class="col-4">
                                             <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhone" />
@@ -251,6 +260,7 @@
                 { "bSortable": false },
                 { "bSortable": false },
                 { "bSortable": false },
+                { "bSortable": false },
                 { "bSortable": false },],
             autoWidth: true,
         });
@@ -281,6 +291,7 @@
         $('#txtExtension').val("");
         $('#txtFirstName').val("");
         $('#txtLastName').val("");
+        $('#txtEmail').val("");
         $('#txtFirm').val("");
         $('#txtAddress').val("");
         $('#txtCity').val("");

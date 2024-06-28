@@ -19,10 +19,10 @@ using tjc.Modules.Purchasing.Components;
 
 namespace tjc.Modules.Purchasing
 {
-    public partial class View : PurchasingModuleBase
+    public partial class ViewSupply : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        public View()
+        public ViewSupply()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
@@ -42,9 +42,10 @@ namespace tjc.Modules.Purchasing
                     BindData();
                     lnkReset.NavigateUrl = EditUrl("list");
                     lnkForm.NavigateUrl = _navigationManager.NavigateURL();
-                    chkShowCompleted.InputAttributes.Add("class", "form-check-input");
-                    chkShowCompleted.LabelAttributes.Add("class", "form-check-label");
+
                 }
+                chkShowCompleted.InputAttributes.Add("class", "form-check-input");
+                chkShowCompleted.LabelAttributes.Add("class", "form-check-label");
             }
             catch (Exception exc)
             {

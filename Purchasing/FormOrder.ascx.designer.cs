@@ -60,6 +60,15 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.HiddenField hdAttachmentIds;
 
         /// <summary>
+        /// rptForms control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptForms;
+
+        /// <summary>
         /// hdFormId control.
         /// </summary>
         /// <remarks>
@@ -159,13 +168,13 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.FileUpload uplAttachments;
 
         /// <summary>
-        /// cmdAddAttachment control.
+        /// valUpload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdAddAttachment;
+        protected global::System.Web.UI.WebControls.CustomValidator valUpload;
 
         /// <summary>
         /// cmdAddForm control.
@@ -184,15 +193,6 @@ namespace tjc.Modules.Purchasing
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkCancelLine;
-
-        /// <summary>
-        /// rptForms control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptForms;
 
         /// <summary>
         /// cmdSave control.

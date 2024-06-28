@@ -9,6 +9,9 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=AttorneyListUrl %>">Attorneys</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=MediatorListUrl %>">Mediators</a>
+        </li>
         <li class="nav-item ">
             <a class="nav-link" href="<%=RegionListUrl %>">Regions</a>
         </li>

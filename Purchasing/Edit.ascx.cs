@@ -131,7 +131,7 @@ namespace tjc.Modules.Purchasing
             }
         }
 
-        private void SendRejectionEmail(StampOrder order)
+        private void SendRejectionEmail(Components.StampOrder order)
         {
             var sb = new StringBuilder();
             string subject = "Stamp Order Rejected";

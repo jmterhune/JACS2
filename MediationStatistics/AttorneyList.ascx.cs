@@ -59,6 +59,7 @@ namespace tjc.Modules.MediationStatistics
             txtCity.Text = string.Empty;
             txtExtension.Text = string.Empty;
             txtFirm.Text = string.Empty;
+            txtEmail.Text = string.Empty;
             txtFirstName.Text = string.Empty;
             txtLastName.Text = string.Empty;
             txtPhone.Text = string.Empty;
@@ -73,6 +74,8 @@ namespace tjc.Modules.MediationStatistics
             {
                 if (!IsPostBack)
                 {
+                    if (!IsAdmin)
+                        Response.Redirect(_navigationManager.NavigateURL());
                     JavaScript.RequestRegistration(CommonJs.jQuery);
                     BindList();
                 }
@@ -96,6 +99,7 @@ namespace tjc.Modules.MediationStatistics
             attorney.LastName = txtLastName.Text;
             attorney.Phone = txtPhone.Text;
             attorney.Firm=txtFirm.Text;
+            attorney.Email = txtEmail.Text;
             attorney.Address = txtAddress.Text;
             attorney.Extension = txtExtension.Text;
             attorney.City = txtCity.Text;
@@ -140,6 +144,7 @@ namespace tjc.Modules.MediationStatistics
                 txtFirstName.Text = attorney.FirstName;
                 txtLastName.Text = attorney.LastName;
                 txtFirm.Text = attorney.Firm;
+                txtEmail.Text = attorney.Email;
                 txtPhone.Text = attorney.Phone;
                 txtExtension.Text = attorney.Extension;
                 txtAddress.Text = attorney.Address;

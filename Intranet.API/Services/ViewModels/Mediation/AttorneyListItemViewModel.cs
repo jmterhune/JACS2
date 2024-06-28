@@ -13,6 +13,9 @@ namespace tjc.Intranet.API.Services.ViewModels.Mediation
             Firm = attorneyListItem.Firm;
             Phone=attorneyListItem.Phone;
             Extension = attorneyListItem.Extension;
+            Email = attorneyListItem.Email;
+            AttorneyName=attorneyListItem.AttorneyName;
+
         }
         public AttorneyListItemViewModel() { }
         [JsonProperty("attorneyid")]
@@ -27,5 +30,17 @@ namespace tjc.Intranet.API.Services.ViewModels.Mediation
         public string Phone { get; set; }
         [JsonProperty("extenstion")]
         public string Extension { get; set; }
+        [JsonProperty("email")]
+        public string Email { get; set; }
+        [JsonProperty("address")]
+        public string Address { get; set; }
+        [JsonProperty("city")]
+        public string City { get; set; }
+        [JsonProperty("state")]
+        public string State { get; set; }
+        [JsonProperty("zip")]
+        public string Zip { get; set; }
+        [JsonProperty("attorneyname")]
+        public string AttorneyName { get; set; }
     }
 }

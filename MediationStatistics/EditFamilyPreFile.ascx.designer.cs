@@ -249,15 +249,6 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.LinkButton cmdDeleteSession;
 
         /// <summary>
-        /// drpMediator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpMediator;
-
-        /// <summary>
         /// txtReferralSource control.
         /// </summary>
         /// <remarks>
@@ -364,6 +355,60 @@ namespace tjc.Modules.MediationStatistics
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtComments;
+
+        /// <summary>
+        /// txtMediatorFirstName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMediatorFirstName;
+
+        /// <summary>
+        /// txtMediatorLastName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMediatorLastName;
+
+        /// <summary>
+        /// txtFirstNameMed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFirstNameMed;
+
+        /// <summary>
+        /// txtLastNameMed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLastNameMed;
+
+        /// <summary>
+        /// txtEmailMed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEmailMed;
+
+        /// <summary>
+        /// txtPhoneMed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPhoneMed;
 
         /// <summary>
         /// cmdSave control.

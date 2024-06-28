@@ -33,6 +33,7 @@ namespace tjc.Intranet.API.Components.Mediation
         public int RegionId { get; set; }
         public int GroupId { get; set; }
         public string CaseNumber { get; set; }
+        public string Comment { get; set; }
         public string CDSPNumber { get; set; }
         public string p1_FirstName { get; set; }
         public string p1_LastName { get; set; }
@@ -59,6 +60,8 @@ namespace tjc.Intranet.API.Components.Mediation
             }
             return partyname;
         }
+        [IgnoreColumn]
+        public string FormattedComments { get { return Comment.Replace("|", Environment.NewLine); } }
     }
     public enum GroupType
     {

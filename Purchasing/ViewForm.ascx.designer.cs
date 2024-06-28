@@ -11,7 +11,7 @@ namespace tjc.Modules.Purchasing
 {
 
 
-    public partial class View
+    public partial class ViewForm
     {
 
         /// <summary>

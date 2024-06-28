@@ -1,5 +1,7 @@
-#stamp-container .form-switch {padding-top:.4rem
+#stamp-container .form-switch, #form-container .form-switch, #supply-container .form-switch {
+    padding-top: .4rem
 }
+a {font-size:inherit !important}
 
 .input-group .form-control {
     max-height: 2.4rem;
@@ -26,12 +28,15 @@
     margin-bottom: 0px;
     list-style: none;
     padding-left: 0;
+    margin-top:10px;
 }
 
     .attachments li {
         background-color: #d9edf7;
         padding: 5px 10px;
         border-radius: 5px;
+        margin-bottom:10px;
+        margin-left:20px
     }
 
     .attachments a {
@@ -104,3 +109,4 @@
     z-index: 2;
     background-color: transparent;
 }
+label em{color:darkred}

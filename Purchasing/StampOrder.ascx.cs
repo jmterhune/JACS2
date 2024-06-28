@@ -10,16 +10,24 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Portals;
+using DotNetNuke.Entities.Host;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Text;
+using tjc.Modules.Purchasing.Components;
 
 namespace tjc.Modules.Purchasing
 {
     public partial class StampOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private string currentProtocol;
+        public string attachmentHandler = "";
+
         public StampOrder()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
@@ -28,14 +36,22 @@ namespace tjc.Modules.Purchasing
         {
             try
             {
+                attachmentHandler = TemplateSourceDirectory + "/Handlers/AttachmentHandler.ashx";
+                currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
+
                 if (!IsPostBack)
                 {
-                    cmdCancel.NavigateUrl = DotNetNuke.Common.Globals.NavigateURL();
+                    cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
                     SetTargetFolder();
                     if (UserInfo != null && UserInfo.IsInRole(AdminRole))
                     {
                         lnkAdmin.NavigateUrl = EditUrl("list");
                         lnkAdmin.Visible = true;
+                    }
+                    if (CurrentOrderId > 0)
+                    {
+                        PopulateForm(CurrentOrderId);
+                        cmdCancel.NavigateUrl = EditUrl("list");
                     }
                 }
             }
@@ -45,26 +61,100 @@ namespace tjc.Modules.Purchasing
             }
 
         }
+        protected void AddAttachments(int orderId)
+        {
+            var ctl = new AttachmentController();
+            if (!string.IsNullOrEmpty(hdAttachmentIds.Value))
+            {
+                var fileIds = hdAttachmentIds.Value.Split(',');
+                foreach (string fileId in fileIds)
+                {
+                    Int32.TryParse(fileId, out int FileID);
+                    Attachment attachment = new Attachment { ModuleID = ModuleId, FileID = FileID, OrderID = orderId };
+                    ctl.CreateAttachment(attachment);
+                }
+            }
+            hdAttachmentIds.Value = string.Empty;
+        }
+        protected void PopulateForm(int orderId)
+        {
+            var ctl = new StampOrderController();
+            var order = ctl.GetStampOrder(orderId);
+            if (order != null)
+            {
+                lblupload.Visible = false;
+                ltTopMessages.Visible = false;
+                ltUploadMessage.Visible = false;
+                ltBottomMessage.Visible = false;
+                txtRequestor.Text = order.RequestedName;
+                txtRequestor.ReadOnly = true;
+                txtPhone.Text = order.Phone;
+                txtPhone.ReadOnly = true;
+                txtEmailAddress.Text = order.EmailAddress;
+                txtEmailAddress.ReadOnly = true;
+                drpLocation.SelectedValue = order.Location;
+                drpLocation.Enabled = false;
+                txtConsumerName.Text = order.ConsumerName;
+                txtConsumerName.ReadOnly = true;
+                drpStampType.SelectedValue = order.StampType;
+                drpStampType.Enabled = false;
+                drpFontStyle.SelectedValue = order.FontStyle;
+                drpFontStyle.Enabled = false;
+                txtFontSize.Text = order.FontSize;
+                txtFontSize.ReadOnly = true;
+                drpInkColor.SelectedValue = order.InkColor;
+                drpInkColor.Enabled = false;
+                txtQuantity.Text = order.Quantity.ToString();
+                txtQuantity.ReadOnly = true;
+                txtSample.Text = order.Sample.ToString();
+                txtSample.ReadOnly = true;
+                txtInstructions.Text = order.Instructions.ToString();
+                txtInstructions.ReadOnly = true;
+                cmdSave.Visible = false;
+                uplAttachments.Visible = false;
+                lnkAdmin.Visible = false;
+                cmdCancel.Text = "Close";
+                string attachments = BuildAttachments(orderId);
+                ltAttachments.Text = string.Format(" <ul id=\"attachmentList\" class=\"attachments\">{0}</ul>", attachments);
+            }
+        }
+        protected string BuildAttachments(int orderId)
+        {
+            string attachementList = string.Empty;
+            var aCtl = new AttachmentController();
+            IEnumerable<Attachment> attachments = aCtl.GetAttachmentsByOrderId(ModuleId, orderId);
+            FileManager objFile = new FileManager();
+            int attachmentCount = 0;
+            foreach (Attachment f in attachments)
+            {
+                var file = objFile.GetFile(f.FileID);
+                if (file != null)
+                    attachementList += string.Format("<li><a href='/portals/0/{0}' title='{1}'>attachment #{2}</a></li>", file.RelativePath, file.FileName, ++attachmentCount);
+            }
+            return attachementList;
+
+        }
         protected void SetTargetFolder()
         {
             DotNetNuke.Services.FileSystem.FolderManager dCtl = (DotNetNuke.Services.FileSystem.FolderManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFolderManager, DotNetNuke.Services.FileSystem.FolderManager>.Instance;
-            if (!dCtl.FolderExists(PortalId, CoTargetFolder))
+            if (!dCtl.FolderExists(this.PortalId, this.FoTargetFolder))
             {
-                var folder = dCtl.AddFolder(PortalId, CoTargetFolder);
+                var folder = dCtl.AddFolder(this.PortalId, this.FoTargetFolder);
             }
-            rdUpload.TargetFolder = "/portals/" + PortalId.ToString() + "/" + CoTargetFolder;
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
             string subject = "Custom Stamp Order Form";
             string fromAddress = "noreply.intranet@jud12.flcourts.org";
-            var order = new OfficeForms.Components.StampOrder() { DateCreated = DateAndTime.Now, RequestedName = txtRequestor.Text, ConsumerName = txtConsumerName.Text, Phone = txtPhone.Text, StampType = drpStampType.SelectedValue, Sample = txtSample.Text, FontStyle = drpFontStyle.SelectedValue, FontSize = txtFontSize.Text, InkColor = drpInkColor.SelectedValue, Instructions = txtInstructions.Text, Quantity = int.Parse(txtQuantity.Text), Location = drpLocation.SelectedValue, EmailAddress = txtEmailAddress.Text };
-            var ctl = new OfficeForms.Components.Controller();
+            var order = new Components.StampOrder { DateCreated = DateTime.Now, RequestedName = txtRequestor.Text, ConsumerName = txtConsumerName.Text, Phone = txtPhone.Text, StampType = drpStampType.SelectedValue, Sample = txtSample.Text, FontStyle = drpFontStyle.SelectedValue, FontSize = txtFontSize.Text, InkColor = drpInkColor.SelectedValue, Instructions = txtInstructions.Text, Quantity = int.Parse(txtQuantity.Text), Location = drpLocation.SelectedValue, EmailAddress = txtEmailAddress.Text };
+            var ctl = new StampOrderController();
+            var aCtl = new AttachmentController();
             var sb = new StringBuilder();
             try
             {
-                int orderId = ctl.AddOrder(order);
-                UploadFiles(orderId);
+                ctl.CreateStampOrder(order);
+                int orderId = order.OrderID;
+                AddAttachments(orderId);
                 if (orderId > 0)
                 {
                     sb.Append("<h2>Stamp Order Details</h2>");
@@ -96,47 +186,22 @@ namespace tjc.Modules.Purchasing
                     sb.Append(order.Instructions);
                     sb.Append("</li></ul>");
                     sb.Append("<h3>Attachments</h3><ul>");
-                    string currentProtocol = Conversions.ToString(Interaction.IIf(Request.IsSecureConnection, "https://", "http://"));
-                    foreach (var attach in ctl.GetCoAttachmentsByOrder(orderId))
-                        sb.Append(string.Format("<li><a href='{0}{1}/portals/0/{2}'>{3}</a></li>", currentProtocol, PortalSettings.PortalAlias.HTTPAlias, attach.Path, attach.FileName));
+                    DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
+                    foreach (var attach in aCtl.GetAttachmentsByOrderId(ModuleId, orderId))
+                    {
+                        if (attach.FileID > 0)
+                        {
+                            var fileInfo = dCtl.GetFile(attach.FileID);
+                            sb.Append(string.Format("<li><a href='https://intranet.new.jud12.local/{1}'>{1}</a></li>", fileInfo.RelativePath, fileInfo.FileName));
+                        }
+                    }
                     sb.Append("</ul>");
-
                     DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
-                    Response.Redirect(EditUrl("complete"), true);
+                    Response.Redirect(EditUrl("form", "stamp", "complete"), true);
                 }
                 else
                 {
                     DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Unable to Add Record. Please contact the <a href='mailto:helpdesk@jud12.flcourts.org'>help desk</a>.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                }
-            }
-            catch (Exception exc)
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-        protected void UploadFiles(int orderId)
-        {
-            try
-            {
-                if (rdUpload.UploadedFiles.Count > 0)
-                {
-                    DotNetNuke.Services.FileSystem.FileManager fCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
-                    DotNetNuke.Services.FileSystem.FolderManager dCtl = (DotNetNuke.Services.FileSystem.FolderManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFolderManager, DotNetNuke.Services.FileSystem.FolderManager>.Instance;
-                    var ctl = new OfficeForms.Components.Controller();
-                    var folder = dCtl.GetFolder(PortalId, CoTargetFolder);
-                    foreach (Telerik.Web.UI.UploadedFile f in rdUpload.UploadedFiles)
-                    {
-                        try
-                        {
-                            string fileName = string.Format("{0}-{1}", orderId, f.FileName);
-                            var fileInfo = fCtl.AddFile(folder, fileName, f.InputStream);
-                            var objAttachment = new OfficeForms.Components.Attachment() { FileID = fileInfo.FileId, FileName = fileName, OrderID = orderId, Path = fileInfo.RelativePath };
-                            ctl.AddCoAttachment(objAttachment);
-                        }
-                        catch (Exception ex)
-                        {
-                        }
-                    }
                 }
             }
             catch (Exception exc)
@@ -172,22 +237,22 @@ namespace tjc.Modules.Purchasing
             if (drpStampType.SelectedValue != "signature")
             {
                 valFontStyle.Visible = true;
+                lblFontStyle.Text = "Font Style<em>*</em>";
                 valFontSize.Visible = true;
+                lblFontSize.Text = "Font Size<em>*</em>";
                 valFontColor.Visible = true;
-                drpInkColor.CssClass = "dnnFormRequired dnnFormInput";
-                drpFontStyle.CssClass = "dnnFormRequired dnnFormInput";
-                txtFontSize.CssClass = "dnnFormRequired";
+                lblInkColor.Text = "Ink Color<em>*</em>";
+
             }
             else
             {
                 valFontStyle.Visible = false;
                 valFontSize.Visible = false;
                 valFontColor.Visible = false;
-                drpInkColor.CssClass = "dnnFormInput";
-                drpFontStyle.CssClass = "dnnFormInput";
-                txtFontSize.CssClass = "";
+                lblFontStyle.Text = "Font Style";
+                lblFontSize.Text = "Font Size";
+                lblInkColor.Text = "Ink Color";
             }
         }
-
     }
 }

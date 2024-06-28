@@ -10,7 +10,7 @@ namespace tjc.Modules.Purchasing.Components
     {
         public int SupplyID { get; set; }
         public string ItemNumber { get; set; }
-        public int OrderId { get; set; }
+        public int OrderID { get; set; }
         public int Quantity { get; set; }
         public string Comments { get; set; }
         public DateTime CreatedDate { get; set; }

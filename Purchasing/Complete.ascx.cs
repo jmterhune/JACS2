@@ -38,6 +38,10 @@ namespace tjc.Modules.Purchasing
                     {
                         lnkForm.Text = "Return to Supply Order Page";
                     }
+                    if (FormType == "form")
+                    {
+                        lnkForm.Text = "Return to Form Order Page";
+                    }
                 }
             }
             catch (Exception exc)

@@ -211,3 +211,9 @@ div.dataTables_wrapper, div.dataTables_paginate, ul.pages {
 .dnnFormPopup .ui-dialog-titlebar {
     padding: 0.5rem
 }
+.pull-down{
+    margin-bottom:-25px
+}
+.pull-up {
+    margin-top: -25px
+}

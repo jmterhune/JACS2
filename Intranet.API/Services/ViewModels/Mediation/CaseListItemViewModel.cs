@@ -16,6 +16,8 @@ namespace tjc.Intranet.API.Services.ViewModels.Mediation
             CaseId = caseListItem.CaseId;
             CreatedDate = caseListItem.CreatedDate.ToShortDateString();
             GroupName = caseListItem.GroupTypeName;
+            Comments=caseListItem.FormattedComments;
+            
         }        
         [JsonProperty("caseid")]
         public int CaseId { get; set; }
@@ -42,6 +44,7 @@ namespace tjc.Intranet.API.Services.ViewModels.Mediation
 
         [JsonProperty("groupname")]
         public string GroupName { get; set; }
-
+        [JsonProperty("comments")]
+        public string Comments { get; set; }
     }   
 }

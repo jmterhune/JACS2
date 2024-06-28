@@ -11,9 +11,10 @@
 */
 using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Text;
+using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using tjc.Modules.Purchasing.Components;
 
@@ -27,7 +28,12 @@ namespace tjc.Modules.Purchasing
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
 
-        #region Event Handlers      
+        #region Event Handlers   
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            Page.Title =string.Format( "Form Order #{0}",CurrentOrderId);
+            PortalSettings.ActiveTab.Title = Page.Title;
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -39,140 +45,26 @@ namespace tjc.Modules.Purchasing
                         Response.Redirect(_navigationManager.NavigateURL(), true);
                         return;
                     }
-                    cmdCancel.NavigateUrl = EditUrl("list");
+                    cmdCancel.NavigateUrl = EditUrl("form-list");
                     if (CurrentOrderId > 0)
                     {
-                        lnkCancelLine.NavigateUrl = EditUrl("oid", CurrentOrderId.ToString(), "detail");
                         hdOrderId.Value = CurrentOrderId.ToString();
-                        if (CurrentFormId > 0)
-                        {
-                            hdFormId.Value = CurrentFormId.ToString();
-                        }
                         var ctl = new FormOrderController();
-                        var aCtl=new AttachmentController();
+                        var aCtl = new AttachmentController();
                         var order = ctl.GetFormOrder(CurrentOrderId);
                         if (order != null)
                         {
                             txtRequestor.Text = order.RequestedName;
                             drpLocation.SelectedValue = order.Location;
-                            var formLine = ctl.GetFormOrderItem(CurrentFormId);
-                            if (formLine != null)
-                            {
-                                cmdAddForm.Text = "Add Additional Form";
-                                txtFormNumber.Text = formLine.FormNumber;
-                                txtFormName.Text = formLine.FormName;
-                                txtDescription.Text = formLine.Description;
-                                txtQuantity.Text = formLine.Quantity.ToString();
-                                txtRecipient.Text = formLine.Recipient;
-                                txtComments.Text = formLine.Comments;
-                                cmdAddForm.Text = "Update Form";
-                            }
                             rptForms.DataSource = ctl.GetFormOrderItemsByOrder(CurrentOrderId);
                             rptForms.DataBind();
-                            rptFiles.DataSource = aCtl.GetAttachmentsByOrder(CurrentOrderId);
-                            rptFiles.DataBind();
-                            if (rptFiles.Items.Count < 1)
-                            {
-                                rptFiles.Visible = false;
-                            }
-
                         }
                     }
                 }
             }
-
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        protected void cmdAddForm_Click(object sender, EventArgs e)
-        {
-            string storeLink = "";
-            int orderId = 0;
-            if (!string.IsNullOrEmpty(hdOrderId.Value))
-            {
-                orderId = int.Parse(hdOrderId.Value);
-            }
-            var order = new Components.FormOrder();
-
-            int formid = 0;
-            if (!string.IsNullOrEmpty(hdFormId.Value))
-            {
-                formid = int.Parse(hdFormId.Value);
-            }
-
-            int quantity = 0;
-            var ctl = new FormOrderController();
-            if (orderId > 0)
-            {
-                order = ctl.GetFormOrder(orderId);
-            }
-            order.DateRequested = DateTime.Now;
-            order.RequestedName = txtRequestor.Text;
-
-            order.Location = drpLocation.SelectedValue;
-            if (orderId > 0)
-            {
-                ctl.UpdateFormOrder(order);
-            }
-            else
-            {
-                 ctl.CreateFormOrder(order);
-                orderId = order.OrderID;
-            }
-            var formLine = new FormOrderItem();
-            if (formid > 0)
-            {
-                formLine = ctl.GetFormOrderItem(formid);
-            }
-            if (!string.IsNullOrEmpty(txtQuantity.Text))
-            {
-                quantity = int.Parse(txtQuantity.Text);
-            }
-            formLine.Comments = txtComments.Text;
-            formLine.Description = txtDescription.Text;
-            formLine.FormNumber = txtFormNumber.Text;
-            formLine.FormName = txtFormName.Text;
-            formLine.Quantity = quantity;
-            formLine.Recipient = txtRecipient.Text;
-            if (formid > 0)
-            {
-                ctl.UpdateFormOrderItem(formLine);
-            }
-            else
-            {
-                formLine.OrderID = orderId;
-                 ctl.CreateFormOrderItem(formLine);
-                formid = formLine.OrderID;
-            }
-            Response.Redirect(EditUrl("oid", CurrentOrderId.ToString(), "detail"), true);
-        }
-
-        protected void cmdSave_Click(object sender, EventArgs e)
-        {
-            string storeLink = "";
-            if (CurrentOrderId > 0)
-            {
-                var ctl = new FormOrderController();
-                var order = ctl.GetFormOrder(CurrentOrderId);
-                var sb = new StringBuilder();
-                try
-                {
-                    order.RequestedName = txtRequestor.Text;
-                    order.Location = drpLocation.SelectedValue;
-                    ctl.UpdateFormOrder(order);
-                    Response.Redirect(EditUrl("list"), true);
-                }
-                catch (Exception exc)
-                {
-                    Exceptions.ProcessModuleLoadException(this, exc);
-                }
-            }
-            else
-            {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Page, "Please add Line Forms to Order before submitting", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
             }
         }
 
@@ -193,13 +85,34 @@ namespace tjc.Modules.Purchasing
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                FormOrderItem item = (FormOrderItem)e.Item.DataItem;
-                HyperLink lnkItemEdit = (HyperLink)e.Item.FindControl("lnkItemEdit");
-                lnkItemEdit.NavigateUrl = EditUrl("oid", CurrentOrderId.ToString(), "detail", "id=" + item.FormID);
+                FormOrderItem formOrderItem = (FormOrderItem)e.Item.DataItem;
+                Literal ltAttachments = (Literal)e.Item.FindControl("ltAttachments");
+                if (formOrderItem != null)
+                {
+                    string attachments = BuildAttachments(formOrderItem.FormID);
+                    if (!string.IsNullOrEmpty(attachments))
+                        ltAttachments.Text = attachments;
+                }
+                else { ltAttachments.Text = string.Empty; }
             }
+        }
+        #endregion
+        protected string BuildAttachments(int formId)
+        {
+            string attachementList = string.Empty;
+            var aCtl = new AttachmentController();
+            IEnumerable<Attachment> attachments = aCtl.GetAttachmentsByFormId(ModuleId, formId);
+            FileManager objFile = new FileManager();
+            int attachmentCount = 0;
+            foreach (Attachment f in attachments)
+            {
+                var file = objFile.GetFile(f.FileID);
+                if (file != null)
+                    attachementList += string.Format("<li><a href='/portals/0/{0}' title='{1}'>attachment #{2}</a></li>", file.RelativePath, file.FileName, ++attachmentCount);
+            }
+            return attachementList;
 
         }
-     #endregion
-    }
 
+    }
 }

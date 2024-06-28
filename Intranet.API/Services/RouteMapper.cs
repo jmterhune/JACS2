@@ -41,7 +41,6 @@ namespace tjc.Intranet.API.Services
                 url: "{controller}/{caseNumber}",
                 defaults: new { caseNumber = RouteParameter.Optional },
                 namespaces: new[] { "tjc.Intranet.API.Services" });
-
             mapRouteManager.MapHttpRoute(
                 moduleFolderName: "directory/data",
                 routeName: "EmployeePersonalData",
@@ -65,6 +64,12 @@ namespace tjc.Intranet.API.Services
               url: "{controller}/{action}/{name}",
               defaults: new { name = RouteParameter.Optional },
               namespaces: new[] { "tjc.Intranet.API.Services.FamilySelfHelp" });
+            mapRouteManager.MapHttpRoute(
+               moduleFolderName: "tjc.Modules/Mediation",
+               routeName: "MediationPosts",
+               url: "{controller}/{action}",
+               defaults: new { name = RouteParameter.Optional },
+               namespaces: new[] { "tjc.Intranet.API.Services.Mediation" });
             mapRouteManager.MapHttpRoute(
                moduleFolderName: "tjc.Modules/Mediation",
                routeName: "CaseListItems",

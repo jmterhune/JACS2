@@ -7,7 +7,7 @@
             <a class="nav-link" href="#caseSearch" data-toggle="tab">Add / Search Cases</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link"  href="<%=ReportUrl%>">Reports</a>
+            <a class="nav-link" href="<%=ReportUrl%>">Reports</a>
         </li>
         <li class="nav-item" id="lists" style="display: hidden">
             <a class="nav-link" href="<%=AttorneyListUrl%>">Manage Lists</a>
@@ -54,7 +54,7 @@
                                             <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                                             <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                                             <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field"  ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                                             <div class="input-group-append">
                                                 <small class="input-group-text form-control" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                                             </div>
@@ -113,7 +113,7 @@
                         <p>
                             <button type="button" class="btn btn-primary me-2" id="cmdSearch">Search</button>
                             <asp:HyperLink runat="server" ID="lnkReset" CssClass="btn btn-secondary">Reset</asp:HyperLink>
-                            <asp:Button Text="Add Case" OnClientClick="return fnJSOnFormSubmit()" UseSubmitBehavior="false" CssClass="btn btn-success float-end" ValidationGroup="CaseNew" ID="cmdAddCase" OnClick="cmdAddCase_Click" runat="server" />
+                            <asp:Button Text="Add Case" OnClientClick="return fnJSOnFormSubmit()" CssClass="btn btn-success float-end" ValidationGroup="CaseNew" ID="cmdAddCase" OnClick="cmdAddCase_Click" runat="server" />
                         </p>
                     </div>
                 </section>
@@ -130,6 +130,7 @@
                         <th>Party One</th>
                         <th>Party Two</th>
                         <th>Created</th>
+                        <th>&nbsp;</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -182,6 +183,7 @@
         }
     });
     function PageInit() {
+       
         var restUrl = `/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/GetCaseListItems/${recordCount}`;
         var deleteUrl = "/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/Delete/";
         var caseTable = $('#tblCases').DataTable({
@@ -199,6 +201,7 @@
                     data.businessName = businessName;
                     data.caseNumber = caseNumber;
                     data.cdspNumber = cdspNumber;
+                    delete data.columns;
                 },
             },
             columns: [{
@@ -206,16 +209,20 @@
                     var url = "<%=EditUrl("CDSP")%>";
                     url = url.replace("CDSP", row.groupname);
                     return `<a title="Edit Record" onclick="SetCaseId(${data})" href="${url}/cid/${data}"><i class="fas fa-search"></i></a>`;
-                }, className: "command-item", orderable: false
-            },
-                {
-                    data: "listnumber"
+                    }, className: "command-item", orderable: false
                 },
+                { data: "listnumber" },
                 { data: "region" },
                 { data: "group" },
                 { data: "partyone" },
                 { data: "partytwo" },
                 { data: "createddate" },
+                {
+                    data: "comments", render: function (data, type, row, meta) {
+                        if (isAdmin == "true")
+                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i></a>';
+                        return '';
+                    }, className: "command-item", orderable: false },
                 {
                     data: "caseid", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
@@ -236,6 +243,7 @@
             displayStart: currentPage * pageSize,
         });
         caseTable.on('draw', function () {
+            $('[data-toggle="tooltip"]').tooltip();
             $(".confirm").on("click", function (e) {
                 e.preventDefault();
                 var caseid = $(this).data("caseid");
@@ -350,13 +358,10 @@
         if (fYear == "" || fCode == "" || fNumber == "") {
             isCaseNumber = false;
         }
-        var drpCDSPType = $find("<%= drpCDSPType.ClientID %>");
-        var fCType = drpCDSPType.get_text();
-
+        var fCType = $("#drpCDSPType").val();
         var fCYear = document.getElementById("<%=txtCDSPYear.ClientID %>").value;
         var fCNumber = document.getElementById("<%=txtCDSPNumber.ClientID %>").value;
-        var drpCDSPLocation = $find("<%= drpCDSPType.ClientID %>");
-        var fCLocation = drpCDSPLocation.get_text();
+        var fCLocation = $("#drpCDSPLocation").val();
         if (fCType == "" || fCYear == "" || fCNumber == "" || fCLocation == "") {
             isCDSPNumber = false;
         }
@@ -367,7 +372,7 @@
 
         args.IsValid = true;
     }
-    function fnJSOnFormSubmit() {
+    function fnJSOnFormSubmit(e) {
         var isGrpOneValid = Page_ClientValidate("CaseSearch");
         var isGrpTwoValid = Page_ClientValidate("CaseNew");
 
@@ -386,6 +391,7 @@
         }
 
         if (isGrpOneValid && isGrpTwoValid)
+
             return true; //postback only when BOTH validations pass.
         else
             return false;
@@ -422,7 +428,7 @@
         var number = $("#txtCDSPNumber").val();
         var location = $("#drpCountyLetter").val();
         var cdspNumber = "";
-        if (type.length > 0) { cdspNumber += "-"; } else { return null; }
+        if (type.length > 0) { cdspNumber += type + "-"; } else { return null; }
         if (year.length > 0) { cdspNumber += year + "-"; } else { return null; }
         if (number.length > 0) { cdspNumber += number + "-"; } else { return null; }
         if (location.length > 0)

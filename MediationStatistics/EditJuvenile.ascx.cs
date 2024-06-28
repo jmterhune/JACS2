@@ -204,7 +204,6 @@ namespace tjc.Modules.MediationStatistics
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
                 hdSessionId.Value = session.SessionId.ToString();
-                drpMediator.SelectedValue = session.Mediator;
                 txtMediationDate.Text = "";
                 if (session.MediationDate.HasValue)
                     txtMediationDate.Text = session.MediationDate.Value.ToShortDateString();
@@ -310,7 +309,6 @@ namespace tjc.Modules.MediationStatistics
             }
             if (_currentCase.CaseId >= 0)
             {
-                session.Mediator = drpMediator.SelectedValue;
                 if (!string.IsNullOrEmpty(txtMediationDate.Text))
                     session.MediationDate = DateTime.Parse(txtMediationDate.Text);
                 if (!string.IsNullOrEmpty(txtOrderReferral.Text))
@@ -475,6 +473,11 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdAddEvent_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(hdSessionId.Value))
+            {
+                FillCase();
+                PopulateSessionInformation();
+            }
             lstEvents.InsertItemPosition = InsertItemPosition.FirstItem;
             PopulateEventInformation();
         }
@@ -559,6 +562,13 @@ namespace tjc.Modules.MediationStatistics
                 }
                 if (e.Item.FindControl("drpReason") is DropDownList drpReason)
                     newEvent.ReasonNotHeld = drpReason.SelectedValue;
+                if (e.Item.FindControl("drpMediatorType") is DropDownList drpMediatorType)
+                    newEvent.MediatorType = drpMediatorType.SelectedValue;
+                if (e.Item.FindControl("hdMediatorId") is HiddenField hdMediatorId)
+                {
+                    if (Int32.TryParse(hdMediatorId.Value, out int id))
+                        newEvent.MediatorId = id;
+                }
                 if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
                     newEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
                 if (e.Item.FindControl("txtHours") is TextBox txtHours)
@@ -647,6 +657,13 @@ namespace tjc.Modules.MediationStatistics
                 }
                 if (e.Item.FindControl("drpReason") is DropDownList drpReason)
                     oldEvent.ReasonNotHeld = drpReason.SelectedValue;
+                if (e.Item.FindControl("drpMediatorType") is DropDownList drpMediatorType)
+                    oldEvent.MediatorType = drpMediatorType.SelectedValue;
+                if (e.Item.FindControl("hdMediatorId") is HiddenField hdMediatorId)
+                {
+                    if (Int32.TryParse(hdMediatorId.Value, out int id))
+                        oldEvent.MediatorId = id;
+                }
                 if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
                     oldEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
                 if (e.Item.FindControl("txtHours") is TextBox txtHours)

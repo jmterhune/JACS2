@@ -45,6 +45,7 @@ namespace tjc.Modules.MediationStatistics
         private int _regionId = Null.NullInteger;
         private readonly GroupType _caseTypeGroup = GroupType.Family;
         private Case _currentCase;
+        private Event _currentEvent;
         #endregion
         #region Properties
         public string PageTitle { get; set; }
@@ -238,7 +239,6 @@ namespace tjc.Modules.MediationStatistics
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
                 hdSessionId.Value = session.SessionId.ToString();
-                drpMediator.SelectedValue = session.Mediator;
                 drpCaseType.SelectedIndex = -1;
                 if (session.PrimaryCaseType.HasValue)
                     drpCaseType.SelectedValue = session.PrimaryCaseType.Value.ToString();
@@ -254,15 +254,15 @@ namespace tjc.Modules.MediationStatistics
                     Attorney petitionerAttorney = ctl.GetAttorney(session.p1_AttorneyId.Value);
                     if (petitionerAttorney != null)
                     {
-                        txtPetitionerFirstName.Text = petitionerAttorney.FirstName;
-                        txtPetitionerLastName.Text = petitionerAttorney.LastName;
+                        txtPetitionerName.Text = petitionerAttorney.FullName;
+                        txtPetitionerEmail.Text = petitionerAttorney.Email;
                         txtPetitionerPhone.Text = petitionerAttorney.Phone;
                         txtPetitionerExtension.Text = petitionerAttorney.Extension;
                     }
                     else
                     {
-                        txtPetitionerFirstName.Text = string.Empty;
-                        txtPetitionerLastName.Text = string.Empty;
+                        txtPetitionerName.Text = string.Empty;
+                        txtPetitionerEmail.Text = string.Empty;
                         txtPetitionerPhone.Text = string.Empty;
                         txtPetitionerExtension.Text = string.Empty;
                     }
@@ -273,15 +273,15 @@ namespace tjc.Modules.MediationStatistics
                     Attorney respondentAttorney = ctl.GetAttorney(session.p2_AttorneyId.Value);
                     if (respondentAttorney != null)
                     {
-                        txtRespondentFirstName.Text = respondentAttorney.FirstName;
-                        txtRespondentLastName.Text = respondentAttorney.LastName;
+                        txtRespondentName.Text = respondentAttorney.FullName;
+                        txtRespondentEmail.Text = respondentAttorney.Email;
                         txtRespondentPhone.Text = respondentAttorney.Phone;
                         txtRespondentExtension.Text = respondentAttorney.Extension;
                     }
                     else
                     {
-                        txtRespondentFirstName.Text = string.Empty;
-                        txtRespondentLastName.Text = string.Empty;
+                        txtRespondentName.Text = string.Empty;
+                        txtRespondentEmail.Text = string.Empty;
                         txtRespondentPhone.Text = string.Empty;
                         txtRespondentExtension.Text = string.Empty;
                     }
@@ -325,6 +325,14 @@ namespace tjc.Modules.MediationStatistics
         {
             try
             {
+              if(lstEvents.InsertItem!=null)
+                {
+
+                }
+                if (lstEvents.EditItem != null)
+                {
+
+                }
                 lstEvents.DataSource = _currentCase.GetCurrentSession(CurrentSessionIndex).SessionEvents;
             }
             catch
@@ -437,7 +445,6 @@ namespace tjc.Modules.MediationStatistics
             }
             if (_currentCase.CaseId >= 0)
             {
-                session.Mediator = drpMediator.SelectedValue;
                 if (!string.IsNullOrEmpty(hdPetitionerAttorneyId.Value))
                     session.p1_AttorneyId = Int32.Parse(hdPetitionerAttorneyId.Value);
                 if (!string.IsNullOrEmpty(hdRespondentAttorneyId.Value))
@@ -463,7 +470,6 @@ namespace tjc.Modules.MediationStatistics
                 session.ArbitrationReferral = chkArbitrationReferral.Checked;
                 session.Interpreter = chkInterpreterRequested.Checked;
                 session.Inmate=chkInmate.Checked;
-                session.Mediator = drpMediator.SelectedValue;
                 session.FeeAmount = drpFeeAmount.SelectedValue;
                 session.p1_FeesOwed = drpPetitionerFeesOwed.SelectedValue;
                 session.p1_FeesPaid = drpPetitionerFeesPaid.SelectedValue;
@@ -642,6 +648,11 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdAddEvent_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(hdSessionId.Value))
+            {
+                FillCase();
+                PopulateSessionInformation();
+            }
             lstEvents.InsertItemPosition = InsertItemPosition.FirstItem;
             PopulateEventInformation();
         }
@@ -745,38 +756,31 @@ namespace tjc.Modules.MediationStatistics
                     TimeRemaining = null
                 };
                 if (e.Item.FindControl("chkMeetingHeld") is CheckBox chkMeetingHeld)
-                {
                     newEvent.MediationHeld = chkMeetingHeld.Checked;
-                }
                 if (e.Item.FindControl("rblAgreementType") is RadioButtonList rblAgreementType)
-                {
                     newEvent.AgreementType = rblAgreementType.SelectedValue;
-                }
                 if (e.Item.FindControl("txtEventDate") is TextBox txtEventDate)
                 {
                     if (!string.IsNullOrEmpty(txtEventDate.Text))
                         newEvent.EventDate = DateTime.Parse(txtEventDate.Text);
                 }
                 if (e.Item.FindControl("chkSubmittedToParties") is CheckBox chkSubmittedToParties)
-                {
                     newEvent.AgreementSubmittedParties = chkSubmittedToParties.Checked;
-                }
                 if (e.Item.FindControl("chkAgreementSigned") is CheckBox chkAgreementSigned)
-                {
                     newEvent.AgreementSigned = chkAgreementSigned.Checked;
-                }
                 if (e.Item.FindControl("chkPreparedAttorney") is CheckBox chkPreparedAttorney)
-                {
                     newEvent.AgreementPreparedAttorney = chkPreparedAttorney.Checked;
-                }
                 if (e.Item.FindControl("drpReason") is DropDownList drpReason)
-                {
                     newEvent.ReasonNotHeld = drpReason.SelectedValue;
+                if (e.Item.FindControl("drpMediatorType") is DropDownList drpMediatorType)
+                    newEvent.MediatorType = drpMediatorType.SelectedValue;
+                if (e.Item.FindControl("hdMediatorId") is HiddenField hdMediatorId)
+                {
+                    if (Int32.TryParse(hdMediatorId.Value, out int id))
+                        newEvent.MediatorId = id;
                 }
                 if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
-                {
                     newEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
-                }
                 if (e.Item.FindControl("txtHours") is TextBox txtHours)
                 {
                     decimal.TryParse(txtHours.Text, out decimal timeRemaining);
@@ -877,6 +881,13 @@ namespace tjc.Modules.MediationStatistics
                     oldEvent.AgreementPreparedAttorney = chkPreparedAttorney.Checked;
                 if (e.Item.FindControl("drpReason") is DropDownList drpReason)
                     oldEvent.ReasonNotHeld = drpReason.SelectedValue;
+                if (e.Item.FindControl("drpMediatorType") is DropDownList drpMediatorType)
+                    oldEvent.MediatorType = drpMediatorType.SelectedValue;
+                if (e.Item.FindControl("hdMediatorId") is HiddenField hdMediatorId)
+                {
+                    if (Int32.TryParse(hdMediatorId.Value, out int id))
+                        oldEvent.MediatorId = id;
+                }
                 if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
                     oldEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
                 if (e.Item.FindControl("txtEventDate") is TextBox txtEventDate)

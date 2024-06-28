@@ -87,6 +87,7 @@ namespace tjc.Modules.MediationStatistics
         public string CaseListUrl { get { return _navigationManager.NavigateURL(); } }
         public string CDSPUrl { get { return EditUrl("CDSP"); } }
         public string AttorneyListUrl { get { return EditUrl("Attorney"); } }
+        public string MediatorListUrl { get { return EditUrl("Mediator"); } }
         public string ReportUrl { get { return EditUrl("Report"); } }
         public string RegionListUrl { get { return EditUrl("Region"); } }
         public string GroupListUrl { get { return EditUrl("Group"); } }

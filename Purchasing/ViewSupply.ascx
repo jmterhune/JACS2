@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.Purchasing.View" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ViewSupply.ascx.cs" Inherits="tjc.Modules.Purchasing.ViewSupply" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div id="stamp-container">
     <div class="row">

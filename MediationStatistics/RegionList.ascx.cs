@@ -10,8 +10,10 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -36,8 +38,16 @@ namespace tjc.Modules.MediationStatistics
     /// -----------------------------------------------------------------------------
     public partial class RegionList : MediationStatisticsModuleBase
     {
+        #region Members
+        private readonly INavigationManager _navigationManager;
+
+        #endregion
 
         #region Methods
+        public RegionList()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
         private void BindList()
         {
             var ctl = new RegionController();
@@ -61,6 +71,8 @@ namespace tjc.Modules.MediationStatistics
 
                 if (!IsPostBack)
                 {
+                    if (!IsAdmin)
+                        Response.Redirect(_navigationManager.NavigateURL());
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }

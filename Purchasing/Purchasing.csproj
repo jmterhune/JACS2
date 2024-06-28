@@ -84,6 +84,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SupplyOrder.ascx.cs">
+      <DependentUpon>SupplyOrder.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SupplyOrder.ascx.designer.cs">
+      <DependentUpon>SupplyOrder.ascx</DependentUpon>
+    </Compile>
     <Compile Include="FormOrder.ascx.cs">
       <DependentUpon>FormOrder.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -140,15 +147,37 @@
     <Compile Include="Complete.ascx.designer.cs">
       <DependentUpon>Complete.ascx</DependentUpon>
     </Compile>
-    <Compile Include="View.ascx.cs">
-      <DependentUpon>View.ascx</DependentUpon>
+    <Compile Include="StampOrder.ascx.cs">
+      <DependentUpon>StampOrder.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="View.ascx.designer.cs">
-      <DependentUpon>View.ascx</DependentUpon>
+    <Compile Include="StampOrder.ascx.designer.cs">
+      <DependentUpon>StampOrder.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewSupply.ascx.cs">
+      <DependentUpon>ViewSupply.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewSupply.ascx.designer.cs">
+      <DependentUpon>ViewSupply.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewForm.ascx.cs">
+      <DependentUpon>ViewForm.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewForm.ascx.designer.cs">
+      <DependentUpon>ViewForm.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewStamp.ascx.cs">
+      <DependentUpon>ViewStamp.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewStamp.ascx.designer.cs">
+      <DependentUpon>ViewStamp.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SupplyOrder.ascx" />
     <Content Include="FormOrder.ascx" />
     <Content Include="EditFormItem.ascx" />
     <Content Include="Edit.ascx" />
@@ -157,7 +186,10 @@
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
     <Content Include="Complete.ascx" />
-    <Content Include="View.ascx" />
+    <Content Include="StampOrder.ascx" />
+    <Content Include="ViewSupply.ascx" />
+    <Content Include="ViewForm.ascx" />
+    <Content Include="ViewStamp.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Purchasing.dnn" />

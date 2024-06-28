@@ -202,7 +202,6 @@ namespace tjc.Modules.MediationStatistics
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
                 hdSessionId.Value = session.SessionId.ToString();
-                drpMediator.SelectedValue = session.Mediator;
                 drpActionStage.SelectedIndex = -1;
                 if (session.StageOfAction.HasValue)
                     drpActionStage.SelectedValue = session.StageOfAction.Value.ToString();
@@ -322,7 +321,6 @@ namespace tjc.Modules.MediationStatistics
             }
             if (_currentCase.CaseId >= 0)
             {
-                session.Mediator = drpMediator.SelectedValue;
                 if (!string.IsNullOrEmpty(txtMediationDate.Text))
                     session.MediationDate = DateTime.Parse(txtMediationDate.Text);
                 if (!string.IsNullOrEmpty(txtOrderReferralDate.Text))
@@ -473,6 +471,11 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdAddEvent_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(hdSessionId.Value))
+            {
+                FillCase();
+                PopulateSessionInformation();
+            }
             lstEvents.InsertItemPosition = InsertItemPosition.FirstItem;
             PopulateEventInformation();
         }

@@ -131,6 +131,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Mediation\MediatorListItemController.cs" />
+    <Compile Include="Components\Mediation\MediatorListItem.cs" />
     <Compile Include="Components\Mediation\AttorneyListItemController.cs" />
     <Compile Include="Components\Mediation\AttorneyListItem.cs" />
     <Compile Include="Components\Mediation\CaseListItem.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="Components\Employee\Phone.cs" />
     <Compile Include="Components\FamilySelfHelp\Client.cs" />
     <Compile Include="Components\FamilySelfHelp\ClientController.cs" />
+    <Compile Include="Services\MediatorListItemAPIController.cs" />
     <Compile Include="Services\AttorneyListItemAPIController .cs" />
     <Compile Include="Services\CaseListItemAPIController.cs" />
     <Compile Include="Services\ClientNameAPIController.cs" />
@@ -159,14 +162,13 @@
     <Compile Include="Services\ViewModels\Employee\PhoneViewModel.cs" />
     <Compile Include="Services\ViewModels\Employee\EmployeeViewModel.cs" />
     <Compile Include="Services\ViewModels\FamilySelfHelp\ClientNameViewModel.cs" />
+    <Compile Include="Services\ViewModels\Mediation\MediatorListItemViewModal.cs" />
     <Compile Include="Services\ViewModels\Mediation\CaseListItemViewModel.cs" />
     <Compile Include="Services\ViewModels\Mediation\AttorneyListItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="IIS-config.txt" />
     <Content Include="packages.config" />
   </ItemGroup>
@@ -174,6 +176,7 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="JudgeVacation.dnn" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -208,13 +211,5 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <Extension>zip</Extension>
-    <DNNFileName>Intranet.API</DNNFileName>
-    <PackageName>Intranet.API</PackageName>
-    <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
-  </PropertyGroup>
-  <Import Project="BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="PackageModule">
-  </Target>
+
 </Project>

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
+using tjc.Intranet.API.Components.Mediation;
 using tjc.Intranet.API.Services.ViewModels.Mediation;
 
 namespace tjc.Intranet.API.Services.Mediation
@@ -34,15 +35,15 @@ namespace tjc.Intranet.API.Services.Mediation
                 filteredCount = ctl.GetAttorneyListCount(firstName, lastName, firm);
                 if (count == 0) { recordCount = filteredCount; }
                 attorneylistItems = ctl.GetAttorneyListPaged(firstName, lastName, firm, recordOffset, pageSize, sortColumn, sortDirection).Select(attorneylistItem => new AttorneyListItemViewModel(attorneylistItem)).ToList();
-                return Request.CreateResponse(new MediationSearchResult { data = attorneylistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+                return Request.CreateResponse(new AttorneySearchResult { data = attorneylistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (System.Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new MediationSearchResult { data = attorneylistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+                return Request.CreateResponse(new AttorneySearchResult { data = attorneylistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
-        public class MediationSearchResult
+        public class AttorneySearchResult
         {
             public List<AttorneyListItemViewModel> data { get; set; }
             public int recordsTotal { get; set; }
@@ -70,6 +71,33 @@ namespace tjc.Intranet.API.Services.Mediation
                     break;
             }
             return name;
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage CreateAttorney(AttorneyListItemViewModel attorneyViewItem)
+        {
+            var ctl = new Components.Mediation.AttorneyListItemController();
+            AttorneyListItem attorney = new AttorneyListItem { Email = attorneyViewItem.Email, FirstName = attorneyViewItem.FirstName, LastName = attorneyViewItem.LastName, Phone = attorneyViewItem.Phone,Extension=attorneyViewItem.Extension, Address=attorneyViewItem.Address, City=attorneyViewItem.City, Firm=attorneyViewItem.Firm, State=attorneyViewItem.State, Zip=attorneyViewItem.Zip };
+            try
+            {
+                ctl.CreateAttorney(attorney);
+                bool result = attorney.AttorneyId > 0;
+                if (result)
+                {
+                    return Request.CreateResponse(new AttorneyAddedResult { AttorneyId = attorney.AttorneyId });
+                }
+                return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public class AttorneyAddedResult
+        {
+            public int AttorneyId { get; set; }
+
         }
     }
 }

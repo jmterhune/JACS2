@@ -40,8 +40,6 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public DateTime? MediationDate { get; set; }
 
-        public string Mediator { get; set; }
-
         public DateTime? ReferralDate { get; set; }
 
         public string ProgramReferralSource { get; set; }

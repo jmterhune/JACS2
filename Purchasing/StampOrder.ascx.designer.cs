@@ -24,6 +24,15 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.HyperLink lnkAdmin;
 
         /// <summary>
+        /// ltTopMessages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltTopMessages;
+
+        /// <summary>
         /// txtRequestor control.
         /// </summary>
         /// <remarks>
@@ -78,13 +87,13 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.DropDownList drpStampType;
 
         /// <summary>
-        /// txtSample control.
+        /// lblFontStyle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSample;
+        protected global::System.Web.UI.WebControls.Label lblFontStyle;
 
         /// <summary>
         /// drpFontStyle control.
@@ -105,6 +114,15 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valFontStyle;
 
         /// <summary>
+        /// lblFontSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFontSize;
+
+        /// <summary>
         /// txtFontSize control.
         /// </summary>
         /// <remarks>
@@ -121,6 +139,15 @@ namespace tjc.Modules.Purchasing
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valFontSize;
+
+        /// <summary>
+        /// lblInkColor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblInkColor;
 
         /// <summary>
         /// drpInkColor control.
@@ -150,6 +177,15 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.TextBox txtQuantity;
 
         /// <summary>
+        /// txtSample control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtSample;
+
+        /// <summary>
         /// txtInstructions control.
         /// </summary>
         /// <remarks>
@@ -157,6 +193,15 @@ namespace tjc.Modules.Purchasing
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtInstructions;
+
+        /// <summary>
+        /// ltUploadMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltUploadMessage;
 
         /// <summary>
         /// lblupload control.
@@ -177,13 +222,22 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.FileUpload uplAttachments;
 
         /// <summary>
-        /// cmdAddAttachment control.
+        /// ltAttachments control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdAddAttachment;
+        protected global::System.Web.UI.WebControls.Literal ltAttachments;
+
+        /// <summary>
+        /// hdAttachmentIds control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdAttachmentIds;
 
         /// <summary>
         /// cmdSave control.
@@ -202,5 +256,14 @@ namespace tjc.Modules.Purchasing
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink cmdCancel;
+
+        /// <summary>
+        /// ltBottomMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltBottomMessage;
     }
 }

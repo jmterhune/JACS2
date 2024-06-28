@@ -21,5 +21,13 @@ namespace tjc.Intranet.API.Components.Mediation {
             }
             return t;
         }
+        public void CreateAttorney(AttorneyListItem t)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<AttorneyListItem>();
+                rep.Insert(t);
+            }
+        }
     }
 }

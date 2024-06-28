@@ -44,12 +44,12 @@ namespace tjc.Intranet.API.Services.Mediation
                 filteredCount= ctl.GetCaseListCount(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName);
                 if (count == 0) { recordCount = filteredCount; }
                 caselistItems = ctl.GetCaseListPaged(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName, recordOffset, pageSize, sortColumn, sortDirection).Select(caselistItem => new CaseListItemViewModel(caselistItem)).ToList();
-                return Request.CreateResponse(new MediationSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount,error=null });
+                return Request.CreateResponse(new CaseSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount,error=null });
             }
             catch (System.Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new MediationSearchResult{ data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount,error=ex.Message });
+                return Request.CreateResponse(new CaseSearchResult{ data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount,error=ex.Message });
             }
         }
         
@@ -70,7 +70,7 @@ namespace tjc.Intranet.API.Services.Mediation
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-        public class MediationSearchResult
+        public class CaseSearchResult
         {
             public List<CaseListItemViewModel> data { get; set; }
             public int recordsTotal { get; set; }

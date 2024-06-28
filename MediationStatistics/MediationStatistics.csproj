@@ -94,6 +94,15 @@
     <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MediatorList.ascx.cs">
+      <DependentUpon>MediatorList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MediatorList.ascx.designer.cs">
+      <DependentUpon>MediatorList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\MediatorController.cs" />
+    <Compile Include="Components\Mediator.cs" />
     <Compile Include="Components\ReportController.cs" />
     <Compile Include="Components\Report.cs" />
     <Compile Include="Report.ascx.cs">
@@ -253,6 +262,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="MediatorList.ascx" />
     <Content Include="Report.ascx" />
     <Content Include="EditFamilyPreFile.ascx" />
     <Content Include="EditSmallClaims.ascx" />
