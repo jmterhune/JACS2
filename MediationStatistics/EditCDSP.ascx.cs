@@ -376,8 +376,8 @@ namespace tjc.Modules.MediationStatistics
             else
             {
                 ctlSession.CreateSession(session);
-                hdSessionId.Value = session.SessionId.ToString();
-            }
+            } 
+            hdSessionId.Value = session.SessionId.ToString();
         }
         private void DeleteSession()
         {

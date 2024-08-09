@@ -35,6 +35,8 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Axiom Setup", "Axiom Setup\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Purchasing", "Purchasing\Purchasing.csproj", "{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearingsLog", "HearingsLog\HearingsLog.csproj", "{0711116E-AF67-46CD-95D6-554831319119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
