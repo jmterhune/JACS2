@@ -71,65 +71,75 @@ namespace tjc.Modules.HearingLog.Components
                 rep.Update(t);
             }
         }
-        public IEnumerable<HearingLog> GetHearingLogPaged(int userId,int status,DateTime cutoffDate, int rowOffset, int pageSize, string sortOrder, string sortDesc)
+        public IEnumerable<HearingLog> GetHearingLogPaged(int userId,int status,DateTime startDate,DateTime endDate, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<HearingLog> t;
             using (IDataContext ctx = DataContext.Instance())
             {
 
-                t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged", userId, status,cutoffDate, rowOffset, pageSize, sortOrder, sortDesc);
+                t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged", userId, status,startDate,endDate, rowOffset, pageSize, sortOrder, sortDesc);
             }
             return t;
         }
-        public IEnumerable<HearingLog> GetHearingLogPaged(int userId, int status, DateTime cutoffDate,string searchText, int rowOffset, int pageSize, string sortOrder, string sortDesc)
+        public IEnumerable<HearingLog> GetHearingLogPaged(int userId, int status, DateTime startDate, DateTime endDate, string searchText, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<HearingLog> t;
             using (IDataContext ctx = DataContext.Instance())
             {
 
-                t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged_search", userId, status, cutoffDate,searchText, rowOffset, pageSize, sortOrder, sortDesc);
+                t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged_search", userId, status, startDate,endDate,searchText, rowOffset, pageSize, sortOrder, sortDesc);
             }
             return t;
         }
 
-        public int GetHearingLogCount(int userId, int status, DateTime cutoffDate)
+        public int GetHearingLogCount(int userId, int status, DateTime startDate, DateTime endDate)
         {
             int t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count", userId, status,cutoffDate);
+                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count", userId, status,startDate,endDate);
             }
             return t;
         }
-        public int GetHearingLogCount(int userId, int status, DateTime cutoffDate, string searchText)
+        public int GetHearingLogCount(int userId, int status, DateTime startDate, DateTime endDate, string searchText)
         {
             int t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count_search", userId, status, cutoffDate,searchText);
+                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count_search", userId, status, startDate,endDate,searchText);
             }
             return t;
         }
+        public void ImportHearings(int userId, DateTime startDate, DateTime endDate)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_hearing_import_jacs_hearings", userId, startDate,endDate);
+            }
+        }
+
         #region "Chief Judges"
-        public IEnumerable<HearingLog> GetHearingLogPaged(int userId, int status, DateTime cutoffDate, string searchText,int judgeUserId, int rowOffset, int pageSize, string sortOrder, string sortDesc)
+        public IEnumerable<HearingLog> GetHearingLogPaged(int userId, int status, DateTime startDate, DateTime endDate, string searchText,int judgeUserId, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<HearingLog> t;
             using (IDataContext ctx = DataContext.Instance())
             {
 
-                t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged_chief_judge", userId, status, cutoffDate, searchText,judgeUserId, rowOffset, pageSize, sortOrder, sortDesc);
+                t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged_chief_judge", userId, status, startDate,endDate, searchText,judgeUserId, rowOffset, pageSize, sortOrder, sortDesc);
             }
             return t;
         }
-        public int GetHearingLogCount(int userId, int status, DateTime cutoffDate, string searchText,int judgeUserId)
+        public int GetHearingLogCount(int userId, int status, DateTime startDate, DateTime endDate, string searchText,int judgeUserId)
         {
             int t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count_chief_judge", userId, status, cutoffDate, searchText,judgeUserId);
+
+                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count_chief_judge", userId, status, startDate,endDate, searchText,judgeUserId);
             }
             return t;
         }
+       
         #endregion
     }
 }

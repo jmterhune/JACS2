@@ -19,7 +19,7 @@
                         <asp:Label Text="Select Judge" AssociatedControlID="drpJudge" runat="server" class="form-label" />
                         <asp:DropDownList ID="drpJudge" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="drpJudge_SelectedIndexChanged">
                         </asp:DropDownList>
-                        <div id="judgeHelp" class="form-text">Select the Judge to configure from the list</div>
+                        <div id="judgeHelp" class="form-text">Select the Judge or Clerk App to configure from the list</div>
                     </div>
                     <div>
                         <asp:Label Text="Select County" AssociatedControlID="drpCounty" runat="server" class="form-label" />
@@ -28,8 +28,10 @@
                             <asp:ListItem Text="DeSoto" />
                             <asp:ListItem Text="Manatee" />
                             <asp:ListItem Text="Sarasota" />
+                            <asp:ListItem Text="Benchmark" />
+                            <asp:ListItem Text="Clericus" />
                         </asp:DropDownList>
-                        <div id="countyHelp" class="form-text">Select the JACS County get judges from</div>
+                        <div id="countyHelp" class="form-text">Select the JACS County or Clerk App to get judges from</div>
                     </div>
 
                 </div>
@@ -42,7 +44,7 @@
                     </div>
                 </div>
                 <div class="col-12 mt-3">
-                    <asp:Label Text="Check all Judge Names used in JACS for this user" AssociatedControlID="chlJacsJudges" runat="server" class="form-label" />
+                    <asp:Label Text="Check all Judge Names associated with this user" AssociatedControlID="chlJacsJudges" runat="server" class="form-label" />
                     <asp:CheckBoxList ID="chlJacsJudges" runat="server" CssClass="check-list" RepeatLayout="UnorderedList">
                     </asp:CheckBoxList>
                 </div>

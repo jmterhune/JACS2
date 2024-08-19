@@ -282,7 +282,7 @@ namespace tjc.Modules.MediationStatistics
             var ctl = new SessionController();
             ctl.CreateSession(newSession);
             _currentCase.CaseSessions.Append(newSession);
-            CurrentSessionIndex = _currentCase.CaseSessions.Count() - 1;
+            CurrentSessionIndex = _currentCase.CaseSessions.Count()>0? _currentCase.CaseSessions.Count() - 1: 0;
         }
         private void UpdateNavigation()
         {
@@ -508,12 +508,6 @@ namespace tjc.Modules.MediationStatistics
             PopulateSessionInformation();
         }
         #region Event Events
-
-
-        #endregion //Event Events
-
-        #endregion //Events
-
         protected void rptEvent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName.ToLower() == "delete")
@@ -554,14 +548,6 @@ namespace tjc.Modules.MediationStatistics
                 ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(true)", true);
             }
         }
-
-        private string GetMediatorName(int mediatorId)
-        {
-            var ctl = new MediatorController();
-            Mediator mediator=ctl.GetMediator(mediatorId);
-            return mediator.MediatorName;
-        }
-
         protected void rptEvent_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
@@ -664,5 +650,18 @@ namespace tjc.Modules.MediationStatistics
                 scriptMan.RegisterAsyncPostBackControl(lnkDelete);
 
         }
+
+        #endregion //Event Events
+
+        #endregion //Events
+
+
+        private string GetMediatorName(int mediatorId)
+        {
+            var ctl = new MediatorController();
+            Mediator mediator=ctl.GetMediator(mediatorId);
+            return mediator.MediatorName;
+        }
+
     }
 }

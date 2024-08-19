@@ -20,10 +20,7 @@
         <li class="nav-item" id="contactItem">
             <a class="nav-link" href="<%=EmergencyContactUrl%>"><i class="fas fa-address-book"></i>&nbsp;Emergency Contacts</a>
         </li>
-
     </ul>
-
-
     <div class="tab-content edit-form">
         <div id="detail" class="tab-pane active">
             <asp:UpdatePanel runat="server" ID="upEmployee" OnUnload="upEmployee_Unload">

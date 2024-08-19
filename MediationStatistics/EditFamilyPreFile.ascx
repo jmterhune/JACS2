@@ -291,7 +291,7 @@
                             <div class="col-auto">
                                 <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
                                 <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
-                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("Mediator")%>' />
+                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("MediatorName")%>' />
                             </div>
                             <div class="col-auto pt-4 mt-1">
                                 <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
@@ -389,7 +389,7 @@
                             <div class="col-auto">
                                 <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
                                 <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
-                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("Mediator")%>' />
+                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("MediatorName")%>' />
                             </div>
                             <div class="col-auto pt-4 mt-1">
                                 <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">

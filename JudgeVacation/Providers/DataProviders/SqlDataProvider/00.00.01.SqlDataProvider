@@ -4,32 +4,104 @@
 /*****                                                  *****/
 /***** Note: To manually execute this script you must   *****/
 /*****       perform a search and replace operation     *****/
-/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****       for {databaseOwner} and   *****/
 /*****                                                  *****/
 /************************************************************/
 
-IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}JudgeVacation_Items]') AND type in (N'U'))
-	DROP TABLE {databaseOwner}[{objectQualifier}JudgeVacation_Items]
+/****** Object:  Table [dbo].[tjc_vacation_vacations]    Script Date: 8/14/2024 2:52:52 PM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_vacations]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_vacation_vacations]
 GO
 
-CREATE TABLE {databaseOwner}{objectQualifier}JudgeVacation_Items
+
+CREATE TABLE {databaseOwner}[tjc_vacation_vacations](
+	[CalendarID] [int] IDENTITY(1,1) NOT NULL,
+	[JudgeID] [int] NULL,
+	[StartDate] [date] NULL,
+	[EndDate] [date] NULL,
+	[VacationDays] [int] NULL,
+ CONSTRAINT [PK_tjc_vacation_vacations] PRIMARY KEY CLUSTERED 
 (
-	[ItemId] INT NOT NULL IDENTITY (1, 1),
-	[ItemName] NVARCHAR(MAX) NOT NULL,
-	[ItemDescription] NVARCHAR(MAX) NOT NULL,
-	[AssignedUserId] INT NULL,
-	[ModuleId] INT NOT NULL,
-	[CreatedOnDate] DATETIME NOT NULL,
-	[CreatedByUserId] INT NOT NULL,
-	[LastModifiedOnDate] DATETIME NOT NULL,
-	[LastModifiedByUserId] INT NOT NULL
-)
+	[CalendarID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
-
-ALTER TABLE {databaseOwner}[{objectQualifier}JudgeVacation_Items] ADD CONSTRAINT [PK_{objectQualifier}JudgeVacation_Items] PRIMARY KEY CLUSTERED ([ItemId])
+/****** Object:  Table [dbo].[tjc_vacation_holidays]    Script Date: 8/14/2024 2:52:52 PM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_holidays]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_vacation_holidays]
 GO
 
+CREATE TABLE {databaseOwner}[tjc_vacation_holidays](
+	[HolidayID] [int] IDENTITY(1,1) NOT NULL,
+	[HolidayDate] [date] NULL,
+	[Description] [nvarchar](50) NULL,
+ CONSTRAINT [PK_tjc_vacation_holidays] PRIMARY KEY CLUSTERED 
+(
+	[HolidayID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+/****** Object:  StoredProcedure [dbo].[tjc_vacation_get_judge_years]    Script Date: 8/14/2024 2:57:40 PM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_get_judge_years]') AND type in (N'P'))
+	DROP PROCEDURE {databaseOwner}[tjc_vacation_get_judge_years]
+GO
+
+CREATE PROCEDURE {databaseOwner}[tjc_vacation_get_judge_years] 
+	@judgeId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	SELECT YEAR(endDate) as Years from tjc_vacation_vacations
+	Where JudgeId=@judgeId
+	Group By YEAR(endDate)
+	Order by 1
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[tjc_vacation_judge_report]    Script Date: 8/14/2024 2:57:40 PM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_judge_report]') AND type in (N'P'))
+	DROP PROCEDURE {databaseOwner}[tjc_vacation_judge_report]
+GO
+CREATE PROCEDURE {databaseOwner}[tjc_vacation_judge_report]
+	@startDate datetime,@enddate datetime
+AS
+BEGIN
+	
+	SET NOCOUNT ON;
+
+		SELECT v.*,u.DisplayName as JudgeName, vacationdays,g.subtotal 
+	from tjc_vacation_vacations v 
+		inner join users u on v.JudgeId=u.UserID 
+		Inner join (select judgeId,sum(VacationDays) as subtotal 
+			from tjc_vacation_vacations 
+				Where (StartDate Between @startDate and @enddate) OR (EndDate Between @startDate and @enddate)
+				group by judgeId) g on g.JudgeId=v.JudgeId
+
+	Where (StartDate Between @startDate and @enddate) OR (EndDate Between @startDate and @enddate)
+	order by JudgeName,enddate
+END
+GO
+/****** Object:  StoredProcedure [dbo].[tjc_vacation_report_by_judge]    Script Date: 8/14/2024 2:57:40 PM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_report_by_judge]') AND type in (N'P'))
+	DROP PROCEDURE {databaseOwner}[tjc_vacation_report_by_judge]
+GO
+
+CREATE PROCEDURE {databaseOwner}[tjc_vacation_report_by_judge] 
+	@startDate datetime,@enddate datetime,@judgeId int
+AS
+BEGIN
+	
+	SET NOCOUNT ON;
+
+	SELECT v.*,u.DisplayName as JudgeName from tjc_vacation_vacations v inner join users u on v.JudgeId=u.UserID
+	Where ((StartDate >= @startDate and StartDate <= @enddate) OR (EndDate>= @startDate and EndDate <= @enddate)) And v.JudgeId=@judgeId
+END
 
 /************************************************************/
 /*****              SqlDataProvider                     *****/

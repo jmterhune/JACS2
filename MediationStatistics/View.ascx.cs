@@ -91,7 +91,13 @@ namespace tjc.Modules.MediationStatistics
             {
                 if (!IsPostBack)
                 {
-                    isAdminUser = UserId > 0 ? UserInfo.IsAdmin.ToString().ToLower() : "false";
+                    if (UserId > 0)
+                    {
+                        if(UserInfo.IsAdmin || UserInfo.IsInRole(AdminRole))
+                        {
+                            isAdminUser = "true";
+                        }
+                    }
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                     PopulateDropdowns();
                     lnkReset.NavigateUrl = _navigationManager.NavigateURL();

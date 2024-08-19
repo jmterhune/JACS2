@@ -11,26 +11,8 @@ namespace tjc.Modules.JudgeVacation
 {
 
 
-    public partial class View
+    public partial class Reports
     {
-
-        /// <summary>
-        /// lnkReports control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkReports;
-
-        /// <summary>
-        /// lnkHolidays control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkHolidays;
 
         /// <summary>
         /// StartDatePicker control.
@@ -51,22 +33,31 @@ namespace tjc.Modules.JudgeVacation
         protected global::System.Web.UI.WebControls.TextBox EndDatePicker;
 
         /// <summary>
-        /// cmdSave control.
+        /// drpJudges control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdSave;
+        protected global::System.Web.UI.WebControls.DropDownList drpJudges;
 
         /// <summary>
-        /// cmdUpdate control.
+        /// cmdSubmit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdUpdate;
+        protected global::System.Web.UI.WebControls.LinkButton cmdSubmit;
+
+        /// <summary>
+        /// cmdCancel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink cmdCancel;
 
         /// <summary>
         /// pnlRecords control.
@@ -78,13 +69,13 @@ namespace tjc.Modules.JudgeVacation
         protected global::System.Web.UI.WebControls.Panel pnlRecords;
 
         /// <summary>
-        /// drpYear control.
+        /// ltMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpYear;
+        protected global::System.Web.UI.WebControls.Literal ltMessage;
 
         /// <summary>
         /// rptVacationDays control.

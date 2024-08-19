@@ -24,12 +24,14 @@ namespace tjc.Modules.HearingLog
                 }
                 var tc = new HearingController();
                 lnkAdmin.NavigateUrl = EditUrl("Admin");
-                txtCutoffDate.Text = DateTime.Now.AddDays(-60).ToShortDateString();
+                txtStartDate.Text = DateTime.Now.AddDays(-60).ToShortDateString();
+                txtEndDate.Text = DateTime.Now.ToShortDateString();
                 if (UserInfo.IsInRole(ChiefJudgeRole))
                 {
                     var users = RoleController.Instance.GetUsersByRole(PortalId, JudgeRole);
                     foreach (var user in users)
                     {
+                        if(user.UserID!= UserId)
                         drpJudges.Items.Add(new ListItem(user.DisplayName, user.UserID.ToString()));
                     }
                     drpJudges.Visible = true;

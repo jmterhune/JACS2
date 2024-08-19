@@ -39,7 +39,12 @@
         top: 2px;
         position: relative;
     }
-
+.tooltip,.tooltip p{
+    color:#fff !important;
+}
+.tooltip-inner {
+    max-width: 100% !important;
+}
 .checkbox-menu li.active label {
     background-color: #cbcbff;
     font-weight: bold;

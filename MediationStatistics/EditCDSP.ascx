@@ -250,7 +250,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="EventModalLabel">
-                                Add New Event</h4>
+                               Add / Edit Event</h4>
                             <button type="button" class="close" onclick="CloseEventModal(event)" aria-hidden="true">&times;</button>
                         </div>
                         <div class="modal-body form-group">

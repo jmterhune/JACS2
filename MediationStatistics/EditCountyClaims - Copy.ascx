@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditSmallClaims.ascx.cs" Inherits="tjc.Modules.MediationStatistics.EditSmallClaims" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditCountyClaims.ascx.cs" Inherits="tjc.Modules.MediationStatistics.EditCountyClaims" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <asp:Literal ID="ltHeading" runat="server"><h4>{0}:&nbsp{1}</h4></asp:Literal>
 <div id="county-form">
@@ -113,38 +113,38 @@
             </div>
             <fieldset class="outline-fieldset">
                 <legend>Plaintiff's Attorney</legend>
-                <asp:HiddenField ID="hdPetitionerAttorneyId" runat="server" ClientIDMode="Static" />
+                <asp:HiddenField ID="hdPlaintiffAttorneyId" runat="server" ClientIDMode="Static" />
                 <div class="row">
                     <div class="col-auto">
                         <div class="form-group">
                             <div class="form-check form-switch mt-4">
-                                <asp:CheckBox ID="chkProSePetitioner" runat="server" Text="Pro Se" />
+                                <asp:CheckBox ID="chkProSePlaintiff" runat="server" Text="Pro Se" />
                             </div>
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtPetitionerName" Text="Petitioner Name" />
-                            <asp:TextBox runat="server" ID="txtPetitionerName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffName" Text="Plaintiff Name" />
+                            <asp:TextBox runat="server" ID="txtPlaintiffName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
 
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtPetitionerEmail" Text="Email Address" />
-                            <asp:TextBox runat="server" ID="txtPetitionerEmail" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffEmail" Text="Email" />
+                            <asp:TextBox runat="server" ID="txtPlaintiffEmail" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtPetitionerPhone" Text="Phone" />
-                            <asp:TextBox runat="server" ID="txtPetitionerPhone" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffPhone" Text="Phone" />
+                            <asp:TextBox runat="server" ID="txtPlaintiffPhone" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtPetitionerExtension" Text="Extension" />
-                            <asp:TextBox runat="server" ID="txtPetitionerExtension" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtPlaintiffExtension" Text="Extension" />
+                            <asp:TextBox runat="server" ID="txtPlaintiffExtension" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto pt-4">
@@ -159,37 +159,37 @@
             </fieldset>
             <fieldset class="outline-fieldset">
                 <legend>Defendant's Attorney</legend>
-                <asp:HiddenField ID="hdRespondentAttorneyId" runat="server" ClientIDMode="Static" />
+                <asp:HiddenField ID="hdDefendantAttorneyId" runat="server" ClientIDMode="Static" />
                 <div class="row">
                     <div class="col-auto">
                         <div class="form-group">
                             <div class="form-check form-switch mt-4">
-                                <asp:CheckBox ID="chkProSeRespondent" runat="server" Text="Pro Se" />
+                                <asp:CheckBox ID="chkProSeDefendant" runat="server" Text="Pro Se" />
                             </div>
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtRespondentName" Text="Respondent Name" />
-                            <asp:TextBox runat="server" ID="txtRespondentName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtDefendantName" Text="Defendant Name" />
+                            <asp:TextBox runat="server" ID="txtDefendantName" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtRespondentEmail" Text="Email Address" />
-                            <asp:TextBox runat="server" ID="txtRespondentEmail" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtDefendantEmail" Text="Email" />
+                            <asp:TextBox runat="server" ID="txtDefendantEmail" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtRespondentPhone" Text="Phone" />
-                            <asp:TextBox runat="server" ID="txtRespondentPhone" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtDefendantPhone" Text="Phone" />
+                            <asp:TextBox runat="server" ID="txtDefendantPhone" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtRespondentExtension" Text="Extension" />
-                            <asp:TextBox runat="server" ID="txtRespondentExtension" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
+                            <asp:Label runat="server" AssociatedControlID="txtDefendantExtension" Text="Extension" />
+                            <asp:TextBox runat="server" ID="txtDefendantExtension" ClientIDMode="Static" Enabled="false" CssClass="form-control" />
                         </div>
                     </div>
                     <div class="col-auto pt-4">
@@ -227,37 +227,146 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-3">
                     <div class="col-auto">
                         <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="rblPtcOrdered" Text="Mediation Forum" />
-                            <asp:RadioButtonList ID="rblPtcOrdered" CssClass="form-control radio-buttons" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
-                                <asp:ListItem Text="None" Value="N" />
-                                <asp:ListItem Text="PTC" Value="P" />
-                                <asp:ListItem Text="Court Ordered" Value="C" />
-                            </asp:RadioButtonList>
+                            <div class="form-check form-switch ">
+                                <asp:CheckBox ID="chkFeeJudgmentEntered" runat="server" Text="Fee judgment Entered" />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-auto pt-4">
-                        <div class="form-group pt-2">
-                            <div class="form-check form-switch">
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <div class="form-check form-switch ">
+                                <asp:CheckBox ID="chkFeeAgreementEntered" runat="server" Text="Fee Agreement Entered" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <div class="form-check form-switch ">
+                                <asp:CheckBox ID="chkInterpreterRequested" runat="server" Text="Interpreter Requested" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <div class="form-check form-switch ">
+                                <asp:CheckBox ID="chkDepartmentFeeWaiver" runat="server" Text="Department Fee Waiver" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <div class="form-check form-switch ">
                                 <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Virtual Session" />
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto pt-4">
-                        <div class="form-group pt-2">
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <div class="form-check form-switch ">
+                                <asp:CheckBox ID="chkCircuitCivilReferal" runat="server" Text="Circuit Civil Referral" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-group">
                             <div class="form-check form-switch ">
                                 <asp:CheckBox ID="chkArbitrationReferral" runat="server" Text="Arbitration Referral" />
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto pt-4">
-                        <div class="form-group pt-2">
+                    <div class="col-auto">
+                        <div class="form-group">
                             <div class="form-check form-switch ">
-                                <asp:CheckBox ID="chkInterpreterRequested" runat="server" Text="Interpreter Requested" />
+                                <asp:CheckBox ID="chkOTSC" runat="server" ToolTip="Order to Show Cause" Text="OTSC" />
                             </div>
                         </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="outline-fieldset">
+                <legend>Fee Information</legend>
+                <div class="row">
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Amount" />
+                            <asp:DropDownList runat="server" ID="drpFeeAmount" CssClass="form-control">
+                                <asp:ListItem Text="< Select Fee Amount >" Value="" />
+                                <asp:ListItem Text="$60" Value="$60" />
+                                <asp:ListItem Text="Indigent" Value="Indigent" />
+                                <asp:ListItem Text="Eviction" Value="Eviction" />
+                            </asp:DropDownList>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <fieldset class="outline-fieldset">
+                            <legend class="small">Fee's Paid By</legend>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="drpPlaintiffFeesPaid" Text="Plaintiff" />
+                                        <asp:DropDownList ID="drpPlaintiffFeesPaid" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Fee Paid >" Value="" />
+                                            <asp:ListItem Text="$0" />
+                                            <asp:ListItem Text="$60" />
+                                            <asp:ListItem Text="Indigent" />
+                                        </asp:DropDownList>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="drpDefendantFeesPaid" Text="Defendant" />
+                                        <asp:DropDownList ID="drpDefendantFeesPaid" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Fee Paid >" Value="" />
+                                            <asp:ListItem Text="$0" />
+                                            <asp:ListItem Text="$60" />
+                                            <asp:ListItem Text="Indigent" />
+                                        </asp:DropDownList>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-auto">
+                        <fieldset class="outline-fieldset">
+                            <legend class="small">Fee's Owed By</legend>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="drpPlaintiffFeesOwed" Text="Plaintiff" />
+                                        <asp:DropDownList ID="drpPlaintiffFeesOwed" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Fee Owed >" Value="" />
+                                            <asp:ListItem Text="$0" />
+                                            <asp:ListItem Text="$60" />
+                                            <asp:ListItem Text="Certificate of Indigency" />
+                                        </asp:DropDownList>
+                                    </div>
+                                </div>
+                                <div class="col-auto pt-4">
+                                    <div class="form-check form-switch mt-2">
+                                        <asp:CheckBox ID="chkPlaintiffFta" Text="P-FTA" ToolTip="Plaintiff Failure to Appear" runat="server" />
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="drpDefendantFeesOwed" Text="Defendant" />
+                                        <asp:DropDownList ID="drpDefendantFeesOwed" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Fee Owed >" Value="" />
+                                            <asp:ListItem Text="$0" />
+                                            <asp:ListItem Text="$60" />
+                                            <asp:ListItem Text="Certificate of Indigency" />
+                                        </asp:DropDownList>
+                                    </div>
+                                </div>
+                                <div class="col-auto pt-4">
+                                    <div class="form-check form-switch mt-2">
+                                        <asp:CheckBox ID="chkDefendantFta" ToolTip="Defendant Failure to Appear" Text="R-FTA" runat="server" />
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
             </fieldset>
@@ -270,7 +379,7 @@
             <div class="btn-toolbar mb-3" role="toolbar" aria-label="Session Events Toolbar">
                 <div class="btn-group" role="group" aria-label="Session Events Actions">
                     <asp:LinkButton ID="cmdSaveSession" runat="server"
-                        OnClick="cmdSave_Click" CssClass="btn btn-primary"><i class="fas fa-save"></i> Save Session</asp:LinkButton>
+                        OnClick="cmdSave_Click" CssClass="btn btn-primary"><i class="fas fa-save"></i> Save</asp:LinkButton>
 
                     <asp:LinkButton ID="cmdAddEvent" CssClass="btn btn-dark" runat="server" OnClick="cmdAddEvent_Click"><i class="fas fa-plus"></i> New Event</asp:LinkButton>
                     <div class="input-group-text" id="eventInfo">
@@ -334,6 +443,7 @@
                                         <input id="txtMediator" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
                                     </div>
                                 </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-auto">
@@ -568,6 +678,7 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="col-auto">
@@ -863,6 +974,7 @@
                     </div>
                 </div>
             </div>
+
         </ContentTemplate>
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="cmdSave" EventName="Click" />
@@ -1090,7 +1202,8 @@
         });
     }
 
-    //* Attorney Functions*/
+    
+    /* Attorney Functions*/
     function SetAttorney(e, item) {
         e.preventDefault();
         ClearAttorney(attorneyRole);
@@ -1101,27 +1214,27 @@
         var ext = item.dataset.extension;
         if (attorneyRole == 1) {
             if (attyid && attyid != "undefined")
-                $("#hdPetitionerAttorneyId").val(attyid);
-            if (name != "null" && name != "undefined")
-                $("#txtPetitionerName").val(name);
-            if (email != "null" && email != "undefined")
-                $("#txtPetitionerEmail").val(email);
+                $("#hdPlaintiffAttorneyId").val(attyid);
+            if (first != "null" && first != "undefined")
+                $("#txtPlaintiffName").val(name);
+            if (last != "null" && last != "undefined")
+                $("#txtPlaintiffEmail").val(email);
             if (phone != "null" && phone != "undefined")
-                $("#txtPetitionerPhone").val(phone);
+                $("#txtPlaintiffPhone").val(phone);
             if (ext != "null" && ext != "undefined")
-                $("#txtPetitionerExtension").val(ext);
+                $("#txtPlaintiffExtension").val(ext);
         }
         else if (attorneyRole == 2) {
             if (attyid && attyid != "undefined")
-                $("#hdRespondentAttorneyId").val(attyid);
-            if (name != "null" && name != "undefined")
-                $("#txtRespondentName").val(name);
-            if (email != "null" && email != "undefined")
-                $("#txtRespondentEmail").val(email);
+                $("#hdDefendantAttorneyId").val(attyid);
+            if (first != "null" && first != "undefined")
+                $("#txtDefendantName").val(name);
+            if (last != "null" && last != "undefined")
+                $("#txtDefendantEmail").val(email);
             if (phone != "null" && phone != "undefined")
-                $("#txtRespondentPhone").val(phone);
+                $("#txtDefendantPhone").val(phone);
             if (ext != "null" && ext != "undefined")
-                $("#txtRespondentExtension").val(ext);
+                $("#txtDefendantExtension").val(ext);
         }
         var attyModal = document.querySelector('#attorneyModal');
         var modal = bootstrap.Modal.getInstance(attyModal);
@@ -1176,17 +1289,17 @@
     }
     function ClearAttorney(attyRole) {
         if (attyRole == 1) {
-            $("#hdPetitionerAttorneyId").val("");
-            $("#txtPetitionerName").val("");
-            $("#txtPetitionerEmail").val("");
-            $("#txtPetitionerPhone").val("");
-            $("#txtPetitionerExtension").val("");
+            $("#hdPlaintiffAttorneyId").val("");
+            $("#txtPlaintiffName").val("");
+            $("#txtPlaintiffEmail").val("");
+            $("#txtPlaintiffPhone").val("");
+            $("#txtPlaintiffExtension").val("");
         } else if (attyRole == 2) {
-            $("#hdRespondentAttorneyId").val("");
-            $("#txtRespondentName").val("");
-            $("#txtRespondentEmail").val("");
-            $("#txtRespondentPhone").val("");
-            $("#txtRespondentExtension").val("");
+            $("#hdDefendantAttorneyId").val("");
+            $("#txtDefendantName").val("");
+            $("#txtDefendantEmail").val("");
+            $("#txtDefendantPhone").val("");
+            $("#txtDefendantExtension").val("");
         }
     }
     function ClearAddAttorneyForm() {
@@ -1299,7 +1412,8 @@
         let modal = bootstrap.Modal.getInstance(document.getElementById("attorneyModal"));
         modal.hide();
     }
-    //* Utility Functions*/
+    /* Utility Functions*/
+
     function hideReason(checkbox) {
         if (checkbox.checked == 1) {
             $(".reason").hide();
@@ -1308,5 +1422,4 @@
             $(".reason").show();
         }
     }
-
 </script>

@@ -1,86 +1,157 @@
-<dotnetnuke type="Package" version="5.0">
+﻿<dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="Hearings Log" type="Module" version="00.00.01">
-      <friendlyName>Hearings Log</friendlyName>
-      <description>Joe Terhune Hearings Log module</description>
-      <iconFile>~/Images/icon_extensions_32px.png</iconFile>
-      <owner>
-        <name>Joe Terhune</name>
-        <organization>Joe Terhune</organization>
-        <url>https://www.jud12.flcourts.org</url>
-        <email>jterhune@jud12.flcourts.org</email>
-      </owner>
-      <license src="License.txt"></license>
-      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
-      <azureCompatible>true</azureCompatible>
-      <dependencies>
-        <dependency type="CoreVersion">09.08.00</dependency>
-      </dependencies>      
-      <components>
-        <component type="ResourceFile">
-          <resourceFiles>
-            <basePath>DesktopModules/HearingsLog</basePath>
-            <resourceFile>
-              <name>Resources.zip</name>
-            </resourceFile>
-          </resourceFiles>
-        </component>
-        <component type="Module">
-          <desktopModule>
-            <moduleName>60 Day Hearings Log</moduleName>
-            <foldername>HearingsLog</foldername>
-            <businessControllerClass/>
-            <supportedFeatures/>
-            <moduleDefinitions>
-              <moduleDefinition>
-                <friendlyName>60 Day Hearings Log</friendlyName>
-                <defaultCacheTime>0</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>DesktopModules/HearingsLog/View.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle />
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>Admin</controlKey>
-                    <controlSrc>DesktopModules/HearingsLog/JudgeAdmin.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Manage Judge Settings</controlTitle>
-                    <controlType>Admin</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                    <supportsPopUps>True</supportsPopUps>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>Settings</controlKey>
-                    <controlSrc>DesktopModules/HearingsLog/Settings.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>60 Day Hearings Log Settings</controlTitle>
-                    <controlType>Edit</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                </moduleControls>
-              </moduleDefinition>
-            </moduleDefinitions>
-          </desktopModule>            
-        </component>
-        <component type="Assembly">
-          <assemblies>
-            <assembly>
-              <name>tjc.Modules.HearingLog.dll</name>
-              <path>bin</path>
-            </assembly>
-          </assemblies>
-        </component>
-      </components>
-    </package>
-  </packages>
+	  <package name="HearingsLog" type="Module" version="0.0.1">
+  <friendlyName>60 Day Hearing Log</friendlyName>
+  <description>60 Day Hearing Log module</description>
+  <iconFile>~/Icons/Sigma/Extensions_32x32_Standard.png</iconFile>
+  <owner>
+    <name>Joe Terhune</name>
+    <organization>Joe Terhune</organization>
+    <url>https://www.jud12.flcourts.org</url>
+    <email>jterhune@jud12.flcourts.org</email>
+  </owner>
+  <license>&lt;div class="License"&gt;
+	&lt;h3&gt;License&lt;/h3&gt;
+	&lt;p class="Owner"&gt;
+		Joe Terhune  &lt;a href=https://www.jud12.flcourts.org&gt;https://www.jud12.flcourts.org&lt;/a&gt;&lt;/br&gt;
+		Copyright (c) 2024&lt;/br&gt;	
+		by Joe Terhune&lt;/br&gt;
+	&lt;/p&gt;
+    &lt;p&gt;
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+        documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+        the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
+        to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    &lt;/p&gt;
+    &lt;p&gt;
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions 
+        of the Software.
+    &lt;/p&gt;
+    &lt;p&gt;
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    &lt;/p&gt;
+&lt;/div&gt;</license>
+  <releaseNotes>&lt;h3&gt;HearingsLog&lt;/h3&gt;
+&lt;p class="Contributor"&gt;
+	Joe Terhune &lt;br /&gt;
+	&lt;a href="mailto:jterhune@jud12.flcourts.org"&gt;jterhune@jud12.flcourts.org&lt;/a&gt;&lt;br /&gt;
+	&lt;a href=https://www.jud12.flcourts.org&gt;https://www.jud12.flcourts.org&lt;/a&gt;&lt;br /&gt;
+	This extension was created using &lt;a href="https://www.christoc.com"&gt;Christoc's&lt;/a&gt; Module Development Templates for DNN.
+&lt;/p&gt;
+&lt;hr/&gt;
+&lt;div class="License"&gt;
+	&lt;h3&gt;About the HearingsLog&lt;/h3&gt;
+	&lt;p class="Owner"&gt;
+		&lt;b&gt;Version CHANGEME&lt;/b&gt;&lt;br /&gt;&lt;br /&gt;
+	&lt;/p&gt;
+	&lt;p&gt;Description about version.&lt;/p&gt;
+	
+	&lt;h4&gt;Bug Fixes&lt;/h4&gt;
+	&lt;ul&gt;
+			&lt;li&gt;List&lt;/li&gt;
+			&lt;li&gt;of&lt;/li&gt;
+			&lt;li&gt;bug&lt;/li&gt;
+			&lt;li&gt;fixes&lt;/li&gt;
+	&lt;/ul&gt;
+	
+&lt;/div&gt;</releaseNotes>
+  <components>
+    <component type="Module">
+      <desktopModule>
+        <moduleName>60 Day Hearings Log</moduleName>
+        <foldername>tjc.Modules/HearingsLog</foldername>
+        <businessControllerClass />
+        <supportedFeatures />
+        <moduleDefinitions>
+          <moduleDefinition>
+            <friendlyName>60 Day Hearings Log</friendlyName>
+            <definitionName>60 Day Hearings Log</definitionName>
+            <defaultCacheTime>0</defaultCacheTime>
+            <moduleControls>
+              <moduleControl>
+                <controlKey />
+                <controlSrc>DesktopModules/tjc.modules/HearingsLog/View.ascx</controlSrc>
+                <supportsPartialRendering>False</supportsPartialRendering>
+                <controlTitle />
+                <controlType>View</controlType>
+                <iconFile />
+                <helpUrl />
+                <supportsPopUps>False</supportsPopUps>
+                <viewOrder>0</viewOrder>
+              </moduleControl>
+              <moduleControl>
+                <controlKey>Admin</controlKey>
+                <controlSrc>DesktopModules/tjc.modules/HearingsLog/JudgeAdmin.ascx</controlSrc>
+                <supportsPartialRendering>False</supportsPartialRendering>
+                <controlTitle>Manage Judge Settings</controlTitle>
+                <controlType>Admin</controlType>
+                <iconFile />
+                <helpUrl />
+                <supportsPopUps>False</supportsPopUps>
+                <viewOrder>0</viewOrder>
+              </moduleControl>
+              <moduleControl>
+                <controlKey>Settings</controlKey>
+                <controlSrc>DesktopModules/tjc.modules/HearingsLog/Settings.ascx</controlSrc>
+                <supportsPartialRendering>False</supportsPartialRendering>
+                <controlTitle>60 Day Hearings Log Settings</controlTitle>
+                <controlType>Edit</controlType>
+                <iconFile />
+                <helpUrl />
+                <supportsPopUps>False</supportsPopUps>
+                <viewOrder>0</viewOrder>
+              </moduleControl>
+            </moduleControls>
+          </moduleDefinition>
+        </moduleDefinitions>
+      </desktopModule>
+    </component>
+    <component type="Assembly">
+      <assemblies>
+        <basePath>bin</basePath>
+        <assembly>
+          <name>tjc.Modules.HearingLog.dll</name>
+        </assembly>
+      </assemblies>
+    </component>
+    <component type="File">
+      <files>
+        <basePath>DesktopModules\tjc.Modules\HearingsLog</basePath>
+        <file>
+          <path>App_LocalResources</path>
+          <name>Edit.ascx.resx</name>
+        </file>
+        <file>
+          <path>App_LocalResources</path>
+          <name>Settings.ascx.resx</name>
+        </file>
+        <file>
+          <path>App_LocalResources</path>
+          <name>View.ascx.resx</name>
+        </file>
+        <file>
+          <name>JudgeAdmin.ascx</name>
+        </file>
+        <file>
+          <name>License.txt</name>
+        </file>
+        <file>
+          <name>module.css</name>
+        </file>
+        <file>
+          <name>ReleaseNotes.txt</name>
+        </file>
+        <file>
+          <name>Resources.zip.manifest</name>
+        </file>
+        <file>
+          <name>Settings.ascx</name>
+        </file>
+        <file>
+          <name>View.ascx</name>
+        </file>
+      </files>
+    </component>
+  </components>
+</package></packages>
 </dotnetnuke>

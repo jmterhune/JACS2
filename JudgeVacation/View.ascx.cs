@@ -1,22 +1,9 @@
-﻿/*
-' Copyright (c) 2022  Joe Terhune
-'  All rights reserved.
-' 
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-' DEALINGS IN THE SOFTWARE.
-' 
-*/
-
+﻿using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using tjc.Modules.JudgeVacation.Components;
 
@@ -35,79 +22,189 @@ namespace tjc.Modules.JudgeVacation
     /// 
     /// </summary>
     /// -----------------------------------------------------------------------------
-    public partial class View : JudgeVacationModuleBase, IActionable
+    public partial class View : JudgeVacationModuleBase
     {
+        #region Members
+        private readonly INavigationManager _navigationManager;
+
+        #endregion
+        #region Methods
+        public View()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+        private void PopulateYears()
+        {
+            drpYear.DataTextField = "Years";
+            drpYear.DataValueField = "Years";
+            var ctl = new HolidayController();
+            var years = ctl.GetYearsAvailable(UserId);
+            if (years.Where(x => x.Years == DateTime.Now.Year).Count() <= 0)
+            {
+                years.Append(new AvailableYears(DateTime.Now.Year));
+            }
+            drpYear.DataSource = years.OrderByDescending(x => x.Years);
+            drpYear.DataBind();
+        }
+
+        private void BindData()
+        {
+            var ctl = new JudgeVacationController();
+            rptVacationDays.DataSource = ctl.GetJudgeVacations(UserId, CurrentYear);
+            rptVacationDays.DataBind();
+        }
+        private void SendEmails(string action, string startDate, string endDate, string pStartDate, string pEndDate)
+        {
+            string subject = "Judicial Vacation Tracker Notice";
+            string body = "";
+
+            switch (action ?? "")
+            {
+                case "s":
+                    {
+                        body = string.Format("{0} Added Vacation Dates {1} - {2}", UserInfo.DisplayName, startDate, endDate);
+                        break;
+                    }
+                case "u":
+                    {
+                        body = string.Format("{0} Updated Vacation Dates from {1} - {2} to {3} - {4}", UserInfo.DisplayName, pStartDate, pEndDate, startDate, endDate);
+                        break;
+                    }
+                case "d":
+                    {
+                        body = string.Format("{0} Deleted Vacation Dates {1} - {2}", UserInfo.DisplayName, startDate, endDate);
+                        break;
+                    }
+            }
+            if (Settings["EmailTo"] != null)
+            {
+                string emails = Settings["EmailTo"].ToString();
+                foreach (var email in emails.Split(','))
+                    DotNetNuke.Services.Mail.Mail.SendEmail("noreply.vt@jud12.flcourts.org", email.Trim(), subject, body);
+            }
+        }
+
+        #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                var tc = new JudgeReferralController();
-                rptItemList.DataSource = tc.GetItems(ModuleId);
-                rptItemList.DataBind();
+                if (!IsPostBack)
+                {
+                    if (Settings["ReportingRole"] != null)
+                    {
+                        if (UserInfo.IsInRole(Settings["ReportingRole"].ToString()))
+                        {
+                            lnkReports.Visible = true;
+                            lnkReports.NavigateUrl = EditUrl("reports");
+                        }
+                    }
+                    if (UserId > 0 && UserInfo.IsAdmin) {
+                        lnkHolidays.Visible = true;
+                        lnkHolidays.NavigateUrl = EditUrl("holiday");
+                    }
+                    if (CalenderID > 0)
+                    {
+                        cmdSave.Visible = false;
+                        cmdUpdate.Visible = true;
+                        pnlRecords.Visible = false;
+                        var ctl = new JudgeVacationController();
+                        var objJC = ctl.GetJudgeVacation(CalenderID);
+                        if (objJC != null)
+                        {
+                            StartDatePicker.Text = objJC.StartDate.ToShortDateString();
+                            EndDatePicker.Text = objJC.EndDate.ToShortDateString();
+                        }
+                    }
+                    else
+                    {
+                        PopulateYears();
+                        drpYear.SelectedValue = CurrentYear.ToString();
+                        BindData();
+                    }
+                }
+                else
+                {
+                    CurrentYear = int.Parse(drpYear.SelectedValue);
+                }
             }
-            catch (Exception exc) //Module failed to load
+            catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
 
-        protected void rptItemListOnItemDataBound(object sender, RepeaterItemEventArgs e)
+        protected void rptVacationDays_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
+            if (e.CommandName == "delete")
             {
-                var lnkEdit = e.Item.FindControl("lnkEdit") as HyperLink;
-                var lnkDelete = e.Item.FindControl("lnkDelete") as LinkButton;
-
-                var pnlAdminControls = e.Item.FindControl("pnlAdmin") as Panel;
-
-                var t = (JudgeReferral)e.Item.DataItem;
-
-                if (IsEditable && lnkDelete != null && lnkEdit != null && pnlAdminControls != null)
-                {
-                    pnlAdminControls.Visible = true;
-                    lnkDelete.CommandArgument = t.ItemId.ToString();
-                    lnkDelete.Enabled = lnkDelete.Visible = lnkEdit.Enabled = lnkEdit.Visible = true;
-
-                    lnkEdit.NavigateUrl = EditUrl(string.Empty, string.Empty, "Edit", "tid=" + t.ItemId);
-
-                    ClientAPI.AddButtonConfirm(lnkDelete, Localization.GetString("ConfirmDelete", LocalResourceFile));
-                }
-                else
-                {
-                    pnlAdminControls.Visible = false;
-                }
+                int mycalendarId = int.Parse(e.CommandArgument.ToString());
+                var ctl = new JudgeVacationController();
+                var objJC = ctl.GetJudgeVacation(mycalendarId);
+                ctl.DeleteJudgeVacation(mycalendarId);
+                SendEmails("d", objJC.StartDate.ToShortDateString(), objJC.EndDate.ToShortDateString(), "", "");
+                BindData();
             }
         }
 
-
-        public void rptItemListOnItemCommand(object source, RepeaterCommandEventArgs e)
+        protected void rptVacationDays_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            if (e.CommandName == "Edit")
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                Response.Redirect(EditUrl(string.Empty, string.Empty, "Edit", "tid=" + e.CommandArgument));
+                Components.JudgeVacation item = (Components.JudgeVacation)e.Item.DataItem;
+                HyperLink lnkEdit = (HyperLink)e.Item.FindControl("lnkEdit");
+                EditUrl();
+                lnkEdit.NavigateUrl = _navigationManager.NavigateURL() + "?calId=" + item.CalendarID;
             }
-
-            if (e.CommandName == "Delete")
-            {
-                var tc = new JudgeReferralController();
-                tc.DeleteItem(Convert.ToInt32(e.CommandArgument), ModuleId);
-            }
-            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL());
+        }
+        protected void drpYear_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurrentYear = int.Parse(drpYear.SelectedValue);
+            BindData();
         }
 
-        public ModuleActionCollection ModuleActions
+        protected void cmdSave_Click(object sender, EventArgs e)
         {
-            get
+            DateTime.TryParse(StartDatePicker.Text, out DateTime startDate);
+            DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
+            if (!string.IsNullOrWhiteSpace(StartDatePicker.Text) & !string.IsNullOrWhiteSpace(EndDatePicker.Text))
             {
-                var actions = new ModuleActionCollection
-                    {
-                        {
-                            GetNextActionID(), Localization.GetString("EditModule", LocalResourceFile), "", "", "",
-                            EditUrl(), false, SecurityAccessLevel.Edit, true, false
-                        }
-                    };
-                return actions;
+                var ctl = new JudgeVacationController();
+                var hCtl = new HolidayController();
+                var objJC = new Components.JudgeVacation()
+                {
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
+                objJC.VacationDays = hCtl.GetActualVacationDays(objJC.StartDate, objJC.EndDate);
+                objJC.JudgeID = UserId;
+                ctl.CreateJudgeVacation(objJC);
+                SendEmails("s", objJC.StartDate.ToShortDateString(), objJC.EndDate.ToShortDateString(), "", "");
+                ModuleController.SynchronizeModule(ModuleId);
+                Response.Redirect(_navigationManager.NavigateURL());
             }
+            else
+            {
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Please Check the Start and End Dates", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+            }
+        }
+
+        protected void cmdUpdate_Click(object sender, EventArgs e)
+        {
+            DateTime.TryParse(StartDatePicker.Text, out DateTime startDate);
+            DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
+            var ctl = new JudgeVacationController();
+            var hCtl = new HolidayController();
+            var objJC = ctl.GetJudgeVacation(CalenderID);
+            var previousStartDate = objJC.StartDate;
+            var previousEndDate = objJC.EndDate;
+            objJC.StartDate = startDate;
+            objJC.EndDate = endDate;
+            objJC.VacationDays = hCtl.GetActualVacationDays(objJC.StartDate, objJC.EndDate);
+            ctl.UpdateJudgeVacation(objJC);
+            SendEmails("u", objJC.StartDate.ToShortDateString(), objJC.EndDate.ToShortDateString(), previousStartDate.ToShortDateString(), previousEndDate.ToShortDateString());
+            ModuleController.SynchronizeModule(ModuleId);
+            Response.Redirect(_navigationManager.NavigateURL());
         }
     }
 }

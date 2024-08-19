@@ -2,110 +2,29 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div class="ms-2 me-2">
     <asp:HyperLink ID="lnkAdmin" runat="server" Visible="false" CssClass="btn btn-primary"><i class="fas fa-cog"></i> Admin</asp:HyperLink>
-    <div class="p-2 bg-light mb-3 ms-3 border rounded border-secondary d-inline-block">
+    <div class="p-2 bg-light mb-3 border rounded border-secondary d-inline-block">
         <div class="row g-3 align-items-center">
-            <label class="col-auto col-form-label" for="txtCutoffDate">Cutoff Date</label>
+            <label class="col-auto col-form-label" for="txtStartDate">Start Date</label>
             <div class="col-auto">
-                <asp:TextBox ID="txtCutoffDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" placeholder="Cutoff Date" aria-label="Cutoff Date"></asp:TextBox>
+                <asp:TextBox ID="txtStartDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="Start Date"></asp:TextBox>
             </div>
+            <label class="col-auto col-form-label" for="txtEndDate">End Date</label>
+            <div class="col-auto">
+                <asp:TextBox ID="txtEndDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="End Date"></asp:TextBox>
+            </div>
+            <div class="col-auto">
+                <button id="btnImport" class="btn btn-tertiary ms-2 me-2">
+                    <i class="fa-solid fa-file-import" aria-hidden="true"></i>&nbsp;Import Hearings
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="p-2 bg-light mb-3 ms-3 border rounded border-secondary d-inline-block float-end">
+        <div class="row g-3 align-items-center">
+            <label class="col-auto col-form-label" for="txtSearch">Search Text</label>
             <div class="col-auto">
                 <input id="txtSearch" type="text" maxlength="50" class="form-control" placeholder="Enter Search Text" />
             </div>
-
-            <div class="col-auto pt-2">
-                <input type="radio" class="btn-check" name="statusOptions" value="0" id="newOption" autocomplete="off" checked>
-                <label class="btn btn-secondary" for="newOption">New</label>
-
-                <input type="radio" class="btn-check" name="statusOptions" value="1" id="archiveOption" autocomplete="off">
-                <label class="btn btn-secondary" for="archiveOption">Archived</label>
-
-                <input type="radio" class="btn-check" name="statusOptions" value="2" id="excludedOption" autocomplete="off">
-                <label class="btn btn-secondary" for="excludedOption">Excluded</label>
-            </div>
-            <div class="col-auto">
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Hidden Columns
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="columnVisibility">
-                        <li>
-                            <label>
-                                <input value="1" type="checkbox">
-                                Order Signed
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="2" type="checkbox">
-                                Hearing Date
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="3" type="checkbox">
-                                60<sup>th</sup> Day
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="4" type="checkbox">
-                                County
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="5" type="checkbox">
-                                Case Name
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="6" type="checkbox">
-                                Case #
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="7" type="checkbox">
-                                <abbr title="Document Identification Number">DIN</abbr>
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="8" type="checkbox">
-                                Motion Title
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="9" type="checkbox">
-                                Drafted By
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="10" type="checkbox">
-                                Judge
-                            </label>
-                        </li>
-
-                        <li>
-                            <label>
-                                <input value="12" type="checkbox">
-                                Court Notes
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input value="11" type="checkbox">
-                                Delay Reason
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
             <div id="dvShowJudges" class="col-auto" style="display: none">
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="showAllJudges">
@@ -119,8 +38,101 @@
             </div>
         </div>
     </div>
-
     <asp:Literal ID="ltMessage" runat="server"></asp:Literal>
+    <button id="btnAdd" class="btn btn-primary me-3" data-toggle="modal" data-target="#logModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Hearing</button>
+    <div id="statusOptionContainer" class="text-end">
+        <div class="d-inline-block">
+            <input type="radio" class="btn-check" name="statusOptions" value="0" id="newOption" autocomplete="off" checked>
+            <label class="btn btn-secondary mt-2" for="newOption">New</label>
+
+            <input type="radio" class="btn-check" name="statusOptions" value="1" id="archiveOption" autocomplete="off">
+            <label class="btn btn-secondary mt-2" for="archiveOption">Archived</label>
+
+            <input type="radio" class="btn-check" name="statusOptions" value="2" id="excludedOption" autocomplete="off">
+            <label class="btn btn-secondary mt-2" for="excludedOption">Excluded</label>
+        </div>
+        <div class="dropdown ms-2 d-inline-block">
+            <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Hidden Columns
+                        <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="columnVisibility">
+                <li>
+                    <label>
+                        <input value="1" type="checkbox">
+                        Order Signed
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="2" type="checkbox">
+                        Hearing Date
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="3" type="checkbox">
+                        60<sup>th</sup> Day
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="4" type="checkbox">
+                        County
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="5" type="checkbox">
+                        Case Name
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="6" type="checkbox">
+                        Case #
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="7" type="checkbox">
+                        <abbr title="Document Identification Number">DIN</abbr>
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="8" type="checkbox">
+                        Motion Title
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="9" type="checkbox">
+                        Drafted By
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="10" type="checkbox">
+                        Judge
+                    </label>
+                </li>
+
+                <li>
+                    <label>
+                        <input value="12" type="checkbox">
+                        Court Notes
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input value="11" type="checkbox">
+                        Delay Reason
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
     <table id="tblHearing" class="table table-striped" width="100%">
         <thead>
             <tr>
@@ -161,14 +173,19 @@
                     <div class="col-auto">
                         <label for="txtHearingDate">Hearing Date</label>
                         <asp:TextBox ID="txtHearingDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger" ErrorMessage="Hearing Date Is Required" ControlToValidate="txtHearingDate" runat="server" />
                     </div>
                     <div class="col-auto">
                         <label for="drpCounty">County</label>
-                        <asp:DropDownList ID="drpCounty" Enabled="false" runat="server" ClientIDMode="Static" CssClass="form-control">
+                        <asp:DropDownList runat="server" ClientIDMode="Static" ID="drpCounty" CssClass="form-control">
+                            <asp:ListItem Text="< Select County >" Value="" />
                             <asp:ListItem Text="DeSoto" />
                             <asp:ListItem Text="Manatee" />
                             <asp:ListItem Text="Sarasota" />
+                            <asp:ListItem Text="Benchmark" />
+                            <asp:ListItem Text="Clericus" />
                         </asp:DropDownList>
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger" ErrorMessage="County Is Required" ControlToValidate="drpCounty" runat="server" />
                     </div>
                     <div class="row">
                         <div class="col-auto">
@@ -211,12 +228,13 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <asp:Button OnClientClick="UpdateHearingLog(event)" CssClass="btn btn-primary" ID="cmdSaveLogItem" runat="server" Text="Save" />
+                <button type="button" id="cmdSaveLogItem" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
@@ -231,7 +249,8 @@
     var selectedJudge = 0;
     var showAllJudges = false;
     var statusValue = 0;
-    var cutoffDateValue = "";
+    var startDate = "";
+    var endDate = "";
     var pageSize = 25;
     var recordCount = 0;
     var sortDirection = "asc";
@@ -249,27 +268,25 @@
         framework: $.ServicesFramework(moduleId)
     };
     (function ($, Sys) {
+
         $(document).ready(function () {
             PageInit();
-
         });
+
     }(jQuery, window.Sys));
 
     function PageInit() {
         GetLocalStorage();
-        cutoffDateValue = $("#txtCutoffDate").val();
         $(".date-picker").datepicker();
         if (hasChiefJudgeRole)
             $("#dvShowJudges").show();
+        startDate = $("#txtStartDate").val();
+        endDate = $("#txtEndDate").val();
         service.baseUrl = service.framework.getServiceRoot(service.path);
         serviceExclude.baseUrl = serviceExclude.framework.getServiceRoot(serviceExclude.path);
         var hearingAction = "GetLogItems";
-        var saveAction = "update-hearing";
-        var addAction = "add-hearing";
         var excludeAction = "toggle-excluded";
         var restUrl = `${service.baseUrl}Hearing/${hearingAction}/${recordCount}`;
-        var saveUrl = `${service.baseUrl}Hearing/${saveAction}/`;
-        var addUrl = `${service.baseUrl}Hearing/${addAction}/`;
         //hearing table config
         hearingTable = $('#tblHearing').DataTable({
             "searching": false,
@@ -280,7 +297,8 @@
                 datatype: 'json',
                 data(data) {
                     data.status = statusValue;
-                    data.cutoffDate = cutoffDateValue;
+                    data.startDate = startDate;
+                    data.endDate = endDate;
                     data.jaRole = jaRole;
                     data.searchText = searchText;
                     if (showAllJudges) {
@@ -319,7 +337,7 @@
                     },
                     {
                         data: "logid", render: function (data, type, row, meta) {
-                            return statusValue == 0 ? `<a class="exclude confirm" aria - role="button" title = "Exclude Log Item" data - toggle="tooltip" data - logid="${data}" > <i class="text-danger fas fa-ban" aria-hidden="true"></i></a > ` : statusValue == 2 ? ` < a class="exclude confirm" aria - role="button" title = "Include Log Item" data - toggle="tooltip" data - logid="${data}" > <i class="text-success fa-solid fa-rotate-left" aria-hidden="true"></i></a > ` : '';
+                            return statusValue == 0 ? `<a class="exclude confirm" aria-role="button" title="Exclude Log Item" data-toggle="tooltip" data-logid="${data}"> <i class="text-danger fas fa-ban" aria-hidden="true"></i></a>` : statusValue == 2 ? `<a class="exclude confirm" aria-role="button" title="Include Log Item" data-toggle="tooltip" data-logid="${data}"><i class="text-success fa-solid fa-rotate-left" aria-hidden="true"></i></a>` : '';
                         }, className: "command-item", orderable: false
                     },
                 ],
@@ -379,12 +397,11 @@
                 hearingTable.column(parseInt(checkboxValue, 10)).visible(false);
             });
         }
-        $("#txtCutoffDate").on("focusout", function (e) {
-            cutoffDateValue = $("#txtCutoffDate").val();
-            currentPage = 0;
-            localStorage.setItem('hearingLog.currentPageIndex', currentPage);
-            localStorage.setItem('hearingLog.cutoffDate', cutoffDateValue);
-            hearingTable.draw();
+        $("#txtStartDate").on("focusout", function (e) {
+            CompareDates();
+        });
+        $("#txtEndDate").on("focusout", function (e) {
+            CompareDates();
         });
         $('input[type=radio][name=statusOptions]').change(function () {
             statusValue = $('input[name = "statusOptions"]:checked').val();
@@ -432,11 +449,34 @@
             searchText = $(this).val();
             hearingTable.draw();
         });
+        $('#btnAdd').on("click", function (e) {
+            ClearEditLogForm();
+            $('#drpCounty').val('');
+            $('#drpCounty').prop("disabled", false);
+        });
+        $('#cmdSaveLogItem').on("click", function (e) {
+            e.preventDefault();
+            if (!Page_ClientValidate("new")) {
+                return;
+            }
+            var logId = $("#hdLogId").val();
+            if (logId != '') {
+                UpdateHearingLog();
+            } else {
+                AddHearingLog();
+            }
+        });
+        $('#btnImport').on("click", function (e) {
+            e.preventDefault();
+            ImportHearing();
+        });
+        $("#tblHearing_length").prepend($('#btnAdd'));
+        $("#tblHearing_length").parent().siblings('div').first().prepend($('#statusOptionContainer'));
         $('input[data-bs-toggle="toggle"]').bootstrapToggle();
     }
     function ExcludeHearing(e, logid) {
         var excludeAction = "toggle-excluded";
-        var excludeUrl = `${serviceExclude.baseUrl} Hearing / ${excludeAction} /${logid}?jarole=${jaRole}`;
+        var excludeUrl = `${serviceExclude.baseUrl}Hearing/${excludeAction}/${logid}?jarole=${jaRole}`;
         e.preventDefault();
         $.ajax({
             url: excludeUrl,
@@ -449,8 +489,21 @@
             }
         });
     }
-    function UpdateHearingLog(e) {
-        e.preventDefault();
+    function ImportHearing() {
+        var importAction = "import-hearings";
+        var importUrl = `${service.baseUrl}Hearing/${importAction}?jarole=${jaRole}&startDate=${startDate}&endDate=${endDate}`;
+        $.ajax({
+            url: importUrl,
+            type: 'GET',
+            success: function (result) {
+                hearingTable.draw();
+            },
+            error: function (error) {
+                ShowAlert('Error Importing Hearings', error);
+            }
+        });
+    }
+    function UpdateHearingLog() {
         var updateAction = "update-hearing";
         var updateUrl = `${service.baseUrl}Hearing/${updateAction}?jarole=${jaRole}`;
         var logId = $("#hdLogId").val();
@@ -490,26 +543,26 @@
                     ShowAlert("Error Updating Record", "Unable to update hearing.\n\nMake sure you are logged in and try again. \n\nError Details: " + error);
                 }
             });
-        } catch (e) {
-            ShowAlert("Error Updating Record", "Unable to update Hearing.\n\nMake sure you are logged in and try again. \n\nError Details: " + e);
+        } catch (err) {
+            ShowAlert("Error Updating Record", "Unable to update Hearing.\n\nMake sure you are logged in and try again. \n\nError Details: " + err);
         }
         return false;
     }
-    function AddHearingLog(e) {
-        e.preventDefault();
-        var updateAction = "add-hearing";
-        var updateUrl = `${service.baseUrl}Hearing/${updateAction}?jarole=${jaRole}`;
+    function AddHearingLog() {
+        var addAction = "add-hearing";
+        var addUrl = `${service.baseUrl}Hearing/${addAction}?jarole=${jaRole}`;
         var orderSigned = $("#txtOrderSigned").val();
         var hearingDate = $("#txtHearingDate").val();
         var caseName = $("#txtCaseName").val();
         var caseNumber = $("#txtCaseNumber").val();
+        var county = $("#drpCounty").val();
         var din = $("#txtDIN").val();
         var motionTitle = $("#txtMotionTitle").val();
         var draftedBy = $("#txtDraftedBy").val();
         var delayReason = $("#txtDelayReason").val();
         var courtNotes = $("#txtCourtNotes").val();
         var hearing = {
-            ordersigned: orderSigned, hearingdate: hearingDate,
+            ordersigned: orderSigned, hearingdate: hearingDate, county: county,
             casename: caseName, casenumber: caseNumber, din: din,
             motiontitle: motionTitle, draftedby: draftedBy,
             delayreason: delayReason, courtnotes: courtNotes
@@ -517,7 +570,7 @@
         try {
             $.ajax({
                 type: "POST",
-                url: updateUrl,
+                url: addUrl,
                 beforeSend: service.framework.setModuleHeaders,
                 data: hearing,
                 success: function (result) {
@@ -535,8 +588,8 @@
                     ShowAlert("Error Adding Record", "Unable to add hearing.\n\nMake sure you are logged in and try again. \n\nError Details: " + error);
                 }
             });
-        } catch (e) {
-            ShowAlert("Error Adding Record", "Unable to add Hearing.\n\nMake sure you are logged in and try again. \n\nError Details: " + e);
+        } catch (err) {
+            ShowAlert("Error Adding Record", "Unable to add Hearing.\n\nMake sure you are logged in and try again. \n\nError Details: " + err);
         }
         return false;
     }
@@ -585,6 +638,7 @@
         var caseName = item.dataset.casename;
         var caseNumber = item.dataset.casenumber;
         var din = item.dataset.din;
+        var county = item.dataset.county;
         var motionTitle = item.dataset.motiontitle;
         var draftedBy = item.dataset.draftedby;
         var delayReason = item.dataset.delayreason;
@@ -599,6 +653,8 @@
             $("#txtCaseName").val(caseName);
         if (caseNumber && caseNumber != "undefined" && caseNumber != "null")
             $("#txtCaseNumber").val(caseNumber);
+        if (county && county != "undefined" && county != "null")
+            $("#drpCounty").val(county);
         if (din && din != "undefined" && din != "null")
             $("#txtDIN").val(din);
         if (motionTitle && motionTitle != "undefined" && motionTitle != "null")
@@ -627,11 +683,12 @@
         $("#txtDraftedBy").val('');
         $("#txtDelayReason").val('');
         $("#txtCourtNotes").val('');
-
+        $('#drpCounty').prop("disabled", true);
     }
     function GetLocalStorage() {
         var storageStatusId = localStorage.getItem('hearingLog.status');
-        var storageCutoffDate = localStorage.getItem('hearingLog.cutoffDate');
+        var storageStartDate = localStorage.getItem('hearingLog.startDate');
+        var storageEndDate = localStorage.getItem('hearingLog.endDate');
         var storageCurrentPage = localStorage.getItem('hearingLog.currentPageIndex');
         var storagePageSize = localStorage.getItem('hearingLog.pageSize');
         var storageSortDirection = localStorage.getItem('hearingLog.sortDirection');
@@ -645,8 +702,10 @@
             var $radios = $('input:radio[name=statusOptions]');
             $radios.filter('[value=' + statusValue + ']').prop('checked', true);
         }
-        if (storageCutoffDate != null && storageCutoffDate != undefined)
-            $("#txtCutoffDate").val(storageCutoffDate);
+        if (storageStartDate != null && storageStartDate != undefined)
+            $("#txtStartDate").val(storageStartDate);
+        if (storageEndDate != null && storageEndDate != undefined)
+            $("#txtEndDate").val(storageEndDate);
         if (storageCurrentPage != null && storageCurrentPage != undefined)
             currentPage = storageCurrentPage;
         if (storagePageSize != null && storagePageSize != undefined)
@@ -662,5 +721,22 @@
             title: title,
             text: text
         });
+    }
+    function CompareDates() {
+        var tempStartDate = $("#txtStartDate").val();
+        var tempEndDate = $("#txtEndDate").val();
+        if ((Date.parse(tempEndDate) < Date.parse(tempStartDate))) {
+            $("#txtEndDate").val(endDate);
+            $("#txtStartDate").val(startDate);
+            ShowAlert("Invalid Date", "End Date MUST be greater than Start Date");
+        } else {
+            startDate = tempStartDate;
+            endDate = tempEndDate;
+            currentPage = 0;
+            localStorage.setItem('hearingLog.currentPageIndex', currentPage);
+            localStorage.setItem('hearingLog.startDate', startDate);
+            localStorage.setItem('hearingLog.endDate', endDate);
+            hearingTable.draw();
+        }
     }
 </script>

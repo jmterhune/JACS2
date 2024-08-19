@@ -40,7 +40,6 @@ namespace tjc.Modules.EmployeeDB
             try
             {
                 cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
-
                 string ImagePath = "Images/Staff"; // Set default value for folder
                 CheckImagePath(ImagePath);
 

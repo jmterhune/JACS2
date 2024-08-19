@@ -153,7 +153,7 @@
             <asp:CheckBoxField DataField="MediationHeld" HeaderText="Mediation Held" ReadOnly="True" SortExpression="MediationHeld"></asp:CheckBoxField>
             <asp:BoundField DataField="MediationDate" HeaderText="Mediated" ReadOnly="True" SortExpression="MediationDate"
                 DataFormatString="{0:d}"></asp:BoundField>
-            <asp:BoundField DataField="Mediator" HeaderText="Mediator" ReadOnly="True" SortExpression="Mediator"></asp:BoundField>
+            <asp:BoundField DataField="MediatorName" HeaderText="Mediator" ReadOnly="True" SortExpression="MediatorName"></asp:BoundField>
             <asp:CheckBoxField DataField="AgreementReached" HeaderText="Agreement Reached" ReadOnly="True" SortExpression="AgreementReached"></asp:CheckBoxField>
             <asp:BoundField DataField="FeeAmount" HeaderText="Fee Amount" ReadOnly="True" SortExpression="FeeAmount"></asp:BoundField>
             <asp:CheckBoxField DataField="OTS" HeaderText="OTSC" ReadOnly="True" SortExpression="OTS">

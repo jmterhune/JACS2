@@ -117,37 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="Cancel.Text" xml:space="preserve">
+    <value>Return to Vacation List</value>
   </data>
-  <data name="btnSubmit.Text" xml:space="preserve">
-    <value>Save</value>
+  <data name="Description.Text" xml:space="preserve">
+    <value>Description of Holiday</value>
   </data>
-  <data name="ControlTitle_edit.Text" xml:space="preserve">
-    <value>Edit Control for JudgeVacation</value>
+  <data name="HolidayDate.Text" xml:space="preserve">
+    <value>Date of Holiday</value>
   </data>
-  <data name="lblAssignedUser.Help" xml:space="preserve">
-    <value>Choose a user to assign this object to.</value>
+  <data name="lblYear.Text" xml:space="preserve">
+    <value>Select Year</value>
   </data>
-  <data name="lblAssignedUser.Text" xml:space="preserve">
-    <value>Assigned User</value>
-  </data>
-  <data name="lblDescription.Help" xml:space="preserve">
-    <value>Enter a Description for your Item</value>
-  </data>
-  <data name="lblDescription.Text" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="lblName.Help" xml:space="preserve">
-    <value>Enter the Name for your Item</value>
-  </data>
-  <data name="lblName.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="BasicSettings.Text" xml:space="preserve">
-    <value>JudgeVacation Item Basic Settings</value>
-  </data>
-  <data name="ExpandAll.Text" xml:space="preserve">
-    <value>Expand All</value>
+  <data name="Save.Text" xml:space="preserve">
+    <value>Add Holiday</value>
   </data>
 </root>

@@ -265,7 +265,7 @@ namespace tjc.Modules.MediationStatistics
             var ctl = new SessionController();
             ctl.CreateSession(newSession);
             _currentCase.CaseSessions.Append(newSession);
-            CurrentSessionIndex = _currentCase.CaseSessions.Count() - 1;
+            CurrentSessionIndex = _currentCase.CaseSessions.Count() > 0 ? _currentCase.CaseSessions.Count() - 1 : 0;
         }
         private void UpdateNavigation()
         {

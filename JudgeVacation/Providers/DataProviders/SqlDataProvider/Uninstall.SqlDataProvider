@@ -1,3 +1,15 @@
-﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}JudgeVacation_Items]') AND type in (N'U'))
-DROP TABLE {databaseOwner}[{objectQualifier}JudgeVacation_Items]
+﻿IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_vacations]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_vacation_vacations]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_holidays]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_vacation_holidays]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_get_judge_years]') AND type in (N'P'))
+	DROP PROCEDURE {databaseOwner}[tjc_vacation_get_judge_years]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_judge_report]') AND type in (N'P'))
+	DROP PROCEDURE {databaseOwner}[tjc_vacation_judge_report]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_vacation_report_by_judge]') AND type in (N'P'))
+	DROP PROCEDURE {databaseOwner}[tjc_vacation_report_by_judge]
 GO
