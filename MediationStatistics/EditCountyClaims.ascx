@@ -209,21 +209,20 @@
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Case Type" />
                             <asp:DropDownList ID="drpCaseType" runat="server" ToolTip="Case Type" CssClass="form-control" ClientIDMode="Static">
-                                <asp:ListItem Text="< Select Case Type >" Value=""></asp:ListItem>
                             </asp:DropDownList>
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="txtOrderReferral" Text="Order of Referral" />
-                            <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                            <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                     </div>
 
                     <div class="col-auto">
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                            <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                            <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
                         </div>
                     </div>
                 </div>
@@ -397,34 +396,34 @@
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch mt-4">
-                                            <input class="form-check-input" type="checkbox" id="chkMeetingHeld" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkMeetingHeld">Mediation Held</label>
+                                            <input class="form-check-input" type="checkbox" id="chkMeetingHeldItem" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
+                                            <label class="form-check-label" for="chkMeetingHeldItem">Mediation Held</label>
                                         </div>
                                         <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtEventDate" class="form-label">Event Date</label>
-                                        <input id="txtEventDate" class="form-control" type="text" value='<%#Eval("EventDate", "{0:d}")%>' />
+                                        <label for="txtEventDateItem" class="form-label">Event Date</label>
+                                        <input id="txtEventDateItem" class="form-control" type="text" value='<%#Eval("EventDate", "{0:d}")%>' />
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtAgreementType">Agreement Type</label>
-                                        <input class="form-control" type="text" id="txtAgreementType" value='<%#GetAgreementType(Eval("AgreementType").ToString())%>'>
+                                        <label for="txtAgreementTypeItem">Agreement Type</label>
+                                        <input class="form-control" type="text" id="txtAgreementTypeItem" value='<%#GetAgreementType(Eval("AgreementType").ToString())%>'>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtMediatoryType">Mediator Type</label>
-                                        <input id="txtMediatorType" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
+                                        <label for="txtMediatorTypeItem">Mediator Type</label>
+                                        <input id="txtMediatorTypeItem" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtMediator">Mediator Name</label>
-                                        <input id="txtMediator" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
+                                        <label for="txtMediatorNameItem">Mediator Name</label>
+                                        <input id="txtMediatorNameItem" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
                                     </div>
                                 </div>
 
@@ -433,32 +432,32 @@
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="chkSubmittedToParties" <%#Convert.ToBoolean(Eval("AgreementSubmittedParties"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkSubmittedToParties">Submitted to Parties</label>
+                                            <input class="form-check-input" type="checkbox" id="chkSubmittedToPartiesItem" <%#Convert.ToBoolean(Eval("AgreementSubmittedParties"))?"checked":""%>>
+                                            <label class="form-check-label" for="chkSubmittedToPartiesItem">Submitted to Parties</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="chkAgreementSigned" <%#Convert.ToBoolean(Eval("AgreementSigned"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkAgreementSigned">Parties Signed Agreement</label>
+                                            <input class="form-check-input" type="checkbox" id="chkAgreementSignedItem" <%#Convert.ToBoolean(Eval("AgreementSigned"))?"checked":""%>>
+                                            <label class="form-check-label" for="chkAgreementSignedItem">Parties Signed Agreement</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="chkPreparedAttorney" <%#Convert.ToBoolean(Eval("AgreementPreparedAttorney"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkPreparedAttorney">Prepared by Attorney</label>
+                                            <input class="form-check-input" type="checkbox" id="chkPreparedAttorneyItem" <%#Convert.ToBoolean(Eval("AgreementPreparedAttorney"))?"checked":""%>>
+                                            <label class="form-check-label" for="chkPreparedAttorneyItem">Prepared by Attorney</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemaining" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
-                                            <label class="form-check-label me-3" for="chkPreparedAttorney">Adjourned with Time Remaining</label>
+                                            <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemainingItem" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
+                                            <label class="form-check-label me-3" for="chkAdjournedTimeRemainingItem">Adjourned with Time Remaining</label>
                                         </div>
                                     </div>
                                 </div>
@@ -470,7 +469,7 @@
                         </fieldset>
                         <p class="mb-0 mt-3">
                             <asp:LinkButton ID="lnkUpdate" OnClientClick="UpdateEventHeader(event)" CssClass="btn btn-primary event-save" CommandName="edit" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-pencil"></i> Edit Event</asp:LinkButton>
-                            <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" CommandArgument='<%#Eval("EventId") %>'  runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
+                            <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
                         </p>
                     </div>
 
@@ -479,17 +478,19 @@
                     <hr />
                 </SeparatorTemplate>
             </asp:Repeater>
-            <hr />
             <div class="form-group">
-                <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" />
-                <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control" />
+                <fieldset class="outline-fieldset pt-0 pb-0">
+                    <legend class="mb-0">
+                        <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
+                    <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
+                </fieldset>
             </div>
             <div class="modal fade" id="EventModal" tabindex="-1" role="dialog" aria-labelledby="EventModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="EventModalLabel">Add / Edit Event</h4>
-                            <button type="button" class="close" onclick="CloseEventModal(event)" aria-hidden="true">&times;</button>
+                            <button type="button" class="close event-close" onclick="CloseEventModal(event)">&times;</button>
                         </div>
                         <div class="modal-body form-group">
                             <asp:HiddenField ID="hdEventId" runat="server" />
@@ -518,7 +519,7 @@
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
-                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -584,37 +585,40 @@
                             <div class="row">
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <div class="form-check form-switch mt-4">
+                                        <div class="form-check form-switch mt-2">
                                             <asp:CheckBox ID="chkAdjournedTimeRemaining" ClientIDMode="Static" runat="server" Text="Adjourned with time remaining?" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="txtHours" Text="Hours" />
-                                        <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                    <div class="form-group row">
+                                        <asp:Label runat="server" AssociatedControlID="txtHours" CssClass="col-auto col-form-label" Text="Hours" />
+                                        <div class="col-auto">
+                                            <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <fieldset class="outline-fieldset">
                                 <legend class="small">Appearance Record</legend>
-                                <asp:CheckBoxList ID="cblAppearanceRecord" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list column-4 form-check form-switch" RepeatLayout="UnorderedList" DataTextField="Description" DataValueField="AppearanceId">
+                                <asp:CheckBoxList ID="cblAppearanceRecord" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list column-4 form-check form-switch appearance-record" RepeatLayout="UnorderedList" DataTextField="Description" DataValueField="AppearanceId">
                                 </asp:CheckBoxList>
                             </fieldset>
                         </div>
-                        <div class="modal-footer">
-                            <asp:LinkButton ID="cmdSaveEvent" OnClick="cmdSaveEvent_Click" CssClass="btn btn-primary float-start" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
-                            <button type="button" class="btn btn-default" onclick="CloseEventModal(event)">Close</button>
+                        <div class="modal-footer justify-content-between">
+                            <asp:LinkButton ID="cmdSaveEvent" OnClick="cmdSaveEvent_Click" CssClass="btn btn-primary" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
+                            <button type="button" class="btn btn-default event-close" onclick="CloseEventModal(event)">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal fade" id="attorneyModal" tabindex="-1" role="dialog" aria-labelledby="attorneyModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
+                <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="attorneyModalLabel">Attorney Search</h4>
-                            <button type="button" class="close" onclick="CloseAttorneyModal(event)" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" onclick="CloseAttorneyModal(event)">&times;</button>
                         </div>
                         <div class="modal-body form-group">
                             <div class="row mb-3">
@@ -660,7 +664,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="EditAttorneyModalLabel">Add Attorney</h4>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
                             <div class="row g-3">
@@ -763,7 +767,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-primary" onclick="AddAttorney(event)">Save</button>
                             <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
@@ -775,7 +779,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="mediatorModalLabel">Mediator Search</h4>
-                            <button type="button" class="close" onclick="CloseMediatorModal(event)" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" onclick="CloseMediatorModal(event)">&times;</button>
                         </div>
                         <div class="modal-body form-group">
                             <div class="row mb-3">
@@ -815,7 +819,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="EditMediatorModalLabel">Add Mediator</h4>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
                             <div class="row g-3">
@@ -839,7 +843,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-primary" onclick="AddMediator(event)">Save</button>
                             <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
@@ -864,7 +868,6 @@
         OnClick="cmdSave_Click" CssClass="btn btn-primary btn-lg case-save"><i class="fas fa-save"></i> Save</asp:LinkButton>
     <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Reset</asp:HyperLink>
 </p>
-<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
 <dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
@@ -908,7 +911,6 @@
                 PageInit();
             });
         });
-
     }(jQuery, window.Sys));
     function PageInit() {
         service.baseUrl = service.framework.getServiceRoot(service.path);
@@ -992,29 +994,15 @@
                 $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             }, 0);
         });
-        $(".case-save").on("click", function (e) {
-            if ($(".event-save").length) {
-                e.preventDefault();
-                $(".event-save").trigger();
-                return false;
-            }
-        });
-        $(".session-save").on("click", function (e) {
-            if ($(".event-save").length) {
-                e.preventDefault();
-                $(".event-save").trigger();
-                return false;
-            }
-        });
-        $("#cmdMediatorSearch").on("click", function (e) {
+        $("#cmdSearch").on("click", function (e) {
             e.preventDefault();
-            lastName = $("#txtMediatorLastName").val();
-            firstName = $("#txtMediatorFirstName").val();
-            mediatorTable.draw();
+            lastName = $("#txtAttorneyLastName").val();
+            firstName = $("#txtAttorneyFirstName").val();
+            firm = $("#txtAttorneyFirm").val();
+            attorneyTable.draw();
         });
         $(".radio-button-list input").addClass("form-check-input");
         $(".radio-button-list label").addClass("form-check-label");
-        $(".datepicker").datepicker();
         $(".confirm-delete-event").on("click", function (e) {
             var item = $(this);
             e.preventDefault();
@@ -1040,6 +1028,7 @@
             noText: 'No',
             title: 'Delete Case?',
         });
+        //attorney search
         $(".attorney-search").on("click", function (e) {
             e.preventDefault();
             attorneyRole = $(this).data("attorney");
@@ -1061,10 +1050,17 @@
             modal.show();
 
         });
+        //mediator search
+        $("#cmdMediatorSearch").on("click", function (e) {
+            e.preventDefault();
+            lastNameMed = $("#txtMediatorLastName").val();
+            firstNameMed = $("#txtMediatorFirstName").val();
+            mediatorTable.draw();
+        });
         $(".mediator-search").on("click", function (e) {
             e.preventDefault();
-            var attyModal = document.querySelector('#mediatorModal');
-            var modal = bootstrap.Modal.getInstance(attyModal);
+            var medModal = document.querySelector('#mediatorModal');
+            var modal = bootstrap.Modal.getInstance(medModal);
             if (!modal) {
                 modal = new bootstrap.Modal(document.getElementById('mediatorModal'));
             }
@@ -1101,9 +1097,9 @@
         if (attorneyRole == 1) {
             if (attyid && attyid != "undefined")
                 $("#hdPlaintiffAttorneyId").val(attyid);
-            if (first != "null" && first != "undefined")
+            if (name != "null" && name != "undefined")
                 $("#txtPlaintiffName").val(name);
-            if (last != "null" && last != "undefined")
+            if (email != "null" && email != "undefined")
                 $("#txtPlaintiffEmail").val(email);
             if (phone != "null" && phone != "undefined")
                 $("#txtPlaintiffPhone").val(phone);
@@ -1113,9 +1109,9 @@
         else if (attorneyRole == 2) {
             if (attyid && attyid != "undefined")
                 $("#hdDefendantAttorneyId").val(attyid);
-            if (first != "null" && first != "undefined")
+            if (name != "null" && name != "undefined")
                 $("#txtDefendantName").val(name);
-            if (last != "null" && last != "undefined")
+            if (email != "null" && email != "undefined")
                 $("#txtDefendantEmail").val(email);
             if (phone != "null" && phone != "undefined")
                 $("#txtDefendantPhone").val(phone);
@@ -1200,10 +1196,22 @@
         $("#drpState").val("");
         $("#txtZip").val("");
     }
+    function ValidateAttorneyRemoval(attyRole) {
+        $.dnnConfirm({
+            text: 'Are you sure you wish to remove this Attorney?',
+            yesText: 'Yes',
+            noText: 'No',
+            title: 'Remove Attorney?',
+            callbackTrue: function () {
+                ClearAttorney(attyRole);
+            }
+        });
+    }
     function ClearEventForm() {
         $("#hdEventId").val("");
         $("#chkMeetingHeld").prop("checked", false);
         $("#drpReason").val("");
+        $(".reason").show();
         $(".agreement input:radio:checked").removeAttr("checked");
         $("#drpMediatorType").val("");
         $("#hdMediatorId").val("");
@@ -1214,6 +1222,7 @@
         $("#chkAgreementSigned").prop("checked", false);
         $("#chkPreparedAttorney").prop("checked", false);
         $("#chkAdjournedTimeRemaining").prop("checked", false);
+        $(".appearance-record input[type='checkbox']").prop("checked", false);
     }
     function ToggleEventForm(toggleValue) {
 
@@ -1338,7 +1347,6 @@
         modal.hide();
     }
     /* Utility Functions*/
-
     function hideReason(checkbox) {
         if (checkbox.checked == 1) {
             $(".reason").hide();

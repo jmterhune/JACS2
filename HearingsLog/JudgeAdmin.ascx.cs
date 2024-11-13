@@ -24,12 +24,12 @@ namespace tjc.Modules.HearingLog
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                     var judges = RoleController.Instance.GetUsersByRole(PortalId, JudgeRole);
                     var jas = RoleController.Instance.GetUsersByRole(PortalId, JaRole);
-                    drpJudge.DataSource = judges;
+                    drpJudge.DataSource = judges.OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
                     drpJudge.DataTextField = "DisplayName";
                     drpJudge.DataValueField = "UserID";
                     drpJudge.DataBind();
                     drpJudge.Items.Insert(0, new ListItem("< Select Judge >", ""));
-                    drpJA.DataSource = jas;
+                    drpJA.DataSource = jas.OrderBy(x=>x.LastName).ThenBy(x=>x.FirstName);
                     drpJA.DataTextField = "DisplayName";
                     drpJA.DataValueField = "UserID";
                     drpJA.DataBind();

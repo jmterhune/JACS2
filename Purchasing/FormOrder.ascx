@@ -142,8 +142,8 @@
                             </div>
                         </fieldset>
                     </div>
-                    <div class="modal-footer">
-                        <asp:LinkButton ID="cmdAddForm" ClientIDMode="Static" runat="server" OnClientClick="CloseModal()" ValidationGroup="Form" CssClass="btn btn-primary pull-left" Text="Save Form" OnClick="cmdAddForm_Click" />
+                    <div class="modal-footer justify-content-between">
+                        <asp:LinkButton ID="cmdAddForm" ClientIDMode="Static" runat="server" OnClientClick="CloseModal()" ValidationGroup="Form" CssClass="btn btn-primary" Text="Save Form" OnClick="cmdAddForm_Click" />
                         <asp:HyperLink ID="lnkCancelLine" data-dismiss="modal" runat="server" CssClass="btn btn-secondary" Text="Cancel Form" />
                     </div>
                 </div>

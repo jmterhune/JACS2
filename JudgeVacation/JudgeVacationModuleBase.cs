@@ -31,5 +31,32 @@ namespace tjc.Modules.JudgeVacation
                 ViewState["CurrentYear"] = value;
             }
         }
+        public string JudgeRole
+        {
+            get
+            {
+                if (Settings.Contains("JudgeRole"))
+                    return Convert.ToString(Settings["JudgeRole"]);
+                return "";
+            }
+        }
+        public string ReportingRole
+        {
+            get
+            {
+                if (Settings.Contains("ReportingRole"))
+                    return Convert.ToString(Settings["ReportingRole"]);
+                return "";
+            }
+        }
+        public string EmailTo
+        {
+            get
+            {
+                if (Settings.Contains("EmailTo"))
+                    return Convert.ToString(Settings["EmailTo"]);
+                return "";
+            }
+        }
     }
 }

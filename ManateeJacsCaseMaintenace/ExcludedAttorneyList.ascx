@@ -53,7 +53,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer justify-content-between">
                 <asp:Button ID="cmdSave" CssClass="btn btn-primary" runat="server" OnClick="cmdSave_Click" Text="Save" />
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>

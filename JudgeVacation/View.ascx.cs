@@ -76,12 +76,9 @@ namespace tjc.Modules.JudgeVacation
                         break;
                     }
             }
-            if (Settings["EmailTo"] != null)
-            {
-                string emails = Settings["EmailTo"].ToString();
-                foreach (var email in emails.Split(','))
-                    DotNetNuke.Services.Mail.Mail.SendEmail("noreply.vt@jud12.flcourts.org", email.Trim(), subject, body);
-            }
+            string emails = EmailTo;
+            foreach (var email in emails.Split(','))
+                DotNetNuke.Services.Mail.Mail.SendEmail("noreply.vt@jud12.flcourts.org", email.Trim(), subject, body);
         }
 
         #endregion
@@ -91,15 +88,13 @@ namespace tjc.Modules.JudgeVacation
             {
                 if (!IsPostBack)
                 {
-                    if (Settings["ReportingRole"] != null)
+                    if (UserInfo.IsInRole(ReportingRole))
                     {
-                        if (UserInfo.IsInRole(Settings["ReportingRole"].ToString()))
-                        {
-                            lnkReports.Visible = true;
-                            lnkReports.NavigateUrl = EditUrl("reports");
-                        }
+                        lnkReports.Visible = true;
+                        lnkReports.NavigateUrl = EditUrl("reports");
                     }
-                    if (UserId > 0 && UserInfo.IsAdmin) {
+                    if (UserId > 0 && UserInfo.IsAdmin)
+                    {
                         lnkHolidays.Visible = true;
                         lnkHolidays.NavigateUrl = EditUrl("holiday");
                     }

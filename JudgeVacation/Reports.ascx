@@ -77,6 +77,12 @@
                 e.preventDefault();
                 PrintTable()
             });
+            $("tbody tr td:last-child").each(function () {
+                if ($(this).is(":not(:empty)")) {
+                    $(this).closest('tr').addClass("subtotal");
+                    $(this).addClass("fw-bold");
+                }
+            });
         });
 
     }(jQuery, window.Sys));

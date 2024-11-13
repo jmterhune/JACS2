@@ -18,12 +18,12 @@ namespace tjc.Modules.CourtCounsel.Components
     internal class LogEntryListController
     {
 
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public IEnumerable<LogEntryListItem> GetLogEntryList()
         {
             IEnumerable<LogEntryListItem> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.Get();
@@ -33,7 +33,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public LogEntryListItem GetLogEntryListItem(long logId)
         {
             LogEntryListItem t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.GetById(logId);
@@ -53,7 +53,7 @@ namespace tjc.Modules.CourtCounsel.Components
                 sqlWhereClause = string.Format("Where CaseNumber like @0", searchText);
             }
             IEnumerable<LogEntryListItem> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.Find(sqlWhereClause, searchText).OrderByDescending(x => x.DateReceived);
@@ -78,7 +78,7 @@ namespace tjc.Modules.CourtCounsel.Components
             else if (pending && active && closed)
                 sqlWhereClause += $" AND (StatusTypeId = {(int)StatusTypes.active} OR StatusTypeId = {(int)StatusTypes.closed} OR StatusTypeId = {(int)StatusTypes.pending})";
             IEnumerable<LogEntryListItem> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.Find(sqlWhereClause).OrderByDescending(x => x.DateReceived);
@@ -89,7 +89,7 @@ namespace tjc.Modules.CourtCounsel.Components
         {
             
             IEnumerable<LogEntryListItem> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.Find("Where (Email = @0 OR JudgeEmail = @0) AND (StatusTypeId IN (@1,@2))", username, (int)StatusTypes.active, (int)StatusTypes.pending).OrderByDescending(x => x.DateReceived);
@@ -101,7 +101,7 @@ namespace tjc.Modules.CourtCounsel.Components
         {
 
             IEnumerable<LogEntryListItem> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.Find("Where LogId = @0 ", logId).OrderByDescending(x => x.DateReceived);

@@ -39,7 +39,8 @@ namespace tjc.Modules.JudgeVacation
         }
         private void PopulateJudgeList()
         {
-            var users = RoleController.Instance.GetUsersByRole(PortalId, "judge");
+
+            var users = RoleController.Instance.GetUsersByRole(PortalId, JudgeRole);
             var userList = new List<UserInfo>();
             foreach (var u in users)
                 userList.Add((UserInfo)u);
@@ -53,15 +54,15 @@ namespace tjc.Modules.JudgeVacation
 
         private void BindData()
         {
-         bool hasStartDate=   DateTime.TryParse(StartDatePicker.Text,out DateTime startDate);
-          bool hasEndDate=  DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
+            bool hasStartDate = DateTime.TryParse(StartDatePicker.Text, out DateTime startDate);
+            bool hasEndDate = DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
             var ctl = new JudgeVacationController();
 
             if (!hasStartDate)
                 startDate = new DateTime(DateTime.Now.Year, 1, 1);
             if (!hasEndDate)
                 endDate = new DateTime(DateTime.Now.Year, 12, 31);
-            IEnumerable<Components.JudgeVacation> reportList = null;
+            IEnumerable<Components.JudgeVacationReport> reportList = null;
             if (drpJudges.SelectedValue != "0")
             {
                 reportList = ctl.GetVacationReportByJudge(startDate, endDate, int.Parse(drpJudges.SelectedValue));
@@ -136,12 +137,9 @@ namespace tjc.Modules.JudgeVacation
                 if (!IsPostBack)
                 {
                     bool IsInRole = false;
-                    if (Settings["ReportingRole"] != null)
+                    if (UserInfo.IsInRole(ReportingRole))
                     {
-                        if (UserInfo.IsInRole(Settings["ReportingRole"].ToString()))
-                        {
-                            IsInRole = true;
-                        }
+                        IsInRole = true;
                     }
                     StartDatePicker.Text = new DateTime(DateTime.Now.Year, 1, 1).ToShortDateString();
                     EndDatePicker.Text = new DateTime(DateTime.Now.Year, 12, 31).ToShortDateString();

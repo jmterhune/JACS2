@@ -17,11 +17,11 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class LogEntryController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void CreateLogEntry(LogEntry t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntry>();
                 rep.Insert(t);
@@ -36,7 +36,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteLogEntry(LogEntry t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntry>();
                 rep.Delete(t);
@@ -46,7 +46,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<LogEntry> GetLogEntrys()
         {
             IEnumerable<LogEntry> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntry>();
                 t = rep.Get();
@@ -56,7 +56,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public LogEntry GetLogEntry(long logEntryId)
         {
             LogEntry t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntry>();
                 t = rep.GetById(logEntryId);
@@ -65,7 +65,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateLogEntry(LogEntry t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntry>();
                 rep.Update(t);

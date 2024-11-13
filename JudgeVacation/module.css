@@ -5,3 +5,8 @@
 .form-container {
     max-width: 800px
 }
+.subtotal, .subtotal td {
+    background: #cff4fc;
+    color: #055160 !important;
+    border-color: #b6effb;
+}

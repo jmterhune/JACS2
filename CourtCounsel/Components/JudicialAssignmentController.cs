@@ -18,7 +18,7 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class JudicialAssignmentController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void DeleteJudicialAssignment(long assignmentId, int judgeId)
         {
@@ -28,7 +28,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteJudicialAssignment(JudicialAssignment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<JudicialAssignment>();
                 rep.Delete(t);
@@ -38,7 +38,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<JudicialAssignment> GetJudicialAssignments()
         {
             IEnumerable<JudicialAssignment> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<JudicialAssignment>();
                 t = rep.Get();
@@ -49,7 +49,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public JudicialAssignment GetJudicialAssignment(long assignmentId, int judgeId)
         {
             JudicialAssignment t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<JudicialAssignment>();
                 t = rep.Find("Where AssignmentId = @0 And JudgeId = @1", assignmentId, judgeId).FirstOrDefault();
@@ -58,7 +58,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateJudicialAssignment(JudicialAssignment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<JudicialAssignment>();
                 rep.Update(t);
@@ -67,7 +67,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void CreateJudicialAssignment(JudicialAssignment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "court_counsel_add_judicial_assignment", t.AssignmentId,t.JudgeId,t.DateAssigned,t.DateRemoved,t.Reason,t.CreatedBy,t.ModifiedBy,t.CreatedDate,t.ModifiedDate);
             }

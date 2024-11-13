@@ -97,7 +97,7 @@
                                     </div>
 
                                 </div>
-                                <div class="modal-footer">
+                                <div class="modal-footer justify-content-between">
                                     <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>

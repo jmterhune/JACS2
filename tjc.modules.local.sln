@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoomConnector", "ZoomConnec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediationStatistics", "MediationStatistics\MediationStatistics.csproj", "{406093C8-126A-41F4-9983-75947209A425}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentRequest", "EquipmentRequest\EquipmentRequest.csproj", "{B597E371-F351-4663-AE6A-4C5D2BD2B1E2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AxionDataUpload", "Axiom File Merge\AxionDataUpload\AxionDataUpload.csproj", "{253578C7-2790-4271-834E-F766073EF98C}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Axiom Setup", "Axiom Setup\Axiom Setup.vdproj", "{0222C6AD-B51E-45D1-996F-F7A830F85275}"
@@ -36,6 +34,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Purchasing", "Purchasing\Purchasing.csproj", "{8BA10DB4-74FB-43FB-B96C-316A9C0BB00C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearingsLog", "HearingsLog\HearingsLog.csproj", "{0711116E-AF67-46CD-95D6-554831319119}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeSotoProbation", "DeSotoProbation\DeSotoProbation.csproj", "{461FA3D8-13AD-4E59-B43C-E4522C3FEC36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,10 +91,6 @@ Global
 		{406093C8-126A-41F4-9983-75947209A425}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{406093C8-126A-41F4-9983-75947209A425}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{406093C8-126A-41F4-9983-75947209A425}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B597E371-F351-4663-AE6A-4C5D2BD2B1E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B597E371-F351-4663-AE6A-4C5D2BD2B1E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B597E371-F351-4663-AE6A-4C5D2BD2B1E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B597E371-F351-4663-AE6A-4C5D2BD2B1E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{253578C7-2790-4271-834E-F766073EF98C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{253578C7-2790-4271-834E-F766073EF98C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{253578C7-2790-4271-834E-F766073EF98C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -109,6 +105,10 @@ Global
 		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.Build.0 = Release|Any CPU
+		{461FA3D8-13AD-4E59-B43C-E4522C3FEC36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{461FA3D8-13AD-4E59-B43C-E4522C3FEC36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{461FA3D8-13AD-4E59-B43C-E4522C3FEC36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{461FA3D8-13AD-4E59-B43C-E4522C3FEC36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

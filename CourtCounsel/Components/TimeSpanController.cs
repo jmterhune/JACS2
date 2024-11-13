@@ -18,11 +18,11 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class TimeSpanController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void CreateTimeSpan(TimeSpan t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<TimeSpan>();
                 rep.Insert(t);
@@ -37,7 +37,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteTimeSpan(TimeSpan t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<TimeSpan>();
                 rep.Delete(t);
@@ -47,7 +47,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<TimeSpan> GetTimeSpans()
         {
             IEnumerable<TimeSpan> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<TimeSpan>();
                 t = rep.Get();
@@ -57,7 +57,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<TimeSpan> GetTimeSpans(bool active)
         {
             IEnumerable<TimeSpan> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<TimeSpan>();
                 t = rep.Find("Where Active=1").OrderBy(x=>x.TimeSpanName);
@@ -68,7 +68,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public TimeSpan GetTimeSpan(int timeSpanId)
         {
             TimeSpan t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<TimeSpan>();
                 t = rep.GetById(timeSpanId);
@@ -77,7 +77,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateTimeSpan(TimeSpan t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<TimeSpan>();
                 rep.Update(t);

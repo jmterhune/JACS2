@@ -13,6 +13,7 @@
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.JudgeVacation
 {
@@ -51,13 +52,27 @@ namespace tjc.Modules.JudgeVacation
             {
                 if (Page.IsPostBack == false)
                 {
+                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var listroles = ctl.GetRoles(PortalId);
+                    foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
+                    {
+                        drpJudges.Items.Add(new ListItem(r.RoleName));
+                        drpReportingRole.Items.Add(new ListItem(r.RoleName));
+                    }
+                    drpJudges.Items.Insert(0, new ListItem("< Select Role >", ""));
+                    drpReportingRole.Items.Insert(0, new ListItem("< Select Role >", ""));
+
                     if (Settings.Contains("EmailTo"))
                     {
                         txtEmailTo.Text = Settings["EmailTo"].ToString();
                     }
                     if (Settings.Contains("ReportingRole"))
                     {
-                        txtReportingRole.Text = Settings["ReportingRole"].ToString();
+                        drpReportingRole.SelectedValue = Convert.ToString(Settings["ReportingRole"].ToString());
+                    }
+                    if (Settings.Contains("JudgeRole"))
+                    {
+                        drpJudges.SelectedValue = Convert.ToString(Settings["JudgeRole"].ToString());
                     }
                 }
             }
@@ -77,9 +92,13 @@ namespace tjc.Modules.JudgeVacation
             try
             {
                 var objModules = new ModuleController();
+                string ReportingRole = drpReportingRole.SelectedValue;
+                string JudgeRole = drpJudges.SelectedValue;
+
                 // the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
                 objModules.UpdateModuleSetting(ModuleId, "EmailTo", txtEmailTo.Text);
-                objModules.UpdateModuleSetting(ModuleId, "ReportingRole", txtReportingRole.Text);
+                objModules.UpdateModuleSetting(ModuleId, "ReportingRole", ReportingRole.Trim());
+                objModules.UpdateModuleSetting(ModuleId, "JudgeRole", JudgeRole.Trim());
             }
             catch (Exception exc) //Module failed to load
             {

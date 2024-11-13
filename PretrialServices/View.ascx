@@ -309,7 +309,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer justify-content-between">
                             <asp:HiddenField ID="hdItemId" runat="server" />
                             <asp:Button OnClientClick="ToggleEditForm(false)" ValidationGroup="defendant" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                             <asp:Button OnClientClick="DismissModal()" CausesValidation="False" CssClass="btn btn-default" ID="cmdClose" runat="server" Text="Close" OnClick="cmdClose_Click" />

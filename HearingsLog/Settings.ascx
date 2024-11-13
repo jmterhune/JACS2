@@ -16,5 +16,8 @@
         <asp:DropDownList runat="server" ID="drpJaRole">
         </asp:DropDownList>
     </div>
-
+     <div class="dnnFormItem">
+     <dnn:Label ID="lblUrl" runat="server" />
+    <asp:TextBox ID="txtUrl" runat="server" />
+ </div>
 </fieldset>

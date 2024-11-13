@@ -69,6 +69,8 @@ namespace tjc.Modules.HearingLog
                         drpJudgeRole.SelectedValue = Convert.ToString(Settings["JudgeRole"]);
                     if (Settings.Contains("JaRole"))
                         drpJaRole.SelectedValue = Convert.ToString(Settings["JaRole"]);
+                    if (Settings.Contains("PageUrl"))
+                       txtUrl.Text = Convert.ToString(Settings["PageUrl"]);
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -90,13 +92,15 @@ namespace tjc.Modules.HearingLog
                 string ChiefJudgeRole = drpRoles.SelectedValue;
                 string JudgeRole = drpJudgeRole.SelectedValue;
                 string JaRole = drpJaRole.SelectedValue;
-
+                string PageUrl=txtUrl.Text;
                 if (!string.IsNullOrEmpty(ChiefJudgeRole.Trim()))
                     objModules.UpdateModuleSetting(ModuleId, "ChiefJudgeRole", ChiefJudgeRole.Trim());
                 if (!string.IsNullOrEmpty(JudgeRole.Trim()))
                     objModules.UpdateModuleSetting(ModuleId, "JudgeRole", JudgeRole.Trim());
                 if (!string.IsNullOrEmpty(JaRole.Trim()))
                     objModules.UpdateModuleSetting(ModuleId, "JaRole", JaRole.Trim());
+                if (!string.IsNullOrEmpty(PageUrl.Trim()))
+                    objModules.UpdateModuleSetting(ModuleId, "PageUrl", PageUrl.Trim());
 
             }
             catch (Exception exc) //Module failed to load

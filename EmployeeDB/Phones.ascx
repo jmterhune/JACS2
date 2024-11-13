@@ -132,9 +132,10 @@
                                     <div class="form-check">
                                         <asp:CheckBox ID="chkExcludeExt" runat="server" Text="SWN Exclude Ext?" ClientIDMode="Static" />
                                     </div>
-                                </div>
-                                <div class="modal-footer">
                                     <asp:HiddenField ID="hdPhoneId" runat="server" ClientIDMode="Static" />
+
+                                </div>
+                                <div class="modal-footer justify-content-between">
                                     <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>

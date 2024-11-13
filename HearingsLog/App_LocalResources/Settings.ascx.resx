@@ -138,4 +138,10 @@
   <data name="lblJudgeRole.Text" xml:space="preserve">
     <value>Judge Role</value>
   </data>
+  <data name="lblUrl.Help" xml:space="preserve">
+    <value>Enter the URL to the other log page</value>
+  </data>
+  <data name="lblUrl.Text" xml:space="preserve">
+    <value>URL to Other Page</value>
+  </data>
 </root>

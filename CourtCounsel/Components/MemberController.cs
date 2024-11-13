@@ -18,11 +18,11 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class MemberController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void CreateMember(Member t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Member>();
                 rep.Insert(t);
@@ -37,7 +37,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteMember(Member t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Member>();
                 rep.Delete(t);
@@ -47,7 +47,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Member> GetMembers()
         {
             IEnumerable<Member> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Member>();
                 t = rep.Get();
@@ -73,7 +73,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
             }
             IEnumerable<Member> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Member>();
                 t = rep.Find(whereClause,typeId).OrderByDescending(x => x.Active).ThenBy(x => x.LastName).ThenBy(x => x.FirstName);
@@ -83,7 +83,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public Member GetMember(int memberId)
         {
             Member t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Member>();
                 t = rep.GetById(memberId);
@@ -92,7 +92,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateMember(Member t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Member>();
                 rep.Update(t);

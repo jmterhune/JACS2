@@ -28,7 +28,7 @@ namespace tjc.Intranet.API.Services.ViewModels.Mediation
         public string Firm { get; set; }
         [JsonProperty("phone")]
         public string Phone { get; set; }
-        [JsonProperty("extenstion")]
+        [JsonProperty("extension")]
         public string Extension { get; set; }
         [JsonProperty("email")]
         public string Email { get; set; }

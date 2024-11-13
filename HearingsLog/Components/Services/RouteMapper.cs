@@ -23,20 +23,12 @@ namespace tjc.Modules.HearingLog.Components.Services
                 url: "{controller}/{action}",
                 defaults: new { name = RouteParameter.Optional },
                 namespaces: new[] { "tjc.Modules.HearingLog.Components.Services" });
-
             mapRouteManager.MapHttpRoute(
                moduleFolderName: "ExcludeLog",
                routeName: "ExcludeItem",
                url: "{controller}/{action}/{logId}",
                defaults: new { name = RouteParameter.Optional },
                namespaces: new[] { "tjc.Modules.HearingLog.Components.Services" });
-            //mapRouteManager.MapHttpRoute(
-            //  moduleFolderName: "HearingsLog",
-            //  routeName: "ImportHearings",
-            //  url: "{controller}/{action}/{startDate}/{endDate}",
-            //  defaults: new { name = RouteParameter.Optional },
-            //  namespaces: new[] { "tjc.Modules.HearingLog.Components.Services" });
-
         }
     }
 }

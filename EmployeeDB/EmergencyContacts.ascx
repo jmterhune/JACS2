@@ -102,10 +102,9 @@
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtMobilePhone" Text="Mobile Phone" />
                                         <asp:TextBox runat="server" CssClass="form-control phone" MaxLength="20" ID="txtMobilePhone" ClientIDMode="Static" />
-                                    </div>
+                                    </div> <asp:HiddenField ID="hdEmergencyContactId" runat="server" ClientIDMode="Static" />
                                 </div>
-                                <div class="modal-footer">
-                                    <asp:HiddenField ID="hdEmergencyContactId" runat="server" ClientIDMode="Static" />
+                                <div class="modal-footer justify-content-between" >                               
                                     <asp:Button OnClientClick="ToggleForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>

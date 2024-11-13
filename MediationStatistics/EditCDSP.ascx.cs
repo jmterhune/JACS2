@@ -233,15 +233,14 @@ namespace tjc.Modules.MediationStatistics
                     drpCaseType.SelectedValue = session.PrimaryCaseType.Value.ToString();
                 txtMediationDate.Text = "";
                 if (session.MediationDate.HasValue)
-                    txtMediationDate.Text = session.MediationDate.Value.ToShortDateString();
+                    txtMediationDate.Text = session.MediationDate.Value.ToString("yyyy-MM-dd");
                 txtCaseReceived.Text = "";
                 if (session.ReferralDate.HasValue)
-                    txtCaseReceived.Text = session.ReferralDate.Value.ToShortDateString();
+                    txtCaseReceived.Text = session.ReferralDate.Value.ToString("yyyy-MM-dd");
                 txtReferralSource.Text = session.ProgramReferralSource;
                 chkTelephoneSession.Checked = false;
                 chkTelephoneSession.Checked = session.HeldByPhone;
                 txtComments.Text = session.Comment;
-
             }
             PopulateEventInformation();
             UpdateNavigation();
@@ -282,7 +281,7 @@ namespace tjc.Modules.MediationStatistics
             var ctl = new SessionController();
             ctl.CreateSession(newSession);
             _currentCase.CaseSessions.Append(newSession);
-            CurrentSessionIndex = _currentCase.CaseSessions.Count()>0? _currentCase.CaseSessions.Count() - 1: 0;
+            CurrentSessionIndex = _currentCase.CaseSessions.Count() > 0 ? _currentCase.CaseSessions.Count() - 1 : 0;
         }
         private void UpdateNavigation()
         {
@@ -300,7 +299,6 @@ namespace tjc.Modules.MediationStatistics
             else
                 ltSessionInfo.Text = " Session " + (CurrentSessionIndex + 1) + " of " + sessionCount;
         }
-
         private void PopulateEventInformation()
         {
             try
@@ -359,10 +357,16 @@ namespace tjc.Modules.MediationStatistics
             {
                 if (drpCaseType.SelectedIndex > 0)
                     session.PrimaryCaseType = Int32.Parse(drpCaseType.SelectedValue);
+                else
+                    session.PrimaryCaseType = null;
                 if (!string.IsNullOrEmpty(txtMediationDate.Text))
                     session.MediationDate = DateTime.Parse(txtMediationDate.Text);
+                else
+                    session.MediationDate = null;
                 if (!string.IsNullOrEmpty(txtCaseReceived.Text))
                     session.ReferralDate = DateTime.Parse(txtCaseReceived.Text);
+                else
+                    session.ReferralDate = null;
                 session.ProgramReferralSource = txtReferralSource.Text;
                 session.HeldByPhone = chkTelephoneSession.Checked;
                 session.Comment = txtComments.Text;
@@ -376,13 +380,14 @@ namespace tjc.Modules.MediationStatistics
             else
             {
                 ctlSession.CreateSession(session);
-            } 
+            }
             hdSessionId.Value = session.SessionId.ToString();
         }
         private void DeleteSession()
         {
             var ctl = new SessionController();
             ctl.DeleteSession(_currentCase.GetCurrentSession(CurrentSessionIndex));
+            CurrentSessionIndex = 0;
             if (_currentCase.CaseSessions.Count() <= 1)
                 _currentCase.CaseSessions.Append(new Session());
         }
@@ -498,6 +503,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
+            chkTelephoneSession.Checked = false;
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -525,26 +531,41 @@ namespace tjc.Modules.MediationStatistics
                 hdEventId.Value = eventId.ToString();
                 if (evt.MediationHeld.HasValue)
                     chkMeetingHeld.Checked = evt.MediationHeld.Value;
-                if(evt.EventDate.HasValue) 
-                    txtEventDate.Text = evt.EventDate.Value.ToShortDateString();
+                else
+                    chkMeetingHeld.Checked = false;
+                if (evt.EventDate.HasValue)
+                    txtEventDate.Text = evt.EventDate.Value.ToString("yyyy-MM-dd");
+                else
+                    txtEventDate.Text = string.Empty;
                 rblAgreementType.SelectedValue = evt.AgreementType;
                 drpReason.SelectedValue = evt.ReasonNotHeld;
                 if (evt.AgreementSigned.HasValue)
                     chkAgreementSigned.Checked = evt.AgreementSigned.Value;
+                else
+                    chkAgreementSigned.Checked = false;
                 drpMediatorType.SelectedValue = evt.MediatorType;
                 hdMediatorId.Value = evt.MediatorId.ToString();
-                if(evt.MediatorId>0)
-
-                txtMediator.Text = GetMediatorName(evt.MediatorId);
+                if (evt.MediatorId > 0)
+                    txtMediator.Text = GetMediatorName(evt.MediatorId);
+                else
+                    txtMediator.Text = string.Empty;
                 txtHours.Text = evt.TimeRemaining.ToString();
                 if (evt.AgreementSubmittedParties.HasValue)
                     chkSubmittedToParties.Checked = evt.AgreementSubmittedParties.Value;
-                if(evt.AgreementSigned.HasValue)
-                    chkAgreementSigned.Checked= evt.AgreementSigned.Value;
+                else
+                    chkSubmittedToParties.Checked = false;
+                if (evt.AgreementSigned.HasValue)
+                    chkAgreementSigned.Checked = evt.AgreementSigned.Value;
+                else
+                    chkAgreementSigned.Checked = false;
                 if (evt.AgreementPreparedAttorney.HasValue)
                     chkPreparedAttorney.Checked = evt.AgreementPreparedAttorney.Value;
+                else
+                    chkPreparedAttorney.Checked = false;
                 if (evt.AdjournedTimeRemaining.HasValue)
                     chkAdjournedTimeRemaining.Checked = evt.AdjournedTimeRemaining.Value;
+                else
+                    chkAdjournedTimeRemaining.Checked = false;
                 ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(true)", true);
             }
         }
@@ -659,7 +680,7 @@ namespace tjc.Modules.MediationStatistics
         private string GetMediatorName(int mediatorId)
         {
             var ctl = new MediatorController();
-            Mediator mediator=ctl.GetMediator(mediatorId);
+            Mediator mediator = ctl.GetMediator(mediatorId);
             return mediator.MediatorName;
         }
 

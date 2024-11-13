@@ -117,9 +117,9 @@
                                         <asp:RequiredFieldValidator runat="server" ValidationGroup="Position" ControlToValidate="txtEndDate"
                                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="End Date is Required" />
                                     </div>
-                                </div>
-                                <div class="modal-footer">
                                     <asp:HiddenField ID="hdPositionHistoryId" runat="server"  ClientIDMode="Static"/>
+                                </div>
+                                <div class="modal-footer justify-content-between">
                                     <asp:Button OnClientClick="TogglePositionForm(false)" ValidationGroup="Position" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
@@ -205,10 +205,9 @@
                                         <asp:Label runat="server" AssociatedControlID="txtLastPayRate" Text="Last Pay Rate" />
                                         <asp:TextBox runat="server" CssClass="form-control money" MaxLength="10" ID="txtLastPayRate"  ClientIDMode="Static"/>
                                     </div>
-
-                                </div>
-                                <div class="modal-footer">
                                     <asp:HiddenField ID="hdServiceHistoryId" runat="server"  ClientIDMode="Static"/>
+                                </div>
+                                <div class="modal-footer justify-content-between">
                                     <asp:Button OnClientClick="ToggleServiceForm(false)" ValidationGroup="Service" CssClass="btn btn-primary" ID="cmdSaveService" runat="server" Text="Save" OnClick="cmdSaveService_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>

@@ -118,11 +118,10 @@ namespace tjc.Modules.MediationStatistics
             {
                 returnValue += string.Format("{0}; ", appearance.Description);
             }
-            if(returnValue !="")
+            if (returnValue != "")
                 return string.Format(template, returnValue);
             return "<p><strong>No Appearance Record</strong></p>";
         }
-
         public string GetAgreementType(string agreementType)
         {
             string returnValue;
@@ -207,15 +206,15 @@ namespace tjc.Modules.MediationStatistics
                     drpActionStage.SelectedValue = session.StageOfAction.Value.ToString();
                 txtMediationDate.Text = "";
                 if (session.MediationDate.HasValue)
-                    txtMediationDate.Text = session.MediationDate.Value.ToShortDateString();
+                    txtMediationDate.Text = session.MediationDate.Value.ToString("yyyy-MM-dd");
                 txtOrderReferralDate.Text = "";
                 if (session.ReferralDate.HasValue)
-                    txtOrderReferralDate.Text = session.ReferralDate.Value.ToShortDateString();
-                txtReferralSource.Text = session.ProgramReferralSource;
+                    txtOrderReferralDate.Text = session.ReferralDate.Value.ToString("yyyy-MM-dd");
                 chkTelephoneSession.Checked = false;
                 chkInmate.Checked = false;
                 chkInterpreterRequested.Checked = false;
                 chkTelephoneSession.Checked = session.HeldByPhone;
+                txtReferralSource.Text=session.ProgramReferralSource;
                 if (session.Inmate.HasValue)
                     chkInmate.Checked = session.Inmate.Value;
                 if (session.Interpreter.HasValue)
@@ -231,14 +230,14 @@ namespace tjc.Modules.MediationStatistics
         {
             try
             {
-                lstEvents.DataSource = _currentCase.GetCurrentSession(CurrentSessionIndex).SessionEvents;
+                rptEvent.DataSource = _currentCase.GetCurrentSession(CurrentSessionIndex).SessionEvents;
             }
             catch
             {
-                lstEvents.DataSource = new List<Event>();
+                rptEvent.DataSource = new List<Event>();
             }
 
-            lstEvents.DataBind();
+            rptEvent.DataBind();
         }
         private void InitializeDropDowns()
         {
@@ -266,6 +265,12 @@ namespace tjc.Modules.MediationStatistics
             ctl.CreateSession(newSession);
             _currentCase.CaseSessions.Append(newSession);
             CurrentSessionIndex = _currentCase.CaseSessions.Count() > 0 ? _currentCase.CaseSessions.Count() - 1 : 0;
+        }
+        private void ClearSession()
+        {
+            chkInterpreterRequested.Checked = false;
+            chkTelephoneSession.Checked = false;
+            chkInmate.Checked = false;
         }
         private void UpdateNavigation()
         {
@@ -352,6 +357,7 @@ namespace tjc.Modules.MediationStatistics
         {
             var ctl = new SessionController();
             ctl.DeleteSession(_currentCase.GetCurrentSession(CurrentSessionIndex));
+            CurrentSessionIndex = 0;
             if (_currentCase.CaseSessions.Count() <= 1)
                 _currentCase.CaseSessions.Append(new Session());
         }
@@ -367,6 +373,37 @@ namespace tjc.Modules.MediationStatistics
                 int caseid = result.FirstOrDefault().CaseId;
                 Response.Redirect(EditUrl("cid", caseid.ToString(), "Dependency"), true);
             }
+        }
+        protected void ClearEventForm()
+        {
+            hdEventId.Value = string.Empty;
+            chkMeetingHeld.Checked = false;
+            txtEventDate.Text = string.Empty;
+            drpReason.SelectedIndex = -1;
+            rblAgreementType.SelectedIndex = -1;
+            drpMediatorType.SelectedIndex = -1;
+            hdMediatorId.Value = string.Empty;
+            txtMediator.Text = string.Empty;
+            txtHours.Text = string.Empty;
+            txtSignedMediationCount.Text = "0";
+            chkSignedMediation.Checked = false;
+            chkSignedAfterMediation.Checked = false;
+            txtSignedAfterMediationCount.Text = "0";
+            chkSignedTrial.Checked = false;
+            txtSignedTrialCount.Text = "0";
+            chkAdjournedTimeRemaining.Checked = false;
+            foreach (ListItem li in cblAppearanceRecord.Items)
+            {
+                {
+                    li.Selected = false;
+                }
+            }
+        }
+        private string GetMediatorName(int mediatorId)
+        {
+            var ctl = new MediatorController();
+            Mediator mediator = ctl.GetMediator(mediatorId);
+            return mediator.MediatorName;
         }
         #endregion
         #region Events
@@ -390,8 +427,24 @@ namespace tjc.Modules.MediationStatistics
                 chkInmate.LabelAttributes.Add("class", "form-check-label");
                 chkInterpreterRequested.LabelAttributes.Add("class", "form-check-label");
                 chkInterpreterRequested.InputAttributes.Add("class", "form-check-input");
+                //Event Form Setup
+                chkMeetingHeld.InputAttributes.Add("class", "form-check-input");
+                chkMeetingHeld.LabelAttributes.Add("class", "form-check-label");
+                chkAdjournedTimeRemaining.InputAttributes.Add("class", "form-check-input");
+                chkAdjournedTimeRemaining.LabelAttributes.Add("class", "form-check-label");
+                chkSignedMediation.InputAttributes.Add("class", "form-check-input");
+                chkSignedMediation.LabelAttributes.Add("class", "form-check-label");
+                chkSignedAfterMediation.InputAttributes.Add("class", "form-check-input");
+                chkSignedAfterMediation.LabelAttributes.Add("class", "form-check-label");
+                chkSignedTrial.InputAttributes.Add("class", "form-check-input");
+                chkSignedTrial.LabelAttributes.Add("class", "form-check-label");
+
                 if (!Page.IsPostBack)
                 {
+                    var aCtl = new GroupController();
+                    IEnumerable<Appearance> appearances = aCtl.GetAppearancesByGroup((int)_caseTypeGroup);
+                    cblAppearanceRecord.DataSource = appearances;
+                    cblAppearanceRecord.DataBind();
                     if (_regionId > 0)
                     {
                         if (RegionName != "" && GroupName != "")
@@ -460,6 +513,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
+            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -469,107 +523,83 @@ namespace tjc.Modules.MediationStatistics
             CurrentSessionIndex--;
             PopulateSessionInformation();
         }
-        protected void cmdAddEvent_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(hdSessionId.Value))
-            {
-                FillCase();
-                PopulateSessionInformation();
-            }
-            lstEvents.InsertItemPosition = InsertItemPosition.FirstItem;
-            PopulateEventInformation();
-        }
         #region Event Events
-        protected void lstEvents_ItemCreated(object sender, ListViewItemEventArgs e)
+        protected void rptEvent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.Item.ItemType == ListViewItemType.DataItem | e.Item.ItemType == ListViewItemType.InsertItem)
+            if (e.CommandName.ToLower() == "delete")
             {
-                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
-                LinkButton lnkUpdate = (LinkButton)e.Item.FindControl("lnkUpdate");
-                LinkButton lnkDelete = (LinkButton)e.Item.FindControl("lnkDelete");
-                LinkButton lnkInsert = (LinkButton)e.Item.FindControl("lnkInsert");
-                LinkButton lnkCancel = (LinkButton)e.Item.FindControl("lnkCancel");
-                var ctl = new GroupController();
-                if (lnkUpdate != null)
-                    scriptMan.RegisterAsyncPostBackControl(lnkUpdate);
-                if (lnkInsert != null)
-                    scriptMan.RegisterAsyncPostBackControl(lnkInsert);
-                if (lnkCancel != null)
-                    scriptMan.RegisterAsyncPostBackControl(lnkCancel);
-                if (lnkDelete != null)
-                    scriptMan.RegisterAsyncPostBackControl(lnkDelete);
-                if (e.Item.FindControl("cblAppearanceRecord") is CheckBoxList cblAppearanceRecord)
+                var ctl = new EventController();
+                Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
+                ctl.DeleteEvent(eventId);
+                PopulateEventInformation();
+            }
+            if (e.CommandName == "edit")
+            {
+                ClearEventForm();
+                var ctl = new EventController();
+                Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
+                Event evt = ctl.GetEvent(eventId);
+                hdEventId.Value = eventId.ToString();
+                if (evt.MediationHeld.HasValue)
+                    chkMeetingHeld.Checked = evt.MediationHeld.Value;
+                if (evt.EventDate.HasValue)
+                    txtEventDate.Text = evt.EventDate.Value.ToString("yyyy-MM-dd");
+                rblAgreementType.SelectedValue = evt.AgreementType;
+                drpReason.SelectedValue = evt.ReasonNotHeld;
+                drpMediatorType.SelectedValue = evt.MediatorType;
+                hdMediatorId.Value = evt.MediatorId.ToString();
+                foreach (Appearance appearance in evt.EventAppearances)
                 {
-                    IEnumerable<Appearance> appearances = ctl.GetAppearancesByGroup((int)_caseTypeGroup);
-                    cblAppearanceRecord.DataSource = appearances;
-                    cblAppearanceRecord.DataBind();
+                    ListItem item = cblAppearanceRecord.Items.FindByValue(appearance.AppearanceId.ToString());
+                    item.Selected = true;
                 }
-                if (e.Item.FindControl("chkMeetingHeld") is CheckBox chkMeetingHeld)
-                {
-                    chkMeetingHeld.InputAttributes.Add("class", "form-check-input");
-                    chkMeetingHeld.LabelAttributes.Add("class", "form-check-label");
-                }
-                if (e.Item.FindControl("chkSignedMediation") is CheckBox chkSignedMediation)
-                {
-                    chkSignedMediation.InputAttributes.Add("class", "form-check-input");
-                    chkSignedMediation.LabelAttributes.Add("class", "form-check-label");
-                }
-                if (e.Item.FindControl("chkSignedAfterMediation") is CheckBox chkSignedAfterMediation)
-                {
-                    chkSignedAfterMediation.InputAttributes.Add("class", "form-check-input");
-                    chkSignedAfterMediation.LabelAttributes.Add("class", "form-check-label");
-                }
-                if (e.Item.FindControl("chkSignedTrial") is CheckBox chkSignedTrial)
-                {
-                    chkSignedTrial.InputAttributes.Add("class", "form-check-input");
-                    chkSignedTrial.LabelAttributes.Add("class", "form-check-label");
-                }
-                if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
-                {
-                    chkAdjournedTimeRemaining.InputAttributes.Add("class", "form-check-input");
-                    chkAdjournedTimeRemaining.LabelAttributes.Add("class", "form-check-label");
-                }
+                if (evt.MediatorId > 0)
+                    txtMediator.Text = GetMediatorName(evt.MediatorId);
+                txtHours.Text = evt.TimeRemaining.ToString();
+                if (evt.Signed1.HasValue)
+                    chkSignedMediation.Checked = evt.Signed1.Value;
+                txtSignedMediationCount.Text = evt.SignedCount1.ToString();
+                if (evt.Signed2.HasValue)
+                    chkSignedAfterMediation.Checked = evt.Signed2.Value;
+                txtSignedAfterMediationCount.Text = evt.SignedCount2.ToString();
+                if (evt.Signed3.HasValue)
+                    chkSignedTrial.Checked = evt.Signed3.Value;
+                txtSignedTrialCount.Text = evt.SignedCount3.ToString();
+                if (evt.AdjournedTimeRemaining.HasValue)
+                    chkAdjournedTimeRemaining.Checked = evt.AdjournedTimeRemaining.Value;
+                ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(true)", true);
             }
         }
-        protected void lstEvents_ItemDataBound(object sender, ListViewItemEventArgs e)
+        protected void rptEvent_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            if (e.Item.ItemType == ListViewItemType.DataItem)
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                ListViewDataItem dataItem = e.Item as ListViewDataItem;
-                Event @event = (Event)dataItem.DataItem;
+                Event @event = (Event)e.Item.DataItem;
                 if (e.Item.FindControl("lblHoursRemaining") is Label lblHoursRemaining)
                 {
                     lblHoursRemaining.Visible = false;
                     if (@event.TimeRemaining.HasValue && @event.TimeRemaining.Value > 0)
                         lblHoursRemaining.Visible = true;
                 }
-
-                if (dataItem.DisplayIndex == lstEvents.EditIndex)
-                {
-                    if (e.Item.FindControl("chkMeetingHeld") is CheckBox chkMeetingHeld && e.Item.FindControl("lblReason") is Label lblReason && e.Item.FindControl("drpReason") is DropDownList drpReason)
-                    {
-                        if (chkMeetingHeld.Checked)
-                        {
-                            drpReason.Attributes.CssStyle.Add("display", "none");
-                            lblReason.Attributes.CssStyle.Add("display", "none");
-                        }
-                        if (e.Item.FindControl("cblAppearanceRecord") is CheckBoxList cblAppearanceRecord)
-                        {
-                            foreach (Appearance appearance in @event.EventAppearances)
-                            {
-                                ListItem item = cblAppearanceRecord.Items.FindByValue(appearance.AppearanceId.ToString());
-                                item.Selected = true;
-                            }
-                        }
-                    }
-                }
             }
         }
-        protected void lstEvents_ItemInserting(object sender, ListViewInsertEventArgs e)
+
+        protected void rptEvent_ItemCreated(object sender, RepeaterItemEventArgs e)
         {
-            try
+            ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
+            LinkButton lnkUpdate = (LinkButton)e.Item.FindControl("lnkUpdate");
+            LinkButton lnkDelete = (LinkButton)e.Item.FindControl("lnkDelete");
+            if (lnkUpdate != null)
+                scriptMan.RegisterAsyncPostBackControl(lnkUpdate);
+            if (lnkDelete != null)
+                scriptMan.RegisterAsyncPostBackControl(lnkDelete);
+        }
+        protected void cmdSaveEvent_Click(object sender, EventArgs e)
+        {
+            FillCase();
+            var ctl = new EventController();
+            if (string.IsNullOrEmpty(hdEventId.Value))
             {
-                var ctlEvent = new EventController();
                 Event newEvent = new Event
                 {
                     TimeRemaining = null,
@@ -578,194 +608,83 @@ namespace tjc.Modules.MediationStatistics
                     LastModifiedById = UserId,
                     LastModifiedDate = DateTime.Now,
                     SessionId = Int32.Parse(hdSessionId.Value),
-                    Signed1 = false, Signed2 = false, Signed3 = false,
-                    SignedCount1 = 0, SignedCount2 = 0,SignedCount3 = 0,
+                    MediationHeld = chkMeetingHeld.Checked,
+                    AgreementType = rblAgreementType.SelectedValue,
+                    ReasonNotHeld = drpReason.SelectedValue,
+                    MediatorType = drpMediatorType.SelectedValue,
+                    Signed1 = chkSignedMediation.Checked,
+                    Signed2 = chkSignedAfterMediation.Checked,
+                    Signed3 = chkSignedTrial.Checked,
+                    AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked
                 };
-                if (e.Item.FindControl("chkMeetingHeld") is CheckBox chkMeetingHeld)
-                    newEvent.MediationHeld = chkMeetingHeld.Checked;
-                if (e.Item.FindControl("rblAgreementType") is RadioButtonList rblAgreementType)
-                    newEvent.AgreementType = rblAgreementType.SelectedValue;
-                if (e.Item.FindControl("txtEventDate") is TextBox txtEventDate)
+                if (!string.IsNullOrEmpty(txtEventDate.Text))
+                    newEvent.EventDate = DateTime.Parse(txtEventDate.Text);
+                if (Int32.TryParse(hdMediatorId.Value, out int id))
+                    newEvent.MediatorId = id;
+                decimal.TryParse(txtHours.Text, out decimal timeRemaining);
+                if (timeRemaining > 0)
+                    newEvent.TimeRemaining = timeRemaining;
+                if (Int32.TryParse(txtSignedMediationCount.Text, out int signedCount1))
+                    newEvent.SignedCount1 = signedCount1;
+                if (Int32.TryParse(txtSignedAfterMediationCount.Text, out int signedCount2))
+                    newEvent.SignedCount1 = signedCount2;
+                if (Int32.TryParse(txtSignedTrialCount.Text, out int signedCount3))
+                    newEvent.SignedCount1 = signedCount3;
+                ctl.CreateEvent(newEvent);
+                foreach (ListItem item in cblAppearanceRecord.Items)
                 {
-                    if (!string.IsNullOrEmpty(txtEventDate.Text))
-                        newEvent.EventDate = DateTime.Parse(txtEventDate.Text);
-                }
-                if (e.Item.FindControl("chkSignedMediation") is CheckBox chkSignedMediation)
-                    newEvent.Signed1 = chkSignedMediation.Checked;
-                if (e.Item.FindControl("chkSignedAfterMediation") is CheckBox chkSignedAfterMediation)
-                    newEvent.Signed2 = chkSignedAfterMediation.Checked;
-                if (e.Item.FindControl("chkSignedTrial") is CheckBox chkSignedTrial)
-                    newEvent.Signed3 = chkSignedTrial.Checked;
-                if (e.Item.FindControl("drpReason") is DropDownList drpReason)
-                    newEvent.ReasonNotHeld = drpReason.SelectedValue;
-                if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
-                    newEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
-                if (e.Item.FindControl("txtHours") is TextBox txtHours)
-                {
-                    decimal.TryParse(txtHours.Text, out decimal timeRemaining);
-                    if (timeRemaining > 0)
-                        newEvent.TimeRemaining = timeRemaining;
-                }
-                if (e.Item.FindControl("txtSignedMediationCount") is TextBox txtSignedMediationCount)
-                {
-                    Int32.TryParse(txtSignedMediationCount.Text, out int mediationCount);
-                    newEvent.SignedCount1 = mediationCount;
-                }
-                if (e.Item.FindControl("txtSignedAfterMediationCount") is TextBox txtSignedAfterMediationCount)
-                {
-                    Int32.TryParse(txtSignedAfterMediationCount.Text, out int afterMediationCount);
-                    newEvent.SignedCount2 = afterMediationCount;
-                }
-                if (e.Item.FindControl("txtSignedTrialCount") is TextBox txtSignedTrialCount)
-                {
-                    Int32.TryParse(txtSignedTrialCount.Text, out int trialCount);
-                    newEvent.SignedCount3 = trialCount;
-                }
-                ctlEvent.CreateEvent(newEvent);
-                if (e.Item.FindControl("cblAppearanceRecord") is CheckBoxList cblAppearanceRecord)
-                {
-                    foreach (ListItem item in cblAppearanceRecord.Items)
+                    if (item.Selected)
                     {
-                        if (item.Selected)
-                        {
-                            int appearanceId = Int32.Parse(item.Value);
-                            ctlEvent.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = newEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
-                        }
+                        int appearanceId = Int32.Parse(item.Value);
+                        ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = newEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
-                FillCase();
-                lstEvents.InsertItemPosition = InsertItemPosition.None;
-                PopulateEventInformation();
-            }
-            catch (Exception ex)
-            {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, ex.Message, DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-            }
-        }
-        protected void lstEvents_ItemDeleting(object sender, ListViewDeleteEventArgs e)
-        {
-            try
-            {
-                var ctl = new EventController();
-                Event selectedEvent = _currentCase.CaseSessions.ElementAt(CurrentSessionIndex).SessionEvents.ElementAt(e.ItemIndex);
-                ctl.DeleteEvent(selectedEvent);
-                PopulateEventInformation();
-            }
-            catch (Exception ex)
-            {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, ex.Message, DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-            }
-        }
-        protected void lstEvents_ItemEditing(object sender, ListViewEditEventArgs e)
-        {
-            lstEvents.EditIndex = e.NewEditIndex;
-            cmdSave.Enabled = false;
-            PopulateEventInformation();
-        }
-        protected void lstEvents_ItemInserted(object sender, ListViewInsertedEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                if (e.AffectedRows == 0)
-                {
-                    e.KeepInInsertMode = true;
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "An exception occurred inserting the new Event. " + "Please verify your values and try again.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                }
-                else
-                {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "An exception occurred inserting the new Event. " + "Please verify the values in the newly inserted item.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                    PopulateEventInformation();
-                }
-
-                e.ExceptionHandled = true;
-                cmdSave.Enabled = true;
             }
             else
             {
-                Response.Redirect(EditUrl("cid", CaseID.ToString(), "Dependency", "sidx=" + CurrentSessionIndex), true);
-            }
-        }
-        protected void lstEvents_ItemCanceling(object sender, ListViewCancelEventArgs e)
-        {
-            if (e.CancelMode == ListViewCancelMode.CancelingInsert)
-                lstEvents.InsertItemPosition = InsertItemPosition.None;
-            else
-                lstEvents.EditIndex = -1;
-            PopulateEventInformation();
-            cmdSave.Enabled = true;
-        }
-        protected void lstEvents_ItemCommand(object sender, ListViewCommandEventArgs e)
-        {
-            if (e.CommandName.ToLower() == "update")
-            {
-                var ctl = new EventController();
-                Event oldEvent = ctl.GetEvent(Int32.Parse(e.CommandArgument.ToString()));
+                Event oldEvent = ctl.GetEvent(Int32.Parse(hdEventId.Value.ToString()));
                 oldEvent.LastModifiedById = UserId;
                 oldEvent.LastModifiedDate = DateTime.Now;
+                oldEvent.MediationHeld = chkMeetingHeld.Checked;
+                oldEvent.AgreementType = rblAgreementType.SelectedValue;
+                if (!string.IsNullOrEmpty(txtEventDate.Text))
+                    oldEvent.EventDate = DateTime.Parse(txtEventDate.Text);
+                oldEvent.Signed1 = chkSignedMediation.Checked;
+                if (Int32.TryParse(txtSignedMediationCount.Text, out int signedCount1))
+                    oldEvent.SignedCount1 = signedCount1;
+                oldEvent.Signed2 = chkSignedAfterMediation.Checked;
+                if (Int32.TryParse(txtSignedAfterMediationCount.Text, out int signedCount2))
+                    oldEvent.SignedCount2 = signedCount2;
+                oldEvent.Signed3 = chkSignedTrial.Checked;
+                if (Int32.TryParse(txtSignedTrialCount.Text, out int signedCount3))
+                    oldEvent.SignedCount3 = signedCount3;
+                oldEvent.ReasonNotHeld = drpReason.SelectedValue;
+                oldEvent.MediatorType = drpMediatorType.SelectedValue;
+                if (Int32.TryParse(hdMediatorId.Value, out int id))
+                    oldEvent.MediatorId = id;
+                oldEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
+                decimal.TryParse(txtHours.Text, out decimal timeRemaining);
                 oldEvent.TimeRemaining = null;
-                if (e.Item.FindControl("chkMeetingHeld") is CheckBox chkMeetingHeld)
-                    oldEvent.MediationHeld = chkMeetingHeld.Checked;
-                if (e.Item.FindControl("rblAgreementType") is RadioButtonList rblAgreementType)
-                    oldEvent.AgreementType = rblAgreementType.SelectedValue;
-                if (e.Item.FindControl("chkSignedMediation") is CheckBox chkSignedMediation)
-                    oldEvent.Signed1 = chkSignedMediation.Checked;
-                if (e.Item.FindControl("chkSignedAfterMediation") is CheckBox chkSignedAfterMediation)
-                    oldEvent.Signed2 = chkSignedAfterMediation.Checked;
-                if (e.Item.FindControl("chkSignedTrial") is CheckBox chkSignedTrial)
-                    oldEvent.Signed3 = chkSignedTrial.Checked;
-                if (e.Item.FindControl("drpReason") is DropDownList drpReason)
-                    oldEvent.ReasonNotHeld = drpReason.SelectedValue;
-                if (e.Item.FindControl("chkAdjournedTimeRemaining") is CheckBox chkAdjournedTimeRemaining)
-                    oldEvent.AdjournedTimeRemaining = chkAdjournedTimeRemaining.Checked;
-                if (e.Item.FindControl("txtEventDate") is TextBox txtEventDate)
-                {
-                    if (!string.IsNullOrEmpty(txtEventDate.Text))
-                        oldEvent.EventDate = DateTime.Parse(txtEventDate.Text);
-                }
-                if (e.Item.FindControl("txtHours") is TextBox txtHours)
-                {
-                    decimal.TryParse(txtHours.Text, out decimal timeRemaining);
-                    if (timeRemaining > 0)
-                        oldEvent.TimeRemaining = timeRemaining;
-                }
-                if (e.Item.FindControl("txtSignedMediationCount") is TextBox txtSignedMediationCount)
-                {
-                    Int32.TryParse(txtSignedMediationCount.Text, out int mediationCount);
-                    oldEvent.SignedCount1 = mediationCount;
-                }
-                if (e.Item.FindControl("txtSignedAfterMediationCount") is TextBox txtSignedAfterMediationCount)
-                {
-                    Int32.TryParse(txtSignedAfterMediationCount.Text, out int afterMediationCount);
-                    oldEvent.SignedCount2 = afterMediationCount;
-                }
-                if (e.Item.FindControl("txtSignedTrialCount") is TextBox txtSignedTrialCount)
-                {
-                    Int32.TryParse(txtSignedTrialCount.Text, out int trialCount);
-                    oldEvent.SignedCount3 = trialCount;
-                }
+                if (timeRemaining > 0)
+                    oldEvent.TimeRemaining = timeRemaining;
                 ctl.UpdateEvent(oldEvent);
                 ctl.DeleteAllEventAppearances(oldEvent.EventId);
-                if (e.Item.FindControl("cblAppearanceRecord") is CheckBoxList cblAppearanceRecord)
+                foreach (ListItem item in cblAppearanceRecord.Items)
                 {
-                    foreach (ListItem item in cblAppearanceRecord.Items)
+                    if (item.Selected)
                     {
-                        if (item.Selected)
-                        {
-                            int appearanceId = Int32.Parse(item.Value);
-                            ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = oldEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
-                        }
+                        int appearanceId = Int32.Parse(item.Value);
+                        ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = oldEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
-                FillCase();
             }
-        }
-        protected void lstEvents_ItemUpdating(object sender, ListViewUpdateEventArgs e)
-        {
-            lstEvents.EditIndex = -1;
+            ClearEventForm();
             PopulateEventInformation();
+            ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
         }
         #endregion //Event Events
 
         #endregion //Events
+
     }
 }

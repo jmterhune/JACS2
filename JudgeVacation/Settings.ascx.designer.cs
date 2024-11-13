@@ -42,12 +42,30 @@ namespace tjc.Modules.JudgeVacation
         protected global::System.Web.UI.UserControl lblReportingRole;
 
         /// <summary>
-        /// txtReportingRole control.
+        /// drpReportingRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtReportingRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpReportingRole;
+
+        /// <summary>
+        /// lblJudgeRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblJudgeRole;
+
+        /// <summary>
+        /// drpJudges control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpJudges;
     }
 }

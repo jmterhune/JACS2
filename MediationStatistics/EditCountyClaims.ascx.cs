@@ -242,18 +242,21 @@ namespace tjc.Modules.MediationStatistics
                     drpCaseType.SelectedValue = session.PrimaryCaseType.Value.ToString();
                 txtMediationDate.Text = "";
                 if (session.MediationDate.HasValue)
-                    txtMediationDate.Text = session.MediationDate.Value.ToShortDateString();
+                    txtMediationDate.Text = session.MediationDate.Value.ToString("yyyy-MM-dd");
                 txtOrderReferral.Text = "";
                 if (session.ReferralDate.HasValue)
-                    txtOrderReferral.Text = session.ReferralDate.Value.ToShortDateString();
+                    txtOrderReferral.Text = session.ReferralDate.Value.ToString("yyyy-MM-dd");
                 chkTelephoneSession.Checked = session.HeldByPhone;
                 txtComments.Text = session.Comment;
                 chkProSePlaintiff.Checked = session.p1_ProSe;
                 chkProSeDefendant.Checked = session.p2_ProSe;
+                chkOTSC.Checked = false;
                 if (session.OTS.HasValue)
                     chkOTSC.Checked = session.OTS.Value;
+                chkPlaintiffFta.Checked = false;
                 if (session.p1_FTA.HasValue)
                     chkPlaintiffFta.Checked = session.p2_FTA.Value;
+                chkDefendantFta.Checked= false;
                 if (session.p2_FTA.HasValue)
                     chkDefendantFta.Checked = session.p2_FTA.Value;
                 if (session.p1_AttorneyId.HasValue)
@@ -281,8 +284,8 @@ namespace tjc.Modules.MediationStatistics
                     Attorney DefendantAttorney = ctl.GetAttorney(session.p2_AttorneyId.Value);
                     if (DefendantAttorney != null)
                     {
-                        txtPlaintiffName.Text = DefendantAttorney.FullName;
-                        txtPlaintiffEmail.Text = DefendantAttorney.Email;
+                        txtDefendantName.Text = DefendantAttorney.FullName;
+                        txtDefendantEmail.Text = DefendantAttorney.Email;
                         txtDefendantPhone.Text = DefendantAttorney.Phone;
                         txtDefendantExtension.Text = DefendantAttorney.Extension;
                     }
@@ -299,16 +302,25 @@ namespace tjc.Modules.MediationStatistics
                 drpDefendantFeesPaid.SelectedValue = session.p2_FeesPaid;
                 drpPlaintiffFeesOwed.SelectedValue = session.p1_FeesOwed;
                 drpPlaintiffFeesPaid.SelectedValue = session.p1_FeesPaid;
+                chkFeeAgreementEntered.Checked = false;
                 if (session.FeeAgreement.HasValue)
                     chkFeeAgreementEntered.Checked = session.FeeAgreement.Value;
+                chkFeeJudgmentEntered.Checked=false;
                 if (session.FeeJudgement.HasValue)
                     chkFeeJudgmentEntered.Checked = session.FeeJudgement.Value;
+                chkDepartmentFeeWaiver.Checked = false;
                 if (session.FeeWaiver.HasValue)
                     chkDepartmentFeeWaiver.Checked = session.FeeWaiver.Value;
-                if(session.Interpreter.HasValue)
+                chkInterpreterRequested.Checked = false;
+                if (session.Interpreter.HasValue)
                     chkInterpreterRequested.Checked = session.Interpreter.Value;
                 chkArbitrationReferral.Checked = session.ArbitrationReferral;
                 chkCircuitCivilReferal.Checked = session.CircuitCivilReferral;
+                clsSecondaryIssues.Items.Clear();
+                foreach (ListItem li in clsSecondaryIssues.Items)
+                {
+                    li.Selected = false;
+                }
                 foreach (Issue issue in session.SessionIssues)
                 {
                     ListItem li = clsSecondaryIssues.Items.FindByValue(issue.IssueId.ToString());
@@ -373,7 +385,26 @@ namespace tjc.Modules.MediationStatistics
             var ctl = new SessionController();
             ctl.CreateSession(newSession);
             _currentCase.CaseSessions.Append(newSession);
-            CurrentSessionIndex = _currentCase.CaseSessions.Count() > 0 ? _currentCase.CaseSessions.Count() - 1 : 0; 
+            CurrentSessionIndex = _currentCase.CaseSessions.Count() > 0 ? _currentCase.CaseSessions.Count() - 1 : 0;
+        }
+        private void ClearSession()
+        {
+            chkProSeDefendant.Checked = false;
+            chkProSePlaintiff.Checked = false;
+            chkPlaintiffFta.Checked = false;
+            chkDefendantFta.Checked = false;
+            chkFeeJudgmentEntered.Checked = false;
+            chkFeeAgreementEntered.Checked = false;
+            chkInterpreterRequested.Checked = false;
+            chkDepartmentFeeWaiver.Checked = false;
+            chkTelephoneSession.Checked = false;
+            chkCircuitCivilReferal.Checked = false;
+            chkArbitrationReferral.Checked = false;
+            chkOTSC.Checked = false;
+            foreach (ListItem item in clsSecondaryIssues.Items)
+            {
+                item.Selected = false;
+            }
         }
         private void UpdateNavigation()
         {
@@ -447,7 +478,7 @@ namespace tjc.Modules.MediationStatistics
                 session.FeeAgreement = chkFeeAgreementEntered.Checked;
                 session.FeeJudgement = chkFeeJudgmentEntered.Checked;
                 session.FeeWaiver = chkDepartmentFeeWaiver.Checked;
-                session.Interpreter=chkInterpreterRequested.Checked;
+                session.Interpreter = chkInterpreterRequested.Checked;
                 session.Comment = txtComments.Text;
                 session.LastModifiedById = UserId;
                 session.LastModifiedDate = DateTime.Now;
@@ -499,6 +530,7 @@ namespace tjc.Modules.MediationStatistics
         {
             var ctl = new SessionController();
             ctl.DeleteSession(_currentCase.GetCurrentSession(CurrentSessionIndex));
+            CurrentSessionIndex = 0;
             if (_currentCase.CaseSessions.Count() <= 1)
                 _currentCase.CaseSessions.Append(new Session());
         }
@@ -531,7 +563,11 @@ namespace tjc.Modules.MediationStatistics
             chkAgreementSigned.Checked = false;
             chkPreparedAttorney.Checked = false;
             chkAdjournedTimeRemaining.Checked = false;
-
+            foreach (ListItem li in cblAppearanceRecord.Items) {
+                {
+                    li.Selected = false;
+                }
+            }
         }
         private string GetMediatorName(int mediatorId)
         {
@@ -571,7 +607,6 @@ namespace tjc.Modules.MediationStatistics
                 chkCircuitCivilReferal.InputAttributes.Add("class", "form-check-input");
                 chkCircuitCivilReferal.LabelAttributes.Add("class", "form-check-label");
                 chkDepartmentFeeWaiver.InputAttributes.Add("class", "form-check-input");
-                
                 chkDepartmentFeeWaiver.LabelAttributes.Add("class", "form-check-label");
                 chkInterpreterRequested.InputAttributes.Add("class", "form-check-input");
                 chkInterpreterRequested.LabelAttributes.Add("class", "form-check-label");
@@ -581,12 +616,23 @@ namespace tjc.Modules.MediationStatistics
                 chkFeeJudgmentEntered.LabelAttributes.Add("class", "form-check-label");
                 chkOTSC.InputAttributes.Add("class", "form-check-input");
                 chkOTSC.LabelAttributes.Add("class", "form-check-label");
-                 var aCtl = new GroupController(); 
+                //Event Form Setup
+                chkMeetingHeld.InputAttributes.Add("class", "form-check-input");
+                chkMeetingHeld.LabelAttributes.Add("class", "form-check-label");
+                chkSubmittedToParties.InputAttributes.Add("class", "form-check-input");
+                chkSubmittedToParties.LabelAttributes.Add("class", "form-check-label");
+                chkAgreementSigned.InputAttributes.Add("class", "form-check-input");
+                chkAgreementSigned.LabelAttributes.Add("class", "form-check-label");
+                chkPreparedAttorney.InputAttributes.Add("class", "form-check-input");
+                chkPreparedAttorney.LabelAttributes.Add("class", "form-check-label");
+                chkAdjournedTimeRemaining.InputAttributes.Add("class", "form-check-input");
+                chkAdjournedTimeRemaining.LabelAttributes.Add("class", "form-check-label");
+                if (!Page.IsPostBack)
+                {
+                    var aCtl = new GroupController();
                     IEnumerable<Appearance> appearances = aCtl.GetAppearancesByGroup((int)_caseTypeGroup);
                     cblAppearanceRecord.DataSource = appearances;
                     cblAppearanceRecord.DataBind();
-                if (!Page.IsPostBack)
-                {
                     if (_regionId > 0)
                     {
                         if (RegionName != "" && GroupName != "")
@@ -655,6 +701,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
+            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -664,7 +711,7 @@ namespace tjc.Modules.MediationStatistics
             CurrentSessionIndex--;
             PopulateSessionInformation();
         }
-        
+
         #region Event Events
         protected void rptEvent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
@@ -677,6 +724,7 @@ namespace tjc.Modules.MediationStatistics
             }
             if (e.CommandName == "edit")
             {
+                ClearEventForm();
                 var ctl = new EventController();
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 Event evt = ctl.GetEvent(eventId);
@@ -684,7 +732,7 @@ namespace tjc.Modules.MediationStatistics
                 if (evt.MediationHeld.HasValue)
                     chkMeetingHeld.Checked = evt.MediationHeld.Value;
                 if (evt.EventDate.HasValue)
-                    txtEventDate.Text = evt.EventDate.Value.ToShortDateString();
+                    txtEventDate.Text = evt.EventDate.Value.ToString("yyyy-MM-dd");
                 rblAgreementType.SelectedValue = evt.AgreementType;
                 drpReason.SelectedValue = evt.ReasonNotHeld;
                 if (evt.AgreementSigned.HasValue)
@@ -692,7 +740,6 @@ namespace tjc.Modules.MediationStatistics
                 drpMediatorType.SelectedValue = evt.MediatorType;
                 hdMediatorId.Value = evt.MediatorId.ToString();
                 if (evt.MediatorId > 0)
-
                     txtMediator.Text = GetMediatorName(evt.MediatorId);
                 txtHours.Text = evt.TimeRemaining.ToString();
                 if (evt.AgreementSubmittedParties.HasValue)
@@ -767,6 +814,15 @@ namespace tjc.Modules.MediationStatistics
                 if (timeRemaining > 0)
                     newEvent.TimeRemaining = timeRemaining;
                 ctl.CreateEvent(newEvent);
+
+                foreach (ListItem item in cblAppearanceRecord.Items)
+                {
+                    if (item.Selected)
+                    {
+                        int appearanceId = Int32.Parse(item.Value);
+                        ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = newEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
+                    }
+                }
             }
             else
             {
@@ -790,11 +846,19 @@ namespace tjc.Modules.MediationStatistics
                 if (timeRemaining > 0)
                     oldEvent.TimeRemaining = timeRemaining;
                 ctl.UpdateEvent(oldEvent);
+                ctl.DeleteAllEventAppearances(oldEvent.EventId);
+                foreach (ListItem item in cblAppearanceRecord.Items)
+                {
+                    if (item.Selected)
+                    {
+                        int appearanceId = Int32.Parse(item.Value);
+                        ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = oldEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
+                    }
+                }
                 ClearEventForm();
             }
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
-
         }
 
         #endregion //Event Events

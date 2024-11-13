@@ -5,9 +5,6 @@
     <asp:HyperLink ID="lnkAddReferral" runat="server" CssClass="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Motion</asp:HyperLink>
     <button class="btn btn-quaternary" data-toggle="modal" data-target="#searchModal"><i class="fa fa-search"></i>&nbsp;Search Referrals</button>
 </div>
-
-
-
 <div class="mt-lg">
     <table id="table-referrals" class="table table-striped">
         <thead>
@@ -39,7 +36,6 @@
         </tbody>
     </table>
     <ul class="list-group list-group-horizontal-sm mt-lg">
-        
         <asp:Literal ID="ltRecordMessage" runat="server" />
     </ul>
 </div>
@@ -103,9 +99,9 @@
                     </p>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer justify-content-between">
                 <asp:LinkButton ID="cmdSearch" runat="server" CssClass="btn btn-default mr-2" Text="Search" OnClick="cmdSearch_Click" />
-                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

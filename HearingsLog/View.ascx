@@ -1,235 +1,284 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.HearingLog.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<div class="ms-2 me-2">
-    <asp:HyperLink ID="lnkAdmin" runat="server" Visible="false" CssClass="btn btn-primary"><i class="fas fa-cog"></i> Admin</asp:HyperLink>
-    <div class="p-2 bg-light mb-3 border rounded border-secondary d-inline-block">
-        <div class="row g-3 align-items-center">
-            <label class="col-auto col-form-label" for="txtStartDate">Start Date</label>
-            <div class="col-auto">
-                <asp:TextBox ID="txtStartDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="Start Date"></asp:TextBox>
-            </div>
-            <label class="col-auto col-form-label" for="txtEndDate">End Date</label>
-            <div class="col-auto">
-                <asp:TextBox ID="txtEndDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="End Date"></asp:TextBox>
-            </div>
-            <div class="col-auto">
-                <button id="btnImport" class="btn btn-tertiary ms-2 me-2">
-                    <i class="fa-solid fa-file-import" aria-hidden="true"></i>&nbsp;Import Hearings
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="p-2 bg-light mb-3 ms-3 border rounded border-secondary d-inline-block float-end">
-        <div class="row g-3 align-items-center">
-            <label class="col-auto col-form-label" for="txtSearch">Search Text</label>
-            <div class="col-auto">
-                <input id="txtSearch" type="text" maxlength="50" class="form-control" placeholder="Enter Search Text" />
-            </div>
-            <div id="dvShowJudges" class="col-auto" style="display: none">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="showAllJudges">
-                    <label class="form-check-label" for="showAllJudges">Show All Judges</label>
+
+<div class="tabs tabs-center">
+    <ul class="nav nav-tabs justify-content-center">
+        <li class="nav-item active">
+            <a class="nav-link" href="#" data-toggle="tab">Hearing Log</a>
+        </li>
+        <li class="nav-item">
+            <asp:HyperLink ID="lnkCourtCounsel" CssClass="nav-link" runat="server" Text="Court Counsel Log" ToolTip="Select to View the Court Counsel Log" />
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <div class="ms-2 me-2">
+                <asp:HyperLink ID="lnkAdmin" runat="server" Visible="false" CssClass="btn btn-primary"><i class="fas fa-cog"></i> Admin</asp:HyperLink>
+                <div class="p-2 bg-light mb-3 border rounded border-secondary d-inline-block">
+                    <div class="row g-3 align-items-center">
+                        <label class="col-auto col-form-label" for="txtStartDate">Start Date</label>
+                        <div class="col-auto">
+                            <asp:TextBox ID="txtStartDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="Start Date"></asp:TextBox>
+                        </div>
+                        <label class="col-auto col-form-label" for="txtEndDate">End Date</label>
+                        <div class="col-auto">
+                            <asp:TextBox ID="txtEndDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="End Date"></asp:TextBox>
+                        </div>
+                        <div class="col-auto">
+                            <button id="btnImport" class="btn btn-tertiary ms-2 me-2" data-toggle="modal" data-target="#importModal">
+                                <i class="fa-solid fa-file-import" aria-hidden="true"></i>&nbsp;Import Hearings
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div id="dvChiefJudge" class="col-auto" style="display: none">
-                <asp:DropDownList ID="drpJudges" Visible="false" ClientIDMode="Static" CssClass="form-control" runat="server">
-                    <asp:ListItem Text="< All Judges >" Value="0" />
-                </asp:DropDownList>
-            </div>
-        </div>
-    </div>
-    <asp:Literal ID="ltMessage" runat="server"></asp:Literal>
-    <button id="btnAdd" class="btn btn-primary me-3" data-toggle="modal" data-target="#logModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Hearing</button>
-    <div id="statusOptionContainer" class="text-end">
-        <div class="d-inline-block">
-            <input type="radio" class="btn-check" name="statusOptions" value="0" id="newOption" autocomplete="off" checked>
-            <label class="btn btn-secondary mt-2" for="newOption">New</label>
+                <div class="p-2 bg-light mb-3 ms-3 border rounded border-secondary d-inline-block float-end">
+                    <div class="row g-3 align-items-center">
+                        <label class="col-auto col-form-label" for="txtSearch">Search Text</label>
+                        <div class="col-auto">
+                            <input id="txtSearch" type="text" maxlength="50" class="form-control" placeholder="Enter Search Text" />
+                        </div>
+                        <div id="dvShowJudges" class="col-auto" style="display: none">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showAllJudges">
+                                <label class="form-check-label" for="showAllJudges">Show All Judges</label>
+                            </div>
+                        </div>
+                        <div id="dvChiefJudge" class="col-auto" style="display: none">
+                            <asp:DropDownList ID="drpJudges" Visible="false" ClientIDMode="Static" CssClass="form-control" runat="server">
+                                <asp:ListItem Text="< All Judges >" Value="0" />
+                            </asp:DropDownList>
+                        </div>
+                    </div>
+                </div>
+                <asp:Literal ID="ltMessage" runat="server"></asp:Literal>
+                <button id="btnAdd" class="btn btn-primary me-3" data-toggle="modal" data-target="#logModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Hearing</button>
+                <div id="statusOptionContainer" class="text-end">
+                    <div class="d-inline-block">
+                        <input type="radio" class="btn-check" name="statusOptions" value="0" id="newOption" autocomplete="off" checked>
+                        <label class="btn btn-secondary mt-2" for="newOption">New</label>
 
-            <input type="radio" class="btn-check" name="statusOptions" value="1" id="archiveOption" autocomplete="off">
-            <label class="btn btn-secondary mt-2" for="archiveOption">Archived</label>
+                        <input type="radio" class="btn-check" name="statusOptions" value="1" id="archiveOption" autocomplete="off">
+                        <label class="btn btn-secondary mt-2" for="archiveOption">Archived</label>
 
-            <input type="radio" class="btn-check" name="statusOptions" value="2" id="excludedOption" autocomplete="off">
-            <label class="btn btn-secondary mt-2" for="excludedOption">Excluded</label>
-        </div>
-        <div class="dropdown ms-2 d-inline-block">
-            <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Hidden Columns
+                        <input type="radio" class="btn-check" name="statusOptions" value="2" id="excludedOption" autocomplete="off">
+                        <label class="btn btn-secondary mt-2" for="excludedOption">Excluded</label>
+                    </div>
+                    <div class="dropdown ms-2 d-inline-block">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Hidden Columns
                         <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="columnVisibility">
-                <li>
-                    <label>
-                        <input value="1" type="checkbox">
-                        Order Signed
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="2" type="checkbox">
-                        Hearing Date
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="3" type="checkbox">
-                        60<sup>th</sup> Day
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="4" type="checkbox">
-                        County
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="5" type="checkbox">
-                        Case Name
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="6" type="checkbox">
-                        Case #
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="7" type="checkbox">
-                        <abbr title="Document Identification Number">DIN</abbr>
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="8" type="checkbox">
-                        Motion Title
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="9" type="checkbox">
-                        Drafted By
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="10" type="checkbox">
-                        Judge
-                    </label>
-                </li>
+                        </button>
+                        <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="columnVisibility">
+                            <li>
+                                <label>
+                                    <input value="1" type="checkbox">
+                                    Order Signed
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="2" type="checkbox">
+                                    Hearing Date
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="3" type="checkbox">
+                                    60<sup>th</sup> Day
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="4" type="checkbox">
+                                    County
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="5" type="checkbox">
+                                    Case Name
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="6" type="checkbox">
+                                    Case #
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="7" type="checkbox">
+                                    <abbr title="Document Identification Number">DIN</abbr>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="8" type="checkbox">
+                                    Motion Title
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="9" type="checkbox">
+                                    Drafted By
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="10" type="checkbox">
+                                    Judge
+                                </label>
+                            </li>
 
-                <li>
-                    <label>
-                        <input value="12" type="checkbox">
-                        Court Notes
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input value="11" type="checkbox">
-                        Delay Reason
-                    </label>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <table id="tblHearing" class="table table-striped" width="100%">
-        <thead>
-            <tr>
-                <th>&nbsp;</th>
-                <th>Order Signed</th>
-                <th>Hearing Date</th>
-                <th>60<sup>th</sup> Day</th>
-                <th>County</th>
-                <th>Case Name</th>
-                <th>Case #</th>
-                <th>
-                    <abbr title="Document Identification Number">DIN</abbr></th>
-                <th>Motion Title</th>
-                <th>Drafted By</th>
-                <th>Judge</th>
-                <th>
-                    <abbr title="Court Notes" data-toggle="tooltip">CN</abbr></th>
-                <th>
-                    <abbr title="Delay Reason" data-toggle="tooltip">DR</abbr></th>
-                <th>&nbsp;</th>
-            </tr>
-        </thead>
-    </table>
-</div>
-<div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="logModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="logModalLabel">Edit Hearing Log Item</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <li>
+                                <label>
+                                    <input value="12" type="checkbox">
+                                    Court Notes
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input value="11" type="checkbox">
+                                    Delay Reason
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="dvExclude">
+                        <button id="btnExclude" class="btn btn-primary">
+                            <i class="fa-solid fa-ban" aria-hidden="true"></i>&nbsp;Exclude Selected Records
+                        </button>
+                    </div>
+                </div>
+                <div id="process-overlay" class="overlay" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+                <table id="tblHearing" class="table table-striped" width="100%">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Order Signed</th>
+                            <th>Hearing Date</th>
+                            <th>60<sup>th</sup> Day</th>
+                            <th>County</th>
+                            <th>Case Name</th>
+                            <th>Case #</th>
+                            <th>
+                                <abbr title="Document Identification Number">DIN</abbr></th>
+                            <th>Motion Title</th>
+                            <th>Drafted By</th>
+                            <th>Judge</th>
+                            <th>
+                                <abbr title="Court Notes" data-toggle="tooltip">CN</abbr></th>
+                            <th>
+                                <abbr title="Delay Reason" data-toggle="tooltip">DR</abbr></th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-auto">
-                        <label for="txtOrderSigned">Order Signed</label>
-                        <asp:TextBox ID="txtOrderSigned" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
-                    </div>
-                    <div class="col-auto">
-                        <label for="txtHearingDate">Hearing Date</label>
-                        <asp:TextBox ID="txtHearingDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
-                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger" ErrorMessage="Hearing Date Is Required" ControlToValidate="txtHearingDate" runat="server" />
-                    </div>
-                    <div class="col-auto">
-                        <label for="drpCounty">County</label>
-                        <asp:DropDownList runat="server" ClientIDMode="Static" ID="drpCounty" CssClass="form-control">
-                            <asp:ListItem Text="< Select County >" Value="" />
-                            <asp:ListItem Text="DeSoto" />
-                            <asp:ListItem Text="Manatee" />
-                            <asp:ListItem Text="Sarasota" />
-                            <asp:ListItem Text="Benchmark" />
-                            <asp:ListItem Text="Clericus" />
-                        </asp:DropDownList>
-                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger" ErrorMessage="County Is Required" ControlToValidate="drpCounty" runat="server" />
-                    </div>
-                    <div class="row">
-                        <div class="col-auto">
-                            <label for="txtCaseName">Case Name</label>
-                            <asp:TextBox ID="txtCaseName" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+            <div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="logModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="logModalLabel">Edit Hearing Log Item</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         </div>
-                        <div class="col-auto">
-                            <label for="txtCaseNumber">Case Number</label>
-                            <asp:TextBox ID="txtCaseNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="30"></asp:TextBox>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <label for="txtOrderSigned">Order Signed</label>
+                                    <asp:TextBox ID="txtOrderSigned" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="txtHearingDate">Hearing Date</label>
+                                    <asp:TextBox ID="txtHearingDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
+                                    <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger" ErrorMessage="Hearing Date Is Required" ControlToValidate="txtHearingDate" runat="server" />
+                                </div>
+                                <div class="col-auto">
+                                    <label for="drpCounty">County</label>
+                                    <asp:DropDownList runat="server" ClientIDMode="Static" ID="drpCounty" CssClass="form-control">
+                                        <asp:ListItem Text="< Select County >" Value="" />
+                                        <asp:ListItem Text="DeSoto" />
+                                        <asp:ListItem Text="Manatee" />
+                                        <asp:ListItem Text="Sarasota" />
+                                    </asp:DropDownList>
+                                    <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger" ErrorMessage="County Is Required" ControlToValidate="drpCounty" runat="server" />
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <label for="txtCaseName">Case Name</label>
+                                        <asp:TextBox ID="txtCaseName" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="txtCaseNumber">Case Number</label>
+                                        <asp:TextBox ID="txtCaseNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="30"></asp:TextBox>
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="txtDIN">
+                                            <abbr title="Document Identification Number">DIN</abbr></label>
+                                        <asp:TextBox ID="txtDIN" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <label for="txtMotionTitle">Motion Title</label>
+                                        <asp:TextBox ID="txtMotionTitle" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="200"></asp:TextBox>
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="txtDraftedBy">Drafted By</label>
+                                        <asp:TextBox ID="txtDraftedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="txtCourtNotes">Court Notes</label>
+                                        <asp:TextBox ID="txtCourtNotes" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"></asp:TextBox>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="txtDelayReason">Delay Reason</label>
+                                        <asp:TextBox ID="txtDelayReason" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"></asp:TextBox>
+                                    </div>
+                                </div>
+                                <asp:HiddenField ID="hdLogId" runat="server" ClientIDMode="Static" />
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <label for="txtDIN">
-                                <abbr title="Document Identification Number">DIN</abbr></label>
-                            <asp:TextBox ID="txtDIN" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" id="cmdSaveLogItem" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-auto">
-                            <label for="txtMotionTitle">Motion Title</label>
-                            <asp:TextBox ID="txtMotionTitle" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="200"></asp:TextBox>
-                        </div>
-                        <div class="col-auto">
-                            <label for="txtDraftedBy">Drafted By</label>
-                            <asp:TextBox ID="txtDraftedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <label for="txtCourtNotes">Court Notes</label>
-                            <asp:TextBox ID="txtCourtNotes" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"></asp:TextBox>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <label for="txtDelayReason">Delay Reason</label>
-                            <asp:TextBox ID="txtDelayReason" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"></asp:TextBox>
-                        </div>
-                    </div>
-                    <asp:HiddenField ID="hdLogId" runat="server" ClientIDMode="Static" />
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" id="cmdSaveLogItem" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="importModalLabel">Import Hearings from JACS</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <label for="txtImportStart">Start Date</label>
+                                    <asp:TextBox ID="txtImportStart" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15" aria-label="Start Date"></asp:TextBox>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="txtImportEnd">End Date</label>
+                                    <asp:TextBox ID="txtImportEnd" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15" aria-label="End Date"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button id="cmdImport" class="btn btn-tertiary">
+                                <i class="fa-solid fa-file-import" aria-hidden="true"></i>&nbsp;Start Import
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -242,10 +291,12 @@
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.1.1/js/bootstrap5-toggle.jquery.min.js" />
 <dnn:dnncssinclude runat="server" filepath="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.1.1/css/bootstrap5-toggle.min.css" />
 
+
+
 <script type="text/javascript">
-    var moduleId = <%=ModuleId%>;
-    var jaRole = '<%=JaRole%>';
-    var hasChiefJudgeRole = <%=HasChiefJudgeRole%>;
+    var moduleId = <%=this.ModuleId%>;
+    var jaRole = '<%=this.JaRole%>';
+    var hasChiefJudgeRole = <%=this.HasChiefJudgeRole%>;
     var selectedJudge = 0;
     var showAllJudges = false;
     var statusValue = 0;
@@ -259,6 +310,7 @@
     var hearingTable = null;
     var hiddenColumns = null;
     var searchText = null;
+    var excludeErrors = [];
     var service = {
         path: "HearingsLog",
         framework: $.ServicesFramework(moduleId)
@@ -278,6 +330,7 @@
     function PageInit() {
         GetLocalStorage();
         $(".date-picker").datepicker();
+        $("#dvExclude").hide();
         if (hasChiefJudgeRole)
             $("#dvShowJudges").show();
         startDate = $("#txtStartDate").val();
@@ -287,7 +340,13 @@
         var hearingAction = "GetLogItems";
         var excludeAction = "toggle-excluded";
         var restUrl = `${service.baseUrl}Hearing/${hearingAction}/${recordCount}`;
+        if (statusValue == 0) {
+            $("#btnExclude").html(`<i class="fa-solid fa-ban" aria-hidden="true"></i>&nbsp;Exclude Selected Records`);
+        } else {
+            $("#btnExclude").html(`<i class="fa-solid fa-rotate-left" aria-hidden="true"></i>&nbsp;Include Selected Records`);
+        }
         //hearing table config
+        $('#process-overlay').show();
         hearingTable = $('#tblHearing').DataTable({
             "searching": false,
             autoWidth: true,
@@ -337,7 +396,7 @@
                     },
                     {
                         data: "logid", render: function (data, type, row, meta) {
-                            return statusValue == 0 ? `<a class="exclude confirm" aria-role="button" title="Exclude Log Item" data-toggle="tooltip" data-logid="${data}"> <i class="text-danger fas fa-ban" aria-hidden="true"></i></a>` : statusValue == 2 ? `<a class="exclude confirm" aria-role="button" title="Include Log Item" data-toggle="tooltip" data-logid="${data}"><i class="text-success fa-solid fa-rotate-left" aria-hidden="true"></i></a>` : '';
+                            return statusValue == 0 ? `<input type="checkbox" class="check-exclude" name="check-${row.logid}" value="${row.logid}" title="Exclude Log Item" data-toggle="tooltip">` : statusValue == 2 ? `<input type="checkbox" class="check-exclude" name="check-${row.logid}" value="${row.logid}" title="Include Log Item" data-toggle="tooltip">` : '';
                         }, className: "command-item", orderable: false
                     },
                 ],
@@ -351,27 +410,16 @@
             lengthMenu: [[25, 50, 100], [25, 50, 100]],
             pageLength: pageSize,
             displayStart: currentPage * pageSize,
+            fixedHeader: true
         });
         hearingTable.on('draw', function () {
             $('[data-toggle="tooltip"]').tooltip();
-            $(".confirm").on("click", function (e) {
-                e.preventDefault();
-                var logid = $(this).data("logid");
-                var prompt = 'Are you sure you wish to exclude this Log Item?'
-                var title = 'Exclude Log Item';
-                if (statusValue > 0) {
-                    prompt = 'Are you sure you wish to Include this Log Item?';
-                    title = 'Include Log Item'
-                }
-                $.dnnConfirm({
-                    text: prompt,
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: title,
-                    callbackTrue: function () {
-                        ExcludeHearing(e, logid);
-                    }
-                });
+            $('#process-overlay').hide();
+            $('.check-exclude').on("click", function (e) {
+                if ($(this).is(':checked') && $('#dvExclude').is(":hidden"))
+                    $('#dvExclude').show();
+                if ($('.check-exclude:checked').length <= 0)
+                    $('#dvExclude').hide();
             });
         });
         $.fn.dataTable.ext.errMode = () => ShowAlert('Error Loading Data', 'Error while loading the table data. Please refresh');
@@ -397,17 +445,23 @@
                 hearingTable.column(parseInt(checkboxValue, 10)).visible(false);
             });
         }
-        $("#txtStartDate").on("focusout", function (e) {
+        $("#txtStartDate").on("change", function (e) {
             CompareDates();
         });
-        $("#txtEndDate").on("focusout", function (e) {
+        $("#txtEndDate").on("change", function (e) {
             CompareDates();
         });
         $('input[type=radio][name=statusOptions]').change(function () {
+            $('#process-overlay').show();
             statusValue = $('input[name = "statusOptions"]:checked').val();
             currentPage = 0;
             localStorage.setItem('hearingLog.status', statusValue);
             localStorage.setItem('hearingLog.currentPageIndex', currentPage);
+            if (statusValue == 0) {
+                $("#btnExclude").html(`<i class="fa-solid fa-ban" aria-hidden="true"></i>&nbsp;Exclude Selected Records`);
+            } else {
+                $("#btnExclude").html(`<i class="fa-solid fa-rotate-left" aria-hidden="true"></i>&nbsp;Include Selected Records`);
+            }
             hearingTable.draw();
         });
         $('.checkbox-menu input').on("change", function (e) {
@@ -441,10 +495,12 @@
             hearingTable.draw();
         });
         $('#drpJudges').on("change", function (e) {
+            $('#process-overlay').show();
             selectedJudge = parseInt(this.value, 10);
             hearingTable.draw();
         });
         $('#txtSearch').on("input", function (e) {
+            $('#process-overlay').show();
             e.preventDefault();
             searchText = $(this).val();
             hearingTable.draw();
@@ -466,37 +522,75 @@
                 AddHearingLog();
             }
         });
-        $('#btnImport').on("click", function (e) {
+        $('#cmdImport').on("click", function (e) {
+            $('#process-overlay').show();
             e.preventDefault();
             ImportHearing();
+        });
+        $('#btnExclude').on("click", function (e) {
+            e.preventDefault();
+            var prompt = 'Are you sure you wish to exclude selected Log Item(s)?'
+            var title = 'Exclude Selected Log Item(s)';
+            if (statusValue > 0) {
+                prompt = 'Are you sure you wish to Include selected Log Item(s)?';
+                title = 'Include Selected Log Item(s)'
+            }
+            $.dnnConfirm({
+                text: prompt,
+                yesText: 'Yes',
+                noText: 'No',
+                title: title,
+                callbackTrue: function () {
+                    ExcludeHearings();
+                }
+            });
         });
         $("#tblHearing_length").prepend($('#btnAdd'));
         $("#tblHearing_length").parent().siblings('div').first().prepend($('#statusOptionContainer'));
         $('input[data-bs-toggle="toggle"]').bootstrapToggle();
     }
-    function ExcludeHearing(e, logid) {
+    function ExcludeHearings() {
+        $('#process-overlay').show();
+        $('.check-exclude:checked').each(function (index) {
+            ExcludeHearing($(this).val());
+            $(this).prop('checked', false);
+        });
+        hearingTable.draw();
+        if (excludeErrors.length > 0) {
+            ShowAlert('Error Processing Records', 'The following Record IDs were not processed due to an Error' + excludeErrors.toString());
+        }
+        $("#dvExclude").hide();
+    }
+    function ExcludeHearing(logid) {
         var excludeAction = "toggle-excluded";
         var excludeUrl = `${serviceExclude.baseUrl}Hearing/${excludeAction}/${logid}?jarole=${jaRole}`;
-        e.preventDefault();
         $.ajax({
             url: excludeUrl,
             type: 'GET',
             success: function (result) {
-                hearingTable.draw();
+                //  hearingTable.draw();
             },
             error: function (error) {
-                ShowAlert('Error Excluding Log Item', error);
+                excludeErrors.push(logid);
             }
         });
     }
     function ImportHearing() {
+        var importModal = document.querySelector('#importModal');
+        var modal = bootstrap.Modal.getInstance(importModal);
+        if (!modal) {
+            modal = new bootstrap.Modal(document.getElementById('importModal'));
+        }
+        modal.hide();
+        var importStart = $("#txtImportStart").val();
+        var importEnd = $("#txtImportEnd").val();
         var importAction = "import-hearings";
-        var importUrl = `${service.baseUrl}Hearing/${importAction}?jarole=${jaRole}&startDate=${startDate}&endDate=${endDate}`;
+        var importUrl = `${service.baseUrl}Hearing/${importAction}?jarole=${jaRole}&startDate=${importStart}&endDate=${importEnd}`;
         $.ajax({
             url: importUrl,
             type: 'GET',
             success: function (result) {
-                hearingTable.draw();
+                location.reload();
             },
             error: function (error) {
                 ShowAlert('Error Importing Hearings', error);
@@ -687,8 +781,8 @@
     }
     function GetLocalStorage() {
         var storageStatusId = localStorage.getItem('hearingLog.status');
-        var storageStartDate = localStorage.getItem('hearingLog.startDate');
-        var storageEndDate = localStorage.getItem('hearingLog.endDate');
+        //var storageStartDate = localStorage.getItem('hearingLog.startDate');
+        //var storageEndDate = localStorage.getItem('hearingLog.endDate');
         var storageCurrentPage = localStorage.getItem('hearingLog.currentPageIndex');
         var storagePageSize = localStorage.getItem('hearingLog.pageSize');
         var storageSortDirection = localStorage.getItem('hearingLog.sortDirection');
@@ -702,10 +796,10 @@
             var $radios = $('input:radio[name=statusOptions]');
             $radios.filter('[value=' + statusValue + ']').prop('checked', true);
         }
-        if (storageStartDate != null && storageStartDate != undefined)
-            $("#txtStartDate").val(storageStartDate);
-        if (storageEndDate != null && storageEndDate != undefined)
-            $("#txtEndDate").val(storageEndDate);
+        //if (storageStartDate != null && storageStartDate != undefined)
+        //    $("#txtStartDate").val(storageStartDate);
+        //if (storageEndDate != null && storageEndDate != undefined)
+        //    $("#txtEndDate").val(storageEndDate);
         if (storageCurrentPage != null && storageCurrentPage != undefined)
             currentPage = storageCurrentPage;
         if (storagePageSize != null && storagePageSize != undefined)
@@ -716,6 +810,7 @@
             sortColumnIndex = storageSortColumnIndex;
     }
     function ShowAlert(title, text) {
+        $('#process-overlay').hide();
         $.dnnAlert({
             okText: 'OK',
             title: title,
@@ -725,18 +820,28 @@
     function CompareDates() {
         var tempStartDate = $("#txtStartDate").val();
         var tempEndDate = $("#txtEndDate").val();
-        if ((Date.parse(tempEndDate) < Date.parse(tempStartDate))) {
-            $("#txtEndDate").val(endDate);
-            $("#txtStartDate").val(startDate);
-            ShowAlert("Invalid Date", "End Date MUST be greater than Start Date");
-        } else {
-            startDate = tempStartDate;
-            endDate = tempEndDate;
-            currentPage = 0;
-            localStorage.setItem('hearingLog.currentPageIndex', currentPage);
-            localStorage.setItem('hearingLog.startDate', startDate);
-            localStorage.setItem('hearingLog.endDate', endDate);
-            hearingTable.draw();
+        if (isValidDate(tempStartDate) && isValidDate(tempEndDate)) {
+            $('#process-overlay').show();
+            if ((Date.parse(tempEndDate) < Date.parse(tempStartDate))) {
+                $("#txtEndDate").val(endDate);
+                $("#txtStartDate").val(startDate);
+                $('#process-overlay').hide();
+                ShowAlert("Invalid Date", "End Date MUST be greater than Start Date");
+
+            } else {
+                startDate = tempStartDate;
+                endDate = tempEndDate;
+                currentPage = 0;
+                localStorage.setItem('hearingLog.currentPageIndex', currentPage);
+                hearingTable.draw();
+            }
         }
+    }
+    function isValidDate(dateString) {
+        // Attempt to parse the string into a date
+        const date = new Date(dateString);
+
+        // Check if the resulting date is valid
+        return !isNaN(date.getTime());
     }
 </script>

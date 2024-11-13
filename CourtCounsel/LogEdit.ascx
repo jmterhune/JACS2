@@ -1,5 +1,5 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LogEdit.ascx.cs" Inherits="tjc.Modules.CourtCounsel.LogEdit" %>
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+﻿<%@ control language="C#" autoeventwireup="true" codebehind="LogEdit.ascx.cs" inherits="tjc.Modules.CourtCounsel.LogEdit" %>
+<%@ register tagprefix="dnn" namespace="DotNetNuke.Web.Client.ClientResourceManagement" assembly="DotNetNuke.Web.Client" %>
 <asp:Literal ID="ltMessage" runat="server" />
 
 <div typeof="post" id="assignment-form">
@@ -42,152 +42,131 @@
         must be filled in or this form will not be processed.
         </div>
         <div class="row">
-            <div class="form-group">
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpCountyLetter" Text="Case Number<em>*</em>" ToolTip="required" />
-                    <div class="input-group">
-                        <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control" ClientIDMode="Static">
-                            <asp:ListItem Text="" Value=""></asp:ListItem>
-                            <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
-                            <asp:ListItem Text="M" Value="M" title="Manatee"></asp:ListItem>
-                            <asp:ListItem Text="S" Value="S" title="Sarasota"></asp:ListItem>
-                            <asp:ListItem Text="V" Value="V" title="Venice"></asp:ListItem>
-                        </asp:DropDownList>
-                        <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                        <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
-                        <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="25" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                        <div class="input-group-append">
-                            <small class="input-group-text form-control" title="County - Year - Case Type - Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
-                        </div>
-                        <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCountyLetter"
-                            Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="County is Required" />
-                        <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseYear"
-                            Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Year is Required" />
-                        <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseType"
-                            Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Type is Required" />
-                        <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseSequence"
-                            Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Sequence is Required" />
-                        <asp:CustomValidator ID="valCaseNumber" runat="server" SetFocusOnError="true" CssClass="label label-danger" ControlToValidate="txtCaseSequence"
-                            Display="Dynamic" ErrorMessage="Invalid Case Number. Please Review Format Requirements" OnServerValidate="valCaseNumber_ServerValidate" ClientValidationFunction="ValidateCaseNumber">
-                        </asp:CustomValidator>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpCountyLetter" Text="Case Number<em>*</em>" ToolTip="required" />
+                <div class="input-group">
+                    <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control" ClientIDMode="Static">
+                        <asp:ListItem Text="" Value=""></asp:ListItem>
+                        <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
+                        <asp:ListItem Text="M" Value="M" title="Manatee"></asp:ListItem>
+                        <asp:ListItem Text="S" Value="S" title="Sarasota"></asp:ListItem>
+                        <asp:ListItem Text="V" Value="V" title="Venice"></asp:ListItem>
+                    </asp:DropDownList>
+                    <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="25" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                    <div class="input-group-append">
+                        <small class="input-group-text form-control" title="County - Year - Case Type - Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="txtCaseName" Text="Case Name<em>*</em>" ToolTip="required" />
-                    <asp:TextBox ID="txtCaseName" runat="server" MaxLength="100" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseName"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Name is Required" />
-
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group">
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Select Case Type<em>*</em>" ToolTip="required" />
-                    <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control">
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCaseType"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please Select the Case Type" />
-                </div>
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpCounty" Text="County<em>*</em>" ToolTip="required" />
-                    <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control" required="required" AppendDataBoundItems="true" ClientIDMode="Static">
-                        <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCounty" ErrorMessage="County is Required"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
+                    <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCountyLetter"
+                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="County is Required" />
+                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseYear"
+                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Year is Required" />
+                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseType"
+                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Type is Required" />
+                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseSequence"
+                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Sequence is Required" />
+                    <asp:CustomValidator ID="valCaseNumber" runat="server" SetFocusOnError="true" CssClass="label label-danger" ControlToValidate="txtCaseSequence"
+                        Display="Dynamic" ErrorMessage="Invalid Case Number. Please Review Format Requirements" OnServerValidate="valCaseNumber_ServerValidate" ClientValidationFunction="ValidateCaseNumber">
+                    </asp:CustomValidator>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group">
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="txtAssignedDate" Text="Assigned Date<em>*</em>" ToolTip="required" />
-                    <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ClientIDMode="Static" ID="txtAssignedDate" />
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtAssignedDate"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Assigned Date is Required" />
-                </div>
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpActionTaken" Text="Action Taken" />
-                    <asp:DropDownList ID="drpActionTaken" runat="server" CssClass="form-control">
-                    </asp:DropDownList>
-
-                </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="txtCaseName" Text="Case Name<em>*</em>" ToolTip="required" />
+                <asp:TextBox ID="txtCaseName" runat="server" MaxLength="100" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseName"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Name is Required" />
 
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpRequestedBy" Text="Requested By<em>*</em>" ToolTip="required" />
-                    <asp:DropDownList ID="drpRequestedBy" runat="server" CssClass="form-control" required="required" ClientIDMode="Static">
-                        <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="drpRequestedBy" ErrorMessage="Requested by is Required"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
-
-                </div>
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpResponsible" Text="Responsible<em>*</em>" ToolTip="required" />
-                    <asp:DropDownList ID="drpResponsible" runat="server" CssClass="form-control" required="required" ClientIDMode="Static">
-                        <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="drpResponsible" ErrorMessage="Responsible is Required"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
-
-                </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Select Case Type<em>*</em>" ToolTip="required" />
+                <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control">
+                </asp:DropDownList>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCaseType"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please Select the Case Type" />
+            </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpCounty" Text="County<em>*</em>" ToolTip="required" />
+                <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control" required="required" AppendDataBoundItems="true" ClientIDMode="Static">
+                    <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCounty" ErrorMessage="County is Required"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <div class="col-md-6">
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="txtAssignedDate" Text="Assigned Date<em>*</em>" ToolTip="required" />
+                <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ClientIDMode="Static" ID="txtAssignedDate" />
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtAssignedDate"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Assigned Date is Required" />
+            </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpActionTaken" Text="Action Taken" />
+                <asp:DropDownList ID="drpActionTaken" runat="server" CssClass="form-control">
+                </asp:DropDownList>
 
-                    <asp:Label runat="server" AssociatedControlID="txtMotionFiled" Text="Motion Filed<em>*</em>" ToolTip="required" />
-                    <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtMotionFiled" />
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionFiled"
-                        Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Filed is Required" />
-                </div>
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpTimeSpent" Text="Time Spent" />
-                    <asp:DropDownList ID="drpTimeSpent" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="< Select Time Spent >" Value=""></asp:ListItem>
-                    </asp:DropDownList>
-
-                </div>
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="txtDateCompleted" Text="Date Completed Filed" />
-                    <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtDateCompleted" />
-                </div>
-                <div class="col-md-6">
-                    <asp:Label runat="server" AssociatedControlID="drpStatus" Text="Status" />
-                    <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control" ClientIDMode="Static">
-                        <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
-                    </asp:DropDownList>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpRequestedBy" Text="Requested By<em>*</em>" ToolTip="required" />
+                <asp:DropDownList ID="drpRequestedBy" runat="server" CssClass="form-control" required="required" ClientIDMode="Static">
+                    <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpRequestedBy" ErrorMessage="Requested by is Required"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
 
-                </div>
+            </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpResponsible" Text="Responsible<em>*</em>" ToolTip="required" />
+                <asp:DropDownList ID="drpResponsible" runat="server" CssClass="form-control" required="required" ClientIDMode="Static">
+                    <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpResponsible" ErrorMessage="Responsible is Required"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <div class="col-md-12">
-                    <asp:Label runat="server" AssociatedControlID="txtComments" Text="Comments" />
-                    <asp:TextBox runat="server" CssClass="form-control" ID="txtComments" TextMode="MultiLine" Rows="4" />
+            <div class="col-md-6">
 
-                </div>
+                <asp:Label runat="server" AssociatedControlID="txtMotionFiled" Text="Motion Filed<em>*</em>" ToolTip="required" />
+                <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtMotionFiled" />
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionFiled"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Filed is Required" />
+            </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpTimeSpent" Text="Time Spent" />
+                <asp:DropDownList ID="drpTimeSpent" runat="server" CssClass="form-control">
+                    <asp:ListItem Text="< Select Time Spent >" Value=""></asp:ListItem>
+                </asp:DropDownList>
+
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="form-check mb-2">
-                <asp:CheckBox Text="Prevent Judge Reassignment" ID="chkReassign" Visible="false" runat="server" />
+        <div class="row">
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="txtDateCompleted" Text="Date Completed Filed" />
+                <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtDateCompleted" />
+            </div>
+            <div class="col-md-6">
+                <asp:Label runat="server" AssociatedControlID="drpStatus" Text="Status" />
+                <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control" ClientIDMode="Static">
+                    <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
+                </asp:DropDownList>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <asp:Label runat="server" AssociatedControlID="txtComments" Text="Comments" />
+                <asp:TextBox runat="server" CssClass="form-control" ID="txtComments" TextMode="MultiLine" Rows="4" />
 
+            </div>
+        </div>
+        <div class="form-check mb-2">
+            <asp:CheckBox Text="Prevent Judge Reassignment" ID="chkReassign" Visible="false" runat="server" />
+        </div>
         <asp:HiddenField ID="hdLogId" runat="server" ClientIDMode="Static" />
     </fieldset>
     <p>
@@ -283,8 +262,8 @@
                         </div>
                         <asp:HiddenField runat="server" ID="hdExternalId" ClientIDMode="Static"></asp:HiddenField>
                     </div>
-                    <div class="modal-footer">
-                        <asp:Button Text="Submit" ID="cmdSubmitEvent" OnClientClick="CloseEventModal()" OnClick="cmdSubmitEvent_Click" runat="server" CssClass="btn btn-primary pull-left" ValidationGroup="event" />
+                    <div class="modal-footer justify-content-between">
+                        <asp:Button Text="Submit" ID="cmdSubmitEvent" OnClientClick="CloseEventModal()" OnClick="cmdSubmitEvent_Click" runat="server" CssClass="btn btn-primary" ValidationGroup="event" />
                         <button type="button" class="btn btn-event" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -298,7 +277,6 @@
 </asp:UpdatePanel>
 <div>
     <asp:UpdatePanel ID="pnlUpdateFiles" runat="server">
-
         <ContentTemplate>
             <asp:UpdateProgress ID="upProgressFiles" runat="server">
                 <ProgressTemplate>
@@ -363,8 +341,8 @@
 
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <asp:Button Text="Submit" ID="cmdSubmitFile" runat="server" OnClick="cmdSubmitFile_Click" CssClass="btn btn-primary pull-left" ValidationGroup="file" />
+                        <div class="modal-footer justify-content-between">
+                            <asp:Button Text="Submit" ID="cmdSubmitFile" runat="server" OnClick="cmdSubmitFile_Click" CssClass="btn btn-primary" ValidationGroup="file" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

@@ -22,7 +22,7 @@ namespace tjc.Modules.CourtCounsel.Components
     internal class EventController
     {
         private const string AuthSystemApplicationName = "Azure";
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
         public EventController() // 
         {
 
@@ -33,7 +33,7 @@ namespace tjc.Modules.CourtCounsel.Components
             if (!string.IsNullOrEmpty(externalId))
             {
                 t.ExternalId = externalId;
-                using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+                using (IDataContext ctx = DataContext.Instance())
                 {
                     var rep = ctx.GetRepository<Event>();
                     rep.Insert(t);
@@ -52,7 +52,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteEvent(Event t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
                 rep.Delete(t);
@@ -62,7 +62,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Event> GetEvents()
         {
             IEnumerable<Event> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
                 t = rep.Get();
@@ -72,7 +72,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Event> GetEventPage(int pageIndex, int pageSize)
         {
             IEnumerable<Event> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
                 t = rep.GetPage(pageIndex, pageSize);
@@ -88,7 +88,7 @@ namespace tjc.Modules.CourtCounsel.Components
             monthEnds = monthEnds.AddDays(6- endDayofWeek);
             List<CalendarEvent> calendarEvents = new List<CalendarEvent>();
             IEnumerable<Event> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
                 if (usernames == null || usernames.Count == 1)
@@ -127,7 +127,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Event> GetEventsByAssignment(long assignmentId)
         {
             IEnumerable<Event> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
                 t = rep.Find("Where AssignmentId = @0", assignmentId);
@@ -136,7 +136,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public IEnumerable<EventListItem> GetCalendarEventItems(SearchQueryParameters searchQueryParameters, int pageIndex, int pageSize)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 string sqlQuery = $@"SELECT e.EventId, a.AssignmentId, l.CaseNumber, l.Description as CaseName,
                                                         ct.CaseTypeName, a.DateReceived, e.Subject, e.StartDate, e.UserName 
@@ -180,7 +180,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public IEnumerable<Event> GetEventListItems(SearchQueryParameters searchQueryParameters, int pageIndex, int pageSize)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 string sqlQuery = $@"SELECT EventId, AssignmentId, Subject, Body, StartDate, EndDate, UserName 
                                                     FROM tjc_cc_events 
@@ -210,7 +210,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public Event GetEvent(long eventId)
         {
             Event t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
                 t = rep.GetById(eventId);
@@ -221,7 +221,7 @@ namespace tjc.Modules.CourtCounsel.Components
         {
             bool updated = AsyncHelper.RunSync(() => UpdateGraphEventAsync(t, username, portalId));
             if (updated)
-                using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+                using (IDataContext ctx = DataContext.Instance())
                 {
                     var rep = ctx.GetRepository<Event>();
                     rep.Update(t);

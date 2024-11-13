@@ -28,10 +28,9 @@
                             <asp:ListItem Text="DeSoto" />
                             <asp:ListItem Text="Manatee" />
                             <asp:ListItem Text="Sarasota" />
-                            <asp:ListItem Text="Benchmark" />
-                            <asp:ListItem Text="Clericus" />
+                            <asp:ListItem Text="Court Counsel" Value="CourtCounsel" />
                         </asp:DropDownList>
-                        <div id="countyHelp" class="form-text">Select the JACS County or Clerk App to get judges from</div>
+                        <div id="countyHelp" class="form-text">Select the JACS County or Court Counsel to get judges from</div>
                     </div>
 
                 </div>

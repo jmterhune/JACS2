@@ -18,12 +18,12 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class ReportController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public IEnumerable<CaseTypeCount> GetCaseTypeCounts(ReportQueryParameters reportQueryParameters)
         {
             List<CaseTypeCount> caseTypeList = new List<CaseTypeCount>();
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var ctlCaseType = new CaseTypeController();
                 IEnumerable<CaseType> caseTypes = ctlCaseType.GetCaseTypes();

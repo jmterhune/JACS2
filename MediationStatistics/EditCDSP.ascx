@@ -116,7 +116,6 @@
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Case Type" />
                         <asp:DropDownList ID="drpCaseType" runat="server" ToolTip="Case Type" CssClass="form-control" ClientIDMode="Static">
-                            <asp:ListItem Text="< Select Case Type >" Value=""></asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     <div class="form-group">
@@ -127,16 +126,18 @@
                                 <asp:Literal ID="ltReferralSourceOptions" runat="server" />
                             </datalist>
                         </div>
+                        <div id="emailHelp" class="form-text">Delete current value to see full list of options.</div>
+
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtCaseReceived" Text="Date Case Received" />
-                        <asp:TextBox runat="server" ID="txtCaseReceived" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                        <asp:TextBox runat="server" ID="txtCaseReceived" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
                     </div>
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
                     <div class="form-check form-switch mt-4">
                         <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Virtual Session" />
@@ -147,7 +148,7 @@
             <div class="btn-toolbar mb-3" role="toolbar" aria-label="Session Events Toolbar">
                 <div class="btn-group" role="group" aria-label="Session Events Actions">
                     <asp:LinkButton ID="cmdSaveSession" runat="server"
-                        OnClick="cmdSave_Click" CssClass="btn btn-primary session-save"><i class="fas fa-save"></i> Save</asp:LinkButton>
+                        OnClick="cmdSave_Click" CssClass="btn btn-primary"><i class="fas fa-save"></i> Save</asp:LinkButton>
                     <button onclick="return ClearEventForm()" id="cmdAddNewEvent" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#EventModal"><i class="fa fa-plus"></i>&nbsp;New Event</button>
                     <div class="input-group-text" id="eventInfo">
                         Session Events
@@ -185,7 +186,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtMediatoryTypeItem">Mediator Type</label>
+                                        <label for="txtMediatorTypeItem">Mediator Type</label>
                                         <input id="txtMediatorTypeItem" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
                                     </div>
                                 </div>
@@ -232,8 +233,8 @@
                             </div>
                         </fieldset>
                         <p class="mb-0 mt-3">
-                            <asp:LinkButton ID="lnkUpdate" OnClientClick="UpdateEventHeader(event)" CssClass="btn btn-primary event-save" CommandName="edit" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-pencil"></i> Edit Event</asp:LinkButton>
-                            <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" CommandArgument='<%#Eval("EventId") %>'  runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
+                            <asp:LinkButton ID="lnkUpdate" OnClientClick="UpdateEventHeader(event)" CssClass="btn btn-primary" CommandName="edit" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-pencil"></i> Edit Event</asp:LinkButton>
+                            <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
                         </p>
                     </div>
                 </ItemTemplate>
@@ -242,15 +243,17 @@
                 </SeparatorTemplate>
             </asp:Repeater>
             <div class="form-group">
-                <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" />
-                <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control" />
+                <fieldset class="outline-fieldset pt-0 pb-0">
+                    <legend class="mb-0">
+                        <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
+                    <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
+                </fieldset>
             </div>
             <div class="modal fade" id="EventModal" tabindex="-1" role="dialog" aria-labelledby="EventModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="EventModalLabel">
-                               Add / Edit Event</h4>
+                            <h4 class="modal-title" id="EventModalLabel">Add / Edit Event</h4>
                             <button type="button" class="close" onclick="CloseEventModal(event)" aria-hidden="true">&times;</button>
                         </div>
                         <div class="modal-body form-group">
@@ -346,21 +349,23 @@
                             <div class="row">
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <div class="form-check form-switch mt-4">
+                                        <div class="form-check form-switch mt-2">
                                             <asp:CheckBox ID="chkAdjournedTimeRemaining" ClientIDMode="Static" runat="server" Text="Adjourned with time remaining?" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="txtHours" Text="Hours" />
-                                        <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                    <div class="form-group row">
+                                        <asp:Label runat="server" AssociatedControlID="txtHours" Text="Hours" CssClass="col-auto col-form-label" />
+                                        <div class="col-auto">
+                                            <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <asp:LinkButton ID="cmdSaveEvent" OnClick="cmdSaveEvent_Click" CssClass="btn btn-primary float-start" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
+                        <div class="modal-footer justify-content-between">
+                            <asp:LinkButton ID="cmdSaveEvent" OnClick="cmdSaveEvent_Click" CssClass="btn btn-primary" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
                             <button type="button" class="btn btn-default" onclick="CloseEventModal(event)">Close</button>
                         </div>
                     </div>
@@ -435,14 +440,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-primary" onclick="AddMediator(event)">Save</button>
                             <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
-
         </ContentTemplate>
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="cmdSave" EventName="Click" />
@@ -452,21 +456,17 @@
             <asp:AsyncPostBackTrigger ControlID="cmdPreviousSession" EventName="Click" />
             <asp:AsyncPostBackTrigger ControlID="cmdNextSession" EventName="Click" />
             <asp:AsyncPostBackTrigger ControlID="cmdDeleteSession" EventName="Click" />
-            
         </Triggers>
     </asp:UpdatePanel>
-
 </div>
 <p>
     <asp:LinkButton ID="cmdSave" runat="server"
-        OnClick="cmdSave_Click" CssClass="btn btn-primary btn-lg case-save"><i class="fas fa-save"></i> Save</asp:LinkButton>
+        OnClick="cmdSave_Click" CssClass="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save</asp:LinkButton>
     <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Reset</asp:HyperLink>
 </p>
-<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
 <dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
-
 
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
@@ -501,6 +501,8 @@
 
     }(jQuery, window.Sys));
     function PageInit() {
+        const dataList = document.getElementById('dlReferralSource');
+        const input = document.getElementById('txtReferralSource');
         service.baseUrl = service.framework.getServiceRoot(service.path);
         var medAction = "GetMediatorListItems";
         var medRestUrl = `${service.baseUrl}MediatorListItem/${medAction}/${recordCountMed}`;
@@ -545,31 +547,17 @@
                 $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             }, 0);
         });
-        $(".case-save").on("click", function (e) {
-            if ($(".event-save").length) {
-                e.preventDefault();
-                $(".event-save").trigger();
-                return false;
-            }
-        });
-        $(".session-save").on("click", function (e) {
-            if ($(".event-save").length) {
-                e.preventDefault();
-                $(".event-save").trigger();
-                return false;
-            }
-        });
-        //event_update session_save
+        //Mediator Search
         $("#cmdMediatorSearch").on("click", function (e) {
             e.preventDefault();
-            lastName = $("#txtMediatorLastName").val();
-            firstName = $("#txtMediatorFirstName").val();
+            lastNameMed = $("#txtMediatorLastName").val();
+            firstNameMed = $("#txtMediatorFirstName").val();
             mediatorTable.draw();
         });
         $(".mediator-search").on("click", function (e) {
             e.preventDefault();
-            var attyModal = document.querySelector('#mediatorModal');
-            var modal = bootstrap.Modal.getInstance(attyModal);
+            var medModal = document.querySelector('#mediatorModal');
+            var modal = bootstrap.Modal.getInstance(medModal);
             if (!modal) {
                 modal = new bootstrap.Modal(document.getElementById('mediatorModal'));
             }
@@ -584,11 +572,6 @@
             }
             modal.show();
         });
-
-
-        const dataList = document.getElementById('dlReferralSource');
-        const input = document.getElementById('txtReferralSource');
-
         dataList.querySelectorAll('option').forEach((el, idx, arr) => {
             el.addEventListener('click', (e) => {
                 input.value = el.value;
@@ -610,7 +593,6 @@
                 dataList.classList.add('show');
             }
         }
-        $(".datepicker").datepicker();
         $(".confirm-delete-event").on("click", function (e) {
             var item = $(this);
             e.preventDefault();
@@ -636,17 +618,7 @@
             noText: 'No',
             title: 'Delete Case?',
         });
-        $(".mediator-search").on("click", function (e) {
-            e.preventDefault();
-            var medModal = document.querySelector('#mediatorModal');
-            var modal = bootstrap.Modal.getInstance(medModal);
-            if (!modal) {
-                modal = new bootstrap.Modal(document.getElementById('mediatorModal'));
-            }
-            modal.show();
-        });
         $("#cmdAddNewEvent").on("click", function (e) {
-           
             $("#EventModalLabel").text("Add New Event");
         });
     }
@@ -659,7 +631,6 @@
         }
     }
     function UpdateEventHeader(e) {
-        var test = $("#EventModalLabel").html();
         $("#EventModalLabel").html("Edit Event")
     }
     //* Mediator Functions*/
@@ -731,6 +702,7 @@
         $("#hdEventId").val("");
         $("#chkMeetingHeld").prop("checked", false);
         $("#drpReason").val("");
+        $(".reason").show();
         $(".agreement input:radio:checked").removeAttr("checked");
         $("#drpMediatorType").val("");
         $("#hdMediatorId").val("");
@@ -756,7 +728,7 @@
             $('#EventModal').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-           // modal.hide();
+            // modal.hide();
         }
         return true;
     }

@@ -18,11 +18,11 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class PhaseController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void CreatePhase(Phase t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 rep.Insert(t);
@@ -37,7 +37,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeletePhase(Phase t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 rep.Delete(t);
@@ -47,7 +47,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Phase> GetPhases()
         {
             IEnumerable<Phase> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 t = rep.Get();
@@ -57,7 +57,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Phase> GetPhases(bool active)
         {
             IEnumerable<Phase> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 t = rep.Find("Where Active=1");
@@ -67,7 +67,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Phase> GetPhaseDropDownItems(bool active)
         {
             IEnumerable<Phase> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 t = rep.Find("Where Active=1").OrderBy(x=>x.GroupIndex).ThenBy(x=>x.PhaseName);
@@ -77,7 +77,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public Phase GetPhase(int phaseId)
         {
             Phase t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 t = rep.GetById(phaseId);
@@ -86,7 +86,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdatePhase(Phase t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Phase>();
                 rep.Update(t);

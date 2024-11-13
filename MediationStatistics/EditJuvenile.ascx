@@ -70,15 +70,17 @@
 
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtOrderReferral" Text="Order of Referral" />
-                        <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                        <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
 
                 </div>
                 <div class="col-auto">
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
+                </div>
+                <div class="col-auto">
                     <div class="pt-4">
                         <div class="form-check form-switch d-inline-block me-2 mt-1">
                             <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Virtual Session" />
@@ -91,7 +93,6 @@
                         </div>
                     </div>
                 </div>
-
                 <fieldset class="outline-fieldset" id="fsSecondaryIssues" runat="server">
                     <legend>Case Types</legend>
                     <asp:CheckBoxList ID="clsSecondaryIssues" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list column-4 form-check form-switch" RepeatLayout="UnorderedList">
@@ -102,67 +103,52 @@
             <div class="btn-toolbar mb-3" role="toolbar" aria-label="Session Events Toolbar">
                 <div class="btn-group" role="group" aria-label="Session Events Actions">
                     <asp:LinkButton ID="cmdSaveSession" runat="server"
-                        OnClick="cmdSave_Click" CssClass="btn btn-primary"><i class="fas fa-save"></i> Save Session</asp:LinkButton>
-                    <asp:LinkButton ID="cmdAddEvent" CssClass="btn btn-dark" runat="server" OnClick="cmdAddEvent_Click"><i class="fas fa-plus"></i> New Event</asp:LinkButton>
+                        OnClick="cmdSave_Click" CssClass="btn btn-primary session-save"><i class="fas fa-save"></i> Save</asp:LinkButton>
+                    <button onclick="return ClearEventForm()" id="cmdAddNewEvent" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#EventModal"><i class="fa fa-plus"></i>&nbsp;New Event</button>
                     <div class="input-group-text" id="eventInfo">
                         Session Events
                     </div>
                     <asp:HiddenField ID="hdSessionId" runat="server" />
                 </div>
             </div>
-            <asp:ListView ID="lstEvents" runat="server" InsertItemPosition="None" OnItemCreated="lstEvents_ItemCreated" OnItemDataBound="lstEvents_ItemDataBound" OnItemInserting="lstEvents_ItemInserting" OnItemDeleting="lstEvents_ItemDeleting" OnItemEditing="lstEvents_ItemEditing" OnItemInserted="lstEvents_ItemInserted" OnItemCanceling="lstEvents_ItemCanceling" OnItemCommand="lstEvents_ItemCommand" OnItemUpdating="lstEvents_ItemUpdating">
-                <ItemSeparatorTemplate>
-                    <hr />
-                </ItemSeparatorTemplate>
-                <LayoutTemplate>
-                    <div class="event">
-                        <div id="itemPlaceholder" runat="server" />
-                    </div>
-                </LayoutTemplate>
-                <EmptyDataTemplate>
-                    <div class="event">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>&nbsp;No Event has been added for this session. To add a new Event click the New Event button in the Session Toolbar.
-                        </div>
-                    </div>
-                </EmptyDataTemplate>
+            <asp:Repeater ID="rptEvent" runat="server" OnItemCommand="rptEvent_ItemCommand" OnItemDataBound="rptEvent_ItemDataBound" OnItemCreated="rptEvent_ItemCreated">
                 <ItemTemplate>
                     <div class="template">
                         <fieldset disabled>
-                            <legend>Event Number <%#Container.DataItemIndex + 1%>
+                            <legend>Event Number <%#Container.ItemIndex + 1%>
                                 <asp:Label ID="lblHoursRemaining" runat="server" CssClass="ms-5 fw-bold badge badge-danger">Hours Remaining: <%#Eval("TimeRemaining","{0:n}")%></asp:Label></legend>
                             <div class="row">
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch mt-4">
-                                            <input class="form-check-input" type="checkbox" id="chkMeetingHeld" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
-                                            <label class="form-check-label" for="chkMeetingHeld">Mediation Held</label>
+                                            <input class="form-check-input" type="checkbox" id="chkMeetingHeldItem" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
+                                            <label class="form-check-label" for="chkMeetingHeldItem">Mediation Held</label>
                                         </div>
                                         <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtEventDate" class="form-label">Event Date</label>
-                                        <input id="txtEventDate" class="form-control" type="text" value='<%#Eval("EventDate", "{0:d}")%>' />
+                                        <label for="txtEventDateItem" class="form-label">Event Date</label>
+                                        <input id="txtEventDateItem" class="form-control" type="text" value='<%#Eval("EventDate", "{0:d}")%>' />
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtAgreementType">Agreement Type</label>
-                                        <input class="form-control" type="text" id="txtAgreementType" value='<%#GetAgreementType(Eval("AgreementType").ToString())%>'>
+                                        <label for="txtAgreementTypeItem">Agreement Type</label>
+                                        <input class="form-control" type="text" id="txtAgreementTypeItem" value='<%#GetAgreementType(Eval("AgreementType").ToString())%>'>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtMediatoryType">Mediator Type</label>
-                                        <input id="txtMediatorType" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
+                                        <label for="txtMediatoryTypeItem">Mediator Type</label>
+                                        <input id="txtMediatorTypeItem" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
-                                        <label for="txtMediator">Mediator Name</label>
-                                        <input id="txtMediator" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
+                                        <label for="txtMediatorItem">Mediator Name</label>
+                                        <input id="txtMediatorItem" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
                                     </div>
                                 </div>
 
@@ -171,211 +157,130 @@
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemaining" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
-                                            <label class="form-check-label me-3" for="chkAdjournedTimeRemaining">Adjourned with Time Remaining</label>
+                                            <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemainingItem" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
+                                            <label class="form-check-label me-3" for="chkAdjournedTimeRemainingItem">Adjourned with Time Remaining</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </fieldset>
                         <p class="mb-0 mt-3">
-                            <asp:LinkButton ID="lnkUpdate" CssClass="btn btn-primary" CommandName="edit" runat="server"><i class="fas fa-pencil"></i> Edit Event</asp:LinkButton>
-                            <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
+                            <asp:LinkButton ID="lnkUpdate" OnClientClick="UpdateEventHeader(event)" CssClass="btn btn-primary event-save" CommandName="edit" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-pencil"></i> Edit Event</asp:LinkButton>
+                            <asp:LinkButton ID="lnkDelete" CssClass="btn btn-secondary confirm-delete-event" CommandName="delete" CommandArgument='<%#Eval("EventId") %>' runat="server"><i class="fas fa-trash"></i> Delete</asp:LinkButton>
                         </p>
                     </div>
                 </ItemTemplate>
-                <InsertItemTemplate>
-                    <fieldset>
-                        <legend>New Event </legend>
-                        <div class="row">
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <div class="form-check form-switch mt-4">
-                                        <asp:CheckBox ID="chkMeetingHeld" runat="server" Checked='<%#Bind("MediationHeld")%>'
-                                            onclick="hideReason(this)" Text="Mediation Held" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" ID="lblReason" AssociatedControlID="drpReason" CssClass="reason" Text="Reason Not Held" />
-                                    <asp:DropDownList ID="drpReason" runat="server" CssClass="form-control reason selectMe" SelectedValue='<%#Bind("ReasonNotHeld")%>'>
-                                        <asp:ListItem Value="" Text="< Select Reason>" />
-                                        <asp:ListItem Text="Settled Prior" Value="Settled Prior" />
-                                        <asp:ListItem Text="Session Rescheduled" Value="Session Rescheduled" />
-                                        <asp:ListItem Text="Failure to Appear" Value="Failure to Appear" />
-                                        <asp:ListItem Text="Party Declined to Participate" Value="Party Declined to Participate" />
-                                        <asp:ListItem Text="Cancelled" Value="Cancelled" />
-                                    </asp:DropDownList>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
-                                    <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" Text='<%#Bind("EventDate","{0:d}")%>' />
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="rblAgreementType" Text="Agreement" />
-                                    <asp:RadioButtonList ID="rblAgreementType" CssClass="form-control radio-button-list" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal"
-                                        SelectedValue='<%#Bind("AgreementType")%>'>
-                                        <asp:ListItem Text="None" Value="N" Selected="True" />
-                                        <asp:ListItem Text="Full" Value="F" />
-                                        <asp:ListItem Text="Partial/Temporary" Value="C" />
-                                    </asp:RadioButtonList>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="drpMediatorType" Text="Mediator Type" />
-                                    <asp:DropDownList ID="drpMediatorType" runat="server" ToolTip="Mediator Type" CssClass="form-control" ClientIDMode="Static" SelectedValue='<%#Bind("MediatorType")%>'>
-                                        <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
-                                        <asp:ListItem Text="Contracted" Value="Contracted" />
-                                        <asp:ListItem Text="Staff" Value="Staff" />
-                                        <asp:ListItem Text="Volunteer" Value="Volunteer" />
-                                    </asp:DropDownList>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
-                                <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
-                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("MediatorName")%>' />
-                            </div>
-                            <div class="col-auto pt-4 mt-1">
-                                <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                                <button class="btn btn-secondary ms-2" title="Clear Mediator" onclick="ValidateMediatorRemoval(event)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <div class="form-check form-switch mt-4">
-                                        <asp:CheckBox ID="chkAdjournedTimeRemaining" runat="server" Text="Adjourned with time remaining?" Checked='<%#Bind("AdjournedTimeRemaining")%>' />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="txtHours" Text="Hours" />
-                                    <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" Text='<%#Bind("TimeRemaining")%>' CssClass="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                        <p class="mt-3">
-                            <asp:LinkButton ID="lnkInsert" CssClass="btn btn-primary me-3" CommandName="Insert" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
-                            <asp:LinkButton ID="lnkCancel" CssClass="btn btn-secondary" CommandName="cancel" runat="server"><i class="fas fa-redo"></i> Cancel</asp:LinkButton>
-                        </p>
-                    </fieldset>
-                </InsertItemTemplate>
-                <EditItemTemplate>
-                    <fieldset>
-                        <legend>Event Number <%#Container.DataItemIndex + 1%></legend>
-                        <div class="row">
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <div class="form-check form-switch mt-4">
-                                        <asp:CheckBox ID="chkMeetingHeld" runat="server" Checked='<%#Bind("MediationHeld")%>'
-                                            onclick="hideReason(this)" Text="Mediation Held" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" ID="lblReason" AssociatedControlID="drpReason" CssClass="reason" Text="Reason Not Held" />
-                                    <asp:DropDownList ID="drpReason" runat="server" CssClass="form-control reason selectMe" SelectedValue='<%#Bind("ReasonNotHeld")%>'>
-                                        <asp:ListItem Value="" Text="< Select Reason>" />
-                                        <asp:ListItem Text="Settled Prior" Value="Settled Prior" />
-                                        <asp:ListItem Text="Session Rescheduled" Value="Session Rescheduled" />
-                                        <asp:ListItem Text="Failure to Appear" Value="Failure to Appear" />
-                                        <asp:ListItem Text="Party Declined to Participate" Value="Party Declined to Participate" />
-                                        <asp:ListItem Text="Cancelled" Value="Cancelled" />
-                                    </asp:DropDownList>
-                                </div>
-                            </div>
-
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
-                                    <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" Text='<%#Bind("EventDate","{0:d}")%>' />
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="rblAgreementType" Text="Agreement" />
-                                    <asp:RadioButtonList ID="rblAgreementType" CssClass="form-control radio-buttons" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal"
-                                        SelectedValue='<%#Bind("AgreementType")%>'>
-                                        <asp:ListItem Text="None" Value="N" Selected="True" />
-                                        <asp:ListItem Text="Full" Value="F" />
-                                        <asp:ListItem Text="Partial/Temporary" Value="C" />
-                                    </asp:RadioButtonList>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="drpMediatorType" Text="Mediator Type" />
-                                    <asp:DropDownList ID="drpMediatorType" runat="server" ToolTip="Mediator Type" CssClass="form-control" ClientIDMode="Static" SelectedValue='<%#Bind("MediatorType")%>'>
-                                        <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
-                                        <asp:ListItem Text="Contracted" Value="Contracted" />
-                                        <asp:ListItem Text="Staff" Value="Staff" />
-                                        <asp:ListItem Text="Volunteer" Value="Volunteer" />
-                                    </asp:DropDownList>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
-                                <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
-                                <asp:TextBox runat="server" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" Text='<%#Bind("MediatorName")%>' />
-                            </div>
-                            <div class="col-auto pt-4 mt-1">
-                                <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                                <button class="btn btn-secondary ms-2" title="Clear Mediator" onclick="ValidateMediatorRemoval(event)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <div class="form-check form-switch mt-4">
-                                        <asp:CheckBox ID="chkAdjournedTimeRemaining" runat="server" Text="Adjourned with time remaining?" Checked='<%#Bind("AdjournedTimeRemaining")%>' />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="form-group">
-                                    <asp:Label runat="server" AssociatedControlID="txtHours" Text="Hours" />
-                                    <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" Text='<%#Bind("TimeRemaining")%>' CssClass="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                        <p class="mt-3">
-                            <asp:LinkButton ID="lnkUpdate" CssClass="btn btn-primary me-3" CommandName="update" CommandArgument='<%#Eval("eventId")%>'
-                                runat="server"><i class="fas fa-save"></i> Update Event</asp:LinkButton>
-                            <asp:LinkButton ID="lnkCancel" CssClass="btn btn-secondary" CommandName="cancel"
-                                runat="server"><i class="fas fa-redo"></i> Cancel</asp:LinkButton>
-                        </p>
-                    </fieldset>
-                </EditItemTemplate>
-            </asp:ListView>
-            <hr />
+                <SeparatorTemplate>
+                    <hr />
+                </SeparatorTemplate>
+            </asp:Repeater>
             <div class="form-group">
-                <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" />
-                <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control" />
+                <fieldset class="outline-fieldset pt-0 pb-0">
+                    <legend class="mb-0">
+                        <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
+                    <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
+                </fieldset>
             </div>
-                        <div class="modal fade" id="mediatorModal" tabindex="-1" role="dialog" aria-labelledby="mediatorModalLabel" aria-hidden="true">
+            <div class="modal fade" id="EventModal" tabindex="-1" role="dialog" aria-labelledby="EventModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="EventModalLabel">Add / Edit Event</h4>
+                            <button type="button" class="close event-close" onclick="CloseEventModal(event)">&times;</button>
+                        </div>
+                        <div class="modal-body form-group">
+                            <asp:HiddenField ID="hdEventId" runat="server" />
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <div class="form-check form-switch mt-4">
+                                            <asp:CheckBox ID="chkMeetingHeld" ClientIDMode="Static" runat="server" onclick="hideReason(this)" Text="Mediation Held" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" ID="lblReason" AssociatedControlID="drpReason" CssClass="reason" Text="Reason Not Held" />
+                                        <asp:DropDownList ID="drpReason" runat="server" ClientIDMode="Static" CssClass="form-control reason selectMe">
+                                            <asp:ListItem Value="" Text="< Select Reason>" />
+                                            <asp:ListItem Text="Settled Prior" Value="Settled Prior" />
+                                            <asp:ListItem Text="Session Rescheduled" Value="Session Rescheduled" />
+                                            <asp:ListItem Text="Failure to Appear" Value="Failure to Appear" />
+                                            <asp:ListItem Text="Party Declined to Participate" Value="Party Declined to Participate" />
+                                            <asp:ListItem Text="Cancelled" Value="Cancelled" />
+                                        </asp:DropDownList>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
+                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="rblAgreementType" Text="Agreement" />
+                                        <asp:RadioButtonList ID="rblAgreementType" ClientIDMode="Static" CssClass="form-control radio-button-list agreement" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
+                                            <asp:ListItem Text="None" Value="N" Selected="True" />
+                                            <asp:ListItem Text="Full" Value="F" />
+                                            <asp:ListItem Text="Partial/Temporary" Value="C" />
+                                        </asp:RadioButtonList>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <asp:Label runat="server" AssociatedControlID="drpMediatorType" Text="Mediator Type" />
+                                        <asp:DropDownList ID="drpMediatorType" runat="server" ToolTip="Mediator Type" CssClass="form-control" ClientIDMode="Static">
+                                            <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
+                                            <asp:ListItem Text="Contracted" Value="Contracted" />
+                                            <asp:ListItem Text="Staff" Value="Staff" />
+                                            <asp:ListItem Text="Volunteer" Value="Volunteer" />
+                                        </asp:DropDownList>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
+                                    <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
+                                    <asp:TextBox runat="server" Enabled="false" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" />
+                                </div>
+                                <div class="col-auto pt-4 mt-1">
+                                    <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <button class="btn btn-secondary ms-2" title="Clear Mediator" onclick="ValidateMediatorRemoval(event)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="form-group">
+                                        <div class="form-check form-switch mt-2">
+                                            <asp:CheckBox ID="chkAdjournedTimeRemaining" ClientIDMode="Static" runat="server" Text="Adjourned with time remaining?" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-group row">
+                                        <asp:Label runat="server" AssociatedControlID="txtHours" CssClass="col-auto col-form-label" Text="Hours" />
+                                        <div class="col-auto">
+                                            <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <asp:LinkButton ID="cmdSaveEvent" OnClick="cmdSaveEvent_Click" CssClass="btn btn-primary" runat="server"><i class="fas fa-save"></i> Save Event</asp:LinkButton>
+                            <button type="button" class="btn btn-default event-close" onclick="CloseEventModal(event)">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="mediatorModal" tabindex="-1" role="dialog" aria-labelledby="mediatorModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -444,7 +349,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-primary" onclick="AddMediator(event)">Save</button>
                             <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
@@ -457,7 +362,7 @@
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="cmdSave" EventName="Click" />
             <asp:AsyncPostBackTrigger ControlID="cmdSaveSession" EventName="Click" />
-            <asp:AsyncPostBackTrigger ControlID="cmdAddEvent" EventName="Click" />
+            <asp:PostBackTrigger ControlID="cmdSaveEvent" />
             <asp:AsyncPostBackTrigger ControlID="cmdNewSession" EventName="Click" />
             <asp:AsyncPostBackTrigger ControlID="cmdPreviousSession" EventName="Click" />
             <asp:AsyncPostBackTrigger ControlID="cmdNextSession" EventName="Click" />
@@ -471,7 +376,6 @@
         OnClick="cmdSave_Click" CssClass="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save</asp:LinkButton>
     <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Reset</asp:HyperLink>
 </p>
-<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
 <dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
@@ -554,10 +458,16 @@
                 $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             }, 0);
         });
+        $(".radio-button-list input").addClass("form-check-input");
+        $(".radio-button-list label").addClass("form-check-label");
+        $("#cmdAddNewEvent").on("click", function (e) {
+            $("#EventModalLabel").text("Add New Event");
+        });
+        //mediator search
         $("#cmdMediatorSearch").on("click", function (e) {
             e.preventDefault();
-            lastName = $("#txtMediatorLastName").val();
-            firstName = $("#txtMediatorFirstName").val();
+            lastNameMed = $("#txtMediatorLastName").val();
+            firstNameMed = $("#txtMediatorFirstName").val();
             mediatorTable.draw();
         });
         $(".mediator-search").on("click", function (e) {
@@ -578,10 +488,16 @@
             }
             modal.show();
         });
-
-        $(".radio-button-list input").addClass("form-check-input");
-        $(".radio-button-list label").addClass("form-check-label");
-        $(".datepicker").datepicker();
+        $(".mediator-search").on("click", function (e) {
+            e.preventDefault();
+            var medModal = document.querySelector('#mediatorModal');
+            var modal = bootstrap.Modal.getInstance(medModal);
+            if (!modal) {
+                modal = new bootstrap.Modal(document.getElementById('mediatorModal'));
+            }
+            modal.show();
+        });
+        //confirmations
         $(".confirm-delete-event").on("click", function (e) {
             var item = $(this);
             e.preventDefault();
@@ -607,15 +523,6 @@
             noText: 'No',
             title: 'Delete Case?',
         });
-        $(".mediator-search").on("click", function (e) {
-            e.preventDefault();
-            var medModal = document.querySelector('#mediatorModal');
-            var modal = bootstrap.Modal.getInstance(medModal);
-            if (!modal) {
-                modal = new bootstrap.Modal(document.getElementById('mediatorModal'));
-            }
-            modal.show();
-        });
     }
     function hideReason(checkbox) {
         if (checkbox.checked == 1) {
@@ -624,6 +531,10 @@
         } else {
             $(".reason").show();
         }
+    }
+    function UpdateEventHeader(e) {
+        var test = $("#EventModalLabel").html();
+        $("#EventModalLabel").html("Edit Event")
     }
     //* Mediator Functions*/
     function SetMediator(e, item) {
@@ -707,4 +618,43 @@
         let modal = bootstrap.Modal.getInstance(document.getElementById("mediatorModal"));
         modal.hide();
     }
+    //event editor
+    function ClearEventForm() {
+        $("#hdEventId").val("");
+        $("#chkMeetingHeld").prop("checked", false);
+        $("#drpReason").val("");
+        $(".reason").show();
+        $(".agreement input:radio:checked").removeAttr("checked");
+        $("#drpMediatorType").val("");
+        $("#hdMediatorId").val("");
+        $("#txtMediator").val("");
+        $("#txtEventDate").val("");
+        $("#txtHours").val("");
+        $("#chkAdjournedTimeRemaining").prop("checked", false);
+    }
+    function ToggleEventForm(toggleValue) {
+
+        if (toggleValue) {
+            $('#EventModal').modal('show');
+            if ($("#chkMeetingHeld").is(":checked")) {
+                $(".reason").hide();
+                $("select.reason").val('');
+            } else {
+                $(".reason").show();
+            }
+        } else {
+            $('#EventModal').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            // modal.hide();
+        }
+        return true;
+    }
+    function CloseEventModal(e) {
+        ClearEventForm();
+        e.preventDefault();
+        let modal = bootstrap.Modal.getInstance(document.getElementById("EventModal"));
+        modal.hide();
+    }
+
 </script>

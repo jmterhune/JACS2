@@ -46,29 +46,36 @@
     <Reference Include="DotNetNuke, Version=9.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Abstractions">
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.Abstractions.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Web">
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\intranet-new\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <HintPath>..\..\intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\IIS\Microsoft Web Deploy V3\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -79,6 +86,7 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http">
       <HintPath>..\..\intranet-new\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -91,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\EnumExtension.cs" />
+    <Compile Include="Components\CourtCounselLog.cs" />
     <Compile Include="Components\JudgeJa.cs" />
     <Compile Include="Components\JudgeController.cs" />
     <Compile Include="Components\JacsJudge.cs" />
@@ -99,6 +108,7 @@
     <Compile Include="Components\Services\HearingController.cs" />
     <Compile Include="Components\Services\RouteMapper.cs" />
     <Compile Include="Components\Services\ViewModels\LogItemViewModel.cs" />
+    <Compile Include="Components\CourtCounselController.cs" />
     <Compile Include="HearingsLogModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -120,6 +130,13 @@
     <Compile Include="Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
+    <Compile Include="CourtCounsel.ascx.cs">
+      <DependentUpon>CourtCounsel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtCounsel.ascx.designer.cs">
+      <DependentUpon>CourtCounsel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="View.ascx.cs">
       <DependentUpon>View.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -136,6 +153,7 @@
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
+    <Content Include="CourtCounsel.ascx" />
     <Content Include="View.ascx" />
   </ItemGroup>
   <ItemGroup>

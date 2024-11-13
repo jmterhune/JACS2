@@ -17,10 +17,10 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class ActionController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
         public void CreateAction(Action t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 rep.Insert(t);
@@ -35,7 +35,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteAction(Action t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 rep.Delete(t);
@@ -45,7 +45,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Action> GetActions()
         {
             IEnumerable<Action> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 t = rep.Get();
@@ -55,7 +55,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public bool ActionExists(int actionId)
         {
             Action t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 t = rep.GetById(actionId);
@@ -65,7 +65,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Action> GetActiveActions()
         {
             IEnumerable<Action> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 t = rep.Find("Where Active=1");
@@ -76,7 +76,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public Action GetAction(int actionId)
         {
             Action t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 t = rep.GetById(actionId);
@@ -85,7 +85,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateAction(Action t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Action>();
                 rep.Update(t);

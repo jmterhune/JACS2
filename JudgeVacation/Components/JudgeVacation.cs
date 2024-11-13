@@ -29,12 +29,13 @@ namespace tjc.Modules.JudgeVacation.Components
         {
             get; set;
         }
-        [IgnoreColumn]
+    }
+    public class JudgeVacationReport:JudgeVacation
+    {
         public string JudgeName
         {
             get; set;
         }
-        [IgnoreColumn]
         public int SubTotal
         {
             get; set;

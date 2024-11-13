@@ -127,9 +127,15 @@
     <value>Email Addresses</value>
   </data>
   <data name="lblReportingRole.Help" xml:space="preserve">
-    <value>Enter the Reporting Role</value>
+    <value>Select the Reporting Role</value>
   </data>
   <data name="lblReportingRole.Text" xml:space="preserve">
     <value>Reporting Role</value>
+  </data>
+  <data name="lblJudgeRole.Text" xml:space="preserve">
+    <value>Judge Role</value>
+  </data>
+  <data name="lblJudgeRole.Help" xml:space="preserve">
+    <value>Select the Role assigned to Judges</value>
   </data>
 </root>

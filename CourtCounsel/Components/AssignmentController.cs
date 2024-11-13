@@ -17,11 +17,11 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class AssignmentController 
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void CreateAssignment(Assignment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 rep.Insert(t);
@@ -36,7 +36,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteAssignment(Assignment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 rep.Delete(t);
@@ -46,7 +46,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Assignment> GetAssignments()
         {
             IEnumerable<Assignment> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 t = rep.Get();
@@ -56,7 +56,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Assignment> GetAssignmentPage(int pageIndex,int pageSize)
         {
             IEnumerable<Assignment> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 t = rep.GetPage(pageIndex,pageSize);
@@ -66,7 +66,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public long GetCurrentJudicialAssignment(long assignmentId)
         {
             Assignment t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 t = rep.GetById(assignmentId);
@@ -76,7 +76,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public Assignment GetAssignment(long assignmentId)
         {
             Assignment t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 t = rep.GetById(assignmentId);
@@ -85,7 +85,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateAssignment(Assignment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 rep.Update(t);
@@ -94,7 +94,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<Assignment> GetPendingAssignmentsToUpdate()
         {
             IEnumerable<Assignment> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Assignment>();
                 t = rep.Find("Where StatusTypeId=1 And DateReceived<=@0",DateTime.Now);

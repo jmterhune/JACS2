@@ -82,21 +82,21 @@ namespace tjc.Modules.JudgeVacation.Components
                 rep.Update(t);
             }
         }
-        public IEnumerable<JudgeVacation> GetVacationReport(DateTime startDate,DateTime endDate)
+        public IEnumerable<JudgeVacationReport> GetVacationReport(DateTime startDate,DateTime endDate)
         {
-            IEnumerable<JudgeVacation> t;
+            IEnumerable<JudgeVacationReport> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<JudgeVacation>(System.Data.CommandType.StoredProcedure, "tjc_vacation_judge_report", startDate,endDate);
+                t = ctx.ExecuteQuery<JudgeVacationReport>(System.Data.CommandType.StoredProcedure, "tjc_vacation_judge_report", startDate,endDate);
             }
             return t;
         }
-        public IEnumerable<JudgeVacation> GetVacationReportByJudge(DateTime startDate, DateTime endDate,int judgeId)
+        public IEnumerable<JudgeVacationReport> GetVacationReportByJudge(DateTime startDate, DateTime endDate,int judgeId)
         {
-            IEnumerable<JudgeVacation> t;
+            IEnumerable<JudgeVacationReport> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<JudgeVacation>(System.Data.CommandType.StoredProcedure, "tjc_vacation_report_by_judge", startDate, endDate,judgeId);
+                t = ctx.ExecuteQuery<JudgeVacationReport>(System.Data.CommandType.StoredProcedure, "tjc_vacation_report_by_judge", startDate, endDate,judgeId);
             }
             return t;
         }

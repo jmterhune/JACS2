@@ -17,11 +17,11 @@ namespace tjc.Modules.CourtCounsel.Components
 {
     internal class CaseTypeController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
+        
 
         public void CreateCaseType(CaseType t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Insert(t);
@@ -36,7 +36,7 @@ namespace tjc.Modules.CourtCounsel.Components
 
         public void DeleteCaseType(CaseType t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Delete(t);
@@ -46,7 +46,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<CaseType> GetCaseTypes()
         {
             IEnumerable<CaseType> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.Get();
@@ -56,7 +56,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public IEnumerable<CaseType> GetActiveCaseTypes()
         {
             IEnumerable<CaseType> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.Find("Where Active=1");
@@ -66,7 +66,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public CaseType GetCaseType(int caseTypeId)
         {
             CaseType t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.GetById(caseTypeId);
@@ -75,7 +75,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public void UpdateCaseType(CaseType t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Update(t);

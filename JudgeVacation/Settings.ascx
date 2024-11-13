@@ -9,8 +9,14 @@
     </div>
     <div class="dnnFormItem">
         <dnn:label ID="lblReportingRole" runat="server" />
-        <asp:TextBox ID="txtReportingRole" runat="server" />
+        <asp:DropDownList runat="server" ID="drpReportingRole">
+        </asp:DropDownList>
     </div>
+    <div class="dnnFormItem">
+    <dnn:label ID="lblJudgeRole" runat="server" />
+        <asp:DropDownList runat="server" ID="drpJudges">
+        </asp:DropDownList>
+</div>
 </fieldset>
 
 

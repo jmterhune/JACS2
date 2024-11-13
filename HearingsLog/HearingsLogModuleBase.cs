@@ -32,6 +32,15 @@ namespace tjc.Modules.HearingLog
                 return "";
             }
         }
+        public string PageUrl
+        {
+            get
+            {
+                if (Settings.Contains("PageUrl"))
+                    return Convert.ToString(Settings["PageUrl"]);
+                return "";
+            }
+        }
 
         public string HasChiefJudgeRole
         {

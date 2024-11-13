@@ -22,9 +22,10 @@ namespace tjc.Modules.HearingLog
                     if (UserInfo.IsAdmin)
                         lnkAdmin.Visible = true;
                 }
-                var tc = new HearingController();
+                var tc = new CourtCounselController();
                 lnkAdmin.NavigateUrl = EditUrl("Admin");
-                txtStartDate.Text = DateTime.Now.AddDays(-60).ToShortDateString();
+                txtStartDate.Text = DateTime.Now.AddDays(-120).ToShortDateString();
+                lnkCourtCounsel.NavigateUrl = PageUrl;
                 txtEndDate.Text = DateTime.Now.ToShortDateString();
                 if (UserInfo.IsInRole(ChiefJudgeRole))
                 {
