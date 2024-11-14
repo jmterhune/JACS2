@@ -16,12 +16,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="<%=EditUrl("reports") %>"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<%=EditUrl("calendar") %>"><i class="fas fa-calendar"></i>&nbsp;Event Calendar</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<%=EditUrl("library") %>"><i class="fas fa-folder-open"></i>&nbsp;Document Repository</a>
-            </li>
             <li class="nav-item" id="li1" runat="server" visible="false">
                 <a class="nav-link" href="<%=EditUrl("admin") %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
             </li>
@@ -77,7 +71,6 @@
 </div>
 
 <asp:UpdatePanel ID="pnlUpdate" runat="server">
-
     <ContentTemplate>
         <asp:UpdateProgress ID="upProgress" runat="server">
             <ProgressTemplate>
@@ -88,11 +81,12 @@
                 </div>
             </ProgressTemplate>
         </asp:UpdateProgress>
-        <asp:Repeater ID="rptLogEntries" runat="server" OnItemDataBound="rptLogEntries_ItemDataBound" OnItemCommand="rptLogEntries_ItemCommand">
+        <asp:Repeater ID="rptLogEntries" runat="server" >
             <HeaderTemplate>
                 <table id="log-list" class="table table-striped">
                     <thead>
                         <tr>
+                            <th>&nbsp;</th>
                             <th>Case Number</th>
                             <th>Case Name</th>
                             <th>Case Type</th>
@@ -100,7 +94,7 @@
                             <th>Motion Filed</th>
                             <th>Responsible</th>
                             <th>Status</th>
-
+                            <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,14 +102,15 @@
 
             <ItemTemplate>
                 <tr data-id="<%#DataBinder.Eval(Container.DataItem,"LogId").ToString() %>">
-                    <td><a href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><i title="View Assignment Record" class="pe-2 fa fa-pencil-alt"></i></a><%#DataBinder.Eval(Container.DataItem,"CaseNumber") %></td>
+                    <td class="command-icon"><a href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><i title="View Assignment Record" class="pe-2 fa fa-pencil-alt"></i></a></td>
+                    <td class="case-number-item text-nowrap"><%#DataBinder.Eval(Container.DataItem,"CaseNumber") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"Description") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"CaseTypeName") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"DateReceived", "{0:M/d/yy}") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"MotionFiled", "{0:M/d/yy}") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"AttorneyName") %></td>
-                    <td><%#DataBinder.Eval(Container.DataItem,"PhaseName") %><a href="<%#EditUrl("lid",DataBinder.Eval(Container.DataItem,"LogId").ToString(),"caseview") %>"><i title="View Related Assignment Records" class="float-end fa fa-arrow-circle-down"></i></a></td>
-
+                    <td><%#DataBinder.Eval(Container.DataItem,"PhaseName") %></td>
+                    <td class="command-icon"><a href="<%#EditUrl("lid",DataBinder.Eval(Container.DataItem,"LogId").ToString(),"caseview") %>"><i title="View Related Assignment Records" class="float-end fa fa-arrow-circle-down"></i></a></td>
                 </tr>
 
             </ItemTemplate>
@@ -145,12 +140,23 @@
 
         var table = $('#log-list').DataTable({
 
-            "order": [[3, "desc"]],
+            "order": [[4, "desc"]],
             "oLanguage": {
 
                 "sSearch": "Filter by Text"
 
             },
+            "aoColumns": [
+                { "bSortable": false },
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                { "bSortable": false },
+            ],
         });
 
     }

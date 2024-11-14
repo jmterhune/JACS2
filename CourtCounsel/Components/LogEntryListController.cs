@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace tjc.Modules.CourtCounsel.Components
     internal class LogEntryListController
     {
 
-        
+
 
         public IEnumerable<LogEntryListItem> GetLogEntryList()
         {
@@ -46,23 +47,23 @@ namespace tjc.Modules.CourtCounsel.Components
             string sqlWhereClause = "";
             if (type == SearchType.caseName)
             {
-                sqlWhereClause = string.Format("Where Description like @0", searchText);
+                sqlWhereClause = "Where Description like @0";
             }
             else
             {
-                sqlWhereClause = string.Format("Where CaseNumber like @0", searchText);
+                sqlWhereClause = "Where CaseNumber like @0";
             }
             IEnumerable<LogEntryListItem> t;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
-                t = rep.Find(sqlWhereClause, searchText).OrderByDescending(x => x.DateReceived);
+                t = rep.Find(sqlWhereClause, string.Format("%{0}%", searchText)).OrderByDescending(x => x.DateReceived);
             }
             return t;
         }
         public IEnumerable<LogEntryListItem> GetLogListItemsByAttorney(long attorneyId, bool active, bool pending, bool closed)
         {
-            string sqlWhereClause = string.Format("Where CurrentAttorneyId = {0}",attorneyId);
+            string sqlWhereClause = string.Format("Where CurrentAttorneyId = {0}", attorneyId);
             if (active && !pending && !closed)
                 sqlWhereClause += $" AND (StatusTypeId = {(int)StatusTypes.active})";
             else if (pending && !active && !closed)
@@ -87,7 +88,7 @@ namespace tjc.Modules.CourtCounsel.Components
         }
         public IEnumerable<LogEntryListItem> GetLogListItemsByUsername(string username)
         {
-            
+
             IEnumerable<LogEntryListItem> t;
             using (IDataContext ctx = DataContext.Instance())
             {
@@ -105,6 +106,54 @@ namespace tjc.Modules.CourtCounsel.Components
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 t = rep.Find("Where LogId = @0 ", logId).OrderByDescending(x => x.DateReceived);
+            }
+            return t;
+        }
+        public IEnumerable<LogEntryListItem> GetReportLogItems(DateTime start, DateTime end, string status, string county, string phase, string requestor, string attorney)
+        {
+            IEnumerable<LogEntryListItem> t;
+            string whereClause = "Where LogID IS NOT NULL";
+            if (status == "A")
+            {
+                whereClause+= " AND (DateReceived BETWEEN @0 AND @1) AND StatusTypeId = 0";
+            }
+            else if (status == "P")
+            {
+                start = DateTime.Now.AddDays(1);
+                whereClause += " AND (DateReceived BETWEEN @0 AND @1) AND StatusTypeId = 1";
+            }
+            else if (status == "C")
+            {
+                whereClause += " AND (DateCompleted BETWEEN @0 AND @1)";
+            }
+            else if (status == "N")
+            {
+                whereClause += " AND (DateReceived BETWEEN @0 AND @1) AND StatusTypeId <> 2";
+            }
+            else
+            {
+                whereClause += " AND (DateReceived BETWEEN @0 AND @1)";
+            }
+            if (!string.IsNullOrEmpty(county))
+            {
+                whereClause += " AND CountyId = @2";
+            }
+            if (!string.IsNullOrEmpty(phase))
+            {
+                whereClause += " AND PhaseId = @3";
+            }
+            if (!string.IsNullOrEmpty(requestor))
+            {
+                whereClause += " AND CurrentJudiciaryId = @4";
+            }
+            if (!string.IsNullOrEmpty(attorney))
+            {
+                whereClause += " AND CurrentAttorneyId = @5";
+            }
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<LogEntryListItem>();
+                t = rep.Find(whereClause,start,end,status,county,phase,requestor,attorney);
             }
             return t;
         }

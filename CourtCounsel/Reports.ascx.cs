@@ -19,6 +19,8 @@ using System.Linq;
 using System.Web;
 using DotNetNuke.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.NetworkInformation;
+using System.Text;
 
 namespace tjc.Modules.CourtCounsel
 {
@@ -49,18 +51,13 @@ namespace tjc.Modules.CourtCounsel
                 if (!IsPostBack)
                 {
                     lnkSearch.NavigateUrl = _navigationManager.NavigateURL();
-                    
-                    var tc = new LogEntryListController();
-                    rptLogEntries.DataSource = tc.GetLogListItemsByUsername(UserInfo.Email);
-                    rptLogEntries.DataBind();
                     if (UserInfo.IsInRole(AdminRole))
                         li1.Visible = true;
-                    chkActive.InputAttributes.Add("class", "custom-control-input");
-                    chkPending.InputAttributes.Add("class", "custom-control-input");
-                    chkClosed.InputAttributes.Add("class", "custom-control-input");
+
                     PopulateDropDowns();
-                    GetCookie();
                 }
+                chkShowDetail.InputAttributes.Add("class", "form-check-input");
+                chkShowDetail.LabelAttributes.Add("class", "form-check-label");
             }
             catch (Exception exc) //Module failed to load
             {
@@ -69,12 +66,18 @@ namespace tjc.Modules.CourtCounsel
         }
         protected void PopulateDropDowns()
         {
+            var countyCtl = new tjc.Modules.Globals.CountyController();
+            drpCounty.DataValueField = "CountyId";
+            drpCounty.DataTextField = "CountyName";
+            drpCounty.DataSource = countyCtl.GetCounties();
+            drpCounty.DataBind();
+            drpCounty.Items.Insert(0, new ListItem("All", ""));
             var ac = new MemberController();
             drpAttorney.DataValueField = "MemberId";
             drpAttorney.DataTextField = "ListName";
             IEnumerable<Member> activeMembers = ac.GetMembersByType(1, true);
             IEnumerable<Member> inActiveMembers = ac.GetMembersByType(1, false);
-            drpAttorney.Items.Add(new ListItem("< Select Attorney >", "0"));
+            drpAttorney.Items.Add(new ListItem("All", ""));
             foreach (Member member in activeMembers)
             {
                 ListItem li = new ListItem(member.ListName, member.MemberId.ToString());
@@ -88,110 +91,139 @@ namespace tjc.Modules.CourtCounsel
                 drpAttorney.Items.Add(li);
             }
             drpAttorney.Items.Add(new ListItem("Inactive Members", ">"));
-        }
-        protected void rptLogEntries_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
 
-        }
-
-        protected void rptLogEntries_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-
-        }
-        /// Stores multiple values in a Cookie using a key-value dictionary, creating the cookie (and/or the key) if it doesn't exists yet.
-        /// </summary>
-        /// <param name="cookieName">Cookie name</param>
-        /// <param name="cookieDomain">Cookie domain (or NULL to use default domain value)</param>
-        /// <param name="keyName">Cookie key name (if the cookie is a keyvalue pair): if NULL or EMPTY, this method will raise an exception since it's required when inserting multiple values.</param>
-        /// <param name="values">Values to store into the cookie</param>
-        /// <param name="expirationDate">Expiration Date (set it to NULL to leave default expiration date)</param>
-        /// <param name="httpOnly">set it to TRUE to enable HttpOnly, FALSE otherwise (default: false)</param>
-        /// <param name="sameSite">set it to 'None', 'Lax', 'Strict' or '(-1)' to not add it (default: '(-1)').</param>
-        /// <param name="secure">set it to TRUE to enable Secure (HTTPS only), FALSE otherwise</param>
-        public static void StoreInCookie(string cookieName, string cookieDomain, Dictionary<string, string> keyValueDictionary, DateTime? expirationDate, bool httpOnly = false, SameSiteMode sameSite = (SameSiteMode)(-1), bool secure = false)
-        {
-            // NOTE: we have to look first in the response, and then in the request.
-            // This is required when we update multiple keys inside the cookie.
-            HttpCookie cookie = HttpContext.Current.Response.Cookies.AllKeys.Contains(cookieName)
-                ? HttpContext.Current.Response.Cookies[cookieName]
-                : HttpContext.Current.Request.Cookies[cookieName];
-
-            if (cookie == null) cookie = new HttpCookie(cookieName);
-            if (keyValueDictionary == null || keyValueDictionary.Count == 0)
-                cookie.Value = null;
-            else
-                foreach (var kvp in keyValueDictionary)
-                    cookie.Values.Set(kvp.Key, kvp.Value);
-            if (expirationDate.HasValue) cookie.Expires = expirationDate.Value;
-            if (!String.IsNullOrEmpty(cookieDomain)) cookie.Domain = cookieDomain;
-            cookie.HttpOnly = httpOnly;
-            cookie.Secure = secure;
-            cookie.SameSite = sameSite;
-            HttpContext.Current.Response.Cookies.Set(cookie);
-        }
-
-        public void GetCookie()
-        {
-            if (Request.Cookies["SearchCookie"] != null)
+            var pc = new PhaseController();
+            IEnumerable<Phase> phases = pc.GetPhaseDropDownItems(true);
+            string groupName = "";
+            foreach (Phase phase in phases)
             {
-                var SearchCookie = Request.Cookies["SearchCookie"];
-                var active = SearchCookie["Active"];
-                var pending = SearchCookie["Pending"];
-                var closed = SearchCookie["Closed"];
-                var searchTerm = SearchCookie["SearchText"];
-                var attorneyId = SearchCookie["AttorneyId"];
-                var searchTypeText = SearchCookie["SearchType"];
-                chkActive.Checked = bool.Parse(active);
-                chkPending.Checked = bool.Parse(pending);
-                chkClosed.Checked = bool.Parse(closed);
-                txtSearchTerm.Text = searchTerm;
-                drpAttorney.SelectedValue = attorneyId;
-                hdSearchType.Value= searchTypeText;
-                SearchType searchType = (SearchType)Int32.Parse(searchTypeText);
-                BindData(searchType);
+                if (phase.GroupName != "Default")
+                {
+                    if (groupName != phase.GroupName && string.IsNullOrEmpty(groupName))
+                    {
+                        drpExtendedStatus.Items.Add(new ListItem(phase.GroupName, "<"));
+                    }
+                    if (groupName != phase.GroupName && !string.IsNullOrEmpty(groupName))
+                    {
+                        drpExtendedStatus.Items.Add(new ListItem(groupName, ">"));
+                        drpExtendedStatus.Items.Add(new ListItem(phase.GroupName, "<"));
+                    }
+                    groupName = phase.GroupName;
+                }
+                ListItem li = new ListItem(phase.PhaseName, phase.PhaseId.ToString());
+                if (phase.IsPending)
+                {
+                    li.Attributes.Add("data-pending", "1");
+                }
+                else
+                {
+                    li.Attributes.Add("data-pending", "0");
+                }
+                drpExtendedStatus.Items.Add(li);
             }
+            drpExtendedStatus.Items.Add(new ListItem(groupName, ">"));
+            drpRequestor.DataValueField = "MemberId";
+            drpRequestor.DataTextField = "ListName";
+            IEnumerable<Member> activeJudges = ac.GetMembersByType(0, true);
+            IEnumerable<Member> inActiveJudges = ac.GetMembersByType(0, false);
+            foreach (Member member in activeJudges)
+            {
+                ListItem li = new ListItem(member.ListName, member.MemberId.ToString());
+                drpRequestor.Items.Add(li);
+            }
+            drpRequestor.Items.Add(new ListItem("Inactive Members", "<"));
+            foreach (Member member in inActiveJudges)
+            {
+                ListItem li = new ListItem(member.ListName, member.MemberId.ToString());
+                li.Attributes.Add("class", "inactive");
+                drpRequestor.Items.Add(li);
+            }
+            drpRequestor.Items.Add(new ListItem("Inactive Members", ">"));
+            drpRequestor.Items.Insert(0, new ListItem("All", ""));
+
         }
         protected void cmdSearch_Click(object sender, EventArgs e)
         {
-            Dictionary<string, string> keyValueDictionary = new Dictionary<string, string>();
-            keyValueDictionary.Add("Active", chkActive.Checked.ToString());
-            keyValueDictionary.Add("Pending", chkPending.Checked.ToString());
-            keyValueDictionary.Add("Closed", chkClosed.Checked.ToString());
-            keyValueDictionary.Add("SearchText", txtSearchTerm.Text);
-            keyValueDictionary.Add("AttorneyId", drpAttorney.SelectedValue);
-            keyValueDictionary.Add("SearchType", hdSearchType.Value);
-            StoreInCookie("SearchCookie", null, keyValueDictionary, DateTime.Now.AddDays(30), false, SameSiteMode.Strict);
-            SearchType searchType = (SearchType)Int32.Parse(hdSearchType.Value);
-            BindData(searchType);
-
-        }
-        protected void BindData(SearchType searchType)
-        {
-            var tc = new LogEntryListController();
-
-            switch (searchType)
+            DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
+            DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
+            if (endDate != null && startDate != null)
             {
-                case SearchType.recent:
+                var ctl = new LogEntryListController();
+                var cCtl = new CaseTypeController();
+                IEnumerable<LogEntryListItem> lstHistory = ctl.GetReportLogItems(startDate, endDate, drpStatus.SelectedValue, drpCounty.SelectedValue, drpExtendedStatus.SelectedValue, drpRequestor.SelectedValue, drpAttorney.SelectedValue);
+                var sb = new StringBuilder();
+                sb.Append("<table class='caseReport'><tr><th>Case Type</th><th class='caseCount'>Case Count</th></tr>");
+                var caseTypes = cCtl.GetActiveCaseTypes().OrderBy(x => x.CaseTypeName);
+                var numberGroups = lstHistory
+                    .GroupBy(h => h.CaseTypeName)
+                    .Select(g => new { CaseType = g.Key, caseCount = g.Count() })
+                    .OrderBy(g => g.CaseType)
+                    .ToList();
 
-                    rptLogEntries.DataSource = tc.GetLogListItemsByUsername(UserInfo.Email);
+                int grandTotal = 0;
 
-                    break;
-                case SearchType.caseName:
-                    rptLogEntries.DataSource = tc.GetLogListItemsBySearchText(txtSearchTerm.Text, SearchType.caseName);
+                foreach (var c in caseTypes)
+                {
+                    int count = numberGroups
+                        .Where(n => n.CaseType == c.CaseTypeName)
+                        .Select(n => n.caseCount)
+                        .FirstOrDefault();
 
-                    break;
-                case SearchType.caseNumber:
-                    rptLogEntries.DataSource = tc.GetLogListItemsBySearchText(txtSearchTerm.Text, SearchType.caseNumber);
+                    grandTotal += count;
+                    count = Math.Max(0, count);
 
-                    break;
-                case SearchType.attorney:
-                    rptLogEntries.DataSource = tc.GetLogListItemsByAttorney(Int32.Parse(drpAttorney.SelectedValue), chkActive.Checked, chkPending.Checked, chkClosed.Checked);
+                    sb.Append("<tr class='caseHeader'><td>");
+                    sb.Append(c.CaseTypeName);
+                    sb.Append("</td><td class='caseCount'>");
+                    sb.Append(count.ToString());
+                    sb.Append("</td></tr>");
 
-                    break;
-                default:
-                    break;
+                    if (chkShowDetail.Checked && count > 0)
+                    {
+                        sb.Append("<tr><td class='containerDetail'><table class='caseDetail'><tr><th>Motion Filed</th><th>Action Date</th><th>Case Name</th><th class='caseNumber'>Case Number</th><th>Responsible</th><th>Status</th></tr>");
+
+                        var details = lstHistory
+                            .Where(h => h.CaseTypeName == c.CaseTypeName)
+                            .OrderBy(h => h.DateReceived)
+                            .Select(h => new
+                            {
+                                h.Description,
+                                h.CaseNumber,
+                                h.AttorneyName,
+                                h.DateReceived,
+                                h.MotionFiled,
+                                h.PhaseName
+                            });
+
+                        foreach (var d in details)
+                        {
+                            sb.Append("<tr><td>");
+                            sb.Append(d.MotionFiled.HasValue ? d.MotionFiled.Value.ToShortDateString() : "&nbsp;");
+                            sb.Append("</td><td>");
+                            if (d.DateReceived.HasValue)
+                                sb.Append(d.DateReceived.Value.ToShortDateString());
+                            sb.Append("</td><td>");
+                            sb.Append(d.Description);
+                            sb.Append("</td><td class='caseNumber'>");
+                            sb.Append(d.CaseNumber);
+                            sb.Append("</td><td>");
+                            sb.Append(d.AttorneyName);
+                            sb.Append("</td><td>");
+                            sb.Append(d.PhaseName);
+                            sb.Append("</td></tr>");
+                        }
+
+                        sb.Append("</table></td><td>&nbsp;</td></tr>");
+                    }
+                }
+
+                sb.Append("<tr class='totals'><td>&nbsp;Grand Total:</td><td class='gradTotal'>");
+                sb.Append(grandTotal);
+                sb.Append("</td></tr></table>");
+
+                ltHistory.Text = sb.ToString();
             }
-            rptLogEntries.DataBind();
+
         }
     }
 }

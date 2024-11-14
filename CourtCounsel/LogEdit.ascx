@@ -1,5 +1,5 @@
-﻿<%@ control language="C#" autoeventwireup="true" codebehind="LogEdit.ascx.cs" inherits="tjc.Modules.CourtCounsel.LogEdit" %>
-<%@ register tagprefix="dnn" namespace="DotNetNuke.Web.Client.ClientResourceManagement" assembly="DotNetNuke.Web.Client" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LogEdit.ascx.cs" Inherits="tjc.Modules.CourtCounsel.LogEdit" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <asp:Literal ID="ltMessage" runat="server" />
 
 <div typeof="post" id="assignment-form">
@@ -21,12 +21,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<%=EditUrl("reports") %>"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%=EditUrl("calendar") %>"><i class="fas fa-calendar"></i>&nbsp;Event Calendar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%=EditUrl("library") %>"><i class="fas fa-folder-open"></i>&nbsp;Document Repository</a>
-                    </li>
                     <li class="nav-item" id="li1" runat="server" visible="false">
                         <a class="nav-link" href="<%=EditUrl("admin") %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
                     </li>
@@ -37,12 +31,8 @@
 
             </div>
         </nav>
-        <div class="alert alert-warning">
-            <strong><em class="fa fa-warning"></em></strong>All fields marked with an asterisk (<em class="text-danger">*</em>) are required and
-        must be filled in or this form will not be processed.
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+        <div class="row form-group">
+            <div class="col-md-5">
                 <asp:Label runat="server" AssociatedControlID="drpCountyLetter" Text="Case Number<em>*</em>" ToolTip="required" />
                 <div class="input-group">
                     <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control" ClientIDMode="Static">
@@ -71,23 +61,14 @@
                     </asp:CustomValidator>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <asp:Label runat="server" AssociatedControlID="txtCaseName" Text="Case Name<em>*</em>" ToolTip="required" />
                 <asp:TextBox ID="txtCaseName" runat="server" MaxLength="100" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseName"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Name is Required" />
 
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Select Case Type<em>*</em>" ToolTip="required" />
-                <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control">
-                </asp:DropDownList>
-                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCaseType"
-                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please Select the Case Type" />
-            </div>
-            <div class="col-md-6">
+            <div class="col-md-2">
                 <asp:Label runat="server" AssociatedControlID="drpCounty" Text="County<em>*</em>" ToolTip="required" />
                 <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control" required="required" AppendDataBoundItems="true" ClientIDMode="Static">
                     <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
@@ -96,68 +77,72 @@
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
+        <div class="row  form-group">
+            <div class="col-auto">
+                <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Select Case Type<em>*</em>" ToolTip="required" />
+                <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control auto-size">
+                </asp:DropDownList>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCaseType"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please Select the Case Type" />
+            </div>
+            <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="txtAssignedDate" Text="Assigned Date<em>*</em>" ToolTip="required" />
-                <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ClientIDMode="Static" ID="txtAssignedDate" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker"  ClientIDMode="Static" ID="txtAssignedDate" />
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtAssignedDate"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Assigned Date is Required" />
             </div>
-            <div class="col-md-6">
-                <asp:Label runat="server" AssociatedControlID="drpActionTaken" Text="Action Taken" />
-                <asp:DropDownList ID="drpActionTaken" runat="server" CssClass="form-control">
-                </asp:DropDownList>
+            <div class="col-auto">
 
+                <asp:Label runat="server" AssociatedControlID="txtMotionFiled" Text="Motion Filed<em>*</em>" ToolTip="required" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker"  ID="txtMotionFiled" />
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionFiled"
+                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Filed is Required" />
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpRequestedBy" Text="Requested By<em>*</em>" ToolTip="required" />
-                <asp:DropDownList ID="drpRequestedBy" runat="server" CssClass="form-control" required="required" ClientIDMode="Static">
+                <asp:DropDownList ID="drpRequestedBy" runat="server" CssClass="form-control auto-size" required="required" ClientIDMode="Static">
                     <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="drpRequestedBy" ErrorMessage="Requested by is Required"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
 
             </div>
-            <div class="col-md-6">
+            <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpResponsible" Text="Responsible<em>*</em>" ToolTip="required" />
-                <asp:DropDownList ID="drpResponsible" runat="server" CssClass="form-control" required="required" ClientIDMode="Static">
+                <asp:DropDownList ID="drpResponsible" runat="server" CssClass="form-control auto-size" required="required" ClientIDMode="Static">
                     <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="drpResponsible" ErrorMessage="Responsible is Required"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
+        <div class="row  form-group">
 
-                <asp:Label runat="server" AssociatedControlID="txtMotionFiled" Text="Motion Filed<em>*</em>" ToolTip="required" />
-                <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtMotionFiled" />
-                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionFiled"
-                    Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Filed is Required" />
+            <div class="col-auto">
+                <asp:Label runat="server" AssociatedControlID="drpActionTaken" Text="Action Taken" />
+                <asp:DropDownList ID="drpActionTaken" runat="server" CssClass="form-control auto-size">
+                </asp:DropDownList>
+
             </div>
-            <div class="col-md-6">
+            <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpTimeSpent" Text="Time Spent" />
-                <asp:DropDownList ID="drpTimeSpent" runat="server" CssClass="form-control">
+                <asp:DropDownList ID="drpTimeSpent" runat="server" CssClass="form-control auto-size">
                     <asp:ListItem Text="< Select Time Spent >" Value=""></asp:ListItem>
                 </asp:DropDownList>
 
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="txtDateCompleted" Text="Date Completed Filed" />
-                <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtDateCompleted" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker"  ID="txtDateCompleted" />
             </div>
-            <div class="col-md-6">
+            <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpStatus" Text="Status" />
-                <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control" ClientIDMode="Static">
+                <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control auto-size" ClientIDMode="Static">
                     <asp:ListItem Text="< Select Option >" Value=""></asp:ListItem>
                 </asp:DropDownList>
             </div>
         </div>
-        <div class="row">
+        <div class="row  form-group">
             <div class="col-md-12">
                 <asp:Label runat="server" AssociatedControlID="txtComments" Text="Comments" />
                 <asp:TextBox runat="server" CssClass="form-control" ID="txtComments" TextMode="MultiLine" Rows="4" />
@@ -176,186 +161,7 @@
         <asp:HiddenField ID="hdCaseInfoChanged" runat="server" ClientIDMode="Static" />
     </p>
 </div>
-<hr />
-<asp:UpdatePanel ID="pnlUpdateEvent" runat="server" RenderMode="Block" OnUnload="pnlUpdateEvent_Unload">
-    <ContentTemplate>
-        <asp:UpdateProgress ID="upProgressEvent" runat="server">
-            <ProgressTemplate>
-                <div class="modal-progress">
-                    <div class="center-progress">
-                        <img alt="" src="/images/loading.gif" />
-                    </div>
-                </div>
-            </ProgressTemplate>
-        </asp:UpdateProgress>
-        <h4>Associated Calendar Events</h4>
-        <asp:Repeater ID="rptEvents" runat="server" OnItemCommand="rptEvents_ItemCommand" OnItemDataBound="rptEvents_ItemDataBound" OnItemCreated="rptEvents_ItemCreated">
-            <HeaderTemplate>
-                <table id="event-list" class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Date</th>
-                            <th>Subject</th>
-                            <th>Reminder</th>
-                            <th>&nbsp;</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            </HeaderTemplate>
-            <ItemTemplate>
-                <tr>
-                    <td class="command-icon">
-                        <asp:LinkButton CausesValidation="false" ID="cmdEditEvent" runat="server" CommandName="edit" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"EventId") %>'><i title="Edit Event" class="fa fa-pencil-alt"></i></asp:LinkButton></td>
-                    <td><%#DataBinder.Eval(Container.DataItem,"StartDate", "{0:M/d/yy}") %></td>
-                    <td><%#DataBinder.Eval(Container.DataItem,"Subject") %></td>
-                    <td><%#DataBinder.Eval(Container.DataItem,"ReminderDays") %></td>
-                    <td class="command-icon">
-                        <asp:LinkButton ID="cmdDelete" CausesValidation="false" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"EventId").ToString()%>' ToolTip="Delete Event" CommandName="delete"><i title="Delete Event" class="fa fa-trash"></i></asp:LinkButton>
-                    </td>
-                </tr>
-            </ItemTemplate>
-            <FooterTemplate>
-                </tbody><tfoot><tr>
-                    <td colspan="5">
-                        <button type="button" class="btn btn-tertiary" id="cmdAddEvent" data-toggle="modal" data-target="#eventModal"><i title="Add Event" class="fa fa-plus"></i>&nbsp;Add Event</button>
-                        <button type="button" class="btn btn-tertiary hidden" id="cmdOpenEvent" data-toggle="modal" data-target="#eventModal"></button>
 
-                    </td>
-                </tr>
-                </tfoot>
-                </table>
-            </FooterTemplate>
-        </asp:Repeater>
-        <asp:Literal ID="ltEventMessage" runat="server"></asp:Literal>
-        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="eventModalLabel">Schedule Event</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date<em>*</em>" ToolTip="required" />
-                            <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtStartDate" ClientIDMode="Static" ValidationGroup="event" />
-                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtStartDate" ValidationGroup="event"
-                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Start Date is Required" />
-                        </div>
-                        <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtSubject" Text="Subject<em>*</em>" />
-                            <asp:TextBox runat="server" CssClass="form-control" ID="txtSubject" ClientIDMode="Static" ValidationGroup="event" />
-                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtSubject" ValidationGroup="event"
-                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Subject is Required" />
-
-                        </div>
-                        <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtBody" Text="Body" />
-                            <asp:TextBox runat="server" CssClass="form-control" ID="txtBody" TextMode="MultiLine" Rows="4" ClientIDMode="Static" />
-
-                        </div>
-                        <div class="form-group">
-                            <asp:Label runat="server" AssociatedControlID="txtReminderDays" Text="Reminder in days before event<em>*</em>" />
-                            <asp:TextBox runat="server" CssClass="form-control" ID="txtReminderDays" TextMode="Number" ClientIDMode="Static" />
-                            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtReminderDays" ValidationGroup="event"
-                                Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Reminder Days is Required" />
-                        </div>
-                        <asp:HiddenField runat="server" ID="hdExternalId" ClientIDMode="Static"></asp:HiddenField>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <asp:Button Text="Submit" ID="cmdSubmitEvent" OnClientClick="CloseEventModal()" OnClick="cmdSubmitEvent_Click" runat="server" CssClass="btn btn-primary" ValidationGroup="event" />
-                        <button type="button" class="btn btn-event" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </ContentTemplate>
-    <Triggers>
-        <asp:AsyncPostBackTrigger ControlID="cmdSubmitEvent" EventName="Click" />
-    </Triggers>
-</asp:UpdatePanel>
-<div>
-    <asp:UpdatePanel ID="pnlUpdateFiles" runat="server">
-        <ContentTemplate>
-            <asp:UpdateProgress ID="upProgressFiles" runat="server">
-                <ProgressTemplate>
-                    <div class="modal-progress">
-                        <div class="center-progress">
-                            <img alt="" src="/images/loading.gif" />
-                        </div>
-                    </div>
-                </ProgressTemplate>
-            </asp:UpdateProgress>
-
-            <h4>Associated Files</h4>
-            <asp:Repeater ID="rptFiles" runat="server" OnItemCommand="rptFiles_ItemCommand" OnItemDataBound="rptFiles_ItemDataBound" OnItemCreated="rptFiles_ItemCreated">
-                <HeaderTemplate>
-                    <table id="file-list" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>File Name</th>
-                                <th>Modified By User</th>
-                                <th>Last Modified</th>
-                                <th>&nbsp;</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                </HeaderTemplate>
-
-                <ItemTemplate>
-                    <tr>
-                        <td><a href='<%#DataBinder.Eval(Container.DataItem,"Url") %>' target="_blank"><%#DataBinder.Eval(Container.DataItem,"FileName") %></a></td>
-                        <td><%#DataBinder.Eval(Container.DataItem,"ModifiedBy").ToString().Replace("Azure-","").Replace("@jud12.flcourts.org","") %></td>
-                        <td><%#DataBinder.Eval(Container.DataItem,"ModifiedDate", "{0:M/d/yy}") %></td>
-                        <td class="command-icon">
-                            <asp:LinkButton ID="cmdDelete" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"FileId").ToString()%>' ToolTip="Delete File" CommandName="delete"><i title="Delete File" class="fa fa-trash"></i></asp:LinkButton>
-                        </td>
-                    </tr>
-
-                </ItemTemplate>
-                <FooterTemplate>
-                    </tbody><tfoot><tr>
-                        <td colspan="5">
-                            <button type="button" class="btn btn-tertiary" id="cmdAddFile" data-toggle="modal" data-target="#fileModal"><i title="Add File" class="fa fa-plus"></i>&nbsp;Add File</button>
-                        </td>
-                    </tr>
-                    </tfoot>
-                    </table>
-                </FooterTemplate>
-            </asp:Repeater>
-            <asp:Literal ID="ltFileMessage" runat="server"></asp:Literal>
-
-            <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="fileModalLabel">Upload Associated File</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <asp:Label runat="server" AssociatedControlID="uplFiles" Text="Select Files to upload" />
-                                <asp:FileUpload ID="uplFiles" runat="server" AllowMultiple="true" />
-
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <asp:Button Text="Submit" ID="cmdSubmitFile" runat="server" OnClick="cmdSubmitFile_Click" CssClass="btn btn-primary" ValidationGroup="file" />
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </ContentTemplate>
-        <Triggers>
-            <asp:PostBackTrigger ControlID="cmdSubmitFile" />
-        </Triggers>
-
-    </asp:UpdatePanel>
-</div>
 <div class="modal fade" id="reassignModal" tabindex="-1" role="dialog" aria-labelledby="reassignModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -422,8 +228,6 @@
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" />
 <dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
 
@@ -586,14 +390,6 @@
         });
         $select.val(currentSelection);
     }
-    function ToggleEventModal() {
-        $('#cmdOpenEvent').click();
-        return true;
-    }
-    function CloseEventModal() {
-        $('#eventModal').modal('hide');
-        return true;
-    }
     function InitializeResponsibleDropDown() {
         var $select = $("#drpResponsible");
         var currentSelection = $select.val();
@@ -676,6 +472,7 @@
             errorMessage =
                 "Case Number must include party sequence for CF cases in the format (C-YYYY-CT-000000-XX)"
         }
+        if (errorMessage == "") { isValid = true; }
         sender.innerHTML = errorMessage;
         args.IsValid = isValid;
         var logId = $("#hdLogId").val()

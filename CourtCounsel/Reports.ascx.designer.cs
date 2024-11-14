@@ -33,6 +33,42 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl li1;
 
         /// <summary>
+        /// txtStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtStartDate;
+
+        /// <summary>
+        /// txtEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEndDate;
+
+        /// <summary>
+        /// drpStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpStatus;
+
+        /// <summary>
+        /// drpExtendedStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpExtendedStatus;
+
+        /// <summary>
         /// drpAttorney control.
         /// </summary>
         /// <remarks>
@@ -42,40 +78,31 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.DropDownList drpAttorney;
 
         /// <summary>
-        /// txtSearchTerm control.
+        /// drpRequestor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearchTerm;
+        protected global::System.Web.UI.WebControls.DropDownList drpRequestor;
 
         /// <summary>
-        /// chkActive control.
+        /// drpCounty control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkActive;
+        protected global::System.Web.UI.WebControls.DropDownList drpCounty;
 
         /// <summary>
-        /// chkPending control.
+        /// chkShowDetail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPending;
-
-        /// <summary>
-        /// chkClosed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkClosed;
+        protected global::System.Web.UI.WebControls.CheckBox chkShowDetail;
 
         /// <summary>
         /// cmdSearch control.
@@ -96,30 +123,12 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.HiddenField hdSearchType;
 
         /// <summary>
-        /// pnlUpdate control.
+        /// ltHistory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel pnlUpdate;
-
-        /// <summary>
-        /// upProgress control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdateProgress upProgress;
-
-        /// <summary>
-        /// rptLogEntries control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptLogEntries;
+        protected global::System.Web.UI.WebControls.Literal ltHistory;
     }
 }

@@ -89,25 +89,6 @@ namespace tjc.Modules.CourtCounsel
             }
             drpAttorney.Items.Add(new ListItem("Inactive Members", ">"));
         }
-        protected void rptLogEntries_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-
-        }
-
-        protected void rptLogEntries_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-
-        }
-        /// Stores multiple values in a Cookie using a key-value dictionary, creating the cookie (and/or the key) if it doesn't exists yet.
-        /// </summary>
-        /// <param name="cookieName">Cookie name</param>
-        /// <param name="cookieDomain">Cookie domain (or NULL to use default domain value)</param>
-        /// <param name="keyName">Cookie key name (if the cookie is a keyvalue pair): if NULL or EMPTY, this method will raise an exception since it's required when inserting multiple values.</param>
-        /// <param name="values">Values to store into the cookie</param>
-        /// <param name="expirationDate">Expiration Date (set it to NULL to leave default expiration date)</param>
-        /// <param name="httpOnly">set it to TRUE to enable HttpOnly, FALSE otherwise (default: false)</param>
-        /// <param name="sameSite">set it to 'None', 'Lax', 'Strict' or '(-1)' to not add it (default: '(-1)').</param>
-        /// <param name="secure">set it to TRUE to enable Secure (HTTPS only), FALSE otherwise</param>
         public static void StoreInCookie(string cookieName, string cookieDomain, Dictionary<string, string> keyValueDictionary, DateTime? expirationDate, bool httpOnly = false, SameSiteMode sameSite = (SameSiteMode)(-1), bool secure = false)
         {
             // NOTE: we have to look first in the response, and then in the request.

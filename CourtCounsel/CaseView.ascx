@@ -16,12 +16,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="<%=EditUrl("reports") %>"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<%=EditUrl("calendar") %>"><i class="fas fa-calendar"></i>&nbsp;Event Calendar</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<%=EditUrl("library") %>"><i class="fas fa-folder-open"></i>&nbsp;Document Repository</a>
-            </li>
             <li class="nav-item" id="li1" runat="server" visible="false">
                 <a class="nav-link" href="<%=EditUrl("admin") %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
             </li>
@@ -51,7 +45,7 @@
             </HeaderTemplate>
             <ItemTemplate>
                 <tr data-id="<%#DataBinder.Eval(Container.DataItem,"LogId").ToString() %>">
-                    <td><a href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><%#DataBinder.Eval(Container.DataItem,"DateReceived", "{0:M/d/yy}") %></a></td>
+                    <td><a  href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><%#DataBinder.Eval(Container.DataItem,"DateReceived", "{0:M/d/yy}") %></a></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"Description") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"ActionName") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"AttorneyName") %></td>

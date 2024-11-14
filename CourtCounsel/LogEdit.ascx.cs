@@ -55,6 +55,8 @@ namespace tjc.Modules.CourtCounsel
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();
                     }
+                    chkReassign.InputAttributes.Add("class", "form-check-input");
+                    chkReassign.LabelAttributes.Add("class", "form-check-label");
 
                     lnkSearch.NavigateUrl = _navigationManager.NavigateURL();
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
@@ -67,13 +69,6 @@ namespace tjc.Modules.CourtCounsel
                     if (AssignmentId > 0)
                     {
                         PopulateForm(AssignmentId);
-                        BindEvents();
-                        BindFiles();
-                    }
-                    else
-                    {
-                        pnlUpdateEvent.Visible = false;
-                        pnlUpdateFiles.Visible = false;
                     }
                     ShowMessages();
 
@@ -83,7 +78,6 @@ namespace tjc.Modules.CourtCounsel
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
-            ltEventMessage.Text = "";
         }
 
         private void ShowMessages()
@@ -309,174 +303,6 @@ namespace tjc.Modules.CourtCounsel
             args.IsValid = true;
         }
 
-        protected void cmdSubmitEvent_Click(object sender, EventArgs e)
-        {
-            var ctl = new EventController();
-            DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
-            Int32.TryParse(txtReminderDays.Text, out int reminderDays);
-            Event @event = new Event { ExternalId = hdExternalId.Value, AssignmentId = AssignmentId, Subject = txtSubject.Text, Body = txtBody.Text, StartDate = startDate, EndDate = startDate.AddDays(1), IsAllDay = true, IsReminderOn = true, ReminderMinutesBeforeStart = reminderDays * 1440, UserName = UserInfo.Email, CreatedDate = DateTime.Now, ModifiedDate = DateTime.Now, CreatedBy = UserInfo.Username, ModifiedBy = UserInfo.Username, };
-            if (!string.IsNullOrEmpty(hdExternalId.Value))
-            {
-                if (!ctl.UpdateEvent(@event, UserInfo.Email, PortalId))
-                {
-                    ltEventMessage.Text = string.Format("<div class='alert alert-danger fade-alert'><i class='fa fa-warning'></i> Could not update selected event.</div>");
-
-                }
-                ltEventMessage.Text = string.Format("<div class='alert alert-success fade-alert'><i class='fa fa-thumbs-up'></i> Selected Event Updated!</div>");
-
-            }
-            else
-            {
-                ctl.CreateEvent(@event, UserInfo.Email, PortalId);
-
-            }
-
-            BindEvents();
-        }
-        protected void rptEvents_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "delete")
-            {
-                var ctl = new EventController();
-                long.TryParse(e.CommandArgument.ToString(), out long eventId);
-                if (eventId > 0)
-                {
-                    ctl.DeleteEvent(eventId, UserInfo.Email, PortalId);
-                    BindEvents();
-                    ltEventMessage.Text = string.Format("<div class='alert alert-success fade-alert'><i class='fa fa-thumbs-up'></i> Selected Event Deleted!</div>");
-
-                }
-                else
-                {
-                    ltEventMessage.Text = string.Format("<div class='alert alert-danger fade-alert'><i class='fa fa-warning'></i> Could not delete selected event.</div>");
-                }
-            }
-            if (e.CommandName == "edit")
-            {
-                var ctl = new EventController();
-                long.TryParse(e.CommandArgument.ToString(), out long eventId);
-                if (eventId > 0)
-                {
-                    Event @event = ctl.GetEvent(eventId);
-                    txtStartDate.Text = @event.StartDate.ToString("yyyy-MM-dd");
-                    txtReminderDays.Text = @event.ReminderDays.ToString();
-                    txtSubject.Text = @event.Subject;
-                    txtBody.Text = @event.Body;
-                    hdExternalId.Value = @event.ExternalId;
-                }
-                ScriptManager.RegisterStartupScript(rptEvents, rptEvents.GetType(), "ShowEvent", "ToggleEventModal()", true);
-            }
-        }
-
-        protected void rptEvents_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if ((e.Item.ItemType == ListItemType.Item) ||
-            (e.Item.ItemType == ListItemType.AlternatingItem))
-            {
-                LinkButton cmdEditEvent = (LinkButton)e.Item.FindControl("cmdEditEvent");
-                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
-                Event @event = (Event)e.Item.DataItem;
-                if (@event.CreatedBy != UserInfo.Username)
-                {
-                    cmdEditEvent.Visible = false;
-                    cmdDelete.Visible = false;
-                }
-            }
-        }
-        protected void pnlUpdateEvent_Unload(object sender, EventArgs e)
-        {
-            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
-            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
-                new object[] { sender as UpdatePanel });
-
-        }
-
-        protected void rptEvents_ItemCreated(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
-            {
-                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
-
-                LinkButton cmdEditEvent = (LinkButton)e.Item.FindControl("cmdEditEvent");
-                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
-                scriptMan.RegisterAsyncPostBackControl(cmdDelete);
-                scriptMan.RegisterAsyncPostBackControl(cmdEditEvent);
-            }
-        }
-        protected void cmdSubmitFile_Click(object sender, EventArgs e)
-        {
-            if (uplFiles.HasFiles)
-            {
-                foreach (var postedFile in uplFiles.PostedFiles)
-                {
-                    var ctl = new FileController();
-                    File file = new File
-                    {
-                        AssignmentId = AssignmentId,
-                        CreatedBy = UserInfo.Username,
-                        CreatedDate = DateTime.Now,
-                        ModifiedBy = UserInfo.Username,
-                        ModifiedDate = DateTime.Now,
-                        DriveId = DocumentDriveId,
-                        ParentId = OrdersDriveId,
-                        FileName = postedFile.FileName
-                    };
-                    var existingFile = ctl.GetFilesByFileName(AssignmentId, postedFile.FileName);
-                    if (existingFile != null)
-                        file = existingFile;
-                    file.FileStream = postedFile.InputStream;
-                    ctl.CreateFile(file, GetCaseNumber(), PortalId);
-
-                }
-                Response.Redirect(EditUrl("aid", AssignmentId.ToString(), "logedit", "as=" + (int)RecordStatus.fileUpload), true);
-
-            }
-            BindFiles();
-        }
-        protected void rptFiles_ItemCreated(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
-            {
-                ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
-
-                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
-                scriptMan.RegisterAsyncPostBackControl(cmdDelete);
-            }
-        }
-
-        protected void rptFiles_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "delete")
-            {
-                var ctl = new FileController();
-                long.TryParse(e.CommandArgument.ToString(), out long fileId);
-                if (fileId > 0)
-                {
-                    ctl.DeleteFile(fileId,  PortalId);
-                    BindFiles();
-                    ltFileMessage.Text = string.Format("<div class='alert alert-success fade-alert'><i class='fa fa-thumbs-up'></i> Selected File Deleted!</div>");
-
-                }
-                else
-                {
-                    ltFileMessage.Text = string.Format("<div class='alert alert-danger fade-alert'><i class='fa fa-warning'></i> Could not delete selected File.</div>");
-                }
-            }
-        }
-
-        protected void rptFiles_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if ((e.Item.ItemType == ListItemType.Item) ||
-            (e.Item.ItemType == ListItemType.AlternatingItem))
-            {
-                LinkButton cmdDelete = (LinkButton)e.Item.FindControl("cmdDelete");
-                File file = (File)e.Item.DataItem;
-                if (file.CreatedBy != UserInfo.Username)
-                {
-                    cmdDelete.Visible = false;
-                }
-            }
-        }
 
         #endregion
 
@@ -518,7 +344,6 @@ namespace tjc.Modules.CourtCounsel
         }
         private void PopulateDropDowns()
         {
-            txtReminderDays.Text = "10";
             var countyCtl = new tjc.Modules.Globals.CountyController();
             var memberCtl = new MemberController();
             var timeCtl = new TimeSpanController();
@@ -641,38 +466,18 @@ namespace tjc.Modules.CourtCounsel
             txtCaseName.Text = logEntry.Description;
             drpCounty.SelectedValue = logEntry.CountyId.ToString();
             if (assignment.DateReceived.HasValue)
-                txtAssignedDate.Text = assignment.DateReceived.Value.ToString("yyyy-MM-dd");
+                txtAssignedDate.Text = assignment.DateReceived.Value.ToShortDateString();
             drpActionTaken.SelectedValue = assignment.ActionId.ToString();
             drpRequestedBy.SelectedValue = assignment.CurrentJudiciaryId.ToString();
             drpResponsible.SelectedValue = assignment.CurrentAttorneyId.ToString();
             if (assignment.MotionFiled.HasValue)
-                txtMotionFiled.Text = assignment.MotionFiled.Value.ToString("yyyy-MM-dd");
+                txtMotionFiled.Text = assignment.MotionFiled.Value.ToShortDateString();
             drpTimeSpent.SelectedValue = assignment.TimeSpanId.ToString();
             if (assignment.DateCompleted.HasValue)
-                txtDateCompleted.Text = assignment.DateCompleted.Value.ToString("yyyy-MM-dd");
+                txtDateCompleted.Text = assignment.DateCompleted.Value.ToShortDateString();
             drpStatus.SelectedValue = assignment.PhaseId.ToString();
             txtComments.Text = assignment.Comments;
         }
-
-        protected void BindData()
-        {
-
-        }
-
-        protected void BindEvents()
-        {
-            var ctl = new EventController();
-            rptEvents.DataSource = ctl.GetEventsByAssignment(AssignmentId);
-            rptEvents.DataBind();
-        }
-        protected void BindFiles()
-        {
-            var ctl = new FileController();
-            rptFiles.DataSource = ctl.GetFilesByAssignment(AssignmentId);
-            rptFiles.DataBind();
-        }
-
-
         #endregion
 
     }

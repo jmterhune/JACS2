@@ -96,15 +96,6 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.TextBox txtCaseName;
 
         /// <summary>
-        /// drpCaseType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpCaseType;
-
-        /// <summary>
         /// drpCounty control.
         /// </summary>
         /// <remarks>
@@ -112,6 +103,15 @@ namespace tjc.Modules.CourtCounsel
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList drpCounty;
+
+        /// <summary>
+        /// drpCaseType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpCaseType;
 
         /// <summary>
         /// txtAssignedDate control.
@@ -123,13 +123,13 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.TextBox txtAssignedDate;
 
         /// <summary>
-        /// drpActionTaken control.
+        /// txtMotionFiled control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpActionTaken;
+        protected global::System.Web.UI.WebControls.TextBox txtMotionFiled;
 
         /// <summary>
         /// drpRequestedBy control.
@@ -150,13 +150,13 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.DropDownList drpResponsible;
 
         /// <summary>
-        /// txtMotionFiled control.
+        /// drpActionTaken control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtMotionFiled;
+        protected global::System.Web.UI.WebControls.DropDownList drpActionTaken;
 
         /// <summary>
         /// drpTimeSpent control.
@@ -238,150 +238,6 @@ namespace tjc.Modules.CourtCounsel
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdCaseInfoChanged;
-
-        /// <summary>
-        /// pnlUpdateEvent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel pnlUpdateEvent;
-
-        /// <summary>
-        /// upProgressEvent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdateProgress upProgressEvent;
-
-        /// <summary>
-        /// rptEvents control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptEvents;
-
-        /// <summary>
-        /// ltEventMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltEventMessage;
-
-        /// <summary>
-        /// txtStartDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtStartDate;
-
-        /// <summary>
-        /// txtSubject control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSubject;
-
-        /// <summary>
-        /// txtBody control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtBody;
-
-        /// <summary>
-        /// txtReminderDays control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtReminderDays;
-
-        /// <summary>
-        /// hdExternalId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdExternalId;
-
-        /// <summary>
-        /// cmdSubmitEvent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdSubmitEvent;
-
-        /// <summary>
-        /// pnlUpdateFiles control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel pnlUpdateFiles;
-
-        /// <summary>
-        /// upProgressFiles control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdateProgress upProgressFiles;
-
-        /// <summary>
-        /// rptFiles control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptFiles;
-
-        /// <summary>
-        /// ltFileMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltFileMessage;
-
-        /// <summary>
-        /// uplFiles control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload uplFiles;
-
-        /// <summary>
-        /// cmdSubmitFile control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdSubmitFile;
 
         /// <summary>
         /// txtReason control.

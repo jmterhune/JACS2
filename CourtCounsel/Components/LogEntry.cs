@@ -28,13 +28,14 @@ namespace tjc.Modules.CourtCounsel.Components
         public string ActionName { get; set; }
         public DateTime? DateReceived { get; set; }
         public DateTime? MotionFiled { get; set; }
-
+        public DateTime? DateCompleted { get; set; }
         public string AttorneyName { get; set; }
         public string PhaseName { get; set; }
         public string Email { get; set; }
         public string JudgeEmail { get; set; }
         public int StatusTypeId { get; set; }
-
+        public int CountyId { get; set; }
+        public int PhaseId { get; set; }
         [IgnoreColumn]
         [EnumDataType(typeof(StatusTypes))]
         public string StatusType
