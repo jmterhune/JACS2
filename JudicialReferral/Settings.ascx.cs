@@ -13,6 +13,8 @@
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.JudicialReferral
 {
@@ -51,16 +53,30 @@ namespace tjc.Modules.JudicialReferral
             {
                 if (Page.IsPostBack == false)
                 {
+                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var listroles = ctl.GetRoles(PortalId);
+                    foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles.OrderBy(jud => jud.RoleName)
+)
+                    {
+                        drpJudgeRole.Items.Add(new ListItem(r.RoleName));
+                        drpJaRole.Items.Add(new ListItem(r.RoleName));
+                        drpCourtCounsel.Items.Add(new ListItem(r.RoleName));
+                    }
+
                     if (Settings.Contains("JudgeRole"))
-                        txtJudgeRole.Text = Settings["JudgeRole"].ToString();
+                        drpJudgeRole.SelectedValue = Settings["JudgeRole"].ToString();
                     if (Settings.Contains("JaRole"))
-                        txtJaRole.Text = Settings["JaRole"].ToString();
+                        drpJaRole.SelectedValue = Settings["JaRole"].ToString();
                     if (Settings.Contains("CounselRole"))
-                        txtCounselRole.Text = Settings["CounselRole"].ToString();
+                        drpCourtCounsel.SelectedValue = Settings["CounselRole"].ToString();
                     if (Settings.Contains("CourtCounselEmail"))
                         txtCounselEmail.Text = Settings["CourtCounselEmail"].ToString();
+                    if (Settings.Contains("CourtCounselUrl"))
+                        txtCourtCounselRefferalUrl.Text = Settings["CourtCounselUrl"].ToString();
                     if (Settings.Contains("FolderName"))
                         txtFolderName.Text = Settings["FolderName"].ToString();
+                    if (Settings.Contains("ccModuleId"))
+                        txtModuleId.Text = Settings["ccModuleId"].ToString();
 
                 }
             }
@@ -81,11 +97,13 @@ namespace tjc.Modules.JudicialReferral
             {
                 var modules = new ModuleController();
 
-                modules.UpdateModuleSetting(ModuleId, "JudgeRole", txtJudgeRole.Text);
-                modules.UpdateModuleSetting(ModuleId, "JaRole", txtJaRole.Text);
-                modules.UpdateModuleSetting(ModuleId, "CounselRole", txtCounselRole.Text);
+                modules.UpdateModuleSetting(ModuleId, "JudgeRole", drpJudgeRole.SelectedValue);
+                modules.UpdateModuleSetting(ModuleId, "JaRole", drpJaRole.SelectedValue);
+                modules.UpdateModuleSetting(ModuleId, "CounselRole", drpCourtCounsel.SelectedValue);
                 modules.UpdateModuleSetting(ModuleId, "FolderName", txtFolderName.Text);
                 modules.UpdateModuleSetting(ModuleId, "CourtCounselEmail", txtCounselEmail.Text);
+                modules.UpdateModuleSetting(ModuleId, "CourtCounselUrl", txtCourtCounselRefferalUrl.Text);
+                modules.UpdateModuleSetting(ModuleId, "ccModuleId", txtModuleId.Text);
             }
             catch (Exception exc) //Module failed to load
             {

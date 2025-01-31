@@ -125,6 +125,7 @@ namespace tjc.Modules.MediationStatistics
                 ctl.DeleteMediator(mediatorId);
                 BindList();
             }
+           
             if (e.CommandName == "edit")
             {
                 Mediator mediator = ctl.GetMediator(mediatorId);
@@ -136,7 +137,7 @@ namespace tjc.Modules.MediationStatistics
                 ScriptManager.RegisterStartupScript(rptMediator, rptMediator.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
             }
         }
- protected void rptMediator_ItemCreated(object sender, RepeaterItemEventArgs e)
+        protected void rptMediator_ItemCreated(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
@@ -147,10 +148,7 @@ namespace tjc.Modules.MediationStatistics
                 scriptMan.RegisterAsyncPostBackControl(cmdDelete);
                 scriptMan.RegisterAsyncPostBackControl(cmdEdit);
             }
-
         }
         #endregion
-
-       
     }
 }

@@ -1,3 +1,14 @@
+.aspNetDisabled{color:#333 !important}
+*:disabled {
+    opacity: 1 !important
+}
+.form-check-input[disabled] ~ .form-check-label, .form-check-input:disabled ~ .form-check-label{
+    opacity:1 !important
+}
+.form-check-input:checked:disabled {
+    background-color: #555 !important;
+    border-color: #555 !important;
+}
 .list-group-horizontal-sm .list-group-item {
     padding: 0.375rem 0.75rem !important;
 }
@@ -21,7 +32,20 @@ label em {
     margin-left: 20px;
     margin-bottom:0px
 }
-
+.delete-item{ cursor:pointer}
+#txtCaseType {
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem
+}
+#txtYear {
+    width: 4rem;
+    min-width: 4rem;
+    max-width: 4rem;
+}
+#txtCaseSequence {
+    min-width: 6rem;
+}
 .custom-validator {
     font-weight: bold
 }

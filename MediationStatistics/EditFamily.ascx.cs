@@ -234,6 +234,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void PopulateSessionInformation()
         {
+            ClearSession();
             var ctl = new AttorneyController();
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
@@ -383,6 +384,22 @@ namespace tjc.Modules.MediationStatistics
         }
         private void ClearSession()
         {
+            txtPetitionerName.Text = string.Empty;      
+            txtPetitionerEmail.Text = string.Empty;
+            txtPetitionerPhone.Text = string.Empty;
+            txtPetitionerExtension.Text = string.Empty;
+            txtRespondentName.Text = string.Empty;
+            txtRespondentEmail.Text = string.Empty;
+            txtRespondentPhone.Text = string.Empty;
+            txtRespondentExtension.Text = string.Empty;
+            drpCaseType.SelectedIndex = 0;
+            txtOrderReferral.Text = string.Empty;
+            txtMediationDate.Text = string.Empty;
+            drpFeeAmount.SelectedIndex = 0;
+            drpPetitionerFeesPaid.SelectedIndex = 0;
+            drpRespondentFeesPaid.SelectedIndex = 0;
+            drpPetitionerFeesOwed.SelectedIndex = 0;
+            drpRespondentFeesOwed.SelectedIndex = 0;
             chkProSePetitioner.Checked = false;
             chkProSeRespondent.Checked = false;
             chkFeeJudgmentEntered.Checked = false;
@@ -391,6 +408,8 @@ namespace tjc.Modules.MediationStatistics
             chkTelephoneSession.Checked = false;
             chkArbitrationReferral.Checked = false;
             chkInterpreterRequested.Checked = false;
+            hdPetitionerAttorneyId.Value = string.Empty;
+            hdRespondentAttorneyId.Value = string.Empty;
             chkOTSC.Checked = false;
             chkInmate.Checked = false;
             chkPetitionerFta.Checked = false;
@@ -498,6 +517,7 @@ namespace tjc.Modules.MediationStatistics
             {
                 ctlSession.CreateSession(session);
             }
+            hdSessionId.Value = session.SessionId.ToString();
             if (session.SessionId > 0)
             {
                 ctlSession.DeleteAllSessionIssues(session.SessionId);
@@ -570,9 +590,8 @@ namespace tjc.Modules.MediationStatistics
             Mediator mediator = ctl.GetMediator(mediatorId);
             return mediator.MediatorName;
         }
-
-
         #endregion
+
         #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -666,6 +685,12 @@ namespace tjc.Modules.MediationStatistics
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+        protected void cmdDelete_Click(object sender, EventArgs e)
+        {
+            var ctl = new CaseController();
+            ctl.DeleteCase(CaseID);
+            Response.Redirect(_navigationManager.NavigateURL());
+        }
         protected void pnlSession_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -698,7 +723,6 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
-            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -755,7 +779,6 @@ namespace tjc.Modules.MediationStatistics
             }
 
         }
-
         protected void rptEvent_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
@@ -770,7 +793,6 @@ namespace tjc.Modules.MediationStatistics
             }
 
         }
-
         protected void rptEvent_ItemCreated(object sender, RepeaterItemEventArgs e)
         {
             ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);

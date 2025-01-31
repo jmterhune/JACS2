@@ -187,7 +187,7 @@
                     <div class="row">
                         <div class="col-auto">
                             <asp:Label ID="lblMembership" runat="server" AssociatedControlID="lsMembership">Group Membersip</asp:Label>
-                            <asp:ListBox ID="lsMembership" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupId" runat="server" Rows="10" />
+                            <asp:ListBox ID="lsMembership" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupID" runat="server" Rows="10" />
                         </div>
                         <div class="col-1 list-commands">
                             <div class="text-center mt-5 mb-3">
@@ -199,7 +199,7 @@
                         </div>
                         <div class="col-auto">
                             <asp:Label ID="lblGroups" runat="server" AssociatedControlID="lsGroups">Available Groups</asp:Label>
-                            <asp:ListBox ID="lsGroups" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupId" runat="server" Rows="10" />
+                            <asp:ListBox ID="lsGroups" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupID" runat="server" Rows="10" />
                         </div>
                     </div>
                 </ContentTemplate>
@@ -208,7 +208,7 @@
     </div>
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jQuery/jquery.mask.js" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */

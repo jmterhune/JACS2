@@ -43,7 +43,7 @@
                             </div>
                         </ProgressTemplate>
                     </asp:UpdateProgress>
-                       <asp:Literal ID="ltMessage" runat="server" />
+                    <asp:Literal ID="ltMessage" runat="server" />
                     <asp:Repeater ID="rptEmployees" runat="server">
                         <HeaderTemplate>
                             <table id="tblEmployees" class="table table-striped">
@@ -95,19 +95,38 @@
                             <asp:HyperLink ID="lnkCancel" Visible="false" runat="server" CssClass="btn btn-danger"><i class="fas fa-undo"></i> Cancel</asp:HyperLink>
                         </div>
                     </div>
+                    <div class="mt-3 border rounded bg-light text-dark p-2">
+                        <div class="row">
+                            <div class="col-auto">
+                                <asp:Label Text="Current Supervisor" ID="lblOldSupervisor" AssociatedControlID="drpOldSupervisor" runat="server" />
+                                <asp:DropDownList runat="server" ID="drpOldSupervisor" CssClass="form-control" DataTextField="DataText" DataValueField="DataValue" AppendDataBoundItems="true">
+                                    <asp:ListItem Text="<Select Old Supervisor>" Value="" />
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-auto">
+                                <asp:Label Text="New Supervisor" ID="lblNewSupervisor" AssociatedControlID="drpNewSupervisor" runat="server" />
+                                <asp:DropDownList runat="server" ID="drpNewSupervisor" CssClass="form-control" DataTextField="DataText" DataValueField="DataValue" AppendDataBoundItems="true">
+                                    <asp:ListItem Text="<Select New Supervisor>" Value="" />
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-auto">
+                                <asp:Button TabIndex="0" CssClass="btn btn-primary mt-3" Text="Swith Supervisors" ID="cmdSwithSupervisor" CausesValidation="false" ValidationGroup="switch" OnClick="cmdSwithSupervisor_Click" runat="server" />
+                            </div>
+                        </div>
+                    </div>
                 </ContentTemplate>
                 <Triggers>
                     <asp:AsyncPostBackTrigger ControlID="cmdAddContacts" EventName="Click" />
-                     <asp:AsyncPostBackTrigger ControlID="cmdSyncAll" EventName="Click" />
+                    <asp:AsyncPostBackTrigger ControlID="cmdSyncAll" EventName="Click" />
                     <asp:AsyncPostBackTrigger ControlID="chkInactiveEmployees" EventName="CheckedChanged" />
                 </Triggers>
             </asp:UpdatePanel>
         </div>
     </div>
 </div>
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
     (function ($, Sys) {

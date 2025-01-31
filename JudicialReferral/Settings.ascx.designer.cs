@@ -24,13 +24,13 @@ namespace tjc.Modules.JudicialReferral
         protected global::System.Web.UI.UserControl lblJudgeRole;
 
         /// <summary>
-        /// txtJudgeRole control.
+        /// drpJudgeRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtJudgeRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpJudgeRole;
 
         /// <summary>
         /// lblJaRole control.
@@ -42,13 +42,13 @@ namespace tjc.Modules.JudicialReferral
         protected global::System.Web.UI.UserControl lblJaRole;
 
         /// <summary>
-        /// txtJaRole control.
+        /// drpJaRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtJaRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpJaRole;
 
         /// <summary>
         /// lblCounselRole control.
@@ -60,13 +60,13 @@ namespace tjc.Modules.JudicialReferral
         protected global::System.Web.UI.UserControl lblCounselRole;
 
         /// <summary>
-        /// txtCounselRole control.
+        /// drpCourtCounsel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCounselRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpCourtCounsel;
 
         /// <summary>
         /// lblCounselEmail control.
@@ -87,6 +87,24 @@ namespace tjc.Modules.JudicialReferral
         protected global::System.Web.UI.WebControls.TextBox txtCounselEmail;
 
         /// <summary>
+        /// lblCourtCounselRefferalUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblCourtCounselRefferalUrl;
+
+        /// <summary>
+        /// txtCourtCounselRefferalUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCourtCounselRefferalUrl;
+
+        /// <summary>
         /// lblFolder control.
         /// </summary>
         /// <remarks>
@@ -103,5 +121,23 @@ namespace tjc.Modules.JudicialReferral
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtFolderName;
+
+        /// <summary>
+        /// lblModuleId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblModuleId;
+
+        /// <summary>
+        /// txtModuleId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtModuleId;
     }
 }

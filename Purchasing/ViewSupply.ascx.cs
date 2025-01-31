@@ -57,19 +57,19 @@ namespace tjc.Modules.Purchasing
         {
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
-            var ctl = new StampOrderController();
-            var orders = ctl.GetOrders(startDate, endDate.AddDays(1));
+            var ctl = new SupplyOrderController();
+            var orders = ctl.GetSupplyOrders(startDate, endDate.AddDays(1));
             if (chkShowCompleted.Checked)
             {
-                rptOrders.DataSource = orders;
+                rptOrders.DataSource = orders.OrderByDescending(x=>x.OrderID);
             }
             else
             {
-                rptOrders.DataSource = orders.Where(x => x.CompletedDate == null);
+                rptOrders.DataSource = orders.Where(x => x.CompletedDate.HasValue == false).OrderByDescending(x => x.OrderID);
             }
-            rptOrders.DataSource = orders;
             rptOrders.DataBind();
         }
+
         protected void cmdSearch_Click(object sender, EventArgs e)
         {
             BindData();
@@ -78,29 +78,27 @@ namespace tjc.Modules.Purchasing
         protected void rptOrders_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int orderId = int.Parse(e.CommandArgument.ToString());
-            var ctl = new StampOrderController();
+            var ctl = new SupplyOrderController();
 
             if (e.CommandName == "toggle")
             {
-                var objOrder = ctl.GetStampOrder(orderId);
+                var objOrder = ctl.GetSupplyOrder(orderId);
                 if (objOrder != null)
                 {
                     if (objOrder.CompletedDate != null)
                     {
                         objOrder.CompletedDate = null;
-                        objOrder.Status = OrderStatus.@new;
                     }
                     else
                     {
                         objOrder.CompletedDate = DateTime.Now;
-                        objOrder.Status = OrderStatus.completed;
                     }
-                    ctl.UpdateStampOrder(objOrder);
+                    ctl.UpdateSupplyOrder(objOrder);
                 }
             }
             if (e.CommandName == "delete")
             {
-                ctl.DeleteStampOrder(orderId);
+                ctl.DeleteSupplyOrder(orderId);
             }
             BindData();
         }
@@ -113,7 +111,7 @@ namespace tjc.Modules.Purchasing
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
-                Components.StampOrder item = (Components.StampOrder)e.Item.DataItem;
+                Components.SupplyOrder item = (Components.SupplyOrder)e.Item.DataItem;
                 HyperLink lnkDetails = (HyperLink)e.Item.FindControl("lnkDetails");
                 lnkDetails.NavigateUrl = EditUrl("oid", item.OrderID.ToString(), "detail");
             }

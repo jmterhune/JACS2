@@ -40,7 +40,7 @@ namespace tjc.Modules.JudicialReferral
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
-       
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -82,7 +82,7 @@ namespace tjc.Modules.JudicialReferral
             var AttacmentIds = hdAttachmentIds.Value.Split(',').ToList();
             Int32.TryParse(drpJudge.SelectedValue, out int judgeId);
             DateTime.TryParse(txtMotionDate.Text, out DateTime mDate);
-            Int32.TryParse(txtCaseNumber.Text, out int caseInt);
+            Int32.TryParse(txtCaseSequence.Text, out int caseInt);
 
             string caseNumber = string.Format("{0}-{1}-{2}-{3:000000}", drpCounty.SelectedValue, txtYear.Text, txtCaseType.Text, caseInt);
             var objReferral = new Components.JudicialReferral
@@ -112,9 +112,12 @@ namespace tjc.Modules.JudicialReferral
             ctl.CreateReferral(objReferral);
             foreach (string id in AttacmentIds)
             {
-                var attachment = aCtl.GetAttachment(Int32.Parse(id));
-                attachment.ReferralID = objReferral.ReferralID;
-                aCtl.UpdateAttachment(attachment);
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var attachment = aCtl.GetAttachment(Int32.Parse(id));
+                    attachment.ReferralID = objReferral.ReferralID;
+                    aCtl.UpdateAttachment(attachment);
+                }
             }
             SendToJudge(objReferral);
             Response.Redirect(_navigationManager.NavigateURL());

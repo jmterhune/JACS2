@@ -90,10 +90,10 @@ namespace tjc.Modules.EmployeeDB
             race.Description = txtDescription.Text;
             race.RaceCode = txtRaceCode.Text;
             race.LastModifiedDate = DateTime.Now;
-            race.LastModifiedById = UserId;
+            race.LastModifiedByID = UserId;
             if (isNew)
             {
-                race.CreatedById = UserId;
+                race.CreatedByID = UserId;
                 race.CreatedDate = DateTime.Now;
                 ctl.CreateRace(race);
             }

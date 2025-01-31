@@ -83,7 +83,7 @@ namespace tjc.Modules.EmployeeDB.Components
             List<string> accessGroups = new List<string>();
             foreach (Group group in employee.Groups)
             {
-                accessGroups.Add(group.GroupId.ToString());
+                accessGroups.Add(group.GroupID.ToString());
             }
 
             ContactRequest contactRequest = new ContactRequest
@@ -109,7 +109,7 @@ namespace tjc.Modules.EmployeeDB.Components
                 contact = client.POSTContactsAsync(swnServiceIdentifier, swnSubscriptionKey, authorization, contactRequest).Result;
                 if (employee.Groups.Count() > 0)
                 {
-                    List<string> groups = employee.Groups.Select(x => x.GroupId.ToString()).ToList();
+                    List<string> groups = employee.Groups.Select(x => x.GroupID.ToString()).ToList();
                     AddContactToSwnGroup(groups, employee.EmployeeId.ToString(), swnServiceIdentifier, swnSubscriptionKey, token);
                 }
             }
@@ -118,24 +118,24 @@ namespace tjc.Modules.EmployeeDB.Components
                 contact = client.PUTContactsIdAsync(employee.EmployeeId.ToString(), swnServiceIdentifier, swnSubscriptionKey, authorization, contactRequest).Result;
                 if (employee.Groups.Count() > 0)
                 {
-                    List<string> groups = employee.Groups.Select(x => x.GroupId.ToString()).ToList();
+                    List<string> groups = employee.Groups.Select(x => x.GroupID.ToString()).ToList();
                     AddContactToSwnGroup(groups, employee.EmployeeId.ToString(), swnServiceIdentifier, swnSubscriptionKey, token);
                 }
             }
             return contact;
         }
-        public static void AddContactToSwnGroup(List<string> groupIds, string employeeId, string swnServiceIdentifier, string swnSubscriptionKey, string token)
+        public static void AddContactToSwnGroup(List<string> GroupIDs, string employeeId, string swnServiceIdentifier, string swnSubscriptionKey, string token)
         {
             SwnClient client = new SwnClient(new HttpClient());
             var authorization = new AuthenticationHeaderValue("Bearer", token);
-            GroupMemberGroupModel addGroupMemberGroup = new GroupMemberGroupModel { Groups = groupIds };
+            GroupMemberGroupModel addGroupMemberGroup = new GroupMemberGroupModel { Groups = GroupIDs };
             client.POSTContactsIdGroupsAsync(employeeId, swnServiceIdentifier, swnSubscriptionKey, authorization, addGroupMemberGroup).Wait();
         }
-        public static void RemoveContactFromSwnGroup(string groupId, string employeeId, string swnServiceIdentifier, string swnSubscriptionKey, string token)
+        public static void RemoveContactFromSwnGroup(string GroupID, string employeeId, string swnServiceIdentifier, string swnSubscriptionKey, string token)
         {
             SwnClient client = new SwnClient(new HttpClient());
             var authorization = new AuthenticationHeaderValue("Bearer", token);
-            client.IdAsync(employeeId, groupId, swnServiceIdentifier, swnSubscriptionKey, authorization).Wait();
+            client.IdAsync(employeeId, GroupID, swnServiceIdentifier, swnSubscriptionKey, authorization).Wait();
 
         }
         public static void DeleteSwnContactById(string employeeId, string swnServiceIdentifier, string swnSubscriptionKey, string token)
@@ -197,11 +197,11 @@ namespace tjc.Modules.EmployeeDB.Components
             return sessionToken.Token;
 
         }
-        public static SwgGroupDetails GetSwnGroup(string groupId, string swnServiceIdentifier, string swnSubscriptionKey, string token)
+        public static SwgGroupDetails GetSwnGroup(string GroupID, string swnServiceIdentifier, string swnSubscriptionKey, string token)
         {
             SwnClient client = new SwnClient(new HttpClient());
             var authorization = new AuthenticationHeaderValue("Bearer", token);
-            SwgGroupDetails groupDetails = client.GETGroupsIdAsync(groupId, swnServiceIdentifier, swnSubscriptionKey, authorization).Result;
+            SwgGroupDetails groupDetails = client.GETGroupsIdAsync(GroupID, swnServiceIdentifier, swnSubscriptionKey, authorization).Result;
             return groupDetails;
         }
         public static SwgGroupDetails AddSwnGroup(Group group, GroupMemberModel groupModel, string swnServiceIdentifier, string swnSubscriptionKey, string token, bool isNew)
@@ -211,7 +211,7 @@ namespace tjc.Modules.EmployeeDB.Components
 
             ContactGroupRequest contactGroupRequest = new ContactGroupRequest
             {
-                Id = group.GroupId.ToString(),
+                Id = group.GroupID.ToString(),
                 Name = group.GroupName,
                 Description = group.GroupName,
                 Type = "Static",
@@ -225,7 +225,7 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             else
             {
-                var emptyContent = client.PUTGroupsIdAsync(group.GroupId.ToString(), swnServiceIdentifier, swnSubscriptionKey, authorization, contactGroupRequest).Result;
+                var emptyContent = client.PUTGroupsIdAsync(group.GroupID.ToString(), swnServiceIdentifier, swnSubscriptionKey, authorization, contactGroupRequest).Result;
                 return new SwgGroupDetails();
             }
         }

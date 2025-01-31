@@ -14,10 +14,13 @@
                 <a class="nav-link" href="<%=EditUrl("logEdit") %>"><i class="fas fa-pencil-alt"></i>&nbsp;Data Entry</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="<%=EditUrl("referrals") %>"><i class="fas fa-gavel"></i>&nbsp;Referrals</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="<%=EditUrl("reports") %>"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
             </li>
             <li class="nav-item" id="li1" runat="server" visible="false">
-                <a class="nav-link" href="<%=EditUrl("admin") %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
+                <a class="nav-link" href="<%=MemberListUrl %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<%=SharePointSiteURL %>"><i class="fas fa-home"></i>&nbsp;Team Site</a>

@@ -237,6 +237,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void PopulateSessionInformation()
         {
+            ClearSession();
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
                 hdSessionId.Value = session.SessionId.ToString();
@@ -303,6 +304,9 @@ namespace tjc.Modules.MediationStatistics
         }
         private void ClearSession()
         {
+            txtReferralSource.Text = string.Empty;
+            txtCaseReceived.Text = string.Empty;
+            txtMediationDate.Text = string.Empty;
             chkTelephoneSession.Checked = false;
             foreach (ListItem item in clsSecondaryIssues.Items)
             {
@@ -399,6 +403,7 @@ namespace tjc.Modules.MediationStatistics
             {
                 ctlSession.CreateSession(session);
             }
+            hdSessionId.Value = session.SessionId.ToString();
             if (session.SessionId > 0)
             {
                 ctlSession.DeleteAllSessionIssues(session.SessionId);
@@ -532,6 +537,12 @@ namespace tjc.Modules.MediationStatistics
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+        protected void cmdDelete_Click(object sender, EventArgs e)
+        {
+            var ctl = new CaseController();
+            ctl.DeleteCase(CaseID);
+            Response.Redirect(_navigationManager.NavigateURL());
+        }
         protected void pnlSession_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -564,7 +575,6 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
-            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();

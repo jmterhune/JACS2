@@ -88,13 +88,13 @@ namespace tjc.Modules.EmployeeDB
                 if (item.Selected)
                 {
                     item.Selected = false;
-                    Int32.TryParse(item.Value, out int groupId);
+                    Int32.TryParse(item.Value, out int GroupID);
                     lsMembership.Items.Add(item);
-                    GroupMembership groupMembership = new GroupMembership { EmployeeId = EmployeeId, GroupId = groupId, CreatedById = UserId, CreatedDate = DateTime.Now, LastModifiedById = UserId, LastModifiedDate = DateTime.Now };
+                    GroupMembership groupMembership = new GroupMembership { EmployeeId = EmployeeId, GroupID = GroupID, CreatedByID = UserId, CreatedDate = DateTime.Now, LastModifiedByID = UserId, LastModifiedDate = DateTime.Now };
                     ctl.CreateGroupMembership(groupMembership);
-                    Components.Group group = ctl.GetGroup(groupId);
+                    Components.Group group = ctl.GetGroup(GroupID);
                     if (group != null && group.IsSwnGroup)
-                        groups.Add(groupId.ToString());
+                        groups.Add(GroupID.ToString());
                 }
             }
             try
@@ -121,22 +121,22 @@ namespace tjc.Modules.EmployeeDB
             {
                 if (item.Selected)
                 {
-                    Int32.TryParse(item.Value, out int groupId);
+                    Int32.TryParse(item.Value, out int GroupID);
                     item.Selected = false;
                     lsGroups.Items.Add(item);
-                    GroupMembership groupMembership = ctl.GetGroupMembership(EmployeeId, groupId);
+                    GroupMembership groupMembership = ctl.GetGroupMembership(EmployeeId, GroupID);
                     if (groupMembership != null)
                     {
                         ctl.DeleteGroupMembership(groupMembership);
-                        Components.Group group = ctl.GetGroup(groupId);
+                        Components.Group group = ctl.GetGroup(GroupID);
                         try
                         {
                             if (group != null && group.IsSwnGroup)
-                                SwnInterface.RemoveContactFromSwnGroup(groupId.ToString(), EmployeeId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
+                                SwnInterface.RemoveContactFromSwnGroup(GroupID.ToString(), EmployeeId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
                         }
                         catch (Exception exc)
                         {
-                            string process = string.Format("Remove Group Id:{0} from Contact Id:{1}", groupId, EmployeeId);
+                            string process = string.Format("Remove Group Id:{0} from Contact Id:{1}", GroupID, EmployeeId);
                             SwnLog swnLog = new SwnLog { CreatedBy = UserId, CreatedDate = DateTime.Now, Exception = exc.InnerException.Message, Process = process };
                             var logCtl = new SwnLogController();
                             logCtl.CreateSwnLog(swnLog);
@@ -169,7 +169,7 @@ namespace tjc.Modules.EmployeeDB
             t.FirstName = txtFirstName.Text;
             t.LastName = txtLastName.Text;
             t.JobTitle = txtTitle.Text;
-            t.LastModifiedById = UserId;
+            t.LastModifiedByID = UserId;
             t.LastModifiedDate = DateTime.Now;
             t.MiddleInitial = txtMiddleInitial.Text;
             t.PersonalEmail = txtPersonalEmail.Text;
@@ -182,7 +182,7 @@ namespace tjc.Modules.EmployeeDB
             if (EmployeeId <= 0)
             {
                 t.CreatedDate = DateTime.Now;
-                t.CreatedById = UserId;
+                t.CreatedByID = UserId;
                 tc.CreateEmployee(t);
             }
             else

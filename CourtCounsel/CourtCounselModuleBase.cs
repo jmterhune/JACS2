@@ -10,13 +10,50 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Framework.JavaScriptLibraries;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.CourtCounsel
 {
     public class CourtCounselModuleBase : PortalModuleBase
     {
+        private readonly INavigationManager _navigationManager;
+        public CourtCounselModuleBase()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+        }
+        public string AdminRole
+        {
+            get
+            {
+                if (Settings.Contains("AdminRole"))
+                    return Settings["AdminRole"].ToString();
+                return "";
+            }
+        }
+        public string JudgeRole
+        {
+            get
+            {
+                if (Settings.Contains("JudgeRole"))
+                    return Settings["JudgeRole"].ToString();
+                return "Judge";
+            }
+        }
+        public int ReferralID
+        {
+            get
+            {
+                var qs = Request.QueryString["rid"];
+                if (qs != null)
+                    return Convert.ToInt32(qs);
+                return -1;
+            }
+        }
         public int AssignmentId
         {
             get
@@ -36,7 +73,7 @@ namespace tjc.Modules.CourtCounsel
                 {
                     return DateTime.Parse(ViewState["CurrentDate"].ToString());
                 }
-               return DateTime.Now;
+                return DateTime.Now;
             }
             set
             {
@@ -83,13 +120,13 @@ namespace tjc.Modules.CourtCounsel
             get
             {
                 var qs = Request.QueryString["ls"];
-               
+
                 if (qs != null)
                 {
                     Int32.TryParse(qs, out int status);
                     return (RecordStatus)status;
                 }
-                    
+
                 return RecordStatus.other;
             }
 
@@ -110,28 +147,27 @@ namespace tjc.Modules.CourtCounsel
             }
 
         }
-        public string AdminRole
+        public bool IsAdmin
         {
             get
             {
-                if (Settings.Contains("AdminRole"))
-                    return Settings["AdminRole"].ToString();
-
-                return "";
+                if (UserId > 0)
+                {
+                    return UserInfo.IsInRole(AdminRole);
+                }
+                else { return false; }
             }
-
         }
-        public string ApiRoot
-        {
-            get
-            {
-                if (Settings.Contains("ApiRoot"))
-                    return Settings["ApiRoot"].ToString();
 
-                return "https://api.test.jud12.local/api/v1/cc/";
-            }
+        public enum RecordStatus
+        { created = 0, updated = 1, deleted = 2, future = 3, other = 4, fileUpload = 5 }
+        public string CaseListUrl { get { return _navigationManager.NavigateURL(); } }
+        public string MemberListUrl { get { return EditUrl("member"); } }
+        public string PhasesListUrl { get { return EditUrl("phase"); } }
+        public string TimeSpanListUrl { get { return EditUrl("timespan"); } }
+        public string ActionListUrl { get { return EditUrl("action"); } }
+        public string CaseTypeListUrl { get { return EditUrl("casetype"); } }
 
-        }
         public int DefaultReminderPeriod
         {
             get
@@ -206,9 +242,7 @@ namespace tjc.Modules.CourtCounsel
                 return "";
             }
         }
-      
-        public enum RecordStatus
-        {created=0,updated=1,deleted=2,future=3,other=4,fileUpload=5 }
+
     }
-   
+
 }

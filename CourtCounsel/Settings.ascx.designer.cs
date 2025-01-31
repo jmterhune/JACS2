@@ -24,31 +24,31 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.UserControl lblAdminRole;
 
         /// <summary>
-        /// txtAdminRole control.
+        /// drpAdminRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAdminRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpAdminRole;
 
         /// <summary>
-        /// lblDefaultReminderPeriod control.
+        /// lblJudgeRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UserControl lblDefaultReminderPeriod;
+        protected global::System.Web.UI.UserControl lblJudgeRole;
 
         /// <summary>
-        /// txtDefaultReminderPeriod control.
+        /// drpJudgeRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDefaultReminderPeriod;
+        protected global::System.Web.UI.WebControls.DropDownList drpJudgeRole;
 
         /// <summary>
         /// lblSharePointSiteURL control.
@@ -85,6 +85,24 @@ namespace tjc.Modules.CourtCounsel
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtId;
+
+        /// <summary>
+        /// lblDefaultReminderPeriod control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblDefaultReminderPeriod;
+
+        /// <summary>
+        /// txtDefaultReminderPeriod control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDefaultReminderPeriod;
 
         /// <summary>
         /// lblDocumentLibraryName control.

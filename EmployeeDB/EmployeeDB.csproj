@@ -16,7 +16,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>tjc.Modules.EmployeeDB</RootNamespace>
     <AssemblyName>tjc.Modules.EmployeeDB</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -333,7 +333,6 @@
     <ProjectReference Include="..\Globals\Globals.csproj">
       <Project>{7066eacb-e672-4110-b73d-c1a230b16eab}</Project>
       <Name>Globals</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

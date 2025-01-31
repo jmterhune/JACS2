@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 
 namespace tjc.Modules.Purchasing.Components
 {
@@ -24,6 +25,15 @@ namespace tjc.Modules.Purchasing.Components
         public DateTime? CompletedDate { get; set; }
         public OrderStatus Status { get; set; }
         public string EmailAddress { get; set; }
+        [IgnoreColumn]
+        public IEnumerable<StampOrderAttachment> StampOrderAttachments
+        {
+            get
+            {
+                var ctl = new AttachmentController();
+                return ctl.GetStampAttachmentsByOrderId(OrderID);
+            }
+        }
     }
     public enum OrderStatus
     {

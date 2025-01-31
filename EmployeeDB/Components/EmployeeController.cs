@@ -129,99 +129,108 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
+        public IEnumerable<Employee> SwitchSupervisorBulk(int oldSupervisor,int newSupervisor)
+        {
+            IEnumerable<Employee> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<Employee>(System.Data.CommandType.StoredProcedure, "tjc_employee_switch_supervisor_bulk", oldSupervisor,newSupervisor);
+            }
+            return t;
+        }
 
         #region EeoTotals
-        public int GetGenderCount(int jobGroupId,string gender,DateTime startDate, DateTime endDate)
+        public int GetGenderCount(int jobGroupID,string gender,DateTime startDate, DateTime endDate)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee Where JobGroupId = @0 " +
+                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee Where JobGroupID = @0 " +
                     "AND isEmployee = 1 AND Gender = @1 AND AgencyOfEmployment <> 'O' AND (HireDate <= @3 AND (TerminationDate IS NULL OR TerminationDate >= @2))",
-                    jobGroupId,gender,startDate,endDate);
+                    jobGroupID,gender,startDate,endDate);
             }
             return phoneCount;
         }
-        public int GetRaceCount(int jobGroupId, string race, DateTime startDate, DateTime endDate)
+        public int GetRaceCount(int jobGroupID, string race, DateTime startDate, DateTime endDate)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee Where JobGroupId = @0 " +
+                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee Where JobGroupID = @0 " +
                     "AND isEmployee = 1 AND Race = @1 AND AgencyOfEmployment <> 'O' AND (HireDate <= @3 AND (TerminationDate IS NULL OR TerminationDate >= @2))", 
-                    jobGroupId, race, startDate, endDate);
+                    jobGroupID, race, startDate, endDate);
             }
             return phoneCount;
         }
-        public int GetGenderHireCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate)
+        public int GetGenderHireCount(int jobGroupID, string gender, DateTime startDate, DateTime endDate)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee Where JobGroupId = @0 " +
+                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee Where JobGroupID = @0 " +
                     "AND isEmployee = 1 AND Gender = @1 AND AgencyOfEmployment <> 'O' AND (HireDate <= @3 AND (TerminationDate IS NULL OR TerminationDate >= @2))",
-                    jobGroupId, gender, startDate, endDate);
+                    jobGroupID, gender, startDate, endDate);
             }
             return phoneCount;
         }
-        public int GetRaceHireCount(int jobGroupId, string race, DateTime startDate, DateTime endDate)
+        public int GetRaceHireCount(int jobGroupID, string race, DateTime startDate, DateTime endDate)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee Where JobGroupId = @0 " +
+                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee Where JobGroupID = @0 " +
                     "AND isEmployee = 1 AND Race = @1 AND AgencyOfEmployment <> 'O' AND (HireDate <= @3 AND (TerminationDate IS NULL OR TerminationDate >= @2))"
-                    , jobGroupId, race, startDate, endDate);
+                    , jobGroupID, race, startDate, endDate);
             }
             return phoneCount;
         }
-        public int GetRacePromotionTransferCount(int jobGroupId, string race, DateTime startDate, DateTime endDate,string entryType)
+        public int GetRacePromotionTransferCount(int jobGroupID, string race, DateTime startDate, DateTime endDate,string entryType)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
                 phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee " +
-                    "Where JobGroupId = @0 AND isEmployee = 1 AND Race = @1 AND AgencyOfEmployment <> 'O' " +
+                    "Where JobGroupID = @0 AND isEmployee = 1 AND Race = @1 AND AgencyOfEmployment <> 'O' " +
                     "AND (HireDate <= @3 AND (TerminationDate IS NULL OR TerminationDate >= @2) " +
                     "AND SocialSecurityNumber IN (Select SocialSecurityNumber From tjc_employee_position_history " +
                     "WHERE EntryType=@4 AND startDate >= @2 AND startDate <= @3))", 
-                    jobGroupId, race, startDate, endDate,entryType);
+                    jobGroupID, race, startDate, endDate,entryType);
             }
             return phoneCount;
         }
-        public int GetGenderPromotionTransferCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate, string entryType)
+        public int GetGenderPromotionTransferCount(int jobGroupID, string gender, DateTime startDate, DateTime endDate, string entryType)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
                 phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee " +
-                    "Where JobGroupId = @0 AND isEmployee = 1 AND Gender = @1 AND AgencyOfEmployment <> 'O' " +
+                    "Where JobGroupID = @0 AND isEmployee = 1 AND Gender = @1 AND AgencyOfEmployment <> 'O' " +
                     "AND (HireDate <= @3 AND (TerminationDate IS NULL OR TerminationDate >= @2) " +
                     "AND SocialSecurityNumber IN (Select SocialSecurityNumber From tjc_employee_position_history " +
                     "WHERE EntryType=@4 AND startDate >= @2 AND startDate <= @3))",
-                    jobGroupId, gender, startDate, endDate, entryType);
+                    jobGroupID, gender, startDate, endDate, entryType);
             }
             return phoneCount;
         }
-        public int GetRaceTerminationCount(int jobGroupId, string race, DateTime startDate, DateTime endDate)
+        public int GetRaceTerminationCount(int jobGroupID, string race, DateTime startDate, DateTime endDate)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee Where JobGroupId = @0 " +
+                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Race) From tjc_employee Where JobGroupID = @0 " +
                     "AND isEmployee = 1 AND Race = @1 AND AgencyOfEmployment <> 'O' AND (TerminationDate <= @3 AND TerminationDate >= @2)"
-                    , jobGroupId, race, startDate, endDate);
+                    , jobGroupID, race, startDate, endDate);
             }
             return phoneCount;
         }
-        public int GetGenderTerminationCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate)
+        public int GetGenderTerminationCount(int jobGroupID, string gender, DateTime startDate, DateTime endDate)
         {
             int phoneCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee Where JobGroupId = @0 " +
+                phoneCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT Count(Gender) From tjc_employee Where JobGroupID = @0 " +
                     "AND isEmployee = 1 AND Gender = @1 AND AgencyOfEmployment <> 'O' AND (TerminationDate <= @3 AND TerminationDate >= @2)",
-                    jobGroupId, gender, startDate, endDate);
+                    jobGroupID, gender, startDate, endDate);
             }
             return phoneCount;
         }

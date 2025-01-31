@@ -48,7 +48,6 @@ namespace tjc.Modules.PretrialServices
             {
                 if (!Page.IsPostBack)
                 {
-
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();
@@ -68,7 +67,6 @@ namespace tjc.Modules.PretrialServices
                     drpDay.SelectedValue = IntakeDate.Day.ToString();
                     drpMonth.SelectedValue = IntakeDate.Month.ToString();
                     BindData();
-
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -100,15 +98,20 @@ namespace tjc.Modules.PretrialServices
                 txtmcNonDanger.Text = dip.McNonDangerous.ToString();
                 drpNewArrest.SelectedValue = dip.NonCompArrestViolation;
                 txtCourtAppearances.Text = dip.CourtAppearances.ToString();
-                if (dip.FtaArrestHearing.HasValue)
-                    rblFtaArrestHearing.SelectedValue = dip.FtaArrestHearing.ToString();
-                if (dip.Indigent.HasValue)
-                    rblIndigent.SelectedValue = dip.Indigent.ToString();
-                if (dip.BwOrdered.HasValue)
-                    rblBwOrdered.SelectedValue = dip.BwOrdered.ToString();
-                if (dip.Completion.HasValue)
-                    rblCompletion.SelectedValue = dip.Completion.ToString();
+                chkFtaArrestHearing.Checked = dip.FtaArrestHearing;
+                chkIndigent.Checked = dip.Indigent;
+                chkBwOrdered.Checked = dip.BwOrdered;
                 chkRevoked.Checked = dip.IsRevoked;
+                chkCaseScreened.Checked = dip.CaseScreened;
+                chkPlaced.Checked = dip.PlacedInProgram;
+                if (dip.Completion.HasValue)
+                    drpCompletion.SelectedValue = dip.Completion.ToString();
+                if (dip.BondType.HasValue)
+                    drpBondType.SelectedValue = dip.BondType.ToString();
+                if (dip.NonCompliance.HasValue)
+                    drpNonCompliance.SelectedValue = dip.NonCompliance.ToString();
+                if (dip.CaseType.HasValue)
+                    drpCaseType.SelectedValue = dip.CaseType.ToString();
                 ScriptManager.RegisterStartupScript(rptDefendantsInProgram, rptDefendantsInProgram.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
             }
         }
@@ -122,14 +125,12 @@ namespace tjc.Modules.PretrialServices
                 scriptMan.RegisterAsyncPostBackControl(cmdDelete);
                 scriptMan.RegisterAsyncPostBackControl(cmdEdit);
             }
-
         }
         protected void pnlDefendantsInProgram_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
             methodInfo.Invoke(ScriptManager.GetCurrent(Page),
                 new object[] { sender as UpdatePanel });
-
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
@@ -161,22 +162,20 @@ namespace tjc.Modules.PretrialServices
             dip.CaseNumber = txtCaseNumber.Text;
             dip.ArrestCharges = txtCharges.Text;
             dip.NonCompArrestViolation = drpNewArrest.SelectedValue;
-            if (rblIndigent.SelectedValue != "")
-            {
-                dip.Indigent = Int32.Parse(rblIndigent.SelectedValue);
-            }
-            else
-            {
-                dip.Indigent = null;
-            }
-
-            if (rblFtaArrestHearing.SelectedValue != "") { dip.FtaArrestHearing = Int32.Parse(rblFtaArrestHearing.SelectedValue); } else { dip.FtaArrestHearing = null; }
-
-            if (rblBwOrdered.SelectedValue != "") { dip.BwOrdered = Int32.Parse(rblBwOrdered.SelectedValue); } else { dip.BwOrdered = null; }
-
-            if (rblCompletion.SelectedValue != "") { dip.Completion = Int32.Parse(rblCompletion.SelectedValue); } else { dip.CompletionDate = null; }
-
+            dip.Indigent = chkIndigent.Checked;
+            dip.FtaArrestHearing = chkFtaArrestHearing.Checked;
+            dip.BwOrdered = chkBwOrdered.Checked;
+            dip.CaseScreened = chkCaseScreened.Checked;
+            dip.PlacedInProgram = chkPlaced.Checked;
             dip.IsRevoked = chkRevoked.Checked;
+            if (drpCompletion.SelectedIndex > 0)
+                dip.Completion = Int32.Parse(drpCompletion.SelectedValue);
+            if (drpCaseType.SelectedIndex > 0)
+                dip.CaseType = Int32.Parse(drpCaseType.SelectedValue);
+            if(drpNonCompliance.SelectedIndex > 0)
+                dip.NonCompliance = Int32.Parse(drpNonCompliance.SelectedValue);
+            if(drpBondType.SelectedIndex > 0)
+                dip.BondType = Int32.Parse(drpBondType.SelectedValue);
             Int32.TryParse(txtfcDanger.Text, out int fcDanger);
             dip.FcDangerous = fcDanger;
             Int32.TryParse(txtfcNonDanger.Text, out int fcNonDanger);
@@ -211,7 +210,6 @@ namespace tjc.Modules.PretrialServices
             }
             ClearDefendantsInProgramForm();
             BindData();
-
         }
         protected void cmdSearch_Click(object sender, EventArgs e)
         {
@@ -219,7 +217,7 @@ namespace tjc.Modules.PretrialServices
         }
         protected void cmdReport_Click(object sender, EventArgs e)
         {
-            string reportUrl = string.Format("{0}/PretrialReport.aspx?cid={1}&mid={2}&indate={3}", TemplateSourceDirectory, CountyId, ModuleId, IntakeDate.ToShortDateString());
+            string reportUrl = string.Format("{0}/PretrialReport.aspx?cid={1}&mid={2}&indate={3}&st={4}", TemplateSourceDirectory, CountyId, ModuleId, IntakeDate.ToShortDateString(), DateTime.Now.ToString("yyyyMMddHHmmss"));
             switch (hdReportType.Value)
             {
                 case "0":
@@ -288,6 +286,7 @@ namespace tjc.Modules.PretrialServices
             intakeLogItem.PtrNotRecommended = ptrNotRecCount;
             intakeLogItem.LastModifiedById = UserId;
             intakeLogItem.LastModifiedDate = DateTime.Now;
+            intakeLogItem.CountyId = CountyId;
             ltMessage.Visible = true;
             if (isNew)
             {
@@ -296,13 +295,11 @@ namespace tjc.Modules.PretrialServices
                 iCtl.CreateIntakeLogItem(intakeLogItem);
                 hdLogId.Value = intakeLogItem.LogId.ToString();
                 ltMessage.Text = string.Format(ltMessage.Text, "success", "thumbs-up", "Record Added Successfully");
-
             }
             else
             {
                 iCtl.UpdateIntakeLogItem(intakeLogItem);
                 ltMessage.Text = string.Format(ltMessage.Text, "success", "thumbs-up", "Record Updated Successfully");
-
             }
         }
         protected void cmdDeleteIntake_Click(object sender, EventArgs e)
@@ -327,35 +324,32 @@ namespace tjc.Modules.PretrialServices
                 ltMessage.Text = string.Format(ltMessage.Text, "danger", "exclamation", exc.Message);
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
-
-
         }
         #endregion
 
         #region Methods
         private void BindData()
         {
-            SearchType searchType = (SearchType)Int32.Parse(hdSearchType.Value);
-            if (searchType == SearchType.date)
+            Enumerations.SearchType searchType = (Enumerations.SearchType)Int32.Parse(hdSearchType.Value);
+            if (searchType == Enumerations.SearchType.date)
             {
                 Int32.TryParse(drpYear.Text, out int year);
                 Int32.TryParse(drpMonth.Text, out int month);
                 Int32.TryParse(drpDay.Text, out int day);
                 IntakeDate = new DateTime(year, month, day);
                 hdIntakeDate.Value = IntakeDate.ToShortDateString();
-
                 if (IntakeDate != null)
                 {
                     rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCounty(CountyId, IntakeDate);
                     rptDefendantsInProgram.DataBind();
                 }
             }
-            else if (searchType == SearchType.caseNumber)
+            else if (searchType == Enumerations.SearchType.caseNumber)
             {
                 rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCaseNumber(CountyId, txtSearchText.Text);
                 rptDefendantsInProgram.DataBind();
             }
-            else if (searchType == SearchType.defendantName)
+            else if (searchType == Enumerations.SearchType.defendantName)
             {
                 rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDefendantName(CountyId, txtSearchText.Text);
                 rptDefendantsInProgram.DataBind();
@@ -374,7 +368,7 @@ namespace tjc.Modules.PretrialServices
         }
         private void PopulateYears()
         {
-            drpYear.DataSource = ctl.GetYears();
+            drpYear.DataSource = ctl.GetYears(CountyId);
             drpYear.DataBind();
         }
         private void PopulateDays()
@@ -397,7 +391,7 @@ namespace tjc.Modules.PretrialServices
         private void FillIntakeLog()
         {
             var iCtl = new IntakeLogItemController();
-            IntakeLogItem intake = iCtl.GetIntakeLogItemByDate(IntakeDate);
+            IntakeLogItem intake = iCtl.GetIntakeLogItemByCountyAndDate(CountyId, IntakeDate);
             if (intake != null)
             {
                 if (intake.Interviewed.HasValue)
@@ -435,15 +429,20 @@ namespace tjc.Modules.PretrialServices
             txtCompletionDate.Text = string.Empty;
             txtCharges.Text = string.Empty;
             txtCourtAppearances.Text = string.Empty;
-            drpNewArrest.SelectedIndex = 0;
             txtfcDanger.Text = string.Empty;
             txtfcNonDanger.Text = string.Empty;
             txtmcDanger.Text = string.Empty;
             txtmcNonDanger.Text = string.Empty;
-            rblBwOrdered.SelectedIndex = -1;
-            rblCompletion.SelectedIndex = -1;
-            rblIndigent.SelectedIndex = -1;
-            rblFtaArrestHearing.SelectedIndex = -1;
+            drpNewArrest.SelectedIndex = 0; 
+            drpCompletion.SelectedIndex = -1;
+            drpBondType.SelectedIndex = -1;
+            drpCaseType.SelectedIndex = -1;
+            drpNonCompliance.SelectedIndex = -1;
+            chkBwOrdered.Checked = false;
+            chkIndigent.Checked= false;
+            chkFtaArrestHearing.Checked = false;
+            chkPlaced.Checked = false;
+            chkCaseScreened.Checked = false;
             chkRevoked.Checked = false;
             hdItemId.Value = string.Empty;
         }
@@ -452,11 +451,9 @@ namespace tjc.Modules.PretrialServices
             if (Request.Cookies["PretrialServices"] != null)
             {
                 string cookieName = string.Format("CookieIntakeDate{0}", CountyId);
-
                 string sCookieDate = Server.HtmlEncode(Request.Cookies["PretrialServices"][cookieName]);
                 if (DateTime.TryParse(sCookieDate, out DateTime cDate))
                     return cDate;
-
             }
             return null;
         }
@@ -477,7 +474,5 @@ namespace tjc.Modules.PretrialServices
         {
             NewDay = 0, Deleted = 1, Saved = 2, Cancelled = 3
         }
-
-
     }
 }

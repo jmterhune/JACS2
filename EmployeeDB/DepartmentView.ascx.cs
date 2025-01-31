@@ -71,19 +71,19 @@ namespace tjc.Modules.EmployeeDB
         }
         protected void rptDepartments_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            int groupId = Convert.ToInt32(e.CommandArgument);
+            int GroupID = Convert.ToInt32(e.CommandArgument);
             var ctl = new GroupController();
             if (e.CommandName == "delete")
             {
-                ctl.DeleteGroup(groupId);
+                ctl.DeleteGroup(GroupID);
                 PopulateDepartmentList();
-                RemoveSwnGroup(groupId.ToString());
+                RemoveSwnGroup(GroupID.ToString());
             }
             if (e.CommandName == "edit")
             {
-                Group group = ctl.GetGroup(groupId);
+                Group group = ctl.GetGroup(GroupID);
 
-                hdDepartmentId.Value = groupId.ToString();
+                hdDepartmentId.Value = GroupID.ToString();
                 txtDescription.Text = group.GroupName;
                 drpType.SelectedValue = group.GroupType.ToString();
                 chkIsSWNGroup.Checked = group.IsSwnGroup;
@@ -104,10 +104,10 @@ namespace tjc.Modules.EmployeeDB
             group.GroupType = Convert.ToInt32(drpType.SelectedValue);
             group.IsSwnGroup = chkIsSWNGroup.Checked;
             group.LastModifiedDate = DateTime.Now;
-            group.LastModifiedById = UserId;
+            group.LastModifiedByID = UserId;
             if (isNew)
             {
-                group.CreatedById = UserId;
+                group.CreatedByID = UserId;
                 group.CreatedDate = DateTime.Now;
                 ctl.CreateGroup(group);
             }
@@ -160,7 +160,7 @@ namespace tjc.Modules.EmployeeDB
             rptDepartments.DataSource = ctl.GetGroups();
             rptDepartments.DataBind();
         }
-        private void RemoveSwnGroup(string groupId)
+        private void RemoveSwnGroup(string GroupID)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace tjc.Modules.EmployeeDB
                 }
                 SwnClient client = new SwnClient(new HttpClient());
                 var authorization = new AuthenticationHeaderValue("Bearer", sessionToken.Token);
-                var result = client.DELETEGroupsIdAsync(groupId, SwnServiceIdentifier, SwnSubscriptionKey, authorization);
+                var result = client.DELETEGroupsIdAsync(GroupID, SwnServiceIdentifier, SwnSubscriptionKey, authorization);
                 result.Wait();
             }
             catch (Exception exc)
@@ -190,10 +190,10 @@ namespace tjc.Modules.EmployeeDB
 
                 var ctl = new GroupController();
                 SwgGroupDetails groupDetails = new SwgGroupDetails();
-                IEnumerable<string> groupMembers = ctl.GetSwnGroupMembers(group.GroupId);
+                IEnumerable<string> groupMembers = ctl.GetSwnGroupMembers(group.GroupID);
                 try
                 {
-                    groupDetails = SwnInterface.GetSwnGroup(group.GroupId.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
+                    groupDetails = SwnInterface.GetSwnGroup(group.GroupID.ToString(), SwnServiceIdentifier, SwnSubscriptionKey, token);
                 }
                 catch { }
                 ICollection<string> members = groupMembers.ToList();

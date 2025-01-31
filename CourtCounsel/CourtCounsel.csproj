@@ -100,13 +100,14 @@
       <HintPath>..\packages\Microsoft.Identity.Client.4.35.1\lib\net461\Microsoft.Identity.Client.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=6.12.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.6.12.2\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Microsoft.IdentityModel.Abstractions, Version=6.34.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Abstractions.6.34.0\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Logging, Version=6.12.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Logging.6.12.2\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=6.34.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.6.34.0\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=6.34.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.6.34.0\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Protocols, Version=6.12.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Protocols.6.12.2\lib\net472\Microsoft.IdentityModel.Protocols.dll</HintPath>
@@ -116,9 +117,8 @@
       <HintPath>..\packages\Microsoft.IdentityModel.Protocols.OpenIdConnect.6.12.2\lib\net472\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.12.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.6.12.2\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.34.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.6.34.0\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -143,9 +143,8 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=6.12.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.6.12.2\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=6.34.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.6.34.0\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
@@ -220,6 +219,57 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="admin\ReferralReview.ascx.cs">
+      <DependentUpon>ReferralReview.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\ReferralReview.ascx.designer.cs">
+      <DependentUpon>ReferralReview.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="admin\MemberList.ascx.cs">
+      <DependentUpon>MemberList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\MemberList.ascx.designer.cs">
+      <DependentUpon>MemberList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="admin\TimeSpanList.ascx.cs">
+      <DependentUpon>TimeSpanList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\TimeSpanList.ascx.designer.cs">
+      <DependentUpon>TimeSpanList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="admin\CaseTypeList.ascx.cs">
+      <DependentUpon>CaseTypeList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\CaseTypeList.ascx.designer.cs">
+      <DependentUpon>CaseTypeList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="admin\PhaseList.ascx.cs">
+      <DependentUpon>PhaseList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\PhaseList.ascx.designer.cs">
+      <DependentUpon>PhaseList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="admin\ActionList.ascx.cs">
+      <DependentUpon>ActionList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\ActionList.ascx.designer.cs">
+      <DependentUpon>ActionList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="admin\JudicialReferral.ascx.cs">
+      <DependentUpon>JudicialReferral.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin\JudicialReferral.ascx.designer.cs">
+      <DependentUpon>JudicialReferral.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\County.cs" />
+    <Compile Include="Components\CountyController.cs" />
     <Compile Include="Library.ascx.cs">
       <DependentUpon>Library.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -315,6 +365,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="admin\ReferralReview.ascx" />
+    <Content Include="admin\MemberList.ascx" />
+    <Content Include="admin\TimeSpanList.ascx" />
+    <Content Include="admin\CaseTypeList.ascx" />
+    <Content Include="admin\PhaseList.ascx" />
+    <Content Include="admin\ActionList.ascx" />
+    <Content Include="admin\JudicialReferral.ascx" />
     <Content Include="Library.ascx" />
     <Content Include="Reports.ascx" />
     <Content Include="Documentation\Documentation.css" />
@@ -352,6 +409,11 @@
     <ProjectReference Include="..\Globals\Globals.csproj">
       <Project>{7066eacb-e672-4110-b73d-c1a230b16eab}</Project>
       <Name>Globals</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\JudicialReferral\JudicialReferral.csproj">
+      <Project>{f8296dd1-cfff-47a4-84f1-55dfb1158abe}</Project>
+      <Name>JudicialReferral</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

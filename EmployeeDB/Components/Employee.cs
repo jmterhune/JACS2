@@ -14,7 +14,7 @@ namespace tjc.Modules.EmployeeDB.Components
         public int EmployeeId { get; set; }
         public int? SupervisorId { get; set; }
         public int? DepartmentId { get; set; }
-        public int? JobGroupId { get; set; }
+        public int? JobGroupID { get; set; }
         public int? ClassId { get; set; }
         public int? OfficeLocationId { get; set; }
         public int? CountyId { get; set; }
@@ -49,7 +49,7 @@ namespace tjc.Modules.EmployeeDB.Components
         public bool? ManateeAccess { get; set; }
         public string SarasotaAccess { get; set; }
         public string DesotoAccess { get; set; }
-        public string SwnGroupId { get; set; }
+        public string SwnGroupID { get; set; }
 
         #region Extension Columns
         [IgnoreColumn]
@@ -76,9 +76,9 @@ namespace tjc.Modules.EmployeeDB.Components
         [IgnoreColumn]
         public IEnumerable<PositionHistory> PositionHistories { get { return GetEmployeePositionHistory(SocialSecurityNumber); } }
         [IgnoreColumn]
-        public IEnumerable<EEO> EEOs { get { return GetEmployeeEEOs(JobGroupId ?? -1); } }
+        public IEnumerable<EEO> EEOs { get { return GetEmployeeEEOs(JobGroupID ?? -1); } }
         [IgnoreColumn]
-        public JobGroup JobCategory { get { return GetEmployeeJobGroup(JobGroupId ?? -1); } }
+        public JobGroup JobCategory { get { return GetEmployeeJobGroup(JobGroupID ?? -1); } }
         [IgnoreColumn]
         public JobClass JobClass { get { return GetEmployeeJobClass(ClassId ?? -1); } }
         [IgnoreColumn]
@@ -108,16 +108,16 @@ namespace tjc.Modules.EmployeeDB.Components
             Group dept = ctl.GetGroup(departmentId);
             return dept != null ? dept.GroupName : "";
         }
-        private IEnumerable<EEO> GetEmployeeEEOs(int jobGroupId)
+        private IEnumerable<EEO> GetEmployeeEEOs(int jobGroupID)
         {
             var ctl = new EEOController();
-            IEnumerable<EEO> eeos = ctl.GetEmployeeEEOs(jobGroupId);
+            IEnumerable<EEO> eeos = ctl.GetEmployeeEEOs(jobGroupID);
             return eeos ?? eeos;
         }
-        private JobGroup GetEmployeeJobGroup(int jobGroupId)
+        private JobGroup GetEmployeeJobGroup(int jobGroupID)
         {
             var ctl = new JobGroupController();
-            JobGroup jobGroup = ctl.GetJobGroup(jobGroupId);
+            JobGroup jobGroup = ctl.GetJobGroup(jobGroupID);
             return jobGroup ?? jobGroup;
         }
         private JobClass GetEmployeeJobClass(int ClassId)

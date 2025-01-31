@@ -6,7 +6,7 @@
         <div class="btn-group" role="group" aria-label="Basic example">
             <asp:HyperLink ID="lnkSearch" CssClass="btn btn-primary" runat="server"><i class="fas fa-search"></i> Case Search</asp:HyperLink>
             <asp:HyperLink ID="lnkNew" CssClass="btn btn-dark" runat="server"><i class="fas fa-plus"></i> New Case</asp:HyperLink>
-            <asp:LinkButton ID="cmdDelete" CssClass="btn btn-secondary confirm-delete-case" runat="server"><i class="fas fa-trash"></i> Delete Case</asp:LinkButton>
+            <asp:LinkButton ID="cmdDelete" CssClass="btn btn-secondary confirm-delete-case" runat="server" OnClick="cmdDelete_Click"><i class="fas fa-trash"></i> Delete Case</asp:LinkButton>
         </div>
     </div>
     <div class="row">
@@ -283,7 +283,7 @@
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
-                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -464,9 +464,9 @@
         OnClick="cmdSave_Click" CssClass="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save</asp:LinkButton>
     <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Reset</asp:HyperLink>
 </p>
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;

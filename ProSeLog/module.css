@@ -1,0 +1,109 @@
+.command-item {
+    cursor: pointer;
+    width: 16px;
+    max-width: 16px;
+}
+label em {
+    color: red
+}
+.casenumber-list{
+    z-index:200
+}
+.radio-button-list {
+    display: block;
+}
+
+.radio-buttons-list li input, .radio-buttons input {
+    margin-right: 5px;
+    margin-bottom: 0px;
+}
+
+.radio-button-list li label, .radio-buttons label {
+    padding: 0 8px 0 5px;
+    margin-right: 5px;
+    margin-bottom: 0 !important;
+    display: inline
+}
+
+.radio-button-list li {
+    list-style: none;
+}
+.column-2 {
+    column-count: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
+}
+
+.column-4 {
+    column-count: 4;
+    -webkit-columns: 4;
+    -moz-columns: 4;
+}
+
+    .column-2 label, .column-4 label {
+        padding-left: 0px;
+    }
+.phone, .custom-control-label {
+    cursor: pointer;
+}
+.modal .label {
+    white-space: normal !important;
+}
+#drpCountyLetter {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    max-width: 2.5rem;
+}
+
+#txtCaseYear {
+    width: 4rem;
+    min-width: 4rem;
+    max-width: 4rem;
+}
+
+#txtCaseType, .manatee-suffix {
+    width: 3rem;
+    min-width: 3rem !important;
+    max-width: 3rem;
+}
+
+.sarasota-suffix {
+    min-width: 4rem;
+}
+
+#txtCaseSequence {
+    min-width: 5rem;
+}
+
+.outline-fieldset {
+    padding: 10px 5px 5px 5px;
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ced4da;
+    border-radius: 5px;
+    margin: 10px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px
+}
+
+    .outline-fieldset legend {
+        width: auto;
+        display: inline-block;
+        padding: 0 5px;
+        font-size: .9rem;
+        font-weight: 700;
+        float: none;
+    }
+
+        .outline-fieldset legend.small {
+            font-size: .75rem;
+        }

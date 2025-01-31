@@ -13,6 +13,8 @@
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.CourtCounsel
 {
@@ -51,8 +53,18 @@ namespace tjc.Modules.CourtCounsel
             {
                 if (Page.IsPostBack == false)
                 {
+                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var listroles = ctl.GetRoles(PortalId);
+                    foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles.OrderBy(jud => jud.RoleName)
+)
+                    {
+                        drpJudgeRole.Items.Add(new ListItem(r.RoleName));
+                        drpAdminRole.Items.Add(new ListItem(r.RoleName));
+                    }
+                    if (Settings.Contains("JudgeRole"))
+                        drpJudgeRole.SelectedValue = Settings["JudgeRole"].ToString();
                     if (Settings.Contains("AdminRole"))
-                        txtAdminRole.Text = Settings["AdminRole"].ToString();
+                        drpAdminRole.SelectedValue = Settings["AdminRole"].ToString();
                     if (Settings.Contains("DefaultReminderPeriod"))
                         txtDefaultReminderPeriod.Text = Settings["DefaultReminderPeriod"].ToString();
                     if (Settings.Contains("SharePointSiteURL"))
@@ -60,7 +72,6 @@ namespace tjc.Modules.CourtCounsel
                     //SharePoint Config
                     if (Settings.Contains("Id"))
                         txtId.Text = Settings["Id"].ToString();
-                   
                     if (Settings.Contains("DocumentLibraryURL"))
                         txtDocumentLibraryURL.Text = Settings["DocumentLibraryURL"].ToString();
                     if (Settings.Contains("DocumentDriveId"))
@@ -96,10 +107,10 @@ namespace tjc.Modules.CourtCounsel
 
                 //the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
                 //module settings
-                modules.UpdateModuleSetting(ModuleId, "AdminRole", txtAdminRole.Text);
+                modules.UpdateModuleSetting(ModuleId, "AdminRole", drpAdminRole.SelectedValue);
+                modules.UpdateModuleSetting(ModuleId, "JudgeRole", drpJudgeRole.SelectedValue);
                 modules.UpdateModuleSetting(ModuleId, "DefaultReminderPeriod", txtDefaultReminderPeriod.Text);
                 modules.UpdateModuleSetting(ModuleId, "SharePointSiteURL", txtSharePointSiteURL.Text);
-
                 modules.UpdateModuleSetting(ModuleId, "Id", txtId.Text);
                 modules.UpdateModuleSetting(ModuleId, "DocumentLibraryURL", txtDocumentLibraryURL.Text);
                 modules.UpdateModuleSetting(ModuleId, "DocumentDriveId", txtDocumentDriveId.Text);

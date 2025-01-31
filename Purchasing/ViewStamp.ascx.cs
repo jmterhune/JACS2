@@ -61,13 +61,12 @@ namespace tjc.Modules.Purchasing
             var orders = ctl.GetOrders(startDate, endDate.AddDays(1));
             if (chkShowCompleted.Checked)
             {
-                rptOrders.DataSource = orders;
+                rptOrders.DataSource = orders.OrderByDescending(x=>x.OrderID);
             }
             else
             {
-                rptOrders.DataSource = orders.Where(x => x.CompletedDate == null);
+                rptOrders.DataSource = orders.Where(x => x.CompletedDate.HasValue == false).OrderByDescending(x => x.OrderID);
             }
-            rptOrders.DataSource = orders;
             rptOrders.DataBind();
         }
         protected void cmdSearch_Click(object sender, EventArgs e)

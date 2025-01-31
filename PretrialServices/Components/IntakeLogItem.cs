@@ -8,7 +8,6 @@ namespace tjc.Modules.PretrialServices.Components
     //setup the primary key for table
     [PrimaryKey("LogId", AutoIncrement = true)]
     //configure caching using PetaPoco
-    [Cacheable("IntakeLogItems", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class IntakeLogItem : EntityBase
     {

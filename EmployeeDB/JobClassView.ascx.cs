@@ -103,10 +103,10 @@ namespace tjc.Modules.EmployeeDB
             jobClass.AMax = Decimal.Parse(txtAMax.Text);
             jobClass.AMin = Decimal.Parse(txtAMin.Text);
             jobClass.LastModifiedDate = DateTime.Now;
-            jobClass.LastModifiedById = UserId;
+            jobClass.LastModifiedByID = UserId;
             if (isNew)
             {
-                jobClass.CreatedById = UserId;
+                jobClass.CreatedByID = UserId;
                 jobClass.CreatedDate = DateTime.Now;
                 ctl.CreateJobClass(jobClass);
             }

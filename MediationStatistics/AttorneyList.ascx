@@ -87,46 +87,48 @@
                         </FooterTemplate>
                     </asp:Repeater>
                     <div class="modal fade" id="EditAttorneyModal" tabindex="-1" role="dialog" aria-labelledby="EditAttorneyModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditAttorneyModalLabel">Add / Edit Attorney</h4>
                                     <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row g-3">
-                                        <div class="col">
+                                    <div class="row form-group">
+                                        <div class="col-3">
                                             <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
                                         </div>
-                                        <div class="col">
+                                        <div class="col-4">
                                             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
                                         </div>
-                                        <div class="col">
+                                        <div class="col-5">
                                             <asp:Label runat="server" AssociatedControlID="txtFirm" Text="Firm" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirm" />
                                         </div>
                                     </div>
-                                    <div class="row g-3">
-                                        <div class="col-4">
-                                            <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Extension" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
-                                        </div>
+                                    <div class="row form-group">
                                         <div class="col-4">
                                             <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhone" />
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-3">
                                             <asp:Label runat="server" AssociatedControlID="txtExtension" Text="Extension" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="10" ID="txtExtension" />
                                         </div>
+                                        <div class="col-5">
+                                            <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Email" />
+                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="txtAddress" Text="Address" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" />
+                                    <div class="row form-group">
+                                        <div class="col-12">
+                                            <asp:Label runat="server" AssociatedControlID="txtAddress" Text="Address" />
+                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" />
+                                        </div>
                                     </div>
-                                    <div class="row g-3">
+                                    <div class="row form-group">
                                         <div class="col-5">
                                             <asp:Label runat="server" AssociatedControlID="txtCity" Text="City" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCity" />
@@ -229,10 +231,10 @@
         </div>
     </div>
 </div>
-<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jquery/jquery.mask.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
     (function ($, Sys) {

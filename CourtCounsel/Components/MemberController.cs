@@ -90,6 +90,16 @@ namespace tjc.Modules.CourtCounsel.Components
             }
             return t;
         }
+        public Member GetMemberByUserId(int userId)
+        {
+            Member t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Member>();
+                t = rep.Find("Where UserId=@0",userId).FirstOrDefault();
+            }
+            return t;
+        }
         public void UpdateMember(Member t)
         {
             using (IDataContext ctx = DataContext.Instance())

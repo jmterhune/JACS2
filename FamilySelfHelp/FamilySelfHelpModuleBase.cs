@@ -39,5 +39,23 @@ namespace tjc.Modules.FamilySelfHelp
             }
 
         }
+        public string AdminRole
+        {
+            get
+            {
+                if (Settings.Contains("AdminRole"))
+                    return Settings["AdminRole"].ToString();
+                return "";
+            }
+        }
+        public bool IsAdmin
+        {
+            get
+            {
+                if (UserId > 0)
+                    return UserInfo.IsInRole(AdminRole);
+                return false;
+            }
+        }
     }
 }

@@ -12,8 +12,11 @@
 
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Caching;
+using System.Web.Services.Description;
 
 namespace tjc.Modules.FamilySelfHelp.Components
 {
@@ -71,18 +74,24 @@ namespace tjc.Modules.FamilySelfHelp.Components
         {
             get; set;
         }
-
-        public string CaseType
+        [IgnoreColumn]
+        public IEnumerable<CaseType> CaseTypes
         {
-            get; set;
+            get
+            {
+                var ctl = new Components.LogController();
+                return ctl.GetCaseTypesByLog(LogId);
+            }
         }
-
-        public string ServiceProvided
+        [IgnoreColumn]
+        public IEnumerable<Service> Services
         {
-            get; set;
+            get
+            {
+                var ctl = new Components.LogController();
+                return ctl.GetServicesByLog(LogId);
+            }
         }
-
-
         public string Location
         {
             get; set;
@@ -97,16 +106,19 @@ namespace tjc.Modules.FamilySelfHelp.Components
         {
             get
             {
-                string[] services = ServiceProvided.Split('|');
-                for (int i = 0; i < services.Length; i++)
-                {
-                    if (!services[i].Contains(" "))
-                    {
-                        services[i] = Regex.Replace(services[i], @"(?<!_)([A-Z])", " $1").Trim();
-                    }
-                }
-
+               var ctl=new Components.LogController();
+                var services=ctl.GetServicesByLog(LogId).Select(x=>x.ServiceName);
                 return string.Join(", ", services);
+            }
+        }
+        [IgnoreColumn]
+        public string FormattedCaseType
+        {
+            get
+            {
+                var ctl = new Components.LogController();
+                var caseTypes = ctl.GetCaseTypesByLog(LogId).Select(x => x.CaseTypeName);
+                return string.Join(", ", caseTypes);
             }
         }
         [IgnoreColumn]
@@ -118,6 +130,47 @@ namespace tjc.Modules.FamilySelfHelp.Components
                 var ctl = new ClientController();
                 client = ctl.GetClient(ClientId);
                 if (client != null) { return client; } else { return new Client(); }
+            }
+        }
+    }
+    [TableName("tjc_shc_case_types")]
+    internal class CaseType
+    {
+        public long LogID { get; set; }
+        public string CaseTypeName { get; set; }
+    }
+    [TableName("tjc_shc_services")]
+    internal class Service
+    {
+        public long LogID { get; set; }
+        public string ServiceName { get; set; }
+
+    }
+    internal class Report : Log
+    {
+        public string LastName
+        {
+            get; set;
+        }
+        public string Name { get; set; }
+        public string FirstName
+        {
+            get; set;
+        }
+        public string MiddleInitial
+        {
+            get; set;
+        }
+
+        [IgnoreColumn]
+        public string FullName
+        {
+            get
+            {
+                if (MiddleInitial != "")
+                    return string.Format("{0}, {1}&nbsp;{2}", LastName, FirstName, MiddleInitial);
+                else
+                    return string.Format("{0}, {1}", LastName, FirstName);
             }
         }
     }

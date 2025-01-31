@@ -66,7 +66,7 @@ namespace tjc.Modules.CourtCounsel
         }
         protected void PopulateDropDowns()
         {
-            var countyCtl = new tjc.Modules.Globals.CountyController();
+            var countyCtl = new CountyController();
             drpCounty.DataValueField = "CountyId";
             drpCounty.DataTextField = "CountyName";
             drpCounty.DataSource = countyCtl.GetCounties();

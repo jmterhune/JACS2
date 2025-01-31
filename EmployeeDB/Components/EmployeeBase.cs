@@ -6,10 +6,10 @@ namespace tjc.Modules.EmployeeDB.Components
     {
         public DateTime CreatedDate { get; set; }
 
-        public int CreatedById { get; set; }
+        public int CreatedByID { get; set; }
 
         public DateTime LastModifiedDate { get; set; }
 
-        public int LastModifiedById { get; set; }
+        public int LastModifiedByID { get; set; }
     }
 }

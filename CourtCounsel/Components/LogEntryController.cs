@@ -12,6 +12,7 @@
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace tjc.Modules.CourtCounsel.Components
 {
@@ -60,6 +61,16 @@ namespace tjc.Modules.CourtCounsel.Components
             {
                 var rep = ctx.GetRepository<LogEntry>();
                 t = rep.GetById(logEntryId);
+            }
+            return t;
+        }
+        public LogEntry GetLogEntryByCaseNumber(string caseNumber)
+        {
+            LogEntry t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<LogEntry>();
+                t = rep.Find("Where casenumber like @0",caseNumber).FirstOrDefault();
             }
             return t;
         }

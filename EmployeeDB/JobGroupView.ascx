@@ -60,11 +60,11 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-icon">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"JobGroupId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"JobGroupID").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
                                 </td>
                                 <td><%#DataBinder.Eval(Container.DataItem,"Description") %></td>
                                 <td class="command-icon">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"JobGroupId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton></td>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"JobGroupID").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton></td>
                             </tr>
                         </ItemTemplate>
                         <FooterTemplate>
@@ -84,7 +84,7 @@
                                         <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtDescription" />
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtDescription"
                                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Description is Required" />
-                                        <asp:HiddenField ID="hdJobGroupId" runat="server" />
+                                        <asp:HiddenField ID="hdJobGroupID" runat="server" />
                                     </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">
@@ -104,9 +104,9 @@
     </div>
 </div>
 
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
 

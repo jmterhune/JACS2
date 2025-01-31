@@ -109,7 +109,16 @@ namespace tjc.Modules.Purchasing.Components
                 rep.Update(t);
             }
         }
-
+        public IEnumerable<SupplyOrder> GetSupplyOrders(DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<SupplyOrder> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<SupplyOrder>();
+                t = rep.Find("Where DateRequested Between @0 And @1", startDate, endDate);
+            }
+            return t;
+        }
 
     }
 }

@@ -1,7 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LogEdit.ascx.cs" Inherits="tjc.Modules.CourtCounsel.LogEdit" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <asp:Literal ID="ltMessage" runat="server" />
-
 <div typeof="post" id="assignment-form">
     <fieldset>
         <legend>Add / Edit Log Entry</legend>
@@ -12,17 +11,20 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
 
-                    <li class="nav-item">
+                    <li class="active nav-item">
                         <asp:HyperLink CssClass="nav-link" ID="lnkSearch" runat="server"><i class="fas fa-search"></i>&nbsp;Search</asp:HyperLink>
                     </li>
-                    <li class="active nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="<%=EditUrl("logEdit") %>"><i class="fas fa-pencil-alt"></i>&nbsp;Data Entry</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<%=EditUrl("referrals") %>"><i class="fas fa-gavel"></i>&nbsp;Referrals</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<%=EditUrl("reports") %>"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
                     </li>
                     <li class="nav-item" id="li1" runat="server" visible="false">
-                        <a class="nav-link" href="<%=EditUrl("admin") %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
+                        <a class="nav-link" href="<%=MemberListUrl %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<%=SharePointSiteURL %>"><i class="fas fa-home"></i>&nbsp;Team Site</a>
@@ -35,18 +37,19 @@
             <div class="col-md-5">
                 <asp:Label runat="server" AssociatedControlID="drpCountyLetter" Text="Case Number<em>*</em>" ToolTip="required" />
                 <div class="input-group">
-                    <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control" ClientIDMode="Static">
+                    <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control county-letter" ClientIDMode="Static">
                         <asp:ListItem Text="" Value=""></asp:ListItem>
                         <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
                         <asp:ListItem Text="M" Value="M" title="Manatee"></asp:ListItem>
                         <asp:ListItem Text="S" Value="S" title="Sarasota"></asp:ListItem>
                         <asp:ListItem Text="V" Value="V" title="Venice"></asp:ListItem>
                     </asp:DropDownList>
-                    <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="25" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control case-year" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-type" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="25" CssClass="form-control upperCase case-sequence" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="10" CssClass="form-control upperCase" ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
-                        <small class="input-group-text form-control" title="County - Year - Case Type - Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
+                        <small class="input-group-text form-control" title="County-Year-Case Type-Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
                     </div>
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCountyLetter"
                         Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="County is Required" />
@@ -56,9 +59,9 @@
                         Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Type is Required" />
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseSequence"
                         Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Sequence is Required" />
-                    <asp:CustomValidator ID="valCaseNumber" runat="server" SetFocusOnError="true" CssClass="label label-danger" ControlToValidate="txtCaseSequence"
+                    <%--                    <asp:CustomValidator ID="valCaseNumber" runat="server" SetFocusOnError="true" CssClass="label label-danger" ControlToValidate="txtCaseSequence"
                         Display="Dynamic" ErrorMessage="Invalid Case Number. Please Review Format Requirements" OnServerValidate="valCaseNumber_ServerValidate" ClientValidationFunction="ValidateCaseNumber">
-                    </asp:CustomValidator>
+                    </asp:CustomValidator>--%>
                 </div>
             </div>
             <div class="col-md-5">
@@ -66,7 +69,6 @@
                 <asp:TextBox ID="txtCaseName" runat="server" MaxLength="100" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseName"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Name is Required" />
-
             </div>
             <div class="col-md-2">
                 <asp:Label runat="server" AssociatedControlID="drpCounty" Text="County<em>*</em>" ToolTip="required" />
@@ -87,14 +89,13 @@
             </div>
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="txtAssignedDate" Text="Assigned Date<em>*</em>" ToolTip="required" />
-                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker"  ClientIDMode="Static" ID="txtAssignedDate" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker" ClientIDMode="Static" ID="txtAssignedDate" />
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtAssignedDate"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Assigned Date is Required" />
             </div>
             <div class="col-auto">
-
                 <asp:Label runat="server" AssociatedControlID="txtMotionFiled" Text="Motion Filed<em>*</em>" ToolTip="required" />
-                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker"  ID="txtMotionFiled" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker" ID="txtMotionFiled" />
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionFiled"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Filed is Required" />
             </div>
@@ -105,7 +106,6 @@
                 </asp:DropDownList>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="drpRequestedBy" ErrorMessage="Requested by is Required"
                     Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" />
-
             </div>
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpResponsible" Text="Responsible<em>*</em>" ToolTip="required" />
@@ -117,23 +117,24 @@
             </div>
         </div>
         <div class="row  form-group">
-
+            <div class="col-auto" id="defendantName">
+                <asp:Label runat="server" AssociatedControlID="txtDefendantName" Text="Defendant Name" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size" ClientIDMode="Static" ID="txtDefendantName" />
+            </div>
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpActionTaken" Text="Action Taken" />
                 <asp:DropDownList ID="drpActionTaken" runat="server" CssClass="form-control auto-size">
                 </asp:DropDownList>
-
             </div>
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpTimeSpent" Text="Time Spent" />
                 <asp:DropDownList ID="drpTimeSpent" runat="server" CssClass="form-control auto-size">
                     <asp:ListItem Text="< Select Time Spent >" Value=""></asp:ListItem>
                 </asp:DropDownList>
-
             </div>
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="txtDateCompleted" Text="Date Completed Filed" />
-                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker"  ID="txtDateCompleted" />
+                <asp:TextBox runat="server" CssClass="form-control auto-size datepicker" ID="txtDateCompleted" />
             </div>
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="drpStatus" Text="Status" />
@@ -146,9 +147,14 @@
             <div class="col-md-12">
                 <asp:Label runat="server" AssociatedControlID="txtComments" Text="Comments" />
                 <asp:TextBox runat="server" CssClass="form-control" ID="txtComments" TextMode="MultiLine" Rows="4" />
-
             </div>
         </div>
+        <asp:Panel ID="pnlFutureAction" runat="server" Visible="false" CssClass="row form-group">
+            <div class="col-auto">
+                <asp:Label runat="server" AssociatedControlID="txtPendingDate" Text="Pending Assignment Date" />
+                <asp:TextBox runat="server" CssClass="form-control datepicker" ClientIDMode="Static" ID="txtPendingDate" />
+            </div>
+        </asp:Panel>
         <div class="form-check mb-2">
             <asp:CheckBox Text="Prevent Judge Reassignment" ID="chkReassign" Visible="false" runat="server" />
         </div>
@@ -161,7 +167,9 @@
         <asp:HiddenField ID="hdCaseInfoChanged" runat="server" ClientIDMode="Static" />
     </p>
 </div>
-
+<div id="process-overlay" class="overlay" style="display: none;">
+    <div class="spinner"></div>
+</div>
 <div class="modal fade" id="reassignModal" tabindex="-1" role="dialog" aria-labelledby="reassignModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -173,11 +181,10 @@
                 <div class="form-group">
                     <asp:Label runat="server" AssociatedControlID="txtReason" Text="Reason for Judge Reassingment" />
                     <asp:TextBox runat="server" CssClass="form-control" ID="txtReason" TextMode="MultiLine" Rows="4" ClientIDMode="Static" />
-
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-reassign" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -203,42 +210,22 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-caseList" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Status Change</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
-            </div>
-            <div class="modal-body">
-                <p>The selected status should be assigned a future date. Unless you are fixing an incorrect status, please change the assigned date. </p>
-            </div>
-            <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
-
-
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jQuery/jquery.mask.js" />
 
 <script>
     var originalJudge = "";
     var moduleId = <%=ModuleId%>;
     (function ($, Sys) {
         $(document).ready(function () {
-
             Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
         });
@@ -249,6 +236,12 @@
     }
     function PageInit() {
         originalJudge = $("#drpRequestedBy").val();
+        if ($("#txtCaseType").val() != "CF") {
+            $("#txtDefendantSuffix").hide();
+            $("#defendantName").hide();
+        } else {
+            MaskCaseSequence("CF");
+        }
         $(".datepicker").datepicker();
         $(".form-check input:checkbox").addClass("form-check-input");
         $(".form-check label").addClass("form-check-label");
@@ -268,7 +261,7 @@
             var assignedDate = parseDate($("#txtAssignedDate").val());
             var pending = $(this).find(':selected').data('pending');
             if (pending == 1 && Date.now() >= assignedDate) {
-                $("#statusModal").modal("show");
+                ShowAlert("Status Change", "The selected status should be assigned a future date. Unless you are fixing an incorrect status, please change the assigned date.");
             }
         });
         $("#cmdChangeCaseInfo").on("click", function (e) {
@@ -286,6 +279,41 @@
             $("#txtCaseName").prop("disabled", (i, v) => !v);
             $("#hdCaseInfoChanged").val("1");
         });
+        $("#drpCounty").on("change", function () {
+            var caseCounty = $("#drpCountyLetter").val();
+            var county = $(this).text().charAt(0);
+            if ((county == "D" && caseCounty != "D") || (county == "M" && caseCounty != "M") || (county == "S" && (caseCounty != "S" || caseCounty != "V"))) {
+                ShowAlert("County Mismatch", "<p class='text-dark'>The selected Case Number prefix does not match the selected County.</p><p class='mb-0 text-dark'>Please verify that the selected County is correct.</p>");
+            }
+        });
+        $("#drpCountyLetter").on("change", function () {
+            var dl = $(this).val();
+            var ds = $("#txtDefendantSuffix").val();
+            if (dl == "S" || dl == "V") {
+                $("#txtDefendantSuffix").removeClass("manatee-suffix").addClass("sarasota-suffix");
+                $("#txtDefendantSuffix").mask("0000");
+                $("#caseFormat").text("000000-0000");
+            } else {
+                $("#txtDefendantSuffix").removeClass("sarasota-suffix").addClass("manatee-suffix");
+                $("#txtDefendantSuffix").mask("AA", {
+                    "translation": {
+                        A: { pattern: /[A-Za-z]/ },
+                        Y: { pattern: /[0-9]/ }
+                    }
+                });
+                $("#caseFormat").text("000000-AA");
+            }
+            PreValidateCaseNumber();
+            SetCountyDropDown($(this).val());
+        });
+        $(document).on("click", ".case-select", function (e) {
+            e.preventDefault();
+            var dataElement = $(this);
+            var obj = { "logId": dataElement.data("logid"), "caseNumber": dataElement.data("casenumber"), "countyId": dataElement.data("countyid"), "description": dataElement.data("desc") };
+            PopulateCaseInformation(obj);
+            $('#caseListModal').modal('hide');
+            $("#txtDefendantSuffix").focus();
+        });
         $("#cmdAddEvent").on("click", function (e) {
             $("#txtStartDate").val('');
             $("#txtSubject").val("");
@@ -295,6 +323,10 @@
         });
         $("#txtCaseType").on("input", function (e) {
             var caseType = $(this).val();
+            if (caseType == "CF") {
+                $("#txtDefendantSuffix").show();
+                $("#defendantName").show();
+            }
             MaskCaseSequence(caseType);
         });
         $("#drpRequestedBy").on("change", function () {
@@ -302,11 +334,21 @@
                 $("#reassignModal").modal("show");
             }
         });
-        $("#drpCountyLetter").on("change", function () {
-            var caseType = $("#txtCaseType").val();
-            if (caseType.length > 1)
-                MaskCaseSequence(caseType);
+        $("#txtCaseYear").on("blur", function () {
+            PreValidateCaseNumber();
         });
+        $("#txtCaseType").on("blur", function () {
+            PreValidateCaseNumber();
+        });
+        $("#txtCaseSequence").on("blur", function () {
+            PreValidateCaseNumber();
+        });
+        // $("#txtDefendantSuffix").on("blur", function () {
+        //     var valCntl = document.getElementById('');
+        //     ValidatorValidate(valCntl); 
+        //     ValidatorUpdateIsValid();
+        //   });
+
         $(".upperCase").on("input", function (evt) {
             $(this).val(function (_, val) {
                 return val.toUpperCase();
@@ -316,46 +358,63 @@
         InitializeResponsibleDropDown();
         InitializeRequestedByDropDown();
         var table = $("#log-list").DataTable({
-
             "order": [[3, "desc"]],
             "oLanguage": {
-
                 "sSearch": "Filter by Text"
-
             },
         });
+    }
+    function SetCountyDropDown(caseCounty) {
+        var county = 3;
+        switch (caseCounty) {
+            case "D":
+                county = 1;
+                break;
+            case "M":
+                county = 2;
+                break;
+            default:
+        }
+        $("#drpCounty").val(county);
     }
     function PopulateCaseInformation(data) {
         $('#txtCaseSequence').prop("disabled", true);
         $("#txtCaseType").prop("disabled", true);
         $("#drpCountyLetter").prop("disabled", true);
         $("#txtCaseYear").prop("disabled", true);
+        if (data.caseNumber.length > 16)
+            $("#txtDefendantSuffix").val(data.caseNumber.substring(17));
+        if ($("#txtCaseType").val() == "CF") {
+            $("#txtDefendantSuffix").show();
+            $("#defendantName").show();
+        }
         $("#drpCounty").val(data.countyId).prop("disabled", true);
         $("#txtCaseName").val(data.description).prop("disabled", true);
         $("#hdLogId").val(data.logId);
     }
-
     function MaskCaseSequence(caseType) {
         var location = $("#drpCountyLetter").find(":selected").val();
+        $("#txtCaseSequence").mask("000000");
+        $("#txtCaseSequence").attr("placeholder", "000000");
         if (caseType.toUpperCase() == "CF") {
-            if (location.toUpperCase() == "S") {
-                $("#txtCaseSequence").mask("000000-0000");
+            if (location.toUpperCase() == "S" || location.toUpperCase() == "V") {
+                $("#txtDefendantSuffix").mask("0000");
                 $("#caseFormat").text("000000-0000");
-                $("#txtCaseSequence").attr("placeholder", "000000-0000");
+                if ($("#txtDefendantSuffix").val().length == 0)
+                    $("#txtDefendantSuffix").attr("placeholder", "0000");
             } else {
-                $("#txtCaseSequence").mask("YYYYYY-AA", {
+                $("#txtDefendantSuffix").mask("AA", {
                     "translation": {
                         A: { pattern: /[A-Za-z]/ },
                         Y: { pattern: /[0-9]/ }
                     }
                 });
                 $("#caseFormat").text("000000-AA");
-                $("#txtCaseSequence").attr("placeholder", "000000-AA");
+                if ($("#txtDefendantSuffix").val().length == 0)
+                    $("#txtDefendantSuffix").attr("placeholder", "AA");
             }
         } else {
-            $("#txtCaseSequence").mask("000000");
             $("#caseFormat").text("000000");
-            $("#txtCaseSequence").attr("placeholder", "000000");
         }
     }
     function GetCaseNumber() {
@@ -363,7 +422,10 @@
         var caseYear = $("#txtCaseYear").val();
         var caseType = $("#txtCaseType").val();
         var caseSequence = $("#txtCaseSequence").val();
-        return caseCounty + "-" + caseYear + "-" + caseType + "-" + caseSequence;
+        var defendantSuffix = $("#txtDefendantSuffix").val();
+        if (defendantSuffix != "")
+            defendantSuffix = "-" + defendantSuffix;
+        return caseCounty + "-" + caseYear + "-" + caseType + "-" + caseSequence + defendantSuffix;
     }
     function InitializeStatusDropDown() {
         var $select = $("#drpStatus");
@@ -449,6 +511,7 @@
         }
         var errorMessage = "";
         var caseNumber = GetCaseNumber();
+        var defendantSuffix = $("#txtDefendantSuffix").val();
         if (caseNumber === "" || caseNumber === null) {
             isValid = false
             errorMessage = "Case Number is Required"
@@ -458,7 +521,7 @@
                 "Case Number must be 16 characters in the format (C-YYYY-CT-000000)"
         } else if (
             caseNumber.startsWith("S") &&
-            caseNumber.indexOf("CF") > 1 && caseNumber.length < 21
+            caseNumber.indexOf("CF") > 1 && caseNumber.length + defendantSuffix.length < 21
         ) {
             isValid = false
             errorMessage =
@@ -466,7 +529,7 @@
         } else if (
             !caseNumber.startsWith("S") &&
             caseNumber.indexOf("CF") > 1 &&
-            caseNumber.length < 19
+            caseNumber.length + defendantSuffix.length < 19
         ) {
             isValid = false
             errorMessage =
@@ -476,17 +539,30 @@
         sender.innerHTML = errorMessage;
         args.IsValid = isValid;
         var logId = $("#hdLogId").val()
-        if (isValid && logId.length === 0)
+        if (isValid && logId.length === 0) {
+            $('#process-overlay').show();
             RetrieveLogEntryByCaseNumber(caseNumber);
+        }
     }
-
+    function PreValidateCaseNumber(sender, args) {
+        var errorMessage = "";
+        var caseCounty = $("#drpCountyLetter").val();
+        var caseYear = $("#txtCaseYear").val();
+        var caseType = $("#txtCaseType").val();
+        var caseSequence = $("#txtCaseSequence").val();
+        if (caseCounty != "" && caseCounty != "" && caseYear != "" && caseType != "" && caseSequence != "") {
+            $('#process-overlay').show();
+            var caseNumber = GetCaseNumber();
+            RetrieveLogEntryByCaseNumber(caseNumber);
+        }
+    }
     function RetrieveLogEntryByCaseNumber(caseNumber) {
         var service = {
             path: "CourtCounsel",
             framework: $.ServicesFramework(moduleId)
         }
         service.baseUrl = service.framework.getServiceRoot(service.path);
-        var restUrl = service.baseUrl + "LogEntry/GetLogEntryByCaseNumber/" + caseNumber;
+        var restUrl = `${service.baseUrl}LogEntry/GetLogEntryByCaseNumber/${caseNumber}`;
         try {
 
             $.ajax({
@@ -502,17 +578,17 @@
                             PopulateCaseList(data);
                         }
                     } else {
-                        //No Case Found
+                        // ShowAlert("No Search Results", "The selected search criteria did not yeild any results. Please change your search request and try again");//No Case Found
                     }
                 }
                 else {
-                    //no data
+                    // ShowAlert("No Search Results", "The selected search criteria did not yeild any results. Please change your search request and try again");//No Case Found
                 }
             }).always(function (data) {
-                //close spinner
+                $('#process-overlay').hide();
             });
         } catch (e) {
-            alert("Unexpected error searching for case number.\n\nMake sure you are logged in and try again.");
+            ShowAlert("Error Validating Case Number!!", "Unexpected error searching for case number.\n\nMake sure you are logged in and try again");//No Case Found
         }
         return false;
     }
@@ -521,15 +597,18 @@
         $('#caseList > tbody > tr').remove();
         data.forEach(function (object) {
             var tr = document.createElement('tr');
-            tr.innerHTML = `<td><a class="command-icon" title="Select This Log Entry" onclick="SelectCase(${object.logId},${object.countyId},'${object.description}',event)"><i class="fa fa-check-circle"></i></a></td><td>${object.caseNumber}</td><td>${object.description}</td>`;
+            tr.innerHTML = `<td><a class="command-icon case-select" title="Select This Log Entry" data-logId="${object.logId}" data-caseNumber="${object.caseNumber}" data-countyId="${object.countyId}" data-desc="${object.description}"><i class="fa fa-check-circle"></i></a></td><td>${object.caseNumber}</td><td>${object.description}</td>`;
             tableBody.appendChild(tr);
         });
         $('#caseListModal').modal('show');
     }
-    function SelectCase(logid, countyId, caseName, e) {
-        e.preventDefault();
-        var obj = { "logId": logid, "countyId": countyId, "description": caseName };
-        PopulateCaseInformation(obj);
-        $('#caseListModal').modal('hide');
+
+    function ShowAlert(title, text) {
+        $('#process-overlay').hide();
+        $.dnnAlert({
+            okText: 'OK',
+            title: title,
+            text: text
+        });
     }
 </script>

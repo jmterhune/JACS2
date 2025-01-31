@@ -12,6 +12,8 @@
 
 using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.Mail;
+using DotNetNuke.UI.Skins;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -89,7 +91,7 @@ namespace tjc.Modules.EmployeeDB
             IEnumerable<Group> departments = ctl.GetGroups().Where(x => x.GroupType == Convert.ToInt32(Group.GroupTypes.Internal));
             foreach (Group department in departments)
             {
-                filterHtml += "<option value='" + department.GroupId.ToString() + "'>" + department.GroupName + "</option>";
+                filterHtml += "<option value='" + department.GroupID.ToString() + "'>" + department.GroupName + "</option>";
             }
             filterHtml += "</select></label>";
             return filterHtml;
@@ -105,19 +107,24 @@ namespace tjc.Modules.EmployeeDB
                 {
                     PopulateEmployeeList();
                     DepartmentFilterHtml = GetDepartmentFilterHtml();
+                    var eCtl = new EmployeeController();
+                    drpOldSupervisor.DataSource = eCtl.GetEmployeeDropDown(SupervisorRole).OrderBy(x => x.DataText);
+                    drpOldSupervisor.DataBind();
+                    drpNewSupervisor.DataSource = eCtl.GetEmployeeDropDown(SupervisorRole).OrderBy(x => x.DataText);
+                    drpNewSupervisor.DataBind();
                 }
                 chkInactiveEmployees.InputAttributes.Add("class", "form-check-input");
                 chkInactiveEmployees.LabelAttributes.Add("class", "form-check-label");
                 lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                 lnkEeoReport.NavigateUrl = EEOUrl;
                 lnkSwnList.NavigateUrl = string.Format("{0}/SwnList.aspx", TemplateSourceDirectory);
+
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
         protected void chkInactiveEmployees_CheckedChanged(object sender, EventArgs e)
         {
             ltMessage.Text = "";
@@ -134,7 +141,6 @@ namespace tjc.Modules.EmployeeDB
             PopulateEmployeeList();
 
         }
-
         protected void cmdAddContacts_Click(object sender, EventArgs e)
         {
             ltMessage.Text = "";
@@ -203,7 +209,7 @@ namespace tjc.Modules.EmployeeDB
                             logCtl.CreateSwnLog(swnLog);
                         }
                     }
-                    ltMessage.Text += string.Format("<div class='alert alert-success'><h5><i class='far fa-thumbs-up'></i> The following contacts were successfully added</h5><ul>{0}</ul></div>", string.Join("",successList));
+                    ltMessage.Text += string.Format("<div class='alert alert-success'><h5><i class='far fa-thumbs-up'></i> The following contacts were successfully added</h5><ul>{0}</ul></div>", string.Join("", successList));
                 }
                 if (messageList.Count > 0)
                 {
@@ -211,7 +217,6 @@ namespace tjc.Modules.EmployeeDB
                 }
             }
         }
-
         protected void cmdSyncAll_Click(object sender, EventArgs e)
         {
             ltMessage.Text = "";
@@ -246,13 +251,29 @@ namespace tjc.Modules.EmployeeDB
                 ltMessage.Text += string.Format("<div class='alert alert-danger'><h5 class='alert-danger'><i class='fas fa-exclamation-circle'></i> The following contacts where not updated</h5><ul>{0}</ul></div>", message.ToString());
             }
 
-        }        
+        }
         protected void pnlEmployees_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
             methodInfo.Invoke(ScriptManager.GetCurrent(Page),
                 new object[] { sender as UpdatePanel });
         }
+        protected void cmdSwithSupervisor_Click(object sender, EventArgs e)
+        {
+            var ctl = new EmployeeController();
+            Int32.TryParse(drpOldSupervisor.SelectedValue, out int oldsup);
+            Int32.TryParse(drpNewSupervisor.SelectedValue, out int newsup);
+            IEnumerable<Employee> employees = ctl.SwitchSupervisorBulk(oldsup, newsup);
+            string employeeNames = "";
+            foreach (Employee employee in employees) {
+                employeeNames += string.Format("<li>{0}</li>", employee.FullName); 
+            }
+            Skin.AddModuleMessage(this, string.Format("Employees reporting to {0} are now reporting to {1}", drpOldSupervisor.SelectedItem.Text, drpNewSupervisor.SelectedItem.Text), DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
+            string body = string.Format("The supervisor for the following employees has changed to {0}:{1}",drpNewSupervisor.SelectedItem.Text, string.Format("<ul>{0}</ul>", employeeNames));
+            Mail.SendEmail("hr@jud12.flcourts.org", "helpdesk@ud12.flcourts.org", "Employee Supervisor Updated", body);
+        }
+
         #endregion
+
     }
 }

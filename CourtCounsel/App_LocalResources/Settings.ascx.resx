@@ -171,6 +171,12 @@
   <data name="lblId.Text" xml:space="preserve">
     <value>Root SharePoint Id</value>
   </data>
+  <data name="lblJudgeRole.Help" xml:space="preserve">
+    <value>Select the Role for Judges</value>
+  </data>
+  <data name="lblJudgeRole.Text" xml:space="preserve">
+    <value>Judge Role</value>
+  </data>
   <data name="lblOrderDriveId.Help" xml:space="preserve">
     <value>Enter the Drive ID for SharePoint Document Library Orders</value>
   </data>

@@ -10,13 +10,23 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Framework.JavaScriptLibraries;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.JudicialReferral
 {
+    //DotNetNuke.Abstractions.Application.IApplicationStatusInfo
     public class JudicialReferralModuleBase : PortalModuleBase
     {
+        private readonly DotNetNuke.Abstractions.Application.IApplicationStatusInfo _applicationStatusInfo;
+        public JudicialReferralModuleBase()
+        {
+            _applicationStatusInfo = DependencyProvider.GetRequiredService<DotNetNuke.Abstractions.Application.IApplicationStatusInfo>();
+            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+        }
         public string JudgeRole
         {
             get
@@ -24,6 +34,15 @@ namespace tjc.Modules.JudicialReferral
                 if ((Settings.Contains("JudgeRole")))
                     return Settings["JudgeRole"].ToString();
                 return "Judge";
+            }
+        }
+        public string ccModuleId
+        {
+            get
+            {
+                if ((Settings.Contains("ccModuleId")))
+                    return Settings["ccModuleId"].ToString();
+                return "";
             }
         }
         public int ReferralID
@@ -37,6 +56,15 @@ namespace tjc.Modules.JudicialReferral
             }
         }
 
+        public string CourtCounselUrl
+        {
+            get
+            {
+                if ((Settings.Contains("CourtCounselUrl")))
+                    return Settings["CourtCounselUrl"].ToString();
+                return DotNetNuke.Common.Globals.ApplicationURL() + "/Judiciary/Court-Counsel/ctl/review/mid/405/rid/";
+            }
+        }
         public string JaRole
         {
             get

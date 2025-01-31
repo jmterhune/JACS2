@@ -133,9 +133,9 @@
     </Triggers>
 </asp:UpdatePanel>
 
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script>
     (function ($, Sys) {

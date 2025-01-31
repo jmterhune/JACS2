@@ -15,15 +15,6 @@ namespace tjc.Modules.JudicialReferral
     {
 
         /// <summary>
-        /// drpJudge control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpJudge;
-
-        /// <summary>
         /// drpCounty control.
         /// </summary>
         /// <remarks>
@@ -51,22 +42,13 @@ namespace tjc.Modules.JudicialReferral
         protected global::System.Web.UI.WebControls.TextBox txtCaseType;
 
         /// <summary>
-        /// txtCaseNumber control.
+        /// txtCaseSequence control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCaseNumber;
-
-        /// <summary>
-        /// drpCaseType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpCaseType;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseSequence;
 
         /// <summary>
         /// txtCaseParties control.
@@ -76,6 +58,24 @@ namespace tjc.Modules.JudicialReferral
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtCaseParties;
+
+        /// <summary>
+        /// drpJudge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpJudge;
+
+        /// <summary>
+        /// drpCaseType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpCaseType;
 
         /// <summary>
         /// txtMotionTitle control.
@@ -103,15 +103,6 @@ namespace tjc.Modules.JudicialReferral
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdAttachmentIds;
-
-        /// <summary>
-        /// CustomValidator1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator CustomValidator1;
 
         /// <summary>
         /// chkMotionVacate control.

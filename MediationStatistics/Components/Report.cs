@@ -167,6 +167,16 @@ namespace tjc.Modules.MediationStatistics.Components
         }
 
     }
+
+    public class StatMediatorCounts
+    {
+        public string Region { get; set; }
+        public string MediatorName { get; set; }
+        public int MediatorId { get; set; }
+        public string MediatorType { get; set; }
+        public int Signed { get; set; }
+        public int Held { get; set; }
+    }
     public class StatisticalReport
     {
         public string questionaire

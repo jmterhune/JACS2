@@ -80,10 +80,10 @@ namespace tjc.Modules.EmployeeDB
             emergencyContact.PhoneMobile = Regex.Replace(txtMobilePhone.Text, @"[^\d]", ""); 
             emergencyContact.CallOrder = 1;
             emergencyContact.LastModifiedDate = DateTime.Now;
-            emergencyContact.LastModifiedById = UserId;
+            emergencyContact.LastModifiedByID = UserId;
             if (isNew)
             {
-                emergencyContact.CreatedById = UserId;
+                emergencyContact.CreatedByID = UserId;
                 emergencyContact.CreatedDate = DateTime.Now;
                 ctl.CreateEmergencyContact(emergencyContact);
             }

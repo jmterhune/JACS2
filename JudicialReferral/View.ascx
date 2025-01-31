@@ -48,55 +48,46 @@
             </div>
             <div class="modal-body">
                 <div type="post" id="referralSearch">
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-6">
-                                <asp:Label runat="server" AssociatedControlID="drpStatus" Text="Status" />
-                                <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control">
-                                    <asp:ListItem Text="< Select Status >" Value=""></asp:ListItem>
-                                    <asp:ListItem Text="New" Value="1"></asp:ListItem>
-                                    <asp:ListItem Text="Retained by Judge" Value="3"></asp:ListItem>
-                                    <asp:ListItem Text="Referred to Court Counsel" Value="2"></asp:ListItem>
-                                    <asp:ListItem Text="Pending" Value="5"></asp:ListItem>
-                                    <asp:ListItem Text="Completed" Value="4"></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                            <div class="col-6">
-                                <asp:Label ID="lblJudge" runat="server" AssociatedControlID="drpJudge" Text="Judge" />
-                                <asp:DropDownList ID="drpJudge" runat="server" CssClass="form-control">
-                                    <asp:ListItem Text="< Select Judge >" Value=""></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
+                    <div class="row form-group">
+                        <div class="col-6">
+                            <asp:Label runat="server" AssociatedControlID="drpStatus" Text="Status" />
+                            <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="< Select Status >" Value=""></asp:ListItem>
+                                <asp:ListItem Text="New" Value="1"></asp:ListItem>
+                                <asp:ListItem Text="Retained by Judge" Value="3"></asp:ListItem>
+                                <asp:ListItem Text="Referred to Court Counsel" Value="2"></asp:ListItem>
+                                <asp:ListItem Text="Pending" Value="5"></asp:ListItem>
+                                <asp:ListItem Text="Completed" Value="4"></asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                        <div class="col-6">
+                            <asp:Label ID="lblJudge" runat="server" AssociatedControlID="drpJudge" Text="Judge" />
+                            <asp:DropDownList ID="drpJudge" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="< Select Judge >" Value=""></asp:ListItem>
+                            </asp:DropDownList>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-6">
-                                <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number" />
-                                <asp:TextBox ID="txtCaseNumber" runat="server" MaxLength="25" CssClass="form-control"></asp:TextBox>
-                            </div>
-                            <div class="col-6">
-                                <asp:Label runat="server" AssociatedControlID="txtMotionTitle" Text="Motion Title" />
-                                <asp:TextBox ID="txtMotionTitle" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                            </div>
+                    <div class="row form-group">
+                        <div class="col-6">
+                            <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number" />
+                            <asp:TextBox ID="txtCaseNumber" runat="server" MaxLength="25" CssClass="form-control"></asp:TextBox>
+                        </div>
+                        <div class="col-6">
+                            <asp:Label runat="server" AssociatedControlID="txtMotionTitle" Text="Motion Title" />
+                            <asp:TextBox ID="txtMotionTitle" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-6">
-                                <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
-                                <asp:TextBox ID="txtStartDate" runat="server" MaxLength="15" CssClass="form-control datepicker" />
+                    <div class="row form-group">
+                        <div class="col-6">
+                            <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
+                            <asp:TextBox ID="txtStartDate" runat="server" MaxLength="15" CssClass="form-control datepicker" />
 
-                            </div>
-                            <div class="col-6">
-                                <asp:Label runat="server" AssociatedControlID="txtEndDate" Text="End Date" />
-                                <asp:TextBox ID="txtEndDate" runat="server" MaxLength="15" CssClass="form-control datepicker" />
-
-                            </div>
+                        </div>
+                        <div class="col-6">
+                            <asp:Label runat="server" AssociatedControlID="txtEndDate" Text="End Date" />
+                            <asp:TextBox ID="txtEndDate" runat="server" MaxLength="15" CssClass="form-control datepicker" />
                         </div>
                     </div>
-                    <p>
-                    </p>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -108,9 +99,9 @@
 </div>
 
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script>
     (function ($, Sys) {

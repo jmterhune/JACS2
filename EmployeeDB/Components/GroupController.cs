@@ -26,9 +26,9 @@ namespace tjc.Modules.EmployeeDB.Components
             }
         }
 
-        public void DeleteGroup(int groupId)
+        public void DeleteGroup(int GroupID)
         {
-            var t = GetGroup(groupId);
+            var t = GetGroup(GroupID);
             DeleteGroup(t);
         }
 
@@ -77,7 +77,7 @@ namespace tjc.Modules.EmployeeDB.Components
             IEnumerable<Group> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t= ctx.ExecuteQuery<Group>(System.Data.CommandType.Text, "select g.* from tjc_gl_group g inner join tjc_employee_group_membership gm on g.GroupId=gm.GroupId Where g.IsSwnGroup=1 And gm.EmployeeId=@0", employeeId);
+                t= ctx.ExecuteQuery<Group>(System.Data.CommandType.Text, "select g.* from tjc_gl_group g inner join tjc_employee_group_membership gm on g.GroupID=gm.GroupID Where g.IsSwnGroup=1 And gm.EmployeeId=@0", employeeId);
             }
             return t;
         }
@@ -86,18 +86,18 @@ namespace tjc.Modules.EmployeeDB.Components
             int groupCount = 0;
             using (IDataContext ctx = DataContext.Instance())
             {
-                groupCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "Select Max(GroupCount) from (select count(employeeId) as GroupCount from tjc_gl_group g inner join tjc_employee_group_membership gm on g.GroupId=gm.GroupId Where g.IsSwnGroup=1 Group by gm.EmployeeId) t");
+                groupCount = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "Select Max(GroupCount) from (select count(employeeId) as GroupCount from tjc_gl_group g inner join tjc_employee_group_membership gm on g.GroupID=gm.GroupID Where g.IsSwnGroup=1 Group by gm.EmployeeId) t");
 
             }
             return groupCount;
         }
-        public Group GetGroup(int groupId)
+        public Group GetGroup(int GroupID)
         {
             Group t;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Group>();
-                t = rep.GetById(groupId);
+                t = rep.GetById(GroupID);
             }
             return t;
         }
@@ -120,12 +120,12 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        public IEnumerable<string> GetSwnGroupMembers(int groupId)
+        public IEnumerable<string> GetSwnGroupMembers(int GroupID)
         {
             IEnumerable<string> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<string>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_swn_group_members", groupId);
+                t = ctx.ExecuteQuery<string>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_swn_group_members", GroupID);
             }
             return t;
         }
@@ -138,12 +138,12 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        public GroupMembership GetGroupMembership(long employeeId,int groupId)
+        public GroupMembership GetGroupMembership(long employeeId,int GroupID)
         {
             GroupMembership t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<GroupMembership>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_group_membership", employeeId,groupId).FirstOrDefault();
+                t = ctx.ExecuteQuery<GroupMembership>(System.Data.CommandType.StoredProcedure, "tjc_employee_get_group_membership", employeeId,GroupID).FirstOrDefault();
             }
             return t;
         }
@@ -151,14 +151,14 @@ namespace tjc.Modules.EmployeeDB.Components
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_employee_create_group_membership", groupMembership.EmployeeId, groupMembership.GroupId,groupMembership.CreatedById);
+                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_employee_create_group_membership", groupMembership.EmployeeId, groupMembership.GroupID,groupMembership.CreatedByID);
             }
         }
         public void DeleteGroupMembership(GroupMembership groupMembership)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_employee_delete_group_membership", groupMembership.EmployeeId, groupMembership.GroupId);
+                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_employee_delete_group_membership", groupMembership.EmployeeId, groupMembership.GroupID);
             }
         }
 

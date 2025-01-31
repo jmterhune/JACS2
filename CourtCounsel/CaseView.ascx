@@ -29,41 +29,47 @@
 <asp:Literal ID="ltCaseHeading" runat="server" />
 <asp:UpdatePanel ID="pnlUpdate" runat="server">
     <ContentTemplate>
-        <asp:Repeater ID="rptLogEntries" runat="server">
+        <asp:Repeater ID="rptLogEntries" runat="server" OnItemCommand="rptLogEntries_ItemCommand" OnItemCreated="rptLogEntries_ItemCreated">
             <HeaderTemplate>
                 <table id="log-list" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Action Date</th>                            
+                            <th>Action Date</th>
                             <th>Case Name</th>
                             <th>Action Taken</th>
                             <th>Responsible</th>
                             <th>Status</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
             </HeaderTemplate>
             <ItemTemplate>
                 <tr data-id="<%#DataBinder.Eval(Container.DataItem,"LogId").ToString() %>">
-                    <td><a  href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><%#DataBinder.Eval(Container.DataItem,"DateReceived", "{0:M/d/yy}") %></a></td>
+                    <td><a href="<%#EditUrl("aid",DataBinder.Eval(Container.DataItem,"AssignmentId").ToString(),"logedit") %>"><%#DataBinder.Eval(Container.DataItem,"DateReceived", "{0:M/d/yy}") %></a></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"Description") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"ActionName") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"AttorneyName") %></td>
                     <td><%#DataBinder.Eval(Container.DataItem,"StatusType") %></td>
+                    <td class="command-icon">
+                        <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"AssignmentId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                    </td>
                 </tr>
             </ItemTemplate>
             <FooterTemplate>
                 </tbody></table>
             </FooterTemplate>
         </asp:Repeater>
+        <hr />
+        <asp:Button ID="cmdDuplicate" runat="server" CssClass="btn btn-primary" Text="Add New Project" OnClick="cmdDuplicate_Click" />
     </ContentTemplate>
     <Triggers>
     </Triggers>
 </asp:UpdatePanel>
 
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script>
     (function ($, Sys) {
@@ -83,6 +89,14 @@
 
             },
         });
-
+        table.on('draw', function () {
+            $(".confirm").dnnConfirm({
+                text: 'Delete this Log  Item?',
+                yesText: 'Yes',
+                noText: 'No',
+                title: 'Delete Log Item?'
+            });
+        });
+        table.draw();
     }
 </script>

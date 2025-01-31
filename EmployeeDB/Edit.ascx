@@ -263,7 +263,7 @@
                                 </div>
                                 <div class="form-group">
                                     <asp:Label runat="server" AssociatedControlID="drpDepartment" Text="Department / Unit / Group<em>*</em>" ToolTip="Required" />
-                                    <asp:DropDownList ID="drpDepartment" runat="server" CssClass="form-control" DataTextField="GroupName" DataValueField="GroupId" AppendDataBoundItems="true">
+                                    <asp:DropDownList ID="drpDepartment" runat="server" CssClass="form-control" DataTextField="GroupName" DataValueField="GroupID" AppendDataBoundItems="true">
                                         <asp:ListItem Text="<Select Department>" Value="" />
                                     </asp:DropDownList>
                                     <asp:RequiredFieldValidator runat="server" ControlToValidate="drpDepartment"
@@ -271,7 +271,7 @@
                                 </div>
                                 <div class="form-group">
                                     <asp:Label runat="server" AssociatedControlID="drpJobGroup" Text="Job Category<em>*</em>" ToolTip="Required" />
-                                    <asp:DropDownList ID="drpJobGroup" runat="server" CssClass="form-control" DataTextField="Description" DataValueField="JobGroupId" AppendDataBoundItems="true">
+                                    <asp:DropDownList ID="drpJobGroup" runat="server" CssClass="form-control" DataTextField="Description" DataValueField="JobGroupID" AppendDataBoundItems="true">
                                         <asp:ListItem Text="<Select Category>" Value="" />
                                     </asp:DropDownList>
                                     <asp:RequiredFieldValidator runat="server" ControlToValidate="drpJobGroup"
@@ -369,7 +369,7 @@
                     <div class="row">
                         <div class="col-auto">
                             <asp:Label ID="lblMembership" runat="server" AssociatedControlID="lsMembership">Group Membersip</asp:Label>
-                            <asp:ListBox ID="lsMembership" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupId" runat="server" Rows="10" />
+                            <asp:ListBox ID="lsMembership" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupID" runat="server" Rows="10" />
                         </div>
                         <div class="col-1 list-commands">
                             <div class="text-center mt-5 mb-3">
@@ -381,7 +381,7 @@
                         </div>
                         <div class="col-auto">
                             <asp:Label ID="lblGroups" runat="server" AssociatedControlID="lsGroups">Available Groups</asp:Label>
-                            <asp:ListBox ID="lsGroups" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupId" runat="server" Rows="10" />
+                            <asp:ListBox ID="lsGroups" SelectionMode="Multiple" CssClass="group-list" DataTextField="GroupName" DataValueField="GroupID" runat="server" Rows="10" />
                         </div>
 
                     </div>
@@ -398,7 +398,7 @@
 
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jQuery/jquery.mask.js" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */

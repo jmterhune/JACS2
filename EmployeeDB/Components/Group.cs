@@ -6,13 +6,13 @@ namespace tjc.Modules.EmployeeDB.Components
 {
     [TableName("tjc_gl_group")]
     //setup the primary key for table
-    [PrimaryKey("GroupId", AutoIncrement = true)]
+    [PrimaryKey("GroupID", AutoIncrement = true)]
     //configure caching using PetaPoco
     [Cacheable("EmployeeGroups", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class Group : EmployeeBase
     {
-        public int GroupId { get; set; }
+        public int GroupID { get; set; }
 
         public string GroupName { get; set; }
 

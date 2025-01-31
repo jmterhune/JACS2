@@ -160,10 +160,10 @@ namespace tjc.Modules.EmployeeDB
             phone.SwnExcludeExtension = chkExcludeExt.Checked;
             phone.SwnText = chkSWNText.Checked;
             phone.LastModifiedDate = DateTime.Now;
-            phone.LastModifiedById = UserId;
+            phone.LastModifiedByID = UserId;
             if (isNew)
             {
-                phone.CreatedById = UserId;
+                phone.CreatedByID = UserId;
                 phone.CreatedDate = DateTime.Now;
                 ctl.CreatePhone(phone);
             }

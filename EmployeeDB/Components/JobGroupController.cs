@@ -25,9 +25,9 @@ namespace tjc.Modules.EmployeeDB.Components
             }
         }
 
-        public void DeleteJobGroup(int jobGroupId)
+        public void DeleteJobGroup(int jobGroupID)
         {
-            var t = GetJobGroup(jobGroupId);
+            var t = GetJobGroup(jobGroupID);
             DeleteJobGroup(t);
         }
 
@@ -51,13 +51,13 @@ namespace tjc.Modules.EmployeeDB.Components
             return t;
         }
 
-        public JobGroup GetJobGroup(int jobGroupId)
+        public JobGroup GetJobGroup(int jobGroupID)
         {
             JobGroup t;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<JobGroup>();
-                t = rep.GetById(jobGroupId);
+                t = rep.GetById(jobGroupID);
             }
             return t;
         }

@@ -111,10 +111,10 @@ namespace tjc.Modules.EmployeeDB
             if (DateTime.TryParse(txtEndDate.Text, out DateTime endDate))
             positionHistory.EndDate = endDate;
             positionHistory.LastModifiedDate = DateTime.Now;
-            positionHistory.LastModifiedById = UserId;
+            positionHistory.LastModifiedByID = UserId;
             if (isNew)
             {
-                positionHistory.CreatedById = UserId;
+                positionHistory.CreatedByID = UserId;
                 positionHistory.CreatedDate = DateTime.Now;
                 ctl.CreatePositionHistory(positionHistory);
             }
@@ -229,10 +229,10 @@ namespace tjc.Modules.EmployeeDB
             if (DateTime.TryParse(txtTerminationDate.Text, out DateTime terminationDate))
                 serviceHistory.TerminationDate = terminationDate;
             serviceHistory.LastModifiedDate = DateTime.Now;
-            serviceHistory.LastModifiedById = UserId;
+            serviceHistory.LastModifiedByID = UserId;
             if (isNew)
             {
-                serviceHistory.CreatedById = UserId;
+                serviceHistory.CreatedByID = UserId;
                 serviceHistory.CreatedDate = DateTime.Now;
                 ctl.CreateServiceHistory(serviceHistory);
             }

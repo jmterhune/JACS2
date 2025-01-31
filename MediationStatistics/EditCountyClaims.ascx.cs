@@ -45,6 +45,7 @@ namespace tjc.Modules.MediationStatistics
         private readonly GroupType _caseTypeGroup = GroupType.CountyClaims;
         private Case _currentCase;
         #endregion
+
         #region Properties
         public string PageTitle { get; set; }
         private int CurrentSessionIndex
@@ -233,6 +234,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void PopulateSessionInformation()
         {
+            ClearSession();
             var ctl = new AttorneyController();
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
@@ -389,10 +391,28 @@ namespace tjc.Modules.MediationStatistics
         }
         private void ClearSession()
         {
+            txtPlaintiffName.Text = string.Empty;
+            txtPlaintiffEmail.Text = string.Empty;
+            txtPlaintiffPhone.Text = string.Empty;
+            txtPlaintiffExtension.Text = string.Empty;
+            txtDefendantName.Text = string.Empty;
+            txtDefendantEmail.Text = string.Empty;
+            txtDefendantPhone.Text = string.Empty;
+            txtDefendantExtension.Text = string.Empty;
+            drpCaseType.SelectedIndex = 0;
+            txtOrderReferral.Text = string.Empty;
+            txtMediationDate.Text = string.Empty;
+            drpFeeAmount.SelectedIndex = 0;
+            drpPlaintiffFeesPaid.SelectedIndex = 0;
+            drpDefendantFeesPaid.SelectedIndex = 0;
+            drpPlaintiffFeesOwed.SelectedIndex = 0;
+            drpDefendantFeesOwed.SelectedIndex = 0;
             chkProSeDefendant.Checked = false;
             chkProSePlaintiff.Checked = false;
             chkPlaintiffFta.Checked = false;
             chkDefendantFta.Checked = false;
+            hdDefendantAttorneyId.Value = string.Empty;
+            hdPlaintiffAttorneyId.Value = string.Empty;
             chkFeeJudgmentEntered.Checked = false;
             chkFeeAgreementEntered.Checked = false;
             chkInterpreterRequested.Checked = false;
@@ -504,6 +524,7 @@ namespace tjc.Modules.MediationStatistics
             {
                 ctlSession.CreateSession(session);
             }
+            hdSessionId.Value = session.SessionId.ToString();
             if (session.SessionId > 0)
             {
                 ctlSession.DeleteAllSessionIssues(session.SessionId);
@@ -575,8 +596,8 @@ namespace tjc.Modules.MediationStatistics
             Mediator mediator = ctl.GetMediator(mediatorId);
             return mediator.MediatorName;
         }
-
         #endregion
+
         #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -669,6 +690,12 @@ namespace tjc.Modules.MediationStatistics
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+        protected void cmdDelete_Click(object sender, EventArgs e)
+        {
+            var ctl = new CaseController();
+            ctl.DeleteCase(CaseID);
+            Response.Redirect(_navigationManager.NavigateURL());
+        }
         protected void pnlSession_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -701,7 +728,6 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
-            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -711,7 +737,7 @@ namespace tjc.Modules.MediationStatistics
             CurrentSessionIndex--;
             PopulateSessionInformation();
         }
-
+        
         #region Event Events
         protected void rptEvent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
@@ -758,7 +784,6 @@ namespace tjc.Modules.MediationStatistics
                 ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(true)", true);
             }
         }
-
         protected void rptEvent_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
@@ -772,7 +797,6 @@ namespace tjc.Modules.MediationStatistics
                 }
             }
         }
-
         protected void rptEvent_ItemCreated(object sender, RepeaterItemEventArgs e)
         {
             ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
@@ -860,11 +884,8 @@ namespace tjc.Modules.MediationStatistics
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
         }
-
         #endregion //Event Events
 
         #endregion //Events
-
-
     }
 }

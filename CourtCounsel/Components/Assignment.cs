@@ -20,7 +20,8 @@ namespace tjc.Modules.CourtCounsel.Components
         public int CurrentJudiciaryId { get; set; }
 
         public int CurrentAttorneyId { get; set; }
-
+        public string DefendantSuffix { get; set; }
+        public string DefendantName { get; set; }
         public int PhaseId { get; set; }
 
         public int ActionId { get; set; }

@@ -1,0 +1,17 @@
+.command-item {
+    cursor: pointer;
+    width: 16px;
+    max-width: 16px;
+}
+.full-width{
+    min-width:100% !important
+}
+.godzilla {
+    
+    z-index:200;
+    position:absolute;
+    top:-20px;
+    width:630px;
+    border-radius:10px;
+    opacity:.5
+}

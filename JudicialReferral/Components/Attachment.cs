@@ -12,7 +12,7 @@ namespace tjc.Modules.JudicialReferral.Components
     //configure caching using PetaPoco
     [Cacheable("Referrals", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
-    internal class Attachment
+    public class Attachment
     {
         public int AttachmentID { get; set; }
         public int FileID { get; set; }

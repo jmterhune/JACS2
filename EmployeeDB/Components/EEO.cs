@@ -14,7 +14,7 @@ namespace tjc.Modules.EmployeeDB.Components
     {//Employment Equal Opportunity
         public long EeoId { get; set; }
 
-        public int? JobGroupId { get; set; }
+        public int? JobGroupID { get; set; }
 
         public decimal? PopulationMale { get; set; }
 
@@ -107,7 +107,7 @@ namespace tjc.Modules.EmployeeDB.Components
         public string JobGroupName { get; set; }
         public long EeoId { get; set; }
 
-        public int? JobGroupId { get; set; }
+        public int? JobGroupID { get; set; }
 
         public decimal? PopulationMale { get; set; }
 

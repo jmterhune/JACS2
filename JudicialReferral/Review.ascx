@@ -4,8 +4,7 @@
 <div typeof="post" id="review-form">
     <asp:Panel ID="pnlJA" runat="server">
         <fieldset>
-            <div class="row">
-                <div class="form-group">
+            <div class="row form-group">
                     <div class="col-md-6">
                         <asp:Label runat="server" AssociatedControlID="drpJudge" Text="Judge" />
                         <asp:DropDownList ID="drpJudge" runat="server" CssClass="form-control">
@@ -14,18 +13,15 @@
                     </div>
                     <div class="col-md-6">
                         <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number" />
-                        <asp:TextBox ID="txtCaseNumber" runat="server" MaxLength="25" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="txtCaseNumber" runat="server" MaxLength="25" CssClass="form-control upperCase"></asp:TextBox>
                     </div>
-                </div>
             </div>
-            <div class="row">
-                <div class="form-group">
+            <div class="row form-group">
                     <div class="col-md-6">
                         <asp:Label runat="server" AssociatedControlID="txtCaseParties" Text="Case Name" />
                         <asp:TextBox ID="txtCaseParties" runat="server" MaxLength="2000" CssClass="form-control" placeholder="Party One v. Party Two"></asp:TextBox>
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseParties"
                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Case Name is Required" />
-
                     </div>
                     <div class="col-md-6">
                         <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Select Case Type" />
@@ -43,26 +39,20 @@
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCaseType"
                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please Select the Case Type" />
                     </div>
-
-                </div>
             </div>
-            <div class="row">
-                <div class="form-group">
+            <div class="row form-group">
                     <div class="col-md-6">
                         <asp:Label runat="server" AssociatedControlID="txtMotionTitle" Text="Motion Title" />
                         <asp:TextBox ID="txtMotionTitle" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionTitle"
                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Title is Required" />
                     </div>
-
                     <div class="col-md-6">
-
                         <asp:Label runat="server" AssociatedControlID="txtMotionDate" Text="Motion Date" />
                         <asp:TextBox runat="server" CssClass="form-control datepicker" ID="txtMotionDate" />
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtMotionDate"
                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Motion Date is Required" />
                     </div>
-                </div>
             </div>
         </fieldset>
         <fieldset>
@@ -92,7 +82,7 @@
                 </div>
                 <div class="form-check mb-2">
                     <asp:CheckBox ID="chkMotionDirected" runat="server" Text="Unless directed by the court below, these motions shall be handled directly by the presiding judge unless the complexity of the issue warrants further assistance by Court Counsel:" TextAlign="Right" />
-                    <asp:CheckBoxList ID="clsMotionList" runat="server" CssClass="motion-list" RepeatDirection="Vertical" RepeatLayout="UnorderedList">
+                    <asp:CheckBoxList ID="clsMotionList" runat="server" CssClass="motion-list list-unstyled" RepeatDirection="Vertical" RepeatLayout="UnorderedList">
                         <asp:ListItem Text="Motion to modify or reduce sentence" />
                         <asp:ListItem Text="Motion to modify probation" />
                         <asp:ListItem Text="Speedy trial matters" />
@@ -123,7 +113,7 @@
             </div>
             <div class="form-check">
                 <asp:CheckBox ID="chkYes" runat="server" Text="I seek Court Counsel’s assistance in the above titled motion. See below:" TextAlign="Right" />
-                <asp:CheckBoxList ID="clsResponse" runat="server" CssClass="motion-list" RepeatDirection="Vertical" RepeatLayout="UnorderedList">
+                <asp:CheckBoxList ID="clsResponse" runat="server" CssClass="motion-list list-unstyled" RepeatDirection="Vertical" RepeatLayout="UnorderedList">
                     <asp:ListItem Text="The State/Petitioner should be ordered to respond to the Motion." />
                     <asp:ListItem Text="The Motion should be granted." />
                     <asp:ListItem Text="The Motion should be denied." />
@@ -154,7 +144,6 @@
     $(document).ready(function () {
         $(".form-check input:checkbox").addClass("form-check-input");
         $(".form-check label").addClass("form-check-label");
-
         if ($("#<%=clsResponse.ClientID%>_4").is(':checked') === false) {
             $("#<%=txtOther.ClientID%>").hide();
         }
@@ -166,6 +155,11 @@
                 $("#<%=txtOther.ClientID%>").val('');
                 $("#<%=txtOther.ClientID%>").hide();
             }
+        });
+        $(".upperCase").on("input", function (evt) {
+            $(this).val(function (_, val) {
+                return val.toUpperCase();
+            });
         });
     });
     var link = document.getElementById("<%=cmdSave.ClientID %>");
@@ -247,7 +241,6 @@
                 return;
             }
         }
-
     }
 
 </script>

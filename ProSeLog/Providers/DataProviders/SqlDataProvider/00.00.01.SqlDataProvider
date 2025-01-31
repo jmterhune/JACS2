@@ -1,0 +1,100 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_prose_case_type]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_prose_case_type]
+GO
+
+CREATE TABLE {databaseOwner}[tjc_prose_case_type]
+(
+	[CaseTypeID] [int] IDENTITY(1,1) NOT NULL,
+	[CaseTypeName] [nvarchar](50) NULL,
+ CONSTRAINT [PK_tjc_prose_case_type] PRIMARY KEY CLUSTERED 
+(
+	[CaseTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_prose_contact]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_prose_contact]
+GO
+CREATE TABLE {databaseOwner}.[tjc_prose_contact](
+	[ContactID] [int] IDENTITY(1,1) NOT NULL,
+	[ContactName] [nvarchar](100) NULL,
+ CONSTRAINT [PK_tjc_prose_initial_contact] PRIMARY KEY CLUSTERED 
+(
+	[ContactID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_prose_history]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[tjc_prose_history]
+GO
+
+CREATE TABLE {databaseOwner}[tjc_prose_history](
+	[HistoryID] [int] IDENTITY(1,1) NOT NULL,
+	[Month] [nvarchar](10) NULL,
+	[MonthNumber] [nvarchar](2) NULL,
+	[Year] [int] NULL,
+	[Petitioner] [nvarchar](50) NULL,
+	[Respondent] [nvarchar](50) NULL,
+	[CaseName] [nvarchar](50) NULL,
+	[CaseNumber] [nvarchar](50) NULL,
+	[Phone] [nvarchar](50) NULL,
+	[ReceivedDate] [smalldatetime] NULL,
+	[CountyID] [int] NOT NULL,
+	[CaseTypeID] [int] NOT NULL,
+	[ContactID] [int] NOT NULL,
+	[NeedsLetter] [bit] NOT NULL,
+	[ProvidedForms] [bit] NOT NULL,
+	[AssistedForms] [bit] NOT NULL,
+	[AssistedProcedures] [bit] NOT NULL,
+	[SetFinalHearing] [bit] NOT NULL,
+	[SetOtherHearing] [bit] NOT NULL,
+	[ReferralOther] [bit] NOT NULL,
+	[ReferralGmMag] [bit] NOT NULL,
+	[PreparedOrder] [bit] NOT NULL,
+	[Other] [bit] NOT NULL,
+	[AppointedPro] [bit] NOT NULL,
+	[ResolutionDate] [smalldatetime] NULL,
+	[CreatedDate] [datetime] NULL,
+	[CreatedByID] [int] NULL,
+	[LastModifiedDate] [datetime] NULL,
+	[LastModifiedByID] [int] NULL,
+ CONSTRAINT [PK_tjc_prose_history] PRIMARY KEY CLUSTERED 
+(
+	[HistoryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE {databaseOwner}[tjc_prose_history] ADD  CONSTRAINT [DF_tjc_prose_history_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+ALTER TABLE {databaseOwner}[tjc_prose_history] ADD  CONSTRAINT [DF_tjc_prose_history_CreatedByID]  DEFAULT ((1)) FOR [CreatedByID]
+GO
+ALTER TABLE {databaseOwner}[tjc_prose_history] ADD  CONSTRAINT [DF_tjc_prose_history_LastModifiedDate]  DEFAULT (getdate()) FOR [LastModifiedDate]
+GO
+ALTER TABLE {databaseOwner}[tjc_prose_history] ADD  CONSTRAINT [DF_tjc_prose_history_LastModifiedByID]  DEFAULT ((1)) FOR [LastModifiedByID]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_prose_history_list]') AND type in (N'V'))
+	DROP VIEW {databaseOwner}[tjc_prose_history_list]
+GO
+CREATE VIEW {databaseOwner}[tjc_prose_history_list]
+AS
+SELECT        {databaseOwner}Users.DisplayName AS LastModifiedByName, {databaseOwner}tjc_prose_history.*, {databaseOwner}tjc_prose_contact.ContactName, {databaseOwner}tjc_gl_counties.CountyName, {databaseOwner}tjc_prose_case_type.CaseTypeName
+FROM            {databaseOwner}Users RIGHT OUTER JOIN
+                         {databaseOwner}tjc_prose_history ON {databaseOwner}Users.UserID = {databaseOwner}tjc_prose_history.LastModifiedByID LEFT OUTER JOIN
+                         {databaseOwner}tjc_prose_contact ON {databaseOwner}tjc_prose_history.ContactID = {databaseOwner}tjc_prose_contact.ContactID LEFT OUTER JOIN
+                         {databaseOwner}tjc_prose_case_type ON {databaseOwner}tjc_prose_history.CaseTypeID = {databaseOwner}tjc_prose_case_type.CaseTypeID LEFT OUTER JOIN
+                         {databaseOwner}tjc_gl_counties ON {databaseOwner}tjc_prose_history.CountyID = {databaseOwner}tjc_gl_counties.CountyId
+GO
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

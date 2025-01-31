@@ -1,28 +1,11 @@
-﻿/*
-' Copyright (c) 2022  Joe Terhune
-'  All rights reserved.
-' 
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-' DEALINGS IN THE SOFTWARE.
-' 
-*/
-
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
+﻿using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using tjc.Modules.JudicialReferral.Components;
-using DotNetNuke.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 using System.Web.UI.WebControls;
+using tjc.Modules.JudicialReferral.Components;
 
 namespace tjc.Modules.JudicialReferral
 {
@@ -119,13 +102,44 @@ namespace tjc.Modules.JudicialReferral
                     cmdSave.Visible = false;
                     pnlJudge.Enabled = false;
                     pnlJA.Enabled = false;
-
-                    if (objReferral.Status == Components.JudicialReferral.Statuses.NewReferral | objReferral.Status == Components.JudicialReferral.Statuses.RetainedByJudge | objReferral.Status == Components.JudicialReferral.Statuses.ReferredToCounsel)
+                    if (objReferral.Status == Components.JudicialReferral.Statuses.Complete)
                     {
+                        pnlJA.Enabled = false;
+                        pnlJudge.Enabled = false;
+                        if (!IsJudge)
+                        {
+                            cmdComplete.Visible = false;
+                            cmdSave.Visible = false;
+                        }
+                        cmdComplete.Text = "Revert Completed Status";
+                    }
+                    else
+                    {
+                        cmdComplete.Text = "Order Completed?";
+                        cmdComplete.Visible = false;
                         if (IsJudge)
                         {
                             pnlJudge.Enabled = true;
+                            cmdComplete.Visible = true;
                             cmdSave.Visible = true;
+                        }
+                    }
+                    if (objReferral.Status == Components.JudicialReferral.Statuses.NewReferral | objReferral.Status == Components.JudicialReferral.Statuses.RetainedByJudge | objReferral.Status == Components.JudicialReferral.Statuses.ReferredToCounsel)
+                    {
+                        if (IsJudge || IsJa)
+                        {
+                            if (IsJudge)
+                            {
+                                pnlJudge.Enabled = true;
+                                cmdSave.Visible = true;
+                            }
+                            if (objReferral.Status == Components.JudicialReferral.Statuses.ReferredToCounsel)
+                            {
+                                pnlJudge.Enabled = false;
+                                pnlJA.Enabled = false;
+                                cmdSave.Text = "Recall Referral from Court Counsel";
+                                cmdComplete.Visible = false;
+                            }
                         }
                         else if (IsJa & objReferral.Status == Components.JudicialReferral.Statuses.NewReferral)
                         {
@@ -158,29 +172,6 @@ namespace tjc.Modules.JudicialReferral
                     }
                     else if (objReferral.Status == Components.JudicialReferral.Statuses.RetainedByJudge)
                         chkNo.Checked = true;
-                    if (objReferral.Status == Components.JudicialReferral.Statuses.Complete)
-                    {
-                        pnlJA.Enabled = false;
-                        pnlJudge.Enabled = false;
-
-                        if (!IsJudge)
-                        {
-                            cmdComplete.Visible = false;
-                            cmdSave.Visible = false;
-                        }
-                        cmdComplete.Text = "Revert Completed Status";
-                    }
-                    else
-                    {
-                        cmdComplete.Text = "Order Completed?";
-                        cmdComplete.Visible = false;
-                        if (IsJudge)
-                        {
-                            pnlJudge.Enabled = true;
-                            cmdComplete.Visible = true;
-                            cmdSave.Visible = true;
-                        }
-                    }
                 }
                 else
                 {
@@ -199,14 +190,21 @@ namespace tjc.Modules.JudicialReferral
         private void SendToCounsel(Components.JudicialReferral objReferral)
         {
             UserInfo objJudge = UserController.GetUserById(PortalId, objReferral.JudgeID);
-
             string emailFrom = objJudge.Email;
             string toEmail = CourtCounselEmail;
             string subject = "Judicial Referral Request";
-            string body = string.Format("<p>Please review the <a href='{0}'>Judicial Referral Request</a> for case number {1}.</p>", EditUrl("rid", objReferral.ReferralID.ToString(), "review"), objReferral.CaseNumber);
+            string body = string.Format("<p>Please review the <a href='{0}'>Judicial Referral Request</a> for case number {1}.</p>", CourtCounselUrl + objReferral.ReferralID.ToString(), objReferral.CaseNumber);
             DotNetNuke.Services.Mail.Mail.SendEmail(emailFrom, toEmail, subject, body);
         }
-
+        private void SendRecallToCounsel(Components.JudicialReferral objReferral)
+        {
+            UserInfo objJudge = UserController.GetUserById(PortalId, objReferral.JudgeID);
+            string emailFrom = objJudge.Email;
+            string toEmail = CourtCounselEmail;
+            string subject = "Judicial Referral Recall";
+            string body = string.Format("<p>Judge {0} has recalled the <a href='{1}'>Judicial Referral Request</a> for case number {2}.</p>",objJudge.LastName, CourtCounselUrl + objReferral.ReferralID.ToString(), objReferral.CaseNumber);
+            DotNetNuke.Services.Mail.Mail.SendEmail(emailFrom, toEmail, subject, body);
+        }
         private bool CounselRecordExists(Components.JudicialReferral objReferral)
         {
             var ctl = new JudicialReferralController();
@@ -242,6 +240,27 @@ namespace tjc.Modules.JudicialReferral
                     Response.Redirect(_navigationManager.NavigateURL(), true);
                     return;
                 }
+                if (objReferral.Status == Components.JudicialReferral.Statuses.ReferredToCounsel)
+                {
+
+                    if (IsCounsel)
+                    {
+                        objReferral.CounselReceivedDate = DateTime.Now;
+                        ctl.UpdateReferral(objReferral);
+                        Response.Redirect(_navigationManager.NavigateURL(), true);
+                    }
+                    else
+                    {
+                        if (cmdSave.Text == "Recall Referral from Court Counsel")
+                        {
+                            objReferral.Status = Components.JudicialReferral.Statuses.RetainedByJudge;
+                            ctl.UpdateReferral(objReferral);
+                            SendRecallToCounsel(objReferral);
+                        }
+                    }
+                    Response.Redirect(_navigationManager.NavigateURL(), true);
+                    return;
+                }
                 if ((objReferral.Status != Components.JudicialReferral.Statuses.Complete) & IsJudge)
                 {
                     objReferral.CounselAssistance = chkYes.Checked;
@@ -267,13 +286,7 @@ namespace tjc.Modules.JudicialReferral
                     Response.Redirect(_navigationManager.NavigateURL(), true);
                     return;
                 }
-                if (objReferral.Status == Components.JudicialReferral.Statuses.ReferredToCounsel & IsCounsel)
-                {
-                    objReferral.CounselReceivedDate = DateTime.Now;
-                    ctl.UpdateReferral(objReferral);
-                    // ctl.CopyToCounselLog(objReferral);
-                    Response.Redirect(_navigationManager.NavigateURL(), true);
-                }
+                
             }
         }
 

@@ -5,7 +5,6 @@
 .call-to-action .call-to-action-btn {
     top: 78px !important;
 }
-
 .command-icon {
     width: 20px;
 }
@@ -21,7 +20,12 @@
         list-style: none;
         
     }
-
+.pnlExist {
+    border: solid 1px #cdb21f;
+    background-color: #feffce;
+    padding: 10px;
+    margin: 10px 15px;
+}
 ul.radio-button-list {
    padding-left: 0;
 }
@@ -36,7 +40,7 @@ ul.radio-button-list {
     -moz-columns: 4;
 }
 
-label em {
+label em,legend em {
     color: red
 }
 

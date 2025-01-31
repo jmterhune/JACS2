@@ -59,6 +59,26 @@ namespace tjc.Modules.MediationStatistics.Components
             }
             return t;
         }
+        public IEnumerable<StatMediatorCounts> GetMediatorTypeReport(DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<StatMediatorCounts> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+
+                t = ctx.ExecuteQuery<StatMediatorCounts>(System.Data.CommandType.StoredProcedure, "tjc_med_mediator_type_stats", startDate, endDate);
+            }
+            return t;
+        }
+        public IEnumerable<StatMediatorCounts> GetMediatorReport(DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<StatMediatorCounts> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+
+                t = ctx.ExecuteQuery<StatMediatorCounts>(System.Data.CommandType.StoredProcedure, "tjc_med_mediator_stats", startDate, endDate);
+            }
+            return t;
+        }
         public IEnumerable<FeeReportCollectedOwed> GetFeeReportCollectedOwed(DateTime startDate, DateTime endDate)
         {
             IEnumerable<FeeReportCollectedOwed> t;

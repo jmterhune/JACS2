@@ -46,7 +46,7 @@ namespace tjc.Modules.EmployeeDB
                     };
                         foreach (Group g in s.GroupList)
                         {
-                            currentRow.Add(g.GroupId.ToString());
+                            currentRow.Add(g.GroupID.ToString());
                             currentRow.Add(g.GroupName);
                         }
                         if (maxgroup == 0)

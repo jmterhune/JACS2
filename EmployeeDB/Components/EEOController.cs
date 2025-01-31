@@ -62,13 +62,13 @@ namespace tjc.Modules.EmployeeDB.Components
             }
             return t;
         }
-        public IEnumerable<EEO> GetEmployeeEEOs(int jobGroupId)
+        public IEnumerable<EEO> GetEmployeeEEOs(int jobGroupID)
         {
             IEnumerable<EEO> t;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<EEO>();
-                t = rep.Find("Where JobGroupId=@0",jobGroupId);
+                t = rep.Find("Where JobGroupID=@0",jobGroupID);
             }
             return t;
         }

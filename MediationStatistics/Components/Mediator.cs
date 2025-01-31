@@ -21,8 +21,6 @@ namespace tjc.Modules.MediationStatistics.Components
     [TableName("tjc_med_mediators")]
     //setup the primary key for table
     [PrimaryKey("MediatorId", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("Mediators", CacheItemPriority.Default, 20)]
     internal class Mediator : EntityBase
     {
         public int MediatorId { get; set; }

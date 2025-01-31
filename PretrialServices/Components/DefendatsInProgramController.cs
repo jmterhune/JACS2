@@ -13,7 +13,6 @@ using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
-using tjc.Modules.Globals;
 
 namespace tjc.Modules.PretrialServices.Components
 {
@@ -84,12 +83,12 @@ namespace tjc.Modules.PretrialServices.Components
             return t;
         }
         
-        public IEnumerable<int> GetYears()
+        public IEnumerable<int> GetYears(int countyId)
         {
             IEnumerable<int> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<int>(System.Data.CommandType.Text, "Select Distinct Year(IntakeDate) as Year From tjc_pts_defendants_in_program Order by 1");
+                t = ctx.ExecuteQuery<int>(System.Data.CommandType.Text, "Select Distinct Year(IntakeDate) as Year From tjc_pts_defendants_in_program Where countyid=@0 Order by 1",countyId);
             }
 
             return t;

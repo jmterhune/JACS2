@@ -16,7 +16,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public bool Active { get; set; }
         public virtual int MemberTypeId { get; set; }
         [IgnoreColumn]

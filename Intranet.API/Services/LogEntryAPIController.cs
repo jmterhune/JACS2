@@ -13,13 +13,15 @@ namespace tjc.Intranet.API.Services
     //[DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Anonymous)]
     public class LogEntryController : DnnApiController
     {
+        [HttpGet]
+        [DnnAuthorize]
         [ActionName("GetLogEntryByCaseNumber")]
         public HttpResponseMessage GetLogEntrysByCaseNumber(string caseNumber)
         {
             List<ViewModels.CourtCounsel.LogEntryViewModel> logEntries=new List<ViewModels.CourtCounsel.LogEntryViewModel>();
 
             var ctl = new Components.CourtCounsel.LogEntryController();
-            logEntries = ctl.GetLogEntrysByCaseNumber(caseNumber).Select(logEntry => new ViewModels.CourtCounsel.LogEntryViewModel(logEntry)).ToList();
+            logEntries = ctl.GetLogEntryByCaseNumber(caseNumber).Select(logEntry => new ViewModels.CourtCounsel.LogEntryViewModel(logEntry)).ToList();
 
             return Request.CreateResponse(logEntries);
         }

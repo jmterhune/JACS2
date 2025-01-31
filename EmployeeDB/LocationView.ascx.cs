@@ -89,10 +89,10 @@ namespace tjc.Modules.EmployeeDB
             }
             officeOfficeLocation.Description = txtDescription.Text;
             officeOfficeLocation.LastModifiedDate = DateTime.Now;
-            officeOfficeLocation.LastModifiedById = UserId;
+            officeOfficeLocation.LastModifiedByID = UserId;
             if (isNew)
             {
-                officeOfficeLocation.CreatedById = UserId;
+                officeOfficeLocation.CreatedByID = UserId;
                 officeOfficeLocation.CreatedDate = DateTime.Now;
                 ctl.CreateOfficeLocation(officeOfficeLocation);
             }

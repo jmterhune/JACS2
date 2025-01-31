@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ViewStamp.ascx.cs" Inherits="tjc.Modules.Purchasing.ViewStamp" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<div id="stamp-container">
+<div id="stamp-container" class="purchasing">
     <div class="row">
         <div class="col-4">
             <div class="input-group">
@@ -47,14 +47,14 @@
                     <asp:HyperLink ID="lnkDetails" runat="server" ToolTip="Click to view details of the Order"><i class="fa fa-search"></i></asp:HyperLink>
                 </td>
                 <td><%#Eval("OrderID") %></td>
-                <td><%#Eval("RequestedName") %></td>
+                <td><a href='mailto:<%#Eval("EmailAddress") %>'><%#Eval("RequestedName") %></a></td>
                 <td><%#Eval("ConsumerName") %></td>
                 <td><%#Eval("Location") %></td>
                 <td><%#Eval("Quantity") %></td>
                 <td><%#Eval("DateCreated") %></td>
                 <td><%#Eval("Status") %></td>
                 <td class="centered">
-                    <asp:LinkButton runat="server" ID="cmdComplete" CommandName="toggle" CommandArgument='<%#Eval("OrderID") %>'><%#"<i class='fa fa-"  + (Eval("CompletedDate")==null ? "check-square": "square") + "'><i/>"  %></asp:LinkButton></td>
+                    <asp:LinkButton runat="server" ID="cmdComplete" CommandName="toggle" CommandArgument='<%#Eval("OrderID") %>'><%#"<i class='fa fa-"  + (Eval("CompletedDate")==null ? "square": "check-square") + "'><i/>"  %></asp:LinkButton></td>
                 <td class="command-icon">
                     <asp:LinkButton runat="server" ID="cmdDelted" CssClass="confirm " CommandName="delete" CommandArgument='<%#Eval("OrderID") %>'><i class="fa fa-trash"></i></asp:LinkButton></td>
                 </td>
@@ -66,9 +66,9 @@
     </asp:Repeater>
 </div>
 
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 
 <script type="text/javascript">

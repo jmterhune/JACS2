@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace tjc.Modules.JudicialReferral.Components
 {
-    internal class JudicialReferralController
+    public class JudicialReferralController
     {
         public void CreateReferral(JudicialReferral t)
         {
@@ -60,6 +60,18 @@ namespace tjc.Modules.JudicialReferral.Components
                 var rep = ctx.GetRepository<JudicialReferral>();
                 t = rep.GetById(referralId);
             }
+            return t;
+        }
+        public IEnumerable<JudicialReferral> GetReferralList()
+        {
+            IEnumerable<JudicialReferral> t;
+
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<JudicialReferral>();
+                t = rep.Find("Where status=2 AND CounselReceivedDate IS NULL");
+            }
+
             return t;
         }
         public IEnumerable<JudicialReferral> GetReferralList(int judgeId)

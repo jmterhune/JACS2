@@ -132,6 +132,12 @@
   <data name="lblCounselRole.Text" xml:space="preserve">
     <value>Counsel Role</value>
   </data>
+  <data name="lblCourtCounselRefferalUrl.Help" xml:space="preserve">
+    <value>Enter the URL to the court counsel Referral Review Page</value>
+  </data>
+  <data name="lblCourtCounselRefferalUrl.Text" xml:space="preserve">
+    <value>Court Counsel URL</value>
+  </data>
   <data name="lblFolder.Help" xml:space="preserve">
     <value>Enter the location in the portals directory to save the files</value>
   </data>
@@ -149,5 +155,11 @@
   </data>
   <data name="lblJudgeRole.Text" xml:space="preserve">
     <value>Judge Role</value>
+  </data>
+  <data name="lblModuleId.Help" xml:space="preserve">
+    <value>Enter the ModuleId for the Court Counsel App</value>
+  </data>
+  <data name="lblModuleId.Text" xml:space="preserve">
+    <value>Court Counsel ModuleId</value>
   </data>
 </root>

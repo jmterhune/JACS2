@@ -62,13 +62,13 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-icon">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupID").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
                                 </td>
                                 <td><%#DataBinder.Eval(Container.DataItem,"GroupName") %></td>
                                 <td><%#DataBinder.Eval(Container.DataItem,"GroupTypeName") %></td>
                                 <td><%#DataBinder.Eval(Container.DataItem,"IsSwnGroup") %></td>
                                 <td class="command-icon">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton></td>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupID").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton></td>
                             </tr>
                         </ItemTemplate>
                         <FooterTemplate>
@@ -122,9 +122,9 @@
     </div>
 </div>
 
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
 

@@ -17,7 +17,34 @@ namespace tjc.Modules.JudicialReferral
         public void ProcessRequest(HttpContext context)
         {
             List<string> errorMessage = new List<string>();
-            if (context.Request.Files.Count > 0)
+            var portalsettings = DotNetNuke.Common.Globals.GetPortalSettings();
+
+            string aid = context.Request.QueryString["aid"];
+
+            // Check if 'aid' is present and valid
+            if (!string.IsNullOrEmpty(aid))
+            {
+                try
+                {
+                    int.TryParse(aid, out int id);
+                    DeleteAttachment(id);
+                }
+                catch (Exception ex)
+                {
+                    errorMessage.Add("Unable to delete file");
+                    Exceptions.LogException(ex);
+                }
+                context.Response.ContentType = "application/json";
+                System.Web.Script.Serialization.JavaScriptSerializer jsonSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+                var returnValues = jsonSerializer.Serialize(
+                      new
+                      {
+                          idList = aid,
+                          errorList = errorMessage,
+                      });
+                context.Response.Write(returnValues);
+            }
+            else if (context.Request.Files.Count > 0)
             {
                 int moduleId = System.Convert.ToInt32(context.Request.Params["mid"]);
                 int tabId = System.Convert.ToInt32(context.Request.Params["tid"]);
@@ -27,10 +54,9 @@ namespace tjc.Modules.JudicialReferral
                 {
                     targetFolder = module.ModuleSettings["FolderName"].ToString();
                 }
-                var portalsettings = DotNetNuke.Common.Globals.GetPortalSettings();
 
                 HttpFileCollection files = context.Request.Files;
-                
+
                 List<int> attachmentIds = new List<int>();
                 foreach (string key in files)
                 {
@@ -87,6 +113,20 @@ namespace tjc.Modules.JudicialReferral
             }
 
             return attachmentId;
+        }
+        public void DeleteAttachment(int attachmentId)
+        {
+            var ctl = new AttachmentController();
+            Attachment attachment = ctl.GetAttachment(attachmentId);
+            if (attachment != null)
+            {
+                var file = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(attachment.FileID);
+                if (file != null)
+                {
+                    DotNetNuke.Services.FileSystem.FileManager.Instance.DeleteFile(file);
+                }
+                ctl.DeleteAttachment(attachmentId);
+            }
         }
         private string GetJsonReturnValue(List<int> attachmentIds, List<string> errorMessage)
         {

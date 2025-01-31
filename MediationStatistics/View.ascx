@@ -1,6 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.MediationStatistics.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
@@ -13,9 +12,9 @@
             <a class="nav-link" href="<%=AttorneyListUrl%>">Manage Lists</a>
         </li>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content pb-0">
         <div id="caseSearch" class="tab-pane active">
-            <div class="toggle toggle-quaternary" data-plugin-toggle="toggle">
+            <div class="toggle toggle-quaternary mb-0" data-plugin-toggle="toggle">
                 <section class="toggle active">
                     <button class="toggle-heading" type="button">Expand for Search / Add Case</button>
                     <div class="toggle-content">
@@ -119,32 +118,29 @@
                 </section>
             </div>
             <asp:Literal ID="ltMessage" runat="server"></asp:Literal>
-
-            <table id="tblCases" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th>Case Number</th>
-                        <th>Region</th>
-                        <th>Case Type</th>
-                        <th>Party One</th>
-                        <th>Party Two</th>
-                        <th>Created</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-        <div id="reports" class="tab-pane">
         </div>
     </div>
-</div>
 
+</div>
+<table id="tblCases" class="table table-striped">
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>Case Number</th>
+            <th>Region</th>
+            <th>Case Type</th>
+            <th>Party One</th>
+            <th>Party Two</th>
+            <th>Created</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+</table>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
@@ -157,8 +153,8 @@
     var businessName = null;
     var pageSize = 25;
     var recordCount = 0;
-    var sortDirection = "asc";
-    var sortColumnIndex = 1;
+    var sortDirection = "desc";
+    var sortColumnIndex = 6;
     var isAdmin = "<%=isAdminUser%>";
     var currentPage = 1;
     GetLocalStorage();
@@ -183,7 +179,7 @@
         }
     });
     function PageInit() {
-       
+
         var restUrl = `/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/GetCaseListItems/${recordCount}`;
         var deleteUrl = "/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/Delete/";
         var caseTable = $('#tblCases').DataTable({
@@ -209,8 +205,8 @@
                     var url = "<%=EditUrl("CDSP")%>";
                     url = url.replace("CDSP", row.groupname);
                     return `<a title="Edit Record" onclick="SetCaseId(${data})" href="${url}/cid/${data}"><i class="fas fa-search"></i></a>`;
-                    }, className: "command-item", orderable: false
-                },
+                }, className: "command-item", orderable: false
+            },
                 { data: "listnumber" },
                 { data: "region" },
                 { data: "group" },
@@ -220,9 +216,10 @@
                 {
                     data: "comments", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
-                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i></a>';
+                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i>';
                         return '';
-                    }, className: "command-item", orderable: false },
+                    }, className: "command-item", orderable: false
+                },
                 {
                     data: "caseid", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
@@ -290,6 +287,12 @@
                 regionId = $(this).val();
             localStorage.setItem('mediation.regionId', $(this).val());
         });
+        //$("#txtCaseSequence").on("blur", function () {
+        //    var number = $("#txtCaseSequence").val();
+        //    if (number.length > 0)
+        //        number = number.toString().padStart(6, '0');
+        //    $("#txtCaseSequence").val(number);
+        //});
         $("#drpGroup").on("change", function () {
             groupId = null;
             if ($(this).val().length > 0)

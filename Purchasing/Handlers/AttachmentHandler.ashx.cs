@@ -2,9 +2,7 @@
 using DotNetNuke.Entities.Portals;
 using System;
 using System.Collections;
-using System.Net.Mail;
 using System.Web;
-using tjc.Modules.Purchasing.Components;
 
 namespace tjc.Modules.Purchasing.Handlers
 {
@@ -14,7 +12,7 @@ namespace tjc.Modules.Purchasing.Handlers
     public class AttachmentHandler : IHttpHandler
     {
         private int _moduleId;
-        private int _portalId;
+        private int _portalId = PortalSettings.Current.PortalId;
         public void ProcessRequest(HttpContext context)
         {
             if (context.Request.Files.Count > 0)
@@ -61,7 +59,7 @@ namespace tjc.Modules.Purchasing.Handlers
         {
             ModuleController moduleController = new ModuleController();
             ModuleInfo modCtl = moduleController.GetModule(_moduleId);
-            Hashtable setting = modCtl.TabModuleSettings;
+            Hashtable setting = modCtl.ModuleSettings;
             string attachmentFolder = "Purchasing-Attachments";
             if (setting.Contains("AttachmentFolderName"))
             {

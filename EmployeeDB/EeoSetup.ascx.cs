@@ -51,7 +51,7 @@ namespace tjc.Modules.EmployeeDB
                     }
                     var ctl = new JobGroupController();
                     drpCategory.DataTextField = "Description";
-                    drpCategory.DataValueField = "JobGroupId";
+                    drpCategory.DataValueField = "JobGroupID";
                     drpCategory.DataSource = ctl.GetJobGroups();
                     drpCategory.DataBind();
                     txtEndDate.Text = new DateTime(DateTime.Now.Year, 6, 30).ToShortDateString();
@@ -77,7 +77,7 @@ namespace tjc.Modules.EmployeeDB
             }
             if (drpCategory.SelectedValue != "")
             {
-                eeo.JobGroupId = Convert.ToInt32(drpCategory.SelectedValue);
+                eeo.JobGroupID = Convert.ToInt32(drpCategory.SelectedValue);
 
             }
             eeo.Year = Convert.ToInt32(txtYear.Text);
@@ -117,10 +117,10 @@ namespace tjc.Modules.EmployeeDB
             eeo.TermOther = Convert.ToDecimal(txtTermOther.Text);
             eeo.TermWhite = Convert.ToDecimal(txtTermWhite.Text);
             eeo.LastModifiedDate = DateTime.Now;
-            eeo.LastModifiedById = UserId;
+            eeo.LastModifiedByID = UserId;
             if (isNew)
             {
-                eeo.CreatedById = UserId;
+                eeo.CreatedByID = UserId;
                 eeo.CreatedDate = DateTime.Now;
                 ctl.CreateEEO(eeo);
             }
@@ -145,50 +145,50 @@ namespace tjc.Modules.EmployeeDB
                     {
                         EEO eeo = new EEO
                         {
-                            JobGroupId = jg.JobGroupId,
-                            PopulationMale = ctl.GetGenderCount(jg.JobGroupId, "M", startDate, endDate),
-                            PopulationFemale = ctl.GetGenderCount(jg.JobGroupId, "F", startDate, endDate),
-                            PopulationWhite = ctl.GetRaceCount(jg.JobGroupId, "W", startDate, endDate),
-                            PopulationAsian = ctl.GetRaceCount(jg.JobGroupId, "A", startDate, endDate),
-                            PopulationHispanic = ctl.GetRaceCount(jg.JobGroupId, "H", startDate, endDate),
-                            PopulationBlack = ctl.GetRaceCount(jg.JobGroupId, "B", startDate, endDate),
-                            PopulationIndian = ctl.GetRaceCount(jg.JobGroupId, "I", startDate, endDate),
-                            PopulationOther = ctl.GetRaceCount(jg.JobGroupId, "O", startDate, endDate),
-                            HireMale = ctl.GetGenderHireCount(jg.JobGroupId, "M", startDate, endDate),
-                            HireIndian = ctl.GetRaceHireCount(jg.JobGroupId, "I", startDate, endDate),
-                            HireFemale = ctl.GetGenderHireCount(jg.JobGroupId, "F", startDate, endDate),
-                            HireAsian = ctl.GetRaceHireCount(jg.JobGroupId, "A", startDate, endDate),
-                            HireBlack = ctl.GetRaceHireCount(jg.JobGroupId, "B", startDate, endDate),
-                            HireHispanic = ctl.GetRaceHireCount(jg.JobGroupId, "H", startDate, endDate),
-                            HireOther = ctl.GetRaceHireCount(jg.JobGroupId, "O", startDate, endDate),
-                            HireWhite = ctl.GetRaceHireCount(jg.JobGroupId, "W", startDate, endDate),
-                            PromoIndian = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "I", startDate, endDate, "P"),
-                            PromoMale = ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "M", startDate, endDate, "P"),
-                            TransferIndian = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "I", startDate, endDate, "T"),
-                            TransferMale = ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "M", startDate, endDate, "T"),
-                            PromoFemale = ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "F", startDate, endDate, "P"),
-                            TransferFemale = ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "F", startDate, endDate, "T"),
-                            TransferAsian = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "A", startDate, endDate, "T"),
-                            PromoAsian = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "A", startDate, endDate, "P"),
-                            TransferBlack = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "B", startDate, endDate, "T"),
-                            PromoBlack = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "B", startDate, endDate, "P"),
-                            TransferHispanic = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "H", startDate, endDate, "T"),
-                            PromoHispanic = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "H", startDate, endDate, "P"),
-                            TransferOther = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "O", startDate, endDate, "T"),
-                            PromoOther = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "O", startDate, endDate, "P"),
-                            TransferWhite = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "W", startDate, endDate, "T"),
-                            PromoWhite = ctl.GetRacePromotionTransferCount(jg.JobGroupId, "W", startDate, endDate, "P"),
-                            TermMale = ctl.GetGenderTerminationCount(jg.JobGroupId, "M", startDate, endDate),
-                            TermFemale = ctl.GetGenderTerminationCount(jg.JobGroupId, "F", startDate, endDate),
-                            TermIndian = ctl.GetRaceTerminationCount(jg.JobGroupId, "I", startDate, endDate),
-                            TermAsian = ctl.GetRaceTerminationCount(jg.JobGroupId, "A", startDate, endDate),
-                            TermBlack = ctl.GetRaceTerminationCount(jg.JobGroupId, "B", startDate, endDate),
-                            TermHispanic = ctl.GetRaceTerminationCount(jg.JobGroupId, "H", startDate, endDate),
-                            TermOther = ctl.GetRaceTerminationCount(jg.JobGroupId, "O", startDate, endDate),
-                            TermWhite = ctl.GetRaceTerminationCount(jg.JobGroupId, "W", startDate, endDate),
+                            JobGroupID = jg.JobGroupID,
+                            PopulationMale = ctl.GetGenderCount(jg.JobGroupID, "M", startDate, endDate),
+                            PopulationFemale = ctl.GetGenderCount(jg.JobGroupID, "F", startDate, endDate),
+                            PopulationWhite = ctl.GetRaceCount(jg.JobGroupID, "W", startDate, endDate),
+                            PopulationAsian = ctl.GetRaceCount(jg.JobGroupID, "A", startDate, endDate),
+                            PopulationHispanic = ctl.GetRaceCount(jg.JobGroupID, "H", startDate, endDate),
+                            PopulationBlack = ctl.GetRaceCount(jg.JobGroupID, "B", startDate, endDate),
+                            PopulationIndian = ctl.GetRaceCount(jg.JobGroupID, "I", startDate, endDate),
+                            PopulationOther = ctl.GetRaceCount(jg.JobGroupID, "O", startDate, endDate),
+                            HireMale = ctl.GetGenderHireCount(jg.JobGroupID, "M", startDate, endDate),
+                            HireIndian = ctl.GetRaceHireCount(jg.JobGroupID, "I", startDate, endDate),
+                            HireFemale = ctl.GetGenderHireCount(jg.JobGroupID, "F", startDate, endDate),
+                            HireAsian = ctl.GetRaceHireCount(jg.JobGroupID, "A", startDate, endDate),
+                            HireBlack = ctl.GetRaceHireCount(jg.JobGroupID, "B", startDate, endDate),
+                            HireHispanic = ctl.GetRaceHireCount(jg.JobGroupID, "H", startDate, endDate),
+                            HireOther = ctl.GetRaceHireCount(jg.JobGroupID, "O", startDate, endDate),
+                            HireWhite = ctl.GetRaceHireCount(jg.JobGroupID, "W", startDate, endDate),
+                            PromoIndian = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "I", startDate, endDate, "P"),
+                            PromoMale = ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "M", startDate, endDate, "P"),
+                            TransferIndian = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "I", startDate, endDate, "T"),
+                            TransferMale = ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "M", startDate, endDate, "T"),
+                            PromoFemale = ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "F", startDate, endDate, "P"),
+                            TransferFemale = ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "F", startDate, endDate, "T"),
+                            TransferAsian = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "A", startDate, endDate, "T"),
+                            PromoAsian = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "A", startDate, endDate, "P"),
+                            TransferBlack = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "B", startDate, endDate, "T"),
+                            PromoBlack = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "B", startDate, endDate, "P"),
+                            TransferHispanic = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "H", startDate, endDate, "T"),
+                            PromoHispanic = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "H", startDate, endDate, "P"),
+                            TransferOther = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "O", startDate, endDate, "T"),
+                            PromoOther = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "O", startDate, endDate, "P"),
+                            TransferWhite = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "W", startDate, endDate, "T"),
+                            PromoWhite = ctl.GetRacePromotionTransferCount(jg.JobGroupID, "W", startDate, endDate, "P"),
+                            TermMale = ctl.GetGenderTerminationCount(jg.JobGroupID, "M", startDate, endDate),
+                            TermFemale = ctl.GetGenderTerminationCount(jg.JobGroupID, "F", startDate, endDate),
+                            TermIndian = ctl.GetRaceTerminationCount(jg.JobGroupID, "I", startDate, endDate),
+                            TermAsian = ctl.GetRaceTerminationCount(jg.JobGroupID, "A", startDate, endDate),
+                            TermBlack = ctl.GetRaceTerminationCount(jg.JobGroupID, "B", startDate, endDate),
+                            TermHispanic = ctl.GetRaceTerminationCount(jg.JobGroupID, "H", startDate, endDate),
+                            TermOther = ctl.GetRaceTerminationCount(jg.JobGroupID, "O", startDate, endDate),
+                            TermWhite = ctl.GetRaceTerminationCount(jg.JobGroupID, "W", startDate, endDate),
                             Year = endDate.Year,
-                            CreatedById = UserId,
-                            LastModifiedById = UserId,
+                            CreatedByID = UserId,
+                            LastModifiedByID = UserId,
                             CreatedDate = DateTime.Now,
                             LastModifiedDate = DateTime.Now,
                         };
@@ -226,30 +226,30 @@ namespace tjc.Modules.EmployeeDB
                     {
                         outStr.Append("<h2>" + jg.Description + "</h2>");
                         outStr.Append("<div class='row'><div class='col-auto'><h5>Populations</h5><ul class='list-unstyled'>");
-                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderCount(jg.JobGroupId, "M", startDate, endDate)));
-                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderCount(jg.JobGroupId, "F", startDate, endDate)));
+                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderCount(jg.JobGroupID, "M", startDate, endDate)));
+                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderCount(jg.JobGroupID, "F", startDate, endDate)));
                         foreach (var r in races)
-                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRaceCount(jg.JobGroupId, r.RaceCode, startDate, endDate)));
+                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRaceCount(jg.JobGroupID, r.RaceCode, startDate, endDate)));
                         outStr.Append("</ul></div><div class='col-auto'><h5>New Hires</h5><ul class='list-unstyled'>");
-                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderHireCount(jg.JobGroupId, "M", startDate, endDate)));
-                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderHireCount(jg.JobGroupId, "F", startDate, endDate)));
+                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderHireCount(jg.JobGroupID, "M", startDate, endDate)));
+                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderHireCount(jg.JobGroupID, "F", startDate, endDate)));
                         foreach (var r in races)
-                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRaceHireCount(jg.JobGroupId, r.RaceCode, startDate, endDate)));
+                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRaceHireCount(jg.JobGroupID, r.RaceCode, startDate, endDate)));
                         outStr.Append("</ul></div><div class='col-auto'><h5>Transfers</h5><ul class='list-unstyled'>");
-                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "M", startDate, endDate, "T")));
-                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "F", startDate, endDate, "T")));
+                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "M", startDate, endDate, "T")));
+                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "F", startDate, endDate, "T")));
                         foreach (var r in races)
-                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRacePromotionTransferCount(jg.JobGroupId, r.RaceCode, startDate, endDate, "T")));
+                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRacePromotionTransferCount(jg.JobGroupID, r.RaceCode, startDate, endDate, "T")));
                         outStr.Append("</ul></div><div class='col-auto'><h5>Promotions</h5><ul class='list-unstyled'>");
-                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "M", startDate, endDate, "P")));
-                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupId, "F", startDate, endDate, "P")));
+                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "M", startDate, endDate, "P")));
+                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderPromotionTransferCount(jg.JobGroupID, "F", startDate, endDate, "P")));
                         foreach (var r in races)
-                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRacePromotionTransferCount(jg.JobGroupId, r.RaceCode, startDate, endDate, "P")));
+                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRacePromotionTransferCount(jg.JobGroupID, r.RaceCode, startDate, endDate, "P")));
                         outStr.Append("</ul></div><div class='col-auto'><h5>Terminations</h5><ul class='list-unstyled'>");
-                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderTerminationCount(jg.JobGroupId, "M", startDate, endDate)));
-                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderTerminationCount(jg.JobGroupId, "F", startDate, endDate)));
+                        outStr.Append(string.Format("<li>Male: {0}</li>", ctl.GetGenderTerminationCount(jg.JobGroupID, "M", startDate, endDate)));
+                        outStr.Append(string.Format("<li>Female: {0}</li>", ctl.GetGenderTerminationCount(jg.JobGroupID, "F", startDate, endDate)));
                         foreach (var r in races)
-                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRaceTerminationCount(jg.JobGroupId, r.RaceCode, startDate, endDate)));
+                            outStr.Append(string.Format("<li>{0}: {1}</li>", r.Description, ctl.GetRaceTerminationCount(jg.JobGroupID, r.RaceCode, startDate, endDate)));
                         outStr.Append("</ul></div></div>");
 
                     }
@@ -292,7 +292,7 @@ namespace tjc.Modules.EmployeeDB
             if (e.CommandName == "edit")
             {
                 EEO eeo = ctl.GetEEO(eeoId);
-                drpCategory.SelectedValue = eeo.JobGroupId.ToString();
+                drpCategory.SelectedValue = eeo.JobGroupID.ToString();
                 hdEeoId.Value = eeoId.ToString();
                 txtYear.Text = eeo.Year.ToString();
                 if (eeo.HireAsian.HasValue)

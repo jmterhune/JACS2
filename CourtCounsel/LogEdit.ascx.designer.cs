@@ -78,13 +78,13 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.TextBox txtCaseSequence;
 
         /// <summary>
-        /// valCaseNumber control.
+        /// txtDefendantSuffix control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valCaseNumber;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantSuffix;
 
         /// <summary>
         /// txtCaseName control.
@@ -150,6 +150,15 @@ namespace tjc.Modules.CourtCounsel
         protected global::System.Web.UI.WebControls.DropDownList drpResponsible;
 
         /// <summary>
+        /// txtDefendantName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantName;
+
+        /// <summary>
         /// drpActionTaken control.
         /// </summary>
         /// <remarks>
@@ -193,6 +202,24 @@ namespace tjc.Modules.CourtCounsel
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtComments;
+
+        /// <summary>
+        /// pnlFutureAction control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlFutureAction;
+
+        /// <summary>
+        /// txtPendingDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPendingDate;
 
         /// <summary>
         /// chkReassign control.

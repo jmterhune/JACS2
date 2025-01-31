@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" TagPrefix="dnn" %>
 <asp:HyperLink ID="lnkAdmin" Visible="false" Text="Manage Orders" CssClass="SubHead" runat="server" />
-<div class="form-order-container">
+<div class="form-order-container purchasing">
     <div id="form-order-form">
         <fieldset class="row g-3">
             <asp:HiddenField ID="hdOrderId" ClientIDMode="Static" runat="server" />
@@ -77,8 +77,8 @@
         </p>
     </div>
 </div>
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     (function ($, Sys) {

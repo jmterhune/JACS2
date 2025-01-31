@@ -42,6 +42,24 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.TextBox txtRequestor;
 
         /// <summary>
+        /// txtEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEmail;
+
+        /// <summary>
+        /// valEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator valEmail;
+
+        /// <summary>
         /// drpLocation control.
         /// </summary>
         /// <remarks>
@@ -210,7 +228,7 @@ namespace tjc.Modules.Purchasing
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton cmdSave;
+        protected global::System.Web.UI.WebControls.Button cmdSave;
 
         /// <summary>
         /// cmdCancel control.

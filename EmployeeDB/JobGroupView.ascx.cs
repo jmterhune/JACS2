@@ -60,19 +60,19 @@ namespace tjc.Modules.EmployeeDB
         }
         protected void rptJobGroups_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            int jobGroupId = Convert.ToInt32(e.CommandArgument);
+            int jobGroupID = Convert.ToInt32(e.CommandArgument);
             var ctl = new JobGroupController();
             if (e.CommandName == "delete")
             {
 
-                ctl.DeleteJobGroup(jobGroupId);
+                ctl.DeleteJobGroup(jobGroupID);
                 PopulateJobGroupList();
             }
             if (e.CommandName == "edit")
             {
-                JobGroup jobGroup = ctl.GetJobGroup(jobGroupId);
+                JobGroup jobGroup = ctl.GetJobGroup(jobGroupID);
 
-                hdJobGroupId.Value = jobGroupId.ToString();
+                hdJobGroupID.Value = jobGroupID.ToString();
                 txtDescription.Text = jobGroup.Description;
                 ScriptManager.RegisterStartupScript(rptJobGroups, rptJobGroups.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
             }
@@ -82,17 +82,17 @@ namespace tjc.Modules.EmployeeDB
             var ctl = new JobGroupController();
             JobGroup jobGroup = new JobGroup();
             bool isNew = true;
-            if (hdJobGroupId.Value != "")
+            if (hdJobGroupID.Value != "")
             {
                 isNew = false;
-                jobGroup = ctl.GetJobGroup(Convert.ToInt32(hdJobGroupId.Value));
+                jobGroup = ctl.GetJobGroup(Convert.ToInt32(hdJobGroupID.Value));
             }
             jobGroup.Description = txtDescription.Text;
             jobGroup.LastModifiedDate = DateTime.Now;
-            jobGroup.LastModifiedById = UserId;
+            jobGroup.LastModifiedByID = UserId;
             if (isNew)
             {
-                jobGroup.CreatedById = UserId;
+                jobGroup.CreatedByID = UserId;
                 jobGroup.CreatedDate = DateTime.Now;
                 ctl.CreateJobGroup(jobGroup);
             }
@@ -128,7 +128,7 @@ namespace tjc.Modules.EmployeeDB
         #region Methods
         private void ClearForm()
         {
-            hdJobGroupId.Value = string.Empty;
+            hdJobGroupID.Value = string.Empty;
             txtDescription.Text = string.Empty;
         }
         private void PopulateJobGroupList()

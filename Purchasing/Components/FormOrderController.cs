@@ -97,7 +97,7 @@ namespace tjc.Modules.Purchasing.Components
         public void DeleteAllFormOrderItems(int moduleId, int orderId)
         {
             var ctl = new AttachmentController();
-            ctl.DeleteAttachmentByOrderId(moduleId, orderId);
+            ctl.DeleteFormAttachmentByOrderId(orderId);
             var f = GetFormOrderItemsByOrder(orderId);
             foreach (FormOrderItem fi in f)
             {

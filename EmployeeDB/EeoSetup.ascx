@@ -412,8 +412,8 @@
 
 </div>
 
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Datatables/datatables.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/Datatables/datatables.min.css" />
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 
 

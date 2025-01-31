@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace tjc.Modules.JudicialReferral.Components
 {
-    internal class AttachmentController
+    public class AttachmentController
     {
         public void CreateAttachment(Attachment t)
         {

@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Web.UI;
 using System.Linq;
 using static DotNetNuke.Modules.NavigationProvider.NavigationProvider;
+using DotNetNuke.Web.UI.WebControls.Extensions;
 
 namespace tjc.Modules.CourtCounsel
 {
@@ -57,7 +58,6 @@ namespace tjc.Modules.CourtCounsel
                     }
                     chkReassign.InputAttributes.Add("class", "form-check-input");
                     chkReassign.LabelAttributes.Add("class", "form-check-label");
-
                     lnkSearch.NavigateUrl = _navigationManager.NavigateURL();
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                     if (UserInfo.IsInRole(AdminRole))
@@ -69,9 +69,13 @@ namespace tjc.Modules.CourtCounsel
                     if (AssignmentId > 0)
                     {
                         PopulateForm(AssignmentId);
+                        pnlFutureAction.Visible = true;
+                    }
+                    if (LogId > 0)
+                    {
+                        PopulateLogEntry(LogId);
                     }
                     ShowMessages();
-
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -79,7 +83,6 @@ namespace tjc.Modules.CourtCounsel
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
         private void ShowMessages()
         {
             switch (LogRecordStatus)
@@ -113,9 +116,10 @@ namespace tjc.Modules.CourtCounsel
                     break;
             }
         }
-
         protected void cmdSave_Click(object sender, EventArgs e)
         {
+            if (UserId <= 0)
+                Response.Redirect(_navigationManager.NavigateURL());
             var aCtl = new AssignmentController();
             var lCtl = new LogEntryController();
             Int32.TryParse(drpResponsible.SelectedValue, out int currentAttorney);
@@ -147,7 +151,6 @@ namespace tjc.Modules.CourtCounsel
                     hdCaseInfoChanged.Value = "";
                     logRecordStatus = (int)RecordStatus.updated;
                 }
-
                 if (assignedDateHasValue)
                     assignment.DateReceived = currentDateReceived;
                 if (completedDateHasValue)
@@ -166,12 +169,12 @@ namespace tjc.Modules.CourtCounsel
                     assignment.CaseTypeId = currentCaseTypeId;
                 if (currentTimeSpanId > 0)
                     assignment.TimeSpanId = currentTimeSpanId;
-
                 assignment.Comments = txtComments.Text;
                 assignment.PreventReassignment = chkReassign.Checked;
                 assignment.ModifiedBy = UserInfo.Username;
                 assignment.ModifiedDate = DateTime.Now;
-
+                assignment.DefendantName = txtDefendantName.Text;
+                assignment.DefendantSuffix = txtDefendantSuffix.Text;
                 if (existingJudge != currentJudge)
                 {
                     var jaCtl = new JudicialAssignmentController();
@@ -188,36 +191,35 @@ namespace tjc.Modules.CourtCounsel
                     };
                     jaCtl.CreateJudicialAssignment(judicialAssignment);
                 }
-                if (assignment.DateReceived > DateTime.Now && originalReceivedDate <= DateTime.Now)
+                if (assignment.DateCompleted.HasValue)
+                    assignment.StatusType = StatusTypes.closed;
+                aCtl.UpdateAssignment(assignment);
+                if (txtPendingDate.Text != "")
                 {
+                    DateTime.TryParse(txtPendingDate.Text, out DateTime pendingDate);
                     Assignment newAssignment = new Assignment
                     {
-                        ModifiedBy = assignment.ModifiedBy,
+                        ModifiedBy = UserInfo.Email,
                         LogId = assignment.LogId,
-                        DateReceived = assignment.DateReceived,
-                        ActionId = assignment.ActionId,
+                        DateReceived = pendingDate,
                         CaseTypeId = assignment.CaseTypeId,
                         Comments = assignment.Comments,
-                        CreatedBy = assignment.ModifiedBy,
-                        CreatedDate = assignment.CreatedDate,
+                        CreatedBy = UserInfo.Email,
+                        CreatedDate = DateTime.Now,
                         CurrentAttorneyId = assignment.CurrentAttorneyId,
                         CurrentJudiciaryId = assignment.CurrentJudiciaryId,
-                        ModifiedDate = assignment.ModifiedDate,
+                        ModifiedDate = DateTime.Now,
                         MotionFiled = assignment.MotionFiled,
                         PhaseId = assignment.PhaseId,
-                        PreventReassignment = assignment.PreventReassignment,
+                        DefendantSuffix = assignment.DefendantSuffix,
+                        DefendantName = assignment.DefendantName,
                         StatusType = StatusTypes.pending,
-                        TimeSpanId = assignment.TimeSpanId,
                     };
                     aCtl.CreateAssignment(newAssignment); //Do we want to copy Files and Events?
-                    CreateEvent(logEntry, newAssignment);
                     Response.Redirect(EditUrl("aid", newAssignment.AssignmentId.ToString(), "logedit", "as=" + (int)RecordStatus.future, "ls=" + logRecordStatus), true);
                 }
                 else
                 {
-                    if (assignment.DateCompleted.HasValue)
-                        assignment.StatusType = StatusTypes.closed;
-                    aCtl.UpdateAssignment(assignment);
                     Response.Redirect(EditUrl("aid", assignment.AssignmentId.ToString(), "logedit", "as=" + (int)RecordStatus.updated, "ls=" + logRecordStatus), true);
                 }
             }
@@ -233,7 +235,6 @@ namespace tjc.Modules.CourtCounsel
                     ModifiedBy = UserInfo.Username,
                     ModifiedDate = DateTime.Now,
                     IsCase = GetIsCase()
-
                 };
                 if (!string.IsNullOrEmpty(hdLogId.Value))
                 {
@@ -261,6 +262,8 @@ namespace tjc.Modules.CourtCounsel
                     Comments = txtComments.Text,
                     PreventReassignment = chkReassign.Checked,
                     ModifiedBy = UserInfo.Username,
+                    DefendantName = txtDefendantName.Text,
+                    DefendantSuffix = txtDefendantSuffix.Text,
                     ModifiedDate = DateTime.Now,
                     CreatedBy = UserInfo.Username,
                     CreatedDate = DateTime.Now,
@@ -302,8 +305,6 @@ namespace tjc.Modules.CourtCounsel
         {
             args.IsValid = true;
         }
-
-
         #endregion
 
         #region Methods
@@ -344,7 +345,7 @@ namespace tjc.Modules.CourtCounsel
         }
         private void PopulateDropDowns()
         {
-            var countyCtl = new tjc.Modules.Globals.CountyController();
+            var countyCtl = new CountyController();
             var memberCtl = new MemberController();
             var timeCtl = new TimeSpanController();
             var statusCtl = new PhaseController();
@@ -354,25 +355,21 @@ namespace tjc.Modules.CourtCounsel
             drpCounty.DataTextField = "CountyName";
             drpCounty.DataSource = countyCtl.GetCounties();
             drpCounty.DataBind();
-
             drpActionTaken.DataValueField = "ActionId";
             drpActionTaken.DataTextField = "ActionName";
-            drpActionTaken.DataSource = actionCtl.GetActiveActions();
+            drpActionTaken.DataSource = actionCtl.GetActiveActions().OrderBy(x => x.ActionName);
             drpActionTaken.DataBind();
-
             drpActionTaken.Items.Insert(0, new ListItem("< Select Option >", "0"));
             drpCaseType.DataValueField = "CaseTypeId";
             drpCaseType.DataTextField = "CaseTypeName";
-            drpCaseType.DataSource = caseTypeCtl.GetActiveCaseTypes();
+            drpCaseType.DataSource = caseTypeCtl.GetActiveCaseTypes().OrderBy(x => x.CaseTypeName);
             drpCaseType.DataBind();
             drpCaseType.Items.Insert(0, new ListItem("< Select Option >", "0"));
-
             drpTimeSpent.DataValueField = "TimeSpanId";
             drpTimeSpent.DataTextField = "TimeSpanName";
             drpTimeSpent.DataSource = timeCtl.GetTimeSpans(true);
             drpTimeSpent.DataBind();
             drpTimeSpent.Items.Insert(0, new ListItem("< Select Option >", "0"));
-
             IEnumerable<Phase> phases = statusCtl.GetPhaseDropDownItems(true);
             string groupName = "";
             foreach (Phase phase in phases)
@@ -390,7 +387,6 @@ namespace tjc.Modules.CourtCounsel
                     }
                     groupName = phase.GroupName;
                 }
-
                 ListItem li = new ListItem(phase.PhaseName, phase.PhaseId.ToString());
                 if (phase.IsPending)
                 {
@@ -420,7 +416,6 @@ namespace tjc.Modules.CourtCounsel
                 drpResponsible.Items.Add(li);
             }
             drpResponsible.Items.Add(new ListItem("Inactive Members", ">"));
-
             drpRequestedBy.DataValueField = "MemberId";
             drpRequestedBy.DataTextField = "ListName";
             IEnumerable<Member> activeJudges = memberCtl.GetMembersByType(0, true);
@@ -438,7 +433,37 @@ namespace tjc.Modules.CourtCounsel
                 drpRequestedBy.Items.Add(li);
             }
             drpRequestedBy.Items.Add(new ListItem("Inactive Members", ">"));
-
+        }
+        private void PopulateLogEntry(int logId)
+        {
+            drpCountyLetter.Attributes.Add("disabled", "disabled");
+            txtCaseYear.Attributes.Add("disabled", "disabled");
+            txtCaseType.Attributes.Add("disabled", "disabled");
+            txtCaseSequence.Attributes.Add("disabled", "disabled");
+            txtCaseName.Attributes.Add("disabled", "disabled");
+            drpCounty.Attributes.Add("disabled", "disabled");
+            var ctlLog = new LogEntryController();
+            LogEntry logEntry = ctlLog.GetLogEntry(logId);
+            string[] caseNumber = logEntry.CaseNumber.Split('-');
+            drpCountyLetter.SelectedValue = caseNumber[0];
+            txtCaseYear.Text = caseNumber[1];
+            txtCaseType.Text = caseNumber[2];
+            txtCaseSequence.Text = caseNumber[3];
+            for (int i = 4; i < caseNumber.Length; i++)
+            {
+                txtCaseSequence.Text += string.Format("-{0}", caseNumber[i]);
+            }
+            if (txtCaseType.Text == "CF")
+            {
+                if (drpCountyLetter.SelectedValue == "S" || drpCountyLetter.SelectedValue == "V")
+                {
+                    txtDefendantSuffix.AddCssClass("sarasota-suffix");
+                }
+                else { txtDefendantSuffix.AddCssClass("manatee-suffix"); }
+            }
+            txtCaseName.Text = logEntry.Description;
+            drpCounty.SelectedValue = logEntry.CountyId.ToString();
+            hdLogId.Value = logId.ToString();
         }
         private void PopulateForm(int assignmentId)
         {
@@ -461,10 +486,19 @@ namespace tjc.Modules.CourtCounsel
             {
                 txtCaseSequence.Text += string.Format("-{0}", caseNumber[i]);
             }
-
+            if (txtCaseType.Text == "CF")
+            {
+                if (drpCountyLetter.SelectedValue == "S" || drpCountyLetter.SelectedValue == "V")
+                {
+                    txtDefendantSuffix.AddCssClass("sarasota-suffix");
+                }
+                else { txtDefendantSuffix.AddCssClass("manatee-suffix"); }
+            }
             drpCaseType.SelectedValue = assignment.CaseTypeId.ToString();
             txtCaseName.Text = logEntry.Description;
             drpCounty.SelectedValue = logEntry.CountyId.ToString();
+            txtDefendantSuffix.Text = assignment.DefendantSuffix;
+            txtDefendantName.Text = assignment.DefendantName;
             if (assignment.DateReceived.HasValue)
                 txtAssignedDate.Text = assignment.DateReceived.Value.ToShortDateString();
             drpActionTaken.SelectedValue = assignment.ActionId.ToString();

@@ -1,32 +1,27 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Report.ascx.cs" Inherits="tjc.Modules.MediationStatistics.Report" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div id="report-form">
-    <div class="row">
+    <div class="row form-group">
         <div class="col-auto">
-            <div class="form-group">
-                <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
-                <asp:TextBox runat="server" ID="txtStartDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
-            </div>
+            <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
+            <asp:TextBox runat="server" ID="txtStartDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+        </div>
+        <div class="col-auto">
+            <asp:Label runat="server" AssociatedControlID="txtEndDate" Text="End Date" />
+            <asp:TextBox runat="server" ID="txtEndDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+        </div>
+        <div class="col-auto">
+            <asp:Label runat="server" AssociatedControlID="drpReport" Text="Report" />
+            <asp:DropDownList ID="drpReport" runat="server" ToolTip="Select Report to Run" AutoPostBack="true" CssClass="form-control" OnSelectedIndexChanged="drpReport_SelectedIndexChanged" ClientIDMode="Static">
+                <asp:ListItem Text="Compendium" Value="0" />
+                <asp:ListItem Text="Fees Owed" Value="1" />
+                <asp:ListItem Text="Referral Sources" Value="2" />
+                <asp:ListItem Text="Check Stats" Value="3" />
+                <asp:ListItem Text="Collected &amp; Paid" Value="4" />
+                <asp:ListItem Text="Mediator Stats" Value="5" />
+            </asp:DropDownList>
         </div>
 
-        <div class="col-auto">
-            <div class="form-group">
-                <asp:Label runat="server" AssociatedControlID="txtEndDate" Text="End Date" />
-                <asp:TextBox runat="server" ID="txtEndDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
-            </div>
-        </div>
-        <div class="col-auto">
-            <div class="form-group">
-                <asp:Label runat="server" AssociatedControlID="drpReport" Text="Report" />
-                <asp:DropDownList ID="drpReport" runat="server" ToolTip="Select Report to Run" CssClass="form-control" ClientIDMode="Static">
-                    <asp:ListItem Text="Compendium" Value="0" />
-                    <asp:ListItem Text="Fees Owed" Value="1" />
-                    <asp:ListItem Text="Referral Sources" Value="2" />
-                    <asp:ListItem Text="Check Stats" Value="3" />
-                    <asp:ListItem Text="Collected &amp; Paid" Value="4" />
-                </asp:DropDownList>
-            </div>
-        </div>
     </div>
 </div>
 <p>
@@ -153,7 +148,7 @@
             <asp:CheckBoxField DataField="MediationHeld" HeaderText="Mediation Held" ReadOnly="True" SortExpression="MediationHeld"></asp:CheckBoxField>
             <asp:BoundField DataField="MediationDate" HeaderText="Mediated" ReadOnly="True" SortExpression="MediationDate"
                 DataFormatString="{0:d}"></asp:BoundField>
-            <asp:BoundField DataField="MediatorName" HeaderText="Mediator" ReadOnly="True" SortExpression="MediatorName"></asp:BoundField>
+            <asp:BoundField DataField="Mediator" HeaderText="Mediator" ReadOnly="True" SortExpression="Mediator"></asp:BoundField>
             <asp:CheckBoxField DataField="AgreementReached" HeaderText="Agreement Reached" ReadOnly="True" SortExpression="AgreementReached"></asp:CheckBoxField>
             <asp:BoundField DataField="FeeAmount" HeaderText="Fee Amount" ReadOnly="True" SortExpression="FeeAmount"></asp:BoundField>
             <asp:CheckBoxField DataField="OTS" HeaderText="OTSC" ReadOnly="True" SortExpression="OTS">
@@ -207,6 +202,91 @@
                 runat="server" />&nbsp;<strong>(Fee Waived)</strong>
         <asp:Label ID="lblCountyOwedWaivedFTA" runat="server" /><br />
     </fieldset>
+</div>
+<div id="MediatorStats" runat="server" visible="false">
+    <hr />
+    <div class="row form-group">
+        <div class="col-auto">
+            <asp:Label runat="server" ID="lblMediatoryType" AssociatedControlID="drpMediatorType" Text="Mediator Type" Visible="false" />
+            <asp:DropDownList ID="drpMediatorType" runat="server" CssClass="form-control" Visible="false" ClientIDMode="Static">
+                <asp:ListItem Text="< Select Mediator Type >" Value=""></asp:ListItem>
+                <asp:ListItem Text="Contracted" Value="Contracted" />
+                <asp:ListItem Text="Staff" Value="Staff" />
+                <asp:ListItem Text="Volunteer" Value="Volunteer" />
+            </asp:DropDownList>
+        </div>
+        <div class="col-auto">
+            <asp:Label runat="server" ID="lblMediator" AssociatedControlID="drpMediator" Text="Mediator" Visible="false" />
+            <asp:DropDownList ID="drpMediator" runat="server" CssClass="form-control" ClientIDMode="Static" Visible="false" AppendDataBoundItems="true">
+                <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
+            </asp:DropDownList>
+        </div>
+
+        <div class="col-auto">
+            <asp:Button CssClass="btn btn-primary" ID="cmdMediatorStat" Text="Submit" runat="server" OnClick="cmdMediatorStat_Click" />
+        </div>
+    </div>
+               <hr /> <h3>Statistics by Mediator Type</h3>
+            <asp:Repeater ID="rptMediatorTypeCounts" runat="server">
+                <HeaderTemplate>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mediator Type</th>
+                                <th>Location</th>
+                                <th># Mediations</th>
+                                <th># Agreements</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                </HeaderTemplate>
+                <ItemTemplate>
+                    <tr>
+                        <td>
+                            <%#Eval("MediatorType") %>
+                        </td>
+                        <td>
+                            <%#Eval("Region") %>
+                        </td>
+                        <td><%#Eval("Held") %></td>
+                        <td><%#Eval("Signed") %></td>
+                    </tr>
+                </ItemTemplate>
+                <FooterTemplate>
+                    </tbody></table>
+                </FooterTemplate>
+            </asp:Repeater>
+            <h3>Statistics by Mediator</h3>
+            <asp:Repeater ID="rptMediatorCounts" runat="server">
+                <HeaderTemplate>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mediator</th>
+                                <th>Location</th>
+                                <th># Mediations</th>
+                                <th># Agreements</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                </HeaderTemplate>
+                <ItemTemplate>
+                    <tr>
+                        <td>
+                            <%#Eval("MediatorName") %>
+                        </td>
+                        <td>
+                            <%#Eval("Region") %>
+                        </td>
+                        <td><%#Eval("Held") %></td>
+                        <td><%#Eval("Signed") %></td>
+                    </tr>
+                </ItemTemplate>
+                <FooterTemplate>
+                    </tbody></table>
+                </FooterTemplate>
+            </asp:Repeater>
+
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 

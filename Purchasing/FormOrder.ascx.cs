@@ -12,9 +12,11 @@
 using DotNetNuke.Abstractions;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
+using System.Text;
 using System.Web.UI.WebControls;
 using tjc.Modules.Purchasing.Components;
 
@@ -43,7 +45,16 @@ namespace tjc.Modules.Purchasing
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
-
+        private void ClearForm()
+        {
+            txtFormNumber.Text = string.Empty;
+            hdFormId.Value = string.Empty;
+            txtComments.Text = string.Empty;
+            txtDescription.Text = string.Empty;
+            txtFormName.Text = string.Empty;
+            txtQuantity.Text = string.Empty;
+            txtRecipient.Text = string.Empty;
+        }
         #region Event Handlers    
         protected void Page_PreRender(object sender, EventArgs e)
         {
@@ -65,6 +76,7 @@ namespace tjc.Modules.Purchasing
                     if (UserInfo != null)
                     {
                         txtRequestor.Text = UserInfo.DisplayName;
+                        txtEmailAddress.Text = UserInfo.Email;
                         if (UserInfo.IsInRole(AdminRole))
                         {
                             lnkAdmin.NavigateUrl = EditUrl("form-list");
@@ -85,6 +97,7 @@ namespace tjc.Modules.Purchasing
                         if (order != null)
                         {
                             txtRequestor.Text = order.RequestedName;
+                            txtEmailAddress.Text=order.EmailAddress;
                             drpLocation.SelectedValue = order.Location;
                             BindFormsList(OrderId);
                             SetTargetFolder();
@@ -129,7 +142,7 @@ namespace tjc.Modules.Purchasing
             }
             order.DateRequested = DateTime.Now;
             order.RequestedName = txtRequestor.Text;
-
+            order.EmailAddress = txtEmailAddress.Text;
             order.Location = drpLocation.SelectedValue;
             if (orderId > 0)
             {
@@ -168,21 +181,70 @@ namespace tjc.Modules.Purchasing
                 formid = formLine.FormID;
             }
             AddAttachments(orderId, formid);
-            cmdSave.Visible = true;
+            cmdSave.Enabled = true;
             BindFormsList(orderId);
+            ClearForm();
         }
-
         protected void cmdSave_Click(object sender, EventArgs e)
         {
             if (OrderId > 0)
             {
                 var ctl = new FormOrderController();
+                var aCtl=new AttachmentController();
+                DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
                 var order = ctl.GetFormOrder(OrderId);
+                string fromAddress = "noreply.intranet@jud12.flcourts.org";
+                StringBuilder sb = new StringBuilder();
+                string subject = "";
+                order.DateRequested = DateTime.Now;
                 try
                 {
                     order.RequestedName = txtRequestor.Text;
+                    order.EmailAddress = txtEmailAddress.Text;
                     order.Location = drpLocation.SelectedValue;
                     ctl.UpdateFormOrder(order);
+                    sb.Append("<h2>Court Form Order  Details</h2>");
+                    sb.Append("<ul style='list-style:none;margin:0;padding:0'><li><strong>Requested By: </strong>");
+                    if (!string.IsNullOrEmpty(order.EmailAddress))
+                        sb.Append(string.Format("<a href='mailto:{0}'>",order.EmailAddress));
+                    sb.Append(order.RequestedName);
+                    if (!string.IsNullOrEmpty(order.EmailAddress))
+                        sb.Append("</a>");
+                    sb.Append("<li><strong>Order Id: </strong>");
+                    sb.Append(order.OrderID);
+                    sb.Append("</li><li><strong>Location: </strong> ");
+                    sb.Append(order.Location);
+                    sb.Append("</li></ul><h3>Form Order Lines</h3><table cellspacing='0' cellpadding='5' border='1'><thead><tr><th>Form #</th><th>Form Name</th><th>Description</th><th>Qty</th><th>End User</th><th>Comments</th></tr></thead><tbody>");
+                    foreach (var formItem in ctl.GetFormOrderItemsByOrder(order.OrderID))
+                    {
+                        sb.Append("<tr><td>");
+                        sb.Append(formItem.FormNumber);
+                        sb.Append("</td><td>");
+                        sb.Append(formItem.FormName);
+                        sb.Append("</td><td>");
+                        sb.Append(formItem.Description);
+                        sb.Append("</td><td>");
+                        sb.Append(formItem.Quantity.ToString());
+                        sb.Append("</td><td>");
+                        sb.Append(formItem.Recipient);
+                        sb.Append("</td><td>");
+                        sb.Append(formItem.Comments);
+                        sb.Append("</td></tr>");
+                        sb.Append("<tr><td colspan='6'><h3>Attachments</h3><ul>");
+                        foreach (var attach in aCtl.GetFormAttachmentsByFormId(formItem.FormID))
+                            if (attach.FileID > 0)
+                            {
+                                var fileInfo = dCtl.GetFile(attach.FileID);
+                                sb.Append(string.Format("<li><a target='_blank' title='Opens in new tab' href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", currentProtocol, PortalAlias.HTTPAlias, PortalId, fileInfo.RelativePath, fileInfo.FileName));
+                            }
+                        sb.Append("</ul></td></tr>");
+                    }
+                    sb.Append("</tbody></table>");
+                    sb.Append("</ul>");                   
+                    subject = string.Format("Court Form Order for {0}", order.RequestedName);
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
+                    subject = "Form Order Confirmation";
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", order.EmailAddress, subject, sb.ToString());
                 }
                 catch (Exception exc)
                 {
@@ -195,7 +257,6 @@ namespace tjc.Modules.Purchasing
                 DotNetNuke.UI.Skins.Skin.AddModuleMessage(Page, "Please add Line Forms to Order before submitting", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
             }
         }
-
         protected void rptForms_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
             Int32.TryParse(e.CommandArgument.ToString(), out int formId);
@@ -243,8 +304,8 @@ namespace tjc.Modules.Purchasing
             foreach (string fileId in fileIds)
             {
                 Int32.TryParse(fileId, out int FileID);
-                Attachment attachment = new Attachment { ModuleID = ModuleId, FileID = FileID, FormID = formId, OrderID = orderId };
-                ctl.CreateAttachment(attachment);
+                FormOrderAttachment attachment = new FormOrderAttachment { FileID = FileID, FormID = formId, OrderID = orderId };
+                ctl.CreateFormAttachment(attachment);
             }
             hdAttachmentIds.Value = string.Empty;
         }
@@ -256,6 +317,7 @@ namespace tjc.Modules.Purchasing
                 var folder = dCtl.AddFolder(this.PortalId, this.FoTargetFolder);
             }
         }
+
         #endregion
 
 

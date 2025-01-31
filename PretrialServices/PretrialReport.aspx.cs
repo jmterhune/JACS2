@@ -6,7 +6,6 @@ using DotNetNuke.Common.Utilities;
 using tjc.Modules.PretrialServices.Components;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
-using tjc.Modules.Globals;
 using DotNetNuke.Entities.Modules;
 
 namespace tjc.Modules.PretrialServices
@@ -153,7 +152,6 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase(string.Format("# Fel Conv Non-{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Misd Conv{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Misd Conv Non-{0}Dangerous", Environment.NewLine), boldFont));
-            table.AddCell(new Phrase(string.Format("# Misd Conv Non-{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase("FTA Date", boldFont));
             table.AddCell(new Phrase(string.Format("# Court{0}Appearances", Environment.NewLine), boldFont));
             table.AddCell(new Phrase("BW Ordered", boldFont));
@@ -215,6 +213,10 @@ namespace tjc.Modules.PretrialServices
             defendantCount = defendantsInProgram.Count();
             foreach (DefendantInProgram defendantInProgram in defendantsInProgram)
             {
+                isFcDangerous = false;
+                isFcNonDangerous = false;
+                isMcDangerous = false;
+                isMcNonDangerous = false;
                 defendantName = "";
                 caseNumber = "";
                 arrestCharges = "";
@@ -259,78 +261,62 @@ namespace tjc.Modules.PretrialServices
                 }
                 if (isFcDangerous)
                 {
-                    FcDangerous_h += 1;
-                    isFcDangerous = false;
-                    isFcNonDangerous = false;
-                    isMcDangerous = false;
-                    isMcNonDangerous = false;
+                    FcDangerous_h ++;
                 }
                 else if (isFcNonDangerous)
                 {
-                    FcNonDangerous_h += 1;
-                    isFcNonDangerous = false;
-                    isMcDangerous = false;
-                    isMcNonDangerous = false;
+                    FcNonDangerous_h++;
                 }
                 else if (isMcDangerous)
                 {
-                    McDangerous_h += 1;
-                    isMcDangerous = false;
-                    isMcNonDangerous = false;
+                    McDangerous_h++;
                 }
                 else if (isMcNonDangerous)
                 {
-                    McNonDangerous_h += 1;
-                    isMcNonDangerous = false;
+                    McNonDangerous_h++;
                 }
                 else
-                    noPriors_h += 1;
+                    noPriors_h++;
                 if (defendantInProgram.CourtAppearances > 0)
                     courtAppearanceTT += defendantInProgram.CourtAppearances;
-                if (defendantInProgram.Indigent.HasValue)
-                {
-                    if (defendantInProgram.Indigent == 1)
+                    if (defendantInProgram.Indigent == true)
                     {
                         indigent = "Yes";
-                        indigentYes += 1;
+                        indigentYes ++;
                     }
-                    else if (defendantInProgram.Indigent == 0)
+                    else if (defendantInProgram.Indigent == false)
                     {
                         indigent = "No";
-                        indigentNo += 1;
+                        indigentNo ++;
                     }
-                }
-                if (defendantInProgram.BwOrdered.HasValue)
-                {
-                    if (defendantInProgram.BwOrdered == 1)
+                    if (defendantInProgram.BwOrdered == true)
                     {
                         bwOrdered = "Yes";
-                        bwOrderedYes += 1;
+                        bwOrderedYes ++;
                     }
-                    else if (defendantInProgram.BwOrdered == 0)
+                    else if (defendantInProgram.BwOrdered == false)
                     {
                         bwOrdered = "No";
-                        bwOrderedNo += 1;
+                        bwOrderedNo ++;
                     }
-                }
                 if (defendantInProgram.Completion.HasValue)
                 {
                     if (defendantInProgram.Completion == 1)
                     {
                         successfull = "Successful";
-                        successfulTT += 1;
+                        successfulTT ++;
                     }
                     else if (defendantInProgram.Completion == 0)
                     {
                         successfull = "Unsuccessful";
-                        successfulTT += 1;
+                        successfulTT ++;
                     }
                 }
 
                 if (defendantInProgram.FtaDate.HasValue)
                 {
                     ftaDate = defendantInProgram.FtaDate.Value.ToShortDateString();
-                    FTACountTT += 1;
+                    FTACountTT ++;
                 }
                 courtAppearance = defendantInProgram.CourtAppearances.ToString();
                 nonCompViolation = defendantInProgram.NonCompArrestViolation;
@@ -338,43 +324,43 @@ namespace tjc.Modules.PretrialServices
                 {
                     case "New Arrest":
                         {
-                            newArrestTT += 1;
-                            ViolationTT += 1;
+                            newArrestTT ++;
+                            ViolationTT ++;
                             break;
                         }
 
                     case "Viol Calls":
                         {
-                            violCallsTT += 1;
-                            ViolationTT += 1;
+                            violCallsTT ++;
+                            ViolationTT ++;
                             break;
                         }
 
                     case "Contact":
                         {
-                            contactTT += 1;
-                            ViolationTT += 1;
+                            contactTT ++;
+                            ViolationTT ++;
                             break;
                         }
 
                     case "Other":
                         {
-                            otherTT += 1;
-                            ViolationTT += 1;
+                            otherTT ++;
+                            ViolationTT ++;
                             break;
                         }
 
                     case "UA":
                         {
-                            UATT += 1;
-                            ViolationTT += 1;
+                            UATT ++;
+                            ViolationTT ++;
                             break;
                         }
                 }
                 if (defendantInProgram.IsRevoked)
                 {
                     revoked = "Yes";
-                    revokedTT += 1;
+                    revokedTT ++;
                 }
                 if (defendantInProgram.DaysSpr > 0)
                 {
@@ -974,8 +960,8 @@ namespace tjc.Modules.PretrialServices
             if (Request.QueryString["indate"] != null)
                 reportDate = DateTime.Parse(Request.QueryString["indate"]);
 
-            var cCtl = new CountyController();
-            County county = cCtl.GetCounty(CountyId);
+            var cCtl = new Globals.CountyController();
+            Globals.County county = cCtl.GetCounty(CountyId);
             if (ModuleId > 0)
             {
                 var mCtl = new ModuleController();

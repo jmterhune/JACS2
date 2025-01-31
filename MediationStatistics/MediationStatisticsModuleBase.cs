@@ -27,7 +27,26 @@ namespace tjc.Modules.MediationStatistics
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
             JavaScript.RequestRegistration(CommonJs.DnnPlugins);
         }
+        public bool IsAdmin
+        {
+            get
+            {
+                if (UserInfo.IsInRole(AdminRole))
+                    return true;
+                return false;
+            }
+        }
+        public string AdminRole
+        {
+            get
+            {
+                if (Settings.Contains("AdminRole"))
+                    return Settings["AdminRole"].ToString();
 
+                return "Mediation Manager";
+            }
+        }
+      
         public int CaseID
         {
             get
@@ -97,25 +116,7 @@ namespace tjc.Modules.MediationStatistics
         public string ActionListUrl { get { return EditUrl("Action"); } }
         public string GroupRelationUrl { get { return EditUrl("GroupRelation"); } }
 
-        public bool IsAdmin
-        {
-            get
-            {
-                if (UserInfo.IsInRole(AdminRole))
-                    return true;
-                return false;
-            }
-        }
-        public string AdminRole
-        {
-            get
-            {
-                if (Settings.Contains("AdminRole"))
-                    return Settings["AdminRole"].ToString();
-
-                return "Mediation Manager";
-            }
-        }
+       
         public enum CookieItems
         {
             SelectedCaseId,

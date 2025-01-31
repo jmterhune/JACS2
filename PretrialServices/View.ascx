@@ -136,10 +136,11 @@
             <asp:Panel runat="server" ID="pnlIntakeForm" CssClass="intake-form mx-auto" Enabled="false">
                 <div class="alert alert-info"><i class="fa fa-info-circle"></i>This section is only active on the 7<sup>th</sup>, 14<sup>th</sup>, 21<sup>st</sup>, 28<sup>th</sup>, or last day of the month</div>
                 <h4>Week End Intake Log</h4>
-                <asp:Literal ID="ltMessage" runat="server" Visible="false"><div class="alert alert-{0} alert-dismissible fade show" role="alert"><i class="fa fa-{1}"></i>&nbsp;{2} <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button></div></asp:Literal>
-
+                <asp:Literal ID="ltMessage" runat="server" Visible="false">
+                    <div class="alert alert-{0} alert-dismissible fade show" role="alert"><i class="fa fa-{1}"></i>&nbsp;{2} 
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                </asp:Literal>
                 <div class="form-group row">
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtInterviewed" Text="Interviewed" />
@@ -160,7 +161,6 @@
                         <asp:Label runat="server" AssociatedControlID="txtPtrOrdered" Text="PTR Ordered" />
                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="Number" MaxLength="10" ID="txtPtrOrdered" />
                     </div>
-
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtIndigentAssessed" Text="Indigent Assessed" />
                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="Number" MaxLength="10" ID="txtIndigentAssessed" />
@@ -197,36 +197,27 @@
                                     <asp:RequiredFieldValidator runat="server" ValidationGroup="defendant" ControlToValidate="txtName"
                                         Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Defendant Name is Required" />
                                 </div>
-                                <div class="col-6">
+                                <div class="col-3">
                                     <asp:Label runat="server" AssociatedControlID="txtFTADate" Text="<abbr title='Failure to Appear'>FTA</abbr> Date" />
                                     <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="50" ID="txtFTADate" />
                                 </div>
+                                <div class="col-3">
+                                    <asp:Label runat="server" AssociatedControlID="txtCompletionDate" Text="Completion Date" />
+                                    <asp:TextBox runat="server" CssClass="form-control datepicker completion-date" MaxLength="50" ID="txtCompletionDate" />
+                                </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number<em>*</em>" ToolTip="required" />
                                     <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" />
                                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseNumber"
                                         Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Case Number is Required" />
                                 </div>
-                                <div class="col-6">
-                                    <asp:Label runat="server" AssociatedControlID="txtCompletionDate" Text="Completion Date" />
-                                    <asp:TextBox runat="server" CssClass="form-control datepicker completion-date" MaxLength="50" ID="txtCompletionDate" />
-                                    <asp:CustomValidator ID="valCompletionDate" Display="Dynamic" ValidationGroup="defendant" CssClass="label label-danger" ClientValidationFunction="ValidateCompletionDate" runat="server" ErrorMessage="Complete all Yes/No questions below when entering the completion date"></asp:CustomValidator>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <asp:Label runat="server" AssociatedControlID="txtCharges" Text="Arrest Charges<em>*</em>" />
-                                <asp:TextBox runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" ID="txtCharges" />
-                                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCharges"
-                                    Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Arrest Charges are Required" />
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-6">
+                                <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="txtCourtAppearances" Text="Court Appearances" />
                                     <asp:TextBox runat="server" CssClass="form-control" TextMode="Number" MaxLength="10" ID="txtCourtAppearances" />
                                 </div>
-                                <div class="col-6">
+                                <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="drpNewArrest" Text="Non-Comp New Arrest / Tech Violations" />
                                     <asp:DropDownList ID="drpNewArrest" runat="server" CssClass="form-control">
                                         <asp:ListItem Text="< Select Value >" Value="" />
@@ -238,7 +229,13 @@
                                     </asp:DropDownList>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row form-group">
+                                <div class="col-12 mb-2">
+                                    <asp:Label runat="server" AssociatedControlID="txtCharges" Text="Arrest Charges<em>*</em>" />
+                                    <asp:TextBox runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" ID="txtCharges" />
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCharges"
+                                        Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Arrest Charges are Required" />
+                                </div>
                                 <div class="col-6">
                                     <fieldset class="form-fieldset">
                                         <legend>Felony Convictions</legend>
@@ -270,40 +267,66 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            <div class="form-group mt-3 ps-3 pe-3">
-                                <div class="row align-items-center">
-                                    <div class="col-6">
-                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblFtaArrestHearing" Text="FTA Arrest Any hearing?" />
-                                        <asp:RadioButtonList ID="rblFtaArrestHearing" runat="server" RepeatLayout="Flow" CssClass="radio-button-list fta-hearing" RepeatDirection="Horizontal">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
+                            <div class="form-group mt-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <asp:Label runat="server" AssociatedControlID="drpCompletion" Text="Completion" />
+                                        <asp:DropDownList ID="drpCompletion" runat="server" CssClass="form-control completion">
+                                            <asp:ListItem Text="< Select Option >" Value="-1" />
+                                            <asp:ListItem Text="Successfull" Value="1" />
+                                            <asp:ListItem Text="Not Successfull" Value="0" />
+                                            <asp:ListItem Text="Other" Value="2" />
+                                        </asp:DropDownList>
                                     </div>
-                                    <div class="col-6">
-                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblBwOrdered" Text="Bench Warrant Ordered?" />
-                                        <asp:RadioButtonList ID="rblBwOrdered" runat="server" RepeatLayout="Flow" CssClass="radio-button-list bw-ordered" RepeatDirection="Horizontal">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
+                                    <div class="col-4">
+                                        <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Felony or Misd. Case" />
+                                        <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Option >" Value="-1" />
+                                            <asp:ListItem Text="Felony" Value="1" />
+                                            <asp:ListItem Text="Misdemeanor" Value="0" />
+                                        </asp:DropDownList>
                                     </div>
-
-
-                                    <div class="col-6">
-                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblCompletion" Text="Successful Completion?" />
-                                        <asp:RadioButtonList ID="rblCompletion" runat="server" RepeatLayout="Flow" CssClass="radio-button-list completion" RepeatDirection="Horizontal">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
-
+                                    <div class="col-4">
+                                        <asp:Label runat="server" AssociatedControlID="drpBondType" Text="Bond(s)?" />
+                                        <asp:DropDownList ID="drpBondType" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Option >" Value="-1" />
+                                            <asp:ListItem Text="Secured" Value="1" />
+                                            <asp:ListItem Text="Non-Secured" Value="0" />
+                                        </asp:DropDownList>
                                     </div>
-                                    <div class="col-6">
-                                        <asp:Label runat="server" CssClass="col-form-label" AssociatedControlID="rblIndigent" Text="Indigent?" />
-                                        <asp:RadioButtonList ID="rblIndigent" runat="server" RepeatLayout="Flow" CssClass="radio-button-list indigent" RepeatDirection="Horizontal">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-auto">
+                                        <asp:Label runat="server" AssociatedControlID="drpNonCompliance" Text="Participant Non-Compliance" />
+                                        <asp:DropDownList ID="drpNonCompliance" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Option >" Value="-1" />
+                                            <asp:ListItem Text="Failure to Appear" Value="0" />
+                                            <asp:ListItem Text="Warrants Issued for Failure to Appear" Value="1" />
+                                            <asp:ListItem Text="Release Revoked due to Failure to Appear" Value="2" />
+                                            <asp:ListItem Text="Arrested for New Offense" Value="3" />
+                                            <asp:ListItem Text="Release Revoked due to New Offense" Value="4" />
+                                            <asp:ListItem Text="Non-Compliant with SPR Conditions" Value="5" />
+                                            <asp:ListItem Text="Warrant Issued for Non-Compliance with SPR Conditions" Value="6" />
+                                        </asp:DropDownList>
                                     </div>
-                                    <div class="form-check col-6 ms-2">
+                                </div>
+                                <div class="row p-3 pb-0">
+                                    <div class="col-4  form-check">
+                                        <asp:CheckBox ID="chkFtaArrestHearing" CssClass="ftaHearing" runat="server" Text="FTA Arrest?" />
+                                    </div>
+                                    <div class="col-4 form-check">
+                                        <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
+                                    </div>
+                                    <div class="col-4 form-check">
+                                        <asp:CheckBox ID="chkIndigent" CssClass="indigent" runat="server" Text="Indigent?" />
+                                    </div>
+                                    <div class="col-4 form-check">
+                                        <asp:CheckBox ID="chkCaseScreened" runat="server" Text="Case Screened?" />
+                                    </div>
+                                    <div class="col-4 form-check">
+                                        <asp:CheckBox ID="chkPlaced" runat="server" Text="Placed in Program?" />
+                                    </div>
+                                    <div class="col-4 form-check">
                                         <asp:CheckBox ID="chkRevoked" runat="server" Text="Revoked?" />
                                     </div>
                                 </div>
@@ -317,7 +340,6 @@
                     </div>
                 </div>
             </div>
-
         </ContentTemplate>
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="cmdSave" EventName="Click" />
@@ -336,8 +358,8 @@
 
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Libraries/jQuery-UI/01_13_02/Themes/jquery-ui.css" />
-<dnn:dnnjsInclude runat="server" FilePath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js" />
-<dnn:dnncssInclude runat="server" FilePath="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
+<dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.js" />
+<dnn:dnncssInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.css" />
 
 
 <script type="text/javascript">
@@ -372,19 +394,14 @@
             },
         });
 
-        $("#tblDefendantsInProgram_length").prepend('<button class="btn btn-primary btn-lg me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
+        $("#tblDefendantsInProgram_length").prepend('<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({
-
             text: 'Are you sure you wish to delete this Record?',
-
             yesText: 'Yes',
-
             noText: 'No',
-
             title: 'Delete Record?'
-
         });
 
         $("#<%=cmdDeleteIntake.ClientID%>").click(function (e) {
@@ -530,17 +547,7 @@
             default:
         }
     }
-    function ValidateCompletionDate(sender, args) {
-        args.IsValid = true;
-        var indigent = $('.indigent input:checked').val();
-        var bwordered = $('.bw-ordered input:checked').val();
-        var completion = $('.completion input:checked').val();
-        var ftaHearing = $('.fta-hearing input:checked').val();
-        var completionDate = $('.completion-date').val();
-        if (completionDate != "" & (indigent == undefined | bwordered == undefined | completion == undefined | ftaHearing == undefined)) {
-            args.IsValid = false;
-        }
-    }
+ 
 
     function ToggleVisibility(fType) {
         if (fType == 0) {

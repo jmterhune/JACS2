@@ -14,6 +14,10 @@ namespace tjc.Modules.CourtCounsel.Components
         public string Description { get; set; }
         public bool IsCase { get; set; }
         public int CountyId { get; set; }
+        [IgnoreColumn]
+        public string CountyName { get{ var ctl = new CountyController();
+                return ctl.GetCounty(CountyId).CountyName;
+            } }
     }
 
     [TableName("court_counsel_entry_list")]
@@ -23,6 +27,7 @@ namespace tjc.Modules.CourtCounsel.Components
         public long LogId { get; set; }
         public string CaseNumber { get; set; }
         public string Description { get; set; }
+        public string DefendantName { get; set; }
         public string CaseTypeName { get; set; }
         public long AssignmentId { get; set; }
         public string ActionName { get; set; }
@@ -56,7 +61,6 @@ namespace tjc.Modules.CourtCounsel.Components
                 }
                 return "";
             }
-            
         }
     }
 }

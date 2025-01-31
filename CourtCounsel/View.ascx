@@ -14,10 +14,13 @@
                 <a class="nav-link" href="<%=EditUrl("logEdit") %>"><i class="fas fa-pencil-alt"></i>&nbsp;Data Entry</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="<%=EditUrl("referrals") %>"><i class="fas fa-gavel"></i>&nbsp;Referrals</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="<%=EditUrl("reports") %>"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
             </li>
             <li class="nav-item" id="li1" runat="server" visible="false">
-                <a class="nav-link" href="<%=EditUrl("admin") %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
+                <a class="nav-link" href="<%=MemberListUrl %>"><i class="fa fa-tools"></i>&nbsp;Admin</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<%=SharePointSiteURL %>"><i class="fas fa-home"></i>&nbsp;Team Site</a>
@@ -81,7 +84,7 @@
                 </div>
             </ProgressTemplate>
         </asp:UpdateProgress>
-        <asp:Repeater ID="rptLogEntries" runat="server" >
+        <asp:Repeater ID="rptLogEntries" runat="server">
             <HeaderTemplate>
                 <table id="log-list" class="table table-striped">
                     <thead>
@@ -124,9 +127,9 @@
     </Triggers>
 </asp:UpdatePanel>
 
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script>
     (function ($, Sys) {

@@ -14,6 +14,7 @@ using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
 using tjc.Modules.MediationStatistics.Components;
@@ -180,6 +181,11 @@ namespace tjc.Modules.MediationStatistics
                 if (!IsPostBack)
                 {
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
+                    var ctl = new MediatorController();
+                    drpMediator.DataTextField = "MediatorName";
+                    drpMediator.DataValueField = "MediatorId";
+                    drpMediator.DataSource = ctl.GetMediators();
+                    drpMediator.DataBind();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -194,6 +200,7 @@ namespace tjc.Modules.MediationStatistics
             Referrals.Visible = false;
             Checker.Visible = false;
             CollectedPaid.Visible = false;
+            MediatorStats.Visible = false;
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
             switch (drpReport.SelectedIndex)
@@ -329,6 +336,11 @@ namespace tjc.Modules.MediationStatistics
                         CollectedPaid.Visible = true;
                         break;
                     }
+                case 5:
+                    {
+                        MediatorStats.Visible = true;
+                        break;
+                    }
             }
         }
 
@@ -360,7 +372,54 @@ namespace tjc.Modules.MediationStatistics
                 }
             }
         }
+        protected void drpReport_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lblMediator.Visible = false;
+            lblMediatoryType.Visible = false;
+            drpMediator.Visible = false;
+            drpMediatorType.Visible = false;
+            if (drpReport.SelectedIndex == 5)
+            {
+                lblMediator.Visible = true;
+                lblMediatoryType.Visible = true;
+                drpMediator.Visible = true;
+                drpMediatorType.Visible = true;
+            }
+        }
+        protected void cmdMediatorStat_Click(object sender, EventArgs e)
+        {
+            DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
+            DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
+            int mediatorId = 0;
+            string mediatorType = "";
+           
+            var ctl = new ReportController();
+            IEnumerable<StatMediatorCounts> mediatorCounts = ctl.GetMediatorReport(startDate, endDate);
+            if (drpMediator.SelectedIndex > 0)
+            {
+                mediatorId = Int32.Parse(drpMediator.SelectedValue);
+                rptMediatorCounts.DataSource = mediatorCounts.Where(x => x.MediatorId == mediatorId); 
+                rptMediatorCounts.DataBind();
+            }
+            else
+            {
+                rptMediatorCounts.DataSource = mediatorCounts;
+                rptMediatorCounts.DataBind();
+            }
+            IEnumerable<StatMediatorCounts> mediatorTypeCounts = ctl.GetMediatorTypeReport(startDate, endDate);
+            if (drpMediatorType.SelectedIndex > 0)
+            {
+                mediatorType = drpMediatorType.SelectedValue;
+                rptMediatorTypeCounts.DataSource = mediatorTypeCounts.Where(x => x.MediatorType == mediatorType);
+                rptMediatorTypeCounts.DataBind();
 
+            }
+            else
+            {
+                rptMediatorTypeCounts.DataSource = mediatorTypeCounts;
+                rptMediatorTypeCounts.DataBind();
+            }
+        }
         protected void cmdReturn_Click(object sender, System.EventArgs e)
         {
             Response.Redirect(_navigationManager.NavigateURL());
@@ -403,7 +462,5 @@ namespace tjc.Modules.MediationStatistics
             }
         }
         #endregion //Events
-
-
     }
 }

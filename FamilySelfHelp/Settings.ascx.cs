@@ -13,6 +13,8 @@
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.FamilySelfHelp
 {
@@ -51,18 +53,15 @@ namespace tjc.Modules.FamilySelfHelp
             {
                 if (Page.IsPostBack == false)
                 {
-                    //Check for existing settings and use those on this page
-                    //Settings["SettingName"]
-
-                    /* uncomment to load saved settings in the text boxes
-                    if(Settings.Contains("Setting1"))
-                        txtSetting1.Text = Settings["Setting1"].ToString();
-			
-                    if (Settings.Contains("Setting2"))
-                        txtSetting2.Text = Settings["Setting2"].ToString();
-
-                    */
-
+                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var listroles = ctl.GetRoles(PortalId);
+                    foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles.OrderBy(jud => jud.RoleName)
+)
+                    {
+                        drpAdminRole.Items.Add(new ListItem(r.RoleName));
+                    }
+                    if (Settings.Contains("AdminRole"))
+                        drpAdminRole.SelectedValue = Settings["AdminRole"].ToString();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -81,15 +80,7 @@ namespace tjc.Modules.FamilySelfHelp
             try
             {
                 var modules = new ModuleController();
-
-                //the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
-                //module settings
-                //modules.UpdateModuleSetting(ModuleId, "Setting1", txtSetting1.Text);
-                //modules.UpdateModuleSetting(ModuleId, "Setting2", txtSetting2.Text);
-
-                //tab module settings
-                //modules.UpdateTabModuleSetting(TabModuleId, "Setting1",  txtSetting1.Text);
-                //modules.UpdateTabModuleSetting(TabModuleId, "Setting2",  txtSetting2.Text);
+                modules.UpdateModuleSetting(ModuleId, "AdminRole", drpAdminRole.SelectedValue);
             }
             catch (Exception exc) //Module failed to load
             {
