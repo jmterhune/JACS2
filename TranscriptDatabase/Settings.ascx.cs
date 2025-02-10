@@ -13,6 +13,7 @@
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Web.UI.WebControls;
 
 namespace tjc.Modules.TranscriptDatabase
 {
@@ -51,18 +52,22 @@ namespace tjc.Modules.TranscriptDatabase
             {
                 if (Page.IsPostBack == false)
                 {
-                    //Check for existing settings and use those on this page
-                    //Settings["SettingName"]
-
-                    /* uncomment to load saved settings in the text boxes
-                    if(Settings.Contains("Setting1"))
-                        txtSetting1.Text = Settings["Setting1"].ToString();
-			
-                    if (Settings.Contains("Setting2"))
-                        txtSetting2.Text = Settings["Setting2"].ToString();
-
-                    */
-
+                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var listroles = ctl.GetRoles(PortalId);
+                    foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
+                    {
+                        drpCourtReporterRole.Items.Add(new ListItem(r.RoleName));
+                    }
+                    if (Settings.Contains("CourtReporterRole"))
+                        drpCourtReporterRole.SelectedValue = Convert.ToString(Settings["CourtReporterRole"]);
+                    if (Settings.Contains("AdminRole"))
+                    {
+                        txtAdminRole.Text = Settings["AdminRole"].ToString();
+                    }
+                    if (Settings.Contains("UploadFolderName"))
+                    {
+                        txtUploadFolderName.Text = Settings["UploadFolderName"].ToString();
+                    }
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -70,7 +75,6 @@ namespace tjc.Modules.TranscriptDatabase
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
         /// -----------------------------------------------------------------------------
         /// <summary>
         /// UpdateSettings saves the modified settings to the Database
@@ -80,23 +84,19 @@ namespace tjc.Modules.TranscriptDatabase
         {
             try
             {
+                string CourtReporterRole = drpCourtReporterRole.SelectedValue;
+
                 var modules = new ModuleController();
-
-                //the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
-                //module settings
-                //modules.UpdateModuleSetting(ModuleId, "Setting1", txtSetting1.Text);
-                //modules.UpdateModuleSetting(ModuleId, "Setting2", txtSetting2.Text);
-
-                //tab module settings
-                //modules.UpdateTabModuleSetting(TabModuleId, "Setting1",  txtSetting1.Text);
-                //modules.UpdateTabModuleSetting(TabModuleId, "Setting2",  txtSetting2.Text);
+                modules.UpdateModuleSetting(ModuleId, "AdminRole", txtAdminRole.Text);
+                modules.UpdateModuleSetting(ModuleId, "UploadFolderName", txtUploadFolderName.Text);
+                if (!string.IsNullOrEmpty(CourtReporterRole.Trim()))
+                    modules.UpdateModuleSetting(ModuleId, "CourtReporterRole", CourtReporterRole.Trim());
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
         #endregion
     }
 }

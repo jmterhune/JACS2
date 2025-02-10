@@ -48,7 +48,7 @@ namespace tjc.Modules.Reports.Components
             using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
-                t = rep.Get();
+                t = rep.Find("Where BadgeType='Employee'");
             }
             return t;
         }    

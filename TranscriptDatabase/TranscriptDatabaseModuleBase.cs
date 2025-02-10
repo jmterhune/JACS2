@@ -1,32 +1,90 @@
-﻿/*
-' Copyright (c) 2025  Joe Terhune
-'  All rights reserved.
-' 
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-' DEALINGS IN THE SOFTWARE.
-' 
-*/
-
+﻿using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Framework.JavaScriptLibraries;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-
 namespace tjc.Modules.TranscriptDatabase
 {
     public class TranscriptDatabaseModuleBase : PortalModuleBase
     {
-        public int ItemId
+        private readonly INavigationManager _navigationManager;
+        public TranscriptDatabaseModuleBase()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+        }
+        public int DesignationId
         {
             get
             {
-                var qs = Request.QueryString["tid"];
+                var qs = Request.QueryString["did"];
                 if (qs != null)
                     return Convert.ToInt32(qs);
                 return -1;
             }
+        }
+        public bool IsAdmin
+        {
+            get
+            {
+                if (UserInfo.IsInRole(AdminRole))
+                    return true;
+                return false;
+            }
+        }
+        public string AdminRole
+        {
+            get
+            {
+                if (Settings.Contains("AdminRole"))
+                    return Settings["AdminRole"].ToString();
+
+                return "Mediation Manager";
+            }
+        }
+        public string CourtReporterRole
+        {
+            get
+            {
+                if (Settings.Contains("CourtReporterRole"))
+                    return Settings["CourtReporterRole"].ToString();
+
+                return "Court Reporter";
+            }
+        }
+        public string UploadFolderName
+        {
+            get
+            {
+                if (Settings.Contains("UploadFolderName"))
+                    return Settings["UploadFolderName"].ToString();
+
+                return "Transcript-Database";
+            }
+        }
+        public DateTime CurrentDate
+        {
+            get
+            {
+                if (ViewState["CurrentDate"] != null)
+                {
+                    return DateTime.Parse(ViewState["CurrentDate"].ToString());
+                }
+                return DateTime.Now;
+            }
+            set
+            {
+                ViewState["CurrentDate"] = value;
+            }
 
         }
+        public string DesignationListUrl { get { return _navigationManager.NavigateURL(); } }
+        public string CalendartUrl { get { return EditUrl("calendar"); } }
+        public string AttorneyListUrl { get { return EditUrl("attorney"); } }
+        public string NamesListUrl { get { return EditUrl("name"); } }
+        public string OfficeListUrl { get { return EditUrl("office"); } }
+        public string FormListUrl { get { return EditUrl("form"); } }
+        public string HearingListUrl { get { return EditUrl("hearing"); } }
+        public string ReportListUrl { get { return EditUrl("report"); } }
     }
 }

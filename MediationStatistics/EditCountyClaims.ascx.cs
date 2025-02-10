@@ -725,12 +725,16 @@ namespace tjc.Modules.MediationStatistics
             DeleteSession();
             PopulateSessionInformation();
             UpdateNavigation();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
+
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
+
         }
         protected void cmdPreviousSession_Click(object sender, EventArgs e)
         {
@@ -741,12 +745,15 @@ namespace tjc.Modules.MediationStatistics
         #region Event Events
         protected void rptEvent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
+
             if (e.CommandName.ToLower() == "delete")
             {
                 var ctl = new EventController();
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {
@@ -809,6 +816,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSaveEvent_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             FillCase();
             var ctl = new EventController();
             if (string.IsNullOrEmpty(hdEventId.Value))
@@ -847,6 +855,7 @@ namespace tjc.Modules.MediationStatistics
                         ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = newEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "New Event Record Saved", "fas fa-thumbs-up");
             }
             else
             {
@@ -880,6 +889,7 @@ namespace tjc.Modules.MediationStatistics
                     }
                 }
                 ClearEventForm();
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "Event Record Saved", "fas fa-thumbs-up");
             }
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);

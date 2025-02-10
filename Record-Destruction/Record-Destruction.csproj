@@ -172,7 +172,7 @@
     <Content Include="DestructionForm.ascx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="RecordDestruction.dnn" />
+    <Content Include="Record_Destruction.dnn" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BuildScripts\ModulePackage.targets" />

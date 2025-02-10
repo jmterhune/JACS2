@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtReporting", "CourtRepo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranscriptDatabase", "TranscriptDatabase\TranscriptDatabase.csproj", "{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearingsLog", "HearingsLog\HearingsLog.csproj", "{0711116E-AF67-46CD-95D6-554831319119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

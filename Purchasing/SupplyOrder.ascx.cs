@@ -253,7 +253,7 @@ namespace tjc.Modules.Purchasing
             sb.Append(supplyOrder.RequestedName);
             if (string.IsNullOrEmpty(supplyOrder.EmailAddress))
                 sb.Append("</a>");
-                sb.Append("<li><strong>Order Id: </strong>");
+            sb.Append("<li><strong>Order Id: </strong>");
             sb.Append(supplyOrder.OrderID.ToString());
             sb.Append("</li><li><strong>Location: </strong> ");
             sb.Append(supplyOrder.Location);
@@ -277,14 +277,14 @@ namespace tjc.Modules.Purchasing
                 sb.Append("</td></tr>");
             }
             sb.Append("</tbody></table>");
-            IEnumerable<SupplyOrderAttachment> attachments= supplyOrder.SupplyOrderAttachments;
+            IEnumerable<SupplyOrderAttachment> attachments = supplyOrder.SupplyOrderAttachments;
             if (attachments.Count() > 0)
             {
                 sb.Append("<h3>Attachments</h3><ul>");
                 foreach (SupplyOrderAttachment attach in attachments)
                     if (attach.FileID > 0)
                     {
-                        var fileInfo = dCtl.GetFile(attach.FileID);                    
+                        var fileInfo = dCtl.GetFile(attach.FileID);
                         sb.Append(string.Format("<li><a target='_blank' title='Opens in new tab' href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", currentProtocol, PortalAlias.HTTPAlias, PortalId, fileInfo.RelativePath, fileInfo.FileName));
                     }
                 sb.Append("</ul>");
@@ -302,7 +302,7 @@ namespace tjc.Modules.Purchasing
         }
         private void ClearForm()
         {
-hdSupplyId.Value=string.Empty;
+            hdSupplyId.Value = string.Empty;
             txtRecipient.Text = string.Empty;
             txtStore.Text = string.Empty;
             txtSupplyNumber.Text = string.Empty;

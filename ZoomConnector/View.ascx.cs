@@ -195,7 +195,7 @@ namespace tjc.Modules.ZoomConnector
                     }
                     else
                     {
-                        ltMessages.Text = "<div class='alert alert-danger'><em class='fa fa-warning'></em> Connection Status Undetermined. Please Wait for 30 seconds and them reattempt if Connection Fails. </div>";
+                        ltMessages.Text = "<div class='alert alert-danger'><em class='fa fa-warning'></em> Connection Status Undetermined. Please check if the connection was successful. If not, please wait for 30 seconds and then reattempt. </div>";
                     }
                 }
             }

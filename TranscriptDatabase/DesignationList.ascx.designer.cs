@@ -11,7 +11,7 @@ namespace tjc.Modules.TranscriptDatabase
 {
 
 
-    public partial class View
+    public partial class DesignationList
     {
     }
 }

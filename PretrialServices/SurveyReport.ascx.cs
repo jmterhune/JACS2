@@ -10,16 +10,12 @@
 ' 
 */
 
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using tjc.Modules.PretrialServices.Components;
 
 namespace tjc.Modules.PretrialServices
@@ -47,6 +43,9 @@ namespace tjc.Modules.PretrialServices
             {
                 if (!Page.IsPostBack)
                 {
+                    if (QueryDate.HasValue)
+                        txtReportDate.Text = QueryDate.Value.ToShortDateString();
+                    BindData();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -54,10 +53,53 @@ namespace tjc.Modules.PretrialServices
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+        protected void cmdSubmit_Click(object sender, EventArgs e)
+        {
+            BindData();
+        }
         #endregion
 
         #region Methods
-
+        private void BindData()
+        {
+            DateTime.TryParse(txtReportDate.Text, out DateTime reportDate);
+            DateTime startDate = DateTimeExtensions.FirstDayOfWeek(reportDate);
+            DateTime endDate = DateTimeExtensions.LastDayOfWeek(reportDate);
+            if (hdRportDate.Value == "Y")
+            {
+                startDate = DateTimeExtensions.FirstDayOfYear(reportDate);
+                endDate = DateTimeExtensions.LastDayOfYear(reportDate);
+            }
+            var ctl = new DefendantInProgramController();
+            IEnumerable<DefendantInProgram> defendantInPrograms = ctl.GetDefendantsInProgram(startDate, endDate);
+            lblScreened.Text = defendantInPrograms.Where(x => x.CaseScreened).Count().ToString();
+            lblNotScreened.Text = defendantInPrograms.Where(x => x.CaseScreened == false).Count().ToString();
+            lblPlacedSPR.Text = defendantInPrograms.Where(x => x.PlacedInProgram == false).Count().ToString();
+            lblNotPlacedSPR.Text = defendantInPrograms.Where(x => x.PlacedInProgram).Count().ToString();
+            lblMisdemeanor.Text = defendantInPrograms.Where(x => x.CaseType == (int)Enumerations.CaseCategoryValue.Misdemeanor).Count().ToString();
+            lblFelony.Text = defendantInPrograms.Where(x => x.CaseType == (int)Enumerations.CaseCategoryValue.Felony).Count().ToString();
+            lblNoBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Secured).Count().ToString();
+            lblWithBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.NonSecured).Count().ToString();
+            lblBothBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Both).Count().ToString();
+            lblRevokedBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Revoked).Count().ToString();
+            lblUnsuccessfulCompletion.Text = defendantInPrograms.Where(x => x.Completion == (int)Enumerations.CompletionStatus.unsuccessful).Count().ToString();
+            lblSuccessfulCompletion.Text = defendantInPrograms.Where(x => x.Completion == (int)Enumerations.CompletionStatus.successful).Count().ToString();
+            lblOtherCompletion.Text = defendantInPrograms.Where(x => x.Completion == (int)Enumerations.CompletionStatus.other).Count().ToString();
+            lblTotalExiting.Text = defendantInPrograms.Where(x => x.CompletionDate.HasValue).Count().ToString();
+            var monthsSPR = defendantInPrograms.Select(x => x.MonthsSPR);
+            if (monthsSPR != null)
+                lblAverageLengthSPR.Text = monthsSPR.Average().ToString("0.##");
+            else
+                lblAverageLengthSPR.Text = "0";
+            lblFtaSpr.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.FTA).Count().ToString();
+            lblWarrantsFta.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.WarrantIssuedFTA).Count().ToString();
+            lblSprRevokedFta.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.ReleaseRevokedFTA).Count().ToString();
+            lblNewArrest.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.NewArrest).Count().ToString();
+            lblReleaseRevokedNewOffense.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.ReleaseRevokedArrest).Count().ToString();
+            lblNoComplaintsProgramConditions.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.SprNonCompliant).Count().ToString();
+            lblWarrantNonCompliance.Text = defendantInPrograms.Where(x => x.NonCompliance == (int)Enumerations.ComplianceStatus.WarrantIssuedNonCompliant).Count().ToString();
+            lblNumberCarriedOver.Text = defendantInPrograms.Where(x => x.CompletionDate.HasValue).Where(y => y.CompletionDate.Value.Year > y.IntakeDate.Value.Year | y.CompletionDate.HasValue == false).Count().ToString();
+        }
         #endregion
     }
 }

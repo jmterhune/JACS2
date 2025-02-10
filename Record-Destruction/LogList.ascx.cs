@@ -86,9 +86,12 @@ namespace tjc.Modules.RecordDestruction
             {
                 if (!IsPostBack)
                 {
+                    if (IsAdmin)
+                    {
+                        phAdminTabs.Visible = true;
+                    }
+
                     DepartmentFilterHtml = GetDepartmentFilterHtml();
-                    if (!IsAdmin)
-                        Response.Redirect(_navigationManager.NavigateURL());
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }

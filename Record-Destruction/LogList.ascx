@@ -9,6 +9,7 @@
             <li class="nav-item active">
                 <a class="nav-link" href="#logItems" data-toggle="tab">Search Log</a>
             </li>
+             <asp:PlaceHolder ID="phAdminTabs" runat="server" Visible="false">
             <li class="nav-item">
                 <a class="nav-link" href="<%=DepartmentListUrl %>">Departments</a>
             </li>
@@ -20,7 +21,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<%=DestructionMethodListUrl %>">Destruction Methods</a>
-            </li>
+            </li></asp:PlaceHolder>
         </ul>
         <div class="tab-content">
             <div id="logItems" class="tab-pane active">
@@ -48,7 +49,7 @@
                             <td class="command-item"><%#Eval("LogID")%></td>
                             <td class="w-75"><%#Eval("Description")%></td>
                             <td><%#Eval("YearCreated")%></td>
-                            <td><%#Eval("DateDestroyed","{0:dd/MM/yyyy}")%></td>
+                            <td><%#Eval("DateDestroyed","{0:MM/dd/yyyy}")%></td>
                             <td class="text-nowrap"><%#Eval("GroupName")%></td>
                             <td class="text-nowrap "><%#Eval("DisplayName")%></td>
                             <td class="text-nowrap"><%#Eval("RecordType")%></td>

@@ -13,7 +13,7 @@ namespace tjc.Intranet.API.Services.ViewModels.Employee
             PhoneNumber = phone.PhoneNumber;
             PhoneType = phone.PhoneType;
             Extension = phone.Extension;
-            Location = phone.Location;
+            OfficeLocationId = phone.OfficeLocationId;
         }
         public PhoneViewModel() { }
         [JsonProperty("employeeId")]
@@ -31,8 +31,8 @@ namespace tjc.Intranet.API.Services.ViewModels.Employee
         [JsonProperty("extension")]
         public string Extension { get; set; }
 
-        [JsonProperty("location")]
-        public string Location { get; set; }
+        [JsonProperty("officelocationid")]
+        public int OfficeLocationId { get; set; }
 
     }
 }

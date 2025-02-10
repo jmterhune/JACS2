@@ -6,8 +6,8 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     [TableName("tjc_rec_office")]
     [PrimaryKey("OfficeID", AutoIncrement = true)]
-    [Cacheable("Offices", CacheItemPriority.Default, 20)]
-    internal class Office:EntityBase
+    [Cacheable("tjc_rec_Offices", CacheItemPriority.Default, 20)]
+    internal class Office : EntityBase
     {
         public int OfficeID { get; set; }
         public string Description { get; set; }
@@ -25,10 +25,15 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 this.DeliveryTypeID = (int)value;
             }
         }
-    }
-    public enum DeliveryTypes
-    {
-        Interoffice = 0,
-        UsPostage = 1
+        [IgnoreColumn]
+        public string DeliveryTypeeName
+        {
+            get
+            {
+                if (DeliveryTypeID.HasValue)
+                    return Enumerations.GetEnumDescription(DeliveryType);
+                return "";
+            }
+        }
     }
 }

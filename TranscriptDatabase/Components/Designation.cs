@@ -6,7 +6,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [TableName("tjc_rec_designation")]
     [PrimaryKey("DesignationID", AutoIncrement = true)]
     [Cacheable("Designations", CacheItemPriority.Default, 20)]
-    internal class Designation:EntityBase
+    public class Designation : EntityBase
     {
         public int DesignationID { get; set; }
 
@@ -30,11 +30,11 @@ namespace tjc.Modules.TranscriptDatabase.Components
 
         public DateTime? DueDate { get; set; }
 
-        public bool PublicDefenderApponted { get; set; }
+        public bool PublicDefenderAppointed { get; set; }
 
         public bool DeclaredIndigent { get; set; }
 
-        public bool FinancialArrangements { get; set; }
+        public bool CourtAppointedCounsel { get; set; }
 
         public DateTime? TranscriptFiled { get; set; }
 
@@ -49,5 +49,12 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public int? Attorney4ID { get; set; }
 
         public bool Archived { get; set; }
+    }
+    [TableName("tjc_rec_designation_list")]
+    [PrimaryKey("DesignationID", AutoIncrement = true)]
+    public class DesignationListItem : Designation
+    {
+        public string CreatedByUsername { get; set; }
+        public string CaseNumber { get; set; }
     }
 }

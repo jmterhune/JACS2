@@ -19,7 +19,7 @@ namespace tjc.Modules.ProSeLog.Components
     //setup the primary key for table
     [PrimaryKey("CaseTypeID", AutoIncrement = true)]
     //configure caching using PetaPoco
-    [Cacheable("CaseTypes", CacheItemPriority.Default, 20)]
+    [Cacheable("tjc_prose_CaseTypes", CacheItemPriority.Default, 20)]
     internal class CaseType
     {
         public int CaseTypeID { get; set; }

@@ -1,16 +1,50 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
-using System;
+using DotNetNuke.Services.FileSystem;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Web.Caching;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     [TableName("tjc_rec_form")]
     [PrimaryKey("FormID", AutoIncrement = true)]
     [Cacheable("Forms", CacheItemPriority.Default, 20)]
-    internal class Form :EntityBase
+    internal class Form : EntityBase
     {
         public int FormID { get; set; }
-        public int? FileID { get; set; }
-        public string FilePath { get; set; }
-        public int? DocumentType { get; set; }
+        public int FileID { get; set; }
+        [IgnoreColumn]
+        public string FilePath
+        {
+            get
+            {
+                var ctl = new FileManager();
+                return ctl.GetFile(FileID).RelativePath;
+            }
+        }
+        public int DocumentTypeID { get; set; }
+        [IgnoreColumn]
+        [EnumDataType(typeof(DocumentTypes))]
+        public DocumentTypes DocumentType
+        {
+            get
+            {
+                return (DocumentTypes)this.DocumentTypeID;
+            }
+            set
+            {
+                this.DocumentTypeID = (int)value;
+            }
+        }
+        [IgnoreColumn]
+        public string FileName { get { return Path.GetFileName(FilePath); } }
+        [IgnoreColumn]
+        public string FormText
+        {
+            get
+            {
+                return Enumerations.GetEnumDescription(DocumentType);
+            }
+        }
     }
+   
 }

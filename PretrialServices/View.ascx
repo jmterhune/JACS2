@@ -312,7 +312,7 @@
                                 </div>
                                 <div class="row p-3 pb-0">
                                     <div class="col-4  form-check">
-                                        <asp:CheckBox ID="chkFtaArrestHearing" CssClass="ftaHearing" runat="server" Text="FTA Arrest?" />
+                                        <asp:CheckBox ID="chkFtaArrestHearing" CssClass="ftaHearing" runat="server" Text="<abbr title='Failure to Appear'>FTA</abbr> Arrest?" />
                                     </div>
                                     <div class="col-4 form-check">
                                         <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />

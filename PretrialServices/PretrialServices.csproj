@@ -139,6 +139,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\DateTimeExtensions.cs" />
     <Compile Include="Components\DayTotal.cs" />
     <Compile Include="Components\EntityBase.cs" />
     <Compile Include="Components\DefendantsInProgram.cs" />
@@ -175,6 +176,13 @@
     <Compile Include="SurveyReport.ascx.designer.cs">
       <DependentUpon>SurveyReport.ascx</DependentUpon>
     </Compile>
+    <Compile Include="DeSotoView.ascx.cs">
+      <DependentUpon>DeSotoView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DeSotoView.ascx.designer.cs">
+      <DependentUpon>DeSotoView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="View.ascx.cs">
       <DependentUpon>View.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -190,6 +198,7 @@
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
     <Content Include="SurveyReport.ascx" />
+    <Content Include="DeSotoView.ascx" />
     <Content Include="View.ascx" />
   </ItemGroup>
   <ItemGroup>

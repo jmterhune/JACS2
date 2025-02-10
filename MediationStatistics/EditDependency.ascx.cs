@@ -363,11 +363,13 @@ namespace tjc.Modules.MediationStatistics
         }
         private void DeleteSession()
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             var ctl = new SessionController();
             ctl.DeleteSession(_currentCase.GetCurrentSession(CurrentSessionIndex));
             CurrentSessionIndex = 0;
             if (_currentCase.CaseSessions.Count() <= 1)
                 _currentCase.CaseSessions.Append(new Session());
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
         }
         private void CheckExistingCase()
         {
@@ -545,6 +547,8 @@ namespace tjc.Modules.MediationStatistics
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+                var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {
@@ -609,6 +613,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSaveEvent_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             FillCase();
             var ctl = new EventController();
             if (string.IsNullOrEmpty(hdEventId.Value))
@@ -652,6 +657,7 @@ namespace tjc.Modules.MediationStatistics
                         ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = newEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "New Event Record Saved", "fas fa-thumbs-up");
             }
             else
             {
@@ -690,10 +696,12 @@ namespace tjc.Modules.MediationStatistics
                         ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = oldEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "Event Record Saved", "fas fa-thumbs-up");
             }
             ClearEventForm();
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
+           
         }
         #endregion //Event Events
 

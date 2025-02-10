@@ -156,8 +156,8 @@
     var sortDirection = "desc";
     var sortColumnIndex = 6;
     var isAdmin = "<%=isAdminUser%>";
-    var currentPage = 1;
-    GetLocalStorage();
+    var currentPage = 0;
+    //GetLocalStorage();
     if (!groupId)
         groupId = 0;
     if (!regionId)
@@ -271,21 +271,21 @@
         caseTable.on('order.dt', function () {
             // This will show: "Ordering on column 1 (asc)", for example
             var order = caseTable.order();
-            localStorage.setItem('mediation.sortDirection', order[0][1]);
-            localStorage.setItem('mediation.sortColumnIndex', order[0][0]);
+        //    localStorage.setItem('mediation.sortDirection', order[0][1]);
+        //    localStorage.setItem('mediation.sortColumnIndex', order[0][0]);
         });
         caseTable.on('page.dt', function () {
             var info = caseTable.page.info();
-            localStorage.setItem('mediation.currentPageIndex', info.page);
+            //localStorage.setItem('mediation.currentPageIndex', info.page);
         });
         caseTable.on('length.dt', function (e, settings, len) {
-            localStorage.setItem('mediation.pageSize', len);
+           // localStorage.setItem('mediation.pageSize', len);
         });
         $("#drpRegion").on("change", function () {
             regionId = null;
             if ($(this).val().length > 0)
                 regionId = $(this).val();
-            localStorage.setItem('mediation.regionId', $(this).val());
+        //    localStorage.setItem('mediation.regionId', $(this).val());
         });
         //$("#txtCaseSequence").on("blur", function () {
         //    var number = $("#txtCaseSequence").val();
@@ -297,7 +297,7 @@
             groupId = null;
             if ($(this).val().length > 0)
                 groupId = $(this).val();
-            localStorage.setItem('mediation.groupId', $(this).val());
+        //    localStorage.setItem('mediation.groupId', $(this).val());
         });
         $("#cmdSearch").on("click", function (e) {
             e.preventDefault();
@@ -441,7 +441,7 @@
         return cdspNumber;
     }
     function SetCaseId(caseId) {
-        localStorage.setItem('mediation.caseId', caseId);
+       // localStorage.setItem('mediation.caseId', caseId);
     }
     function GetLocalStorage() {
         storageRegionId = localStorage.getItem('mediation.regionId');

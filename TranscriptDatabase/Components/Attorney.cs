@@ -21,7 +21,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [TableName("tjc_rec_attorney")]
     [PrimaryKey("AttorneyID", AutoIncrement = true)]
     [Cacheable("Attorneys", CacheItemPriority.Default, 20)]
-    internal class Attorney: EntityBase
+    internal class Attorney : EntityBase
     {
         public int AttorneyID { get; set; }
 
@@ -42,6 +42,15 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public string State { get; set; }
 
         public string ZipCode { get; set; }
-
+        [IgnoreColumn]
+        public string OfficeName
+        {
+            get
+            {
+                var ctl = new OfficeController(); Office office = ctl.GetOffice(OfficeID);
+                if (office != null) 
+                    return office.Description;
+                return ""; }
+        }
     }
 }

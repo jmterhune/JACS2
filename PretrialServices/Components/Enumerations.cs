@@ -1,12 +1,6 @@
-﻿using DotNetNuke.Common.Utilities;
-using DotNetNuke.ComponentModel.DataAnnotations;
-using DotNetNuke.Entities.Content;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reflection;
-using System.Web.Caching;
-
-
 namespace tjc.Modules.PretrialServices.Components
 {
     public class Enumerations
@@ -14,7 +8,9 @@ namespace tjc.Modules.PretrialServices.Components
         public enum BondTypeValue
         {
             NonSecured = 0,
-            Secured = 1
+            Secured = 1,
+            Both = 2,
+            Revoked = 3
         }
         public enum CaseCategoryValue
         {

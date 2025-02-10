@@ -401,7 +401,6 @@ namespace tjc.Modules.MediationStatistics
             else
                 ltSessionInfo.Text = " Session " + (CurrentSessionIndex + 1) + " of " + sessionCount;
         }
-        
         private void FillCase()
         {
             var ctl = new CaseController();
@@ -659,9 +658,11 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdDeleteSession_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             DeleteSession();
             PopulateSessionInformation();
             UpdateNavigation();
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
@@ -683,6 +684,8 @@ namespace tjc.Modules.MediationStatistics
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+                var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {
@@ -749,6 +752,7 @@ namespace tjc.Modules.MediationStatistics
         {
             FillCase();
             var ctl = new EventController();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             if (string.IsNullOrEmpty(hdEventId.Value))
             {
                 Event newEvent = new Event
@@ -776,7 +780,7 @@ namespace tjc.Modules.MediationStatistics
                 if (timeRemaining > 0)
                     newEvent.TimeRemaining = timeRemaining;
                 ctl.CreateEvent(newEvent);
-
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "New Event Record Saved", "fas fa-thumbs-up");
                 foreach (ListItem item in cblAppearanceRecord.Items)
                 {
                     if (item.Selected)
@@ -818,6 +822,7 @@ namespace tjc.Modules.MediationStatistics
                     }
                 }
                 ClearEventForm();
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "Event Record Saved", "fas fa-thumbs-up");
             }
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);

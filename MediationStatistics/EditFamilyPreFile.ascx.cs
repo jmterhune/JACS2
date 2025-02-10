@@ -569,9 +569,11 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdDeleteSession_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             DeleteSession();
             PopulateSessionInformation();
             UpdateNavigation();
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
@@ -593,6 +595,8 @@ namespace tjc.Modules.MediationStatistics
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+                var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {

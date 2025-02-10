@@ -81,8 +81,7 @@ namespace tjc.Modules.RecordDestruction
                     txtName.Text = UserInfo.DisplayName;
                     if (IsAdmin)
                     {
-                        lnkManage.Visible = true;
-                        lnkManage.NavigateUrl = EditUrl("search");
+                        phAdminTabs.Visible = true;
                     }
                     BindLists();
                 }

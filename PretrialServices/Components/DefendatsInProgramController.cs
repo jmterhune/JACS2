@@ -52,6 +52,16 @@ namespace tjc.Modules.PretrialServices.Components
             }
             return t;
         }
+        public IEnumerable<DefendantInProgram> GetDefendantsInProgram(DateTime startDate,DateTime endDate)
+        {
+            IEnumerable<DefendantInProgram> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<DefendantInProgram>();
+                t = rep.Find("Where IntakeDate Between @0 AND @1",startDate,endDate);
+            }
+            return t;
+        }
         public IEnumerable<DefendantInProgram> GetDefendantsInProgramByCaseNumber(int countyId, string caseNumber)
         {
             IEnumerable<DefendantInProgram> t;

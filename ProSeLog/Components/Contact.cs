@@ -19,7 +19,7 @@ namespace tjc.Modules.ProSeLog.Components
     //setup the primary key for table
     [PrimaryKey("ContactID", AutoIncrement = true)]
     //configure caching using PetaPoco
-    [Cacheable("Contacts", CacheItemPriority.Default, 20)]
+    [Cacheable("tjc_prose_Contacts", CacheItemPriority.Default, 20)]
     internal class Contact
     {
         public int ContactID { get; set; }

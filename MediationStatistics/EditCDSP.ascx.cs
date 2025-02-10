@@ -519,9 +519,11 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdDeleteSession_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             DeleteSession();
             PopulateSessionInformation();
             UpdateNavigation();
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
@@ -544,6 +546,8 @@ namespace tjc.Modules.MediationStatistics
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+                var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {
@@ -609,6 +613,7 @@ namespace tjc.Modules.MediationStatistics
         {
             FillCase();
             var ctl = new EventController();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             if (string.IsNullOrEmpty(hdEventId.Value))
             {
                 Event newEvent = new Event
@@ -636,6 +641,7 @@ namespace tjc.Modules.MediationStatistics
                 if (timeRemaining > 0)
                     newEvent.TimeRemaining = timeRemaining;
                 ctl.CreateEvent(newEvent);
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "New Event Record Saved", "fas fa-thumbs-up");
             }
             else
             {
@@ -659,7 +665,8 @@ namespace tjc.Modules.MediationStatistics
                 if (timeRemaining > 0)
                     oldEvent.TimeRemaining = timeRemaining;
                 ctl.UpdateEvent(oldEvent);
-                ClearEventForm();
+                ClearEventForm();            
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "Event Record Saved", "fas fa-thumbs-up");
             }
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
@@ -679,7 +686,6 @@ namespace tjc.Modules.MediationStatistics
             chkAgreementSigned.Checked = false;
             chkPreparedAttorney.Checked = false;
             chkAdjournedTimeRemaining.Checked = false;
-
         }
 
         protected void rptEvent_ItemCreated(object sender, RepeaterItemEventArgs e)

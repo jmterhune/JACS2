@@ -7,6 +7,6 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public DateTime CreatedDate { get; set; }
         public int CreatedByUser { get; set; }
         public DateTime LastModifiedDate { get; set; }
-        public int ModifiedByUser { get; set; }
+        public int LastModifiedByUser { get; set; }
     }
 }

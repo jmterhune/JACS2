@@ -146,7 +146,7 @@ namespace tjc.Intranet.API.Services
                 p.PhoneNumber = phone.PhoneNumber;
                 p.Extension = phone.Extension;
                 p.PhoneType = phone.PhoneType;
-                p.Location = phone.Location;
+                p.OfficeLocationId = phone.OfficeLocationId;
             }
             return p;
         }

@@ -108,6 +108,13 @@ namespace tjc.Modules.PretrialServices.Components
         public int? BondType { get; set; }
         public int? NonCompliance { get; set; }
         public int? CaseType { get; set; }
+        public bool Interviewed { get; set; }
+        public bool Assessed { get; set; }
+        public bool PtrRecommended { get; set; }
+        public bool PtrOrdered { get; set; }
+        public bool IndigentAssessed { get; set; }
+        public bool PtrNotRecommended { get; set; }
+
 
         [IgnoreColumn]
         public string FormattedIntakeDate
@@ -218,6 +225,17 @@ namespace tjc.Modules.PretrialServices.Components
             }
         }
         [IgnoreColumn]
+        public int MonthsSPR
+        {
+            get
+            {
+                int months = 0;
+                if (CompletionDate.HasValue)
+                    months = (CompletionDate.Value.Year - IntakeDate.Value.Year) * 12 + (CompletionDate.Value.Month - IntakeDate.Value.Month);
+                return months;
+            }
+        }
+        [IgnoreColumn]
         public string FormattedNonCompliance
         {
             get
@@ -226,7 +244,7 @@ namespace tjc.Modules.PretrialServices.Components
                 switch ((Enumerations.ComplianceStatus)NonCompliance)
                 {
                     case Enumerations.ComplianceStatus.FTA:
-                        returnValue=Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.FTA);
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.FTA);
                         break;
                     case Enumerations.ComplianceStatus.WarrantIssuedFTA:
                         returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.WarrantIssuedFTA);

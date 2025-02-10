@@ -112,24 +112,30 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ControlTitle_settings.Text" xml:space="preserve">
-    <value>TranscriptDatabase Settings</value>
+    <value>Transcript Database Settings</value>
   </data>
-  <data name="lblSetting1.Help" xml:space="preserve">
-    <value>Put your value for Setting 1 here.</value>
+  <data name="lblAdminRole.Help" xml:space="preserve">
+    <value>Select the role used for App Administration</value>
   </data>
-  <data name="lblSetting1.Text" xml:space="preserve">
-    <value>Setting One</value>
+  <data name="lblAdminRole.Text" xml:space="preserve">
+    <value>Administrator Role</value>
   </data>
-  <data name="lblSetting2.Help" xml:space="preserve">
-    <value>Put your value for Setting 2 here.</value>
+  <data name="lblCourtReporterRole.Help" xml:space="preserve">
+    <value>Select the Court Reporter Role</value>
   </data>
-  <data name="lblSetting2.Text" xml:space="preserve">
-    <value>Setting Two</value>
+  <data name="lblCourtReporterRole.Text" xml:space="preserve">
+    <value>Court Reporter Role</value>
+  </data>
+  <data name="lblUploadFolderName.Help" xml:space="preserve">
+    <value>Enter the Name of the Folder which will contain the Uploaded Files</value>
+  </data>
+  <data name="lblUploadFolderName.Text" xml:space="preserve">
+    <value>Upload Folder Name</value>
   </data>
 </root>
