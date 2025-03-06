@@ -114,42 +114,6 @@ namespace tjc.Modules.MediationStatistics
         protected global::System.Web.UI.WebControls.TextBox txtBusinessName;
 
         /// <summary>
-        /// drpCDSPType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpCDSPType;
-
-        /// <summary>
-        /// txtCDSPYear control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCDSPYear;
-
-        /// <summary>
-        /// txtCDSPNumber control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCDSPNumber;
-
-        /// <summary>
-        /// drpCountyLetter control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpCountyLetter;
-
-        /// <summary>
         /// txtLastName_p2 control.
         /// </summary>
         /// <remarks>

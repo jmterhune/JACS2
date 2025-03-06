@@ -1,7 +1,17 @@
+
+.date-panel {
+    max-width: 300px;
+}
+#events section:nth-child(even) {
+    background-color: aliceblue;
+}
+#events section:nth-child(odd) {
+    background-color: #fff;
+}
+
 .command-item {
     cursor: pointer;
     width: 16px;
-    max-width: 16px;
 }
 
 label em {
@@ -34,7 +44,10 @@ label em {
     -webkit-columns: 2;
     -moz-columns: 2;
 }
-
+.aspNetDisabled label, .aspNetDisabled input {
+    color: #777 !important;
+    cursor: not-allowed;
+}
 .column-4 {
     column-count: 4;
     -webkit-columns: 4;
@@ -44,6 +57,10 @@ label em {
     .column-2 label, .column-4 label {
         padding-left: 0px;
     }
+.checkbox input[type="checkbox"] {
+    margin-right: .5rem
+}
+.checkbox label{ padding-bottom:2px}
 .accordion-button {
     font-size: .9rem !important;
     padding: 0.2rem 1.25rem !important;
@@ -134,28 +151,16 @@ div.dataTables_wrapper, div.dataTables_paginate, ul.pages {
 }
 
 .combo-list {
-    display: none !important;
-    position: absolute;
     z-index: 200;
     max-height: 30vh;
     overflow-y: auto;
-    border: 1px solid black;
 }
 
-    .combo-list option {
-        font-family: arial;
-        font-size: 11.8px;
+#attyDropDown,#judgeDropDown{
+    z-index:10;
+    overflow:scroll;
+    max-height:400px;
+}
+    #attyDropDown .list-group-item, #judgeDropDown .list-group-item {
         cursor: pointer;
-        padding: 5px 10px;
-        font-weight: bold;
     }
-
-        .combo-list option:hover {
-            background-color: #bfddf5;
-        }
-
-    .combo-list.show {
-        display: block;
-    }
-
-

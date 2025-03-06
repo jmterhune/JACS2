@@ -126,16 +126,28 @@
   <data name="lblAdminRole.Text" xml:space="preserve">
     <value>Administrator Role</value>
   </data>
+  <data name="lblCourtReporterIntakeRole.Help" xml:space="preserve">
+    <value>Select the Court Reporter Intake Role</value>
+  </data>
+  <data name="lblCourtReporterIntakeRole.Text" xml:space="preserve">
+    <value>Court Reporter Intake Role</value>
+  </data>
   <data name="lblCourtReporterRole.Help" xml:space="preserve">
     <value>Select the Court Reporter Role</value>
   </data>
   <data name="lblCourtReporterRole.Text" xml:space="preserve">
     <value>Court Reporter Role</value>
   </data>
-  <data name="lblUploadFolderName.Help" xml:space="preserve">
-    <value>Enter the Name of the Folder which will contain the Uploaded Files</value>
+  <data name="lblUploadFileFolder.Help" xml:space="preserve">
+    <value>Enter the Name of the Folder which will contain file associated with the designation</value>
   </data>
-  <data name="lblUploadFolderName.Text" xml:space="preserve">
-    <value>Upload Folder Name</value>
+  <data name="lblUploadFileFolder.Text" xml:space="preserve">
+    <value>Attachments Folder Name</value>
+  </data>
+  <data name="lblUploadFormFolder.Help" xml:space="preserve">
+    <value>Enter the Name of the Folder which will contain the Forms</value>
+  </data>
+  <data name="lblUploadFormFolder.Text" xml:space="preserve">
+    <value>Forms Folder Name</value>
   </data>
 </root>

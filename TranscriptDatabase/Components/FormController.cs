@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.Linq;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class FormController
@@ -42,6 +43,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
             {
                 var rep = ctx.GetRepository<Form>();
                 t = rep.GetById(formId);
+            }
+            return t;
+        }
+        public Form GetFormByType(DocumentTypes type)
+        {
+            Form t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Form>();
+                t = rep.Find("Where DocumentTypeID=@0",(int)type).FirstOrDefault();
             }
             return t;
         }

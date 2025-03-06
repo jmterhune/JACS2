@@ -3,6 +3,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using tjc.Modules.TranscriptDatabase.Handlers;
 namespace tjc.Modules.TranscriptDatabase
 {
     public class TranscriptDatabaseModuleBase : PortalModuleBase
@@ -52,14 +53,34 @@ namespace tjc.Modules.TranscriptDatabase
                 return "Court Reporter";
             }
         }
-        public string UploadFolderName
+        public string CourtReporterIntakeRole
         {
             get
             {
-                if (Settings.Contains("UploadFolderName"))
-                    return Settings["UploadFolderName"].ToString();
+                if (Settings.Contains("CourtReporterIntakeRole"))
+                    return Settings["CourtReporterIntakeRole"].ToString();
 
-                return "Transcript-Database";
+                return "Court Reporter Intake";
+            }
+        }
+        public string UploadFormFolder
+        {
+            get
+            {
+                if (Settings.Contains("UploadFormFolder"))
+                    return Settings["UploadFormFolder"].ToString();
+
+                return "Transcript-Forms";
+            }
+        }
+        public string UploadAttachmentFolder
+        {
+            get
+            {
+                if (Settings.Contains("UploadAttachmentFolder"))
+                    return Settings["UploadAttachmentFolder"].ToString();
+
+                return "Transcript-Attachments";
             }
         }
         public DateTime CurrentDate
@@ -77,6 +98,13 @@ namespace tjc.Modules.TranscriptDatabase
                 ViewState["CurrentDate"] = value;
             }
 
+        }
+        public string UploadHandler
+        {
+            get
+            {
+                return string.Format("{0}/Handlers/UploadHandler.ashx", TemplateSourceDirectory);
+            }
         }
         public string DesignationListUrl { get { return _navigationManager.NavigateURL(); } }
         public string CalendartUrl { get { return EditUrl("calendar"); } }

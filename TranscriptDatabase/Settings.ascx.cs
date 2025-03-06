@@ -57,16 +57,22 @@ namespace tjc.Modules.TranscriptDatabase
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
                     {
                         drpCourtReporterRole.Items.Add(new ListItem(r.RoleName));
+                        drpAdminRole.Items.Add(new ListItem(r.RoleName));
+                        drpCourtReporterIntake.Items.Add(new ListItem(r.RoleName));
                     }
                     if (Settings.Contains("CourtReporterRole"))
                         drpCourtReporterRole.SelectedValue = Convert.ToString(Settings["CourtReporterRole"]);
+                    if (Settings.Contains("CourtReporterIntakeRole"))
+                        drpCourtReporterIntake.SelectedValue = Convert.ToString(Settings["CourtReporterIntakeRole"]);
                     if (Settings.Contains("AdminRole"))
+                        drpAdminRole.SelectedValue = Convert.ToString(Settings["AdminRole"]);
+                    if (Settings.Contains("UploadFormFolder"))
                     {
-                        txtAdminRole.Text = Settings["AdminRole"].ToString();
+                        txtUploadFormFolder.Text = Settings["UploadFormFolder"].ToString();
                     }
-                    if (Settings.Contains("UploadFolderName"))
+                    if (Settings.Contains("UploadAttachmentFolder"))
                     {
-                        txtUploadFolderName.Text = Settings["UploadFolderName"].ToString();
+                        txtUploadFormFolder.Text = Settings["UploadAttachmentFolder"].ToString();
                     }
                 }
             }
@@ -85,12 +91,18 @@ namespace tjc.Modules.TranscriptDatabase
             try
             {
                 string CourtReporterRole = drpCourtReporterRole.SelectedValue;
-
+                string AdminRole = drpAdminRole.SelectedValue;
+                string CourtReporterIntakeRole = drpCourtReporterIntake.SelectedValue;
                 var modules = new ModuleController();
-                modules.UpdateModuleSetting(ModuleId, "AdminRole", txtAdminRole.Text);
-                modules.UpdateModuleSetting(ModuleId, "UploadFolderName", txtUploadFolderName.Text);
+                if (!string.IsNullOrEmpty(AdminRole.Trim()))
+                    modules.UpdateModuleSetting(ModuleId, "AdminRole", AdminRole.Trim());
                 if (!string.IsNullOrEmpty(CourtReporterRole.Trim()))
                     modules.UpdateModuleSetting(ModuleId, "CourtReporterRole", CourtReporterRole.Trim());
+                if (!string.IsNullOrEmpty(CourtReporterIntakeRole.Trim()))
+                    modules.UpdateModuleSetting(ModuleId, "CourtReporterIntakeRole", CourtReporterIntakeRole.Trim());
+                modules.UpdateModuleSetting(ModuleId, "UploadFormFolder", txtUploadFormFolder.Text);
+                modules.UpdateModuleSetting(ModuleId, "UploadAttachmentFolder", txtUploadFormFolder.Text);
+
             }
             catch (Exception exc) //Module failed to load
             {

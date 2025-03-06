@@ -14,10 +14,10 @@
             <div class="form-group">
                 <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
                 <div class="input-group">
-                    <asp:TextBox TabIndex="1" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
@@ -29,11 +29,11 @@
                     <div class="row">
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                            <asp:TextBox runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                            <asp:TextBox runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
 
                     </div>
@@ -70,14 +70,14 @@
 
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtOrderReferral" Text="Order of Referral" />
-                        <asp:TextBox runat="server" ID="txtOrderReferral" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
+                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtOrderReferral" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
 
                 </div>
                 <div class="col-auto">
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
+                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
                 </div>
                 <div class="col-auto">
@@ -178,7 +178,7 @@
                 <fieldset class="outline-fieldset pt-0 pb-0">
                     <legend class="mb-0">
                         <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
-                    <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
+                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
                 </fieldset>
             </div>
             <div class="modal fade" id="EventModal" tabindex="-1" role="dialog" aria-labelledby="EventModalLabel" aria-hidden="true">
@@ -214,7 +214,7 @@
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
-                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -243,7 +243,7 @@
                                 <div class="col-auto">
                                     <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
                                     <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
-                                    <asp:TextBox runat="server" Enabled="false" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" Enabled="false" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" />
                                 </div>
                                 <div class="col-auto pt-4 mt-1">
                                     <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
@@ -266,7 +266,7 @@
                                     <div class="form-group row">
                                         <asp:Label runat="server" AssociatedControlID="txtHours" CssClass="col-auto col-form-label" Text="Hours" />
                                         <div class="col-auto">
-                                            <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
 
                                         </div>
                                     </div>
@@ -291,11 +291,11 @@
                             <div class="row mb-3">
                                 <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="txtMediatorFirstName" Text="First Name" />
-                                    <asp:TextBox runat="server" ID="txtMediatorFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediatorFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                 </div>
                                 <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="txtMediatorLastName" Text="Last Name" />
-                                    <asp:TextBox runat="server" ID="txtMediatorLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediatorLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                 </div>
 
                                 <div class="col-auto pt-4">
@@ -331,21 +331,21 @@
                             <div class="row g-3">
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtFirstNameMed" Text="First Name" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameMed" />
                                 </div>
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtLastNameMed" Text="Last Name" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameMed" />
                                 </div>
                             </div>
                             <div class="row g-3">
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtEmailMed" Text="Email" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmailMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmailMed" />
                                 </div>
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtPhoneMed" Text="Phone" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhoneMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhoneMed" />
                                 </div>
                             </div>
                         </div>

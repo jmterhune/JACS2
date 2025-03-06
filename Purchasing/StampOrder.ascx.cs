@@ -152,7 +152,6 @@ namespace tjc.Modules.Purchasing
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            string subject = "Custom Stamp Order Form for {0}";
             string fromAddress = "noreply.intranet@jud12.flcourts.org";
             var order = new Components.StampOrder { DateCreated = DateTime.Now, RequestedName = txtRequestor.Text, ConsumerName = txtConsumerName.Text, Phone = txtPhone.Text, StampType = drpStampType.SelectedValue, Sample = txtSample.Text, FontStyle = drpFontStyle.SelectedValue, FontSize = txtFontSize.Text, InkColor = drpInkColor.SelectedValue, Instructions = txtInstructions.Text, Quantity = int.Parse(txtQuantity.Text), Location = drpLocation.SelectedValue, EmailAddress = txtEmailAddress.Text };
             var ctl = new StampOrderController();
@@ -165,7 +164,7 @@ namespace tjc.Modules.Purchasing
                 AddAttachments(orderId);
                 if (orderId > 0)
                 {
-                   subject= string.Format(subject, order.RequestedName); 
+                    string subject = string.Format("Custom Stamp Order Form for {0}", order.RequestedName); 
                     sb.Append("<h2>Stamp Order Details</h2>");
                     sb.Append("<ul style='list-style:none;margin:0;padding:0'><li><strong>Requested By: </strong>");
                     sb.Append(order.RequestedName);

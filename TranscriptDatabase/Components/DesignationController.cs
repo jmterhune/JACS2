@@ -1,6 +1,7 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
+using tjc.Modules.TranscriptDatabase.Services.ViewModels;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class DesignationController
@@ -94,5 +95,55 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 rep.Update(t);
             }
         }
+        #region Designation Attorneys References
+        public void CreateDesignationAttorney(int designationId, int attorneyId)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_rec_add_designation_attorney", designationId, attorneyId);
+            }
+        }
+        public IEnumerable<DesignationAttorney> GetDesignationAttorneys(int designationId)
+        {
+            IEnumerable<DesignationAttorney> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<DesignationAttorney>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_designation_attorneys", designationId);
+            }
+            return t;
+        }
+        public DesignationAttorney GetDesignationAttorney(int designationId, int attorneyId)
+        {
+            DesignationAttorney t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteScalar<DesignationAttorney>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_designation_attorney", designationId, attorneyId);
+            }
+            return t;
+        }
+        public IEnumerable<NameMatchViewModel> GetMatchingNames(string lastName)
+        {
+            IEnumerable<NameMatchViewModel> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<NameMatchViewModel>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_matching_names", lastName);
+            }
+            return t;
+        }
+        public void DeleteDesignationAttorney(int designationId, int attorneyId)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_rec_delete_designation_attorney", designationId, attorneyId);
+            }
+        }
+        public void DeleteDesignationAttorneys(int designationId)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_rec_delete_designation_attorney_all", designationId);
+            }
+        }
+        #endregion
     }
 }

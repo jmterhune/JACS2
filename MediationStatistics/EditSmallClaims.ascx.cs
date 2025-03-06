@@ -187,41 +187,41 @@ namespace tjc.Modules.MediationStatistics
                     }
                 }
             }
-            if (_currentCase.CDSPNumber.Contains("-")) { delimiter = "-"; } else { delimiter = " "; }
-            string[] cdspNumber = _currentCase.CDSPNumber.Split(char.Parse(delimiter));
-            if (cdspNumber.Length > 0)
-            {
-                int count = cdspNumber.Length - 1;
-                for (var i = 0; i <= count; i++)
-                {
-                    switch (i)
-                    {
-                        case 0:
-                            {
-                                drpCDSPType.SelectedValue = cdspNumber[i];
-                                break;
-                            }
+            //if (_currentCase.CDSPNumber.Contains("-")) { delimiter = "-"; } else { delimiter = " "; }
+            //string[] cdspNumber = _currentCase.CDSPNumber.Split(char.Parse(delimiter));
+            //if (cdspNumber.Length > 0)
+            //{
+            //    int count = cdspNumber.Length - 1;
+            //    for (var i = 0; i <= count; i++)
+            //    {
+            //        switch (i)
+            //        {
+            //            case 0:
+            //                {
+            //                    drpCDSPType.SelectedValue = cdspNumber[i];
+            //                    break;
+            //                }
 
-                        case 1:
-                            {
-                                txtCDSPYear.Text = cdspNumber[i];
-                                break;
-                            }
+            //            case 1:
+            //                {
+            //                    txtCDSPYear.Text = cdspNumber[i];
+            //                    break;
+            //                }
 
-                        case 2:
-                            {
-                                txtCDSPNumber.Text = cdspNumber[i];
-                                break;
-                            }
+            //            case 2:
+            //                {
+            //                    txtCDSPNumber.Text = cdspNumber[i];
+            //                    break;
+            //                }
 
-                        case 3:
-                            {
-                                drpCountyLetter.SelectedValue = cdspNumber[i];
-                                break;
-                            }
-                    }
-                }
-            }
+            //            case 3:
+            //                {
+            //                    drpCountyLetter.SelectedValue = cdspNumber[i];
+            //                    break;
+            //                }
+            //        }
+            //    }
+            //}
             if (_currentCase.CaseSessions.Count() > 0)
             {
                 if (CurrentSessionIndex == Null.NullInteger)
@@ -414,7 +414,7 @@ namespace tjc.Modules.MediationStatistics
             _currentCase.RegionId = _regionId;
             _currentCase.GroupId = (int)_caseTypeGroup;
             _currentCase.CaseNumber = Helper.GetCaseFormatted(txtCaseYear.Text.Trim(), txtCaseType.Text.Trim(), txtCaseSequence.Text.Trim(), txtSuffix.Text.Trim());
-            _currentCase.CDSPNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
+          //  _currentCase.CDSPNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
             _currentCase.LastModifiedById = UserId;
             _currentCase.LastModifiedDate = DateTime.Now;
             if (CaseID <= 0)
@@ -506,11 +506,11 @@ namespace tjc.Modules.MediationStatistics
         private void CheckExistingCase()
         {
             string caseNumber = Helper.GetCaseFormatted(txtCaseYear.Text.Trim(), txtCaseType.Text.Trim(), txtCaseSequence.Text.Trim(), txtSuffix.Text.Trim());
-            string cdspNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
+           // string cdspNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
             var ctl = new CaseController();
-            if (string.IsNullOrEmpty(caseNumber) & string.IsNullOrEmpty(cdspNumber))
+            if (string.IsNullOrEmpty(caseNumber) )
                 return;
-            var result = ctl.GetExistingCase(caseNumber, cdspNumber);
+            var result = ctl.GetExistingCase(caseNumber,"");
             if (result != null && result.Count() > 0)
             {
                 int caseid = result.FirstOrDefault().CaseId;

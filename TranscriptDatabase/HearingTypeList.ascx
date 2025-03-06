@@ -43,7 +43,7 @@
                     <asp:Literal ID="ltMessage" runat="server" />
                     <asp:Repeater ID="rptHearing" runat="server" OnItemCreated="rptHearing_ItemCreated" OnItemCommand="rptHearing_ItemCommand">
                         <HeaderTemplate>
-                            <table id="tblHearings" class="table table-striped">
+                            <table id="tblHearingType" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
@@ -64,7 +64,7 @@
                             </tr>
                         </ItemTemplate>
                         <FooterTemplate>
-                                </tbody>
+                            </tbody>
                             </table>
                         </FooterTemplate>
                     </asp:Repeater>
@@ -78,12 +78,15 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtHearingType" Text="Hearing Type" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtHearingType" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtHearingType" />
+                                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="hearing" CssClass="label label-danger"
+                                            ErrorMessage="Hearing Is Required" ControlToValidate="txtHearingType" runat="server" />
+
                                     </div>
                                     <asp:HiddenField ID="hdHearingTypeId" ClientIDMode="Static" runat="server" />
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ValidationGroup="hearing" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -106,6 +109,7 @@
     var isAdmin = "<%=IsAdmin%>";
     (function ($, Sys) {
         $(document).ready(function () {
+            Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
         });
     }(jQuery, window.Sys));

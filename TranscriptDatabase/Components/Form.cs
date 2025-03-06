@@ -17,8 +17,14 @@ namespace tjc.Modules.TranscriptDatabase.Components
         {
             get
             {
-                var ctl = new FileManager();
-                return ctl.GetFile(FileID).RelativePath;
+                if (FileID > 0)
+                {
+                    var ctl = new FileManager();
+                    var file = ctl.GetFile(FileID);
+                    if (file != null)
+                        return file.RelativePath;
+                }
+                return null;
             }
         }
         public int DocumentTypeID { get; set; }
@@ -46,5 +52,5 @@ namespace tjc.Modules.TranscriptDatabase.Components
             }
         }
     }
-   
+
 }

@@ -98,20 +98,18 @@ namespace tjc.Modules.PretrialServices
                 txtmcNonDanger.Text = dip.McNonDangerous.ToString();
                 drpNewArrest.SelectedValue = dip.NonCompArrestViolation;
                 txtCourtAppearances.Text = dip.CourtAppearances.ToString();
-                chkFtaArrestHearing.Checked = dip.FtaArrestHearing;
-                chkIndigent.Checked = dip.Indigent;
-                chkBwOrdered.Checked = dip.BwOrdered;
+                if (dip.FtaArrestHearing)
+                    rblFtaArrestHearing.SelectedValue = "1";
+                else
+                    rblFtaArrestHearing.SelectedValue = "0";
+                if (dip.Indigent)
+                    rblIndigent.SelectedValue = "1";
+                else
+                    rblIndigent.SelectedValue = "0";
                 chkRevoked.Checked = dip.IsRevoked;
-                chkCaseScreened.Checked = dip.CaseScreened;
-                chkPlaced.Checked = dip.PlacedInProgram;
+                chkBwOrdered.Checked = dip.BwOrdered;
                 if (dip.Completion.HasValue)
                     drpCompletion.SelectedValue = dip.Completion.ToString();
-                if (dip.BondType.HasValue)
-                    drpBondType.SelectedValue = dip.BondType.ToString();
-                if (dip.NonCompliance.HasValue)
-                    drpNonCompliance.SelectedValue = dip.NonCompliance.ToString();
-                if (dip.CaseType.HasValue)
-                    drpCaseType.SelectedValue = dip.CaseType.ToString();
                 ScriptManager.RegisterStartupScript(rptDefendantsInProgram, rptDefendantsInProgram.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
             }
         }
@@ -162,20 +160,19 @@ namespace tjc.Modules.PretrialServices
             dip.CaseNumber = txtCaseNumber.Text;
             dip.ArrestCharges = txtCharges.Text;
             dip.NonCompArrestViolation = drpNewArrest.SelectedValue;
-            dip.Indigent = chkIndigent.Checked;
-            dip.FtaArrestHearing = chkFtaArrestHearing.Checked;
-            dip.BwOrdered = chkBwOrdered.Checked;
-            dip.CaseScreened = chkCaseScreened.Checked;
-            dip.PlacedInProgram = chkPlaced.Checked;
             dip.IsRevoked = chkRevoked.Checked;
+            dip.BwOrdered = chkBwOrdered.Checked;
+
+            if (rblFtaArrestHearing.SelectedIndex >= 0)
+                dip.FtaArrestHearing = rblFtaArrestHearing.SelectedValue == "1";
+            else
+                dip.FtaArrestHearing = false;
+            if (rblIndigent.SelectedIndex >= 0)
+                dip.Indigent = rblIndigent.SelectedValue == "1";
+            else
+                dip.Indigent = false;
             if (drpCompletion.SelectedIndex > 0)
                 dip.Completion = Int32.Parse(drpCompletion.SelectedValue);
-            if (drpCaseType.SelectedIndex > 0)
-                dip.CaseType = Int32.Parse(drpCaseType.SelectedValue);
-            if(drpNonCompliance.SelectedIndex > 0)
-                dip.NonCompliance = Int32.Parse(drpNonCompliance.SelectedValue);
-            if(drpBondType.SelectedIndex > 0)
-                dip.BondType = Int32.Parse(drpBondType.SelectedValue);
             Int32.TryParse(txtfcDanger.Text, out int fcDanger);
             dip.FcDangerous = fcDanger;
             Int32.TryParse(txtfcNonDanger.Text, out int fcNonDanger);
@@ -433,17 +430,12 @@ namespace tjc.Modules.PretrialServices
             txtfcNonDanger.Text = string.Empty;
             txtmcDanger.Text = string.Empty;
             txtmcNonDanger.Text = string.Empty;
-            drpNewArrest.SelectedIndex = 0; 
+            drpNewArrest.SelectedIndex = 0;
             drpCompletion.SelectedIndex = -1;
-            drpBondType.SelectedIndex = -1;
-            drpCaseType.SelectedIndex = -1;
-            drpNonCompliance.SelectedIndex = -1;
+            rblFtaArrestHearing.SelectedIndex = -1;
             chkBwOrdered.Checked = false;
-            chkIndigent.Checked= false;
-            chkFtaArrestHearing.Checked = false;
-            chkPlaced.Checked = false;
-            chkCaseScreened.Checked = false;
             chkRevoked.Checked = false;
+            rblIndigent.SelectedIndex = -1;
             hdItemId.Value = string.Empty;
         }
         private DateTime? GetCookieIntakeDate()

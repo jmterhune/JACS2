@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.Linq;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class CalendarController
@@ -42,6 +43,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
             {
                 var rep = ctx.GetRepository<Calendar>();
                 t = rep.GetById(calendarId);
+            }
+            return t;
+        }
+        public Calendar GetCalendarByDesignation(int designationId)
+        {
+            Calendar t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Calendar>();
+                t = rep.Find("Where DesignationID=@0",designationId).FirstOrDefault();
             }
             return t;
         }

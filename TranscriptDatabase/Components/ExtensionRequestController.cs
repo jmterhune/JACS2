@@ -35,6 +35,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
             }
             return t;
         }
+        public IEnumerable<ExtensionRequest> GetExtensionRequestsByDesignation(int designationId)
+        {
+            IEnumerable<ExtensionRequest> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<ExtensionRequest>();
+                t = rep.Find("Where DesignationID = @0",designationId);
+            }
+            return t;
+        }
         public ExtensionRequest GetExtensionRequest(int extensionrequestId)
         {
             ExtensionRequest t;
@@ -45,6 +55,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
             }
             return t;
         }
+        
         public void UpdateExtensionRequest(ExtensionRequest t)
         {
             using (IDataContext ctx = DataContext.Instance())

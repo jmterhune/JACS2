@@ -73,9 +73,9 @@ namespace tjc.Modules.TranscriptDatabase
                     var deliveryTypes = Enumerations.GetValues<DeliveryTypes>();
                     foreach (DeliveryTypes deliveryType in deliveryTypes)
                     {
-                        drpDeliveryType.Items.Add(new ListItem(Enumerations.GetEnumDescription(deliveryType), deliveryType.ToString()));
+                        string deliveryTypeId = ((int)deliveryType).ToString();
+                        drpDeliveryType.Items.Add(new ListItem(Enumerations.GetEnumDescription(deliveryType), deliveryTypeId));
                     }
-
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -136,10 +136,10 @@ namespace tjc.Modules.TranscriptDatabase
             if (drpDeliveryType.SelectedIndex > 0)
                 office.DeliveryTypeID = Int32.Parse(drpDeliveryType.SelectedValue);
             office.LastModifiedDate = DateTime.Now;
-            office.LastModifiedByUser = UserId;
+            office.LastModifiedByUserID = UserId;
             if (isNew)
             {
-                office.CreatedByUser = UserId;
+                office.CreatedByUserID = UserId;
                 office.CreatedDate = DateTime.Now;
                 ctl.CreateOffice(office);
             }

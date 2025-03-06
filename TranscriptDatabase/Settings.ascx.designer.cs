@@ -24,13 +24,13 @@ namespace tjc.Modules.TranscriptDatabase
         protected global::System.Web.UI.UserControl lblAdminRole;
 
         /// <summary>
-        /// txtAdminRole control.
+        /// drpAdminRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAdminRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpAdminRole;
 
         /// <summary>
         /// lblCourtReporterRole control.
@@ -51,21 +51,57 @@ namespace tjc.Modules.TranscriptDatabase
         protected global::System.Web.UI.WebControls.DropDownList drpCourtReporterRole;
 
         /// <summary>
-        /// lblUploadFolderName control.
+        /// lblCourtReporterIntakeRole control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UserControl lblUploadFolderName;
+        protected global::System.Web.UI.UserControl lblCourtReporterIntakeRole;
 
         /// <summary>
-        /// txtUploadFolderName control.
+        /// drpCourtReporterIntake control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtUploadFolderName;
+        protected global::System.Web.UI.WebControls.DropDownList drpCourtReporterIntake;
+
+        /// <summary>
+        /// lblUploadFormFolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblUploadFormFolder;
+
+        /// <summary>
+        /// txtUploadFormFolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtUploadFormFolder;
+
+        /// <summary>
+        /// lblUploadFileFolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblUploadFileFolder;
+
+        /// <summary>
+        /// txtUploadFileFolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtUploadFileFolder;
     }
 }

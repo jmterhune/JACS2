@@ -15,6 +15,7 @@ using DotNetNuke.Common.Lists;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,35 +45,44 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Members
         private readonly INavigationManager _navigationManager;
-
         #endregion
         #region Methods
         public FormList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
-        private void BindDropDowns()
+
+        private void BindList()
         {
+            drpFileType.Items.Clear();
+            var ctl = new FormController();
+            IEnumerable<Form> forms = ctl.GetForms();
+            rptForm.DataSource = forms;
+            rptForm.DataBind();
+
+            var formIds = forms.Select(x => x.DocumentTypeID.ToString());
             var documentTypes = Enumerations.GetValues<DocumentTypes>();
             foreach (var documentType in documentTypes)
             {
-                drpFileType.Items.Add(new ListItem(Enumerations.GetEnumDescription(documentType), documentType.ToString()));
+                string formTypeId = ((int)documentType).ToString();
+                if (!formIds.Contains(formTypeId))
+                {
+                    drpFileType.Items.Add(new ListItem(Enumerations.GetEnumDescription(documentType), formTypeId));
+                }
             }
-        }
-        private void BindList()
-        {
-            var ctl = new FormController();
-            rptForm.DataSource = ctl.GetForms();
-            rptForm.DataBind();
+            if (drpFileType.Items.Count > 0)
+                drpFileType.Items.Insert(0, new ListItem("< Select Form Type >", ""));
+            else
+                drpFileType.Items.Insert(0, new ListItem("< All Form Types Uploaded >", ""));
         }
         private void ClearForm()
         {
             hdFormId.Value = string.Empty;
             hdFileId.Value = string.Empty;
             drpFileType.SelectedIndex = 0;
+            lblLink.Text = string.Empty;
             lnkFormUrl.Text = string.Empty;
             lnkFormUrl.NavigateUrl = string.Empty;
-            uplFile.PostedFiles.Clear();
         }
         #endregion
 
@@ -81,11 +91,13 @@ namespace tjc.Modules.TranscriptDatabase
         {
             try
             {
-                if (!IsAdmin)
-                    Response.Redirect(_navigationManager.NavigateURL());
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
-                BindDropDowns();
-                BindList();
+                if (!IsPostBack)
+                {
+                    if (!IsAdmin)
+                        Response.Redirect(_navigationManager.NavigateURL());
+                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    BindList();
+                }
             }
             catch (Exception exc) //Module failed to load
             {
@@ -119,6 +131,7 @@ namespace tjc.Modules.TranscriptDatabase
                 hdFormId.Value = formId.ToString();
                 drpFileType.SelectedValue = form.DocumentTypeID.ToString();
                 hdFileId.Value = form.FileID.ToString();
+                lblLink.Text = "Currently Selected File";
                 lnkFormUrl.Text = Path.GetFileName(filePath);
                 lnkFormUrl.NavigateUrl = filePath;
                 ScriptManager.RegisterStartupScript(rptForm, rptForm.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
@@ -143,12 +156,19 @@ namespace tjc.Modules.TranscriptDatabase
             }
             if (drpFileType.SelectedIndex > 0)
                 form.DocumentTypeID = Int32.Parse(drpFileType.SelectedValue);
-            form.FileID = Int32.Parse(hdFileId.Value);
+            if (!string.IsNullOrEmpty(hdFileId.Value))
+                form.FileID = Int32.Parse(hdFileId.Value);
+            else
+            {
+                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No File was selected or an error occurred uploading the file.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                return;
+            }
+
             form.LastModifiedDate = DateTime.Now;
-            form.LastModifiedByUser = UserId;
+            form.LastModifiedByUserID = UserId;
             if (isNew)
             {
-                form.CreatedByUser = UserId;
+                form.CreatedByUserID = UserId;
                 form.CreatedDate = DateTime.Now;
                 ctl.CreateForm(form);
             }

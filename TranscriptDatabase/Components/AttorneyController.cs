@@ -9,8 +9,11 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Collections;
 using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.Linq;
+using tjc.Modules.TranscriptDatabase.Services.ViewModels;
 
 namespace tjc.Modules.TranscriptDatabase.Components
 {
@@ -47,6 +50,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
             }
             return t;
         }
+        public IEnumerable<DropDownViewModel> GetAttorneyDropDownList()
+        {
+            IEnumerable<DropDownViewModel> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Attorney>();
+                t = rep.Get().Select(atty=> new DropDownViewModel { Id= atty.AttorneyID, Name=atty.ListName, Office=atty.OfficeName});
+            }
+            return t;
+        }
         public Attorney GetAttorney(int attorneyId)
         {
             Attorney t;
@@ -65,5 +78,24 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 rep.Update(t);
             }
         }
+        public IEnumerable<AttorneyViewModel> GetDesignationAttorneys(int designationId)
+        {
+            IEnumerable<AttorneyViewModel> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<AttorneyViewModel>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_attorneys_by_designation", designationId);
+            }
+            return t;
+        }
+        public IEnumerable<Attorney> GetAttorneysByDesignation(int designationId)
+        {
+            IEnumerable<Attorney> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<Attorney>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_attorneys_by_designation", designationId);
+            }
+            return t;
+        }
+
     }
 }

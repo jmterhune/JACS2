@@ -41,16 +41,14 @@
                         </ProgressTemplate>
                     </asp:UpdateProgress>
                     <asp:Literal ID="ltMessage" runat="server" />
-                    <asp:Repeater ID="rptOffice" runat="server" OnItemCreated="rptOffice_ItemCreated" OnItemCommand="rptOffice_ItemCommand">
+                    <asp:Repeater ID="rptOffice" runat="server" OnItemCreated="rptOffices_ItemCreated" OnItemCommand="rptOffices_ItemCommand">
                         <HeaderTemplate>
                             <table id="tblOffices" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
-                                        <th>First Name</th>
-                                        <th>Middle Name</th>
-                                        <th>Last Name</th>
-                                        <th>Office</th>
+                                        <th>Office Name</th>
+                                        <th>Delivery Type</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -82,22 +80,28 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col">
                                                 <asp:Label runat="server" AssociatedControlID="txtDescription" Text="Office Description" />
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtDescription" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtDescription" />
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="office" CssClass="label label-danger"
+                                                    ErrorMessage="Office Description Is Required" ControlToValidate="txtDescription" runat="server" />
+
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-auto">
                                                 <asp:Label runat="server" AssociatedControlID="drpDeliveryType" Text="Delivery Type" />
                                                 <asp:DropDownList runat="server" ID="drpDeliveryType" CssClass="form-control">
-                                                    <asp:ListItem Value="0" Text="< Select Delivery Type >" />
+                                                    <asp:ListItem Value="" Text="< Delivery Type >" />
                                                 </asp:DropDownList>
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="office" CssClass="label label-danger"
+                                                    ErrorMessage="Delivery Type Is Required" ControlToValidate="drpDeliveryType" runat="server" />
+
                                             </div>
                                         </div>
                                     </div>
                                     <asp:HiddenField ID="hdOfficeId" ClientIDMode="Static" runat="server" />
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ValidationGroup="office" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -119,6 +123,7 @@
     var isAdmin = "<%=IsAdmin%>";
     (function ($, Sys) {
         $(document).ready(function () {
+            Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
         });
     }(jQuery, window.Sys));

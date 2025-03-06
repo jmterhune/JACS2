@@ -231,15 +231,6 @@ namespace tjc.Modules.PretrialServices
         protected global::System.Web.UI.WebControls.Button cmdClose2;
 
         /// <summary>
-        /// txtIntakeDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtIntakeDate;
-
-        /// <summary>
         /// txtName control.
         /// </summary>
         /// <remarks>
@@ -348,40 +339,22 @@ namespace tjc.Modules.PretrialServices
         protected global::System.Web.UI.WebControls.DropDownList drpCompletion;
 
         /// <summary>
-        /// drpCaseType control.
+        /// rblFtaArrestHearing control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpCaseType;
+        protected global::System.Web.UI.WebControls.RadioButtonList rblFtaArrestHearing;
 
         /// <summary>
-        /// drpBondType control.
+        /// rblIndigent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpBondType;
-
-        /// <summary>
-        /// drpNonCompliance control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpNonCompliance;
-
-        /// <summary>
-        /// chkFtaArrestHearing control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkFtaArrestHearing;
+        protected global::System.Web.UI.WebControls.RadioButtonList rblIndigent;
 
         /// <summary>
         /// chkBwOrdered control.
@@ -391,33 +364,6 @@ namespace tjc.Modules.PretrialServices
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkBwOrdered;
-
-        /// <summary>
-        /// chkIndigent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkIndigent;
-
-        /// <summary>
-        /// chkCaseScreened control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkCaseScreened;
-
-        /// <summary>
-        /// chkPlaced control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPlaced;
 
         /// <summary>
         /// chkRevoked control.

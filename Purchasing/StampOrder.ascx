@@ -157,7 +157,7 @@
         </fieldset>
         <hr />
         <p>
-            <asp:LinkButton ID="cmdSave" runat="server" CssClass="btn btn-primary" Text="Submit Order" OnClick="cmdSave_Click" />
+            <asp:LinkButton ID="cmdSave" runat="server" ClientIDMode="Static" CssClass="btn btn-primary" Text="Submit Order" OnClick="cmdSave_Click" />
             <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
         </p>
     </div>
@@ -224,6 +224,21 @@
         });
         $('#drpFontStyle').change(function () {
             UpdateSampleStyle();
+        });
+        $("#cmdSave").on("click", function (e) {
+            if ($('#cmdSave').text() == "Please Wait") {
+                e.preventDefault();
+                return false;
+            }
+            if (typeof (Page_ClientValidate) == 'function') {
+                Page_ClientValidate();
+            }
+            if (Page_IsValid) {
+                $('#cmdSave').prop("disabled", false);
+                $('#cmdSave').text("Please Wait");
+            } else {
+                return false
+            }
         });
     });
     function UpdateSampleStyle() {

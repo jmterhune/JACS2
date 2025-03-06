@@ -11,7 +11,11 @@ namespace tjc.Modules.TranscriptDatabase.Components
     {
         public int EmployeeID { get; set; }
         public int EmployeeTypeID { get; set; }
-        public string EmployeeName { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string Title { get; set; }
+        [IgnoreColumn]
+        public string EmployeeName { get { return string.Format("{0}, {1}", LastName, FirstName); } }
         [IgnoreColumn]
         public string EmployeeTypeName
         {

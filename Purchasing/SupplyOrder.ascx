@@ -204,6 +204,21 @@
             text: 'Are you Sure you wish to delete this item?',
             title: 'Delete line item?'
         });
+        $("#cmdSave").on("click", function (e) {
+            if ($('#cmdSave').val() == "Please Wait") {
+                e.preventDefault();
+                return false;
+            }
+            if (typeof (Page_ClientValidate) == 'function') {
+                Page_ClientValidate('Order');
+            }
+            if (Page_IsValid) {
+                $('#cmdSave').prop("disabled", false);
+                $('#cmdSave').val("Please Wait");
+            } else {
+                return false
+            }
+        });
     }(jQuery, window.Sys));
 
     function WriteAttachmentMessage(filename) {

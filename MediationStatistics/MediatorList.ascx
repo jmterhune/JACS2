@@ -87,21 +87,21 @@
                                     <div class="row g-3">
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
                                         </div>
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
                                         </div>
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="50" ID="txtPhone" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="50" ID="txtPhone" />
                                         </div>
                                     </div>
                                     <div class="row g-3">
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Email Address" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
                                             <asp:RegularExpressionValidator ID="valEmail" runat="server"
                                                 ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" Display="Dynamic" ControlToValidate="txtEmail"
                                                 ErrorMessage="Invalid Email Address Format" SetFocusOnError="true" CssClass="label label-danger" />

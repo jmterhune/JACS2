@@ -5,17 +5,27 @@
 <fieldset>
     <div class="dnnFormItem">
         <dnn:Label ID="lblAdminRole" runat="server" />
-        <asp:TextBox ID="txtAdminRole" runat="server" />
+        <asp:DropDownList runat="server" ID="drpAdminRole">
+        </asp:DropDownList>
+    </div>
+    <div class="dnnFormItem">
+        <dnn:Label ID="lblCourtReporterRole" runat="server" />
+        <asp:DropDownList runat="server" ID="drpCourtReporterRole">
+        </asp:DropDownList>
+    </div>
+    <div class="dnnFormItem">
+    <dnn:Label ID="lblCourtReporterIntakeRole" runat="server" />
+    <asp:DropDownList runat="server" ID="drpCourtReporterIntake">
+    </asp:DropDownList>
+</div>
+    <div class="dnnFormItem">
+        <dnn:Label ID="lblUploadFormFolder" runat="server" />
+        <asp:TextBox AutoCompleteType="Disabled" ID="txtUploadFormFolder" runat="server" />
     </div>
      <div class="dnnFormItem">
-     <dnn:Label ID="lblCourtReporterRole" runat="server" />
-     <asp:DropDownList runat="server" ID="drpCourtReporterRole">
-     </asp:DropDownList>
+     <dnn:Label ID="lblUploadFileFolder" runat="server" />
+     <asp:TextBox AutoCompleteType="Disabled" ID="txtUploadFileFolder" runat="server" />
  </div>
-    <div class="dnnFormItem">
-        <dnn:Label ID="lblUploadFolderName" runat="server" />
-        <asp:TextBox ID="txtUploadFolderName" runat="server" />
-    </div>
 </fieldset>
 
 

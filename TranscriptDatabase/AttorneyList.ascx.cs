@@ -110,7 +110,7 @@ namespace tjc.Modules.TranscriptDatabase
             }
         }
 
-        protected void rptAttorneys_ItemCreated(object sender, RepeaterItemEventArgs e)
+        protected void rptAttorney_ItemCreated(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
@@ -122,7 +122,7 @@ namespace tjc.Modules.TranscriptDatabase
             }
         }
 
-        protected void rptAttorneys_ItemCommand(object source, RepeaterCommandEventArgs e)
+        protected void rptAttorney_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int attorneyId = Convert.ToInt32(e.CommandArgument);
             var ctl = new AttorneyController();
@@ -148,7 +148,7 @@ namespace tjc.Modules.TranscriptDatabase
             }
         }
 
-        protected void pnlAttorneys_Unload(object sender, EventArgs e)
+        protected void pnlAttorney_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
             methodInfo.Invoke(ScriptManager.GetCurrent(Page),
@@ -176,10 +176,10 @@ namespace tjc.Modules.TranscriptDatabase
                 attorney.OfficeID = Int32.Parse(drpOffice.SelectedValue);
             attorney.State = drpState.SelectedValue;
             attorney.LastModifiedDate = DateTime.Now;
-            attorney.LastModifiedByUser = UserId;
+            attorney.LastModifiedByUserID = UserId;
             if (isNew)
             {
-                attorney.CreatedByUser = UserId;
+                attorney.CreatedByUserID = UserId;
                 attorney.CreatedDate = DateTime.Now;
                 ctl.CreateAttorney(attorney);
             }
@@ -190,5 +190,6 @@ namespace tjc.Modules.TranscriptDatabase
             ClearForm();
             BindList();
         }
+
     }
 }

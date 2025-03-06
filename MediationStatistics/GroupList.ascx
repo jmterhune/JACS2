@@ -87,7 +87,7 @@
                                 <div class="modal-body groups">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtGroup" Text="Group" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtGroup" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtGroup" />
                                     </div>
                                     <div class="form-check form-switch">
                                         <asp:CheckBox ID="chkCourtOrdered" ClientIDMode="Static" runat="server" Text="Court Ordered" />

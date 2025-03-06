@@ -4,11 +4,11 @@
     <div class="row form-group">
         <div class="col-auto">
             <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
-            <asp:TextBox runat="server" ID="txtStartDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtStartDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
         </div>
         <div class="col-auto">
             <asp:Label runat="server" AssociatedControlID="txtEndDate" Text="End Date" />
-            <asp:TextBox runat="server" ID="txtEndDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtEndDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
         </div>
         <div class="col-auto">
             <asp:Label runat="server" AssociatedControlID="drpReport" Text="Report" />

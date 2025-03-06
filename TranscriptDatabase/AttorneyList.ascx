@@ -29,7 +29,7 @@
     </ul>
     <div class="tab-content pb-0">
         <div id="attorneys" class="tab-pane active">
-            <asp:UpdatePanel ID="pnlAttorneys" runat="server" RenderMode="Block" OnUnload="pnlAttorneys_Unload">
+            <asp:UpdatePanel ID="pnlAttorney" runat="server" RenderMode="Block" OnUnload="pnlAttorney_Unload">
                 <ContentTemplate>
                     <asp:UpdateProgress ID="upProgressEvent" runat="server">
                         <ProgressTemplate>
@@ -43,7 +43,7 @@
                     <asp:Literal ID="ltMessage" runat="server" />
                     <asp:Repeater ID="rptAttorney" runat="server" OnItemCreated="rptAttorney_ItemCreated" OnItemCommand="rptAttorney_ItemCommand">
                         <HeaderTemplate>
-                            <table id="tblAttorneys" class="table table-striped">
+                            <table id="tblAttorney" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
@@ -84,19 +84,27 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="atty" CssClass="label label-danger"
+                                                    ErrorMessage="First Name Is Required" ControlToValidate="txtFirstName" runat="server" />
+
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <asp:Label runat="server" AssociatedControlID="txtMiddleName" Text="Middle Name" />
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtMiddleName" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtMiddleName" />
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="atty" CssClass="label label-danger"
+                                                    ErrorMessage="Last Name Is Required" ControlToValidate="txtLastName" runat="server" />
                                             </div>
-                                            <div class="col-3">
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
                                                 <asp:Label runat="server" AssociatedControlID="drpOffice" Text="Office Location" />
                                                 <asp:DropDownList runat="server" ID="drpOffice" CssClass="form-control" AppendDataBoundItems="true">
                                                     <asp:ListItem Value="0" Text="< Select Office Location >" />
@@ -107,15 +115,15 @@
 
                                             <div class="col-12">
                                                 <label for="txtAddress" class="form-label">Address</label>
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" placeholder="1234 Main St" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" placeholder="1234 Main St" />
                                             </div>
                                             <div class="col-12">
                                                 <label for="txtAddress2" class="form-label">Address 2</label>
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress2" placeholder="Apartment, studio, or floor" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress2" placeholder="Apartment, studio, or floor" />
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="txtCity" class="form-label">City</label>
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCity" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCity" />
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="drpState" class="form-label">State</label>
@@ -125,14 +133,14 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <label for="txtZip" class="form-label">Zip</label>
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="10" ID="txtZip" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="10" ID="txtZip" />
                                             </div>
                                         </div>
                                     </div>
                                     <asp:HiddenField ID="hdAttorneyId" ClientIDMode="Static" runat="server" />
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" ValidationGroup="atty" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -155,6 +163,7 @@
     var isAdmin = "<%=IsAdmin%>";
     (function ($, Sys) {
         $(document).ready(function () {
+            Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
         });
     }(jQuery, window.Sys));

@@ -35,6 +35,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
             }
             return t;
         }
+        public IEnumerable<Attachment> GetAttachmentsByDesignation(int designationId)
+        {
+            IEnumerable<Attachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Attachment>();
+                t = rep.Find("Where DesignationID = @0",designationId);
+            }
+            return t;
+        }
         public Attachment GetAttachment(int attachmentId)
         {
             Attachment t;

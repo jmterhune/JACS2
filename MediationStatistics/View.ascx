@@ -50,10 +50,10 @@
                                     <div class="col-md-6">
                                         <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
                                         <div class="input-group">
-                                            <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                                             <div class="input-group-append">
                                                 <small class="input-group-text form-control" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                                             </div>
@@ -68,8 +68,8 @@
                                                 <asp:ListItem Text="CDSP" />
                                                 <asp:ListItem Text="CDSPF" />
                                             </asp:DropDownList>
-                                            <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                                             <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control location-field" ClientIDMode="Static">
                                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                                 <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
@@ -96,15 +96,15 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                        <asp:TextBox runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                                        <asp:TextBox runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtBusinessName" Text="Business Name" />
-                                        <asp:TextBox runat="server" ID="txtBusinessName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtBusinessName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                 </div>
                             </div>

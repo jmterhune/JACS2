@@ -38,8 +38,10 @@
                         <thead>
                             <tr>
                                 <th>Form #</th>
+                                <th># Sets</th>
+                                <th># Parts</th>
+                                <th>Page Size</th>
                                 <th>Description</th>
-                                <th>Qty</th>
                                 <th>End User</th>
                                 <th>Comments</th>
                                 <th>Attachments</th>
@@ -53,8 +55,16 @@
                         <td>
                             <%#Eval("FormNumber") %>
                         </td>
+                        <td>
+                            <%#Eval("Quantity") %>
+                        </td>
+                        <td>
+                            <%#Eval("NumberParts") %>
+                        </td>
+                        <td>
+                            <%#Eval("PageType") %>
+                        </td>
                         <td><%#Eval("Description") %></td>
-                        <td><%#Eval("Quantity") %></td>
                         <td><%#Eval("Recipient") %></td>
                         <td><%#Eval("Comments") %></td>
                         <td>

@@ -114,22 +114,13 @@ namespace tjc.Modules.Purchasing
         protected global::System.Web.UI.WebControls.TextBox txtFormName;
 
         /// <summary>
-        /// txtQuantity control.
+        /// txtNumberSets control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtQuantity;
-
-        /// <summary>
-        /// valIsNumber control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CompareValidator valIsNumber;
+        protected global::System.Web.UI.WebControls.TextBox txtNumberSets;
 
         /// <summary>
         /// txtRecipient control.
@@ -139,6 +130,24 @@ namespace tjc.Modules.Purchasing
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtRecipient;
+
+        /// <summary>
+        /// drpNumberParts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpNumberParts;
+
+        /// <summary>
+        /// drpPageType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpPageType;
 
         /// <summary>
         /// txtDescription control.

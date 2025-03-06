@@ -60,10 +60,12 @@ namespace tjc.Modules.TranscriptDatabase
         private void ClearForm()
         {
             hdNameId.Value = string.Empty;
-            txtName.Text = string.Empty;
+            txtLastName.Text = string.Empty;
+            txtFirstName.Text = string.Empty;
+            txtTitle.Text = string.Empty;
             drpNameType.SelectedIndex = 0;
         }
-#endregion
+        #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -73,10 +75,11 @@ namespace tjc.Modules.TranscriptDatabase
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
-                    var employeeTypes=Enumerations.GetValues<EmployeeTypes>();
+                    var employeeTypes = Enumerations.GetValues<EmployeeTypes>();
                     foreach (EmployeeTypes employeeType in employeeTypes)
                     {
-                        drpNameType.Items.Add(new ListItem(Enumerations.GetEnumDescription(employeeType),employeeType.ToString()));
+                        string employeeTypeId = ((int)employeeType).ToString();
+                        drpNameType.Items.Add(new ListItem(Enumerations.GetEnumDescription(employeeType), employeeTypeId));
                     }
                     BindList();
                 }
@@ -87,7 +90,7 @@ namespace tjc.Modules.TranscriptDatabase
             }
         }
 
-        protected void rptNames_ItemCreated(object sender, RepeaterItemEventArgs e)
+        protected void rptName_ItemCreated(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
@@ -99,7 +102,7 @@ namespace tjc.Modules.TranscriptDatabase
             }
         }
 
-        protected void rptNames_ItemCommand(object source, RepeaterCommandEventArgs e)
+        protected void rptName_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int nameId = Convert.ToInt32(e.CommandArgument);
             var ctl = new EmployeeController();
@@ -112,7 +115,9 @@ namespace tjc.Modules.TranscriptDatabase
             {
                 Employee name = ctl.GetEmployee(nameId);
                 hdNameId.Value = nameId.ToString();
-                txtName.Text = name.EmployeeName;
+                txtLastName.Text = name.LastName;
+                txtFirstName.Text = name.FirstName;
+                txtTitle.Text = name.Title;
                 drpNameType.SelectedValue = name.EmployeeTypeID.ToString();
                 ScriptManager.RegisterStartupScript(rptName, rptName.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
             }
@@ -135,14 +140,16 @@ namespace tjc.Modules.TranscriptDatabase
                 isNew = false;
                 name = ctl.GetEmployee(Convert.ToInt32(hdNameId.Value));
             }
-            name.EmployeeName = txtName.Text;
-            if(drpNameType.SelectedIndex>0) 
-            name.EmployeeTypeID = Int32.Parse(drpNameType.SelectedValue);
+            name.LastName = txtLastName.Text;
+            name.FirstName = txtFirstName.Text;
+            name.Title = txtTitle.Text;
+            if (drpNameType.SelectedIndex > 0)
+                name.EmployeeTypeID = Int32.Parse(drpNameType.SelectedValue);
             name.LastModifiedDate = DateTime.Now;
-            name.LastModifiedByUser = UserId;
+            name.LastModifiedByUserID = UserId;
             if (isNew)
             {
-                name.CreatedByUser = UserId;
+                name.CreatedByUserID = UserId;
                 name.CreatedDate = DateTime.Now;
                 ctl.CreateEmployee(name);
             }

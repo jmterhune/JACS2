@@ -51,8 +51,17 @@ namespace tjc.Modules.Reports.Components
                 t = rep.Find("Where BadgeType='Employee'");
             }
             return t;
-        }    
-
+        }
+        public IEnumerable<PhotoID> GetPhotoIDs(string lastName)
+        {
+            IEnumerable<PhotoID> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            {
+                var rep = ctx.GetRepository<PhotoID>();
+                t = rep.Find("Where BadgeType='Employee' AND LastName like @0",string.Format("%{0}%",lastName));
+            }
+            return t;
+        }
         public PhotoID GetPhotoID(long id)
         {
             PhotoID t;

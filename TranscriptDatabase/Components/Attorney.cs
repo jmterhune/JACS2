@@ -10,10 +10,7 @@
 ' 
 */
 
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel.DataAnnotations;
-using DotNetNuke.Entities.Content;
-using System;
 using System.Web.Caching;
 
 namespace tjc.Modules.TranscriptDatabase.Components
@@ -21,7 +18,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [TableName("tjc_rec_attorney")]
     [PrimaryKey("AttorneyID", AutoIncrement = true)]
     [Cacheable("Attorneys", CacheItemPriority.Default, 20)]
-    internal class Attorney : EntityBase
+    public class Attorney : EntityBase
     {
         public int AttorneyID { get; set; }
 
@@ -48,9 +45,35 @@ namespace tjc.Modules.TranscriptDatabase.Components
             get
             {
                 var ctl = new OfficeController(); Office office = ctl.GetOffice(OfficeID);
-                if (office != null) 
+                if (office != null)
                     return office.Description;
-                return ""; }
+                return "";
+            }
         }
+        [IgnoreColumn]
+        public string ListName
+        {
+            get
+            {
+                return string.Format("{0}, {1}", LastName, FirstName);
+            }
+        }
+        [IgnoreColumn]
+        public string AttorneyName
+        {
+            get
+            {
+                return string.Format("{0} {1}",FirstName, LastName );
+            }
+        }
+    }
+    [TableName("tjc_rec_designation_attorneys")]
+    public class DesignationAttorney
+    {
+        public int AttorneyID { get; set; }
+        public int DesignationID { get; set; }
+        [IgnoreColumn]
+        public string AttorneyName { get; set; }
+
     }
 }

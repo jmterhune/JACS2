@@ -241,7 +241,7 @@ namespace tjc.Modules.Purchasing
         #region Methods
         private void SendEmail(Components.SupplyOrder supplyOrder)
         {
-            string subject = "Supply Order Form for {0}";
+            string subject = "Supply Order Form ";
             string fromAddress = "noreply.intranet@jud12.flcourts.org";
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
             DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
@@ -289,7 +289,7 @@ namespace tjc.Modules.Purchasing
                     }
                 sb.Append("</ul>");
             }
-            subject = string.Format("{0} for {1}", subject, supplyOrder.RequestedName);
+            subject = string.Format("Supply Order Form for {0}", supplyOrder.RequestedName);
             DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
             subject = "Supply Order Confirmation";
             DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", txtEmail.Text, subject, sb.ToString());

@@ -3,7 +3,7 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="#designation" data-toggle="tab">Designations</a>
+            <a class="nav-link" href="<%=DesignationListUrl%>">Designations</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=CalendartUrl%>">Calendar</a>
@@ -17,11 +17,11 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=OfficeListUrl%>">Offices</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=FormListUrl%>">Forms</a>
-        </li>
         <li class="nav-item active">
             <a class="nav-link" href="#forms" data-toggle="tab">Forms</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=HearingListUrl%>">Hearing Types</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ReportListUrl%>">Reporting</a>
@@ -41,13 +41,14 @@
                         </ProgressTemplate>
                     </asp:UpdateProgress>
                     <asp:Literal ID="ltMessage" runat="server" />
-                    <asp:Repeater ID="rptForm" runat="server" OnItemCreated="rptForm_ItemCreated" OnItemCommand="rptForm_ItemCommand">
+                    <asp:Repeater ID="rptForm" runat="server" OnItemCreated="rptForms_ItemCreated" OnItemCommand="rptForms_ItemCommand">
                         <HeaderTemplate>
-                            <table id="tblForms" class="table table-striped">
+                            <table id="tblForm" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
-                                        <th>Form</th>
+                                        <th>Form Type</th>
+                                        <th>File Name</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -80,10 +81,11 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="drpFileType" Text="Form" />
+                                        <asp:Label runat="server" AssociatedControlID="drpFileType" Text="Form Type" />
                                         <asp:DropDownList runat="server" ID="drpFileType" CssClass="form-control">
-                                            <asp:ListItem Value="" Text="< Select File Type >" />
                                         </asp:DropDownList>
+                                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="Form" CssClass="label label-danger"
+                                            ErrorMessage="Form Type Is Required" ControlToValidate="drpFileType" runat="server" />
                                     </div>
                                     <div class="form-group clearfix">
                                         <asp:Label ID="lblupload" runat="server" AssociatedControlID="uplFile" Text="Upload Attachments<em>*</em>" />
@@ -98,14 +100,14 @@
                                             <span id="uploadInfo"></span>
                                         </div>
                                         <div class="form-group">
-                                            <asp:Label ID="lblLink" runat="server" AssociatedControlID="lnkFormUrl" Text="Currently Selected File" />
+                                            <asp:Label ID="lblLink" runat="server" AssociatedControlID="lnkFormUrl" Text="" />
                                             <asp:HyperLink ID="lnkFormUrl" ClientIDMode="Static" runat="server" />
                                         </div>
                                     </div>
                                     <asp:HiddenField ID="hdFormId" ClientIDMode="Static" runat="server" />
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" ValidationGroup="Form" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -126,6 +128,10 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
+    const uploadHandler = "<%=UploadFormFolder%>";
+    const moduleId = <%=ModuleId%>;
+    const tabId = <%=TabId%>;
+    const isAdmin = "<%=IsAdmin%>";
     var extensionHash = {
         'pdf': 1,
         'doc': 1,
@@ -133,14 +139,19 @@
         'xls': 1,
         'xlsx': 1,
     };
-    var isAdmin = "<%=IsAdmin%>";
     (function ($, Sys) {
         $(document).ready(function () {
+            Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
         });
     }(jQuery, window.Sys));
     function PageInit() {
-
+        $("#EditFormModal").on("click", "#uplFile", function (e) {
+            $("#upload-overlay").show();
+        });
+        $("#EditFormModal").on("change", "#uplFile", function (e) {
+            check_extension($(this).val());
+        });
         var table = $('#tblForm').DataTable({
             "order": [[1, "asc"]],
             "oLanguage": {
@@ -175,7 +186,7 @@
         return true;
     }
     function ClearForm() {
-        $('#txtForm').val("");
+        $('#drpFileType').val("");
         $('#hdFormId').val("");
         return false;
     }
@@ -184,12 +195,11 @@
             $("#uploadInfo").html("<span class='text-danger'>Unable to upload file. Please make sure the file is in an allowed format.</span>");
         } else {
             $("#fileAttachmentWarning").fadeOut();
-            $("#uploadInfo").html("<span class='text-danger'>File Captured.</span>");
+            $("#uploadInfo").html("<div class='alert alert-warning mt-3'><i class='fas fa-file-arrow-up'></i> File Uploaded! Click Save to add to Database.</div>");
         }
         var upload = $("#uplFile");
         var html = upload.parent().html();
-        upload.parent().html(html.replace(filename, "Choose File"));
-        $("#uploadInfo").html('');
+        upload.parent().html(html.replace(filename, "File Selected"));
     }
     function HandleUpload() {
         $("#upload-overlay").show();
@@ -204,10 +214,10 @@
             var filename = file.name;
             var data = new FormData();
             data.append(filename, file);
-            data.append("mid",<%=ModuleId%>);
-            data.append("tabId",<%=TabId%>);
+            data.append("mid",moduleId);
+            data.append("tabId",tabId);
             var options = {};
-            options.url = "<%=uploadHandler%>";
+            options.url = uploadHandler;
             options.type = "POST";
             options.data = data;
             options.contentType = false;

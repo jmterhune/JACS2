@@ -645,9 +645,9 @@ namespace tjc.Modules.MediationStatistics
                 if (Int32.TryParse(txtSignedMediationCount.Text, out int signedCount1))
                     newEvent.SignedCount1 = signedCount1;
                 if (Int32.TryParse(txtSignedAfterMediationCount.Text, out int signedCount2))
-                    newEvent.SignedCount1 = signedCount2;
+                    newEvent.SignedCount2 = signedCount2;
                 if (Int32.TryParse(txtSignedTrialCount.Text, out int signedCount3))
-                    newEvent.SignedCount1 = signedCount3;
+                    newEvent.SignedCount3 = signedCount3;
                 ctl.CreateEvent(newEvent);
                 foreach (ListItem item in cblAppearanceRecord.Items)
                 {

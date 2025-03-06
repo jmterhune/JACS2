@@ -133,15 +133,10 @@
         table.draw();
 
         $(".confirm").dnnConfirm({
-
             text: 'Are you sure you wish to delete this County?',
-
             yesText: 'Yes',
-
             noText: 'No',
-
             title: 'Delete County?'
-
         });
     }
     function ToggleEditForm(toggleValue) {

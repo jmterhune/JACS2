@@ -1,4 +1,7 @@
-﻿using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Roles;
+using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.Mail;
 using DotNetNuke.Web.Api;
 using System;
 using System.Collections.Generic;
@@ -47,13 +50,84 @@ namespace tjc.Modules.TranscriptDatabase.Services
         }
         [HttpGet]
         [AllowAnonymous]
+        [ActionName("GetMatchingNames")]
+        public HttpResponseMessage GetMatchingNames()
+        {
+            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+            string lastName = query["lastName"].ToString();
+            try
+            {
+                var ctl = new DesignationController();
+                IEnumerable<NameMatchViewModel> matchingNames = ctl.GetMatchingNames(lastName);
+                return Request.CreateResponse(new MatchingNameResult { data = matchingNames, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new MatchingNameResult { data = null, error = ex.Message });
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ActionName("CreateDesignation")]
+        public HttpResponseMessage CreateDesignation(DesignationViewModel designationViewModel)
+        {
+            var ctl = new Components.DesignationController();
+            var attorneys = designationViewModel.Attorneys.Split(',');
+            DateTime dueDate = DateTime.Now.AddDays(30);
+            if (DateTime.TryParse(designationViewModel.ReceiptDate, out DateTime receiptdate))
+                dueDate = receiptdate.AddDays(30);
+            string adminRole = designationViewModel.AdminRole;
+            Designation designation = new Designation
+            {
+                dFirstName = designationViewModel.FirstName,
+                dLastName = designationViewModel.LastName,
+                dMiddleName = designationViewModel.MiddleName,
+                County = designationViewModel.County,
+                LowerTribunalCaseNumber = designationViewModel.TribunalCaseNumber,
+                AppellateCaseNumber = designationViewModel.AppellateCaseNumber,
+                ServiceDate = DateTime.Parse(designationViewModel.ServiceDate),
+                ReceiptDate = DateTime.Parse(designationViewModel.ReceiptDate),
+                CreatedByUserID = designationViewModel.CreatedByUserID,
+                CreatedDate = DateTime.Now,
+                DueDate = dueDate,
+                LastModifiedByUserID = designationViewModel.CreatedByUserID,
+                LastModifiedDate = DateTime.Now
+            };
+            try
+            {
+                ctl.CreateDesignation(designation);
+                foreach (string attorneyId in attorneys)
+                {
+                    ctl.CreateDesignationAttorney(designation.DesignationID, Int32.Parse(attorneyId));
+                }
+                bool result = designation.DesignationID > 0;
+                if (result)
+                {
+                    AddDueDate(designation);
+                    int portalId = PortalSettings.PortalId;
+                    UserInfo userinfo = UserController.Instance.GetUserById(portalId, designation.CreatedByUserID);
+                    Notifications.NotifiyRecordingManager(portalId, designation.DesignationID,userinfo.Email,adminRole,designation.DisplayName,designation.County);
+                    var dCtl = new DesignationController();
+                    designationViewModel.DesignationID = designation.DesignationID;
+                    return Request.CreateResponse(new DesignationResult { designationId = designationViewModel.DesignationID, error = null });
+                }
+                return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+        [HttpGet]
+        [AllowAnonymous]
         [ActionName("Delete")]
         public HttpResponseMessage DeleteDesignation(int designationId)
         {
             try
             {
                 var ctl = new DesignationController();
-                 ctl.DeleteDesignation(designationId);
+                ctl.DeleteDesignation(designationId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
             catch (Exception ex)
@@ -62,6 +136,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
+
         [HttpGet]
         [AllowAnonymous]
         [ActionName("Archive")]
@@ -105,6 +180,17 @@ namespace tjc.Modules.TranscriptDatabase.Services
             public string error { get; set; }
 
         }
+        public class MatchingNameResult
+        {
+            public IEnumerable<NameMatchViewModel> data { get; set; }
+            public string error { get; set; }
+        }
+        public class DesignationResult
+        {
+            public int designationId { get; set; }
+            public string error { get; set; }
+
+        }
         private string GetSortColumn(int columnIndex)
         {
             string name = "DesignationID";
@@ -128,6 +214,9 @@ namespace tjc.Modules.TranscriptDatabase.Services
                 case 7:
                     name = "ServiceDate";
                     break;
+                case 8:
+                    name = "AcknowledgmentFiled";
+                    break;
                 case 9:
                     name = "DueDate";
                     break;
@@ -135,13 +224,31 @@ namespace tjc.Modules.TranscriptDatabase.Services
                     name = "TranscriptFiled";
                     break;
                 case 11:
-                    name = "CreatedByUsername";
+                    name = "CreatedByName";
                     break;
                 default:
                     name = "DesignationID";
                     break;
             }
             return name;
+        }
+        private void AddDueDate(Designation designation)
+        {
+            var ctl = new CalendarController();
+            Components.Calendar calendar = new Components.Calendar
+            {
+                CreatedByUserID = designation.CreatedByUserID,
+                CreatedDate = designation.CreatedDate,
+                LastModifiedByUserID = designation.LastModifiedByUserID,
+                LastModifiedDate = designation.LastModifiedDate,
+                DesignationID = designation.DesignationID,
+                StartTime = designation.DueDate.Value,
+                EndTime = designation.DueDate.Value,
+                EventTypeID = (int)EventTypes.dueDate,
+                RequestOutstanding = false,
+                Subject = designation.CalendarName
+            };
+            ctl.CreateCalendar(calendar);
         }
     }
 }

@@ -9,7 +9,7 @@
             <a class="nav-link" href="<%=CalendartUrl%>">Calendar</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<%=NamesListUrl%>">Names</a>
+            <a class="nav-link" href="<%=AttorneyListUrl%>">Attorneys</a>
         </li>
         <li class="nav-item active">
             <a class="nav-link" href="#names" data-toggle="tab">Names</a>
@@ -43,14 +43,14 @@
                     <asp:Literal ID="ltMessage" runat="server" />
                     <asp:Repeater ID="rptName" runat="server" OnItemCreated="rptName_ItemCreated" OnItemCommand="rptName_ItemCommand">
                         <HeaderTemplate>
-                            <table id="tblNames" class="table table-striped">
+                            <table id="tblName" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>First Name</th>
-                                        <th>Middle Name</th>
                                         <th>Last Name</th>
-                                        <th>Office</th>
+                                        <th>Title</th>
+                                        <th>Type</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -59,11 +59,13 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"NameID").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
-                                <td><%#Eval("EmployeeName")%></td>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"EmployeeID").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                <td><%#Eval("FirstName")%></td>
+                                <td><%#Eval("LastName")%></td>
+                                <td><%#Eval("Title")%></td>
                                 <td><%#Eval("EmployeeTypeName")%></td>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"NameID").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"EmployeeID").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -82,22 +84,43 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-3">
-                                                <asp:Label runat="server" AssociatedControlID="txtName" Text="Name" />
-                                                <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtName" />
+                                            <div class="col-6">
+                                                <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="name" CssClass="label label-danger"
+                                                    ErrorMessage="First Name Is Required" ControlToValidate="txtFirstName" runat="server" />
+
                                             </div>
-                                            <div class="col-3">
+
+                                            <div class="col-6">
+                                                <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="name" CssClass="label label-danger"
+                                                    ErrorMessage="Last Name Is Required" ControlToValidate="txtLastName" runat="server" />
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <asp:Label runat="server" AssociatedControlID="txtTitle" Text="Title" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtTitle" />
+                                            </div>
+                                            <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="drpNameType" Text="Name Type" />
                                                 <asp:DropDownList runat="server" ID="drpNameType" CssClass="form-control">
-                                                    <asp:ListItem Value="0" Text="< Select Type >" />
+                                                    <asp:ListItem Value="" Text="< Select Type >" />
                                                 </asp:DropDownList>
+                                                <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="name" CssClass="label label-danger"
+                                                    ErrorMessage="Name Type Is Required" ControlToValidate="drpNameType" runat="server" />
+
                                             </div>
                                         </div>
                                     </div>
                                     <asp:HiddenField ID="hdNameId" ClientIDMode="Static" runat="server" />
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ValidationGroup="name" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -120,6 +143,7 @@
     var isAdmin = "<%=IsAdmin%>";
     (function ($, Sys) {
         $(document).ready(function () {
+            Sys.Application.add_load(function (s, e) { PageInit(); });
             PageInit();
         });
     }(jQuery, window.Sys));
@@ -131,6 +155,8 @@
             },
             "aoColumns": [
                 { "bSortable": false },
+                { "bSortable": true },
+                { "bSortable": true },
                 { "bSortable": true },
                 { "bSortable": true },
                 { "bSortable": false },],
@@ -158,7 +184,9 @@
         return true;
     }
     function ClearForm() {
-        $('#txtName').val("");
+        $('#txtFirstName').val("");
+        $('#txtLastName').val("");
+        $('#txtTitle').val("");
         $('#drpNameType').val("0");
         $('#hdNameId').val("");
         return false;

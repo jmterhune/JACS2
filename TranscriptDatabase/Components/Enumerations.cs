@@ -54,12 +54,12 @@ namespace tjc.Modules.TranscriptDatabase.Components
         FeeDepositWaived = 0,
         [Description("Acknowledgment Private Paying")]
         PrivatePaying = 1,
-        [Description("Acknowledgment Private Paid")]
-        PrivatePaid = 2,
+        //[Description("Acknowledgment Private Paid")]
+        //PrivatePaid = 2,
         [Description("Extension Request")]
         ExtensionRequest = 3,
-        [Description("Extension Request No Deposit")]
-        ExtensionRequestNoDeposit = 4
+        //[Description("Extension Request No Deposit")]
+        //ExtensionRequestNoDeposit = 4
     }
     public enum EventTypes
     {
@@ -76,5 +76,4 @@ namespace tjc.Modules.TranscriptDatabase.Components
         [Description("Transcript Filed")]
         transcriptFiled = 5
     }
-
 }

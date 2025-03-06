@@ -130,7 +130,7 @@ namespace tjc.Modules.Purchasing
                     if (!string.IsNullOrEmpty(formOrderLines))
                         ltFormItems.Text = string.Format("<tr><td colspan='6'>" +
                             "<table class='table table-bordered table-dark ms-3'><thead><th>Form #</th><th>Form Title</th><th>Description</th>" +
-                            "<th>Quantity</th><th>End User</th><th>Comments</th><th>Attachments</th></thead><tbody>{0}</tbody>" +
+                            "<th># Sets</th><th>End User</th><th>Comments</th><th>Attachments</th></thead><tbody>{0}</tbody>" +
                             "</table></td></tr>", formOrderLines);
                 }
                 else { ltFormItems.Text = string.Empty; }

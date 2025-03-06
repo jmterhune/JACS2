@@ -101,10 +101,10 @@ namespace tjc.Modules.TranscriptDatabase
             }
             hearingType.HearingTypeName = txtHearingType.Text;
             hearingType.LastModifiedDate = DateTime.Now;
-            hearingType.LastModifiedByUser = UserId;
+            hearingType.LastModifiedByUserID = UserId;
             if (isNew)
             {
-                hearingType.CreatedByUser = UserId;
+                hearingType.CreatedByUserID = UserId;
                 hearingType.CreatedDate = DateTime.Now;
                 ctl.CreateHearingType(hearingType);
             }

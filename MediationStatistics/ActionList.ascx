@@ -84,7 +84,7 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtStageAction" Text="Stage of Action" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtStageAction" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtStageAction" />
                                     </div>
                                     <div class="form-check form-switch">
                                         <asp:CheckBox ID="chkActive" ClientIDMode="Static" runat="server" Text="Active" />

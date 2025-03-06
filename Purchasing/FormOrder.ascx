@@ -49,8 +49,10 @@
                         <thead>
                             <tr>
                                 <th>Form #</th>
+                                <th># Sets</th>
+                                <th># Parts</th>
+                                <th>Page Size</th>
                                 <th>Description</th>
-                                <th>Qty</th>
                                 <th>End User</th>
                                 <th>Comments</th>
                                 <th>&nbsp;</th>
@@ -63,8 +65,16 @@
                         <td>
                             <%#Eval("FormNumber") %>
                         </td>
+                        <td>
+                            <%#Eval("Quantity") %>
+                        </td>
+                        <td>
+                            <%#Eval("NumberParts") %>
+                        </td>
+                        <td>
+                            <%#Eval("PageType") %>
+                        </td>
                         <td><%#Eval("Description") %></td>
-                        <td><%#Eval("Quantity") %></td>
                         <td><%#Eval("Recipient") %></td>
                         <td><%#Eval("Comments") %></td>
                         <td>
@@ -102,17 +112,11 @@
                                     CssClass="label label-danger" ErrorMessage="Form Title is Required" />
                             </div>
                             <div class="col-md-4">
-                                <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtQuantity" Text="Quantity<em>*</em>" />
-                                <datalist id="dlQuantity">
-                                    <option value="250">
-                                    <option value="500">
-                                    <option value="1000">
-                                    <option value="NA">
-                                </datalist>
-                                <asp:TextBox ID="txtQuantity" ClientIDMode="Static" runat="server" list="dlQuantity" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                                <asp:CompareValidator ID="valIsNumber" Display="Dynamic" ValidationGroup="Form" CssClass="label label-danger" runat="server" ErrorMessage="The Value must be number only" ControlToValidate="txtQuantity" Type="Integer" Operator="DataTypeCheck"></asp:CompareValidator>
-                                <asp:RequiredFieldValidator runat="server" ValidationGroup="Form" ControlToValidate="txtQuantity"
-                                    CssClass="label label-danger" Display="Dynamic" ErrorMessage="Quantity is Required" />
+                                <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtNumberSets" Text="Number of Sets<em>*</em>" />
+                                <asp:TextBox ID="txtNumberSets" ClientIDMode="Static" runat="server" MaxLength="5" step="25" Min="0" Max="1000" TextMode="Number" CssClass="form-control"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtNumberSets"
+                                    CssClass="label label-danger" ErrorMessage="Please Select the Number of Sets" />
+                                <asp:CompareValidator Display="Dynamic" ValidationGroup="Form" CssClass="label label-danger" runat="server" ErrorMessage="The Value must be number only" ControlToValidate="txtNumberSets" Type="Integer" Operator="DataTypeCheck"></asp:CompareValidator>
                             </div>
                             <div class="col-md-8">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRecipient" Text="Recipient Name<em>*</em>" />
@@ -120,10 +124,35 @@
                                 <asp:RequiredFieldValidator runat="server" Display="Dynamic" ValidationGroup="Form" ControlToValidate="txtRecipient"
                                     CssClass="label label-danger" ErrorMessage="Recipient is Required" />
                             </div>
+                            <div class="col-md-4">
+                                <asp:Label runat="server" CssClass="form-label" AssociatedControlID="drpNumberParts" Text="Number of Parts<em>*</em>" />
+                                <asp:DropDownList ID="drpNumberParts" runat="server" CssClass="form-control">
+                                    <asp:ListItem Text="< Select Number >" Value="0"></asp:ListItem>
+                                    <asp:ListItem Text="1"></asp:ListItem>
+                                    <asp:ListItem Text="2"></asp:ListItem>
+                                    <asp:ListItem Text="3"></asp:ListItem>
+                                    <asp:ListItem Text="4"></asp:ListItem>
+                                    <asp:ListItem Text="5"></asp:ListItem>
+                                </asp:DropDownList>
+                                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpNumberParts"
+                                    CssClass="label label-danger" ErrorMessage="Please Select Number of Parts" />
+                            </div>
+                            <div class="col-md-4">
+                                <asp:Label runat="server" CssClass="form-label" AssociatedControlID="drpPageType" Text="Page Size<em>*</em>" />
+                                <asp:DropDownList ID="drpPageType" runat="server" CssClass="form-control">
+                                    <asp:ListItem Text="< Select Page Size >" Value=""></asp:ListItem>
+                                    <asp:ListItem Text="1-sided, black"></asp:ListItem>
+                                    <asp:ListItem Text="1-sided, color"></asp:ListItem>
+                                    <asp:ListItem Text="2-sided, black"></asp:ListItem>
+                                    <asp:ListItem Text="2-sided, color"></asp:ListItem>
+                                </asp:DropDownList>
+                                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpPageType"
+                                    CssClass="label label-danger" ErrorMessage="Please Select Page Type" />
+                            </div>
                             <div class="col-md-12">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtDescription" Text="Description<em>*</em>" />
                                 <asp:TextBox ID="txtDescription" ClientIDMode="Static" TextMode="MultiLine" Rows="3" runat="server" MaxLength="2000" CssClass="form-control"></asp:TextBox>
-                                <div class="form-text">Purchasing does not keep copies of the forms on hand; therefore, we need as much detail as possible</div>
+                                <div class="form-text">Purchasing does not keep copies of the forms on hand; therefore, we need as much detail as possible.</div>
                                 <asp:RequiredFieldValidator runat="server" Display="Dynamic" ValidationGroup="Form" ControlToValidate="txtDescription"
                                     CssClass="label label-danger" ErrorMessage="Description is Required" />
                             </div>
@@ -162,7 +191,7 @@
 
         <hr />
         <p class="mt-3">
-            <asp:Button ID="cmdSave" Enabled="false" ClientIDMode="Static" runat="server" ValidationGroup="Order" CssClass="btn btn-primary" Text="Submit Order" OnClick="cmdSave_Click" />
+            <asp:Button ID="cmdSave" Enabled="false" ClientIDMode="Static" runat="server" ValidationGroup="Order" CssClass="btn btn-primary" OnClick="cmdSave_Click" Text="Submit" />
             <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
         </p>
     </div>
@@ -188,19 +217,27 @@
         $("#form-order-form").on("change", "#uplAttachments", function (e) {
             check_extension($(this).val());
         });
-        //$('#modFormOrder').on('hidden.bs.modal', function (e) {
-        //    $("#btnAddForm").show();
-        //});
-        //$('#modFormOrder').on('shown.bs.modal', function (e) {
-        //    $("#btnAddForm").hide();
-        //});
         $('.confirm').dnnConfirm({
             text: 'Are you Sure you wish to delete this record?',
             title: 'Delete Record?'
         });
+        $("#cmdSave").on("click", function (e) {
+            if ($('#cmdSave').val() == "Please Wait") {
+                e.preventDefault();
+                return false;
+            }
+            if (typeof (Page_ClientValidate) == 'function') {
+                Page_ClientValidate('Order');
+            }
+            if (Page_IsValid) {
+                $('#cmdSave').prop("disabled", false);
+                $('#cmdSave').val("Please Wait");
+            } else {
+                return false
+            }
+        });
 
     }(jQuery, window.Sys));
-
     function WriteAttachmentMessage(filename) {
         if (filename == "") {
             $("#attachmentInfo").html("<span class='text-danger'>Unable to upload file. Please make sure the file is in an allowed format.</span>");

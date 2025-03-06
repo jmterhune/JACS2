@@ -10,14 +10,14 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
+using DotNetNuke.Abstractions;
+using DotNetNuke.Common.Lists;
+using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Linq;
 using tjc.Modules.TranscriptDatabase.Components;
 
 namespace tjc.Modules.TranscriptDatabase
@@ -37,10 +37,46 @@ namespace tjc.Modules.TranscriptDatabase
     /// -----------------------------------------------------------------------------
     public partial class DesignationList : TranscriptDatabaseModuleBase
     {
+        #region Members
+        private readonly INavigationManager _navigationManager;
+
+        #endregion
+        #region Methods
+        public DesignationList()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+        private void BindDropDowns()
+        {
+            var hCtl = new HearingTypeController();
+            var jCtl = new EmployeeController();
+            var oCtl = new OfficeController();
+            drpOffice.DataTextField = "Description";
+            drpOffice.DataValueField = "OfficeID";
+            drpOffice.DataSource = oCtl.GetOffices().OrderBy(x => x.Description);
+            drpOffice.DataBind();
+            drpHearingType.DataTextField = "HearingTypeName";
+            drpHearingType.DataValueField = "HearingTypeName";
+            drpHearingType.DataSource = hCtl.GetHearingTypes().OrderBy(x => x.HearingTypeName);
+            drpHearingType.DataBind();
+            var ctl = new ListController();
+            IEnumerable<ListEntryInfo> states = ctl.GetListEntryInfoItems("Region", "Country.US");
+            drpState.DataSource = states;
+            drpState.DataTextField = "Text";
+            drpState.DataValueField = "Value";
+            drpState.DataBind();
+        }
+        #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
+                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                if (!Page.IsPostBack)
+                {
+                    BindDropDowns();
+                    txtReceiptDate.Text= DateTime.Now.ToShortDateString();
+                }
             }
             catch (Exception exc) //Module failed to load
             {

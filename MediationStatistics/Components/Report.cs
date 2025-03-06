@@ -175,6 +175,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public int MediatorId { get; set; }
         public string MediatorType { get; set; }
         public int Signed { get; set; }
+        public string Agreement { get; set; }
         public int Held { get; set; }
     }
     public class StatisticalReport

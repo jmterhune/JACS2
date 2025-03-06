@@ -269,7 +269,7 @@
                             </div>
                             <div class="form-group mt-3">
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <asp:Label runat="server" AssociatedControlID="drpCompletion" Text="Completion" />
                                         <asp:DropDownList ID="drpCompletion" runat="server" CssClass="form-control completion">
                                             <asp:ListItem Text="< Select Option >" Value="-1" />
@@ -278,56 +278,31 @@
                                             <asp:ListItem Text="Other" Value="2" />
                                         </asp:DropDownList>
                                     </div>
-                                    <div class="col-4">
-                                        <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Felony or Misd. Case" />
-                                        <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Option >" Value="-1" />
-                                            <asp:ListItem Text="Felony" Value="1" />
-                                            <asp:ListItem Text="Misdemeanor" Value="0" />
-                                        </asp:DropDownList>
-                                    </div>
-                                    <div class="col-4">
-                                        <asp:Label runat="server" AssociatedControlID="drpBondType" Text="Bond(s)?" />
-                                        <asp:DropDownList ID="drpBondType" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Option >" Value="-1" />
-                                            <asp:ListItem Text="Secured" Value="1" />
-                                            <asp:ListItem Text="Non-Secured" Value="0" />
-                                        </asp:DropDownList>
-                                    </div>
                                 </div>
-                                <div class="row mt-2">
-                                    <div class="col-auto">
-                                        <asp:Label runat="server" AssociatedControlID="drpNonCompliance" Text="Participant Non-Compliance" />
-                                        <asp:DropDownList ID="drpNonCompliance" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Option >" Value="-1" />
-                                            <asp:ListItem Text="Failure to Appear" Value="0" />
-                                            <asp:ListItem Text="Warrants Issued for Failure to Appear" Value="1" />
-                                            <asp:ListItem Text="Release Revoked due to Failure to Appear" Value="2" />
-                                            <asp:ListItem Text="Arrested for New Offense" Value="3" />
-                                            <asp:ListItem Text="Release Revoked due to New Offense" Value="4" />
-                                            <asp:ListItem Text="Non-Compliant with SPR Conditions" Value="5" />
-                                            <asp:ListItem Text="Warrant Issued for Non-Compliance with SPR Conditions" Value="6" />
-                                        </asp:DropDownList>
+                                <div class="row g-1 pb-0 mt-3">
+                                    <div class="col-3 radio-button-list">
+                                        <asp:Label runat="server" AssociatedControlID="rblFtaArrestHearing" Text="FTA Arrest?" />
+                                        <asp:RadioButtonList ID="rblFtaArrestHearing" runat="server"  RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                            <asp:ListItem Text="Yes" Value="1" />
+                                            <asp:ListItem Text="No" Value="0" />
+                                        </asp:RadioButtonList>
+                                        <asp:RequiredFieldValidator runat="server" ControlToValidate="rblFtaArrestHearing"
+                                            Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
                                     </div>
-                                </div>
-                                <div class="row p-3 pb-0">
-                                    <div class="col-4  form-check">
-                                        <asp:CheckBox ID="chkFtaArrestHearing" CssClass="ftaHearing" runat="server" Text="<abbr title='Failure to Appear'>FTA</abbr> Arrest?" />
+                                    <div class="col-3 radio-button-list">
+                                        <asp:Label runat="server" AssociatedControlID="rblIndigent" Text="Indigent?" />
+                                        <asp:RadioButtonList ID="rblIndigent"  runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                            <asp:ListItem Text="Yes" Value="1" />
+                                            <asp:ListItem Text="No" Value="0" />
+                                        </asp:RadioButtonList>
+                                        <asp:RequiredFieldValidator runat="server" ControlToValidate="rblIndigent"
+                                            Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
                                     </div>
-                                    <div class="col-4 form-check">
-                                        <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
+                                    <div class="col-3 radio-button-list">
+                                         <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
                                     </div>
-                                    <div class="col-4 form-check">
-                                        <asp:CheckBox ID="chkIndigent" CssClass="indigent" runat="server" Text="Indigent?" />
-                                    </div>
-                                    <div class="col-4 form-check">
-                                        <asp:CheckBox ID="chkCaseScreened" runat="server" Text="Case Screened?" />
-                                    </div>
-                                    <div class="col-4 form-check">
-                                        <asp:CheckBox ID="chkPlaced" runat="server" Text="Placed in Program?" />
-                                    </div>
-                                    <div class="col-4 form-check">
-                                        <asp:CheckBox ID="chkRevoked" runat="server" Text="Revoked?" />
+                                    <div class="col-3 radio-button-list">
+                                        <asp:CheckBox ID="chkRevoked" CssClass="revoked" runat="server" Text="Revoked?" />
                                     </div>
                                 </div>
                             </div>
@@ -380,8 +355,6 @@
             modal: true
         });
         $(".datepicker").datepicker();
-        $(".form-check input").addClass("form-check-input");
-        $(".form-check label").addClass("form-check-label");
         $("#cmdCancel").on("click", function (e) {
             e.preventDefault();
             ClearIntakeForm();
@@ -547,7 +520,7 @@
             default:
         }
     }
- 
+
 
     function ToggleVisibility(fType) {
         if (fType == 0) {

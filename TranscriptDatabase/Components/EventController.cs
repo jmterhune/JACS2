@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using tjc.Modules.TranscriptDatabase.Services.ViewModels;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class EventController
@@ -27,13 +28,28 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 rep.Delete(t);
             }
         }
-        public IEnumerable<Event> GetEvents()
+        public IEnumerable<Event> GetEvents(int designationId)
         {
             IEnumerable<Event> t;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Event>();
-                t = rep.Get();
+                t = rep.Find("Where DesignationID = @0",designationId);
+            }
+            return t;
+        }
+       
+        public IEnumerable<EventViewModel> GetEventViewModels(int designationId)
+        {
+            IEnumerable<EventViewModel> t = Enumerable.Empty<EventViewModel>();
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<Event>();
+               IEnumerable<Event> events = GetEvents(designationId);
+                foreach (Event evt in events)
+                {
+                    t.Append(new EventViewModel(evt));
+                }
             }
             return t;
         }
@@ -55,6 +71,27 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 rep.Update(t);
             }
         }
+        public IEnumerable<EventListItem> GetEventListItemsByDesignation(int designationId)
+        {
+            IEnumerable<EventListItem> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<EventListItem>();
+                t = rep.Find("Where DesignationID = @0", designationId);
+            }
+            return t;
+        }
+        public EventListItem GetEventListItem(int eventId)
+        {
+            EventListItem t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<EventListItem>();
+                t = rep.GetById(eventId) ;
+            }
+            return t;
+        }
+
         //public IEnumerable<Calendar> GetCalendarEvents(DateTime currentDate, List<int> userIds, string url)
         //{
         //    DateTime monthBegins = new DateTime(currentDate.Year, currentDate.Month, 1);

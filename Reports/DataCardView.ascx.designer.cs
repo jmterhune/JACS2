@@ -33,6 +33,24 @@ namespace tjc.Modules.Reports
         protected global::System.Web.UI.WebControls.Literal ltReportTitle;
 
         /// <summary>
+        /// txtLastName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLastName;
+
+        /// <summary>
+        /// cmdSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button cmdSearch;
+
+        /// <summary>
         /// hdTitle control.
         /// </summary>
         /// <remarks>
