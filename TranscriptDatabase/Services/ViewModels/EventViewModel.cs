@@ -28,7 +28,6 @@ namespace tjc.Modules.TranscriptDatabase.Services.ViewModels
         [JsonProperty("presidingjudgename")]
         public string PresidingJudgeName { get; set; }
 
-
         [JsonProperty("hearingtype")]
         public string HearingType { get; set; }
 
@@ -41,5 +40,44 @@ namespace tjc.Modules.TranscriptDatabase.Services.ViewModels
     public class EventsViewModel
     {
         public List<EventViewModel> events { get; set; }
+    }
+    public class ExtensionViewModel
+    {
+        public ExtensionViewModel(ExtensionRequest extensionRequest)
+        {
+            ExtensionID = extensionRequest.ExtensionID;
+            DesignationID = extensionRequest.DesignationID;
+            EventTypeID = extensionRequest.EventTypeID;
+            RequestedDate = extensionRequest.RequestedDate.Value;
+            GrantedDate = extensionRequest.GrantedDate.Value;
+            SubmittedDate = extensionRequest.SubmittedDate.Value;
+            CreatedDate = extensionRequest.CreatedDate;
+            CreatedByUserID = extensionRequest.CreatedByUserID;
+            LastModifiedByUserID = extensionRequest.LastModifiedByUserID;
+            LastModifiedDate=extensionRequest.LastModifiedDate;
+            Approved=extensionRequest.Approved;
+        }
+        [JsonProperty("extensionid")] 
+        public int ExtensionID { get; set; }
+        [JsonProperty("designationid")] 
+        public int DesignationID { get; set; }
+        [JsonProperty("eventtypeid")] 
+        public int EventTypeID { get; set; }
+        [JsonProperty("requesteddate")] 
+        public DateTime RequestedDate { get; set; }
+        [JsonProperty("granteddate")] 
+        public DateTime GrantedDate { get; set; }
+        [JsonProperty("submitteddate")] 
+        public DateTime SubmittedDate { get; set; }
+        [JsonProperty("createddate")] 
+        public DateTime CreatedDate { get; set; }
+        [JsonProperty("createdbyid")] 
+        public int CreatedByUserID { get; set; }
+        [JsonProperty("lastmodifieddate")] 
+        public DateTime LastModifiedDate { get; set; }
+        [JsonProperty("lastmodifiedbyuserid")] 
+        public int LastModifiedByUserID { get; set; }
+        [JsonProperty("approved")]
+        public bool Approved { get; set; }
     }
 }

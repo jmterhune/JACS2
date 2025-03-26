@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Entities.Portals;
 using DotNetNuke.Services.FileSystem;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -22,7 +23,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
                     var ctl = new FileManager();
                     var file = ctl.GetFile(FileID);
                     if (file != null)
-                        return file.RelativePath;
+                        return string.Format("/Portals/{0}/{1}",PortalSettings.Current.PortalId, file.RelativePath);
                 }
                 return null;
             }

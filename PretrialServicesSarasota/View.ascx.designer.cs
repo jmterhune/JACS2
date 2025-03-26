@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace tjc.Modules.PretrialServices
+namespace tjc.Modules.PretrialServices.Sarasota
 {
 
 
@@ -339,6 +339,15 @@ namespace tjc.Modules.PretrialServices
         protected global::System.Web.UI.WebControls.DropDownList drpCompletion;
 
         /// <summary>
+        /// drpMostSeriosOffense control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpMostSeriosOffense;
+
+        /// <summary>
         /// rblFtaArrestHearing control.
         /// </summary>
         /// <remarks>
@@ -355,6 +364,15 @@ namespace tjc.Modules.PretrialServices
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButtonList rblIndigent;
+
+        /// <summary>
+        /// rblBondPaid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList rblBondPaid;
 
         /// <summary>
         /// chkBwOrdered control.

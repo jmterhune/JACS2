@@ -146,38 +146,47 @@ namespace tjc.Modules.TranscriptDatabase
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new FormController();
-            Form form = new Form();
-            bool isNew = true;
-            if (hdFormId.Value != "")
+            try
             {
-                isNew = false;
-                form = ctl.GetForm(Convert.ToInt32(hdFormId.Value));
+                var ctl = new FormController();
+                Form form = new Form();
+                bool isNew = true;
+                if (hdFormId.Value != "")
+                {
+                    isNew = false;
+                    form = ctl.GetForm(Convert.ToInt32(hdFormId.Value));
+                }
+                if (drpFileType.SelectedIndex > 0)
+                    form.DocumentTypeID = Int32.Parse(drpFileType.SelectedValue);
+                if (!string.IsNullOrEmpty(hdFileId.Value))
+                    form.FileID = Int32.Parse(hdFileId.Value);
+                else
+                {
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No File was selected or an error occurred uploading the file.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    return;
+                }
+
+                form.LastModifiedDate = DateTime.Now;
+                form.LastModifiedByUserID = UserId;
+                if (isNew)
+                {
+                    form.CreatedByUserID = UserId;
+                    form.CreatedDate = DateTime.Now;
+                    ctl.CreateForm(form);
+                }
+                else
+                {
+                    ctl.UpdateForm(form);
+                }
+                ClearForm();
+                BindList();
             }
-            if (drpFileType.SelectedIndex > 0)
-                form.DocumentTypeID = Int32.Parse(drpFileType.SelectedValue);
-            if (!string.IsNullOrEmpty(hdFileId.Value))
-                form.FileID = Int32.Parse(hdFileId.Value);
-            else
+            catch (Exception exc)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No File was selected or an error occurred uploading the file.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                return;
+
+                Exceptions.ProcessModuleLoadException(this, exc);
             }
 
-            form.LastModifiedDate = DateTime.Now;
-            form.LastModifiedByUserID = UserId;
-            if (isNew)
-            {
-                form.CreatedByUserID = UserId;
-                form.CreatedDate = DateTime.Now;
-                ctl.CreateForm(form);
-            }
-            else
-            {
-                ctl.UpdateForm(form);
-            }
-            ClearForm();
-            BindList();
         }
         protected void valUpload_ServerValidate(object source, ServerValidateEventArgs args)
         {

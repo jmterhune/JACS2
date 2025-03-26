@@ -667,6 +667,12 @@
         $("#txtLastName").on("blur", function (e) {
             fetchMatchingNames($(this).val());
         });
+        $('#txtTribunalCaseNumber').on('blur', function () {
+            this.value = this.value.toUpperCase();
+        });
+        $('#txtAppellateCaseNumber').on('blur', function () {
+            this.value = this.value.toUpperCase();
+        });
         $('#attorneySearch').on('keyup', function () {
             let input = $(this).val().toLowerCase();
             let filteredOptions = attyOptions.filter(option => option.name.toLowerCase().includes(input));

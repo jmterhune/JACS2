@@ -29,7 +29,7 @@
     </ul>
     <div class="tab-content pb-0">
         <div id="designation" class="tab-pane active">
-            <asp:UpdatePanel ID="pnlUpdate" runat="server">
+            <asp:UpdatePanel ID="pnlUpdate" runat="server" OnUnload="pnlUpdate_Unload" >
                 <ContentTemplate>
                     <div class="container-fluid">
                         <asp:UpdateProgress ID="upProgress" runat="server">
@@ -41,32 +41,36 @@
                                 </div>
                             </ProgressTemplate>
                         </asp:UpdateProgress>
-                        <asp:ListBox ID="lstUsers" runat="server" ClientIDMode="Static" SelectionMode="Multiple" AutoPostBack="true" OnSelectedIndexChanged="lstUsers_SelectedIndexChanged"></asp:ListBox>
-                        <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control">
-                            <asp:ListItem Text="< Select County >" Value="" />
-                            <asp:ListItem Text="DeSoto" />
-                            <asp:ListItem Text="Manatee" />
-                            <asp:ListItem Text="Sarasota" />
-                        </asp:DropDownList>
-                        <asp:Repeater ID="rptCalendar" runat="server">
+                        <div class="input-group mb-3 float-end">
+                            <asp:ListBox ID="lstUsers" runat="server" CssClass="form-control users" ClientIDMode="Static" SelectionMode="Multiple" AutoPostBack="true" OnSelectedIndexChanged="lstUsers_SelectedIndexChanged"></asp:ListBox>
+                            <asp:DropDownList ID="drpCounty" runat="server" ClientIDMode="Static" CssClass="form-control county" AutoPostBack="true" OnSelectedIndexChanged="drpCounty_SelectedIndexChanged">
+                                <asp:ListItem Text="All Counties" Value="" />
+                                <asp:ListItem Text="DeSoto" />
+                                <asp:ListItem Text="Manatee" />
+                                <asp:ListItem Text="Sarasota" />
+                            </asp:DropDownList>
+                            <asp:TextBox ID="txtCurrentDate" ClientIDMode="Static" CssClass="form-control date-picker current-date" runat="server" AutoPostBack="true" OnTextChanged="txtCurrentDate_TextChanged" />
+                        </div>
+
+                        <asp:Repeater ID="rptCalendar" runat="server" OnItemCreated="rptCalendar_ItemCreated">
                             <HeaderTemplate>
-                                <header>
-                                    <h4 class="display-4 mb-4 text-center">
+                                <div>
+                                    <h4 class="display-4 mb-2 text-center">
                                         <asp:LinkButton ID="cmdPreviousYear" ToolTip="Previous Year" runat="server" OnClick="cmdPreviousYear_Click"><i class="fas fa-angle-double-left"></i></asp:LinkButton>
                                         <asp:LinkButton ID="cmdPreviousMonth" ToolTip="Previous Month" runat="server" OnClick="cmdPreviousMonth_Click"><i class="fas fa-angle-left"></i></asp:LinkButton>
                                         <asp:Literal ID="ltHeader" runat="server" />
                                         <asp:LinkButton ID="cmdNextMonth" runat="server" ToolTip="Next Month" OnClick="cmdNextMonth_Click"><i class="fas fa-angle-right"></i></asp:LinkButton>
                                         <asp:LinkButton ID="cmdNextYear" runat="server" ToolTip="Next Year" OnClick="cmdNextYear_Click"><i class="fas fa-angle-double-right"></i></asp:LinkButton></h4>
                                     <div class="row g-0 d-none d-sm-flex p-1 bg-dark">
-                                        <h5 class="col-sm p-1 text-center text-white">Sunday</h5>
-                                        <h5 class="col-sm p-1 text-center text-white">Monday</h5>
-                                        <h5 class="col-sm p-1 text-center text-white">Tuesday</h5>
-                                        <h5 class="col-sm p-1 text-center text-white">Wednesday</h5>
-                                        <h5 class="col-sm p-1 text-center text-white">Thursday</h5>
-                                        <h5 class="col-sm p-1 text-center text-white">Friday</h5>
-                                        <h5 class="col-sm p-1 text-center text-white">Saturday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Sunday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Monday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Tuesday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Wednesday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Thursday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Friday</h5>
+                                        <h5 class="col-sm p-1 mb-0 text-center text-white">Saturday</h5>
                                     </div>
-                                </header>
+                                </div>
                                 <div class="row g-0 border border-right-0 border-bottom-0">
                             </HeaderTemplate>
                             <ItemTemplate>
@@ -82,24 +86,28 @@
                             </ItemTemplate>
                             <FooterTemplate></div></FooterTemplate>
                         </asp:Repeater>
-                        <div class="modal fade" id="tooltipModal" tabindex="-1" role="dialog" aria-labelledby="event-subject" aria-hidden="true">
+                        <div class="modal fade" id="tooltipModal" tabindex="-1" role="dialog" aria-labelledby="event-subject" >
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h4 class="modal-title" id="event-subject">Title</h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
                                     </div>
                                     <div id="event-body" class="modal-body">
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-tooltip" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </ContentTemplate>
+                <Triggers>
+                    <asp:AsyncPostBackTrigger ControlID="drpCounty" EventName="SelectedIndexChanged" />
+                     <asp:AsyncPostBackTrigger ControlID="lstUsers" EventName="SelectedIndexChanged" />
+                    <asp:AsyncPostBackTrigger ControlID="txtCurrentDate" EventName="TextChanged" />
+                </Triggers>
             </asp:UpdatePanel>
         </div>
     </div>
@@ -110,12 +118,19 @@
 <script>
     (function ($, Sys) {
         $(document).ready(function () {
-            Sys.Application.add_load(function (s, e) { PageInit(); });
+            $(".date-picker").on("blur", function (e) {
+                var date = $(this).val();
+                $(this).val(date.replace(/\.|-/g, "/"));
+            });
             PageInit();
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                PageInit();
+            });
         });
     }(jQuery, window.Sys));
     function PageInit() {
-        $("#lstUsers").SumoSelect({ selectAll: true, placeholder: 'Select User(s)' });
+        $('[data-bs-toggle="tooltip"]').tooltip();
+        $("#lstUsers").SumoSelect({ selectAll: false, placeholder: 'All Reporters' });
         $(".event-item").on("dblclick", function (e) {
             var subject = $(this).data("subject");
             var body = $(this).data("body");
@@ -124,11 +139,9 @@
             $("#event-body").html(`<p>${body}</p><p><strong>Last Modified By:</strong> ${user}</p>`);
             $('#tooltipModal').modal("show");
         });
-       <%-- $(".event-item").on("dblclick", function (e) {
-            var assignmentId = $(this).data("assignmentid");
-            window.location.href = "<%=EditUrl("logEdit") %>/aid/" + assignmentId;
-        });--%>
-
     }
-    
+    function CloseModal() {
+        var modalToggle = document.getElementById('tooltipModal') // relatedTarget
+        myModal.show(modalToggle)
+    }
 </script>

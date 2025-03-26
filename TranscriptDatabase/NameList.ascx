@@ -47,6 +47,7 @@
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>
+                                        <th>ID</th>
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Title</th>
@@ -60,7 +61,8 @@
                             <tr>
                                 <td class="command-item">
                                     <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"EmployeeID").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
-                                <td><%#Eval("FirstName")%></td>
+                                <td><%#Eval("EmployeeID")%></td>
+                                    <td><%#Eval("FirstName")%></td>
                                 <td><%#Eval("LastName")%></td>
                                 <td><%#Eval("Title")%></td>
                                 <td><%#Eval("EmployeeTypeName")%></td>
@@ -155,6 +157,7 @@
             },
             "aoColumns": [
                 { "bSortable": false },
+                { "bSortable": true },
                 { "bSortable": true },
                 { "bSortable": true },
                 { "bSortable": true },

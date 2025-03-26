@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.PretrialServices.View" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.PretrialServices.Sarasota.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div class="fullScreenContainer">
     <div class="float-end fw-bold lead">
@@ -278,11 +278,20 @@
                                             <asp:ListItem Text="Other" Value="2" />
                                         </asp:DropDownList>
                                     </div>
+                                    <div class="col-4">
+                                        <asp:Label runat="server" AssociatedControlID="drpMostSeriosOffense" Text="Most Serious Offense" />
+                                        <asp:DropDownList ID="drpMostSeriosOffense" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Option >" Value="" />
+                                            <asp:ListItem Text="907.041 (Incl Domestic)" />
+                                            <asp:ListItem Text="Non-Dangerous Felony" />
+                                            <asp:ListItem Text="Misd Only (Not Domestic)"  />
+                                        </asp:DropDownList>
+                                    </div>
                                 </div>
                                 <div class="row g-1 pb-0 mt-3">
                                     <div class="col-3 radio-button-list">
                                         <asp:Label runat="server" AssociatedControlID="rblFtaArrestHearing" Text="FTA Arrest?" />
-                                        <asp:RadioButtonList ID="rblFtaArrestHearing" runat="server"  RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                        <asp:RadioButtonList ID="rblFtaArrestHearing" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
                                             <asp:ListItem Text="Yes" Value="1" />
                                             <asp:ListItem Text="No" Value="0" />
                                         </asp:RadioButtonList>
@@ -291,7 +300,7 @@
                                     </div>
                                     <div class="col-3 radio-button-list">
                                         <asp:Label runat="server" AssociatedControlID="rblIndigent" Text="Indigent?" />
-                                        <asp:RadioButtonList ID="rblIndigent"  runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                        <asp:RadioButtonList ID="rblIndigent" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
                                             <asp:ListItem Text="Yes" Value="1" />
                                             <asp:ListItem Text="No" Value="0" />
                                         </asp:RadioButtonList>
@@ -299,9 +308,21 @@
                                             Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
                                     </div>
                                     <div class="col-3 radio-button-list">
-                                         <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
+                                        <asp:Label runat="server" AssociatedControlID="rblBondPaid" Text="Bond Paid?" />
+                                        <asp:RadioButtonList ID="rblBondPaid" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                            <asp:ListItem Text="Yes" Value="1" />
+                                            <asp:ListItem Text="No" Value="0" />
+                                        </asp:RadioButtonList>
+                                        <asp:RequiredFieldValidator runat="server" ControlToValidate="rblBondPaid"
+                                            Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
                                     </div>
-                                    <div class="col-3 radio-button-list">
+                                </div>
+
+                                <div class="row g-1 pb-0 mt-3">
+                                    <div class="col-auto radio-button-list">
+                                        <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
+                                    </div>
+                                    <div class="col-auto radio-button-list">
                                         <asp:CheckBox ID="chkRevoked" CssClass="revoked" runat="server" Text="Revoked?" />
                                     </div>
                                 </div>

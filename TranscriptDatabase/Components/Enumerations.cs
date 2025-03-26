@@ -7,7 +7,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     public static class Enumerations
     {
-       
+
         public static string GetEnumDescription(Enum value)
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());
@@ -46,7 +46,9 @@ namespace tjc.Modules.TranscriptDatabase.Components
         [Description("U.S. Postage")]
         UsPostage = 1,
         [Description("Email")]
-        Email = 2
+        Email = 2,
+        [Description("e-Service")]
+        eService = 3
     }
     public enum DocumentTypes
     {
@@ -54,12 +56,8 @@ namespace tjc.Modules.TranscriptDatabase.Components
         FeeDepositWaived = 0,
         [Description("Acknowledgment Private Paying")]
         PrivatePaying = 1,
-        //[Description("Acknowledgment Private Paid")]
-        //PrivatePaid = 2,
         [Description("Extension Request")]
-        ExtensionRequest = 3,
-        //[Description("Extension Request No Deposit")]
-        //ExtensionRequestNoDeposit = 4
+        ExtensionRequest = 2,
     }
     public enum EventTypes
     {
@@ -72,7 +70,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         [Description("Due Date")]
         dueDate = 1,
         [Description("Other")]
-        Other = 6,
+        Other = 0,
         [Description("Transcript Filed")]
         transcriptFiled = 5
     }

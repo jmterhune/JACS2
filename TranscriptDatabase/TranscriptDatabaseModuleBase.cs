@@ -24,6 +24,16 @@ namespace tjc.Modules.TranscriptDatabase
                 return -1;
             }
         }
+        public string ErrorMessage
+        {
+            get
+            {
+                var qs = Request.QueryString["error"];
+                if (qs != null)
+                    return qs.ToString();
+                return string.Empty;
+            }
+        }
         public bool IsAdmin
         {
             get
@@ -40,7 +50,7 @@ namespace tjc.Modules.TranscriptDatabase
                 if (Settings.Contains("AdminRole"))
                     return Settings["AdminRole"].ToString();
 
-                return "Mediation Manager";
+                return "Court Reporting Manager";
             }
         }
         public string CourtReporterRole
@@ -63,6 +73,7 @@ namespace tjc.Modules.TranscriptDatabase
                 return "Court Reporter Intake";
             }
         }
+        public string  MessageFormat { get{ return "<div class=\"{1} alert-dismissible\" role=\"alert\"><button aria-label=\"Close\" class=\"close\" data-dismiss=\"alert\" type=\"button\"><span aria-hidden=\"true\">&times;</span></button><i class=\"{2}\"></i> {0}</div>"; } }
         public string UploadFormFolder
         {
             get
@@ -103,7 +114,14 @@ namespace tjc.Modules.TranscriptDatabase
         {
             get
             {
-                return string.Format("{0}/Handlers/UploadHandler.ashx", TemplateSourceDirectory);
+                return string.Format("{0}/Handlers/UploadAttachmentHandler.ashx", TemplateSourceDirectory);
+            }
+        }
+        public string FormUploadHandler
+        {
+            get
+            {
+                return string.Format("{0}/Handlers/UploadFormHandler.ashx", TemplateSourceDirectory);
             }
         }
         public string DesignationListUrl { get { return _navigationManager.NavigateURL(); } }

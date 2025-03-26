@@ -21,7 +21,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 var file = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(FileID);
                 if (file != null)
                 {
-                    return file.RelativePath;
+                    return string.Format("/portals/0/{0}",file.RelativePath);
                 }
                 return Path;
             }

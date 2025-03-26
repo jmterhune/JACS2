@@ -6,18 +6,20 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Xml;
+using System.Runtime.Remoting.Contexts;
 
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     public class OfficeOpenXml
     {
+        private string tempfile = HttpContext.Current.Server.MapPath("~/temp/tempWordDoc.docx");
         public Package CreateOpenPackage()
         {
 
             // Set the proper Name for the file based on the type
             string filename = string.Empty;
 
-            filename = Environment.GetEnvironmentVariable("Temp") + @"\" + "tempWordDoc.docx";
+            filename = tempfile;
 
             // Return the opened package
             return Package.Open(filename, FileMode.Create, FileAccess.ReadWrite);
@@ -113,7 +115,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
             string header = string.Empty;
 
             // Select the file type and set the needed variables
-            filename = Environment.GetEnvironmentVariable("Temp") + @"\" + "tempWordDoc.docx";
+            filename = tempfile;
             contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             header = "attachment;filename=ExportDocument.docx";
             System.IO.Stream myStream = File.Open(filename, FileMode.Open);

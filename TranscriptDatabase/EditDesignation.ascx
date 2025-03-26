@@ -294,6 +294,12 @@
                 $('#judgeDropDown').hide();
             }
         });
+        $('#txtTribunalCaseNumber').on('blur', function () {
+            this.value = this.value.toUpperCase();
+        });
+        $('#txtAppellateCaseNumber').on('blur', function () {
+            this.value = this.value.toUpperCase();
+        });
         $("#cmdUpdate").on("click", function (e) {
             $("#txtDueDate").hide();
             $("#txtDueDateReadonly").show();

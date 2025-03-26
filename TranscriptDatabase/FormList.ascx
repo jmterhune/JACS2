@@ -128,7 +128,7 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 
 <script type="text/javascript">
-    const uploadHandler = "<%=UploadFormFolder%>";
+    const uploadHandler = "<%=FormUploadHandler%>";
     const moduleId = <%=ModuleId%>;
     const tabId = <%=TabId%>;
     const isAdmin = "<%=IsAdmin%>";

@@ -72,7 +72,7 @@ namespace tjc.Modules.TranscriptDatabase
                     }
                     if (Settings.Contains("UploadAttachmentFolder"))
                     {
-                        txtUploadFormFolder.Text = Settings["UploadAttachmentFolder"].ToString();
+                        txtUploadFileFolder.Text = Settings["UploadAttachmentFolder"].ToString();
                     }
                 }
             }
@@ -101,7 +101,7 @@ namespace tjc.Modules.TranscriptDatabase
                 if (!string.IsNullOrEmpty(CourtReporterIntakeRole.Trim()))
                     modules.UpdateModuleSetting(ModuleId, "CourtReporterIntakeRole", CourtReporterIntakeRole.Trim());
                 modules.UpdateModuleSetting(ModuleId, "UploadFormFolder", txtUploadFormFolder.Text);
-                modules.UpdateModuleSetting(ModuleId, "UploadAttachmentFolder", txtUploadFormFolder.Text);
+                modules.UpdateModuleSetting(ModuleId, "UploadAttachmentFolder", txtUploadFileFolder.Text);
 
             }
             catch (Exception exc) //Module failed to load

@@ -90,5 +90,43 @@ namespace tjc.Modules.TranscriptDatabase.Services
             public int EventId { get; set; }
 
         }
+        [HttpPost]
+        [AllowAnonymous]
+        [ActionName("CreateExtension")]
+        public HttpResponseMessage CreateExtension(ExtensionViewModel extensionRequest)
+        {
+            var ctl = new Components.ExtensionRequestController();
+            ExtensionRequest extension = new ExtensionRequest
+            {
+                DesignationID = extensionRequest.DesignationID,
+                EventTypeID = extensionRequest.EventTypeID,
+                RequestedDate = extensionRequest.RequestedDate,
+                SubmittedDate = extensionRequest.SubmittedDate,
+                CreatedDate = extensionRequest.CreatedDate,
+                CreatedByUserID = extensionRequest.CreatedByUserID,
+                LastModifiedByUserID = extensionRequest.LastModifiedByUserID,
+                LastModifiedDate = extensionRequest.LastModifiedDate,
+            };
+            try
+            {
+                ctl.CreateExtensionRequest(extension);
+                bool result = extension.ExtensionID > 0;
+                if (result)
+                {
+                    return Request.CreateResponse(new EventAddedResult { EventId = extension.ExtensionID });
+                }
+                return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+    
+        public class ExtensionAddedResult
+        {
+            public int ExtensionId { get; set; }
+
+        }
     }
 }

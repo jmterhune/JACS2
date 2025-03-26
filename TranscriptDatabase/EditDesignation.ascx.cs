@@ -70,6 +70,10 @@ namespace tjc.Modules.TranscriptDatabase
             {
                 calendarEvent.StartTime = designation.DueDate.Value;
                 calendarEvent.EndTime = designation.DueDate.Value;
+                txtLastName.Text = designation.dLastName;
+                txtFirstName.Text = designation.dFirstName;
+                txtMiddleName.Text = designation.dMiddleName;
+
                 ctl.UpdateCalendar(calendarEvent);
             }
             else

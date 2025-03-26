@@ -11,17 +11,14 @@
 */
 
 using DotNetNuke.Abstractions;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.TranscriptDatabase.Components;
 
@@ -52,7 +49,6 @@ namespace tjc.Modules.TranscriptDatabase
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
-
         private void PopulateUserList()
         {
             var courtReporters = RoleController.Instance.GetUsersByRole(PortalId, CourtReporterRole);
@@ -61,24 +57,22 @@ namespace tjc.Modules.TranscriptDatabase
             lstUsers.DataValueField = "UserID";
             lstUsers.DataBind();
         }
-
         private void BindCalendar(DateTime currentDate)
         {
             CurrentDate = currentDate;
-            var tc = new EventController();
-            List<string> selectedUsers = GetSelectedUsers();
-            //rptCalendar.DataSource = tc.GetCalendarEvents(currentDate, selectedUsers, EditUrl("logEdit"));
-            //rptCalendar.DataBind();
+            var tc = new CalendarController();
+            List<int> selectedUsers = GetSelectedUsers();
+            rptCalendar.DataSource = tc.GetCalendarEvents(currentDate, drpCounty.SelectedValue, selectedUsers, EditUrl("status"));
+            rptCalendar.DataBind();
             Literal ltHeader = (Literal)rptCalendar.Controls[0].Controls[0].FindControl("ltHeader");
-            ltHeader.Text = string.Format("{0} {1}", currentDate.ToString("MMMM"), currentDate.Year);
+            ltHeader.Text = string.Format("<div class='d-inline-block calendar-title'>{0} {1}</div>", currentDate.ToString("MMMM"), currentDate.Year);
         }
-
-        private List<string> GetSelectedUsers()
+        private List<int> GetSelectedUsers()
         {
-            List<string> selectedUsers = new List<string>();
+            List<int> selectedUsers = new List<int>();
             foreach (ListItem item in lstUsers.Items)
             {
-                if (item.Selected) { selectedUsers.Add(item.Value); }
+                if (item.Selected) { selectedUsers.Add(Int32.Parse(item.Value)); }
             }
             return selectedUsers;
         }
@@ -90,9 +84,13 @@ namespace tjc.Modules.TranscriptDatabase
         {
             try
             {
-                //lnkSearch.NavigateUrl = _navigationManager.NavigateURL();
-                PopulateUserList();
-                BindCalendar(CurrentDate);
+                if (!Page.IsPostBack)
+                {
+                    //lnkSearch.NavigateUrl = _navigationManager.NavigateURL();
+                    PopulateUserList();
+                    txtCurrentDate.Text = CurrentDate.ToShortDateString();
+                    BindCalendar(CurrentDate);
+                }
 
             }
             catch (Exception exc) //Module failed to load
@@ -103,29 +101,66 @@ namespace tjc.Modules.TranscriptDatabase
         protected void cmdPreviousYear_Click(object sender, EventArgs e)
         {
             BindCalendar(CurrentDate.AddYears(-1));
-        }
+            txtCurrentDate.Text = CurrentDate.AddYears(-1).ToShortDateString();
 
+        }
         protected void cmdPreviousMonth_Click(object sender, EventArgs e)
         {
             BindCalendar(CurrentDate.AddMonths(-1));
+            txtCurrentDate.Text = CurrentDate.AddMonths(-1).ToShortDateString();
         }
-
         protected void cmdNextMonth_Click(object sender, EventArgs e)
         {
             BindCalendar(CurrentDate.AddMonths(1));
+            txtCurrentDate.Text = CurrentDate.AddMonths(1).ToShortDateString();
         }
-
         protected void cmdNextYear_Click(object sender, EventArgs e)
         {
             BindCalendar(CurrentDate.AddYears(1));
+            txtCurrentDate.Text = CurrentDate.AddYears(1).ToShortDateString();
         }
+        protected void pnlUpdate_Unload(object sender, EventArgs e)
+        {
+            MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
+            methodInfo.Invoke(ScriptManager.GetCurrent(Page),
+                new object[] { sender as UpdatePanel });
 
-        protected void lstUsers_SelectedIndexChanged(object sender, EventArgs e)
+        }
+        protected void rptCalendar_ItemCreated(object sender, RepeaterItemEventArgs e)
+        {
+            ScriptManager scriptMan = ScriptManager.GetCurrent(this.Page);
+            LinkButton cmdPreviousYear = (LinkButton)e.Item.FindControl("cmdPreviousYear");
+            LinkButton cmdPreviousMonth = (LinkButton)e.Item.FindControl("cmdPreviousMonth");
+            LinkButton cmdNextMonth = (LinkButton)e.Item.FindControl("cmdNextMonth");
+            LinkButton cmdNextYear = (LinkButton)e.Item.FindControl("cmdNextYear");
+
+            if (cmdPreviousYear != null)
+                scriptMan.RegisterAsyncPostBackControl(cmdPreviousYear);
+            if (cmdPreviousMonth != null)
+                scriptMan.RegisterAsyncPostBackControl(cmdPreviousMonth);
+            if (cmdNextMonth != null)
+                scriptMan.RegisterAsyncPostBackControl(cmdNextMonth);
+            if (cmdNextYear != null)
+                scriptMan.RegisterAsyncPostBackControl(cmdNextYear);
+        }
+        protected void drpCounty_SelectedIndexChanged(object sender, EventArgs e)
         {
             BindCalendar(CurrentDate);
         }
 
+        protected void txtCurrentDate_TextChanged(object sender, EventArgs e)
+        {
+            if (DateTime.TryParse(txtCurrentDate.Text, out DateTime currentDate))
+                CurrentDate = currentDate;
+            BindCalendar(CurrentDate);
+
+        }
+        protected void lstUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BindCalendar(CurrentDate);
+        }
         #endregion
+
 
     }
 }

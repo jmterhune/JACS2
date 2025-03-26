@@ -20,9 +20,9 @@ using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using tjc.Modules.PretrialServices.Components;
+using tjc.Modules.PretrialServices.Sarasota.Components;
 
-namespace tjc.Modules.PretrialServices
+namespace tjc.Modules.PretrialServices.Sarasota
 {
     /// -----------------------------------------------------------------------------
     /// <summary>
@@ -185,7 +185,6 @@ namespace tjc.Modules.PretrialServices
             dip.CourtAppearances = courtAppearances;
             dip.LastModifiedDate = DateTime.Now;
             dip.LastModifiedById = UserId;
-            dip.CountyId = CountyId;
             if (dip.CompletionDate.HasValue && dip.IntakeDate.HasValue)
             {
                 TimeSpan difference = dip.CompletionDate.Value - dip.IntakeDate.Value;
@@ -214,7 +213,7 @@ namespace tjc.Modules.PretrialServices
         }
         protected void cmdReport_Click(object sender, EventArgs e)
         {
-            string reportUrl = string.Format("{0}/PretrialReport.aspx?cid={1}&mid={2}&indate={3}&st={4}", TemplateSourceDirectory, CountyId, ModuleId, IntakeDate.ToShortDateString(), DateTime.Now.ToString("yyyyMMddHHmmss"));
+            string reportUrl = string.Format("{0}/PretrialReport.aspx?mid={1}&indate={2}&st={3}", TemplateSourceDirectory,  ModuleId, IntakeDate.ToShortDateString(), DateTime.Now.ToString("yyyyMMddHHmmss"));
             switch (hdReportType.Value)
             {
                 case "0":
@@ -283,7 +282,6 @@ namespace tjc.Modules.PretrialServices
             intakeLogItem.PtrNotRecommended = ptrNotRecCount;
             intakeLogItem.LastModifiedById = UserId;
             intakeLogItem.LastModifiedDate = DateTime.Now;
-            intakeLogItem.CountyId = CountyId;
             ltMessage.Visible = true;
             if (isNew)
             {
@@ -337,18 +335,18 @@ namespace tjc.Modules.PretrialServices
                 hdIntakeDate.Value = IntakeDate.ToShortDateString();
                 if (IntakeDate != null)
                 {
-                    rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCounty(CountyId, IntakeDate);
+                    rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDate( IntakeDate);
                     rptDefendantsInProgram.DataBind();
                 }
             }
             else if (searchType == Enumerations.SearchType.caseNumber)
             {
-                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCaseNumber(CountyId, txtSearchText.Text);
+                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCaseNumber( txtSearchText.Text);
                 rptDefendantsInProgram.DataBind();
             }
             else if (searchType == Enumerations.SearchType.defendantName)
             {
-                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDefendantName(CountyId, txtSearchText.Text);
+                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDefendantName( txtSearchText.Text);
                 rptDefendantsInProgram.DataBind();
             }
             pnlIntakeForm.Enabled = false;
@@ -365,7 +363,7 @@ namespace tjc.Modules.PretrialServices
         }
         private void PopulateYears()
         {
-            drpYear.DataSource = ctl.GetYears(CountyId);
+            drpYear.DataSource = ctl.GetYears();
             drpYear.DataBind();
         }
         private void PopulateDays()
@@ -379,7 +377,7 @@ namespace tjc.Modules.PretrialServices
         }
         private void SetCookies()
         {
-            string cookieName = string.Format("CookieIntakeDate{0}", CountyId);
+            string cookieName = "CookieIntakeDate";
             HttpCookie aCookie = new HttpCookie("PretrialServices");
             aCookie.Values[cookieName] = IntakeDate.ToShortDateString();
             aCookie.Expires = DateTime.Now.AddDays(30);
@@ -388,7 +386,7 @@ namespace tjc.Modules.PretrialServices
         private void FillIntakeLog()
         {
             var iCtl = new IntakeLogItemController();
-            IntakeLogItem intake = iCtl.GetIntakeLogItemByCountyAndDate(CountyId, IntakeDate);
+            IntakeLogItem intake = iCtl.GetIntakeLogItemByDate( IntakeDate);
             if (intake != null)
             {
                 if (intake.Interviewed.HasValue)
@@ -442,7 +440,7 @@ namespace tjc.Modules.PretrialServices
         {
             if (Request.Cookies["PretrialServices"] != null)
             {
-                string cookieName = string.Format("CookieIntakeDate{0}", CountyId);
+                string cookieName = "CookieIntakeDate";
                 string sCookieDate = Server.HtmlEncode(Request.Cookies["PretrialServices"][cookieName]);
                 if (DateTime.TryParse(sCookieDate, out DateTime cDate))
                     return cDate;

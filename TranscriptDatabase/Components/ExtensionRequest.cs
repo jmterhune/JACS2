@@ -4,9 +4,9 @@ using System.Web.Caching;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     [TableName("tjc_rec_extension_request")]
-    [PrimaryKey("ExtensionRequestID", AutoIncrement = true)]
+    [PrimaryKey("ExtensionID", AutoIncrement = true)]
     [Cacheable("ExtensionRequests", CacheItemPriority.Default, 20)]
-    internal class ExtensionRequest : EntityBase
+    public class ExtensionRequest : EntityBase
     {
         public int ExtensionID { get; set; }
         public int DesignationID { get; set; }

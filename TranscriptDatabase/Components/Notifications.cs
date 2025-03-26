@@ -1,15 +1,20 @@
-﻿using DotNetNuke.Common.Utilities;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Mail;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using UserInfo = DotNetNuke.Entities.Users.UserInfo;
 
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     public static class Notifications
     {
+        private static UserInfo userinfo=UserController.Instance.GetCurrentUserInfo();
         private static void NotifiyRecordingManager(EventListItem evt, EventListItem evtOld, int sequence, int portalId, string displayName, string managerRole, string county)
         {
             string subject = string.Format("Event Update to Designation - {0}", displayName);
@@ -158,9 +163,12 @@ namespace tjc.Modules.TranscriptDatabase.Components
             foreach (Event evt in events)
             {
                 UserInfo courtReporterUser = UserController.GetUserById(portalId, evt.CourtReporterID);
-                string body = string.Format("The extension request for Designation - {0} has been granted.  The new due date is {1}", displayName, requestedDate.ToShortDateString());
-                string subject = "Extension Request Granted";
-                Mail.SendEmail(fromEmail, courtReporterUser.Email, subject, body.ToString());
+                if (courtReporterUser != null)
+                {
+                    string body = string.Format("The extension request for Designation - {0} has been granted.  The new due date is {1}", displayName, requestedDate.ToShortDateString());
+                    string subject = "Extension Request Granted";
+                    Mail.SendEmail(fromEmail, courtReporterUser.Email, subject, body.ToString());
+                }
             }
         }
         private static string HighlightChange(string label, string newText, string oldText)
@@ -178,6 +186,20 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 outputString = (label + newText + " -> " + oldText + Environment.NewLine + Environment.NewLine);
             }
             return outputString;
+        }
+        private static void SendCourtReporterResetNotification(string displayName,int reporterId, int sequence,string managerRole,int portalId, string county)
+        {
+            string body = "The Court Reporter field for <strong>Designation</strong> " + displayName + ", <strong>Event</strong> " + sequence + " has been set to blank. Please reassign a court reporter to the event.";
+            string subject = "Court Reporter Assigned Set to Blank";
+            DotNetNuke.Security.Roles.RoleController ctlRole = new DotNetNuke.Security.Roles.RoleController();
+            var lstManager = RoleController.Instance.GetUsersByRole(portalId, managerRole);
+            string fromEmail = "dcrgrpsar@jud12.flcourts.org";
+            if (county.ToLower() == "manatee")
+                fromEmail = "dcrgrpman@jud12.flcourts.org";
+            foreach (UserInfo objuser in lstManager)
+            {
+                Mail.SendEmail(fromEmail, objuser.Email, subject, body);
+            }
         }
 
     }

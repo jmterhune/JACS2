@@ -1,7 +1,9 @@
 ﻿using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Users;
 using System;
 using System.Collections;
+using System.Net.Mail;
 using System.Web;
 
 namespace tjc.Modules.TranscriptDatabase.Handlers
@@ -11,8 +13,6 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
     /// </summary>
     public class UploadAttachmentHandler : IHttpHandler
     {
-        private int _moduleId;
-        private int _portalId = PortalSettings.Current.PortalId;
         public void ProcessRequest(HttpContext context)
         {
             if (context.Request.Files.Count > 0)
@@ -21,42 +21,61 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
                 HttpPostedFile file = files[0];
                 int fileId = 0;
                 string moduleIdString = context.Request.Params["mid"];
-                _moduleId = Convert.ToInt32(moduleIdString);
+                string designationString = context.Request.Params["did"];
+                string description = context.Request.Params["des"];
+                int moduleId = Convert.ToInt32(moduleIdString);
+                int designationId = Convert.ToInt32(designationString);
+                int portalId = PortalSettings.Current.PortalId;
                 try
                 {
-                    fileId = InsertFile(file);
+                    fileId = InsertFile(file,moduleId,portalId,designationId,description);
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
-                    DotNetNuke.Services.Exceptions.Exceptions.LogException(ex);
+                    DotNetNuke.Services.Exceptions.Exceptions.LogException(exc);
                 }
                 context.Response.ContentType = "text/plain";
                 context.Response.Write(fileId.ToString());
             }
         }
-        private int InsertFile(HttpPostedFile file)
+        private int InsertFile(HttpPostedFile file,int moduleId,int portalId,int designationId,string description)
         {
-            ModuleController moduleController = new ModuleController();
-            ModuleInfo modCtl = moduleController.GetModule(_moduleId);
-            Hashtable setting = modCtl.ModuleSettings;
-            string uploadFolder = "Transcript-Attachments";
-            if (setting.Contains("UploadAttachmentFolder"))
+            try
             {
-                uploadFolder = setting["UploadAttachmentFolder"].ToString();
+                UserInfo currentUser = UserController.Instance.GetCurrentUserInfo();
+                ModuleController moduleController = new ModuleController();
+                ModuleInfo modCtl = moduleController.GetModule(moduleId);
+                Hashtable setting = modCtl.ModuleSettings;
+                string uploadFolder = "Transcript-Attachments";
+                if (setting.Contains("UploadAttachmentFolder"))
+                {
+                    uploadFolder = setting["UploadAttachmentFolder"].ToString();
+                }
+                DotNetNuke.Services.FileSystem.FolderManager objFolder = new DotNetNuke.Services.FileSystem.FolderManager();
+                DotNetNuke.Services.FileSystem.FileManager objFile = new DotNetNuke.Services.FileSystem.FileManager();
+                DotNetNuke.Services.FileSystem.IFolderInfo folderInfo = null;
+                if (objFolder.FolderExists(portalId, uploadFolder) == false)
+                {
+                    objFolder.AddFolder(portalId, uploadFolder);
+                }
+                uploadFolder = string.Format("{0}/{1}", uploadFolder, designationId);
+                if (objFolder.FolderExists(portalId, uploadFolder) == false)
+                {
+                    folderInfo = objFolder.AddFolder(portalId, uploadFolder);
+                }
+                else
+                {
+                    folderInfo = objFolder.GetFolder(portalId, uploadFolder);
+                }
+                DotNetNuke.Services.FileSystem.IFileInfo fileInfo = objFile.AddFile(folderInfo, file.FileName, file.InputStream);
+                
+                return fileInfo.FileId;
             }
-            DotNetNuke.Services.FileSystem.FolderManager objFolder = new DotNetNuke.Services.FileSystem.FolderManager();
-            DotNetNuke.Services.FileSystem.FileManager objFile = new DotNetNuke.Services.FileSystem.FileManager();
-            DotNetNuke.Services.FileSystem.IFolderInfo folderInfo = null;
-            if (objFolder.FolderExists(_portalId, uploadFolder) == false)
+            catch (Exception exc)
             {
-                folderInfo = objFolder.AddFolder(_portalId, uploadFolder);
+                DotNetNuke.Services.Exceptions.Exceptions.LogException(exc);
+                return -1;
             }
-            else
-            {
-                folderInfo=objFolder.GetFolder(_portalId, uploadFolder);
-            }
-            DotNetNuke.Services.FileSystem.IFileInfo fileInfo = objFile.AddFile(folderInfo, file.FileName, file.InputStream);
-            return fileInfo.FileId;
         }
         public bool IsReusable
         {

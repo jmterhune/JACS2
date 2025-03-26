@@ -2,8 +2,8 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div class="tabs">
     <ul class="nav nav-tabs">
-        <li class="nav-item active">
-            <a class="nav-link" href="#designation" data-toggle="tab">Designations</a>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=DesignationListUrl%>">Designations</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=CalendartUrl%>">Calendar</a>
@@ -23,11 +23,11 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=HearingListUrl%>">Hearing Types</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=ReportListUrl%>">Reporting</a>
+        <li class="nav-item active">
+            <a class="nav-link" href="#reports" data-toggle="tab">Reporting</a>
         </li>
     </ul>
-    <div class="tab-content pb-0">
+    <div id="reports" class="tab-content pb-0">
         <div id="designation" class="tab-pane active">
             <table id="tblDesignations" class="table table-striped">
                 <thead>
@@ -36,42 +36,12 @@
                         <th class="command-icon">&nbsp;</th>
                         <th>ID</th>
                         <th>Last Name</th>
-                        <th>Case Number</th>
+                        <th>First Name</th>
                         <th>County</th>
                         <th>Service Date</th>
                         <th>Acknowledgment Filed</th>
                         <th>Due Date</th>
                         <th>Transcript Filed</th>
-                        <th>Created By</th>
-                        <th>Archived</th>
-                        <th>Archived</th>
-                        <th class="command-icon" style="display: none">&nbsp;</th>
-                    </tr>
-                    <tr class="table-secondary">
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>
-                            <input type="text" id="txtLastName" class="form-control" maxlength="25" /></td>
-                        <td>
-                            <input type="text" id="txtFirstName" class="form-control" maxlength="25" /></td>
-                        <td>
-                            <input type="text" id="txtCaseNumber" class="form-control" maxlength="25" /></td>
-                        <td>
-                            <select id="drpCounty" class="form-control">
-                                <option value="">< Filter By County ></option>
-                                <option>DeSoto</option>
-                                <option>Manatee</option>
-                                <option>Sarasota</option>
-                            </select>
-                        </td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                         <td>&nbsp;</td>
-                        <td>&nbsp;</td>
                     </tr>
                 </thead>
             </table>
@@ -92,11 +62,11 @@
     var county = null;
     var pageSize = 25;
     var recordCount = 0;
+    var archived = null;
     var sortDirection = "desc";
     var sortColumnIndex = 3;
     var isAdmin = "<%=IsAdmin%>";
     var currentPage = 1;
-    GetLocalStorage();
     (function ($, Sys) {
         $(document).ready(function () {
             PageInit();
@@ -119,7 +89,7 @@
             framework: $.ServicesFramework(moduleId)
         }
         service.baseUrl = service.framework.getServiceRoot(service.path);
-        var restUrl = `${service.baseUrl}Designation/GetDesignations/${recordCount}`;
+        restUrl = `${service.baseUrl}DesignationListItem/GetDesignationListItems/${recordCount}`;
         var deleteUrl = `${service.baseUrl}Designation/Delete/`;
         var archiveUrl = `${service.baseUrl}Designation/Archive/`;
         var acknowledgeUrl = `${service.baseUrl}Designation/Acknowledge/`;
@@ -135,51 +105,35 @@
                     data.lastName = lastName;
                     data.caseNumber = caseNumber;
                     data.county = county;
+                    data.archived = archived;
                     delete data.columns;
                 },
             },
-            columns: [{
-                data: "designationid", render: function (data, type, row, meta) {
-                    var url = "<%=EditUrl("status")%>";
-                    return `<a title="Change Status" onclick="SetdesignationId(${data})" href="${url}/did/${data}"><i class="fas fa-search"></i></a>`;
-                }, className: "command-item", orderable: false
-            },
+            columns: [
                 {
                     data: "designationid", render: function (data, type, row, meta) {
-                        var url = "<%=EditUrl("designation")%>";
+                        var url = "<%=EditUrl("status")%>";
+                        return `<a title="Change Status" onclick="SetdesignationId(${data})" href="${url}/did/${data}"><i class="fas fa-search"></i></a>`;
+                    }, className: "command-item", orderable: false
+                },
+                {
+                    data: "designationid", render: function (data, type, row, meta) {
+                        var url = "<%=EditUrl()%>";
                         return `<a title="Edit Designation" onclick="SetdesignationId(${data})" href="${url}/did/${data}"><i class="fas fa-pencil"></i></a>`;
                     }, className: "command-item", orderable: false
                 },
+                { data: "designationid" },
                 { data: "lastname" },
                 { data: "firstname" },
-                { data: "casenumber" },
                 { data: "county" },
                 { data: "servicedate" },
                 {
                     data: "acknowledgmentfiled", render: function (data, type, row, meta) {
-                        return data == 'true' ? `<a class="acknowledge" href="" title="Set Acknowledgment to Unfiled" data-id="${row.designationid}"><i class="fas fa-check-square"></i></a>` : `<a class="acknowledge" href="#" title="Set Acknowledgment to Filed" data-id="${row.designationid}"><i class="fas fa-square"></i></a>`;
-                    }, orderable: false
+                        return data == true ? `<i class="fas fa-check-square"></i>` : `<i class="fas fa-square"></i>`;
+                    }
                 },
                 { data: "duedate" },
                 { data: "transcriptfiled" },
-                { data: "createdusername" },
-                {
-                    data: "archived", render: function (data, type, row, meta) {
-                        return data == 'true' ? `<a class="archive" href="#" title="Set Status to Unarchived" data-id="${row.designationid}"><i class="fas fa-check-square"></i></a>` : `<a class="archive" href="#" title="Set Status to Unarchived" data-id="${row.designationid}" ><i class="fas fa-square"></i></a>`;
-                    }, orderable: false
-                },
-                {
-                    data: "comment", render: function (data, type, row, meta) {
-                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i>';
-                    }, className: "command-item", orderable: false
-                },
-                {
-                    data: "designationId", render: function (data, type, row, meta) {
-                        if (isAdmin == "true")
-                            return '<a class="delete" aria-role="button" title="Delete Record" data-designationId="' + data + '" href="#""><i class="fas fa-trash"></i></a>';
-                        return '';
-                    }, className: "command-item", orderable: false
-                },
             ],
             language: {
                 emptyTable: "No Records Available.",
@@ -187,7 +141,7 @@
             },
             order: [[sortColumnIndex, sortDirection]],
             serverSide: true,
-            process: true,
+            processing: true,
             lengthMenu: [[25, 50, 100], [25, 50, 100]],
             pageLength: pageSize,
             displayStart: currentPage * pageSize,
@@ -215,7 +169,7 @@
                             designationTable.draw();
                         },
                         error: function (error) {
-                            ShowAlert("Error Deleting Designation",error);
+                            ShowAlert("Error Deleting Designation", error);
                         }
                     });
                 }
@@ -240,7 +194,7 @@
                             designationTable.draw();
                         },
                         error: function (error) {
-                            ShowAlert("Error Changing Archive Status",error);
+                            ShowAlert("Error Changing Archive Status", error);
                         }
                     });
                 }
@@ -271,7 +225,7 @@
                 }
             });
         });
-        $.fn.dataTable.ext.errMode = () => ShowAlert("Error Building Record List","Error while loading the table data. Please refresh");
+        $.fn.dataTable.ext.errMode = () => ShowAlert("Error Building Record List", "Error while loading the table data. Please refresh");
         designationTable.on('order.dt', function () {
             // This will show: "Ordering on column 1 (asc)", for example
             var order = designationTable.order();
@@ -288,20 +242,6 @@
     }
     function SetDesignationId(designationId) {
         localStorage.setItem('transcript.designationId', designationId);
-    }
-    function GetLocalStorage() {
-        storageCurrentPage = localStorage.getItem('tranascript.currentPageIndex');
-        storagePageSize = localStorage.getItem('tranascript.pageSize');
-        storageSortDirection = localStorage.getItem('tranascript.sortDirection');
-        storageSortColumnIndex = localStorage.getItem('tranascript.sortColumnIndex');
-        if (storageCurrentPage != null && storageCurrentPage != undefined)
-            currentPage = storageCurrentPage;
-        if (storagePageSize != null && storagePageSize != undefined)
-            pageSize = storagePageSize;
-        if (storageSortDirection != null && storageSortDirection != undefined)
-            sortDirection = storageSortDirection;
-        if (storageSortColumnIndex != null && storageSortColumnIndex != undefined)
-            sortColumnIndex = storageSortColumnIndex;
     }
     function ShowAlert(title, text) {
         $.dnnAlert({
