@@ -77,26 +77,31 @@
                                 <th>Defendant</th>
                                 <th>Case Number</th>
                                 <th>Charges</th>
+                                <th><abbr title="Most Serious Offense" data-toggle="tooltip">MSO</abbr></th>
                                 <th class="text-center">Indigent</th>
                                 <th class="text-center">
-                                    <abbr title="Felony Conviction Dangerous">FCD</abbr></th>
+                                    <abbr title="Felony Conviction Dangerous" data-toggle="tooltip">FCD</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Felony Conviction Non-Dangerous">FCND</abbr></th>
+                                    <abbr title="Felony Conviction Non-Dangerous" data-toggle="tooltip">FCND</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Misdemeanor Conviction Dangerous">MCD</abbr></th>
+                                    <abbr title="Misdemeanor Conviction Dangerous" data-toggle="tooltip">MCD</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Misdemeanor Conviction Non-Dangerous">MCND</abbr></th>
+                                    <abbr title="Misdemeanor Conviction Non-Dangerous" data-toggle="tooltip">MCND</abbr></th>
+                                
                                 <th>
-                                    <abbr title="Failure to Appear">FTA</abbr>
+                                    <abbr title="Failure to Appear" data-toggle="tooltip">FTA</abbr>
                                     Date</th>
-                                <th class="text-center">Court Appearances</th>
+                                <th class="text-center"><abbr title="Court Appearances" data-toggle="tooltip">CA</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Bench Warrant Ordered">BWO</abbr>?</th>
+                                    <abbr title="Bench Warrant Ordered" data-toggle="tooltip">BWO</abbr>?</th>
+                                <th class="text-center">
+                                    <abbr title="Bond Paid" data-toggle="tooltip">BP</abbr>?</th>
                                 <th class="text-center">Compliance</th>
+
                                 <th class="text-center">Revoked?</th>
                                 <th>Completion</th>
                                 <th class="text-center">Days
-                                    <abbr title="Supervised Release">SPR</abbr></th>
+                                    <abbr title="Supervised Release" data-toggle="tooltip">SPR</abbr></th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -110,14 +115,18 @@
                         <td><%#DataBinder.Eval(Container.DataItem,"DefendantName") %></td>
                         <td><%#DataBinder.Eval(Container.DataItem,"CaseNumber") %></td>
                         <td><%#DataBinder.Eval(Container.DataItem,"ArrestCharges") %></td>
+                        <td><%#DataBinder.Eval(Container.DataItem,"MostSeriousOffense") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FormattedIndigent") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FcDangerous") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FcNonDangerous") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"McDangerous") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"McNonDangerous") %></td>
+                         
                         <td><%#DataBinder.Eval(Container.DataItem,"FormattedFTADate") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"CourtAppearances") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FormattedBwOrdered") %></td>
+                        <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FormattedBondPaid") %></td>
+
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"NonCompArrestViolation") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"IsRevoked").ToString()=="True"?"<i class=\"fas fa-check-square\"></i>":"<i class=\"fas fa-square\"></i>" %></td>
                         <td><%#DataBinder.Eval(Container.DataItem,"FormattedCompletion") %></td>
@@ -209,7 +218,7 @@
                             <div class="form-group row">
                                 <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number<em>*</em>" ToolTip="required" />
-                                    <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" />
+                                    <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" ClientIDMode="Static" />
                                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseNumber"
                                         Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Case Number is Required" />
                                 </div>
@@ -232,7 +241,7 @@
                             <div class="row form-group">
                                 <div class="col-12 mb-2">
                                     <asp:Label runat="server" AssociatedControlID="txtCharges" Text="Arrest Charges<em>*</em>" />
-                                    <asp:TextBox runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" ID="txtCharges" />
+                                    <asp:TextBox runat="server" TextMode="MultiLine" Rows="2" CssClass="form-control" ID="txtCharges" />
                                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCharges"
                                         Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Arrest Charges are Required" />
                                 </div>
@@ -269,6 +278,17 @@
                             </div>
                             <div class="form-group mt-3">
                                 <div class="row">
+                                    <div class="col-4">
+                                        <asp:Label runat="server" AssociatedControlID="drpMostSeriosOffense" Text="Most Serious Offense<em>*</em>" />
+                                        <asp:DropDownList ID="drpMostSeriosOffense" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Option >" Value="" />
+                                            <asp:ListItem Text="907.041 (Incl Domestic)" />
+                                            <asp:ListItem Text="Non-Dangerous Felony" />
+                                            <asp:ListItem Text="Misd Only (Not Domestic)" />
+                                        </asp:DropDownList>
+                                        <asp:RequiredFieldValidator runat="server" ValidationGroup="defendant" ControlToValidate="drpMostSeriosOffense"
+                                            Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please select an option" />
+                                    </div>
                                     <div class="col-3">
                                         <asp:Label runat="server" AssociatedControlID="drpCompletion" Text="Completion" />
                                         <asp:DropDownList ID="drpCompletion" runat="server" CssClass="form-control completion">
@@ -278,52 +298,46 @@
                                             <asp:ListItem Text="Other" Value="2" />
                                         </asp:DropDownList>
                                     </div>
-                                    <div class="col-4">
-                                        <asp:Label runat="server" AssociatedControlID="drpMostSeriosOffense" Text="Most Serious Offense" />
-                                        <asp:DropDownList ID="drpMostSeriosOffense" runat="server" CssClass="form-control">
-                                            <asp:ListItem Text="< Select Option >" Value="" />
-                                            <asp:ListItem Text="907.041 (Incl Domestic)" />
-                                            <asp:ListItem Text="Non-Dangerous Felony" />
-                                            <asp:ListItem Text="Misd Only (Not Domestic)"  />
-                                        </asp:DropDownList>
+                                    <div class="col-3 radio-button-list pt-4 mt-2">
+                                        <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
+                                    </div>
+                                    <div class="col-2 radio-button-list pt-4 mt-2">
+                                        <asp:CheckBox ID="chkRevoked" CssClass="revoked" runat="server" Text="Revoked?" />
                                     </div>
                                 </div>
                                 <div class="row g-1 pb-0 mt-3">
-                                    <div class="col-3 radio-button-list">
-                                        <asp:Label runat="server" AssociatedControlID="rblFtaArrestHearing" Text="FTA Arrest?" />
-                                        <asp:RadioButtonList ID="rblFtaArrestHearing" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
+                                    <div class="col-4 radio-button-list">
+                                        <div>
+                                            <asp:Label runat="server" AssociatedControlID="rblFtaArrestHearing" Text="FTA Arrest?<em>*</em>" />
+                                            <asp:RadioButtonList ID="rblFtaArrestHearing" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                                <asp:ListItem Text="Yes" Value="1" />
+                                                <asp:ListItem Text="No" Value="0" />
+                                            </asp:RadioButtonList>
+                                        </div>
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="rblFtaArrestHearing"
                                             Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
                                     </div>
-                                    <div class="col-3 radio-button-list">
-                                        <asp:Label runat="server" AssociatedControlID="rblIndigent" Text="Indigent?" />
-                                        <asp:RadioButtonList ID="rblIndigent" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
+                                    <div class="col-4 radio-button-list">
+                                        <div>
+                                            <asp:Label runat="server" AssociatedControlID="rblIndigent" Text="Indigent?<em>*</em>" />
+                                            <asp:RadioButtonList ID="rblIndigent" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                                <asp:ListItem Text="Yes" Value="1" />
+                                                <asp:ListItem Text="No" Value="0" />
+                                            </asp:RadioButtonList>
+                                        </div>
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="rblIndigent"
                                             Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
                                     </div>
-                                    <div class="col-3 radio-button-list">
-                                        <asp:Label runat="server" AssociatedControlID="rblBondPaid" Text="Bond Paid?" />
-                                        <asp:RadioButtonList ID="rblBondPaid" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
-                                            <asp:ListItem Text="Yes" Value="1" />
-                                            <asp:ListItem Text="No" Value="0" />
-                                        </asp:RadioButtonList>
+                                    <div class="col-4 radio-button-list">
+                                        <div>
+                                            <asp:Label runat="server" AssociatedControlID="rblBondPaid" Text="Bond Paid?<em>*</em>" />
+                                            <asp:RadioButtonList ID="rblBondPaid" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow">
+                                                <asp:ListItem Text="Yes" Value="1" />
+                                                <asp:ListItem Text="No" Value="0" />
+                                            </asp:RadioButtonList>
+                                        </div>
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="rblBondPaid"
                                             Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Please Select Yes or No" />
-                                    </div>
-                                </div>
-
-                                <div class="row g-1 pb-0 mt-3">
-                                    <div class="col-auto radio-button-list">
-                                        <asp:CheckBox ID="chkBwOrdered" CssClass="bw-ordered" runat="server" Text="Bench Warrant?" />
-                                    </div>
-                                    <div class="col-auto radio-button-list">
-                                        <asp:CheckBox ID="chkRevoked" CssClass="revoked" runat="server" Text="Revoked?" />
                                     </div>
                                 </div>
                             </div>
@@ -371,6 +385,7 @@
     }(jQuery, window.Sys));
 
     function PageInit() {
+        $('[data-toggle="tooltip"]').tooltip();
         $("#dialog").dialog({
             autoOpen: false,
             modal: true
@@ -397,7 +412,11 @@
             noText: 'No',
             title: 'Delete Record?'
         });
-
+        $('#txtCaseNumber').on('input', function () {
+            $(this).val(function (_, val) {
+                return val.toUpperCase();
+            });
+        });
         $("#<%=cmdDeleteIntake.ClientID%>").click(function (e) {
             e.preventDefault();
             $("#dialog").dialog({

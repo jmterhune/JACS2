@@ -96,8 +96,8 @@
             <div class="row">
                 <div class="col-auto">
                     <div class="form-group">
-                        <asp:Label runat="server" AssociatedControlID="txtName" Text="Year Created" />
-                        <asp:TextBox ID="txtYearCreated" runat="server" CssClass="form-control" TextMode="Number" min="2000" />
+                        <asp:Label runat="server" AssociatedControlID="txtName" Text="Year Record was Created" />
+                        <asp:TextBox ID="txtYearCreated" runat="server" CssClass="form-control" TextMode="Number" />
                         <asp:RequiredFieldValidator ID="valYearCreated" runat="server" Display="Dynamic" ControlToValidate="txtYearCreated" CssClass="label label-danger"
                             ErrorMessage="Year Created is Required" SetFocusOnError="true"></asp:RequiredFieldValidator>
 

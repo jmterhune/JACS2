@@ -170,7 +170,7 @@
                             <div class="form-group row">
                                 <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number<em>*</em>" ToolTip="required" />
-                                    <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" />
+                                    <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" ClientIDMode="Static" />
                                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseNumber"
                                         Display="Dynamic" SetFocusOnError="true" ValidationGroup="defendant" CssClass="label label-danger" ErrorMessage="Case Number is Required" />
                                 </div>
@@ -357,6 +357,11 @@
         $("#dialog").dialog({
             autoOpen: false,
             modal: true
+        });
+        $('#txtCaseNumber').on('input', function () {
+            $(this).val(function (_, val) {
+                return val.toUpperCase();
+            });
         });
         $(".datepicker").datepicker();
         $(".form-check input").addClass("form-check-input");

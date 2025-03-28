@@ -63,6 +63,33 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         {
             get; set;
         }
+        public int BondPaidYes
+        {
+            get; set;
+        }
+        public int BondPaidNo
+        {
+            get; set;
+        }
+        public int Mso907
+        {
+            get; set;
+        }
+        public int MsoNonDangerous
+        {
+            get; set;
+        }
+        public int MsoMisd
+        {
+            get; set;
+        }
+        public int MsoTotals
+        {
+            get
+            {
+                return Mso907 + MsoNonDangerous + MsoMisd ;
+            }
+        }
         public int NonCompNewArrest
         {
             get; set;

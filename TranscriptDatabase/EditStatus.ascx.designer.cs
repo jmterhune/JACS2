@@ -762,15 +762,6 @@ namespace tjc.Modules.TranscriptDatabase
         protected global::System.Web.UI.WebControls.TextBox txtRequestedDueDate;
 
         /// <summary>
-        /// ifrDocument control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlIframe ifrDocument;
-
-        /// <summary>
         /// hdRequestOutstanding control.
         /// </summary>
         /// <remarks>
@@ -798,12 +789,12 @@ namespace tjc.Modules.TranscriptDatabase
         protected global::System.Web.UI.WebControls.HiddenField hdThirdExtension;
 
         /// <summary>
-        /// cmdSave control.
+        /// cmdRefreshExtensions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button cmdSave;
+        protected global::System.Web.UI.WebControls.Button cmdRefreshExtensions;
     }
 }

@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Services.Exceptions;
+﻿using DocumentFormat.OpenXml.Drawing;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using System;
 using System.Collections.Generic;
@@ -96,24 +97,42 @@ namespace tjc.Modules.TranscriptDatabase.Services
         public HttpResponseMessage CreateExtension(ExtensionViewModel extensionRequest)
         {
             var ctl = new Components.ExtensionRequestController();
+            var cCtl = new Components.CalendarController();
             ExtensionRequest extension = new ExtensionRequest
             {
-                DesignationID = extensionRequest.DesignationID,
-                EventTypeID = extensionRequest.EventTypeID,
+                DesignationID = extensionRequest.DesignationId,
+                EventTypeID = extensionRequest.EventTypeId,
                 RequestedDate = extensionRequest.RequestedDate,
                 SubmittedDate = extensionRequest.SubmittedDate,
-                CreatedDate = extensionRequest.CreatedDate,
-                CreatedByUserID = extensionRequest.CreatedByUserID,
-                LastModifiedByUserID = extensionRequest.LastModifiedByUserID,
-                LastModifiedDate = extensionRequest.LastModifiedDate,
+                CreatedDate = DateTime.Now,
+                CreatedByUserID = extensionRequest.CreatedByUserId,
+                LastModifiedByUserID = extensionRequest.CreatedByUserId,
+                LastModifiedDate = DateTime.Now,
             };
             try
             {
                 ctl.CreateExtensionRequest(extension);
-                bool result = extension.ExtensionID > 0;
-                if (result)
+                bool hasExtentionId = extension.ExtensionID > 0;
+                ExtensionAddedResult extensionresult = new ExtensionAddedResult();
+                string returnMessage = string.Empty;
+                if (hasExtentionId)
                 {
-                    return Request.CreateResponse(new EventAddedResult { EventId = extension.ExtensionID });
+                    Components.Calendar calendar = cCtl.GetCalendarByDesignation(extension.DesignationID);
+                    if (calendar != null)
+                    {
+                        calendar.EventTypeID = extension.EventTypeID;
+                        calendar.RequestOutstanding = true;
+                        cCtl.UpdateCalendar(calendar);
+                        extensionresult = new ExtensionAddedResult { ExtensionId = extension.ExtensionID };
+                    }
+                    else
+                    {
+                        returnMessage = "Could not retrieve calendar information for designation. Update the due date to recreate the calendar event.";
+                        extensionresult = new ExtensionAddedResult { ExtensionId = extension.ExtensionID, Message = returnMessage };
+                    }
+                    string subject = string.Format("Extension Request for Designation: {0}", extensionRequest.DesignationId);
+                    Notifications.NotifiyRecordingManager(subject, "A new extension request has been submitted", extensionRequest.PortalId, extensionRequest.AdminRole, extensionRequest.CountyName);
+                    return Request.CreateResponse(extensionresult);
                 }
                 return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
             }
@@ -122,10 +141,11 @@ namespace tjc.Modules.TranscriptDatabase.Services
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
-    
+
         public class ExtensionAddedResult
         {
             public int ExtensionId { get; set; }
+            public string Message { get; set; }
 
         }
     }

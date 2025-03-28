@@ -15,7 +15,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         private ReportType reportType;
         private DateTime reportDate = Null.NullDate;
         private int ModuleId = 0;
-        private string ReportRootUrl = "~/portals/0/reports/pretrialservices/";
+        private string ReportRootUrl = "~/portals/0/reports/pretrialservices/sarasota/"; 
         private List<DayTotal> colDefendantDayTotal = new List<DayTotal>();
         private List<DayTotal> colDefendantRunningTotal = new List<DayTotal>();
         private List<IntakeLogItem> colIntake = new List<IntakeLogItem>();
@@ -112,7 +112,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(string.Format("# Indigent {0} Int / Assessed ", Environment.NewLine), boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
             var ctl = new IntakeLogItemController();
-            IntakeLogItem intakeLogItem = ctl.GetIntakeLogItemByDate( inDate);
+            IntakeLogItem intakeLogItem = ctl.GetIntakeLogItemByDate(inDate);
             if (intakeLogItem != null)
             {
                 table.AddCell(new Phrase(GetWeekTextValue(inDate), normalFont));
@@ -135,7 +135,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
 
         private PdfPTable GetDefendantLog(DateTime InDate)
         {
-            PdfPTable table = new PdfPTable(15);
+            PdfPTable table = new PdfPTable(17);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 204, 153); // ORANGE
             table.DefaultCell.HorizontalAlignment = 1;
             table.HorizontalAlignment = 0;
@@ -153,6 +153,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("FTA Date", boldFont));
             table.AddCell(new Phrase(string.Format("# Court{0}Appearances", Environment.NewLine), boldFont));
             table.AddCell(new Phrase("BW Ordered", boldFont));
+            table.AddCell(new Phrase("Bond Paid", boldFont));
+            table.AddCell(new Phrase(string.Format("Most{0}Serious{0}Offense", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("Non-Compliance{0}New Arrest/Tech", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("Recommendation{0}Revoked", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("Successful/Non-{0}Successful{0}Completion", Environment.NewLine), boldFont));
@@ -170,6 +172,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             string ftaDate = "";
             string courtAppearance = "";
             string bwOrdered = "";
+            string bondPaid = "";
+            string mostSeriosOffense = "";
             string nonCompViolation = "";
             string revoked = "";
             string successfull = "";
@@ -189,6 +193,12 @@ namespace tjc.Modules.PretrialServices.Sarasota
             int noPriors_h = 0;
             int bwOrderedYes = 0;
             int bwOrderedNo = 0;
+            int bondPaidYes = 0;
+            int bondPaidNo = 0;
+            int Mso907TT = 0;
+            int MsoNdFelonyTT = 0;
+            int MsoMisdTT = 0;
+            int MsoTotal = 0;
             int revokedTT = 0;
             int successfulTT = 0;
             int unSuccessfulTT = 0;
@@ -206,7 +216,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             bool isMcDangerous = false;
             bool isMcNonDangerous = false;
             var ctl = new DefendantInProgramController();
-            IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramByDate( InDate);
+            IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramByDate(InDate);
 
             defendantCount = defendantsInProgram.Count();
             foreach (DefendantInProgram defendantInProgram in defendantsInProgram)
@@ -227,6 +237,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 courtAppearance = "";
                 bwOrdered = "";
                 nonCompViolation = "";
+                mostSeriosOffense = "";
+                bondPaid = "";
                 revoked = "";
                 successfull = "";
                 daysSPR = "";
@@ -259,7 +271,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 }
                 if (isFcDangerous)
                 {
-                    FcDangerous_h ++;
+                    FcDangerous_h++;
                 }
                 else if (isFcNonDangerous)
                 {
@@ -277,44 +289,54 @@ namespace tjc.Modules.PretrialServices.Sarasota
                     noPriors_h++;
                 if (defendantInProgram.CourtAppearances > 0)
                     courtAppearanceTT += defendantInProgram.CourtAppearances;
-                    if (defendantInProgram.Indigent == true)
-                    {
-                        indigent = "Yes";
-                        indigentYes ++;
-                    }
-                    else if (defendantInProgram.Indigent == false)
-                    {
-                        indigent = "No";
-                        indigentNo ++;
-                    }
-                    if (defendantInProgram.BwOrdered == true)
-                    {
-                        bwOrdered = "Yes";
-                        bwOrderedYes ++;
-                    }
-                    else if (defendantInProgram.BwOrdered == false)
-                    {
-                        bwOrdered = "No";
-                        bwOrderedNo ++;
-                    }
+                if (defendantInProgram.Indigent == true)
+                {
+                    indigent = "Yes";
+                    indigentYes++;
+                }
+                else if (defendantInProgram.Indigent == false)
+                {
+                    indigent = "No";
+                    indigentNo++;
+                }
+                if (defendantInProgram.BwOrdered == true)
+                {
+                    bwOrdered = "Yes";
+                    bwOrderedYes++;
+                }
+                else if (defendantInProgram.BwOrdered == false)
+                {
+                    bwOrdered = "No";
+                    bwOrderedNo++;
+                }
+                if(defendantInProgram.BondPaid == true)
+                {
+                    bondPaid = "Yes";
+                    bondPaidYes++;
+                }
+                else if(defendantInProgram.BondPaid== false)
+                {
+                    bondPaid = "No";
+                    bondPaidNo++;
+                }
                 if (defendantInProgram.Completion.HasValue)
                 {
                     if (defendantInProgram.Completion == 1)
                     {
                         successfull = "Successful";
-                        successfulTT ++;
+                        successfulTT++;
                     }
                     else if (defendantInProgram.Completion == 0)
                     {
                         successfull = "Unsuccessful";
-                        successfulTT ++;
+                        successfulTT++;
                     }
                 }
 
                 if (defendantInProgram.FtaDate.HasValue)
                 {
                     ftaDate = defendantInProgram.FtaDate.Value.ToShortDateString();
-                    FTACountTT ++;
+                    FTACountTT++;
                 }
                 courtAppearance = defendantInProgram.CourtAppearances.ToString();
                 nonCompViolation = defendantInProgram.NonCompArrestViolation;
@@ -322,43 +344,65 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 {
                     case "New Arrest":
                         {
-                            newArrestTT ++;
-                            ViolationTT ++;
+                            newArrestTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "Viol Calls":
                         {
-                            violCallsTT ++;
-                            ViolationTT ++;
+                            violCallsTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "Contact":
                         {
-                            contactTT ++;
-                            ViolationTT ++;
+                            contactTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "Other":
                         {
-                            otherTT ++;
-                            ViolationTT ++;
+                            otherTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "UA":
                         {
-                            UATT ++;
-                            ViolationTT ++;
+                            UATT++;
+                            ViolationTT++;
+                            break;
+                        }
+                }
+               mostSeriosOffense=defendantInProgram.MostSeriousOffense;
+                switch (mostSeriosOffense)
+                {
+                    case "907.041 (Incl Domestic)":
+                        {
+                            Mso907TT++;
+                            MsoTotal++;
+                            break;
+                        }
+                    case "Non-Dangerous Felony":
+                        {
+                            MsoNdFelonyTT++;
+                            MsoTotal++;
+                            break;
+                        }
+                    case "Misd Only (Not Domestic)":
+                        {
+                            MsoMisdTT++;
+                            MsoTotal++;
                             break;
                         }
                 }
                 if (defendantInProgram.IsRevoked)
                 {
                     revoked = "Yes";
-                    revokedTT ++;
+                    revokedTT++;
                 }
                 if (defendantInProgram.DaysSpr > 0)
                 {
@@ -376,6 +420,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 table.AddCell(new Phrase(ftaDate, normalFont));
                 table.AddCell(new Phrase(courtAppearance, normalFont));
                 table.AddCell(new Phrase(bwOrdered, normalFont));
+                table.AddCell(new Phrase(bondPaid, normalFont));
+                table.AddCell(new Phrase(mostSeriosOffense, normalFont));
                 table.AddCell(new Phrase(nonCompViolation, normalFont));
                 table.AddCell(new Phrase(revoked, normalFont));
                 table.AddCell(new Phrase(successfull, normalFont));
@@ -383,9 +429,11 @@ namespace tjc.Modules.PretrialServices.Sarasota
             }
 
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            PdfPCell blankCell = new PdfPCell();
-            blankCell.Border = 0;
-            blankCell.Colspan = 3;
+            PdfPCell blankCell = new PdfPCell
+            {
+                Border = 0,
+                Colspan = 3
+            };
             table.AddCell(blankCell);
             table.AddCell(new Phrase("YES", boldFont));
             table.AddCell(new Phrase("DANGEROUS", boldFont));
@@ -395,6 +443,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("FTA COUNT", boldFont));
             table.AddCell(new Phrase("APPEARANCES", boldFont));
             table.AddCell(new Phrase("YES", boldFont));
+            table.AddCell(new Phrase("YES", boldFont));
+            table.AddCell(new Phrase("907.041", boldFont));
             table.AddCell(new Phrase("NEW ARREST", boldFont));
             table.AddCell(new Phrase("REVOKED", boldFont));
             table.AddCell(new Phrase("SUCCESSFUL", boldFont));
@@ -411,6 +461,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(FTACountTT.ToString(), normalFont)); // FTA Date Count
             table.AddCell(new Phrase(courtAppearanceTT.ToString(), normalFont)); // Court Appearances
             table.AddCell(new Phrase(bwOrderedYes.ToString(), normalFont));
+            table.AddCell(new Phrase(bondPaidYes.ToString(), normalFont));
+            table.AddCell(new Phrase(Mso907TT.ToString(), normalFont));
             table.AddCell(new Phrase(newArrestTT.ToString(), normalFont));
             table.AddCell(new Phrase(revokedTT.ToString(), normalFont));
             table.AddCell(new Phrase(successfulTT.ToString(), normalFont));
@@ -423,6 +475,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             blankCell.Colspan = 6;
             table.AddCell(blankCell);
             table.AddCell(new Phrase("NO", boldFont));
+            table.AddCell(new Phrase("NO", boldFont));
+            table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
             table.AddCell(new Phrase("VIOL CALLS", boldFont));
             blankCell.Colspan = 1;
             table.AddCell(blankCell);
@@ -436,6 +490,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             blankCell.Colspan = 6;
             table.AddCell(blankCell);
             table.AddCell(new Phrase(bwOrderedNo.ToString(), normalFont));
+            table.AddCell(new Phrase(bondPaidNo.ToString(), normalFont));
+            table.AddCell(new Phrase(MsoNdFelonyTT.ToString(), normalFont));
             table.AddCell(new Phrase(violCallsTT.ToString(), normalFont));
             blankCell.Colspan = 1;
             table.AddCell(blankCell);
@@ -447,8 +503,9 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
 
             // table.AddCell(New Phrase("UNKNOWN", boldFont))
-            blankCell.Colspan = 7;
+            blankCell.Colspan = 8;
             table.AddCell(blankCell);
+            table.AddCell(new Phrase("MISD ONLY", boldFont));
             table.AddCell(new Phrase("CONTACT", boldFont));
             blankCell.Colspan = 3;
             table.AddCell(blankCell);
@@ -456,12 +513,15 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             blankCell.Colspan = 1;
             table.AddCell(blankCell);
-            PdfPCell caption = new PdfPCell(new Phrase("Chart below is based on the defendants criminal histories. " + Environment.NewLine + "It categorizes each defendant by their most serious offense.", captionFont));
-            caption.Colspan = 4;
-            caption.Border = 0;
+            PdfPCell caption = new PdfPCell(new Phrase("Chart below is based on the defendants criminal histories. " + Environment.NewLine + "It categorizes each defendant by their most serious offense.", captionFont))
+            {
+                Colspan = 4,
+                Border = 0
+            };
             table.AddCell(caption);
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 4;
             table.AddCell(blankCell);
+            table.AddCell(new Phrase(MsoMisdTT.ToString(), normalFont));
             table.AddCell(new Phrase(contactTT.ToString(), normalFont));
             blankCell.Colspan = 3;
             table.AddCell(blankCell);
@@ -474,8 +534,9 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(hdrCell);
             table.AddCell(new Phrase("TOTAL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 4;
             table.AddCell(blankCell);
+            table.AddCell(new Phrase("MSO TOTALS", boldFont));
             table.AddCell(new Phrase("OTHER", boldFont));
             blankCell.Colspan = 3;
             table.AddCell(blankCell);
@@ -486,8 +547,9 @@ namespace tjc.Modules.PretrialServices.Sarasota
             ttlCell.Colspan = 3;
             table.AddCell(ttlCell);
             table.AddCell(new Phrase(FcDangerous_h.ToString(), normalFont));
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 4;
             table.AddCell(blankCell);
+            table.AddCell(new Phrase(MsoTotal.ToString(), normalFont));
             table.AddCell(new Phrase(otherTT.ToString(), normalFont));
             blankCell.Colspan = 3;
             table.AddCell(blankCell);
@@ -499,7 +561,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(ttlCell2);
             table.AddCell(new Phrase(FcNonDangerous_h.ToString(), normalFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 5;
             table.AddCell(blankCell);
             table.AddCell(new Phrase("UA", boldFont));
             blankCell.Colspan = 3;
@@ -511,7 +573,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             ttlCell3.Colspan = 3;
             table.AddCell(ttlCell3);
             table.AddCell(new Phrase(McDangerous_h.ToString(), normalFont));
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 5;
 
             table.AddCell(blankCell);
             table.AddCell(new Phrase(UATT.ToString(), normalFont));
@@ -525,7 +587,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(McNonDangerous_h.ToString(), normalFont));
 
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 5;
             table.AddCell(blankCell);
             table.AddCell(new Phrase("VIOL TOTALS", boldFont));
             blankCell.Colspan = 3;
@@ -533,12 +595,14 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
             blankCell.Colspan = 4;
             table.AddCell(blankCell);
-            PdfPCell ttlCell5 = new PdfPCell(new Phrase("No prior offense", boldFont));
-            ttlCell5.Colspan = 3;
+            PdfPCell ttlCell5 = new PdfPCell(new Phrase("No prior offense", boldFont))
+            {
+                Colspan = 3
+            };
             table.AddCell(ttlCell5);
             table.AddCell(new Phrase(noPriors_h.ToString(), normalFont));
 
-            blankCell.Colspan = 3;
+            blankCell.Colspan = 5;
             table.AddCell(blankCell);
             table.AddCell(new Phrase(ViolationTT.ToString(), normalFont));
             blankCell.Colspan = 3;
@@ -548,6 +612,11 @@ namespace tjc.Modules.PretrialServices.Sarasota
             dayTotal.Day = InDate.Day;
             dayTotal.BwOrderedNo = bwOrderedNo;
             dayTotal.BwOrderedYes = bwOrderedYes;
+            dayTotal.BondPaidNo = bondPaidNo;
+            dayTotal.BondPaidYes = bondPaidYes;
+            dayTotal.Mso907 = Mso907TT;
+            dayTotal.MsoMisd = MsoMisdTT;
+            dayTotal.MsoNonDangerous=MsoNdFelonyTT;
             dayTotal.FcDangerous = FcDangerousTT;
             dayTotal.FcNonDangerous = FcNonDangerousTT;
             dayTotal.IndigentNo = indigentNo;
@@ -581,7 +650,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             List<DayTotal> colDefendantDayTotalTemp = null;
             PdfPCell blankCell = new PdfPCell();
             blankCell.Border = 0;
-            PdfPTable table = new PdfPTable(11);
+            PdfPTable table = new PdfPTable(13);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204); // YELLOW
             table.DefaultCell.HorizontalAlignment = 1;
             table.HorizontalAlignment = 0;
@@ -594,7 +663,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("# PTR not" + Environment.NewLine + " Recommended", boldFont));
             table.AddCell(new Phrase("# Accepted" + Environment.NewLine + " into Program", boldFont));
             table.AddCell(new Phrase("# Indigent" + Environment.NewLine + " Int/Assessed", boldFont));
-            blankCell.Colspan = 4;
+            blankCell.Colspan = 6;
             table.AddCell(blankCell);
             blankCell.Colspan = 11;
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
@@ -618,7 +687,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             else
                 colIntakeTemp = colIntake;
             var query = from i in colIntakeTemp
-                        where i.IntakeDay >= startDay & i.IntakeDay <= endDay 
+                        where i.IntakeDay >= startDay & i.IntakeDay <= endDay
                         select i;
             int interviewTT = query.Sum(i => i.Interviewed.Value);
 
@@ -635,7 +704,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(notRecommednPtrTT.ToString(), normalFont));
             table.AddCell(new Phrase(acceptedTT.ToString(), normalFont));
             table.AddCell(new Phrase(indigentAssessedTT.ToString(), normalFont));
-            blankCell.Colspan = 2;
+            blankCell.Colspan = 4;
             table.AddCell(blankCell);
             blankCell.Colspan = 11;
             table.AddCell(blankCell);
@@ -644,10 +713,12 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 colIntakeRunningTotal.AddRange(colIntake);
                 colIntake.Clear();
             }
-            PdfPCell TitleCell = new PdfPCell(new Phrase("Defendants Ordered Into Program", titleFont));
-            TitleCell.Border = 0;
-            TitleCell.Colspan = 11;
-            TitleCell.HorizontalAlignment = Element.ALIGN_CENTER;
+            PdfPCell TitleCell = new PdfPCell(new Phrase("Defendants Ordered Into Program", titleFont))
+            {
+                Border = 0,
+                Colspan = 11,
+                HorizontalAlignment = Element.ALIGN_CENTER
+            };
             table.AddCell(TitleCell);
             table.AddCell(blankCell);
             blankCell.Colspan = 1;
@@ -673,6 +744,12 @@ namespace tjc.Modules.PretrialServices.Sarasota
             int NoPriorsTT = query2.Sum(c => c.NoPriors);
             int bworderedYesTT = query2.Sum(c => c.BwOrderedYes);
             int bwOrderedNoTT = query2.Sum(c => c.BwOrderedNo);
+            int bondPaidYesTT= query2.Sum(c => c.BondPaidYes);
+            int bondPaidNoTT= query2.Sum(c => c.BondPaidNo);
+            int mso907TT= query2.Sum(c => c.Mso907);
+            int msoMisdTT = query2.Sum(c => c.MsoMisd);
+            int msoTotal= query2.Sum(c => c.MsoTotals);
+            int msoNonDangerousTT = query2.Sum(c => c.MsoNonDangerous);
             int ncArrestTT = query2.Sum(c => c.NonCompNewArrest);
             int ncViolCallsTT = query2.Sum(c => c.NonCompViolCalls);
             int ncContactTT = query2.Sum(c => c.NonCompContact);
@@ -695,6 +772,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("FTA Dates", boldFont));
             table.AddCell(new Phrase("Court Appearances", boldFont));
             table.AddCell(new Phrase("BW Ordered", boldFont));
+            table.AddCell(new Phrase("Bond Paid", boldFont));
+            table.AddCell(new Phrase("Most Serious Offense", boldFont));
             table.AddCell(new Phrase("Non-Compliance", boldFont));
             table.AddCell(new Phrase("Recommendation", boldFont));
             table.AddCell(new Phrase("Completion", boldFont));
@@ -707,6 +786,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("COUNT", boldFont));
             table.AddCell(new Phrase("COUNT", boldFont));
             table.AddCell(new Phrase("YES", boldFont));
+            table.AddCell(new Phrase("YES", boldFont));
+            table.AddCell(new Phrase("907.041", boldFont));
             table.AddCell(new Phrase("NEW ARREST", boldFont));
             table.AddCell(new Phrase("REVOKED", boldFont));
             table.AddCell(new Phrase("SUCCESSFUL", boldFont));
@@ -719,6 +800,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(ftaCountTT.ToString(), normalFont));
             table.AddCell(new Phrase(courtAppearanceTT.ToString(), normalFont));
             table.AddCell(new Phrase(bworderedYesTT.ToString(), normalFont));
+            table.AddCell(new Phrase(bondPaidYesTT.ToString(), normalFont));
+            table.AddCell(new Phrase(mso907TT.ToString(), normalFont));
             table.AddCell(new Phrase(ncArrestTT.ToString(), normalFont));
             table.AddCell(new Phrase(revokedTT.ToString(), normalFont));
             table.AddCell(new Phrase(successfullTT.ToString(), normalFont));
@@ -731,6 +814,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(new Phrase("NO", boldFont));
+            table.AddCell(new Phrase("NO", boldFont));
+            table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
             table.AddCell(new Phrase("VIOL CALLS", boldFont));
             table.AddCell(blankCell);
             table.AddCell(new Phrase("UNSUCCESSFUL", boldFont));
@@ -743,6 +828,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(new Phrase(bwOrderedNoTT.ToString(), normalFont));
+            table.AddCell(new Phrase(bondPaidNoTT.ToString(), normalFont));
+            table.AddCell(new Phrase(msoNonDangerousTT.ToString(), normalFont));
             table.AddCell(new Phrase(ncViolCallsTT.ToString(), normalFont));
             table.AddCell(blankCell);
             table.AddCell(new Phrase(unsuccessfulTT.ToString(), normalFont));
@@ -756,6 +843,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
+            table.AddCell(blankCell);
+            table.AddCell(new Phrase("MISD ONLY", boldFont));
             table.AddCell(new Phrase("CONTACT", boldFont));
             table.AddCell(blankCell);
             table.AddCell(blankCell);
@@ -769,6 +858,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
+            table.AddCell(blankCell);
+            table.AddCell(new Phrase(msoMisdTT.ToString(), normalFont));
             table.AddCell(new Phrase(ncContactTT.ToString(), normalFont));
             table.AddCell(blankCell);
             table.AddCell(blankCell);
@@ -781,6 +872,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
+            table.AddCell(blankCell);
+            table.AddCell(new Phrase("MSO TOTALS", boldFont));
             table.AddCell(new Phrase("OTHER", boldFont));
             table.AddCell(blankCell);
             table.AddCell(blankCell);
@@ -793,11 +886,15 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
+            table.AddCell(blankCell);
+            table.AddCell(new Phrase(msoTotal.ToString(), normalFont));
             table.AddCell(new Phrase(ncOtherTT.ToString(), normalFont));
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
+            table.AddCell(blankCell);
+            table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
@@ -817,11 +914,15 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
+            table.AddCell(blankCell);
+            table.AddCell(blankCell);
             table.AddCell(new Phrase(ncUATT.ToString(), normalFont));
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
+            table.AddCell(blankCell);
+            table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
@@ -841,6 +942,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(blankCell);
             table.AddCell(blankCell);
             table.AddCell(blankCell);
+            table.AddCell(blankCell);
+            table.AddCell(blankCell);
             table.AddCell(new Phrase(ncTotalsTT.ToString(), normalFont));
             table.AddCell(blankCell);
             table.AddCell(blankCell);
@@ -849,7 +952,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             caption.Colspan = 4;
             caption.Border = 0;
             table.AddCell(caption);
-            blankCell.Colspan = 7;
+            blankCell.Colspan = 9;
             table.AddCell(blankCell);
             table.DefaultCell.BackgroundColor = new BaseColor(0, 183, 183);
             PdfPCell hdrCell = new PdfPCell(new Phrase("OFFENSE TYPE", boldFont));
@@ -952,7 +1055,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             if (Request.QueryString["mid"] != null)
                 Int32.TryParse(Request.QueryString["mid"].ToString(), out ModuleId);
             if (Request.QueryString["rid"] != null)
-                reportTypeQSValue= Request.QueryString["rid"].ToString();
+                reportTypeQSValue = Request.QueryString["rid"].ToString();
             if (Request.QueryString["indate"] != null)
                 reportDate = DateTime.Parse(Request.QueryString["indate"]);
 
@@ -962,10 +1065,10 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 ModuleInfo moduleInfo = mCtl.GetModule(ModuleId);
                 if (moduleInfo.TabModuleSettings.Contains("ReportDirectory"))
                 {
-                    ReportRootUrl= moduleInfo.TabModuleSettings["ReportDirectory"].ToString();
+                    ReportRootUrl = moduleInfo.TabModuleSettings["ReportDirectory"].ToString();
                 }
             }
-            if (reportTypeQSValue=="daily")
+            if (reportTypeQSValue == "daily")
             {
                 reportType = ReportType.daily;
             }
@@ -992,14 +1095,14 @@ namespace tjc.Modules.PretrialServices.Sarasota
             {
                 beginningDate = reportDate.ToShortDateString();
                 enddingDate = beginningDate;
-                reportName = string.Format("pts-CRTK-{0}-{1}-{2}.pdf",  reportDate.Month.ToString(), reportDate.Day.ToString(), reportDate.Year.ToString());
+                reportName = string.Format("pts-CRTK-{0}-{1}-{2}.pdf", reportDate.Month.ToString(), reportDate.Day.ToString(), reportDate.Year.ToString());
                 PdfWriter pdfWriter1 = PdfWriter.GetInstance(doc, new FileStream(appPath + reportName, FileMode.Create));
                 pdfWriter1.PageEvent = PageEventHandler;
                 pdfWriter1.SetFullCompression();
                 pdfWriter1.StrictImageSequence = true;
                 pdfWriter1.SetLinearPageMode();
                 // Define the page header
-                
+
                 PageEventHandler.Title = " ";
                 PageEventHandler.HeaderFont = FontFactory.GetFont(BaseFont.COURIER_BOLD, 10, Font.BOLD);
                 doc.Open();
@@ -1015,7 +1118,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 enddingDate = new DateTime(reportDate.Year, reportDate.Month, lastDay).ToShortDateString();
                 reportName = string.Format("pts-CRTK-Monthly-{0}-{1}.pdf", reportDate.Month.ToString(), reportDate.Year.ToString());
                 PdfWriter pdfWriter1 = PdfWriter.GetInstance(doc, new FileStream(appPath + reportName, FileMode.Create));
-               
+
                 pdfWriter1.PageEvent = PageEventHandler;
                 pdfWriter1.SetFullCompression();
                 pdfWriter1.StrictImageSequence = true;
@@ -1040,7 +1143,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 int firstDay = GetWeekStartDay(reportDate);
                 int lastDayMonth = GetLastDayOfMonth(reportDate).Day;
                 int lastDay = firstDay + 6;
-                if(lastDay>lastDayMonth)
+                if (lastDay > lastDayMonth)
                     lastDay = lastDayMonth;
                 beginningDate = new DateTime(reportDate.Year, reportDate.Month, firstDay).ToShortDateString();
                 enddingDate = new DateTime(reportDate.Year, reportDate.Month, lastDay).ToShortDateString();

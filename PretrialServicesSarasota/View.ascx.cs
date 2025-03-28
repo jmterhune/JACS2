@@ -97,6 +97,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 txtmcDanger.Text = dip.McDangerous.ToString();
                 txtmcNonDanger.Text = dip.McNonDangerous.ToString();
                 drpNewArrest.SelectedValue = dip.NonCompArrestViolation;
+                drpMostSeriosOffense.SelectedValue = dip.MostSeriousOffense;
                 txtCourtAppearances.Text = dip.CourtAppearances.ToString();
                 if (dip.FtaArrestHearing)
                     rblFtaArrestHearing.SelectedValue = "1";
@@ -106,6 +107,10 @@ namespace tjc.Modules.PretrialServices.Sarasota
                     rblIndigent.SelectedValue = "1";
                 else
                     rblIndigent.SelectedValue = "0";
+                if (dip.BondPaid)
+                    rblBondPaid.SelectedValue = "1";
+                else
+                    rblBondPaid.SelectedValue = "0";
                 chkRevoked.Checked = dip.IsRevoked;
                 chkBwOrdered.Checked = dip.BwOrdered;
                 if (dip.Completion.HasValue)
@@ -160,13 +165,17 @@ namespace tjc.Modules.PretrialServices.Sarasota
             dip.CaseNumber = txtCaseNumber.Text;
             dip.ArrestCharges = txtCharges.Text;
             dip.NonCompArrestViolation = drpNewArrest.SelectedValue;
+            dip.MostSeriousOffense = drpMostSeriosOffense.SelectedValue;
             dip.IsRevoked = chkRevoked.Checked;
             dip.BwOrdered = chkBwOrdered.Checked;
-
             if (rblFtaArrestHearing.SelectedIndex >= 0)
                 dip.FtaArrestHearing = rblFtaArrestHearing.SelectedValue == "1";
             else
                 dip.FtaArrestHearing = false;
+            if (rblBondPaid.SelectedIndex >= 0)
+                dip.BondPaid = rblBondPaid.SelectedValue == "1";
+            else
+                dip.BondPaid = false;
             if (rblIndigent.SelectedIndex >= 0)
                 dip.Indigent = rblIndigent.SelectedValue == "1";
             else
@@ -213,7 +222,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         }
         protected void cmdReport_Click(object sender, EventArgs e)
         {
-            string reportUrl = string.Format("{0}/PretrialReport.aspx?mid={1}&indate={2}&st={3}", TemplateSourceDirectory,  ModuleId, IntakeDate.ToShortDateString(), DateTime.Now.ToString("yyyyMMddHHmmss"));
+            string reportUrl = string.Format("{0}/PretrialReport.aspx?mid={1}&indate={2}&st={3}", TemplateSourceDirectory, ModuleId, IntakeDate.ToShortDateString(), DateTime.Now.ToString("yyyyMMddHHmmss"));
             switch (hdReportType.Value)
             {
                 case "0":
@@ -335,18 +344,18 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 hdIntakeDate.Value = IntakeDate.ToShortDateString();
                 if (IntakeDate != null)
                 {
-                    rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDate( IntakeDate);
+                    rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDate(IntakeDate);
                     rptDefendantsInProgram.DataBind();
                 }
             }
             else if (searchType == Enumerations.SearchType.caseNumber)
             {
-                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCaseNumber( txtSearchText.Text);
+                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByCaseNumber(txtSearchText.Text);
                 rptDefendantsInProgram.DataBind();
             }
             else if (searchType == Enumerations.SearchType.defendantName)
             {
-                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDefendantName( txtSearchText.Text);
+                rptDefendantsInProgram.DataSource = ctl.GetDefendantsInProgramByDefendantName(txtSearchText.Text);
                 rptDefendantsInProgram.DataBind();
             }
             pnlIntakeForm.Enabled = false;
@@ -386,7 +395,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         private void FillIntakeLog()
         {
             var iCtl = new IntakeLogItemController();
-            IntakeLogItem intake = iCtl.GetIntakeLogItemByDate( IntakeDate);
+            IntakeLogItem intake = iCtl.GetIntakeLogItemByDate(IntakeDate);
             if (intake != null)
             {
                 if (intake.Interviewed.HasValue)
@@ -435,6 +444,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             chkRevoked.Checked = false;
             rblIndigent.SelectedIndex = -1;
             hdItemId.Value = string.Empty;
+            rblBondPaid.SelectedIndex = -1;
+            drpMostSeriosOffense.SelectedIndex = -1;
         }
         private DateTime? GetCookieIntakeDate()
         {

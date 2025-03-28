@@ -731,13 +731,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <iframe id="ifrDocument" runat="server" class="create-form" frameborder="0" width="1" height="1" style="display: hidden" />
                                     <asp:HiddenField ID="hdRequestOutstanding" runat="server" ClientIDMode="Static" />
                                     <asp:HiddenField ID="hdCalendarEventTypeId" runat="server" ClientIDMode="Static" />
                                     <asp:HiddenField ID="hdThirdExtension" runat="server" ClientIDMode="Static" />
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="return ToggleFileForm(false);" CssClass="btn btn-primary" ID="cmdSave" ValidationGroup="FileSelection" runat="server" Text="Save" OnClick="cmdSave_Click" />
+                                    <asp:Button id="cmdRefreshExtensions" OnClick="cmdRefreshExtensions_Click" CausesValidation="false" CssClass="hidden" ClientIDMode="Static" Text="Refresh" runat="server" />
+                                    <button id="cmdSave" type="button" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -762,12 +762,15 @@
         'xlsx': 1,
     };
     const moduleId = <%=ModuleId%>;
+    const portalId = <%=PortalId%>;
     const tabId = <%=TabId%>;
     const designationId = <%=DesignationId%>;
     const isAdmin = "<%=IsAdmin%>";
     const userId = <%=UserId%>;
     const adminRole = "<%=AdminRole%>";
     const uploadHandler = "<%=UploadHandler%>";
+    const templateSourceDirectory = "<%=TemplateSourceDirectory%>";
+    const domainUrl = window.location.origin;
     var courtReporterOptions = [];
     var scopistOptions = [];
     var transcriptionistOptions = [];
@@ -775,6 +778,7 @@
     var judgeOptions = [];
     var acknowledgementTypes = [{ id: 0, name: "Acknowledgment Fee or Deposit Waived" }, { id: 1, name: "Acknowledgment Private Paying" }];
     var extensionDocTypes = [{ id: 2, name: "Extension Request" }];
+    var extensionAddUrl = null;
     var serviceEmployee = {
         path: "TranscriptEmployee",
         framework: $.ServicesFramework(moduleId)
@@ -783,13 +787,16 @@
         path: "TranscriptReporter",
         framework: $.ServicesFramework(moduleId)
     };
-
+    var serviceEvent = {
+        path: "TranscriptEvent",
+        framework: $.ServicesFramework(moduleId)
+    };
     (function ($, Sys) {
         $(document).ready(function () {
-            //$(".date-picker").on("blur", function (e) {
-            //    var date = $(this).val();
-            //    $(this).val(date.replace(/\.|-/g, "/"));
-            //});
+            $(".date-picker").on("blur", function (e) {
+                var date = $(this).val();
+                $(this).val(date.replace(/\.|-/g, "/"));
+            });
             PageInit();
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
                 PageInit();
@@ -805,8 +812,10 @@
                 $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             }, 0);
         });
+        serviceEvent.baseUrl = serviceEvent.framework.getServiceRoot(serviceEvent.path);
         serviceEmployee.baseUrl = serviceEmployee.framework.getServiceRoot(serviceEmployee.path);
         serviceReporter.baseUrl = serviceReporter.framework.getServiceRoot(serviceReporter.path);
+        extensionAddUrl = `${serviceEvent.baseUrl}Event/CreateExtension/`;
         judgeOptions = fetchEmployeeOptions(0);
         courtReporterOptions = fetchCourtReporterOptions("<%=CourtReporterRole%>");
         scopistOptions = fetchEmployeeOptions(2);
@@ -1001,6 +1010,26 @@
                 $('#drpProofer').hide();
             }
         });
+        $('#cmdSave').on("click", function (e) {
+            e.preventDefault();
+            ToggleFileForm(false);
+            var documentType = Number($("#drpFormType").val());
+            var eventTypeId = Number($("#hdCalendarEventTypeId").val());
+            var submittedDate = $("#txtSubmittedDate").val();
+            var requestedDate = $("#txtRequestedDueDate").val();
+            var countyName = $("#txtCounty").val();
+            var reason = $("#txtReason").val();
+            var formCreationUrl = `${domainUrl}/${templateSourceDirectory}/Handlers/WordDocHandler.ashx?did=${designationId}&type=${documentType}&reason=${reason}&date=${requestedDate}`;
+            var createdByUserId = userId;
+            if (documentType == 2) {
+                var newExtension = { designationid: designationId, eventtypeid: eventTypeId, requesteddate: requestedDate, submitteddate: submittedDate,
+                    countyname: countyName, createdbyuserid: userId, portalid: portalId, adminrole: adminRole
+                };
+                AddExtension(newExtension, formCreationUrl);
+            } else {
+                window.location.replace(formCreationUrl);
+            }
+        });
         $('#prooferSearch').on("blur", function () {
             let input = $(this).val().toLowerCase();
             let name = $(this).val();
@@ -1119,6 +1148,34 @@
         $("#UploadModal").on("change", "#uplFile", function (e) {
             check_extension($(this).val());
         });
+    }
+    function AddExtension(extension, url) {
+        var extensionMessage = "";
+        try {
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: extensionAddUrl,
+                beforeSend: serviceEvent.framework.setModuleHeaders,
+                data: (extension),
+                success: function (result) {
+                    var extensionId = result.ExtensionId;
+                    if (extensionId) {
+                        $("#cmdRefreshExtensions").click();
+                        window.location.replace(url);
+                    } else {
+                        extensionMessage += "Unable to add extension. Please refresh the page and retry \n\n\n";
+                        ShowAlert("Error Attempting to Add Extension", extensionMessage);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    ShowAlert("Error Attempting to Add Extension", "Unable to add extension.\n\nMake sure you are logged in and try again. \n\nError:" + error);
+                }
+            });
+        } catch (error) {
+            extensionMessage += error + " \n\n\n";
+            ShowAlert("Error Attempting to Add Extension", extensionMessage);
+        }
     }
     function ValidateDateType(sender, args) {
         args.IsValid = false;
@@ -1311,9 +1368,6 @@
         $('#drpFormType').val("");
         $('#txtRequestedDays').val("");
         $('#txtRequestedDueDate').val("");
-        $('#hdRequestOutstanding').val("");
-        $('#hdCalendarEventTypeId').val("");
-        $('#hdThirdExtension').val("");
         $('.create-form').attr('src', '');
     }
     function ToggleEventForm(toggleValue) {

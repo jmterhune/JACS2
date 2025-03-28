@@ -330,6 +330,15 @@ namespace tjc.Modules.PretrialServices.Sarasota
         protected global::System.Web.UI.WebControls.TextBox txtmcNonDanger;
 
         /// <summary>
+        /// drpMostSeriosOffense control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpMostSeriosOffense;
+
+        /// <summary>
         /// drpCompletion control.
         /// </summary>
         /// <remarks>
@@ -339,13 +348,22 @@ namespace tjc.Modules.PretrialServices.Sarasota
         protected global::System.Web.UI.WebControls.DropDownList drpCompletion;
 
         /// <summary>
-        /// drpMostSeriosOffense control.
+        /// chkBwOrdered control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpMostSeriosOffense;
+        protected global::System.Web.UI.WebControls.CheckBox chkBwOrdered;
+
+        /// <summary>
+        /// chkRevoked control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkRevoked;
 
         /// <summary>
         /// rblFtaArrestHearing control.
@@ -373,24 +391,6 @@ namespace tjc.Modules.PretrialServices.Sarasota
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButtonList rblBondPaid;
-
-        /// <summary>
-        /// chkBwOrdered control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkBwOrdered;
-
-        /// <summary>
-        /// chkRevoked control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkRevoked;
 
         /// <summary>
         /// hdItemId control.

@@ -63,7 +63,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
 
         public static void NotifiyRecordingManager(string defendant, string url, int sequence, string managerRole, int portalId, string county)
         {
-            string subject = "Designation Event Complete Notification";
+            string subject = "Designation Event Added Notification";
             StringBuilder body = new StringBuilder();
 
             if (sequence > 0)

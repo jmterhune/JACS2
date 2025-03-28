@@ -45,24 +45,25 @@ namespace tjc.Modules.TranscriptDatabase.Services.ViewModels
     {
         public ExtensionViewModel(ExtensionRequest extensionRequest)
         {
-            ExtensionID = extensionRequest.ExtensionID;
-            DesignationID = extensionRequest.DesignationID;
-            EventTypeID = extensionRequest.EventTypeID;
+            ExtensionId = extensionRequest.ExtensionID;
+            DesignationId = extensionRequest.DesignationID;
+            EventTypeId = extensionRequest.EventTypeID;
             RequestedDate = extensionRequest.RequestedDate.Value;
             GrantedDate = extensionRequest.GrantedDate.Value;
             SubmittedDate = extensionRequest.SubmittedDate.Value;
             CreatedDate = extensionRequest.CreatedDate;
-            CreatedByUserID = extensionRequest.CreatedByUserID;
-            LastModifiedByUserID = extensionRequest.LastModifiedByUserID;
+            CreatedByUserId = extensionRequest.CreatedByUserID;
+            LastModifiedByUserId = extensionRequest.LastModifiedByUserID;
             LastModifiedDate=extensionRequest.LastModifiedDate;
             Approved=extensionRequest.Approved;
         }
+        public ExtensionViewModel() { }
         [JsonProperty("extensionid")] 
-        public int ExtensionID { get; set; }
+        public int ExtensionId { get; set; }
         [JsonProperty("designationid")] 
-        public int DesignationID { get; set; }
+        public int DesignationId { get; set; }
         [JsonProperty("eventtypeid")] 
-        public int EventTypeID { get; set; }
+        public int EventTypeId { get; set; }
         [JsonProperty("requesteddate")] 
         public DateTime RequestedDate { get; set; }
         [JsonProperty("granteddate")] 
@@ -72,12 +73,22 @@ namespace tjc.Modules.TranscriptDatabase.Services.ViewModels
         [JsonProperty("createddate")] 
         public DateTime CreatedDate { get; set; }
         [JsonProperty("createdbyid")] 
-        public int CreatedByUserID { get; set; }
+        public int CreatedByUserId { get; set; }
         [JsonProperty("lastmodifieddate")] 
         public DateTime LastModifiedDate { get; set; }
         [JsonProperty("lastmodifiedbyuserid")] 
-        public int LastModifiedByUserID { get; set; }
+        public int LastModifiedByUserId { get; set; }
         [JsonProperty("approved")]
         public bool Approved { get; set; }
+        [JsonProperty("documenttypeid")]
+        public int DocumentTypeId { get; set; }
+        [JsonProperty("hasduedate")]
+        public bool HasDueDate { get; set; }
+        [JsonProperty("portalid")]
+        public int PortalId { get; set; }
+        [JsonProperty("adminrole")]
+        public string AdminRole { get; set; }
+        [JsonProperty("countyname")]
+        public string CountyName { get; set; }
     }
 }

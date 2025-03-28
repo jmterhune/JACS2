@@ -10,12 +10,10 @@
 ' 
 */
 
-using DocumentFormat.OpenXml.EMMA;
 using DotNetNuke.Abstractions;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework.JavaScriptLibraries;
-using DotNetNuke.Services.EventQueue;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -26,7 +24,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.TranscriptDatabase.Components;
 using tjc.Modules.TranscriptDatabase.Services.ViewModels;
-using Literal = System.Web.UI.WebControls.Literal;
 
 namespace tjc.Modules.TranscriptDatabase
 {
@@ -46,8 +43,6 @@ namespace tjc.Modules.TranscriptDatabase
     public partial class EditStatus : TranscriptDatabaseModuleBase
     {
         private readonly INavigationManager _navigationManager;
-
-
         #region Methods
         public EditStatus()
         {
@@ -270,8 +265,6 @@ namespace tjc.Modules.TranscriptDatabase
             {
                 if (!IsPostBack)
                 {
-                    if (!IsAdmin)
-                        Response.Redirect(_navigationManager.NavigateURL());
                     if (ErrorMessage != string.Empty)
                         ltPageMessage.Text = string.Format(MessageFormat, ErrorMessage, "alert alert-danger", "fas fa-circle-exclamation");
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
@@ -324,6 +317,10 @@ namespace tjc.Modules.TranscriptDatabase
                 scriptMan.RegisterAsyncPostBackControl(cmdEdit);
                 scriptMan.RegisterPostBackControl(cmdDelete);
             }
+        }
+        protected void cmdRefreshExtensions_Click(object sender, EventArgs e)
+        {
+            BindExtensionRequests(new ExtensionRequestController());
         }
         protected void rptExtensions_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
@@ -587,76 +584,6 @@ namespace tjc.Modules.TranscriptDatabase
                 Response.Redirect(EditUrl("did", DesignationId.ToString(), "status", "error=" + Server.UrlEncode(exc.Message)));
             }
         }
-        protected void cmdSave_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                bool hasRequestedDays = Int32.TryParse(txtRequestedDays.Text, out int requestedDays);
-                bool hasRequestedDate = DateTime.TryParse(txtRequestedDueDate.Text, out DateTime requestedDate);
-                bool hasDueDate = DateTime.TryParse(txtDueDate.Text, out DateTime dueDate);
-                bool hasEventTypeId = Int32.TryParse(hdCalendarEventTypeId.Value, out int eventTypeId);
-                bool hasSubmittedDate = DateTime.TryParse(txtSubmittedDate.Text, out DateTime submittedDate);
-                DocumentTypes documentType = (DocumentTypes)Int32.Parse(hdSelectedFormType.Value);
-                string formCreationUrl = string.Empty;
-                if (documentType == DocumentTypes.ExtensionRequest)
-                {
-                    if (hasDueDate)
-                    {
-                        var eCtl = new ExtensionRequestController();
-                        var ctl = new CalendarController();
-                        ExtensionRequest extensionRequest = new ExtensionRequest
-                        {
-                            Approved = false,
-                            DesignationID = this.DesignationId,
-                            EventTypeID = eventTypeId,
-                            SubmittedDate = hasSubmittedDate ? submittedDate : DateTime.Today,
-                            RequestedDate = requestedDate,
-                            CreatedByUserID = UserId,
-                            CreatedDate = DateTime.Now,
-                            LastModifiedByUserID = UserId,
-                            LastModifiedDate = DateTime.Now,
-                        };
-                        eCtl.CreateExtensionRequest(extensionRequest);
-                        Components.Calendar calendar = ctl.GetCalendarByDesignation(this.DesignationId);
-                        if (calendar != null)
-                        {
-                            calendar.EventTypeID = eventTypeId;
-                            calendar.RequestOutstanding = true;
-                            ctl.UpdateCalendar(calendar);
-                        }
-                        else
-                        {
-                            ltPageMessage.Text = string.Format(MessageFormat, "Could not retrieve calendar information for designation. Update the due date to recreate the calendar event.", "alert alert-warning", "fas fa-triangle-exclamation");
-                        }
-                        string subject = string.Format("Extension Request for Designation: {0}", this.DesignationId);
-                        Notifications.NotifiyRecordingManager(subject, "A new extension request has been submitted", PortalId, AdminRole, txtCounty.Text);
-                        BindExtensionRequests(eCtl);
-                        GetExtensionForm(requestedDate);
-                    }
-                    else
-                    {
-                        ltPageMessage.Text = string.Format(MessageFormat, "The Due Date was not entered for the Current Designation. Please close the window and add the due date.", "alert alert-danger", "fas fa-circle-exclamation");
-                    }
-                }
-                else
-                {
-                    string reason = txtReason.Text;
-                    if (documentType == DocumentTypes.PrivatePaying)
-                    {
-                        reason = "";
-                    }
-                    formCreationUrl = string.Format("{0}/Handlers/WordDocHandler.ashx?did={1}&type={2}&reason={3}&date={4}", TemplateSourceDirectory, DesignationId, hdSelectedFormType.Value, reason, Server.UrlEncode(requestedDate.ToShortDateString()));
-                }
-                ClearFileSelectionForm();
-                ScriptManager.RegisterStartupScript(pnlStatus, pnlStatus.GetType(), "OpenForm", string.Format("ShowForm('{0}')", formCreationUrl), true);
-            }
-            catch (Exception exc)
-            {
-                ClearFileSelectionForm();
-                Exceptions.ProcessModuleLoadException(this, exc);
-                Response.Redirect(EditUrl("did", DesignationId.ToString(), "status", "error=" + Server.UrlEncode(exc.Message)));
-            }
-        }
         protected void cmdUpdateTranscriptFiled_Click(object sender, EventArgs e)
         {
             try
@@ -828,30 +755,19 @@ namespace tjc.Modules.TranscriptDatabase
                     {
                         if (oldCourtReporterId != courtReporterId)
                         {
-                            if (courtReporterId <= 0)
+                            try
                             {
-                                try
+                                if (oldCourtReporterId <= 0)
                                 {
-                                    Notifications.SendCourtReporterResetNotification(courtReporterId, txtDefendantName.Text, eventSequence, AdminRole, PortalId, UserInfo, txtCounty.Text);
+                                    Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
                                 }
-                                catch { }
-                            }
-                            else
-                            {
-                                try
+                                else
                                 {
-                                    if (oldCourtReporterId <= 0)
-                                    {
-                                        Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
-                                    }
-                                    else
-                                    {
-                                        Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
-                                        Notifications.SendCourtReporterTransferrNotification(oldCourtReporterId, courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, txtCounty.Text);
-                                    }
+                                    Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
+                                    Notifications.SendCourtReporterTransferrNotification(oldCourtReporterId, courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, txtCounty.Text);
                                 }
-                                catch { }
                             }
+                            catch { }
                         }
                     }
                     ctl.UpdateEvent(evt);
@@ -862,6 +778,8 @@ namespace tjc.Modules.TranscriptDatabase
                     evt.CreatedDate = DateTime.Now;
                     evt.CreatedByUserID = UserId;
                     ctl.CreateEvent(evt);
+                    if (hasCourtReporter)
+                        Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
                     Notifications.NotifiyRecordingManager(txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, AdminRole, PortalId, txtCounty.Text);
                 }
                 ClearEventForm();
@@ -881,5 +799,7 @@ namespace tjc.Modules.TranscriptDatabase
                 new object[] { sender as UpdatePanel });
         }
         #endregion
+
+
     }
 }
