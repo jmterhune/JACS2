@@ -593,7 +593,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     var ctl = new DesignationController();
                     Designation designation = ctl.GetDesignation(DesignationId);
-                    if (filedDate != designation.TranscriptFiled.Value)
+                    if (!designation.TranscriptFiled.HasValue ||filedDate != designation.TranscriptFiled)
                     {
                         designation.TranscriptFiled = filedDate;
                         ctl.UpdateDesignation(designation);
@@ -637,7 +637,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     var ctl = new DesignationController();
                     Designation designation = ctl.GetDesignation(DesignationId);
-                    if (dueDate != designation.DueDate.Value)
+                    if (!designation.DueDate.HasValue || dueDate != designation.DueDate.Value)
                     {
                         designation.DueDate = dueDate;
                         ctl.UpdateDesignation(designation);
