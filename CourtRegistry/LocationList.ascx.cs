@@ -11,16 +11,14 @@
 */
 
 using DotNetNuke.Services.Exceptions;
+using iText.Html2pdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.UI;
-using System.Web;
 using System.Web.UI.WebControls;
 using tjc.Modules.CourtRegistry.Components;
-using iText.Html2pdf;
-using iText.Kernel.Pdf;
 
 namespace tjc.Modules.CourtRegistry
 {
@@ -39,7 +37,6 @@ namespace tjc.Modules.CourtRegistry
     /// -----------------------------------------------------------------------------
     public partial class LocationList : CourtRegistryModuleBase
     {
-        private int test;
         #region Methods
         private void BindData()
         {

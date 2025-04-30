@@ -60,9 +60,9 @@
             </div>
             <div class="col-5">
                 <section class="call-to-action call-to-action-default pt-3 pb-2">
-                    <p class="text-left">Begin typing the clients last name below to check for previous log</p>
+                    <p class="text-start">Begin typing the clients last name below to check for previous log</p>
                     <div class="row form-group">
-                        <div class="col text-left">
+                        <div class="col text-start">
                             <asp:Label runat="server" AssociatedControlID="txtName" CssClass="fw-bold" Text="Client" ToolTip="Begin typing the clients last name below to check for previous log" />
                             <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtName" />
                             <select id="drpClients" class="form-control client-list position-absolute top-20" style="z-index: 1000"></select>

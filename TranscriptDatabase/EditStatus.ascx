@@ -83,25 +83,25 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-1 row">
-                                <label for="txtDefendantName" class="col-sm-4 col-form-label text-right">Defendant Name:</label>
+                                <label for="txtDefendantName" class="col-sm-4 col-form-label text-end">Defendant Name:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtDefendantName" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtTribunalCase" class="col-sm-4 col-form-label text-right">Tribunal Case #:</label>
+                                <label for="txtTribunalCase" class="col-sm-4 col-form-label text-end">Tribunal Case #:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtTribunalCase" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtAppellateCase" class="col-sm-4 col-form-label text-right">Appellate Case #:</label>
+                                <label for="txtAppellateCase" class="col-sm-4 col-form-label text-end">Appellate Case #:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtAppellateCase" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtCounty" class="col-sm-4 col-form-label text-right">County:</label>
+                                <label for="txtCounty" class="col-sm-4 col-form-label text-end">County:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtCounty" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
@@ -109,25 +109,25 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-1 row">
-                                <label for="txtServiceDate" class="col-sm-4 col-form-label text-right">Service Date:</label>
+                                <label for="txtServiceDate" class="col-sm-4 col-form-label text-end">Service Date:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtServiceDate" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtReceiptDate" class="col-sm-4 col-form-label text-right">Receipt Date:</label>
+                                <label for="txtReceiptDate" class="col-sm-4 col-form-label text-end">Receipt Date:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtReceiptDate" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtDueDate" class="col-sm-4 col-form-label text-right">Due Date:</label>
+                                <label for="txtDueDate" class="col-sm-4 col-form-label text-end">Due Date:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtDueDate" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtTranscriptFiledDate" class="col-sm-4 col-form-label text-right">Transcript Filed:</label>
+                                <label for="txtTranscriptFiledDate" class="col-sm-4 col-form-label text-end">Transcript Filed:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtTranscriptFiledDate" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
@@ -135,25 +135,25 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-1 row">
-                                <label for="txtHearingDates" class="col-sm-4 col-form-label text-right">Hearing Dates:</label>
+                                <label for="txtHearingDates" class="col-sm-4 col-form-label text-end">Hearing Dates:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtHearingDates" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtDays" class="col-sm-4 col-form-label text-right">Days:</label>
+                                <label for="txtDays" class="col-sm-4 col-form-label text-end">Days:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtDays" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtEstimatedPages" class="col-sm-4 col-form-label text-right">Estimated Pages:</label>
+                                <label for="txtEstimatedPages" class="col-sm-4 col-form-label text-end">Estimated Pages:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtEstimatedPages" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
                             </div>
                             <div class="mb-1 row">
-                                <label for="txtCreatedBy" class="col-sm-4 col-form-label text-right">Created By:</label>
+                                <label for="txtCreatedBy" class="col-sm-4 col-form-label text-end">Created By:</label>
                                 <div class="col-sm-8">
                                     <asp:TextBox ID="txtCreatedBy" ClientIDMode="Static" ReadOnly="true" CssClass="form-control-plaintext" runat="server" />
                                 </div>
@@ -171,7 +171,7 @@
                     </div>
                     <div class="row radio-button-list mb-3">
                         <div class="col-auto">
-                            <asp:CheckBox ID="chkAcknowledgementFiled" ClientIDMode="Static" Text="Acknowledgment Filed/No Acknowledgment Needed" runat="server" />
+                            <asp:CheckBox ID="chkAcknowledgementFiled" ClientIDMode="Static" AutoPostBack="true" OnCheckedChanged="chkAcknowledgementFiled_CheckedChanged" Text="Acknowledgment Filed/No Acknowledgment Needed" runat="server" />
                         </div>
                         <div class="col-auto">
                             <asp:CheckBox ID="chkPublicDefender" Enabled="false" ClientIDMode="Static" runat="server" Text="Public Defender/Special Appointed Public Defender" />
@@ -1437,7 +1437,7 @@
             }
             var filename = file.name;
             var data = new FormData();
-            data.append(filename, file);
+            data.append("file", file);
             data.append("mid", moduleId);
             data.append("did", designationId);
             data.append("des", description);

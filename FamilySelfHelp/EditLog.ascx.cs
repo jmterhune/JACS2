@@ -207,6 +207,8 @@ namespace tjc.Modules.FamilySelfHelp
                 var ctl = new Components.LogController();
                 Log log = GetNewLog(ClientId);
                 ctl.CreateLog(log);
+                SetServicesProvided(log.LogId);
+                SetCaseTypes(log.LogId);
                 Response.Redirect(_navigationManager.NavigateURL(TabId, "", "cid=" + ClientId.ToString()));
             }
             else

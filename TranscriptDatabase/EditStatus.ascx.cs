@@ -74,17 +74,17 @@ namespace tjc.Modules.TranscriptDatabase
             var ctl = new CalendarController();
             Components.Calendar calendar = new Components.Calendar();
             {
-                var withBlock = calendar;
-                withBlock.CreatedByUserID = UserId;
-                withBlock.CreatedDate = DateTime.Now;
-                withBlock.LastModifiedDate = DateTime.Now;
-                withBlock.LastModifiedByUserID = UserId;
-                withBlock.DesignationID = DesignationId;
-                withBlock.StartTime = designation.DueDate.Value;
-                withBlock.EndTime = designation.DueDate.Value;
-                withBlock.EventTypeID = (int)eventTypeId;
-                withBlock.Subject = designation.CalendarName;
-                withBlock.RequestOutstanding = requestOutstanding;
+
+                calendar.CreatedByUserID = UserId;
+                calendar.CreatedDate = DateTime.Now;
+                calendar.LastModifiedDate = DateTime.Now;
+                calendar.LastModifiedByUserID = UserId;
+                calendar.DesignationID = DesignationId;
+                calendar.StartTime = designation.DueDate.Value;
+                calendar.EndTime = designation.DueDate.Value;
+                calendar.EventTypeID = (int)eventTypeId;
+                calendar.Subject = designation.CalendarName;
+                calendar.RequestOutstanding = requestOutstanding;
             }
             ctl.CreateCalendar(calendar);
             return calendar;
@@ -448,7 +448,6 @@ namespace tjc.Modules.TranscriptDatabase
                     ctl.UpdateEvent(evt);
                     try
                     {
-                        txtDefendantName.Text = e.CommandArgument.ToString();
                         Notifications.NotifiyRecordingManager(txtDefendantName.Text, EditUrl("did", DesignationId.ToString(), "status"), sequence, AdminRole, PortalId, txtCounty.Text);
                     }
                     catch (Exception exc)
@@ -568,7 +567,7 @@ namespace tjc.Modules.TranscriptDatabase
 
                         ctl.CreateAttachment(attachment);
                     }
-                    Response.Redirect(EditUrl("did", DesignationId.ToString(), "status"), true);
+                    Response.Redirect(EditUrl("did", DesignationId.ToString(), "status"), false);
                 }
                 else
                 {
@@ -593,7 +592,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     var ctl = new DesignationController();
                     Designation designation = ctl.GetDesignation(DesignationId);
-                    if (!designation.TranscriptFiled.HasValue ||filedDate != designation.TranscriptFiled)
+                    if (!designation.TranscriptFiled.HasValue || filedDate != designation.TranscriptFiled)
                     {
                         designation.TranscriptFiled = filedDate;
                         ctl.UpdateDesignation(designation);
@@ -694,59 +693,110 @@ namespace tjc.Modules.TranscriptDatabase
                 evt.HearingType = drpHearingType.SelectedValue;
                 if (hasPresidingJudge)
                     evt.PresidingJudgeID = judgeId;
+                else
+                    evt.PresidingJudgeID = -1;
                 if (hasCourtReporter)
                 {
                     oldCourtReporterId = evt.CourtReporterID;
                     evt.CourtReporterID = courtReporterId;
                 }
+                else
+                {
+                    oldCourtReporterId = evt.CourtReporterID;
+                    evt.CourtReporterID = -1;
+                }
                 if (!string.IsNullOrEmpty(txtEstimagedPages.Text))
                     evt.Pages = Int32.Parse(txtEstimagedPages.Text);
-                if (!string.IsNullOrEmpty(txtEstimagedPages.Text))
-                    evt.Pages = Int32.Parse(txtEstimagedPages.Text);
+                else
+                    evt.Pages = -1;
                 if (!string.IsNullOrEmpty(txtDaysUntilCompletion.Text))
                     evt.DaysUntilComplete = Int32.Parse(txtDaysUntilCompletion.Text);
+                else
+                    evt.DaysUntilComplete = -1;
                 if (hasScopist)
                     evt.ScopistID = scopistId;
+                else
+                    evt.ScopistID = -1;
                 if (hasTranscriptionist)
                     evt.TranscriptionistID = transcriptionistId;
+                else
+                    evt.TranscriptionistID = -1;
                 if (hasEditor)
                     evt.EditorID = editorId;
+                else
+                    evt.EditorID = -1;
                 if (hasProofer)
                     evt.ProoferID = proofterId;
+                else
+                    evt.ProoferID = -1;
                 if (hasScopSentDate)
                     evt.ScopSent = scopSentDate;
+                else
+                    evt.ScopSent = null;
                 if (hasScopReturnDate)
                     evt.ScopReturned = scopReturnDate;
+                else
+                    evt.ScopReturned = null;
                 if (hasTransSentDate)
                     evt.TransSent = transSentDate;
+                else
+                    evt.TransSent = null;
                 if (hasTransReturnDate)
                     evt.TransReturned = transReturnDate;
+                else
+                    evt.TransReturned = null;
                 if (hasEditSentDate)
                     evt.EditSent = editSentDate;
+                else
+                    evt.EditSent = null;
                 if (hasEditReturnDate)
                     evt.EditReturned = editReturnDate;
+                else
+                    evt.EditReturned = null;
                 if (hasProofSentDate)
                     evt.ProofSent = proofSentDate;
+                else
+                    evt.ProofSent = null;
                 if (hasProofReturnDate)
                     evt.ProofReturned = proofReturnDate;
+                else
+                    evt.ProofReturned = null;
                 if (!string.IsNullOrEmpty(txtScopePagesIn.Text))
                     evt.ScopPagesIn = Int32.Parse(txtScopePagesIn.Text);
+                else
+                    evt.ScopPagesIn = -1;
                 if (!string.IsNullOrEmpty(txtScopePagesOut.Text))
                     evt.ScopPagesOut = Int32.Parse(txtScopePagesOut.Text);
+                else
+                    evt.ScopPagesOut = -1;
                 if (!string.IsNullOrEmpty(txtTransPagesIn.Text))
                     evt.TransPagesIn = Int32.Parse(txtTransPagesIn.Text);
+                else
+                    evt.TransPagesIn = -1;
                 if (!string.IsNullOrEmpty(txtTransPagesOut.Text))
                     evt.TransPagesOut = Int32.Parse(txtTransPagesOut.Text);
+                else
+                    evt.TransPagesOut = -1;
                 if (!string.IsNullOrEmpty(txtEditPagesIn.Text))
                     evt.EditPagesIn = Int32.Parse(txtEditPagesIn.Text);
+                else
+                    evt.EditPagesIn = -1;
                 if (!string.IsNullOrEmpty(txtEditPagesOut.Text))
                     evt.EditPagesOut = Int32.Parse(txtEditPagesOut.Text);
+                else
+                    evt.EditPagesOut = -1;
                 if (!string.IsNullOrEmpty(txtProofPagesIn.Text))
                     evt.ProofPagesIn = Int32.Parse(txtProofPagesIn.Text);
+                else
+                    evt.ProofPagesIn = -1;
                 if (!string.IsNullOrEmpty(txtProofPagesOut.Text))
                     evt.ProofPagesOut = Int32.Parse(txtProofPagesOut.Text);
+                else
+                    evt.ProofPagesOut = -1;
                 if (!string.IsNullOrEmpty(txtCompletedPages.Text))
                     evt.CompletedPages = Int32.Parse(txtCompletedPages.Text);
+                else
+                    evt.CompletedPages = -1;
                 evt.LastModifiedByUserID = UserId;
                 evt.LastModifiedDate = DateTime.Now;
                 if (hasEvent)
@@ -759,12 +809,12 @@ namespace tjc.Modules.TranscriptDatabase
                             {
                                 if (oldCourtReporterId <= 0)
                                 {
-                                    Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
+                                    Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("did", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
                                 }
                                 else
                                 {
-                                    Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
-                                    Notifications.SendCourtReporterTransferrNotification(oldCourtReporterId, courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, txtCounty.Text);
+                                    Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("did", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
+                                    Notifications.SendCourtReporterTransferrNotification(oldCourtReporterId, courtReporterId, txtDefendantName.Text, EditUrl("did", DesignationId.ToString(), "status"), eventSequence, PortalId, txtCounty.Text);
                                 }
                             }
                             catch { }
@@ -779,8 +829,8 @@ namespace tjc.Modules.TranscriptDatabase
                     evt.CreatedByUserID = UserId;
                     ctl.CreateEvent(evt);
                     if (hasCourtReporter)
-                        Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
-                    Notifications.NotifiyRecordingManager(txtDefendantName.Text, EditUrl("designationId", DesignationId.ToString(), "status"), eventSequence, AdminRole, PortalId, txtCounty.Text);
+                        Notifications.SendCourtReporterNotification(courtReporterId, txtDefendantName.Text, EditUrl("did", DesignationId.ToString(), "status"), eventSequence, PortalId, UserInfo, txtCounty.Text);
+                    Notifications.NotifiyRecordingManager(txtDefendantName.Text, EditUrl("did", DesignationId.ToString(), "status"), eventSequence, AdminRole, PortalId, txtCounty.Text);
                 }
                 ClearEventForm();
                 BindEvents(ctl);
@@ -798,8 +848,13 @@ namespace tjc.Modules.TranscriptDatabase
             methodInfo.Invoke(ScriptManager.GetCurrent(Page),
                 new object[] { sender as UpdatePanel });
         }
+        protected void chkAcknowledgementFiled_CheckedChanged(object sender, EventArgs e)
+        {
+            var ctl = new DesignationController();
+            Designation designation = ctl.GetDesignation(DesignationId);
+            designation.AcknowledgmentFiled = chkAcknowledgementFiled.Checked;
+            ctl.UpdateDesignation(designation);
+        }
         #endregion
-
-
     }
 }

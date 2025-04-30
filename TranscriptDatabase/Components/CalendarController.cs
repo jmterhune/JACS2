@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Data;
+﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
@@ -78,26 +81,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<CalendarListItem>();
-                if (courtReporterIds == null || courtReporterIds.Count == 0)
-                {
-                    if (county != "")
-                        t = rep.Find("Where (StartTime Between @0 And @1) AND County = @2", monthBegins, monthEnds, county);
-                    else
-                        t = rep.Find("Where (StartTime Between @0 And @1)", monthBegins, monthEnds);
-                }
-                else if (courtReporterIds.Count == 1)
+                if (courtReporterIds == null || courtReporterIds.Count <= 1)
                 {
                     reporterId = courtReporterIds.FirstOrDefault();
-                    if (county != "")
-                        t = rep.Find("Where (StartTime Between @0 And @1) And CreatedByUserID = @2 AND County=@3", monthBegins, monthEnds, reporterId, county);
-                    else
-                        t = rep.Find("Where (StartTime Between @0 And @1) And CreatedByUserID = @2", monthBegins, monthEnds, reporterId);
+                    t = ctx.ExecuteQuery<CalendarListItem>(System.Data.CommandType.StoredProcedure, "tjc_rec_list_calendars_filtered", monthBegins, monthEnds, reporterId, county, monthBegins);
                 }
                 else
                 {
-                    string sqlQuery = $@"Select * From tjc_rec_calendar_events Where (StartTime Between '{monthBegins.ToShortDateString()}' And '{monthEnds.ToShortDateString()}') And CreatedByUserID in ({string.Join(",", courtReporterIds)})";
+                    string sqlQuery = $@"SELECT * FROM tjc_rec_calendar_events c WHERE (c.StartTime BETWEEN '{monthBegins.ToShortDateString()}' AND '{monthEnds.ToShortDateString()}') AND EXISTS(SELECT DesignationID from tjc_rec_event WHERE CourtReporterID IN ({string.Join(",", courtReporterIds)}) AND DesignationID=c.DesignationID)";
                     if (county != "")
-                        sqlQuery += string.Format(" AND County={0}",county);
+                        sqlQuery += string.Format(" AND EXISTS(SELECT DesignationID FROM tjc_rec_designation WHERE county={0} AND DesignationID=c.DesignationID)", county);
                     t = ctx.ExecuteQuery<CalendarListItem>(System.Data.CommandType.Text, sqlQuery);
                 }
             }

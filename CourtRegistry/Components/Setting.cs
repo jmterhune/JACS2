@@ -21,7 +21,7 @@ namespace tjc.Modules.CourtRegistry.Components
     //configure caching using PetaPoco
     internal class Setting
     {
-        public int ID { get; set; }
+        public int SettingID { get; set; }
         public string VerificationNote { get; set; }
         public string EditAttorneyNote { get; set; }
         public string EditApplicationNote { get; set; }

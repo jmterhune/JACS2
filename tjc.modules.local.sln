@@ -45,11 +45,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpertWitness", "ExpertWitn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtReporting", "CourtReporting\CourtReporting.csproj", "{6EB89284-918D-4EA8-8417-09139C904B7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranscriptDatabase", "TranscriptDatabase\TranscriptDatabase.csproj", "{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearingsLog", "HearingsLog\HearingsLog.csproj", "{0711116E-AF67-46CD-95D6-554831319119}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PretrialServicesSarasota", "PretrialServicesSarasota\PretrialServicesSarasota.csproj", "{EC6F90B2-5D5A-4460-B031-1EDD5A4BECA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalCourtReporting", "DigitalCourtReporting\DigitalCourtReporting.csproj", "{AC1FF542-5341-4D64-A027-4B8DD30CA1A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranscriptDatabase", "TranscriptDatabase\TranscriptDatabase.csproj", "{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,10 +141,6 @@ Global
 		{6EB89284-918D-4EA8-8417-09139C904B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EB89284-918D-4EA8-8417-09139C904B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EB89284-918D-4EA8-8417-09139C904B7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0711116E-AF67-46CD-95D6-554831319119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0711116E-AF67-46CD-95D6-554831319119}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -151,6 +149,14 @@ Global
 		{EC6F90B2-5D5A-4460-B031-1EDD5A4BECA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC6F90B2-5D5A-4460-B031-1EDD5A4BECA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC6F90B2-5D5A-4460-B031-1EDD5A4BECA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC1FF542-5341-4D64-A027-4B8DD30CA1A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC1FF542-5341-4D64-A027-4B8DD30CA1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC1FF542-5341-4D64-A027-4B8DD30CA1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC1FF542-5341-4D64-A027-4B8DD30CA1A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C36ACBD-278B-445A-B3AE-3FBAE1DE058A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

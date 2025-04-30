@@ -10,7 +10,9 @@
 ' 
 */
 using DotNetNuke.Data;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace tjc.Modules.CourtRegistry.Components
 {
@@ -89,7 +91,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteApplicationPeriod(ApplicationPeriod t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 rep.Delete(t);
@@ -99,7 +101,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<ApplicationPeriod> GetApplicationPeriods()
         {
             IEnumerable<ApplicationPeriod> t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 t = rep.Get();
@@ -110,7 +112,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public ApplicationPeriod GetApplicationPeriod(int applicationYear)
         {
             ApplicationPeriod t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 t = rep.GetById(applicationYear);
@@ -120,11 +122,31 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateApplicationPeriod(ApplicationPeriod t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 rep.Update(t);
             }
+        }
+
+        internal int GetApplicationListCount(int applicationId, int periodYear, string firstName, string lastName, int statusId)
+        {
+            int t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            {
+                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_car_get_application_list_count", applicationId, periodYear, lastName, firstName, statusId);
+            }
+            return t;
+        }
+
+        internal IEnumerable<ApplicationListItem> GetDesignationListPaged(int applicationId, int periodYear, string firstName, string lastName, int statusId, int recordOffset, int pageSize, string sortColumn, string sortDirection)
+        {
+            IEnumerable<ApplicationListItem> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            {
+                t = ctx.ExecuteQuery<ApplicationListItem>(System.Data.CommandType.StoredProcedure, "tjc_car_get_application_list_paged", applicationId, periodYear, lastName, firstName, statusId, recordOffset, pageSize, sortColumn, sortDirection);
+            }
+            return t;
         }
     }
 }

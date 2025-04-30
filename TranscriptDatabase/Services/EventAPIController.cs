@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Remoting.Messaging;
 using System.Web.Http;
 using tjc.Modules.TranscriptDatabase.Components;
 using tjc.Modules.TranscriptDatabase.Services.ViewModels;
@@ -136,9 +137,9 @@ namespace tjc.Modules.TranscriptDatabase.Services
                 }
                 return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(new ExtensionAddedResult { ExtensionId = extension.ExtensionID, Message = exc.Message });
             }
         }
 

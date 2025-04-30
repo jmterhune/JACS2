@@ -67,7 +67,7 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
                 {
                     folderInfo = objFolder.GetFolder(portalId, uploadFolder);
                 }
-                DotNetNuke.Services.FileSystem.IFileInfo fileInfo = objFile.AddFile(folderInfo, file.FileName, file.InputStream);
+                DotNetNuke.Services.FileSystem.IFileInfo fileInfo = objFile.AddFile(folderInfo, file.FileName.Replace(";","-").Replace("&", "-").Replace("/", "-").Replace("\\", "-"), file.InputStream);
                 
                 return fileInfo.FileId;
             }

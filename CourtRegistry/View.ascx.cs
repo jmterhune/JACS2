@@ -10,12 +10,7 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using System;
 using System.Web.UI.WebControls;
 using tjc.Modules.CourtRegistry.Components;
@@ -35,78 +30,40 @@ namespace tjc.Modules.CourtRegistry
     /// 
     /// </summary>
     /// -----------------------------------------------------------------------------
-    public partial class View : CourtRegistryModuleBase, IActionable
+    public partial class View : CourtRegistryModuleBase
     {
+        private void BindLists()
+        {
+            var ctl = new ApplicationController();
+            drpYear.DataTextField = "PeriodYear";
+            drpYear.DataValueField = "ApplicationYear";
+            drpYear.DataSource = ctl.GetApplicationPeriods();
+            drpYear.DataBind();
+            var statusTypes = Enumerations.GetValues<ApplicationStatus>();
+            foreach (var statusType in statusTypes) {
+                string statusTypeId = ((int)statusType).ToString();
+                drpStatus.Items.Add(new ListItem(Enumerations.GetEnumDescription(statusType), statusTypeId));
+            }
+            if (drpStatus.Items.Count > 0) {
+                drpStatus.Items.Insert(0, new ListItem("Every Status", "-1"));
+            }
+            if (drpYear.Items.Count > 0)
+            {
+                drpYear.Items.Insert(0, new ListItem("All Periods", "-1"));
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                var tc = new ApplicationController();
-                rptItemList.DataSource = tc.GetItems(ModuleId);
-                rptItemList.DataBind();
+                if (!Page.IsPostBack) {
+                    BindLists();
+                }
+               
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        protected void rptItemListOnItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
-            {
-                var lnkEdit = e.Item.FindControl("lnkEdit") as HyperLink;
-                var lnkDelete = e.Item.FindControl("lnkDelete") as LinkButton;
-
-                var pnlAdminControls = e.Item.FindControl("pnlAdmin") as Panel;
-
-                var t = (Application)e.Item.DataItem;
-
-                if (IsEditable && lnkDelete != null && lnkEdit != null && pnlAdminControls != null)
-                {
-                    pnlAdminControls.Visible = true;
-                    lnkDelete.CommandArgument = t.ItemId.ToString();
-                    lnkDelete.Enabled = lnkDelete.Visible = lnkEdit.Enabled = lnkEdit.Visible = true;
-
-                    lnkEdit.NavigateUrl = EditUrl(string.Empty, string.Empty, "Edit", "tid=" + t.ItemId);
-
-                    ClientAPI.AddButtonConfirm(lnkDelete, Localization.GetString("ConfirmDelete", LocalResourceFile));
-                }
-                else
-                {
-                    pnlAdminControls.Visible = false;
-                }
-            }
-        }
-
-
-        public void rptItemListOnItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Edit")
-            {
-                Response.Redirect(EditUrl(string.Empty, string.Empty, "Edit", "tid=" + e.CommandArgument));
-            }
-
-            if (e.CommandName == "Delete")
-            {
-                var tc = new ApplicationController();
-                tc.DeleteItem(Convert.ToInt32(e.CommandArgument), ModuleId);
-            }
-            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL());
-        }
-
-        public ModuleActionCollection ModuleActions
-        {
-            get
-            {
-                var actions = new ModuleActionCollection
-                    {
-                        {
-                            GetNextActionID(), Localization.GetString("EditModule", LocalResourceFile), "", "", "",
-                            EditUrl(), false, SecurityAccessLevel.Edit, true, false
-                        }
-                    };
-                return actions;
             }
         }
     }

@@ -94,13 +94,13 @@
                         <label for="txtLastName">Last Name</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtLastName" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
-                            ErrorMessage="Last Name Is Required" ControlToValidate="txtLastName" runat="server" />
+                            ErrorMessage="Last Name Is Required" ControlToValidate="txtLastName" EnableClientScript="true" runat="server" />
                     </div>
                     <div class="col-md-3">
                         <label for="txtFirstName">First Name</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtFirstName" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
-                            ErrorMessage="First Name Is Required" ControlToValidate="txtFirstName" runat="server" />
+                            ErrorMessage="First Name Is Required" ControlToValidate="txtFirstName" EnableClientScript="true" runat="server" />
                     </div>
                     <div class="col-md-3">
                         <label for="txtMiddleName">Middle Name</label>
@@ -114,14 +114,13 @@
                             <asp:ListItem Text="Manatee" />
                             <asp:ListItem Text="Sarasota" />
                         </asp:DropDownList>
-                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" EnableClientScript="true" ValidationGroup="new" CssClass="label label-danger"
                             ErrorMessage="County Is Required" ControlToValidate="drpCounty" runat="server" />
                     </div>
                 </div>
                 <fieldset class="outline-fieldset mb-2">
                     <h5 class="mb-0">Add one or more attorneys to designation</h5>
                     <div class="form-text ms-2">Select the attorney from the drop down then click the "Add Selected Attorney". If the attorney does not exist in the drop down, click Add New Attorney to add them.</div>
-
                     <div class="row">
                         <div class="col-auto">
                             <div class="attydropdown">
@@ -134,6 +133,7 @@
                             <button type="button" id="cmdAddAttorney" class="btn btn-primary">Add Selected Attorney</button>
                             <button type="button" id="cmdAttorney" class="btn btn-dark float-end" data-toggle="modal" data-target="#EditAttorneyModal">Add New Attorney</button>
                         </div>
+                        <input type="hidden" id="attorneyCount">
                     </div>
                     <table id="tblAttorneys" class="table table-striped w-100">
                         <thead>
@@ -149,6 +149,8 @@
                     <div class="col-md-3">
                         <label for="txtTribunalCaseNumber">Tribunal Case Number</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
+                            ErrorMessage="Tribunal Case Number Is Required" ControlToValidate="txtTribunalCaseNumber" EnableClientScript="true" runat="server" />
                     </div>
                     <div class="col-md-3">
                         <label for="txtAppellateCaseNumber">Appellate Case Number</label>
@@ -157,17 +159,25 @@
                     <div class="col-md-3">
                         <label for="txtServiceDate">Service Date</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtServiceDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
+                            ErrorMessage="Service Date Is Required" ControlToValidate="txtServiceDate" EnableClientScript="true" runat="server" />
+
                     </div>
                     <div class="col-md-3">
                         <label for="txtReceiptDate">Receipt Date</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtReceiptDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
-                    </div>
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
+                            ErrorMessage="Receipt Date Is Required" ControlToValidate="txtReceiptDate" EnableClientScript="true" runat="server" />
 
+                    </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-md-3">
                         <label for="txtHearingDate">Hearing Date</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtHearingDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
+                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="hearingDate" CssClass="label label-danger"
+                            ErrorMessage="Hearing Date Is Required" ControlToValidate="txtHearingDate" EnableClientScript="true" runat="server" />
+
                     </div>
                     <div class="col">
                         <label for="drpPresidingJudge">Presiding Judge</label>
@@ -199,6 +209,7 @@
                     </thead>
                 </table>
                 <asp:HiddenField ID="hdDesignationId" runat="server" ClientIDMode="Static" />
+                <input type="hidden" id="hearingCount">
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" id="cmdSaveDesignationItem" class="btn btn-primary"><i class="fas fa-floppy-disk"></i>&nbsp;Submit Designation</button>
@@ -228,7 +239,6 @@
                         <asp:Label runat="server" AssociatedControlID="txtLastNameAtty" Text="Last Name" />
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameAtty" />
                     </div>
-
                 </div>
                 <div class="row form-group">
                     <div class="col-12">
@@ -246,14 +256,12 @@
                     </div>
                 </div>
                 <div class="row form-group">
-
                     <div class="col-12">
                         <label for="txtAddress2" class="form-label">Address 2</label>
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress2" placeholder="Apartment, studio, or floor" />
                     </div>
                 </div>
                 <div class="row form-group">
-
                     <div class="col-md-5">
                         <label for="txtCity" class="form-label">City</label>
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCity" />
@@ -301,12 +309,10 @@
         </div>
     </div>
 </div>
-
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
-
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
     var userId = <%=UserId%>;
@@ -370,7 +376,7 @@
         $(document).ready(function () {
             $(".date-picker").on("blur", function (e) {
                 var date = $(this).val();
-                $(this).val(date.replace(/\.|-/g,"/"));
+                $(this).val(date.replace(/\.|-/g, "/"));
             });
             PageInit();
         });
@@ -571,7 +577,6 @@
                 emptyTable: "No Events Added.",
                 zeroRecords: "No Events Added."
             },
-
         });
         attorneyTable = $('#tblAttorneys').DataTable({
             searching: false,
@@ -593,11 +598,10 @@
                 emptyTable: "No Attorneys Added.",
                 zeroRecords: "No Attorneys Added."
             },
-
         });
         matchingNameTable = $('#tblMatchingNames').DataTable({
             searching: false,
-            autoWidth: true,            
+            autoWidth: true,
             columns: [
                 { data: "lastname" },
                 { data: "firstname" },
@@ -665,7 +669,9 @@
             $("#cmdSearch").trigger("click");
         });
         $("#txtLastName").on("blur", function (e) {
-            fetchMatchingNames($(this).val());
+            var last = $(this).val();
+            if (last)
+                fetchMatchingNames(last);
         });
         $('#txtTribunalCaseNumber').on('blur', function () {
             this.value = this.value.toUpperCase();
@@ -720,20 +726,39 @@
                 $('#judgeDropDown').hide();
             }
         });
-
         $('#btnAdd').on("click", function (e) {
             e.preventDefault();
             ClearDesignation();
         });
         $("#cmdSaveDesignationItem").on("click", function (e) {
-            e.preventDefault();
             $(this).prop("disabled", true);
-            $("#cmdSaveDesignationItem i").removeClass("floppy-disk");
-            $("#cmdSaveDesignationItem i").addClass("fa-arrows-rotate fa-spin");
-            AddDesignation();
+            e.preventDefault();
+            var events = $("#hearingCount").val();
+            var attys = $("#attorneyCount").val();
+            var hasEvents = (!isNaN(events) && events.trim() !== "");
+            var hasAttys = (!isNaN(attys) && attys.trim() !== "");
+            if (validateAddDesignation()) {
+                if (hasEvents && hasAttys) {
+                    $("#cmdSaveDesignationItem i").removeClass("floppy-disk");
+                    $("#cmdSaveDesignationItem i").addClass("fa-arrows-rotate fa-spin");
+                    AddDesignation();
+                } else {
+                    if (!hasEvents & !hasAttys) {
+                        ShowAlert("No Hearing or Attorney Added", "Please Add at least one hearing and at least one attorney");
+                    } else if (!hasEvents) {
+                        ShowAlert("No Hearing Added", "Please Add at least one hearing");
+                    } else {
+                        ShowAlert("No Attorney Selected", "Please Select at least one attorney");
+                    }
+                    $(this).prop("disabled", false);
+                }
+            } else {
+                $(this).prop("disabled", false);
+            }
         });
         $('#cmdAddEvent').on("click", function (e) {
-            InsertEvent();
+            if (validateHearingDate())
+                InsertEvent();
         });
         $("#cmdAddAttorney").on("click", function (e) {
             InsertAttorney();
@@ -752,14 +777,29 @@
         });
         $("#tblDesignations_length").prepend($('#btnAdd'));
     }
-   
+    function validateAddDesignation() {
+        var isValid = Page_ClientValidate('new');
+        if (isValid) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function validateHearingDate() {
+        var isValid = Page_ClientValidate('hearingDate');
+        if (isValid) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     function fetchMatchingNames(name) {
         $.ajax({
             url: matchingNameUrl,
             method: 'GET',
             dataType: 'json',
             data: {
-               lastName: name,
+                lastName: name,
             },
             success: function (response) {
                 matchingNames = response.data;
@@ -786,7 +826,6 @@
             }
         });
     }
-   
     function fetchEmployeeOptions() {
         $.ajax({
             url: employeeDropDownUrl,
@@ -806,6 +845,7 @@
             eventArray.splice(eventRow, 1);
             eventTable.clear().rows.add(eventArray).draw();
         }
+        $("#hearingCount").val(eventArray.length);
     }
     function RemoveAttorney(attorneyId) {
         var attyRow = attorneyArray.find(row => row.id === attorneyId);
@@ -813,12 +853,14 @@
             attorneyArray.splice(attyRow, 1);
             attorneyTable.clear().rows.add(attorneyArray).draw();
         }
+        $('#attorneyCount').val(attorneyArray.length);
     }
     function InsertAttorney() {
         const attorney = GetSelectedAttoney();
         if (attorney.id) {
             attorneyArray.push(attorney);
             attorneyTable.clear().rows.add(attorneyArray).draw();
+            $('#attorneyCount').val(attorneyArray.length);
         }
         $('#selectedAttorneyId').val("");
         $('#selectedAttorneyId').removeAttr("data-office");
@@ -851,6 +893,9 @@
         $("#txtServiceDate").val("");
         $("#txtReceiptDate").val("");
         $("#hdDesignationId").val("");
+        $("#hearingCount").val("");
+        $("#attorneyCount").val("");
+
         eventArray = [];
         eventTable.clear().rows.add(eventArray).draw();
         attorneyArray = [];
@@ -884,11 +929,11 @@
                     }
                     modal.hide();
                     const attorneyAdd = { id: result.data.attorneyid, name: result.data.listname, office: result.data.officename };
+                    attyOptions.push(attorneyAdd);
                     attorneyArray.push(attorneyAdd);
                     attorneyTable.clear().rows.add(attorneyArray).draw();
                 },
                 error: function (xhr, status, error) {
-                    // ShowAlert(xhr.responseText);
                     ShowAlert("Error Attempting to Add Attorney", "Unable to add attorney.\n\nMake sure you are logged in and try again. \n\nError:" + error);
                 }
             });
@@ -919,6 +964,7 @@
             eventId = eventId + 1;
         const event = { date: hearingDate, judgeid: judgeId, type: type, eventid: eventId, judgename: judgeName, createdbyuserid: userId };
         eventArray.push(event);
+        $("#hearingCount").val(eventArray.length);
         eventTable.clear().rows.add(eventArray).draw();
         ClearEvent();
     }
@@ -938,7 +984,7 @@
             lastname: lastName, middlename: middleName, county: county,
             tribunalcasenumber: tribunalCaseNumber, appellatecasenumber: appellateCaseNumber,
             servicedate: serviceDate, receiptdate: receiptDate, createdbyuserid: userId,
-            attorneys: attorneyIds.toString(),adminRole:adminRole,
+            attorneys: attorneyIds.toString(), adminRole: adminRole,
         };
         try {
             $.ajax({
@@ -949,22 +995,29 @@
                 data: (designation),
                 success: function (result) {
                     designationId = result.designationId;
-                    eventArray.forEach(evt => {
-                        var newEvent = { hearingdate: evt.date, presidingjudgeid: evt.judgeid, hearingtype: evt.type, createdbyuserid: userId, designationid: designationId };
-                        AddEvent(newEvent);
-                    });
-                    ClearDesignation();
-                    $("#cmdSaveDesignationItem i").removeClass("fa-arrows-rotate fa-spin");
-                    $("#cmdSaveDesignationItem i").addClass("floppy-disk");
-                    $("#cmdSaveDesignationItem").prop("disabled", false);
-                    if (eventMessage)
-                        ShowAlert("Errors Attempting to add Hearings: \n" + eventMessage);
-                    var designationAddModal = document.querySelector('#designationModal');
-                    var modal = bootstrap.Modal.getInstance(designationAddModal);
-                    if (!modal) {
-                        modal = new bootstrap.Modal(document.getElementById('designationModal'));
+                    if (designationId <= 0) {
+                        ShowAlert("Error Attempting to Add Designation", result.error);
+                    } else {
+                        eventArray.forEach(evt => {
+                            var newEvent = { hearingdate: evt.date, presidingjudgeid: evt.judgeid, hearingtype: evt.type, createdbyuserid: userId, designationid: designationId };
+                            AddEvent(newEvent);
+                        });
+                        ClearDesignation();
+                        $("#cmdSaveDesignationItem i").removeClass("fa-arrows-rotate fa-spin");
+                        $("#cmdSaveDesignationItem i").addClass("floppy-disk");
+                        $("#cmdSaveDesignationItem").prop("disabled", false);
+                        if (eventMessage != null && eventMessage.length > 0)
+                            ShowAlert("Errors Attempting to add Hearings: \n" + eventMessage);
+                        else {
+                            var designationAddModal = document.querySelector('#designationModal');
+                            var modal = bootstrap.Modal.getInstance(designationAddModal);
+                            if (!modal) {
+                                modal = new bootstrap.Modal(document.getElementById('designationModal'));
+                            }
+                            modal.hide();
+                            designationTable.draw();
+                        }
                     }
-                    modal.hide();
                 },
                 error: function (xhr, status, error) {
                     ShowAlert("Error Attempting to Add Designation", "Unable to add Designation.\n\nMake sure you are logged in and try again. \n\nError:" + error);
@@ -991,17 +1044,15 @@
                 success: function (result) {
                     var eventId = result.EventId;
                     if (eventId <= 0) {
-                        eventMessage += "Unable to add event. Please edit the designation and retry \n\n\n";
+                        eventMessage += result.Message + ";";
                     }
                 },
                 error: function (xhr, status, error) {
                     eventMessage += error + " \n\n\n";
-                    // ShowAlert("Error Attempting to Add Event", "Unable to add hearing.\n\nMake sure you are logged in and try again. \n\nError:" + error);
                 }
             });
         } catch (error) {
             eventMessage += error + " \n\n\n";
-            // ShowAlert("Error Attempting to Add Event", "Unable to add hearing.\n\nMake sure you are logged in and try again.");
         }
         return false;
     }
@@ -1020,5 +1071,4 @@
             text: text
         });
     }
-
 </script>

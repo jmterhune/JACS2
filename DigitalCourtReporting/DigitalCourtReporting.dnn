@@ -1,0 +1,137 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="DigitalCourtReporting" type="Module" version="00.00.01">
+      <friendlyName>Digital Court Reporting</friendlyName>
+      <description>Digital Court Reporting Module</description>
+      <iconFile>~/Images/icon_extensions_32px.png</iconFile>
+      <owner>
+        <name>Joe Terhune</name>
+        <organization>Joe Terhune</organization>
+        <url>https://www.jud12.flcourts.org</url>
+        <email>jterhune@jud12.flcourts.org</email>
+      </owner>
+      <license src="License.txt"></license>
+      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="CoreVersion">09.08.00</dependency>
+      </dependencies>
+      <components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/tjc.modules/DigitalCourtReporting</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+		  <component type="Module">
+			  <desktopModule>
+				  <moduleName>Digital Court Reporting</moduleName>
+				  <foldername>tjc.modules/DigitalCourtReporting</foldername>
+				  <businessControllerClass />
+				  <supportedFeatures />
+				  <moduleDefinitions>
+					  <moduleDefinition>
+						  <friendlyName>Digital Court Reporting</friendlyName>
+						  <definitionName>Digital Court Reporting</definitionName>
+						  <defaultCacheTime>0</defaultCacheTime>
+						  <moduleControls>
+							  <moduleControl>
+								  <controlKey />
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/View.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle />
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+								  <viewOrder>0</viewOrder>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>Accounting</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/EditAccounting.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>Edit Accounting</controlTitle>
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>cd</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/EditDcr.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>Edit DCR</controlTitle>
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>completed</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/EditComplete.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>Edit Completed</controlTitle>
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>inquiry</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/EditInquiry.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>Edit Inquiry</controlTitle>
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>notification</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/EditNotification.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>Edit Notification</controlTitle>
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>Settings</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/Settings.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>DCR Settings</controlTitle>
+								  <controlType>Edit</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+							  <moduleControl>
+								  <controlKey>stats</controlKey>
+								  <controlSrc>DesktopModules/tjc.modules/DigitalCourtReporting/Stats.ascx</controlSrc>
+								  <supportsPartialRendering>False</supportsPartialRendering>
+								  <controlTitle>Statistics</controlTitle>
+								  <controlType>View</controlType>
+								  <iconFile />
+								  <helpUrl />
+								  <supportsPopUps>False</supportsPopUps>
+							  </moduleControl>
+						  </moduleControls>
+					  </moduleDefinition>
+				  </moduleDefinitions>
+			  </desktopModule>
+		  </component>        
+		  <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <name>tjc.Modules.DigitalCourtReporting.dll</name>
+              <path>bin</path>
+            </assembly>
+          </assemblies>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

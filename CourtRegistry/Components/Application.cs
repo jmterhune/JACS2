@@ -40,6 +40,27 @@ namespace tjc.Modules.CourtRegistry.Components
         public bool Exported { get; set; }
 
     }
+    [TableName("tjc_car_application_list")]
+    public class ApplicationListItem
+    {
+        public int ApplicationID { get; set; }
+        public int AttorneyID { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+
+        public string GuardianSignature { get; set; }
+        public int Status { get; set; }
+        public int Year { get; set; }
+        public int YearsOnRegistry { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime? DateReviewed { get; set; }
+        public bool IsRenewal { get; set; }
+        public bool IsGuardian { get; set; }
+        public string StatusName { get{
+                
+                return Enumerations.GetEnumDescription((ApplicationStatus)Status);
+            } }
+    }
     [TableName("tjc_car_current_periods")]
     //setup the primary key for table
     [PrimaryKey("ApplicationYear", AutoIncrement = false)]
@@ -49,16 +70,8 @@ namespace tjc.Modules.CourtRegistry.Components
         public int ApplicationYear { get; set; }
         public DateTime? ModificationDeadline { get; set; }
         public bool AcceptingNewApplications { get; set; }
+        [IgnoreColumn]
+        public string PeriodYear { get{ return string.Format("{0} - {1}", ApplicationYear-1, ApplicationYear); } }
 
     }
-    public enum ApplicationStatus
-    {
-        New = 0,
-        Approved = 1,
-        Rejected = 2,
-        Archived = 3,
-        Updated = 4
-    }
-
-
 }

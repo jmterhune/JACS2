@@ -46,7 +46,7 @@ namespace tjc.Modules.RecordDestruction.Components
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Group>();
-                t = rep.Find("Where GroupType=0");
+                t = rep.Find("Where GroupType=0").OrderBy(x=>x.GroupName);
             }
             return t;
         }

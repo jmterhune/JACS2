@@ -125,17 +125,14 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblHearingType_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditHearingTypeModal"><i class="fa fa-plus"></i>&nbsp;Add Hearing Type</button>');
-        table.on('draw', function () {
-            $(".confirm").dnnConfirm({
-                text: 'Are you sure you wish to Delete the selected Hearing Type?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Hearing Type?'
-            });
-        });
-        table.draw();
+        $("#tblHearingType_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditHearingTypeModal"><i class="fa fa-plus"></i>&nbsp;Add Hearing Type</button>');       
     }
+        $(".confirm").dnnConfirm({
+            text: 'Are you sure you wish to Delete the Hearing Type?',
+            yesText: 'Yes',
+            noText: 'No',
+            title: 'Delete Hearing Type?'
+        });
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
             $('#EditHearingTypeModal').modal('show');

@@ -54,14 +54,13 @@ namespace tjc.Modules.CourtRegistry
                     //Check for existing settings and use those on this page
                     //Settings["SettingName"]
 
-                    /* uncomment to load saved settings in the text boxes
-                    if(Settings.Contains("Setting1"))
-                        txtSetting1.Text = Settings["Setting1"].ToString();
-			
-                    if (Settings.Contains("Setting2"))
-                        txtSetting2.Text = Settings["Setting2"].ToString();
+                    if (Settings.Contains("PublicUrl"))
+                        txtUrl.Text = Settings["PublicUrl"].ToString();
 
-                    */
+                    if (Settings.Contains("ApproverUsername"))
+                        txtApprover.Text = Settings["ApproverUsername"].ToString();
+
+
 
                 }
             }
@@ -81,15 +80,8 @@ namespace tjc.Modules.CourtRegistry
             try
             {
                 var modules = new ModuleController();
-
-                //the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
-                //module settings
-                //modules.UpdateModuleSetting(ModuleId, "Setting1", txtSetting1.Text);
-                //modules.UpdateModuleSetting(ModuleId, "Setting2", txtSetting2.Text);
-
-                //tab module settings
-                //modules.UpdateTabModuleSetting(TabModuleId, "Setting1",  txtSetting1.Text);
-                //modules.UpdateTabModuleSetting(TabModuleId, "Setting2",  txtSetting2.Text);
+                modules.UpdateModuleSetting(ModuleId, "PublicUrl", txtUrl.Text);
+                modules.UpdateModuleSetting(ModuleId, "ApproverUsername", txtApprover.Text);
             }
             catch (Exception exc) //Module failed to load
             {

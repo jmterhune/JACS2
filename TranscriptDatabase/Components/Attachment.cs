@@ -18,12 +18,15 @@ namespace tjc.Modules.TranscriptDatabase.Components
         {
             get
             {
-                var file = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(FileID);
-                if (file != null)
+                if (FileID > 0)
                 {
-                    return string.Format("/portals/0/{0}",file.RelativePath);
+                    var file = DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(FileID);
+                    if (file != null)
+                    {
+                        return string.Format("/portals/0/{0}", file.RelativePath);
+                    }
                 }
-                return Path;
+                return string.Format("/portals/0/{0}", Path);
             }
         }
     }

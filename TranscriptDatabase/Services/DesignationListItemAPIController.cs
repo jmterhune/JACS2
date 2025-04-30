@@ -1,7 +1,5 @@
 ﻿using DotNetNuke.Entities.Users;
-using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Mail;
 using DotNetNuke.Web.Api;
 using System;
 using System.Collections.Generic;
@@ -112,11 +110,12 @@ namespace tjc.Modules.TranscriptDatabase.Services
                     designationViewModel.DesignationID = designation.DesignationID;
                     return Request.CreateResponse(new DesignationResult { designationId = designationViewModel.DesignationID, error = null });
                 }
-                return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                return Request.CreateResponse(new DesignationResult { designationId =-1, error = "Unable to Create Designation" });
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                Exceptions.LogException(exc);
+                return Request.CreateResponse(new DesignationResult { designationId = -1, error =exc.Message });
             }
         }
         [HttpGet]
