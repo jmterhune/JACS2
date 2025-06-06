@@ -11,6 +11,7 @@ using tjc.Modules.TranscriptDatabase.Services.ViewModels;
 
 namespace tjc.Modules.TranscriptDatabase.Services
 {
+    [DnnAuthorize]
     public class EmployeeController : DnnApiController
     {
        

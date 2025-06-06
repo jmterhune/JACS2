@@ -51,6 +51,7 @@ namespace tjc.Modules.CourtRegistry
             {
                 drpYear.Items.Insert(0, new ListItem("All Periods", "-1"));
             }
+            drpStatus.SelectedValue = "0";
         }
         protected void Page_Load(object sender, EventArgs e)
         {

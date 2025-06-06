@@ -11,16 +11,16 @@
             <div class="col-md-4">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRequestor" Text="Requester Name<em>*</em>" />
                 <asp:TextBox ID="txtRequestor" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
-                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtRequestor"
+                <asp:RequiredFieldValidator runat="server" ValidationGroup="Order" ControlToValidate="txtRequestor"
                     CssClass="label label-danger" ErrorMessage="Requester is Required" />
             </div>
             <div class="col-md-4">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtEmail" Text="Requester Email<em>*</em>" />
                 <asp:TextBox ID="txtEmail" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtEmail"
-                    CssClass="label label-danger" ErrorMessage="Email is Required" />
+                    CssClass="label label-danger" ErrorMessage="Email is Required" ValidationGroup="Order" />
                 <asp:RegularExpressionValidator ID="valEmail" runat="server" CssClass="label label-danger" ControlToValidate="txtEmail"
-                    Display="Dynamic" ErrorMessage="Incorrect e-mail format" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
+                    Display="Dynamic" ErrorMessage="Incorrect e-mail format" ValidationGroup="Order" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
 
 
             </div>
@@ -35,7 +35,7 @@
                     <asp:ListItem Text="Venice"></asp:ListItem>
                     <asp:ListItem Text="1751 Mound Street"></asp:ListItem>
                 </asp:DropDownList>
-                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpLocation"
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="drpLocation" ValidationGroup="Order"
                     CssClass="label label-danger" ErrorMessage="Please Select a Delivery Location" />
             </div>
         </fieldset>

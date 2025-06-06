@@ -558,6 +558,25 @@
             }, 0);
         });
         //Mediator Search
+        $('input').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+            }
+        });
+
+        $('#txtMediatorFirstName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
+        $('#txtMediatorLastName').keypress(function (event) {
+
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
         $("#cmdMediatorSearch").on("click", function (e) {
             e.preventDefault();
             lastNameMed = $("#txtMediatorLastName").val();

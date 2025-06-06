@@ -1,21 +1,30 @@
+.container:has(#attorneys) {
+    max-width: 100% !important
+}
+
 td .approved {
     color: darkgreen;
     font-weight: bold;
 }
+
 td .rejected {
     color: #333;
     text-decoration: line-through;
 }
+
 td .new {
     color: blue;
     font-weight: bold;
 }
+
 td .archived {
     color: #666;
 }
+
 td .removed {
     color: #666;
 }
+
 td .locked {
     color: #fff;
 }
@@ -25,9 +34,10 @@ td .updated {
     font-weight: bold;
 }
 
-.id-filter{
-    max-width:6rem
+.id-filter {
+    max-width: 6rem
 }
+
 .command-item {
     cursor: pointer;
     width: 16px;
@@ -99,6 +109,7 @@ label em {
         .outline-fieldset legend.small {
             font-size: .75rem;
         }
+
 div.dataTables_wrapper, div.dataTables_paginate, ul.pages {
     margin: 2px 0;
     white-space: nowrap;
@@ -225,6 +236,7 @@ div.dataTables_wrapper, div.dataTables_paginate, ul.pages {
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
 }
+
 .aspNetDisabled label, .aspNetDisabled input {
     color: #777 !important;
     cursor: not-allowed;
@@ -259,6 +271,7 @@ div.dataTables_wrapper, div.dataTables_paginate, ul.pages {
 .form-check {
     min-height: 0rem !important
 }
+
 .SumoSelect > .CaptionCont > span.placeholder {
     color: #333 !important;
     font-style: normal !important;

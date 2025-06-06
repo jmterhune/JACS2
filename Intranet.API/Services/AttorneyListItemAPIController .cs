@@ -10,10 +10,10 @@ using tjc.Intranet.API.Services.ViewModels.Mediation;
 
 namespace tjc.Intranet.API.Services.Mediation
 {
+    [DnnAuthorize]
     public class AttorneyListItemController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetAttorneyListItems(int count)
         {
             List<AttorneyListItemViewModel> attorneylistItems = new List<AttorneyListItemViewModel>();
@@ -73,7 +73,6 @@ namespace tjc.Intranet.API.Services.Mediation
             return name;
         }
         [HttpPost]
-        [AllowAnonymous]
         public HttpResponseMessage CreateAttorney(AttorneyListItemViewModel attorneyViewItem)
         {
             var ctl = new Components.Mediation.AttorneyListItemController();

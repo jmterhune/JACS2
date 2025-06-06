@@ -1,71 +1,96 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SurveyReport.ascx.cs" Inherits="tjc.Modules.PretrialServices.SurveyReport" %>
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+﻿<%@ control language="C#" autoeventwireup="true" codebehind="SurveyReport.ascx.cs" inherits="tjc.Modules.PretrialServices.SurveyReport" %>
+<%@ register tagprefix="dnn" namespace="DotNetNuke.Web.Client.ClientResourceManagement" assembly="DotNetNuke.Web.Client" %>
 <div class="fullScreenContainer">
     <div class="btn-toolbar" role="toolbar" aria-label="Reporting Toolbar">
         <div class="input-group me-2" aria-label="Select Report Date">
             <div class="input-group-text" id="dvReportDate">Report Date</div>
-            <asp:TextBox runat="server" ID="txtReportDate" CssClass="form-control datepicker" Width="110" aria-label="Report Date Selection" aria-describedby="dvReportDate" />
+            <asp:textbox runat="server" id="txtReportDate" cssclass="form-control datepicker" width="110" aria-label="Report Date Selection" aria-describedby="dvReportDate" />
         </div>
         <div class="btn-group me-2" role="group" aria-label="Select Report Type">
             <input type="radio" class="btn-check" name="btnradio" id="reportWeek" autocomplete="off" checked>
             <label class="btn btn-outline-primary mb-0" for="reportWeek">Weekly</label>
+            <input type="radio" class="btn-check" name="btnradio" id="reportMonth" autocomplete="off">
+            <label class="btn btn-outline-primary mb-0" for="reportMonth">Monthly</label>
             <input type="radio" class="btn-check" name="btnradio" id="reportYear" autocomplete="off">
             <label class="btn btn-outline-primary mb-0" for="reportYear">Annual</label>
         </div>
-        <asp:HiddenField ID="hdRportDate" ClientIDMode="Static" runat="server" Value="W" />
-        <asp:Button Text="Submit" ID="cmdSubmit" CssClass="btn btn-primary" runat="server" OnClick="cmdSubmit_Click" />
+        <asp:hiddenfield id="hdRportDate" clientidmode="Static" runat="server" value="W" />
+        <asp:button text="Submit" id="cmdSubmit" cssclass="btn btn-primary" runat="server" onclick="cmdSubmit_Click" />
     </div>
     <h4>How many cases</h4>
     <ul class="list">
         <li>
-            <asp:Label ID="lblScreened" runat="server">0</asp:Label> - Screened (SPR packet created)</li>
+            <asp:label id="lblScreened" runat="server">0</asp:label>
+            - Screened (SPR packet created)</li>
         <li>
-            <asp:Label ID="lblNotScreened" runat="server">0</asp:Label> - Not Screened (no SPR packet created)</li>
+            <asp:label id="lblNotScreened" runat="server">0</asp:label>
+            - Not Screened (no SPR packet created)</li>
         <li>
-            <asp:Label ID="lblPlacedSPR" runat="server">0</asp:Label> - Placed on SPR**</li>
+            <asp:label id="lblPlacedSPR" runat="server">0</asp:label>
+            - Placed on SPR**</li>
         <li>
-            <asp:Label ID="lblNotPlacedSPR" runat="server">0</asp:Label> - Not placed on SPR (number of participants in the program)</li>
+            <asp:label id="lblNotPlacedSPR" runat="server">0</asp:label>
+            - Not placed on SPR (number of participants in the program)</li>
         <li>
-            <asp:Label ID="lblMisdemeanor" runat="server">0</asp:Label> - Misdemeanor case</li>
+            <asp:label id="lblMisdemeanor" runat="server">0</asp:label>
+            - Misdemeanor case</li>
         <li>
-            <asp:Label ID="lblFelony" runat="server">0</asp:Label> - Felony case (how many charged with MM misdemeanors and CF felonies)</li>
+            <asp:label id="lblFelony" runat="server">0</asp:label>
+            - Felony case (how many charged with MM misdemeanors and CF felonies)</li>
         <li>
-            <asp:Label ID="lblNoBond" runat="server">0</asp:Label> - Nonsecured (Without bond)</li>
+            <asp:label id="lblNoBond" runat="server">0</asp:label>
+            - Nonsecured (Without bond)</li>
         <li>
-            <asp:Label ID="lblWithBond" runat="server">0</asp:Label> - Secured (with bond) wants to know who had bonds and who didn’t)</li>
+            <asp:label id="lblWithBond" runat="server">0</asp:label>
+            - Secured (with bond) wants to know who had bonds and who didn’t)</li>
         <li>
-            <asp:Label ID="lblBothBond" runat="server">0</asp:Label> - Both Secured and Unsecured</li>
+            <asp:label id="lblBothBond" runat="server">0</asp:label>
+            - Both Secured and Unsecured</li>
         <li>
-            <asp:Label ID="lblRevokedBond" runat="server">0</asp:Label> - Bond Revoked</li>
+            <asp:label id="lblRevokedBond" runat="server">0</asp:label>
+            - Bond Revoked</li>
         <li>
-            <asp:Label ID="lblUnsuccessfulCompletion" runat="server">0</asp:Label> - number exiting with an unsuccessful completion</li>
+            <asp:label id="lblUnsuccessfulCompletion" runat="server">0</asp:label>
+            - number exiting with an unsuccessful completion</li>
         <li>
-            <asp:Label ID="lblSuccessfulCompletion" runat="server">0</asp:Label> - number exiting with a successful completion</li>
+            <asp:label id="lblSuccessfulCompletion" runat="server">0</asp:label>
+            - number exiting with a successful completion</li>
         <li>
-            <asp:Label ID="lblOtherCompletion" runat="server">0</asp:Label> - number exiting for other reasons (this one wants us to describe: bonded before 1st, pled at 1st, revoked bonds, revoked SPR, new arrest, deceased, ordered by court)</li>
+            <asp:label id="lblOtherCompletion" runat="server">0</asp:label>
+            - number exiting for other reasons (this one wants us to describe: bonded before 1st, pled at 1st, revoked bonds, revoked SPR, new arrest, deceased, ordered by court)</li>
         <li>
-            <asp:Label ID="lblTotalExiting" runat="server">0</asp:Label> - total number exiting the program</li>
+            <asp:label id="lblTotalExiting" runat="server">0</asp:label>
+            - total number exiting the program</li>
         <li>
-            <asp:Label ID="lblAverageLengthSPR" runat="server">0</asp:Label> - average length of time in months on SPR (when we open it and closed it)</li>
+            <asp:label id="lblAverageLengthSPR" runat="server">0</asp:label>
+            - average length of time in months on SPR (when we open it and closed it)</li>
         <li>
-            <asp:Label ID="lblFtaSpr" runat="server">0</asp:Label> - how many FTA (failed to appear while on SPR)</li>
+            <asp:label id="lblFtaSpr" runat="server">0</asp:label>
+            - how many FTA (failed to appear while on SPR)</li>
         <li>
-            <asp:Label ID="lblWarrantsFta" runat="server">0</asp:Label> - warrants issued for FTA</li>
+            <asp:label id="lblWarrantsFta" runat="server">0</asp:label>
+            - warrants issued for FTA</li>
         <li>
-            <asp:Label ID="lblSprRevokedFta" runat="server">0</asp:Label> - SPR revoked due to FTA</li>
+            <asp:label id="lblSprRevokedFta" runat="server">0</asp:label>
+            - SPR revoked due to FTA</li>
         <li>
-            <asp:Label ID="lblNewArrest" runat="server">0</asp:Label> - arrested for committing a new offense</li>
+            <asp:label id="lblNewArrest" runat="server">0</asp:label>
+            - arrested for committing a new offense</li>
         <li>
-            <asp:Label ID="lblReleaseRevokedNewOffense" runat="server">0</asp:Label> - released revoked due to new offense</li>
+            <asp:label id="lblReleaseRevokedNewOffense" runat="server">0</asp:label>
+            - released revoked due to new offense</li>
         <li>
-            <asp:Label ID="lblNoComplaintsProgramConditions" runat="server">0</asp:Label> - non-compliant with program conditions</li>
+            <asp:label id="lblNoComplaintsProgramConditions" runat="server">0</asp:label>
+            - non-compliant with program conditions</li>
         <li>
-            <asp:Label ID="lblWarrantNonCompliance" runat="server">0</asp:Label> - warrant issued for non-compliance with program</li>
+            <asp:label id="lblWarrantNonCompliance" runat="server">0</asp:label>
+            - warrant issued for non-compliance with program</li>
         <li>
-            <asp:Label ID="lblNumberCarriedOver" runat="server">0</asp:Label> - how many carried over from the year before</li>
+            <asp:label id="lblNumberCarriedOver" runat="server">0</asp:label>
+            - how many carried over from the year before</li>
     </ul>
 </div>
-<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
+<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */
@@ -75,12 +100,26 @@
             $(".datepicker").datepicker();
             $(".toggle-button input").addClass("btn-check");
             $(".toggle-button label").addClass("btn btn-outline-primary");
-            if ($("#hdRportDate").val() == "W")
+            if ($("#hdRportDate").val() == "W") {
+                $("#reportMonth").prop("checked", false);
+                $("#reportYear").prop("checked", false);
                 $("#reportWeek").prop("checked", true);
-            else
+            }
+            else if ($("#hdRportDate").val() == "M") {
+                $("#reportMonth").prop("checked", true);
+                $("#reportYear").prop("checked", false);
+                $("#reportWeek").prop("checked", false);
+            }
+            else {
+                $("#reportMonth").prop("checked", false);
                 $("#reportYear").prop("checked", true);
+                $("#reportWeek").prop("checked", false);
+            }
             $("#reportWeek").on("click", function (e) {
                 $("#hdRportDate").val("W");
+            });
+            $("#reportMonth").on("click", function (e) {
+                $("#hdRportDate").val("M");
             });
             $("#reportYear").on("click", function (e) {
                 $("#hdRportDate").val("Y");

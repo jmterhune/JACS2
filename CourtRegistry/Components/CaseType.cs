@@ -25,6 +25,6 @@ namespace tjc.Modules.CourtRegistry.Components
         public string CaseTypeName { get; set; }
         public string LabelNote { get; set; }
         public bool Active { get; set; }
-
+       
     }
 }

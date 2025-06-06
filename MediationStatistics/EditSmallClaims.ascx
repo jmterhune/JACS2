@@ -868,6 +868,36 @@
                 $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
             }, 0);
         });
+        $('input').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+            }
+        });
+        $('#txtMediatorFirstName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
+        $('#txtMediatorLastName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
+        $('#txtAttorneyLastName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdSearch').click();
+            }
+        });
+        $('#txtAttorneyFirstName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdSearch').click();
+            }
+        });
+
         $("#cmdSearch").on("click", function (e) {
             e.preventDefault();
             lastName = $("#txtAttorneyLastName").val();

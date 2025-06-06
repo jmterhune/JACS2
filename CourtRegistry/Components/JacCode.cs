@@ -27,6 +27,18 @@ namespace tjc.Modules.CourtRegistry.Components
         public string LabelNote { get; set; }
         public int CaseTypeID { get; set; }
         public bool Active { get; set; }
+        [IgnoreColumn]
+        public string JacCodeListName { get { return string.Format("{0} ({1} - {2})", JacCodeID, CaseTypeName, Category); } }
+        [IgnoreColumn]
+        public string CaseTypeName
+        {
+            get
+            {
+                var ctl = new CaseTypeController();
+                CaseType caseType = ctl.GetCaseType(CaseTypeID);
+                return caseType != null ? caseType.CaseTypeName : string.Empty;
+            }
+        }
     }
     [TableName("tjc_car_jac_codes_updates")]
     //setup the primary key for table
@@ -47,6 +59,13 @@ namespace tjc.Modules.CourtRegistry.Components
         public int Year { get; set; }
         public bool Exclude { get; set; }
         public bool OnlyRenewals { get; set; }
+    }
+    [TableName("tjc_car_exceptions")]
+    internal class JacException : JacCodeConfig
+    {
+        public string LocationName { get; set; }
+        [IgnoreColumn]
+        public string Period { get { return string.Format("{0} - {1}", Year - 1, Year); } }
     }
     [TableName("tjc_car_application_by_jac_code")]
     internal class ApplicationJacCode

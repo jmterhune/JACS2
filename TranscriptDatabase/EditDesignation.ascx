@@ -379,6 +379,9 @@
             attorneyArray.splice(attyRow, 1);
             attorneyTable.clear().rows.add(attorneyArray).draw();
         }
+        var attorneyIds = attorneyArray.map(atty => atty.id);
+        $("#hdAttorneyIds").val(attorneyIds.toString());
+
     }
     function InsertAttorney() {
         const attorney = GetSelectedAttoney();

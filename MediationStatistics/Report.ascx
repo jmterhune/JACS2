@@ -1,44 +1,45 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Report.ascx.cs" Inherits="tjc.Modules.MediationStatistics.Report" %>
-<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+﻿<%@ control language="C#" autoeventwireup="true" codebehind="Report.ascx.cs" inherits="tjc.Modules.MediationStatistics.Report" %>
+<%@ register tagprefix="dnn" namespace="DotNetNuke.Web.Client.ClientResourceManagement" assembly="DotNetNuke.Web.Client" %>
 <div id="report-form">
     <div class="row form-group">
         <div class="col-auto">
-            <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
-            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtStartDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+            <asp:label runat="server" associatedcontrolid="txtStartDate" text="Start Date" />
+            <asp:textbox autocompletetype="Disabled" runat="server" id="txtStartDate" maxlength="15" clientidmode="Static" cssclass="form-control datepicker" />
         </div>
         <div class="col-auto">
-            <asp:Label runat="server" AssociatedControlID="txtEndDate" Text="End Date" />
-            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtEndDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
+            <asp:label runat="server" associatedcontrolid="txtEndDate" text="End Date" />
+            <asp:textbox autocompletetype="Disabled" runat="server" id="txtEndDate" maxlength="15" clientidmode="Static" cssclass="form-control datepicker" />
         </div>
         <div class="col-auto">
-            <asp:Label runat="server" AssociatedControlID="drpReport" Text="Report" />
-            <asp:DropDownList ID="drpReport" runat="server" ToolTip="Select Report to Run" AutoPostBack="true" CssClass="form-control" OnSelectedIndexChanged="drpReport_SelectedIndexChanged" ClientIDMode="Static">
-                <asp:ListItem Text="Compendium" Value="0" />
-                <asp:ListItem Text="Fees Owed" Value="1" />
-                <asp:ListItem Text="Referral Sources" Value="2" />
-                <asp:ListItem Text="Check Stats" Value="3" />
-                <asp:ListItem Text="Collected &amp; Paid" Value="4" />
-                <asp:ListItem Text="Mediator Stats" Value="5" />
-            </asp:DropDownList>
+            <asp:label runat="server" associatedcontrolid="drpReport" text="Report" />
+            <asp:dropdownlist id="drpReport" runat="server" tooltip="Select Report to Run" autopostback="true" cssclass="form-control" onselectedindexchanged="drpReport_SelectedIndexChanged" clientidmode="Static">
+                <asp:listitem text="Compendium" value="0" />
+                <asp:listitem text="Fees Owed" value="1" />
+                <asp:listitem text="Referral Sources" value="2" />
+                <asp:listitem text="Check Stats" value="3" />
+                <asp:listitem text="Collected &amp; Paid" value="4" />
+                <asp:listitem text="Mediator Stats" value="5" />
+            </asp:dropdownlist>
         </div>
 
     </div>
 </div>
 <p>
-    <asp:LinkButton ID="cmdReport" runat="server"
-        OnClick="cmdReport_Click" CssClass="btn btn-primary btn-lg"><i class="fas fa-save"></i> Run Report</asp:LinkButton>
-    <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Exit</asp:HyperLink>
+    <asp:linkbutton id="cmdReport" runat="server"
+        onclick="cmdReport_Click" cssclass="btn btn-primary btn-lg">
+        <i class="fas fa-save"></i>&nbsp;Run Report</asp:linkbutton>
+    <asp:hyperlink id="lnkCancel" cssclass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i>&nbsp;Exit</asp:hyperlink>
 </p>
 <div id="Conpendium" runat="server" visible="false">
-    <asp:Repeater ID="rptConpendium" runat="server" OnItemDataBound="rptConpendium_ItemDataBound">
-        <FooterTemplate>
+    <asp:repeater id="rptConpendium" runat="server" onitemdatabound="rptConpendium_ItemDataBound">
+        <footertemplate>
             </tbody></table>
-        </FooterTemplate>
-        <ItemTemplate>
-            <asp:Literal ID="ltHeader" runat="server" />
+        </footertemplate>
+        <itemtemplate>
+            <asp:literal id="ltHeader" runat="server" />
             <tr>
                 <td>
-                    <asp:Literal ID="ltLineNumber" runat="server" />
+                    <asp:literal id="ltLineNumber" runat="server" />
                 </td>
                 <td>
                     <%#Eval("question") %>
@@ -49,13 +50,13 @@
                 <%#FormatNumber(Eval("Southcounty").ToString(), "-1")%>
                 <%#FormatNumber(Eval("Northcounty").ToString(), "-1")%>
             </tr>
-        </ItemTemplate>
-    </asp:Repeater>
+        </itemtemplate>
+    </asp:repeater>
 </div>
 <div id="FeesOwed" runat="server" visible="false">
-    <asp:Repeater ID="rptFeesOwed" runat="server" OnItemDataBound="rptFeesOwed_ItemDataBound">
-        <ItemTemplate>
-            <asp:Literal ID="ltHeader" runat="server" />
+    <asp:repeater id="rptFeesOwed" runat="server" onitemdatabound="rptFeesOwed_ItemDataBound">
+        <itemtemplate>
+            <asp:literal id="ltHeader" runat="server" />
             <tr>
                 <td>
                     <%#Eval("CaseNumber") %>
@@ -83,36 +84,36 @@
                     <%#Eval("MediationDate","{0:d}") %>
                 </td>
                 <td>
-                    <asp:CheckBox ID="chkAgreement" runat="server" Enabled="false" Checked='<%#Eval("FeeAgreement")%>' />
+                    <asp:checkbox id="chkAgreement" runat="server" enabled="false" checked='<%#Eval("FeeAgreement")%>' />
                 </td>
                 <td>
-                    <asp:CheckBox ID="chkjudgment" runat="server" Enabled="false" Checked='<%#Eval("Feejudgement")%>' />
+                    <asp:checkbox id="chkjudgment" runat="server" enabled="false" checked='<%#Eval("Feejudgement")%>' />
                 </td>
                 <td>
-                    <asp:CheckBox ID="chkWaiver" runat="server" Enabled="false" Checked='<%#Eval("FeeWaiver")%>' />
+                    <asp:checkbox id="chkWaiver" runat="server" enabled="false" checked='<%#Eval("FeeWaiver")%>' />
                 </td>
                 <td>
-                    <asp:CheckBox ID="chkOts" runat="server" Enabled="false" Checked='<%#Eval("OTS")%>' />
+                    <asp:checkbox id="chkOts" runat="server" enabled="false" checked='<%#Eval("OTS")%>' />
                 </td>
                 <td>
-                    <asp:CheckBox ID="chkP1_FTA" runat="server" Enabled="false" Checked='<%#Eval("P1_FTA")%>' />
+                    <asp:checkbox id="chkP1_FTA" runat="server" enabled="false" checked='<%#Eval("P1_FTA")%>' />
                 </td>
                 <td>
-                    <asp:CheckBox ID="chkP2_FTA" runat="server" Enabled="false" Checked='<%#Eval("P2_FTA")%>' />
+                    <asp:checkbox id="chkP2_FTA" runat="server" enabled="false" checked='<%#Eval("P2_FTA")%>' />
                 </td>
             </tr>
-        </ItemTemplate>
-        <FooterTemplate>
+        </itemtemplate>
+        <footertemplate>
             </tbody></table>
-        </FooterTemplate>
-    </asp:Repeater>
+        </footertemplate>
+    </asp:repeater>
 </div>
 <div id="Referrals" runat="server" visible="false">
-    <asp:Repeater ID="rptReferrals" runat="server">
-        <FooterTemplate>
+    <asp:repeater id="rptReferrals" runat="server">
+        <footertemplate>
             </tbody></table>
-        </FooterTemplate>
-        <HeaderTemplate>
+        </footertemplate>
+        <headertemplate>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -121,171 +122,182 @@
                     </tr>
                 </thead>
                 <tbody>
-        </HeaderTemplate>
-        <ItemTemplate>
+        </headertemplate>
+        <itemtemplate>
             <tr>
                 <td>
                     <%# Container.DataItem ?? string.Empty%>
                 </td>
             </tr>
-        </ItemTemplate>
-    </asp:Repeater>
+        </itemtemplate>
+    </asp:repeater>
 </div>
 <div id="Checker" runat="server" visible="false">
-    <asp:GridView ID="rgChecker" runat="server" CssClass="table table-striped">
-        <Columns>
-            <asp:BoundField DataField="Region" HeaderText="Region" ReadOnly="True" SortExpression="Region"></asp:BoundField>
-            <asp:BoundField DataField="CaseTypeGroup" HeaderText="Case Group" ReadOnly="True" SortExpression="CaseTypeGroup">
-                <ItemStyle Wrap="false" />
-            </asp:BoundField>
-            <asp:BoundField DataField="CaseNumber" HeaderText="Case Number" ReadOnly="True" SortExpression="CaseNumber">
-                <ItemStyle Wrap="false" />
-            </asp:BoundField>
-            <asp:BoundField DataField="partyone" HeaderText="Party One" ReadOnly="True" SortExpression="partyone"></asp:BoundField>
-            <asp:BoundField DataField="partytwo" HeaderText="Party Two" ReadOnly="True" SortExpression="partytwo"></asp:BoundField>
-            <asp:BoundField DataField="ReferralDate" HeaderText="Referred" ReadOnly="True" SortExpression="ReferralDate"
-                DataFormatString="{0:d}"></asp:BoundField>
-            <asp:CheckBoxField DataField="MediationHeld" HeaderText="Mediation Held" ReadOnly="True" SortExpression="MediationHeld"></asp:CheckBoxField>
-            <asp:BoundField DataField="MediationDate" HeaderText="Mediated" ReadOnly="True" SortExpression="MediationDate"
-                DataFormatString="{0:d}"></asp:BoundField>
-            <asp:BoundField DataField="Mediator" HeaderText="Mediator" ReadOnly="True" SortExpression="Mediator"></asp:BoundField>
-            <asp:CheckBoxField DataField="AgreementReached" HeaderText="Agreement Reached" ReadOnly="True" SortExpression="AgreementReached"></asp:CheckBoxField>
-            <asp:BoundField DataField="FeeAmount" HeaderText="Fee Amount" ReadOnly="True" SortExpression="FeeAmount"></asp:BoundField>
-            <asp:CheckBoxField DataField="OTS" HeaderText="OTSC" ReadOnly="True" SortExpression="OTS">
-                <HeaderStyle Wrap="false" />
-            </asp:CheckBoxField>
-            <asp:CheckBoxField DataField="FeeWaiver" HeaderText="Fee Waived" ReadOnly="True" SortExpression="FeeWaiver">
-                <HeaderStyle Wrap="false" />
-            </asp:CheckBoxField>
-            <asp:CheckBoxField DataField="P1_FTA" HeaderText="P-FTA" ReadOnly="True" SortExpression="P1_FTA">
-                <HeaderStyle Wrap="false" />
-            </asp:CheckBoxField>
-            <asp:CheckBoxField DataField="P2_FTA" HeaderText="R-FTA" ReadOnly="True" SortExpression="P2_FTA">
-                <HeaderStyle Wrap="false" />
-            </asp:CheckBoxField>
-        </Columns>
-    </asp:GridView>
+    <asp:gridview id="rgChecker" runat="server" cssclass="table table-striped rgChecker" clientidmode="Static">
+        <columns>
+            <asp:boundfield datafield="Region" headertext="Region" readonly="True" sortexpression="Region"></asp:boundfield>
+            <asp:boundfield datafield="CaseTypeGroup" headertext="Case Group" readonly="True" sortexpression="CaseTypeGroup">
+                <itemstyle wrap="false" />
+            </asp:boundfield>
+            <asp:boundfield datafield="CaseNumber" headertext="Case Number" readonly="True" sortexpression="CaseNumber">
+                <itemstyle wrap="false" />
+            </asp:boundfield>
+            <asp:boundfield datafield="partyone" headertext="Party One" readonly="True" sortexpression="partyone"></asp:boundfield>
+            <asp:boundfield datafield="partytwo" headertext="Party Two" readonly="True" sortexpression="partytwo"></asp:boundfield>
+            <asp:boundfield datafield="ReferralDate" headertext="Referred" readonly="True" sortexpression="ReferralDate"
+                dataformatstring="{0:d}"></asp:boundfield>
+            <asp:checkboxfield datafield="MediationHeld" headertext="Mediation Held" readonly="True" sortexpression="MediationHeld"></asp:checkboxfield>
+            <asp:boundfield datafield="MediationDate" headertext="Mediated" readonly="True" sortexpression="MediationDate"
+                dataformatstring="{0:d}"></asp:boundfield>
+            <asp:boundfield datafield="Mediator" headertext="Mediator" readonly="True" sortexpression="Mediator"></asp:boundfield>
+            <asp:checkboxfield datafield="AgreementReached" headertext="Agreement Reached" readonly="True" sortexpression="AgreementReached"></asp:checkboxfield>
+            <asp:boundfield datafield="FeeAmount" headertext="Fee Amount" readonly="True" sortexpression="FeeAmount"></asp:boundfield>
+            <asp:checkboxfield datafield="OTS" headertext="OTSC" readonly="True" sortexpression="OTS">
+                <headerstyle wrap="false" />
+            </asp:checkboxfield>
+            <asp:checkboxfield datafield="FeeWaiver" headertext="Fee Waived" readonly="True" sortexpression="FeeWaiver">
+                <headerstyle wrap="false" />
+            </asp:checkboxfield>
+            <asp:checkboxfield datafield="P1_FTA" headertext="P-FTA" readonly="True" sortexpression="P1_FTA">
+                <headerstyle wrap="false" />
+            </asp:checkboxfield>
+            <asp:checkboxfield datafield="P2_FTA" headertext="R-FTA" readonly="True" sortexpression="P2_FTA">
+                <headerstyle wrap="false" />
+            </asp:checkboxfield>
+        </columns>
+    </asp:gridview>
+    <button class="btn btn-primary" onclick="exportGridViewToExcel('rgChecker')"><i class="fas fa-file-excel"></i>&nbsp;Export to Excel</button>
 </div>
 <div id="CollectedPaid" runat="server" visible="false">
     <fieldset class="outline-fieldset">
-        <legend>Family</legend><strong>Mediations Held:&nbsp;</strong><asp:Label
-            ID="lblMediationHeld_f" runat="server" /><br />
-        <strong>Total fees collected:&nbsp; ($0-$50)</strong>&nbsp;<asp:Label ID="lblFeeCollect60_f"
-            runat="server" />&nbsp;&nbsp;<strong>($50-$100)</strong>&nbsp;<asp:Label ID="lblFeeCollect120_f"
-                runat="server" />&nbsp;&nbsp;<strong>(Indigent)</strong>&nbsp;<asp:Label ID="lblFeeCollectIndigent_f"
+        <legend>Family</legend><strong>Mediations Held:&nbsp;</strong><asp:label
+            id="lblMediationHeld_f" runat="server" /><br />
+        <strong>Total fees collected:&nbsp; ($0-$50)</strong>&nbsp;<asp:label id="lblFeeCollect60_f"
+            runat="server" />&nbsp;&nbsp;<strong>($50-$100)</strong>&nbsp;<asp:label id="lblFeeCollect120_f"
+                runat="server" />&nbsp;&nbsp;<strong>(Indigent)</strong>&nbsp;<asp:label id="lblFeeCollectIndigent_f"
                     runat="server" />&nbsp;<strong>(Fee Waived)</strong>
-        <asp:Label ID="lblFamilyPaidWaived" runat="server" /><br />
-        <strong>Total fees owed when session was held:&nbsp; ($0-$50)</strong>&nbsp;<asp:Label
-            ID="lblFeeOwedHeld60_f" runat="server" />&nbsp;&nbsp;<strong>($50-$100)</strong>&nbsp;<asp:Label
-                ID="lblFeeOwedHeld120_f" runat="server" />&nbsp;&nbsp;<strong>(Indigent)</strong>&nbsp;<asp:Label
-                    ID="lblFeeOwedHeldIndigent_f" runat="server" />&nbsp;<strong>(Fee Waived)</strong>
-        <asp:Label ID="lblFamilyOwedWaived" runat="server" /><br />
-        <strong>Total fees owed when session was not held (FTA):&nbsp; ($0-$50)</strong>&nbsp;<asp:Label
-            ID="lblFeeOwedNH60_f" runat="server" />&nbsp;&nbsp;<strong>($50-$100)</strong>&nbsp;<asp:Label
-                ID="lblFeeOwedNH120_f" runat="server" />&nbsp;&nbsp;<strong>(Indigent)</strong>&nbsp;<asp:Label
-                    ID="lblFeeOwedIndigentNH_f" runat="server" />&nbsp;<strong>(Fee Waived)</strong>
-        <asp:Label ID="lblFamilyOwedWaivedFTA" runat="server" /><br />
+        <asp:label id="lblFamilyPaidWaived" runat="server" />
+        <br />
+        <strong>Total fees owed when session was held:&nbsp; ($0-$50)</strong>&nbsp;<asp:label
+            id="lblFeeOwedHeld60_f" runat="server" />&nbsp;&nbsp;<strong>($50-$100)</strong>&nbsp;<asp:label
+                id="lblFeeOwedHeld120_f" runat="server" />&nbsp;&nbsp;<strong>(Indigent)</strong>&nbsp;<asp:label
+                    id="lblFeeOwedHeldIndigent_f" runat="server" />&nbsp;<strong>(Fee Waived)</strong>
+        <asp:label id="lblFamilyOwedWaived" runat="server" />
+        <br />
+        <strong>Total fees owed when session was not held (FTA):&nbsp; ($0-$50)</strong>&nbsp;<asp:label
+            id="lblFeeOwedNH60_f" runat="server" />&nbsp;&nbsp;<strong>($50-$100)</strong>&nbsp;<asp:label
+                id="lblFeeOwedNH120_f" runat="server" />&nbsp;&nbsp;<strong>(Indigent)</strong>&nbsp;<asp:label
+                    id="lblFeeOwedIndigentNH_f" runat="server" />&nbsp;<strong>(Fee Waived)</strong>
+        <asp:label id="lblFamilyOwedWaivedFTA" runat="server" />
+        <br />
     </fieldset>
     <fieldset class="outline-fieldset">
-        <legend>County</legend><strong>Mediations Held:&nbsp;</strong>&nbsp;<asp:Label
-            ID="lblMediationHeld_c" runat="server" /><br />
-        <strong>Total fees collected:&nbsp;</strong><asp:Label ID="lblFeeCollect60_c"
-            runat="server" />&nbsp;&nbsp;<strong>(Indigent)&nbsp;</strong><asp:Label ID="lblFeeCollectIndigent_c"
+        <legend>County</legend><strong>Mediations Held:&nbsp;</strong>&nbsp;<asp:label
+            id="lblMediationHeld_c" runat="server" /><br />
+        <strong>Total fees collected:&nbsp;</strong><asp:label id="lblFeeCollect60_c"
+            runat="server" />&nbsp;&nbsp;<strong>(Indigent)&nbsp;</strong><asp:label id="lblFeeCollectIndigent_c"
                 runat="server" />&nbsp;<strong>(Fee Waived)</strong>
-        <asp:Label ID="lblCountyPaidWaived" runat="server" /><br />
-        <strong>Total fees owed when session was held:&nbsp;</strong>&nbsp;<asp:Label
-            ID="lblFeeOwedHeld60_c" runat="server" />&nbsp;&nbsp;<strong>(Indigent)&nbsp;</strong><asp:Label ID="lblFeeOwedHeldIndigent_c"
+        <asp:label id="lblCountyPaidWaived" runat="server" />
+        <br />
+        <strong>Total fees owed when session was held:&nbsp;</strong>&nbsp;<asp:label
+            id="lblFeeOwedHeld60_c" runat="server" />&nbsp;&nbsp;<strong>(Indigent)&nbsp;</strong><asp:label id="lblFeeOwedHeldIndigent_c"
                 runat="server" />&nbsp;<strong>(Fee Waived)</strong>
-        <asp:Label ID="lblCountyOwedWaived" runat="server" /><br />
-        <strong>Total fees owed when session was not held (FTA):&nbsp;</strong>&nbsp;<asp:Label
-            ID="lblFeeOwedNH60_c" runat="server" />&nbsp;&nbsp;<strong>(Indigent)&nbsp;</strong><asp:Label ID="lblFeeOwedNHIndigent_c"
+        <asp:label id="lblCountyOwedWaived" runat="server" />
+        <br />
+        <strong>Total fees owed when session was not held (FTA):&nbsp;</strong>&nbsp;<asp:label
+            id="lblFeeOwedNH60_c" runat="server" />&nbsp;&nbsp;<strong>(Indigent)&nbsp;</strong><asp:label id="lblFeeOwedNHIndigent_c"
                 runat="server" />&nbsp;<strong>(Fee Waived)</strong>
-        <asp:Label ID="lblCountyOwedWaivedFTA" runat="server" /><br />
+        <asp:label id="lblCountyOwedWaivedFTA" runat="server" />
+        <br />
     </fieldset>
 </div>
 <div id="MediatorStats" runat="server" visible="false">
     <hr />
     <div class="row form-group">
         <div class="col-auto">
-            <asp:Label runat="server" ID="lblMediatoryType" AssociatedControlID="drpMediatorType" Text="Mediator Type" Visible="false" />
-            <asp:DropDownList ID="drpMediatorType" runat="server" CssClass="form-control" Visible="false" ClientIDMode="Static">
-                <asp:ListItem Text="< Select Mediator Type >" Value=""></asp:ListItem>
-                <asp:ListItem Text="Contracted" Value="Contracted" />
-                <asp:ListItem Text="Staff" Value="Staff" />
-                <asp:ListItem Text="Volunteer" Value="Volunteer" />
-            </asp:DropDownList>
+            <asp:label runat="server" id="lblMediatoryType" associatedcontrolid="drpMediatorType" text="Mediator Type" visible="false" />
+            <asp:dropdownlist id="drpMediatorType" runat="server" cssclass="form-control" visible="false" clientidmode="Static">
+                <asp:listitem text="< Select Mediator Type >" value=""></asp:listitem>
+                <asp:listitem text="Contracted" value="Contracted" />
+                <asp:listitem text="Staff" value="Staff" />
+                <asp:listitem text="Volunteer" value="Volunteer" />
+            </asp:dropdownlist>
         </div>
         <div class="col-auto">
-            <asp:Label runat="server" ID="lblMediator" AssociatedControlID="drpMediator" Text="Mediator" Visible="false" />
-            <asp:DropDownList ID="drpMediator" runat="server" CssClass="form-control" ClientIDMode="Static" Visible="false" AppendDataBoundItems="true">
-                <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
-            </asp:DropDownList>
+            <asp:label runat="server" id="lblMediator" associatedcontrolid="drpMediator" text="Mediator" visible="false" />
+            <asp:dropdownlist id="drpMediator" runat="server" cssclass="form-control" clientidmode="Static" visible="false" appenddatabounditems="true">
+                <asp:listitem text="< Select Mediator >" value=""></asp:listitem>
+            </asp:dropdownlist>
         </div>
 
         <div class="col-auto">
-            <asp:Button CssClass="btn btn-primary" ID="cmdMediatorStat" Text="Submit" runat="server" OnClick="cmdMediatorStat_Click" />
+            <asp:button cssclass="btn btn-primary" id="cmdMediatorStat" text="Submit" runat="server" onclick="cmdMediatorStat_Click" />
         </div>
     </div>
-               <hr /> <h3>Statistics by Mediator Type</h3>
-            <asp:Repeater ID="rptMediatorTypeCounts" runat="server">
-                <HeaderTemplate>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Mediator Type</th>
-                                <th>Location</th>
-                                <th># Mediations</th>
-                                <th># Agreements</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                </HeaderTemplate>
-                <ItemTemplate>
+    <hr />
+    <h3>Statistics by Mediator Type</h3>
+    <asp:repeater id="rptMediatorTypeCounts" runat="server">
+        <headertemplate>
+            <table id="tblMediatorTypeCounts" class="table table-striped">
+                <thead>
                     <tr>
-                        <td>
-                            <%#Eval("MediatorType") %>
-                        </td>
-                        <td>
-                            <%#Eval("Region") %>
-                        </td>
-                        <td><%#Eval("Held") %></td>
-                        <td><%#Eval("Signed") %></td>
+                        <th>Mediator Type</th>
+                        <th>Location</th>
+                        <th># Mediations</th>
+                        <th># Agreements</th>
                     </tr>
-                </ItemTemplate>
-                <FooterTemplate>
-                    </tbody></table>
-                </FooterTemplate>
-            </asp:Repeater>
-            <h3>Statistics by Mediator</h3>
-            <asp:Repeater ID="rptMediatorCounts" runat="server">
-                <HeaderTemplate>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Mediator</th>
-                                <th>Location</th>
-                                <th># Mediations</th>
-                                <th># Agreements</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                </HeaderTemplate>
-                <ItemTemplate>
+                </thead>
+                <tbody>
+        </headertemplate>
+        <itemtemplate>
+            <tr>
+                <td>
+                    <%#Eval("MediatorType") %>
+                </td>
+                <td>
+                    <%#Eval("Region") %>
+                </td>
+                <td><%#Eval("Held") %></td>
+                <td><%#Eval("Signed") %></td>
+            </tr>
+        </itemtemplate>
+        <footertemplate>
+            </tbody></table>
+        </footertemplate>
+    </asp:repeater>
+        <button class="btn btn-primary mb-4" onclick="exportGridViewToExcel('tblMediatorTypeCounts')"><i class="fas fa-file-excel"></i>&nbsp;Export to Excel</button>
+
+    <h3>Statistics by Mediator</h3>
+    <asp:repeater id="rptMediatorCounts" runat="server">
+        <headertemplate>
+            <table id="tblMediatorCounts" class="table table-striped">
+                <thead>
                     <tr>
-                        <td>
-                            <%#Eval("MediatorName") %>
-                        </td>
-                        <td>
-                            <%#Eval("Region") %>
-                        </td>
-                        <td><%#Eval("Held") %></td>
-                        <td><%#Eval("Signed") %></td>
+                        <th>Mediator</th>
+                        <th>Location</th>
+                        <th># Mediations</th>
+                        <th># Agreements</th>
                     </tr>
-                </ItemTemplate>
-                <FooterTemplate>
-                    </tbody></table>
-                </FooterTemplate>
-            </asp:Repeater>
+                </thead>
+                <tbody>
+        </headertemplate>
+        <itemtemplate>
+            <tr>
+                <td>
+                    <%#Eval("MediatorName") %>
+                </td>
+                <td>
+                    <%#Eval("Region") %>
+                </td>
+                <td><%#Eval("Held") %></td>
+                <td><%#Eval("Signed") %></td>
+            </tr>
+        </itemtemplate>
+        <footertemplate>
+            </tbody></table>
+        </footertemplate>
+    </asp:repeater>
+            <button class="btn btn-primary" onclick="exportGridViewToExcel('tblMediatorCounts')"><i class="fas fa-file-excel"></i>&nbsp;Export to Excel</button>
 
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
@@ -305,5 +317,18 @@
     function PageInit() {
         $(".datepicker").datepicker();
     }
+    function exportGridViewToExcel(gridId) {
+        var table = document.getElementById(gridId);
+        var html = table.outerHTML;
+        var dataType = 'application/vnd.ms-excel';
+        var blob = new Blob(['\ufeff', html], { type: dataType });
 
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'GridViewExport.xls';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 </script>

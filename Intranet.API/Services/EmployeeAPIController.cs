@@ -15,7 +15,6 @@ namespace tjc.Intranet.API.Services
     public class EmployeeController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("me")]
         public HttpResponseMessage GetEmployeePersonalDataByEmail(string emailAddress)
         {
@@ -25,7 +24,6 @@ namespace tjc.Intranet.API.Services
             return Request.CreateResponse(employeeData);
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("contacts")]
         public HttpResponseMessage GetEmergencyContacts(long employeeId)
         {
@@ -35,7 +33,6 @@ namespace tjc.Intranet.API.Services
             return Request.CreateResponse(contacts);
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("phones")]
         public HttpResponseMessage GetEmployeePhones(long employeeId)
         {
@@ -45,7 +42,6 @@ namespace tjc.Intranet.API.Services
             return Request.CreateResponse(phones);
         }
         [HttpPut]
-        [AllowAnonymous]
         [ActionName("update-personal")]
         public HttpResponseMessage UpdatePersonalData(EmployeeViewModel employee)
         {
@@ -73,7 +69,6 @@ namespace tjc.Intranet.API.Services
             }
         }
         [HttpPost]
-        [AllowAnonymous]
         [ActionName("update-phones")]
         public HttpResponseMessage UpdatePhones(IEnumerable<PhoneViewModel> phones)
         {
@@ -98,7 +93,6 @@ namespace tjc.Intranet.API.Services
             }
         }
         [HttpPost]
-        [AllowAnonymous]
         [ActionName("update-contacts")]
         public HttpResponseMessage UpdateEmergencyContact(IEnumerable<EmergencyContactViewModel> contacts)
         {

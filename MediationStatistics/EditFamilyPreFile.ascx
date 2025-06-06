@@ -531,6 +531,25 @@
         $(".radio-button-list input").addClass("form-check-input");
         $(".radio-button-list label").addClass("form-check-label");
         //mediator search
+        $('input').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+            }
+        });
+
+        $('#txtMediatorFirstName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
+        $('#txtMediatorLastName').keypress(function (event) {
+
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
         $(".mediator-search").on("click", function (e) {
             e.preventDefault();
             var medModal = document.querySelector('#mediatorModal');

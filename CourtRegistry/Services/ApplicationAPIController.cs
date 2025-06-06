@@ -45,7 +45,7 @@ namespace tjc.Modules.CourtRegistry.Services
                 var ctl = new ApplicationController();
                 filteredCount = ctl.GetApplicationListCount(applicationId, periodYear, firstName, lastName, statusId);
                 if (count == 0) { recordCount = filteredCount; }
-                caselistItems = ctl.GetDesignationListPaged(applicationId, periodYear, firstName, lastName, statusId, recordOffset, pageSize, sortColumn, sortDirection).Select(applicationListItem => new ApplicationViewModel(applicationListItem)).ToList();
+                caselistItems = ctl.GetApplicationListPaged(applicationId, periodYear, firstName, lastName, statusId, recordOffset, pageSize, sortColumn, sortDirection).Select(applicationListItem => new ApplicationViewModel(applicationListItem)).ToList();
                 return Request.CreateResponse(new ApplicationSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (Exception ex)

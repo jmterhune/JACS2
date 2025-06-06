@@ -180,12 +180,13 @@ namespace tjc.Modules.TranscriptDatabase
             designation.PublicDefenderAppointed = chkPublicDefender.Checked;
             designation.DeclaredIndigent = chkIndigent.Checked;
             designation.CourtAppointedCounsel = chkCourtAppointed.Checked;
-            ctl.UpdateDesignation(designation);
             ctl.DeleteDesignationAttorneys(DesignationId);
             foreach (string atty in attorneys)
             {
                 ctl.CreateDesignationAttorney(DesignationId, Int32.Parse(atty));
             }
+            ctl.UpdateDesignation(designation);
+           
             bool isDueDate = DateTime.TryParse(hdOldDueDate.Value, out DateTime newDueDate);
             if (isDueDate && designation.DueDate.HasValue)
                 if (designation.DueDate.Value != newDueDate)
@@ -199,7 +200,5 @@ namespace tjc.Modules.TranscriptDatabase
             Response.Redirect(_navigationManager.NavigateURL());
         }
         #endregion
-
-
     }
 }

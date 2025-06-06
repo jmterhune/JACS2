@@ -37,21 +37,21 @@
             <div class="bg-dark text-white border-dark rounded p-2 mb-2">
                 <div class="row">
                     <div class="col-auto me-2 pt-2"><strong>Filter By:</strong></div>
-                    <div class="col">
+                    <div class="col-auto">
                         <input type="number" id="txtApplicationId" tabindex="0" min="1" class="form-control search id-filter" placeholder="ID" maxlength="25" />
                     </div>
-                    <div class="col">
+                    <div class="col-auto">
                         <asp:DropDownList runat="server" ClientIDMode="Static" ID="drpYear" CssClass="form-control search">
                         </asp:DropDownList>
                     </div>
-                    <div class="col">
+                    <div class="col-auto">
                         <input type="text" id="txtLastNameSearch" tabindex="0" class="form-control search" maxlength="25" placeholder="Last Name" />
                     </div>
-                    <div class="col">
+                    <div class="col-auto">
                         <input type="text" id="txtFirstNameSearch" tabindex="0" class="form-control search" maxlength="25" placeholder="First Name" />
                     </div>
 
-                    <div class="col">
+                    <div class="col-auto">
                         <asp:DropDownList runat="server" ClientIDMode="Static" ID="drpStatus" CssClass="form-control search">
                         </asp:DropDownList>
                     </div>
@@ -93,7 +93,7 @@
     var moduleId = <%=ModuleId%>;
     var applicationId = -1;
     var year = -1;
-    var statusId = -1;
+    var statusId = 0;
     var lastName = null;
     var firstName = null;
     var pageSize = 25;

@@ -31,6 +31,35 @@ namespace tjc.Modules.CourtRegistry.Services
                routeName: "Delete",
                url: "{controller}/{action}/{applicationid}",
                namespaces: new[] { "tjc.Modules.CourtRegistry.Services" });
+
+            mapRouteManager.MapHttpRoute(
+               moduleFolderName: "Attorney",
+               routeName: "action",
+               url: "{controller}/{action}",
+               namespaces: new[] { "tjc.Modules.CourtRegistry.Services" });
+
+            mapRouteManager.MapHttpRoute(
+              moduleFolderName: "JAC",
+              routeName: "jacActions",
+              url: "{controller}/{action}",
+              namespaces: new[] { "tjc.Modules.CourtRegistry.Services" });
+
+            mapRouteManager.MapHttpRoute(
+                moduleFolderName: "Attorney",
+                routeName: "actionParam",
+                url: "{controller}/{action}/{count}",
+                namespaces: new[] { "tjc.Modules.CourtRegistry.Services" });
+            mapRouteManager.MapHttpRoute(
+                moduleFolderName: "AttorneyManage",
+                routeName: "actionParam2",
+                url: "{controller}/{action}/{attorneyId}",
+                namespaces: new[] { "tjc.Modules.CourtRegistry.Services" });
+
+            mapRouteManager.MapHttpRoute(
+               moduleFolderName: "AttorneyDelete",
+               routeName: "Delete",
+               url: "{controller}/{action}/{attorneyid}",
+               namespaces: new[] { "tjc.Modules.CourtRegistry.Services" });
         }
     }
 }

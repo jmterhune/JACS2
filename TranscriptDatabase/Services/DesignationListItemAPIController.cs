@@ -11,10 +11,10 @@ using tjc.Modules.TranscriptDatabase.Services.ViewModels;
 
 namespace tjc.Modules.TranscriptDatabase.Services
 {
+    [DnnAuthorize]
     public class DesignationListItemController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetDesignationListItems(int count)
         {
             List<DesignationListItemViewModel> caselistItems = new List<DesignationListItemViewModel>();
@@ -47,7 +47,6 @@ namespace tjc.Modules.TranscriptDatabase.Services
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("GetMatchingNames")]
         public HttpResponseMessage GetMatchingNames()
         {
@@ -66,7 +65,6 @@ namespace tjc.Modules.TranscriptDatabase.Services
             }
         }
         [HttpPost]
-        [AllowAnonymous]
         [ActionName("CreateDesignation")]
         public HttpResponseMessage CreateDesignation(DesignationViewModel designationViewModel)
         {
@@ -119,7 +117,6 @@ namespace tjc.Modules.TranscriptDatabase.Services
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("Delete")]
         public HttpResponseMessage DeleteDesignation(int designationId)
         {
@@ -137,7 +134,6 @@ namespace tjc.Modules.TranscriptDatabase.Services
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("Archive")]
         public HttpResponseMessage ToggleArchiveStatus(int designationId)
         {
@@ -154,7 +150,6 @@ namespace tjc.Modules.TranscriptDatabase.Services
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("Acknowledge")]
         public HttpResponseMessage ToggleAcknowledgmentStatus(int designationId)
         {

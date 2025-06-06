@@ -572,6 +572,25 @@
             }
             modal.show();
         });
+        $('input').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+            }
+        });
+
+        $('#txtMediatorFirstName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
+        $('#txtMediatorLastName').keypress(function (event) {
+
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
         dataList.querySelectorAll('option').forEach((el, idx, arr) => {
             el.addEventListener('click', (e) => {
                 input.value = el.value;

@@ -15,7 +15,12 @@ using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.MediationStatistics.Components;
 
@@ -342,8 +347,9 @@ namespace tjc.Modules.MediationStatistics
                         break;
                     }
             }
-        }
 
+
+        }
         protected void rptConpendium_ItemDataBound(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.AlternatingItem | e.Item.ItemType == ListItemType.Item)
@@ -392,13 +398,13 @@ namespace tjc.Modules.MediationStatistics
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
             int mediatorId = 0;
             string mediatorType = "";
-           
+
             var ctl = new ReportController();
             IEnumerable<StatMediatorCounts> mediatorCounts = ctl.GetMediatorReport(startDate, endDate);
             if (drpMediator.SelectedIndex > 0)
             {
                 mediatorId = Int32.Parse(drpMediator.SelectedValue);
-                rptMediatorCounts.DataSource = mediatorCounts.Where(x => x.MediatorId == mediatorId); 
+                rptMediatorCounts.DataSource = mediatorCounts.Where(x => x.MediatorId == mediatorId);
                 rptMediatorCounts.DataBind();
             }
             else
@@ -424,7 +430,6 @@ namespace tjc.Modules.MediationStatistics
         {
             Response.Redirect(_navigationManager.NavigateURL());
         }
-
         protected void rptFeesOwed_ItemDataBound(object sender, System.Web.UI.WebControls.RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.AlternatingItem | e.Item.ItemType == ListItemType.Item)
@@ -461,6 +466,26 @@ namespace tjc.Modules.MediationStatistics
                 }
             }
         }
+        protected void cmdExport_Click(object sender, EventArgs e)
+        {
+
+            StringWriter writer = new StringWriter();
+            HtmlTextWriter htmlWriter = new HtmlTextWriter(writer);
+            DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
+            DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
+            rgChecker.AutoGenerateColumns = true;
+            rgChecker.DataSource = ctl.GetSessionCounts(startDate, endDate);
+            rgChecker.DataBind();
+            rgChecker.RenderControl(htmlWriter);
+            htmlWriter.Close();
+            Response.Clear();
+            Response.AddHeader("content-disposition", "attachment;filename=FileName.xls");
+            Response.Charset = "";
+            Response.Write(writer.ToString());
+            Response.End();
+
+        }
         #endregion //Events
+
     }
 }

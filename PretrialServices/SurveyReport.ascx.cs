@@ -70,16 +70,21 @@ namespace tjc.Modules.PretrialServices
                 startDate = DateTimeExtensions.FirstDayOfYear(reportDate);
                 endDate = DateTimeExtensions.LastDayOfYear(reportDate);
             }
+            if (hdRportDate.Value == "M")
+            {
+                startDate = DateTimeExtensions.FirstDayOfMonth(reportDate);
+                endDate = DateTimeExtensions.LastDayOfMonth(reportDate);
+            }
             var ctl = new DefendantInProgramController();
             IEnumerable<DefendantInProgram> defendantInPrograms = ctl.GetDefendantsInProgram(startDate, endDate);
-            lblScreened.Text = defendantInPrograms.Where(x => x.CaseScreened).Count().ToString();
-            lblNotScreened.Text = defendantInPrograms.Where(x => x.CaseScreened == false).Count().ToString();
-            lblPlacedSPR.Text = defendantInPrograms.Where(x => x.PlacedInProgram == false).Count().ToString();
-            lblNotPlacedSPR.Text = defendantInPrograms.Where(x => x.PlacedInProgram).Count().ToString();
+            lblScreened.Text = defendantInPrograms.Where(x => x.CaseScreened==true).Count().ToString();
+            lblNotScreened.Text = defendantInPrograms.Where(x => x.CaseScreened == false ).Count().ToString();
+            lblPlacedSPR.Text = defendantInPrograms.Where(x => x.PlacedInProgram == true).Count().ToString();
+            lblNotPlacedSPR.Text = defendantInPrograms.Where(x => x.PlacedInProgram==false || x.PtrOrdered).Count().ToString();
             lblMisdemeanor.Text = defendantInPrograms.Where(x => x.CaseType == (int)Enumerations.CaseCategoryValue.Misdemeanor).Count().ToString();
             lblFelony.Text = defendantInPrograms.Where(x => x.CaseType == (int)Enumerations.CaseCategoryValue.Felony).Count().ToString();
-            lblNoBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Secured).Count().ToString();
-            lblWithBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.NonSecured).Count().ToString();
+            lblNoBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.NonSecured).Count().ToString();
+            lblWithBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Secured).Count().ToString();
             lblBothBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Both).Count().ToString();
             lblRevokedBond.Text = defendantInPrograms.Where(x => x.BondType == (int)Enumerations.BondTypeValue.Revoked).Count().ToString();
             lblUnsuccessfulCompletion.Text = defendantInPrograms.Where(x => x.Completion == (int)Enumerations.CompletionStatus.unsuccessful).Count().ToString();

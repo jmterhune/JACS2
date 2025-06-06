@@ -134,17 +134,17 @@ namespace tjc.Modules.CourtRegistry.Components
             int t;
             using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
-                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_car_get_application_list_count", applicationId, periodYear, lastName, firstName, statusId);
+                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_car_get_application_list_count", applicationId, periodYear, firstName,lastName,  statusId);
             }
             return t;
         }
 
-        internal IEnumerable<ApplicationListItem> GetDesignationListPaged(int applicationId, int periodYear, string firstName, string lastName, int statusId, int recordOffset, int pageSize, string sortColumn, string sortDirection)
+        internal IEnumerable<ApplicationListItem> GetApplicationListPaged(int applicationId, int periodYear, string firstName, string lastName, int statusId, int recordOffset, int pageSize, string sortColumn, string sortDirection)
         {
             IEnumerable<ApplicationListItem> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
-                t = ctx.ExecuteQuery<ApplicationListItem>(System.Data.CommandType.StoredProcedure, "tjc_car_get_application_list_paged", applicationId, periodYear, lastName, firstName, statusId, recordOffset, pageSize, sortColumn, sortDirection);
+                t = ctx.ExecuteQuery<ApplicationListItem>(System.Data.CommandType.StoredProcedure, "tjc_car_get_application_list_paged", applicationId, periodYear,firstName, lastName,  statusId, recordOffset, pageSize, sortColumn, sortDirection);
             }
             return t;
         }

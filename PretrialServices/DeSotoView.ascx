@@ -299,7 +299,7 @@
                                         <asp:CheckBox ID="chkAssessed" runat="server" Text="Assessed?" />
                                     </div>
                                     <div class="col-3 form-check">
-                                        <asp:CheckBox ID="chkIndigentAssessed" runat="server" Text="Ingident Assessed?" />
+                                        <asp:CheckBox ID="chkIndigentAssessed" runat="server" Text="Indigent Assessed?" />
                                     </div>
                                     <div class="col-3 form-check">
                                         <asp:CheckBox ID="chkPtrOrdered" runat="server" Text="<abbr title='Pretrial Release'>PTR</abbr> Ordered?" />

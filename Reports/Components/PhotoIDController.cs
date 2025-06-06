@@ -48,7 +48,7 @@ namespace tjc.Modules.Reports.Components
             using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
-                t = rep.Find("Where BadgeType='Employee'");
+                t = rep.Find("Where BadgeType='Employee' OR BadgeType='Intern'");
             }
             return t;
         }
@@ -58,7 +58,7 @@ namespace tjc.Modules.Reports.Components
             using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
-                t = rep.Find("Where BadgeType='Employee' AND LastName like @0",string.Format("%{0}%",lastName));
+                t = rep.Find("Where (BadgeType='Employee' OR BadgeType='Intern') AND LastName like @0", string.Format("%{0}%",lastName));
             }
             return t;
         }

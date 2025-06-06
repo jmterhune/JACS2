@@ -11,11 +11,11 @@ using tjc.Intranet.API.Services.ViewModels.Mediation;
 
 namespace tjc.Intranet.API.Services.Mediation
 {
+    [DnnAuthorize]
     public class CaseListItemController : DnnApiController
     {
 
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetCaseListItems(int count)
         {
             List<CaseListItemViewModel> caselistItems = new List<CaseListItemViewModel>();

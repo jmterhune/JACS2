@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Services.Authentication;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using tjc.Modules.TranscriptDatabase.Services.ViewModels;
 
 namespace tjc.Modules.TranscriptDatabase.Services
 {
+    [DnnAuthorize]
     public class AttorneyController : DnnApiController
     {
         [HttpGet]

@@ -10,7 +10,7 @@ using System.Web.Http;
 
 namespace tjc.Intranet.API.Services
 {
-    //[DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Anonymous)]
+    [DnnAuthorize]
     public class LogEntryController : DnnApiController
     {
         [HttpGet]

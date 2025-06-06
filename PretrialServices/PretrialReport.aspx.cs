@@ -79,8 +79,10 @@ namespace tjc.Modules.PretrialServices
             return new DateTime(inDate.Year, inDate.Month, DateTime.DaysInMonth(inDate.Year, inDate.Month));
         }
 
-        private string GetWeekTextValue(DateTime inDate)
+        private string GetWeekTextValue(DateTime inDate, bool isTotal)
         {
+            if(!isTotal)
+                return inDate.ToShortDateString();
             string weekEndValue = inDate.ToString("MMM");
             int weekStartDay = inDate.Day;
             if (weekStartDay == 7)
@@ -96,7 +98,7 @@ namespace tjc.Modules.PretrialServices
             return weekEndValue;
         }
 
-        private PdfPTable getIntakelog(DateTime inDate)
+        private PdfPTable getIntakelog(DateTime inDate,IEnumerable<DefendantInProgram> defendantsInProgram)
         {
             PdfPTable table = new PdfPTable(7);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204);
@@ -113,11 +115,17 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase(string.Format("# Ordered {0} to PTR ", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Indigent {0} Int / Assessed ", Environment.NewLine), boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            var ctl = new IntakeLogItemController();
-            IntakeLogItem intakeLogItem = ctl.GetIntakeLogItemByCountyAndDate(CountyId, inDate);
-            if (intakeLogItem != null)
+            IntakeLogItem intakeLogItem = new IntakeLogItem();
+            if (defendantsInProgram != null)
             {
-                table.AddCell(new Phrase(GetWeekTextValue(inDate), normalFont));
+                intakeLogItem.IntakeDate = inDate;
+                intakeLogItem.Assessed=defendantsInProgram.Where(x => x.Assessed).Count();
+                intakeLogItem.Interviewed=defendantsInProgram.Where(x => x.Interviewed).Count();
+                intakeLogItem.IndigentAssessed=defendantsInProgram.Where(x=>x.IndigentAssessed).Count();
+                intakeLogItem.PtrRecommended=defendantsInProgram.Where(x => x.PtrRecommended).Count();
+                intakeLogItem.PtrNotRecommended=defendantsInProgram.Where(x=>x.PtrNotRecommended).Count();
+                intakeLogItem.PtrOrdered = defendantsInProgram.Where(x=>x.PtrOrdered).Count();
+                table.AddCell(new Phrase(GetWeekTextValue(inDate,false), normalFont));
                 if (intakeLogItem.Interviewed.HasValue)
                     table.AddCell(new Phrase(intakeLogItem.Interviewed.ToString(), normalFont));
                 if (intakeLogItem.Assessed.HasValue)
@@ -135,7 +143,7 @@ namespace tjc.Modules.PretrialServices
             return table;
         }
 
-        private PdfPTable GetDefendantLog(DateTime InDate)
+        private PdfPTable GetDefendantLog(DateTime InDate, IEnumerable<DefendantInProgram> defendantsInProgram)
         {
             PdfPTable table = new PdfPTable(15);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 204, 153); // ORANGE
@@ -207,8 +215,7 @@ namespace tjc.Modules.PretrialServices
             bool isFcNonDangerous = false;
             bool isMcDangerous = false;
             bool isMcNonDangerous = false;
-            var ctl = new DefendantInProgramController();
-            IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramByCounty(CountyId, InDate);
+            
 
             defendantCount = defendantsInProgram.Count();
             foreach (DefendantInProgram defendantInProgram in defendantsInProgram)
@@ -608,7 +615,7 @@ namespace tjc.Modules.PretrialServices
             if (IsMonthEnd)
                 startDay = 1;
 
-            string dateText = GetWeekTextValue(inDate);
+            string dateText = GetWeekTextValue(inDate,true);
             if (IsMonthEnd)
                 dateText = "Month End";
 
@@ -619,9 +626,8 @@ namespace tjc.Modules.PretrialServices
             }
             else
                 colIntakeTemp = colIntake;
-            var query = from i in colIntakeTemp
-                        where i.IntakeDay >= startDay & i.IntakeDay <= endDay & i.CountyId == CountyId
-                        select i;
+            var query = colIntakeTemp.Where(i => i.IntakeDay >= startDay & i.IntakeDay <= endDay);
+                        
             int interviewTT = query.Sum(i => i.Interviewed.Value);
 
             int assessedTT = query.Sum(i => i.Assessed.Value);
@@ -897,16 +903,20 @@ namespace tjc.Modules.PretrialServices
 
         public void WriteDaily(ref Document doc, DateTime Indate)
         {
+
+            var ctl = new DefendantInProgramController();
+            IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramByCounty(CountyId, Indate);
+
             Paragraph pDates = new Paragraph(reportTitle + Environment.NewLine + "For " + beginningDate + " to " + enddingDate + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
             pDates.Alignment = Element.ALIGN_CENTER;
             doc.Add(pDates);
             Paragraph pCurrentDate = new Paragraph(Indate.ToShortDateString() + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 9, Font.NORMAL));
             doc.Add(pCurrentDate);
-            doc.Add(getIntakelog(Indate));
+            doc.Add(getIntakelog(Indate,defendantsInProgram));
             Paragraph pDefendant = new Paragraph("Defendants Ordered into Program " + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLDITALIC));
             pDefendant.Alignment = Element.ALIGN_CENTER;
             doc.Add(pDefendant);
-            doc.Add(GetDefendantLog(Indate));
+            doc.Add(GetDefendantLog(Indate, defendantsInProgram));
             doc.Add(new Paragraph(" "));
             doc.Add(new Paragraph(string.Format("* {0} PTS does not make recommendations @ 1st appearance.", CountyId), new Font(Font.FontFamily.HELVETICA, 5)));
             doc.Add(new Paragraph("* In accordance with the FCIC/NCIC rules, only convictions in the State of Florida are reflected.", new Font(Font.FontFamily.HELVETICA, 5)));
@@ -915,7 +925,7 @@ namespace tjc.Modules.PretrialServices
                 if (IsWeekend(Indate))
                 {
                     doc.NewPage();
-                    Paragraph pTitleW = new Paragraph(reportTitleW + Environment.NewLine + "For " + GetWeekTextValue(Indate).Replace("Week", Indate.Year.ToString() + " Week") + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
+                    Paragraph pTitleW = new Paragraph(reportTitleW + Environment.NewLine + "For " + GetWeekTextValue(Indate,false).Replace("Week", Indate.Year.ToString() + " Week") + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleW.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleW);
                     doc.Add(GetCombinedTotals(Indate, false, false));
@@ -1054,7 +1064,7 @@ namespace tjc.Modules.PretrialServices
                     lastDay = lastDayMonth;
                 beginningDate = new DateTime(reportDate.Year, reportDate.Month, firstDay).ToShortDateString();
                 enddingDate = new DateTime(reportDate.Year, reportDate.Month, lastDay).ToShortDateString();
-                reportName = string.Format("pts-CRTK-{0}-{1}-{2}-{3}.pdf", CountyId, GetWeekTextValue(reportDate).Replace(" ", "-"), reportDate.Month.ToString(), reportDate.Year.ToString());
+                reportName = string.Format("pts-CRTK-{0}-{1}-{2}-{3}.pdf", CountyId, GetWeekTextValue(reportDate,true).Replace(" ", "-"), reportDate.Month.ToString(), reportDate.Year.ToString());
                 PdfWriter pdfWriter1 = PdfWriter.GetInstance(doc, new FileStream(appPath + reportName, FileMode.Create));
                 pdfWriter1.PageEvent = PageEventHandler;
                 pdfWriter1.SetFullCompression();
@@ -1110,8 +1120,7 @@ namespace tjc.Modules.PretrialServices
                 doc.Close();
 
             }
-
-            Response.Redirect(string.Format("{0}{1}", ReportRootUrl, reportName));
+            Response.Redirect(string.Format("{0}{1}?ver={2}", ReportRootUrl, reportName, DateTime.Now.ToString("MMddyyyhhmmss")));
         }
     }
 }

@@ -16,7 +16,6 @@ namespace tjc.Intranet.API.Services.Mediation
     public class MediatorListItemController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetMediatorListItems(int count)
         {
             List<MediatorListItemViewModel> mediatorlistItems = new List<MediatorListItemViewModel>();
@@ -46,7 +45,6 @@ namespace tjc.Intranet.API.Services.Mediation
             }
         }
         [HttpPost]
-        [AllowAnonymous]
         [ActionName("add-mediator")]
         public HttpResponseMessage CreateMediator(MediatorListItemViewModel mediatorViewItem)
         {

@@ -13,6 +13,7 @@ using static tjc.Modules.TranscriptDatabase.Services.AttorneyController;
 
 namespace tjc.Modules.TranscriptDatabase.Services
 {
+    [DnnAuthorize]
     public class EventController : DnnApiController
     {
         [HttpGet]
