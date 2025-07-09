@@ -1,5 +1,7 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Entities.Content.Taxonomy;
 using System.Collections.Generic;
+using System.Linq;
 namespace tjc.Modules.jacs.Components
 {
     internal class CategoryController
@@ -39,6 +41,15 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+        public List<KeyValuePair<long, string>> GetCategoryDropDownItems(string searchTerm)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<Category>();
+                return rep.Find("Where description like @0", string.Format("%{0}%", searchTerm))
+                    .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+            }
+        }
         public Category GetCategory(long categoryId)
         {
             Category t;
@@ -60,21 +71,29 @@ namespace tjc.Modules.jacs.Components
         }
         public IEnumerable<Category> GetCategoriesPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
-            IEnumerable<Category> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t = ctx.ExecuteQuery<Category>(System.Data.CommandType.StoredProcedure, "tjc_jacs_get_category_paged", searchTerm, rowOffset, pageSize, sortOrder, sortDesc);
+                return ctx.ExecuteQuery<Category>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_category_paged",
+                    searchTerm ?? string.Empty,
+                    rowOffset,
+                    pageSize,
+                    sortOrder ?? "description",
+                    sortDesc ?? "asc"
+                );
             }
-            return t;
         }
         public int GetCategoriesCount(string searchTerm)
         {
-            int t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_jacs_get_category_count", searchTerm);
+                return ctx.ExecuteScalar<int>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_category_count",
+                    searchTerm ?? string.Empty
+                );
             }
-            return t;
         }
 
     }

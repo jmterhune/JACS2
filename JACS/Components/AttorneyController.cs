@@ -1,10 +1,13 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.Linq;
+using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
 {
     internal class AttorneyController
     {
         private const string CONN_JACS = "jacs"; //Connection
+        private const string CONN_JUD12 = "Jud12"; //jud12.flcourts.org
 
         public void CreateAttorney(Attorney t)
         {
@@ -51,6 +54,16 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+        public IEnumerable<Attorney> GetAttorneyDropDownItems(string term)
+        {
+            IEnumerable<Attorney> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<Attorney>();
+                t = rep.Find("Where name like @0",string.Format("%{0}%",term));
+            }
+            return t;
+        }
         public Attorney GetAttorney(long attorneyId)
         {
             Attorney t;
@@ -61,6 +74,21 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+        public CourtListItem GetAttorneyListItem(long attorneyId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var attorney = ctx.GetRepository<Attorney>().GetById(attorneyId);
+                return attorney != null
+                    ? new CourtListItem
+                    {
+                        value = attorney.id,
+                        text = attorney.name
+                    }
+                    : new CourtListItem();
+            }
+        }
+
         public void UpdateAttorney(Attorney t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -81,21 +109,38 @@ namespace tjc.Modules.jacs.Components
         }
         public IEnumerable<Attorney> GetAttorneysPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
-            IEnumerable<Attorney> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t = ctx.ExecuteQuery<Attorney>(System.Data.CommandType.StoredProcedure, "tjc_jacs_get_attorney_paged", searchTerm, rowOffset, pageSize, sortOrder, sortDesc);
+                return ctx.ExecuteQuery<Attorney>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_attorney_paged",
+                    searchTerm ?? string.Empty,
+                    rowOffset,
+                    pageSize,
+                    sortOrder ?? "description",
+                    sortDesc ?? "asc"
+                );
             }
-            return t;
         }
         public int GetAttorneysCount(string searchTerm)
         {
-            int t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_jacs_get_attorney_count", searchTerm);
+                return ctx.ExecuteScalar<int>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_attorney_count",
+                    searchTerm ?? string.Empty
+                );
             }
-            return t;
+        }
+        public SiteUser GetSiteUser(int portalId,string barNumber)
+        {
+            IEnumerable<SiteUser> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            {
+                t = ctx.ExecuteQuery<SiteUser>(System.Data.CommandType.StoredProcedure, "tjc_jacs_get_user_by_barnumber",portalId, barNumber);
+            }
+            return t.FirstOrDefault();
         }
     }
 }

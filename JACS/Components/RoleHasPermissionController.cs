@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class RoleHasPermissionController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateRoleHasPermission(RoleHasPermission t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<RoleHasPermission>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteRoleHasPermission(RoleHasPermission t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<RoleHasPermission>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<RoleHasPermission> GetRoleHasPermissions()
         {
             IEnumerable<RoleHasPermission> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<RoleHasPermission>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public RoleHasPermission GetRoleHasPermission(int rolehaspermissionId)
         {
             RoleHasPermission t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<RoleHasPermission>();
                 t = rep.GetById(rolehaspermissionId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateRoleHasPermission(RoleHasPermission t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<RoleHasPermission>();
                 rep.Update(t);

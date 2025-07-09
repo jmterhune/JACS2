@@ -2,8 +2,8 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Src="Controls/navbar.ascx" TagPrefix="tb" TagName="navbar" %>
 <section class="navbar border-0 mb-0 justify-content-start">
-    <button class="btn btn-default me-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
-        <i class="fa-solid fa-bars"></i>
+    <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
     </button>
     <h2 class="mb-0">Attorneys</h2>
 </section>
@@ -11,7 +11,7 @@
     <tb:navbar runat="server" ID="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
         <div class="alert alert-info mt-3" role="alert">
-            <strong><i class="fas fa-info-circle"></i>&nbsp;Note:</strong>
+            <strong><i class="fas fa-info-circle" aria-hidden="true"></i>&nbsp;Note:</strong>
             All Attorneys are imported from the Florida Bar. Attorney User Accounts are enabled automatically upon verification of bar number.
         </div>
         <a id="lnkAdd" class="btn btn-primary me-3" tabindex="-1" href="#" data-bs-toggle="modal" data-bs-target="#AttorneyEditModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Attorney</a>
@@ -50,6 +50,10 @@
                             <td class="border-top-0"><span id="attyName"></span></td>
                         </tr>
                         <tr>
+                            <td><strong>User ID:</strong></td>
+                            <td><span id="attyUserId"></span></td>
+                        </tr>
+                        <tr>
                             <td><strong>Bar Number:</strong></td>
                             <td><span id="attyBar"></span></td>
                         </tr>
@@ -78,8 +82,8 @@
                 <input type="hidden" id="hdAttorneyId" />
             </div>
             <div class="modal-footer justify-content-around">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#AttorneyEditModal" id="editAttorneyBtn"><i class="fas fa-edit me-2"></i>&nbsp;Edit</button>
-                <button type="button" id="cmdDelete" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-trash me-2"></i>&nbsp;Delete</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#AttorneyEditModal" id="editAttorneyBtn"><i class="fas fa-edit me-2" aria-hidden="true"></i>&nbsp;Edit</button>
+                <button type="button" id="cmdDelete" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-trash me-2" aria-hidden="true"></i>&nbsp;Delete</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -117,18 +121,30 @@
                                 <div class="invalid-feedback" id="edit_radio-error">Please select an account status.</div>
                             </div>
                             <div class="col-md-4">
-                                <label>Name<span class="text-danger">*</span></label>
-                                <input type="text" id="edit_attyName" class="form-control" placeholder="Last Name, First Name" required>
-                                <div class="invalid-feedback">Name is required.</div>
-                            </div>
-                            <div class="col-md-4">
                                 <label>Bar Number<span class="text-danger">*</span></label>
                                 <input type="text" id="edit_attyBar" class="form-control" required>
                                 <div class="invalid-feedback">Florida Bar Number is required.</div>
                             </div>
                             <div class="col-md-4">
+                                <label>Jud12.flcourts.org User ID<span class="text-danger">*</span></label>
+                                <div class="input-group mb-0">
+                                    <input type="number" id="edit_attyUserId" class="form-control">
+                                    <div class="input-group-append mb-0">
+                                        <button id="edit_user_lookup" type="button" title="Lookup UserId from Jud12 site" tabindex="-1" class="btn btn-primary">
+                                            <i class="fas fa-search" aria-hidden="true"></i>&nbsp;Lookup</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Name<span class="text-danger">*</span></label>
+                                <input type="text" id="edit_attyName" class="form-control" placeholder="Last Name, First Name" required>
+                                <div class="invalid-feedback">Name is required.</div>
+                            </div>
+                            <div class="col-md-4">
                                 <label>Phone Number</label>
-                                <input type="text" id="edit_attyPhone" class="form-control">
+                                <input type="text" id="edit_attyPhone" class="form-control phone">
                             </div>
                             <div class="col-md-12">
                                 <label>Notes</label>
@@ -139,7 +155,7 @@
                                 <input type="hidden" id="edit_hdEmails">
                                 <ul id="edit_email-list" class="list-unstyled"></ul>
                                 <button type="button" id="edit_new-email" class="btn btn-outline-primary btn-sm ms-1">
-                                    <i class="fas fa-plus"></i>&nbsp;New Email
+                                    <i class="fas fa-plus" aria-hidden="true"></i>&nbsp;New Email
                                 </button>
                                 <div class="invalid-feedback" id="edit_email-error">At least one email address is required.</div>
                             </div>
@@ -160,9 +176,13 @@
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/attorney.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/datatables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
 
 <script>
     var moduleId = <%=ModuleId%>;
@@ -170,7 +190,7 @@
         path: "JACS",
         framework: $.ServicesFramework(moduleId)
     };
-    
+
     (function ($, Sys) {
         $(document).ready(function () {
             const element = document.getElementById('edit_attyPhone');

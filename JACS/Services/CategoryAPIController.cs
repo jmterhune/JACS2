@@ -16,19 +16,52 @@ namespace tjc.Modules.jacs.Services
     public class CategoryAPIController : DnnApiController
     {
         [HttpGet]
+        public HttpResponseMessage GetCategoryDropDownItems()
+        {
+            List<KeyValuePair<long, string>> categories = new List<KeyValuePair<long, string>>();
+            try
+            {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                string searchTerm = !query.ContainsKey("q") ? "" : query["q"].ToString();
+
+                var ctl = new CategoryController();
+                categories = ctl.GetCategoryDropDownItems(searchTerm);
+                return Request.CreateResponse(new CategoryListItemResult {data=categories,error=null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new CategorySearchResult { data = null, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ValidateAntiForgeryToken]
         public HttpResponseMessage GetCategories(int p1)
         {
             List<CategoryViewModel> categories = new List<CategoryViewModel>();
             int recordCount = p1;
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-            string searchTerm = query["searchText"].ToString();
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
-            Int32.TryParse(query["length"], out int pageSize);
-            Int32.TryParse(query["start"], out int recordOffset);
-            Int32.TryParse(query["draw"], out int draw);
+            string searchTerm = query.ContainsKey("searchText") ? query["searchText"].ToString() : "";
+            int sortIndex = 2; // Default sort index
+            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
+            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            string sortDirection = "asc"; // Default sort direction
+
+            // Check if order parameters exist
+            if (query.ContainsKey("order[0].column"))
+            {
+                Int32.TryParse(query["order[0].column"], out sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+            }
+            if (query.ContainsKey("order[0].dir"))
+            {
+                sortDirection = query["order[0].dir"];
+            }
+
             try
             {
                 var ctl = new CategoryController();
@@ -45,6 +78,7 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public HttpResponseMessage DeleteCategory(long p1)
         {
             try
@@ -61,6 +95,7 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public HttpResponseMessage GetCategory(long p1)
         {
             try
@@ -77,12 +112,15 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public HttpResponseMessage CreateCategory(JObject p1)
         {
             try
             {
                 var ctl = new CategoryController();
                 var category = p1.ToObject<Category>();
+                category.created_at = DateTime.Now;
+                category.updated_at = DateTime.Now;
                 ctl.CreateCategory(category);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -94,12 +132,14 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public HttpResponseMessage UpdateCategory(JObject p1)
         {
             try
             {
                 var ctl = new CategoryController();
                 var category = p1.ToObject<Category>();
+                category.updated_at = DateTime.Now;
                 ctl.UpdateCategory(category);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -122,6 +162,11 @@ namespace tjc.Modules.jacs.Services
         internal class CategoryResult
         {
             public Category data { get; set; }
+            public string error { get; set; }
+        }
+        internal class CategoryListItemResult
+        {
+            public List<KeyValuePair<long, string>> data { get; set; }
             public string error { get; set; }
         }
 

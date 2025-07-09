@@ -1,4 +1,4 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using System;
@@ -9,10 +9,10 @@ using System.Web.Http;
 using tjc.Modules.CourtRegistry.Components;
 namespace tjc.Modules.CourtRegistry.Services
 {
+    [DnnAuthorize]
     public class ApplicationAPIController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetApplicationListItems(int count)
         {
             List<ApplicationViewModel> caselistItems = new List<ApplicationViewModel>();
@@ -27,19 +27,24 @@ namespace tjc.Modules.CourtRegistry.Services
             if (query.ContainsKey("applicationid"))
                 Int32.TryParse(query["applicationid"], out applicationId);
             if (query.ContainsKey("year"))
-                Int32.TryParse(query["year"], out  periodYear);
+                Int32.TryParse(query["year"], out periodYear);
             if (query.ContainsKey("status"))
-                Int32.TryParse(query["status"], out  statusId);
+                Int32.TryParse(query["status"], out statusId);
             if (query.ContainsKey("firstName"))
                 firstName = query["firstName"].ToString();
             if (query.ContainsKey("lastName"))
                 lastName = query["lastName"].ToString();
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
-            Int32.TryParse(query["length"], out int pageSize);
-            Int32.TryParse(query["start"], out int recordOffset);
-            Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
+            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
+            string sortColumn = "ApplicationID"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
             try
             {
                 var ctl = new ApplicationController();
@@ -55,7 +60,6 @@ namespace tjc.Modules.CourtRegistry.Services
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("Delete")]
         public HttpResponseMessage DeleteApplication(int applicationId)
         {

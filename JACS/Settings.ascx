@@ -17,7 +17,12 @@
         <asp:DropDownList runat="server" ID="drpJaRole">
         </asp:DropDownList>
     </div>
-        <div class="dnnFormItem">
+    <div class="dnnFormItem">
+        <dnn:label ID="lblJacsUserRole" runat="server" />
+        <asp:DropDownList runat="server" ID="drpJacsUserRole">
+        </asp:DropDownList>
+    </div>
+    <div class="dnnFormItem">
         <dnn:Label ID="lblQuickRef" runat="server" />
         <asp:TextBox AutoCompleteType="Disabled" ID="txtQuickRefUrl" runat="server" />
     </div>

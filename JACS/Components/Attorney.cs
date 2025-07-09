@@ -11,6 +11,7 @@ namespace tjc.Modules.jacs.Components
     internal class Attorney
     {
         public long id { get; set; }
+        public long UserId { get; set; }
         public string name { get; set; }
         public string bar_num { get; set; }
         public string phone { get; set; }
@@ -19,13 +20,8 @@ namespace tjc.Modules.jacs.Components
         public bool? enabled { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
-        private List<string> _emails;
         [IgnoreColumn]
-        public List<string> emails
-        {
-            get;
-            set;
-        }
+        public List<string> emails{get;set;}
         [IgnoreColumn]
         public List<string> email_list
         {

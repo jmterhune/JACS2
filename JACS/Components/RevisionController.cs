@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class RevisionController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateRevision(Revision t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Revision>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteRevision(Revision t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Revision>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<Revision> GetRevisions()
         {
             IEnumerable<Revision> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Revision>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public Revision GetRevision(int revisionId)
         {
             Revision t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Revision>();
                 t = rep.GetById(revisionId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateRevision(Revision t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Revision>();
                 rep.Update(t);

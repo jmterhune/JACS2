@@ -77,6 +77,9 @@
       <HintPath>..\..\..\..\websites\intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.DebuggerVisualizers, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\websites\intranet-new\bin\Newtonsoft.Json.dll</HintPath>
@@ -89,6 +92,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\websites\intranet-new\bin\System.Net.Http.dll</HintPath>
@@ -100,6 +104,7 @@
       <HintPath>..\..\..\..\websites\intranet-new\bin\System.Web.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -110,6 +115,131 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventView.ascx.cs">
+      <DependentUpon>EventView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EventView.ascx.designer.cs">
+      <DependentUpon>EventView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\EventAPIController.cs" />
+    <Compile Include="Services\ViewModels\EventViewModel.cs" />
+    <Compile Include="TimeslotView.ascx.cs">
+      <DependentUpon>TimeslotView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TimeslotView.ascx.designer.cs">
+      <DependentUpon>TimeslotView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CourtCalendarView.ascx.cs">
+      <DependentUpon>CourtCalendarView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtCalendarView.ascx.designer.cs">
+      <DependentUpon>CourtCalendarView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CourtEdit.ascx.cs">
+      <DependentUpon>CourtEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtEdit.ascx.designer.cs">
+      <DependentUpon>CourtEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="PermissionView.ascx.cs">
+      <DependentUpon>PermissionView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PermissionView.ascx.designer.cs">
+      <DependentUpon>PermissionView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\PermissionAPIController.cs" />
+    <Compile Include="Services\UserAPIController.cs" />
+    <Compile Include="Services\ViewModels\CourtEventTypeViewModel.cs" />
+    <Compile Include="Services\ViewModels\PermissionViewModel.cs" />
+    <Compile Include="Services\ViewModels\UserViewModel.cs" />
+    <Compile Include="UserView.ascx.cs">
+      <DependentUpon>UserView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserView.ascx.designer.cs">
+      <DependentUpon>UserView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RoleView.ascx.cs">
+      <DependentUpon>RoleView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RoleView.ascx.designer.cs">
+      <DependentUpon>RoleView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Role.cs" />
+    <Compile Include="Components\RoleController.cs" />
+    <Compile Include="Components\SiteUser.cs" />
+    <Compile Include="Components\UserController.cs" />
+    <Compile Include="Components\UserHelper.cs" />
+    <Compile Include="CourtPermissionView.ascx.cs">
+      <DependentUpon>CourtPermissionView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtPermissionView.ascx.designer.cs">
+      <DependentUpon>CourtPermissionView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\User.cs" />
+    <Compile Include="CourtTemplateView.ascx.cs">
+      <DependentUpon>CourtTemplateView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtTemplateView.ascx.designer.cs">
+      <DependentUpon>CourtTemplateView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="JudgeView.ascx.cs">
+      <DependentUpon>JudgeView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JudgeView.ascx.designer.cs">
+      <DependentUpon>JudgeView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HolidayView.ascx.cs">
+      <DependentUpon>HolidayView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HolidayView.ascx.designer.cs">
+      <DependentUpon>HolidayView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EventTypeView.ascx.cs">
+      <DependentUpon>EventTypeView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EventTypeView.ascx.designer.cs">
+      <DependentUpon>EventTypeView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EventStatusView.ascx.cs">
+      <DependentUpon>EventStatusView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EventStatusView.ascx.designer.cs">
+      <DependentUpon>EventStatusView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="MotionView.ascx.cs">
+      <DependentUpon>MotionView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MotionView.ascx.designer.cs">
+      <DependentUpon>MotionView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CourtTypeView.ascx.cs">
+      <DependentUpon>CourtTypeView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtTypeView.ascx.designer.cs">
+      <DependentUpon>CourtTypeView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CourtView.ascx.cs">
+      <DependentUpon>CourtView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtView.ascx.designer.cs">
+      <DependentUpon>CourtView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="CountyView.ascx.cs">
       <DependentUpon>CountyView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -163,24 +293,6 @@
     <Compile Include="Components\HolidayController.cs" />
     <Compile Include="Components\Judge.cs" />
     <Compile Include="Components\JudgeController.cs" />
-    <Compile Include="Components\MediationCase.cs" />
-    <Compile Include="Components\MediationCaseController.cs" />
-    <Compile Include="Components\MediationCaseEventPayment.cs" />
-    <Compile Include="Components\MediationCaseEventPaymentController.cs" />
-    <Compile Include="Components\MediationDocument.cs" />
-    <Compile Include="Components\MediationDocumentController.cs" />
-    <Compile Include="Components\MediationEvent.cs" />
-    <Compile Include="Components\MediationEventController.cs" />
-    <Compile Include="Components\MediationInstruction.cs" />
-    <Compile Include="Components\MediationInstructionController.cs" />
-    <Compile Include="Components\MediationNotAvailableTime.cs" />
-    <Compile Include="Components\MediationNotAvailableTimeController.cs" />
-    <Compile Include="Components\MediationOutcome.cs" />
-    <Compile Include="Components\MediationOutcomeController.cs" />
-    <Compile Include="Components\MediationTime.cs" />
-    <Compile Include="Components\MediationTimeController.cs" />
-    <Compile Include="Components\Mediator.cs" />
-    <Compile Include="Components\MediatorController.cs" />
     <Compile Include="Components\Migration.cs" />
     <Compile Include="Components\MigrationController.cs" />
     <Compile Include="Components\ModelHasRole.cs" />
@@ -191,8 +303,6 @@
     <Compile Include="Components\MotionController.cs" />
     <Compile Include="Components\Party.cs" />
     <Compile Include="Components\PartyContoller.cs" />
-    <Compile Include="Components\PasswordReset.cs" />
-    <Compile Include="Components\PasswordResetController.cs" />
     <Compile Include="Components\Permission.cs" />
     <Compile Include="Components\PermissionController.cs" />
     <Compile Include="Components\PersonalAccessToken.cs" />
@@ -235,10 +345,34 @@
     <Compile Include="Services\CountyAPIController.cs" />
     <Compile Include="Services\CategoryAPIController.cs" />
     <Compile Include="Services\AttorneyAPIController.cs" />
+    <Compile Include="Services\CourtAPIController.cs" />
+    <Compile Include="Services\CourtMotionAPIController.cs" />
+    <Compile Include="Services\CourtPermissionAPIController.cs" />
+    <Compile Include="Services\CourtTypeAPIController.cs" />
+    <Compile Include="Services\EventStatusAPIController.cs" />
+    <Compile Include="Services\EventTypeAPIController.cs" />
+    <Compile Include="Services\HolidayAPIController.cs" />
+    <Compile Include="Services\JudgeAPIController.cs" />
+    <Compile Include="Services\Mappers\SiteUserMapper.cs" />
+    <Compile Include="Services\MotionAPIController.cs" />
+    <Compile Include="Services\RoleAPIController.cs" />
     <Compile Include="Services\RouteMapper.cs" />
+    <Compile Include="Services\CourtTemplateAPIController.cs" />
     <Compile Include="Services\ViewModels\CountyViewModel.cs" />
     <Compile Include="Services\ViewModels\CategoryViewModel.cs" />
     <Compile Include="Services\ViewModels\AttorneyViewModel.cs" />
+    <Compile Include="Services\ViewModels\CourtMotionViewModel.cs" />
+    <Compile Include="Services\ViewModels\CourtPermissionViewModel.cs" />
+    <Compile Include="Services\ViewModels\CourtTypeViewModel.cs" />
+    <Compile Include="Services\ViewModels\CourtViewModel.cs" />
+    <Compile Include="Services\ViewModels\EventStatusViewModel.cs" />
+    <Compile Include="Services\ViewModels\EventTypeViewModel.cs" />
+    <Compile Include="Services\ViewModels\HolidayViewModel.cs" />
+    <Compile Include="Services\ViewModels\JudgeViewModel.cs" />
+    <Compile Include="Services\ViewModels\MotionViewModel.cs" />
+    <Compile Include="Services\ViewModels\CourtTemplateViewModel.cs" />
+    <Compile Include="Services\ViewModels\RoleViewModel.cs" />
+    <Compile Include="Services\ViewModels\SiteUserViewModel.cs" />
     <Compile Include="Settings.ascx.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -262,6 +396,34 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="EventView.ascx" />
+    <Content Include="js\court - Copy.js" />
+    <Content Include="js\event.js" />
+    <Content Include="js\jacs - Copy.js" />
+    <Content Include="TimeslotView.ascx" />
+    <Content Include="CourtCalendarView.ascx" />
+    <Content Include="CourtEdit.ascx" />
+    <Content Include="js\permission.js" />
+    <Content Include="PermissionView.ascx" />
+    <Content Include="js\user.js" />
+    <Content Include="UserView.ascx" />
+    <Content Include="js\role.js" />
+    <Content Include="RoleView.ascx" />
+    <Content Include="CourtPermissionView.ascx" />
+    <Content Include="CourtTemplateView.ascx" />
+    <Content Include="js\courtPermission.js" />
+    <Content Include="js\courtTemplate.js" />
+    <Content Include="JudgeView.ascx" />
+    <Content Include="HolidayView.ascx" />
+    <Content Include="EventTypeView.ascx" />
+    <Content Include="EventStatusView.ascx" />
+    <Content Include="js\eventStatus.js" />
+    <Content Include="js\eventType.js" />
+    <Content Include="js\holiday.js" />
+    <Content Include="js\judge.js" />
+    <Content Include="MotionView.ascx" />
+    <Content Include="CourtTypeView.ascx" />
+    <Content Include="CourtView.ascx" />
     <Content Include="CountyView.ascx" />
     <Content Include="CategoryView.ascx" />
     <Content Include="Controls\navbar.ascx" />
@@ -270,8 +432,11 @@
     <Content Include="js\category.js" />
     <Content Include="js\attorney.js" />
     <Content Include="js\county.js" />
+    <Content Include="js\court.js" />
+    <Content Include="js\courtType.js" />
     <Content Include="js\imask.js" />
     <Content Include="js\jacs.js" />
+    <Content Include="js\motion.js" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
@@ -301,6 +466,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".bin\node.cmd" />
+    <Content Include="Services\.editorconfig" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

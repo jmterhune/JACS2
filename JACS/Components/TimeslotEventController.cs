@@ -1,12 +1,14 @@
 ﻿using DotNetNuke.Data;
+using System;
 using System.Collections.Generic;
 namespace tjc.Modules.jacs.Components
 {
     internal class TimeslotEventController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateTimeslotEvent(TimeslotEvent t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 rep.Insert(t);
@@ -19,7 +21,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteTimeslotEvent(TimeslotEvent t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 rep.Delete(t);
@@ -28,7 +30,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<TimeslotEvent> GetTimeslotEvents()
         {
             IEnumerable<TimeslotEvent> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 t = rep.Get();
@@ -38,7 +40,7 @@ namespace tjc.Modules.jacs.Components
         public TimeslotEvent GetTimeslotEvent(int timesloteventId)
         {
             TimeslotEvent t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 t = rep.GetById(timesloteventId);
@@ -47,11 +49,32 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateTimeslotEvent(TimeslotEvent t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 rep.Update(t);
             }
+        }
+
+        public IEnumerable<TimeslotEvent> GetTimeslotEventsByTimeslot(long id)
+        {
+            IEnumerable<TimeslotEvent> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<TimeslotEvent>();
+                t = rep.Find("Where timeslot_id=@0",id);
+            }
+            return t;
+        }
+        public IEnumerable<TimeslotEvent> GetTimeslotEventsByEvent(long id)
+        {
+            IEnumerable<TimeslotEvent> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<TimeslotEvent>();
+                t = rep.Find("Where event_id=@0", id);
+            }
+            return t;
         }
     }
 }

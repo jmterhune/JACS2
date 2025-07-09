@@ -1,5 +1,7 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
 {
@@ -23,5 +25,28 @@ namespace tjc.Modules.jacs.Components
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
         public DateTime? deleted_at { get; set; }
+        [IgnoreColumn]
+        public bool available
+        {
+            get
+            {
+                if (blocked || public_block)
+                    return false;
+                else
+                {
+                    var ctl = new TimeslotEventController();
+                    int eventCount = ctl.GetTimeslotEventsByTimeslot(id).Count();
+                    return quantity> eventCount ;
+                }
+            }
+        }
+        [IgnoreColumn]
+        public string FormattedStart
+        {
+            get
+            {
+                return start.ToString("MM/dd/yyyy @ hh:mm tt");
+            }
+        }
     }
 }

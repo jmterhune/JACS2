@@ -8,6 +8,19 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#authMenu" role="button" aria-expanded="false" aria-controls="authMenu">
+                    <i class="fa-solid fa-people-group"></i>Authentication
+                </a>
+                <div class="collapse" id="authMenu">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"><a class="nav-link" id="lnkUser" href="<%=UserListUrl %>"><i class="fas fa-user"></i>Users</a></li>
+                        <li class="nav-item"><a class="nav-link" id="lnkRole" href="<%=RoleListUrl %>"><i class="fas fa-id-badge"></i>Roles</a></li>
+                        <li class="nav-item"><a class="nav-link" id="lnkPermission" href="<%=PermissionListUrl %>"><i class="fas fa-key"></i>Permissions</a></li>
+                    </ul>
+                </div>
+
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#jacsMenu" role="button" aria-expanded="false" aria-controls="jacsMenu">
                     <i class="fas fa-user-gear"></i>JACS SA
                 </a>
@@ -21,7 +34,7 @@
                         <li class="nav-item"><a class="nav-link" id="lnkCourtPermission" href="<%=CourtPermissionListUrl %>"><i class="fas fa-user-lock"></i>Court Permissions</a></li>
                         <li class="nav-item"><a class="nav-link" id="lnkDocketPrint" href="<%=DocketPrintUrl %>"><i class="fas fa-print"></i>Docket Print</a></li>
                         <li class="nav-item"><a class="nav-link" id="lnkEvent" href="<%=EventListUrl %>"><i class="fas fa-user-clock"></i>Events</a></li>
-                        <li class="nav-item"><a class="nav-link" id="lnkEVentStatus" href="<%=EventStatusListUrl %>"><i class="fas fa-sliders-h"></i>Event Statuses</a></li>
+                        <li class="nav-item"><a class="nav-link" id="lnkEventStatus" href="<%=EventStatusListUrl %>"><i class="fas fa-sliders-h"></i>Event Statuses</a></li>
                         <li class="nav-item"><a class="nav-link" id="lnkEventType" href="<%=EventTypeListUrl %>"><i class="fas fa-tags"></i>Event Types</a></li>
                         <li class="nav-item"><a class="nav-link" id="lnkHoliday" href="<%=HolidayListUrl %>"><i class="fas fa-gifts"></i>Holidays</a></li>
                         <li class="nav-item"><a class="nav-link" id="lnkJudge" href="<%=JudgeListUrl %>"><i class="fas fa-gavel"></i>Judges</a></li>

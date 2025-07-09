@@ -40,6 +40,16 @@ namespace tjc.Modules.MediationStatistics.Components
             }
             return t;
         }
+        public IEnumerable<StatChecker> GetStatChecker(DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<StatChecker> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StatChecker>();
+                t = rep.Find("Where ReferralDate Between @0 And @1", startDate, endDate).OrderBy(x => x.Region).ThenBy(x => x.CaseTypeGroup);
+            }
+            return t;
+        }
         public IEnumerable<FeesOwed> GetFeesOwed(DateTime startDate, DateTime endDate)
         {
             IEnumerable<FeesOwed> t;

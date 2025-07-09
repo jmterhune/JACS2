@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class PartyController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateParty(Party t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Party>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteParty(Party t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Party>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<Party> GetPartys()
         {
             IEnumerable<Party> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Party>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public Party GetParty(int partyId)
         {
             Party t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Party>();
                 t = rep.GetById(partyId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateParty(Party t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Party>();
                 rep.Update(t);

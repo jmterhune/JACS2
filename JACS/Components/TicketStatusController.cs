@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class TicketStatusController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateTicketStatus(TicketStatus t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TicketStatus>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteTicketStatus(TicketStatus t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TicketStatus>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<TicketStatus> GetTicketStatuss()
         {
             IEnumerable<TicketStatus> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TicketStatus>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public TicketStatus GetTicketStatus(int ticketstatusId)
         {
             TicketStatus t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TicketStatus>();
                 t = rep.GetById(ticketstatusId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateTicketStatus(TicketStatus t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TicketStatus>();
                 rep.Update(t);

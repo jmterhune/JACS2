@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class TicketController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateTicket(Ticket t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Ticket>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteTicket(Ticket t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Ticket>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<Ticket> GetTickets()
         {
             IEnumerable<Ticket> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Ticket>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public Ticket GetTicket(int ticketId)
         {
             Ticket t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Ticket>();
                 t = rep.GetById(ticketId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateTicket(Ticket t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Ticket>();
                 rep.Update(t);

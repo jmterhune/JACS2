@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.PretrialServices.Sarasota.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+
 <div class="fullScreenContainer">
     <div class="float-end fw-bold lead">
         <span id="current-intake-date" class="badge rounded-pill bg-danger fs-5"></span>
@@ -370,7 +371,10 @@
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Libraries/jQuery-UI/01_13_02/Themes/jquery-ui.css" />
 <dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.js" />
 <dnn:dnncssInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.css" />
-
+<dnn:DnnCssInclude runat="server" 
+                   FilePath="~/resources/shared/stylesheets/dnndefault/8.0.0/default.css"
+                   Name="dnndefault" 
+                   Version="8.0.0" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */

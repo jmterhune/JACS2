@@ -316,7 +316,7 @@ namespace tjc.Modules.PretrialServices
                     else if (defendantInProgram.Completion == 0)
                     {
                         successfull = "Unsuccessful";
-                        successfulTT ++;
+                        unSuccessfulTT ++;
                     }
                 }
 

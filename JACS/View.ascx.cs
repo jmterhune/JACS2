@@ -58,7 +58,37 @@ namespace tjc.Modules.jacs
                 navbar.TemplateListUrl = TemplateListUrl;
                 navbar.TimeSlotListUrl = TimeSlotListUrl;
                 navbar.QuickReferenceUrl = QuickReferenceUrl;
+                navbar.UserListUrl = UserListUrl;
+                navbar.RoleListUrl = RoleListUrl;
+                navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkMain";
+                if (!IsPostBack)
+                {
+
+                    var ctl = new TimeslotController();
+                    var ectl = new EventController();
+                    if (UserId > 0)
+                    {
+                        if(UserInfo.IsInRole(JudgeRole))
+                        {
+                            rptTimeslots.DataSource = ctl.GetTimeslotsForDashboardByJudge(UserId);
+                            rptEvents.DataSource = ectl.GetEventsForDashboardByJudge(UserId);
+                        }
+                        else if (IsAdmin)
+                        {
+                            // FIX: Replace the incorrect method call with a valid one
+                            rptTimeslots.DataSource = ctl.GetTimeslotsForDashBoardByAdmin(); // Assuming GetTimeslots() is the correct method
+                            rptEvents.DataSource = ectl.GetEventsForDashBoardByAdmin();
+                        }
+                        else
+                        {
+                            rptTimeslots.DataSource = ctl.GetTimeslotsForDashboard(UserId);
+                            rptEvents.DataSource = ectl.GetEventsForDashboard(UserId);
+                        }
+                    }
+                    rptTimeslots.DataBind();
+                    rptEvents.DataBind();
+                }
             }
             catch (Exception exc) //Module failed to load
             {

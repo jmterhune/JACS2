@@ -36,16 +36,22 @@ namespace tjc.Modules.jacs
                 return -1;
             }
         }
-       
         public string MainViewUrl { get { return _navigationManager.NavigateURL(); } }
+        public string UserListUrl { get { return EditUrl("user"); } }
+        public string RoleListUrl { get { return EditUrl("role"); } }
+        public string PermissionListUrl { get { return EditUrl("permission"); } }
         public string CategoryListUrl { get { return EditUrl("category"); } }
         public string AttorneyListUrl { get { return EditUrl("attorney"); } }
         public string CountyListUrl { get { return EditUrl("county"); } }
         public string CourtListUrl { get { return EditUrl("court"); } }
+        public string CourtEditUrl { get { return EditUrl("court-edit"); } }
+        public string CourtCalendarUrl { get { return EditUrl("court-calendar"); } }
         public string CourtTypeListUrl { get { return EditUrl("court-type"); } }
         public string CourtPermissionListUrl { get { return EditUrl("court-permission"); } }
         public string DocketPrintUrl { get { return EditUrl("docket-print"); } }
         public string EventListUrl { get { return EditUrl("event"); } }
+        public string EventEditUrl { get { return EditUrl("event-edit"); } }
+        public string EventCalendarUrl { get { return EditUrl("event-calendar"); } }
         public string EventStatusListUrl { get { return EditUrl("event-status"); } }
         public string EventTypeListUrl { get { return EditUrl("event-type"); } }
         public string HolidayListUrl { get { return EditUrl("holiday"); } }
@@ -53,12 +59,12 @@ namespace tjc.Modules.jacs
         public string MotionListUrl { get { return EditUrl("motion"); } }
         public string TemplateListUrl { get { return EditUrl("template"); } }
         public string TimeSlotListUrl { get { return EditUrl("time-slot"); } }
-        public string QuickReferenceUrl { get { return EditUrl("quick-reference"); } }
+        public string EventRevisionUrl { get { return EditUrl("revise"); } }
         public bool IsAdmin
         {
             get
             {
-                if (UserInfo.IsInRole(AdminRole))
+                if (UserInfo.IsInRole(AdminRole) || UserInfo.IsAdmin)
                     return true;
                 return false;
             }
@@ -71,6 +77,45 @@ namespace tjc.Modules.jacs
                     return Settings["AdminRole"].ToString();
 
                 return "JACS Admin";
+            }
+        }
+        public string JudgeRole
+        {
+            get
+            {
+                if (Settings.Contains("JudgeRole"))
+                    return Settings["JudgeRole"].ToString();
+
+                return "Judge";
+            }
+        }
+        public string JaRole
+        {
+            get
+            {
+                if (Settings.Contains("JaRole"))
+                    return Settings["JaRole"].ToString();
+
+                return "Judicial Assistant";
+            }
+        }
+        public string JacsUserRole
+        {
+            get
+            {
+                if (Settings.Contains("JacsUserRole"))
+                    return Settings["JacsUserRole"].ToString();
+
+                return "JACS User";
+            }
+        }
+        public string QuickReferenceUrl
+        {
+            get
+            {
+                if (Settings.Contains("QuickRefUrl"))
+                    return Settings["QuickRefUrl"].ToString();
+                return "";
             }
         }
     }

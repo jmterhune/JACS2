@@ -56,7 +56,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Calendar>();
-                t = rep.Find("Where DesignationID=@0", designationId).FirstOrDefault();
+                t = rep.Find("Where DesignationID=@0", designationId).OrderByDescending(x=>x.EventTypeID).FirstOrDefault();
             }
             return t;
         }

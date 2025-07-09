@@ -113,6 +113,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             };
             try
             {
+            
                 ctl.CreateExtensionRequest(extension);
                 bool hasExtentionId = extension.ExtensionID > 0;
                 ExtensionAddedResult extensionresult = new ExtensionAddedResult();

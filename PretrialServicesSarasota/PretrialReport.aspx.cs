@@ -15,7 +15,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         private ReportType reportType;
         private DateTime reportDate = Null.NullDate;
         private int ModuleId = 0;
-        private string ReportRootUrl = "~/portals/0/reports/pretrialservices/sarasota/"; 
+        private string ReportRootUrl = "~/portals/0/reports/pretrialservices/sarasota/";
         private List<DayTotal> colDefendantDayTotal = new List<DayTotal>();
         private List<DayTotal> colDefendantRunningTotal = new List<DayTotal>();
         private List<IntakeLogItem> colIntake = new List<IntakeLogItem>();
@@ -309,12 +309,12 @@ namespace tjc.Modules.PretrialServices.Sarasota
                     bwOrdered = "No";
                     bwOrderedNo++;
                 }
-                if(defendantInProgram.BondPaid == true)
+                if (defendantInProgram.BondPaid == true)
                 {
                     bondPaid = "Yes";
                     bondPaidYes++;
                 }
-                else if(defendantInProgram.BondPaid== false)
+                else if (defendantInProgram.BondPaid == false)
                 {
                     bondPaid = "No";
                     bondPaidNo++;
@@ -329,7 +329,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                     else if (defendantInProgram.Completion == 0)
                     {
                         successfull = "Unsuccessful";
-                        successfulTT++;
+                        unSuccessfulTT++;
                     }
                 }
 
@@ -377,7 +377,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                             break;
                         }
                 }
-               mostSeriosOffense=defendantInProgram.MostSeriousOffense;
+                mostSeriosOffense = defendantInProgram.MostSeriousOffense;
                 switch (mostSeriosOffense)
                 {
                     case "907.041 (Incl Domestic)":
@@ -481,6 +481,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             blankCell.Colspan = 1;
             table.AddCell(blankCell);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
+            table.DefaultCell.NoWrap = true;
             table.AddCell(new Phrase("UNSUCCESSFUL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
             table.AddCell(blankCell);
@@ -616,7 +617,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             dayTotal.BondPaidYes = bondPaidYes;
             dayTotal.Mso907 = Mso907TT;
             dayTotal.MsoMisd = MsoMisdTT;
-            dayTotal.MsoNonDangerous=MsoNdFelonyTT;
+            dayTotal.MsoNonDangerous = MsoNdFelonyTT;
             dayTotal.FcDangerous = FcDangerousTT;
             dayTotal.FcNonDangerous = FcNonDangerousTT;
             dayTotal.IndigentNo = indigentNo;
@@ -744,11 +745,11 @@ namespace tjc.Modules.PretrialServices.Sarasota
             int NoPriorsTT = query2.Sum(c => c.NoPriors);
             int bworderedYesTT = query2.Sum(c => c.BwOrderedYes);
             int bwOrderedNoTT = query2.Sum(c => c.BwOrderedNo);
-            int bondPaidYesTT= query2.Sum(c => c.BondPaidYes);
-            int bondPaidNoTT= query2.Sum(c => c.BondPaidNo);
-            int mso907TT= query2.Sum(c => c.Mso907);
+            int bondPaidYesTT = query2.Sum(c => c.BondPaidYes);
+            int bondPaidNoTT = query2.Sum(c => c.BondPaidNo);
+            int mso907TT = query2.Sum(c => c.Mso907);
             int msoMisdTT = query2.Sum(c => c.MsoMisd);
-            int msoTotal= query2.Sum(c => c.MsoTotals);
+            int msoTotal = query2.Sum(c => c.MsoTotals);
             int msoNonDangerousTT = query2.Sum(c => c.MsoNonDangerous);
             int ncArrestTT = query2.Sum(c => c.NonCompNewArrest);
             int ncViolCallsTT = query2.Sum(c => c.NonCompViolCalls);
@@ -1175,7 +1176,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 DateTime BeginDateMonth = EndDateMonth.AddMonths(-12).AddDays(1);
                 beginningDate = BeginDateMonth.ToShortDateString();
                 enddingDate = EndDateMonth.ToShortDateString();
-                reportName = string.Format("pts-CRTK-Yearly-{0}-{1}-{2}.pdf", reportDate.Month.ToString(), reportDate.Year.ToString());
+                reportName = string.Format("pts-CRTK-Yearly-{0}-{1}.pdf", reportDate.Month.ToString(), reportDate.Year.ToString());
                 PdfWriter pdfWriter1 = PdfWriter.GetInstance(doc, new FileStream(appPath + reportName, FileMode.Create));
                 pdfWriter1.PageEvent = PageEventHandler;
                 pdfWriter1.SetFullCompression();
@@ -1204,7 +1205,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
 
             }
 
-            Response.Redirect(string.Format("{0}{1}", ReportRootUrl, reportName));
+            Response.Redirect(string.Format("{0}{1}?ver={2}", ReportRootUrl, reportName, System.Web.HttpUtility.UrlEncode(DateTime.Now.ToString("MMddyyyhhmmss"))));
+
         }
     }
 }

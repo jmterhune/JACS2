@@ -51,10 +51,23 @@ class AttorneyController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 data(data) {
                     data.searchText = data.search.value;
                     delete data.columns;
                 },
+                error: function (error) {
+                    $("#tblAttorney_processing").hide();
+                    if (error.status === 401) {
+                        ShowNotification("Error Retrieving Attorneys", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
+                    } else {
+                        ShowNotification("Error Retrieving Attorneys", "The following error occurred attempting to retrieve attorney information. Error: " + error.statusText, 'error');
+                    }
+                }
             },
             columns: [
                 {
@@ -115,23 +128,30 @@ class AttorneyController {
             pageLength: this.pageSize,
             displayStart: this.currentPage * this.pageSize,
         });
+        $.fn.dataTable.ext.errMode = 'none';
 
-        $("#tblAttorney_length").prepend($("#lnkAdd"));
+        $(".dt-length").prepend($("#lnkAdd"));
         this.attorneyTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const attorneyId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Attorney?',
-                    yesText: 'Yes',
-                    noText: 'No',
+                Swal.fire({
                     title: 'Delete Attorney?',
-                    callbackTrue: function () {
+                    text: 'Are you sure you wish to delete this Attorney?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         attorneyControllerInstance.DeleteAttorney(attorneyId);
                     }
                 });
             });
+        });
+        $(document).on('dt-error', function (e, settings, technical, message) {
+            ShowNotification("Error", "An error occurred: " + message, 'error');
+            return false;
         });
 
         $(document).on('click', '.atty-detail', function (e) {
@@ -140,7 +160,6 @@ class AttorneyController {
             attorneyControllerInstance.ViewAttorney(attorneyId, false);
         });
 
-        // Initialize edit modal interactions
         const editModal = new bootstrap.Modal(document.getElementById('AttorneyEditModal'));
         $(document).on('click', '.atty-edit, #editAttorneyBtn', function (e) {
             e.preventDefault();
@@ -163,22 +182,23 @@ class AttorneyController {
             editModal.show();
         });
 
-        // Initialize delete button for detail modal
         $("#cmdDelete").on("click", function (e) {
             e.preventDefault();
             var attorneyId = $("#hdAttorneyId").val();
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this Attorney?',
-                yesText: 'Yes',
-                noText: 'No',
+            Swal.fire({
                 title: 'Delete Attorney?',
-                callbackTrue: function () {
+                text: 'Are you sure you wish to delete this Attorney?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     attorneyControllerInstance.DeleteAttorney(attorneyId);
                 }
             });
         });
 
-        // Initialize form validation and save for edit modal
         $("input[name='edit_enabled']").on("change", function () {
             $("#edit_radio-error").hide();
             $("input[name='edit_enabled']").removeClass("is-invalid");
@@ -211,6 +231,18 @@ class AttorneyController {
             } else {
                 $attyNameError.hide();
                 $attyName.removeClass("is-invalid");
+            }
+
+            // Validate User ID
+            const $attyUserId = $("#edit_attyUserId");
+            const $attyUserIdError = $attyUserId.next(".invalid-feedback");
+            if ($attyUserId.val().trim() === "" || isNaN($attyUserId.val()) || parseInt($attyUserId.val()) < 0) {
+                $attyUserIdError.show();
+                $attyUserId.addClass("is-invalid");
+                isValid = false;
+            } else {
+                $attyUserIdError.hide();
+                $attyUserId.removeClass("is-invalid");
             }
 
             // Validate Bar Number
@@ -261,11 +293,29 @@ class AttorneyController {
             }
         });
 
+        $("#edit_attyUserId").on("input", function () {
+            const $this = $(this);
+            if ($this.val().trim() !== "" && !isNaN($this.val()) && parseInt($this.val()) >= 0) {
+                $this.next(".invalid-feedback").hide();
+                $this.removeClass("is-invalid");
+            }
+        });
+
         $("#edit_attyBar").on("input", function () {
             const $this = $(this);
             if ($this.val().trim() !== "") {
                 $this.next(".invalid-feedback").hide();
                 $this.removeClass("is-invalid");
+            }
+        });
+        $("#edit_user_lookup").on("click", function (e) {
+            e.preventDefault();
+            const barNumber = $("#edit_attyBar").val();
+            if (barNumber.trim() !== "") {
+                // Trigger GetSiteUser only in create mode
+                if ($("#edit_hdAttorneyId").val() === "") {
+                    attorneyControllerInstance.GetSiteUser(barNumber);
+                }
             }
         });
 
@@ -281,9 +331,18 @@ class AttorneyController {
 
         $(document).on('click', '.delete-email', function (e) {
             e.preventDefault();
-            if (confirm("Are you sure you want to delete this email address?")) {
-                $(this).closest('li').remove();
-            }
+            Swal.fire({
+                title: 'Delete Email Address?',
+                text: 'Are you sure you want to delete this email address?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(this).closest('li').remove();
+                }
+            });
         });
     }
 
@@ -298,6 +357,11 @@ class AttorneyController {
         $.ajax({
             url: this.deleteUrl + attorneyId,
             type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('ModuleId', moduleId);
+                xhr.setRequestHeader('TabId', service.framework.getTabId());
+                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+            },
             success: function (result) {
                 if (attorneyControllerInstance.attorneyTable) {
                     attorneyControllerInstance.attorneyTable.draw();
@@ -310,9 +374,14 @@ class AttorneyController {
                 if (detailModal) {
                     detailModal.hide();
                 }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Attorney deleted successfully.'
+                });
             },
             error: function (error) {
-                ShowAlert("Error Deleting Attorney", error.statusText);
+                ShowNotification("Error Deleting Attorney", error.statusText, 'error');
             }
         });
     }
@@ -329,6 +398,7 @@ class AttorneyController {
 
     ClearDetailForm() {
         $("#attyName").html("");
+        $("#attyUserId").html("");
         $("#attyBar").html("");
         $("#attyPhone").html("");
         $("#attySchedule").html("");
@@ -340,6 +410,7 @@ class AttorneyController {
 
     ClearEditForm() {
         $("#edit_attyName").val("");
+        $("#edit_attyUserId").val("");
         $("#edit_attyBar").val("");
         $("#edit_attyPhone").val("");
         $("#edit_attyNotes").val("");
@@ -359,6 +430,10 @@ class AttorneyController {
         $("#edit_attyName").removeClass("is-invalid");
         $("#edit_attyName").next(".invalid-feedback").hide();
 
+        // Clear user ID validation
+        $("#edit_attyUserId").removeClass("is-invalid");
+        $("#edit_attyUserId").next(".invalid-feedback").hide();
+
         // Clear bar number validation
         $("#edit_attyBar").removeClass("is-invalid");
         $("#edit_attyBar").next(".invalid-feedback").hide();
@@ -367,6 +442,43 @@ class AttorneyController {
         $("#edit_email-list").removeClass("is-invalid");
         $("#edit_email-error").hide();
         $("#edit_email-error").text("At least one email address is required.");
+    }
+
+    GetSiteUser(barNumber) {
+        if (!barNumber) return;
+        const getUrl = `${this.service.baseUrl}AttorneyAPI/GetSiteUser/${encodeURIComponent(barNumber)}`;
+        $("#edit_progress-attorney").show();
+
+        $.ajax({
+            url: getUrl,
+            method: 'GET',
+            dataType: 'json',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('ModuleId', moduleId);
+                xhr.setRequestHeader('TabId', service.framework.getTabId());
+                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+            },
+            success: function (response) {
+                if (response.data) {
+                    $("#edit_attyName").val(`${response.data.lastname}, ${response.data.firstname}`);
+                    $("#edit_attyUserId").val(response.data.userid);
+                    $("#edit_email-list").html(`<li><input type="text" class="form-control me-3 d-inline-block" value="${response.data.email}"><a href="#" role="button" data-toggle="tooltip" class="delete-email" aria-disabled="true" aria-label="Delete Email Address" title="Delete Email Address"><i class="fas fa-trash"></i></a></li>`);
+                    $("#edit_attyName").removeClass("is-invalid");
+                    $("#edit_attyName").next(".invalid-feedback").hide();
+                    $("#edit_attyUserId").removeClass("is-invalid");
+                    $("#edit_attyUserId").next(".invalid-feedback").hide();
+                    $("#edit_email-list").removeClass("is-invalid");
+                    $("#edit_email-error").hide();
+                } else {
+                    ShowNotification("No User Found", "No user found for the provided Bar Number.", 'error');
+                }
+                $("#edit_progress-attorney").hide();
+            },
+            error: function () {
+                ShowNotification("Error", "Failed to retrieve user details. Please try again later.", 'error');
+                $("#edit_progress-attorney").hide();
+            }
+        });
     }
 
     ViewAttorney(attorneyId, isEditMode = false) {
@@ -386,10 +498,16 @@ class AttorneyController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
                             $("#edit_attyName").val(response.data.name);
+                            $("#edit_attyUserId").val(response.data.UserId);
                             $("#edit_attyBar").val(response.data.bar_num);
                             $("#edit_attyPhone").val(response.data.phone);
                             $("#edit_attyNotes").val(response.data.notes);
@@ -408,6 +526,7 @@ class AttorneyController {
                             $("#AttorneyEditModalLabel").html(`Edit Attorney: ${response.data.name}`);
                         } else {
                             $("#attyName").html(response.data.name);
+                            $("#attyUserId").html(response.data.UserId);
                             $("#attyBar").html(response.data.bar_num);
                             $("#attyPhone").html(response.data.phone);
                             $("#attySchedule").html(response.data.scheduling ? "Yes" : "No");
@@ -420,13 +539,13 @@ class AttorneyController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowAlert("Error", "Failed to retrieve attorney details. Please try again later.");
+                        ShowNotification("Error", "Failed to retrieve attorney details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
                 error: function () {
                     console.error('Failed to fetch attorney details');
-                    ShowAlert("Error", "Failed to retrieve attorney details. Please try again later.");
+                    ShowNotification("Error", "Failed to retrieve attorney details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -451,6 +570,7 @@ class AttorneyController {
         try {
             $("#edit_progress-attorney").show();
             const attorneyData = {
+                UserId: parseInt($("#edit_attyUserId").val()),
                 name: $("#edit_attyName").val(),
                 bar_num: $("#edit_attyBar").val(),
                 phone: $("#edit_attyPhone").val(),
@@ -464,27 +584,36 @@ class AttorneyController {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(attorneyData),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (result) {
                     if (result === 200) {
                         $("#edit_progress-attorney").hide();
-                        ShowAlert("Success", "Attorney created successfully.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Attorney created successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
                     } else {
                         $("#edit_progress-attorney").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-attorney").hide();
-                    ShowAlert("Error Creating Attorney", error.statusText);
+                    ShowNotification("Error Creating Attorney", error.statusText, 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-attorney").hide();
-            ShowAlert("Error Creating Attorney", e.statusText);
+            ShowNotification("Error Creating Attorney", e.statusText, 'error');
         }
     }
 
@@ -493,6 +622,7 @@ class AttorneyController {
             $("#edit_progress-attorney").show();
             const attorneyData = {
                 id: $("#edit_hdAttorneyId").val(),
+                UserId: parseInt($("#edit_attyUserId").val()),
                 name: $("#edit_attyName").val(),
                 bar_num: $("#edit_attyBar").val(),
                 phone: $("#edit_attyPhone").val(),
@@ -506,27 +636,36 @@ class AttorneyController {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(attorneyData),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (result) {
                     if (result === 200) {
                         $("#edit_progress-attorney").hide();
-                        ShowAlert("Success", "Attorney updated successfully.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Attorney updated successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
                     } else {
                         $("#edit_progress-attorney").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-attorney").hide();
-                    ShowAlert("Error Updating Attorney", error.statusText);
+                    ShowNotification("Error Updating Attorney", error.statusText, 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-attorney").hide();
-            ShowAlert("Error Updating Attorney", e.statusText);
+            ShowNotification("Error Updating Attorney", e.statusText, 'error');
         }
     }
 }

@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class CourtTemplateOrderController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateCourtTemplateOrder(CourtTemplateOrder t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteCourtTemplateOrder(CourtTemplateOrder t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<CourtTemplateOrder> GetCourtTemplateOrders()
         {
             IEnumerable<CourtTemplateOrder> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public CourtTemplateOrder GetCourtTemplateOrder(int courttemplateorderId)
         {
             CourtTemplateOrder t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 t = rep.GetById(courttemplateorderId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateCourtTemplateOrder(CourtTemplateOrder t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 rep.Update(t);

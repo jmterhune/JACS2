@@ -39,9 +39,12 @@ namespace tjc.Modules.jacs
                         drpJugeRole.Items.Add(new ListItem(r.RoleName));
                         drpAdminRole.Items.Add(new ListItem(r.RoleName));
                         drpJaRole.Items.Add(new ListItem(r.RoleName));
+                        drpJacsUserRole.Items.Add(new ListItem(r.RoleName));
                     }
                     if (Settings.Contains("JudgeRole"))
                         drpJugeRole.SelectedValue = Convert.ToString(Settings["JudgeRole"]);
+                    if (Settings.Contains("JacsUserRole"))
+                        drpJacsUserRole.SelectedValue = Convert.ToString(Settings["JacsUserRole"]);
                     if (Settings.Contains("JaRole"))
                         drpJaRole.SelectedValue = Convert.ToString(Settings["JaRole"]);
                     if (Settings.Contains("AdminRole"))
@@ -70,6 +73,7 @@ namespace tjc.Modules.jacs
                 string JudgeRole = drpJugeRole.SelectedValue;
                 string AdminRole = drpAdminRole.SelectedValue;
                 string JaRole = drpJaRole.SelectedValue;
+                string JacsUserRole = drpJacsUserRole.SelectedValue;
                 var modules = new ModuleController();
                 if (!string.IsNullOrEmpty(AdminRole.Trim()))
                     modules.UpdateModuleSetting(ModuleId, "AdminRole", AdminRole.Trim());
@@ -77,6 +81,8 @@ namespace tjc.Modules.jacs
                     modules.UpdateModuleSetting(ModuleId, "JudgeRole", JudgeRole.Trim());
                 if (!string.IsNullOrEmpty(JaRole.Trim()))
                     modules.UpdateModuleSetting(ModuleId, "JaRole", JaRole.Trim());
+                if (!string.IsNullOrEmpty(JacsUserRole.Trim()))
+                    modules.UpdateModuleSetting(ModuleId, "JacsUserRole", JacsUserRole.Trim());
                 modules.UpdateModuleSetting(ModuleId, "QuickRefUrl", txtQuickRefUrl.Text);
             }
             catch (Exception exc) //Module failed to load

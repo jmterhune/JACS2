@@ -31,28 +31,31 @@ namespace tjc.Intranet.API.Services.Mediation
             string businessName = query["businessName"].ToString();
             string cdspNumber = query["cdspNumber"].ToString();
             string caseNumber = query["caseNumber"].ToString();
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            string sortColumn = "ListNumber"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
             try
             {
-                
                 var ctl = new Components.Mediation.CaseListItemController();
-                filteredCount= ctl.GetCaseListCount(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName);
+                filteredCount = ctl.GetCaseListCount(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName);
                 if (count == 0) { recordCount = filteredCount; }
                 caselistItems = ctl.GetCaseListPaged(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName, recordOffset, pageSize, sortColumn, sortDirection).Select(caselistItem => new CaseListItemViewModel(caselistItem)).ToList();
-                return Request.CreateResponse(new CaseSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount,error=null });
+                return Request.CreateResponse(new CaseSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (System.Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CaseSearchResult{ data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount,error=ex.Message });
+                return Request.CreateResponse(new CaseSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
-        
         [HttpDelete]
         [DnnAuthorize(StaticRoles = "Mediation")]
         public HttpResponseMessage DeleteCase(int caseId)

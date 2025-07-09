@@ -58,6 +58,9 @@ namespace tjc.Modules.jacs
                 navbar.TemplateListUrl = TemplateListUrl;
                 navbar.TimeSlotListUrl = TimeSlotListUrl;
                 navbar.QuickReferenceUrl = QuickReferenceUrl;
+                navbar.UserListUrl = UserListUrl;
+                navbar.RoleListUrl = RoleListUrl;
+                navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkAttorney";
             }
             catch (Exception exc) //Module failed to load

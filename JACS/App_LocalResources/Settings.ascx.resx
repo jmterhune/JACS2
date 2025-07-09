@@ -126,6 +126,12 @@
   <data name="lblAdminRole.Text" xml:space="preserve">
     <value>Admin Role</value>
   </data>
+  <data name="lblJacsUserRole.Help" xml:space="preserve">
+    <value>Select the JACS User Role from the list</value>
+  </data>
+  <data name="lblJacsUserRole.Text" xml:space="preserve">
+    <value>JACS User Role</value>
+  </data>
   <data name="lblJaRole.Help" xml:space="preserve">
     <value>Select the JA Role</value>
   </data>

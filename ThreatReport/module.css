@@ -1,0 +1,157 @@
+label em, em.lbl {
+    color: red;
+    font-weight: inherit;
+}
+
+.dnnFormRadioButtons {
+    float: none !important;
+    border-radius: 4px;
+    background-color: #fff !important;
+    display: block;
+    width: 100%;
+    padding: 8px 10px !important;
+    margin: 0px !important;
+    border: 1px solid #ccc !important;
+}
+
+    .dnnFormRadioButtons input {
+        margin-right: 4px !important;
+    }
+
+    .dnnFormRadioButtons td {
+        padding-right: 25px;
+        padding-bottom: 5px;
+    }
+/* #region file upload*/
+.spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 60px;
+    width: 60px;
+    margin: 0px auto;
+    -webkit-animation: rotation .6s infinite linear;
+    -moz-animation: rotation .6s infinite linear;
+    -o-animation: rotation .6s infinite linear;
+    animation: rotation .6s infinite linear;
+    border-left: 6px solid rgba(0,174,239,.15);
+    border-right: 6px solid rgba(0,174,239,.15);
+    border-bottom: 6px solid rgba(0,174,239,.15);
+    border-top: 6px solid rgba(0,174,239,.8);
+    border-radius: 100%;
+}
+
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+
+    to {
+        -moz-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+        -o-transform: rotate(0deg);
+    }
+
+    to {
+        -o-transform: rotate(359deg);
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+.overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.file-list-container {
+    border: solid 1px #dbdbdb;
+    border-radius: 5px;
+    min-height: 100px;
+    margin-top: 10px;
+    padding: 8px;
+}
+
+.file-list {
+    margin-bottom: 0px;
+    list-style: none;
+    padding-left: 0;
+}
+
+    .file-list li {
+        list-style-type: none;
+        padding-left: 10px;
+        background-color: #d9edf7;
+        max-width: 500px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    .file-list a {
+        cursor: pointer;
+        float: right;
+        margin-right: 10px;
+    }
+
+.file-upload {
+    opacity: 0;
+    cursor: pointer !important;
+}
+
+    .file-upload:disabled {
+        cursor: not-allowed !important;
+    }
+
+.disabledWrapper, .disabledWrapper:hover {
+    background-image: none !important;
+    background-color: #808080;
+    text-shadow: none;
+}
+
+#upload-wrapper {
+    max-width: 200px
+}
+
+#upload-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    cursor: pointer !important;
+}
+
+    #upload-wrapper input[type=file], #upload-wrapper input[type=file]:hover {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer !important
+    }
+/* #endregion*/

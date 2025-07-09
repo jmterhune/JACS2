@@ -140,9 +140,9 @@
             </div>
         </div>
         <div class="dnnSupplyItem">
-                <ul id="attachmentList" class="attachments">
-                    <asp:Literal id="ltAttachments" runat="server" />
-                </ul>
+            <ul id="attachmentList" class="attachments">
+                <asp:Literal ID="ltAttachments" runat="server" />
+            </ul>
         </div>
 
         <hr />
@@ -152,8 +152,9 @@
         </p>
     </div>
 </div>
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     (function ($, Sys) {

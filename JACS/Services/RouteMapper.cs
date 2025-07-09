@@ -27,7 +27,12 @@ namespace tjc.Modules.jacs.Services
                 routeName: "paramCount",
                 url: "{controller}/{action}/{p1}",
                 namespaces: new[] { "tjc.Modules.jacs.Services" });
-            
+            mapRouteManager.MapHttpRoute(
+               moduleFolderName: "JACS",
+               routeName: "paramCount2",
+               url: "{controller}/{action}/{p1}/{p2}",
+               namespaces: new[] { "tjc.Modules.jacs.Services" });
+
         }
     }
 }

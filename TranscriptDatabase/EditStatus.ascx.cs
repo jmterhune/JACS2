@@ -136,14 +136,23 @@ namespace tjc.Modules.TranscriptDatabase
                 chkPublicDefender.Checked = designation.PublicDefenderAppointed;
                 txtSubmittedDate.Text = DateTime.Now.ToShortDateString();
                 Components.Calendar calendar = cCtl.GetCalendarByDesignation(DesignationId);
+                IEnumerable<ExtensionRequest> extensionRequests = eCtl.GetExtensionRequestsByDesignation(DesignationId);
+                int eventTypeId = 1;
+                if(extensionRequests != null)
+                {
+                ExtensionRequest lastExtension = extensionRequests.OrderByDescending(x => x.EventTypeID).FirstOrDefault();
+                    if(lastExtension !=null)
+                        eventTypeId= lastExtension.EventTypeID;
+                }
                 if (calendar != null)
                 {
                     hdRequestOutstanding.Value = calendar.RequestOutstanding.ToString();
-                    hdCalendarEventTypeId.Value = (calendar.EventTypeID + 1).ToString();
+                    hdCalendarEventTypeId.Value = (eventTypeId + 1).ToString();
                 }
                 hdThirdExtension.Value = ((int)EventTypes.thirdExtension).ToString();
+
                 BindAttachments(aCtl);
-                BindExtensionRequests(eCtl);
+                BindExtensionRequests(extensionRequests);
                 BindEvents(vCtl);
                 BindDropDowns();
             }
@@ -237,6 +246,11 @@ namespace tjc.Modules.TranscriptDatabase
             }
             rptEvent.DataSource = events;
             rptEvent.DataBind();
+        }
+        private void BindExtensionRequests(IEnumerable<ExtensionRequest> requests)
+        {
+            rptExtensions.DataSource = requests;
+            rptExtensions.DataBind();
         }
         private void BindExtensionRequests(ExtensionRequestController ctl)
         {

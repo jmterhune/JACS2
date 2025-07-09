@@ -14,11 +14,11 @@ namespace tjc.Modules.jacs.Components
         public string field_type { get; set; }
         public string alignment { get; set; }
         public string default_value { get; set; }
-        public byte required { get; set; }
-        public byte yes_answer_required { get; set; }
-        public byte display_on_docket { get; set; }
-        public byte display_on_schedule { get; set; }
-        public byte use_in_attorany_scheduling { get; set; }
+        public int required { get; set; }
+        public int yes_answer_required { get; set; }
+        public int display_on_docket { get; set; }
+        public int display_on_schedule { get; set; }
+        public int use_in_attorany_scheduling { get; set; }
         public string old_id { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }

@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class CourtTimeslotController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateCourtTimeslot(CourtTimeslot t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteCourtTimeslot(CourtTimeslot t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<CourtTimeslot> GetCourtTimeslots()
         {
             IEnumerable<CourtTimeslot> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 t = rep.Get();
@@ -38,16 +39,17 @@ namespace tjc.Modules.jacs.Components
         public CourtTimeslot GetCourtTimeslot(int courttimeslotId)
         {
             CourtTimeslot t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 t = rep.GetById(courttimeslotId);
             }
             return t;
         }
+        
         public void UpdateCourtTimeslot(CourtTimeslot t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 rep.Update(t);

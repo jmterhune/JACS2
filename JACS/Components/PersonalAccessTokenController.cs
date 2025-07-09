@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class PersonalAccessTokenController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreatePersonalAccessToken(PersonalAccessToken t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<PersonalAccessToken>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeletePersonalAccessToken(PersonalAccessToken t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<PersonalAccessToken>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<PersonalAccessToken> GetPersonalAccessTokens()
         {
             IEnumerable<PersonalAccessToken> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<PersonalAccessToken>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public PersonalAccessToken GetPersonalAccessToken(int personalaccesstokenId)
         {
             PersonalAccessToken t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<PersonalAccessToken>();
                 t = rep.GetById(personalaccesstokenId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdatePersonalAccessToken(PersonalAccessToken t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<PersonalAccessToken>();
                 rep.Update(t);

@@ -4,7 +4,7 @@ using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("judges")]
-    [PrimaryKey("id", AutoIncrement = true)]
+    [PrimaryKey("id", AutoIncrement = false)]
     [Cacheable("Judges", CacheItemPriority.Default, 20)]
     internal class Judge
     {
@@ -16,5 +16,7 @@ namespace tjc.Modules.jacs.Components
         public string title { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
+        [IgnoreColumn]
+        public string court_name { get; set; }
     }
 }

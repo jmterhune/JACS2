@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class TemplateTimeslotController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateTemplateTimeslot(TemplateTimeslot t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TemplateTimeslot>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteTemplateTimeslot(TemplateTimeslot t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TemplateTimeslot>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<TemplateTimeslot> GetTemplateTimeslots()
         {
             IEnumerable<TemplateTimeslot> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TemplateTimeslot>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public TemplateTimeslot GetTemplateTimeslot(int templatetimeslotId)
         {
             TemplateTimeslot t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TemplateTimeslot>();
                 t = rep.GetById(templatetimeslotId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateTemplateTimeslot(TemplateTimeslot t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TemplateTimeslot>();
                 rep.Update(t);

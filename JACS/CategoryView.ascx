@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Src="Controls/navbar.ascx" TagPrefix="tb" TagName="navbar" %>
 <section class="navbar border-0 mb-0 justify-content-start">
-    <button class="btn btn-default me-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
+    <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
     </button>
     <h2 class="mb-0">Categories</h2>
@@ -80,6 +80,7 @@
                             <div class="col-md-6">
                                 <label>Description<em>*</em></label>
                                 <input type="text" id="edit_catDescription" class="form-control" required>
+                                <div class="invalid-feedback" id="edit_description-error">Category Description is Required.</div>
                             </div>
                         </div>
                     </div>
@@ -97,8 +98,12 @@
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/category.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/datatables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
 
 <script>
     var moduleId = <%=ModuleId%>;

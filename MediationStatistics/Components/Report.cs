@@ -348,6 +348,138 @@ namespace tjc.Modules.MediationStatistics.Components
             get; set;
         }
     }
+    [TableName("tjc_med_stat_checker")]
+    internal class StatChecker
+    {
+        public string Region
+        {
+            get; set;
+        }
+
+        public string CaseType
+        {
+            get; set;
+        }
+
+        public string CaseTypeGroup
+        {
+            get; set;
+        }
+
+        public string StageOfAction
+        {
+            get; set;
+        }
+
+        public DateTime MediationDate
+        {
+            get; set;
+        }
+
+        public string MediatorType
+        {
+            get; set;
+        }
+        public string MediatorName
+        {
+            get; set;
+        }
+
+        public DateTime ReferralDate
+        {
+            get; set;
+        }
+
+        public bool ArbitrationReferral
+        {
+            get; set;
+        }
+
+        public bool CircuitCivilReferral
+        {
+            get; set;
+        }
+
+        public string FeeAmount
+        {
+            get; set;
+        }
+
+        public bool HeldByPhone
+        {
+            get; set;
+        }
+
+        public char PTC_CourtOrdered
+        {
+            get; set;
+        }
+
+        public DateTime CreatedDate
+        {
+            get; set;
+        }
+
+        public bool MediationHeld
+        {
+            get; set;
+        }
+
+        public int SessionId
+        {
+            get; set;
+        }
+
+        public bool AgreementReached
+        {
+            get; set;
+        }
+
+        public string CaseNumber
+        {
+            get; set;
+        }
+
+        public string partyone
+        {
+            get; set;
+        }
+
+        public string partytwo
+        {
+            get; set;
+        }
+
+        public bool FeeJudgement
+        {
+            get; set;
+        }
+
+        public bool FeeAgreement
+        {
+            get; set;
+        }
+
+        public bool p1_FTA
+        {
+            get; set;
+        }
+
+        public bool p2_FTA
+        {
+            get; set;
+        }
+
+        public bool OTS
+        {
+            get; set;
+        }
+
+        public bool FeeWaiver
+        {
+            get; set;
+        }
+    }
     [TableName("tjc_med_session_counts")]
     internal class SessionCount
     {

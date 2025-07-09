@@ -69,6 +69,24 @@ namespace tjc.Modules.jacs
         protected global::System.Web.UI.WebControls.DropDownList drpJaRole;
 
         /// <summary>
+        /// lblJacsUserRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl lblJacsUserRole;
+
+        /// <summary>
+        /// drpJacsUserRole control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpJacsUserRole;
+
+        /// <summary>
         /// lblQuickRef control.
         /// </summary>
         /// <remarks>

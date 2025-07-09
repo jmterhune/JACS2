@@ -23,24 +23,30 @@ namespace tjc.Modules.DigitalCourtReporting.Services
             int recordCount = count;
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-            string searchText = query["searchText"].ToString();
-            if (searchText == "null")
-                searchText = "";
-            Int32.TryParse(query["listType"], out int listTypeId);
-            Int32.TryParse(query["searchType"], out int searchTypeId);
+            string searchText = !query.ContainsKey("searchText") || query["searchText"] == "null" ? "" : query["searchText"].ToString();
+            Int32.TryParse(query.ContainsKey("listType") ? query["listType"] : "0", out int listTypeId);
+            Int32.TryParse(query.ContainsKey("searchType") ? query["searchType"] : "0", out int searchTypeId);
             ListTypes listType = (ListTypes)listTypeId;
             SearchTypes searchType = (SearchTypes)searchTypeId;
-            Int32.TryParse(query["countyId"], out int countyId);
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
-            Int32.TryParse(query["length"], out int pageSize);
-            Int32.TryParse(query["start"], out int recordOffset);
-            Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            Int32.TryParse(query.ContainsKey("countyId") ? query["countyId"] : "0", out int countyId);
+            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
+            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
+
+            string sortColumn = "RequestDateFormatted"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
+
             try
             {
                 var ctl = new ProceedingController();
-                filteredCount = ctl.GetProceedingsCount(listTypeId,searchTypeId,searchText,countyId);
+                filteredCount = ctl.GetProceedingsCount(listTypeId, searchTypeId, searchText, countyId);
                 if (count == 0) { recordCount = filteredCount; }
                 proceedinglistItems = ctl.GetProceedingsPaged(listTypeId, searchTypeId, searchText, countyId, recordOffset, pageSize, sortColumn, sortDirection).Select(proceedingListItem => new ProceedingListItemViewModel(proceedingListItem)).ToList();
                 return Request.CreateResponse(new ProceedingSearchResult { data = proceedinglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
@@ -51,6 +57,7 @@ namespace tjc.Modules.DigitalCourtReporting.Services
                 return Request.CreateResponse(new ProceedingSearchResult { data = proceedinglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
+
         [HttpGet]
         [AllowAnonymous]
         [ActionName("Delete")]
@@ -68,7 +75,7 @@ namespace tjc.Modules.DigitalCourtReporting.Services
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
-      
+
         internal class ProceedingSearchResult
         {
             public List<ProceedingListItemViewModel> data { get; set; }
@@ -77,12 +84,13 @@ namespace tjc.Modules.DigitalCourtReporting.Services
             public int recordsTotal { get; set; }
             public object error { get; set; }
         }
+
         public class ProceedingResult
         {
             public int proceedingId { get; set; }
             public string error { get; set; }
-
         }
+
         private string GetSortColumn(int columnIndex)
         {
             string name = "RequestDateFormatted";

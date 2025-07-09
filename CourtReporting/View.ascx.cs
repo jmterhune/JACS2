@@ -41,8 +41,8 @@ namespace tjc.Modules.CourtReporting
         {
             try
             {
-                var tc = new AccountingController();
-                rptItemList.DataSource = tc.GetItems(ModuleId);
+                var tc = new AccountController();
+                rptItemList.DataSource = tc.GetAccounts();
                 rptItemList.DataBind();
             }
             catch (Exception exc) //Module failed to load
@@ -60,15 +60,15 @@ namespace tjc.Modules.CourtReporting
 
                 var pnlAdminControls = e.Item.FindControl("pnlAdmin") as Panel;
 
-                var t = (Accounting)e.Item.DataItem;
+                var t = (Account)e.Item.DataItem;
 
                 if (IsEditable && lnkDelete != null && lnkEdit != null && pnlAdminControls != null)
                 {
                     pnlAdminControls.Visible = true;
-                    lnkDelete.CommandArgument = t.ItemId.ToString();
+                    lnkDelete.CommandArgument = t.AccountID.ToString();
                     lnkDelete.Enabled = lnkDelete.Visible = lnkEdit.Enabled = lnkEdit.Visible = true;
 
-                    lnkEdit.NavigateUrl = EditUrl(string.Empty, string.Empty, "Edit", "tid=" + t.ItemId);
+                    lnkEdit.NavigateUrl = EditUrl(string.Empty, string.Empty, "Edit", "tid=" + t.AccountID);
 
                     ClientAPI.AddButtonConfirm(lnkDelete, Localization.GetString("ConfirmDelete", LocalResourceFile));
                 }
@@ -89,8 +89,8 @@ namespace tjc.Modules.CourtReporting
 
             if (e.CommandName == "Delete")
             {
-                var tc = new AccountingController();
-                tc.DeleteItem(Convert.ToInt32(e.CommandArgument), ModuleId);
+                var tc = new AccountController();
+                tc.DeleteAccount(Convert.ToInt32(e.CommandArgument));
             }
             Response.Redirect(DotNetNuke.Common.Globals.NavigateURL());
         }

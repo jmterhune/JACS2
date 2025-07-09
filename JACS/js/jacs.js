@@ -1,52 +1,52 @@
 ﻿$(function () {
-    // Manage Sidebar state on page load
-    const $sidebarToggle = $('[data-bs-target="#sidebarMenu"]');
-    const $sidebarMenu = $('#sidebarMenu');
-    const savedSideBarState = getFromLocalStorage('sidebarState');
-    // Restore state of SideBar from localStorage on page load
-    if (savedSideBarState === 'collapsed') {
-        $sidebarMenu.removeClass('show');
-        $sidebarToggle.attr('aria-expanded', 'false');
-    } else {
-        $sidebarMenu.addClass('show');
-        $sidebarToggle.attr('aria-expanded', 'true');
+    // Function to initialize collapse state from localStorage for menus
+    function initializeCollapseState(menuId, storageKey, isSidebar = false) {
+        const $menu = $(`#${menuId}`);
+        const $toggle = isSidebar
+            ? $('#btnToggleMenu')
+            : $(`[data-bs-toggle="collapse"][href="#${menuId}"], [data-bs-toggle="collapse"][data-bs-target="#${menuId}"]`);
+        const savedState = getFromLocalStorage(storageKey);
+
+        // Restore state from localStorage, default to expanded for sidebar if no state
+        const isExpanded = savedState === 'expanded' || (isSidebar && savedState === null);
+        if (isExpanded) {
+            $menu.addClass('show');
+            $toggle.attr('aria-expanded', 'true');
+            if (!isSidebar) $toggle.removeClass('collapsed');
+        } else {
+            $menu.removeClass('show');
+            $toggle.attr('aria-expanded', 'false');
+            if (!isSidebar) $toggle.addClass('collapsed');
+        }
+        if (storageKey != 'sidebarState') { 
+        // Save state to localStorage and update toggle class on collapse toggle (only for submenus)
+            $menu.on('shown.bs.collapse', () => {
+                saveToLocalStorage(storageKey, 'expanded');
+                $toggle.attr('aria-expanded', 'true').removeClass('collapsed');
+            });
+
+            $menu.on('hidden.bs.collapse', () => {
+                saveToLocalStorage(storageKey, 'collapsed');
+                $toggle.attr('aria-expanded', 'false').addClass('collapsed');
+            });
+        }
     }
-    // Save state of SideBar to localStorage on collapse toggle
-    $sidebarMenu.on('shown.bs.collapse', () => {
+
+    // Initialize sidebar state (default to expanded if no state saved)
+    initializeCollapseState('sidebarMenu', 'sidebarState', true);
+
+    // Initialize submenu states
+    initializeCollapseState('authMenu', 'authMenuState');
+    initializeCollapseState('jacsMenu', 'jacsMenuState');
+    $('#sidebarMenu').on('shown.bs.collapse', function () {
         saveToLocalStorage('sidebarState', 'expanded');
-        $sidebarToggle.attr('aria-expanded', 'true');
     });
 
-    $sidebarMenu.on('hidden.bs.collapse', () => {
+    $('#sidebarMenu').on('hidden.bs.collapse', function () {
         saveToLocalStorage('sidebarState', 'collapsed');
-        $sidebarToggle.attr('aria-expanded', 'false');
-    });
-   
-    // Manage Jacs Menu state on page load
-    const $jacsToggle = $('[data-bs-target="#jacsMenu"], [href="#jacsMenu"]');
-    const $jacsMenu = $('#jacsMenu');
-    const savedJacsMenuState = getFromLocalStorage('jacsMenuState');
-
-    // Restore state of Jacs Menu from localStorage on page load
-    if (savedJacsMenuState === 'collapsed') {
-        $jacsMenu.removeClass('show');
-        $jacsToggle.attr('aria-expanded', 'false');
-    } else {
-        $jacsMenu.addClass('show');
-        $jacsToggle.attr('aria-expanded', 'true');
-    }
-
-    // Save state of Jacs Menu to localStorage on collapse toggle
-    $jacsMenu.on('shown.bs.collapse', () => {
-        saveToLocalStorage('jacsMenuState', 'expanded');
-        $jacsToggle.attr('aria-expanded', 'true');
-    });
-
-    $jacsMenu.on('hidden.bs.collapse', () => {
-        saveToLocalStorage('jacsMenuState', 'collapsed');
-        $jacsToggle.attr('aria-expanded', 'false');
     });
 });
+
 function setActiveLink(linkId) {
     // Remove active class from all nav links
     document.querySelectorAll('.nav-link').forEach(link => {
@@ -58,6 +58,7 @@ function setActiveLink(linkId) {
         targetLink.classList.add('active');
     }
 }
+
 function ShowAlert(title, text) {
     $.dnnAlert({
         okText: 'OK',
@@ -65,6 +66,18 @@ function ShowAlert(title, text) {
         text: text
     });
 }
+
+function ShowNotification(title, message, type) {
+    new Noty({
+        type: type.toLowerCase(),
+        text: `<strong>${title}</strong><br>${message}`,
+        timeout: 5000,
+        theme: "bootstrap-v4",
+        layout: "topRight",
+        progressBar: true
+    }).show();
+}
+
 // Saving to local storage
 function saveToLocalStorage(key, value) {
     try {
@@ -90,6 +103,7 @@ function getFromLocalStorage(key) {
         return null;
     }
 }
+
 function getValueFromUrl(param) {
     try {
         const urlObj = new URL(window.location.href);

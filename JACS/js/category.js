@@ -52,6 +52,19 @@ class CategoryController {
                     data.searchText = data.search.value;
                     delete data.columns;
                 },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
+                error: function (error) {
+                    $("#tblCategory_processing").hide();
+                    if (error.status === 401) {
+                        ShowNotification("Error Retrieving Categories", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
+                    } else {
+                        ShowNotification("Error Retrieving Categories", "The following error occurred attempting to retrieve category information. Error: " + error.statusText, 'error');
+                    }
+                }
             },
             columns: [
                 {
@@ -100,24 +113,25 @@ class CategoryController {
             displayStart: this.currentPage * this.pageSize,
         });
 
-        $("#tblCategory_length").prepend($("#lnkAdd"));
+        $(".dt-length").prepend($("#lnkAdd"));
         this.categoryTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const categoryId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Category?',
-                    yesText: 'Yes',
-                    noText: 'No',
+                Swal.fire({
                     title: 'Delete Category?',
-                    callbackTrue: function () {
+                    text: 'Are you sure you wish to delete this Category?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         categoryControllerInstance.DeleteCategory(categoryId);
                     }
                 });
             });
         });
-
         $(document).on('click', '.cat-detail', function (e) {
             e.preventDefault();
             var categoryId = $(this).data("id");
@@ -149,12 +163,15 @@ class CategoryController {
         $("#cmdDelete").on("click", function (e) {
             e.preventDefault();
             var categoryId = $("#hdCategoryId").val();
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this Category?',
-                yesText: 'Yes',
-                noText: 'No',
+            Swal.fire({
                 title: 'Delete Category?',
-                callbackTrue: function () {
+                text: 'Are you sure you wish to delete this Category?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     categoryControllerInstance.DeleteCategory(categoryId);
                 }
             });
@@ -200,6 +217,11 @@ class CategoryController {
         $.ajax({
             url: this.deleteUrl + categoryId,
             type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('ModuleId', moduleId);
+                xhr.setRequestHeader('TabId', service.framework.getTabId());
+                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+            },
             success: function (result) {
                 if (categoryControllerInstance.categoryTable) {
                     categoryControllerInstance.categoryTable.draw();
@@ -212,9 +234,14 @@ class CategoryController {
                 if (detailModal) {
                     detailModal.hide();
                 }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Category deleted successfully.'
+                });
             },
             error: function (error) {
-                ShowAlert("Error Deleting Category", error.statusText);
+                ShowNotification("Error Deleting Category", error.statusText, 'error');
             }
         });
     }
@@ -261,6 +288,11 @@ class CategoryController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -273,13 +305,13 @@ class CategoryController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowAlert("Error", "Failed to retrieve category details. Please try again later.");
+                        ShowNotification("Error", "Failed to retrieve category details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
                 error: function () {
                     console.error('Failed to fetch category details');
-                    ShowAlert("Error", "Failed to retrieve category details. Please try again later.");
+                    ShowNotification("Error", "Failed to retrieve category details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -311,27 +343,36 @@ class CategoryController {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(categoryData),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (result) {
                     if (result === 200) {
                         $("#edit_progress-category").hide();
-                        ShowAlert("Success", "Category created successfully.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Category created successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CategoryEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
                     } else {
                         $("#edit_progress-category").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-category").hide();
-                    ShowAlert("Error Creating Category", error.statusText);
+                    ShowNotification("Error Creating Category", error.statusText, 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-category").hide();
-            ShowAlert("Error Creating Category", e.statusText);
+            ShowNotification("Error Creating Category", e.statusText, 'error');
         }
     }
 
@@ -347,28 +388,36 @@ class CategoryController {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(categoryData),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (result) {
                     if (result === 200) {
                         $("#edit_progress-category").hide();
-                        ShowAlert("Success", "Category updated successfully.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Category updated successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CategoryEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
                     } else {
                         $("#edit_progress-category").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-category").hide();
-                    ShowAlert("Error Updating Category", error.statusText);
+                    ShowNotification("Error Updating Category", error.statusText, 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-category").hide();
-            ShowAlert("Error Updating Category", e.statusText);
+            ShowNotification("Error Updating Category", e.statusText, 'error');
         }
     }
-
 }

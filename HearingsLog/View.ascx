@@ -283,15 +283,12 @@
         </div>
     </div>
 </div>
-
-<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap5-toggle.jquery.min.js" />
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap5-toggle.min.css" />
-
-
+<dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap5-toggle.jquery.min.js" />
 
 <script type="text/javascript">
     var moduleId = <%=this.ModuleId%>;

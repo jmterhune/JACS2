@@ -4,7 +4,7 @@ namespace tjc.Modules.jacs.Components
 {
     internal class EmailController
     {
-                private const string CONN_JACS = "jacs"; //Connection
+        private const string CONN_JACS = "jacs"; //Connection
 
         public void CreateEmail(Email t)
         {

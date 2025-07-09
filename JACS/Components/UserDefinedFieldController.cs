@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class UserDefinedFieldController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateUserDefinedField(UserDefinedField t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<UserDefinedField>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteUserDefinedField(UserDefinedField t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<UserDefinedField>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<UserDefinedField> GetUserDefinedFields()
         {
             IEnumerable<UserDefinedField> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<UserDefinedField>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public UserDefinedField GetUserDefinedField(int userdefinedfieldId)
         {
             UserDefinedField t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<UserDefinedField>();
                 t = rep.GetById(userdefinedfieldId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateUserDefinedField(UserDefinedField t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<UserDefinedField>();
                 rep.Update(t);

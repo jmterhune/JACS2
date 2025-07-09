@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class TimeslotMotionController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateTimeslotMotion(TimeslotMotion t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotMotion>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteTimeslotMotion(TimeslotMotion t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotMotion>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<TimeslotMotion> GetTimeslotMotions()
         {
             IEnumerable<TimeslotMotion> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotMotion>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public TimeslotMotion GetTimeslotMotion(int timeslotmotionId)
         {
             TimeslotMotion t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotMotion>();
                 t = rep.GetById(timeslotmotionId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateTimeslotMotion(TimeslotMotion t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotMotion>();
                 rep.Update(t);

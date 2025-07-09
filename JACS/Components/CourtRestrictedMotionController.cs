@@ -4,9 +4,10 @@ namespace tjc.Modules.jacs.Components
 {
     internal class CourtRestrictedMotionController
     {
+        private const string CONN_JACS = "jacs"; //Connection
         public void CreateCourtRestrictedMotion(CourtRestrictedMotion t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtRestrictedMotion>();
                 rep.Insert(t);
@@ -19,7 +20,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void DeleteCourtRestrictedMotion(CourtRestrictedMotion t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtRestrictedMotion>();
                 rep.Delete(t);
@@ -28,7 +29,7 @@ namespace tjc.Modules.jacs.Components
         public IEnumerable<CourtRestrictedMotion> GetCourtRestrictedMotions()
         {
             IEnumerable<CourtRestrictedMotion> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtRestrictedMotion>();
                 t = rep.Get();
@@ -38,7 +39,7 @@ namespace tjc.Modules.jacs.Components
         public CourtRestrictedMotion GetCourtRestrictedMotion(int courtrestrictedmotionId)
         {
             CourtRestrictedMotion t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtRestrictedMotion>();
                 t = rep.GetById(courtrestrictedmotionId);
@@ -47,7 +48,7 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateCourtRestrictedMotion(CourtRestrictedMotion t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtRestrictedMotion>();
                 rep.Update(t);

@@ -18,8 +18,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.MediationStatistics.Components;
@@ -250,7 +248,7 @@ namespace tjc.Modules.MediationStatistics
                 case 3:
                     {
                         Checker.Visible = true;
-                        rgChecker.DataSource = ctl.GetSessionCounts(startDate, endDate);
+                        rgChecker.DataSource = ctl.GetStatChecker(startDate, endDate);
                         rgChecker.DataBind();
                         break;
                     }

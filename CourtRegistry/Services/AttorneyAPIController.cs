@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Security;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,10 @@ using System.Web.Http;
 using tjc.Modules.CourtRegistry.Components;
 namespace tjc.Modules.CourtRegistry.Services
 {
+    [DnnAuthorize]
     public class AttorneyAPIController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetAttorneyListItems(int count)
         {
             List<AttorneyViewModel> attorneyListItems = new List<AttorneyViewModel>();
@@ -34,12 +35,17 @@ namespace tjc.Modules.CourtRegistry.Services
                 email = query["email"].ToString();
             if (query.ContainsKey("lawFirm"))
                 lawFirm = query["lawFirm"].ToString();
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
-            Int32.TryParse(query["length"], out int pageSize);
-            Int32.TryParse(query["start"], out int recordOffset);
-            Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
+            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
+            string sortColumn = "AttorneyID"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
             try
             {
                 var ctl = new AttorneyController();
@@ -55,7 +61,6 @@ namespace tjc.Modules.CourtRegistry.Services
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("Delete")]
         public HttpResponseMessage DeleteAttorney(int attorneyId)
         {
@@ -72,7 +77,6 @@ namespace tjc.Modules.CourtRegistry.Services
             }
         }
         [HttpGet]
-        [AllowAnonymous]
         [ActionName("GetAttorney")]
         public HttpResponseMessage GetAttorney(int attorneyId)
         {
@@ -89,7 +93,6 @@ namespace tjc.Modules.CourtRegistry.Services
             }
         }
         [HttpPost]
-        [AllowAnonymous]
         internal HttpResponseMessage SaveAttorney(AttorneyViewModel attorney)
         {
             try

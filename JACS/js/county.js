@@ -48,10 +48,23 @@ class CountyController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 data(data) {
                     data.searchText = data.search.value;
                     delete data.columns;
                 },
+                error: function (error) {
+                    $("#tblCounty_processing").hide();
+                    if (error.status === 401) {
+                        ShowAlert("Error Retrieving Counties", "Please make sure you are logged in and try again. Error: " + error.statusText);
+                    } else {
+                        ShowAlert("Error Retrieving Counties", "The following error occurred attempting to retrieve county information. Error: " + error.statusText);
+                    }
+                }
             },
             columns: [
                 {
@@ -105,10 +118,9 @@ class CountyController {
             pageLength: this.pageSize,
             displayStart: this.currentPage * this.pageSize,
         });
-
-        $("#tblCounty_length").prepend($("#lnkAdd"));
+        $(".dt-length").prepend($("#lnkAdd"));
         this.countyTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const countyId = $(this).data("id");
@@ -123,7 +135,6 @@ class CountyController {
                 });
             });
         });
-
         $(document).on('click', '.county-detail', function (e) {
             e.preventDefault();
             var countyId = $(this).data("id");
@@ -217,6 +228,11 @@ class CountyController {
         $.ajax({
             url: this.deleteUrl + countyId,
             type: 'GET',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('ModuleId', moduleId);
+                xhr.setRequestHeader('TabId', service.framework.getTabId());
+                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+            },
             success: function (result) {
                 if (countyControllerInstance.countyTable) {
                     countyControllerInstance.countyTable.draw();
@@ -282,6 +298,11 @@ class CountyController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -335,6 +356,11 @@ class CountyController {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(countyData),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (result) {
                     if (result === 200) {
                         $("#edit_progress-county").hide();
@@ -372,6 +398,11 @@ class CountyController {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(countyData),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('ModuleId', moduleId);
+                    xhr.setRequestHeader('TabId', service.framework.getTabId());
+                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
+                },
                 success: function (result) {
                     if (result === 200) {
                         $("#edit_progress-county").hide();

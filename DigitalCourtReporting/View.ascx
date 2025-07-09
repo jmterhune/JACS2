@@ -89,8 +89,9 @@
 </table>
 
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Libraries/jQuery-UI/01_13_02/Themes/jquery-ui.css" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Datatables/datatables.min.js" />
-<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/Datatables/datatables.min.css" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
     var userId = <%=UserId%>;
