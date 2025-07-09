@@ -1,0 +1,363 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CourtEdit.ascx.cs" Inherits="tjc.Modules.jacs.CourtEdit" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%@ Register Src="Controls/navbar.ascx" TagPrefix="tb" TagName="navbar" %>
+
+<section class="navbar border-0 mb-0 justify-content-start">
+    <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <h2 class="mb-0">Edit Court</h2>
+</section>
+<div class="d-flex">
+    <tb:navbar runat="server" ID="navbar" />
+    <main class="main flex-grow-1 p-3 pt-0">
+        <div class="container-fluid">
+            <div id="edit_progress-court" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif" />
+                </div>
+            </div>
+            <div class="alert alert-info" role="alert">
+                <strong class="alert-heading"><i class="fas fa-info-circle"></i>&nbsp;Note</strong>
+                In addition to the fields marked required, you must also fill out motions and hearing types on the Scheduling Tab.
+            </div>
+            <div class="tab-container mb-2">
+                <div class="tabs" id="form_tabs">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="nav-item active">
+                            <a href="#tab_main" aria-controls="tab_main" role="tab" data-toggle="tab" class="nav-link active">Main</a>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <a href="#tab_scheduling" aria-controls="tab_scheduling" role="tab" data-toggle="tab" class="nav-link">Scheduling</a>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <a href="#tab_custom-email" aria-controls="tab_custom-email" role="tab" data-toggle="tab" class="nav-link">Custom Email</a>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <a href="#tab_timeslot-search-header" aria-controls="tab_timeslot-search-header" role="tab" data-toggle="tab" class="nav-link">Timeslot Search Header</a>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <a href="#tab_docket-print-header" aria-controls="tab_docket-print-header" role="tab" data-toggle="tab" class="nav-link">Docket Print Header</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content p-3">
+                        <div role="tabpanel" class="tab-pane active" id="tab_main">
+                            <input type="hidden" id="edit_hdCourtId">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Description<em>*</em></label>
+                                        <input type="text" id="edit_courtDescription" class="form-control" required>
+                                        <div class="invalid-feedback">Description is required.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>County<em>*</em></label>
+                                        <select id="edit_courtCounty" class="form-control" required>
+                                        </select>
+                                        <div class="invalid-feedback">Please Select a county.</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Case Number Format</label>
+                                        <div>
+                                            <div class="case-format-row">
+                                                <input type="radio" name="case_format_type" value="1" id="first_radio">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="7" minlength="7" placeholder="xxxxxxx">
+                                            </div>
+                                            <div class="case-format-row">
+                                                <input type="radio" name="case_format_type" value="2" id="second_radio">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
+                                                <select class="case_num_format_multiple">
+                                                    <option value="0"></option>
+                                                    <option value="CA">CA</option>
+                                                    <option value="CC">CC</option>
+                                                    <option value="CF">CF</option>
+                                                    <option value="CJ">CJ</option>
+                                                    <option value="CM">CM</option>
+                                                    <option value="CO">CO</option>
+                                                    <option value="CP">CP</option>
+                                                    <option value="CT">CT</option>
+                                                    <option value="DP">DP</option>
+                                                    <option value="DR">DR</option>
+                                                    <option value="GA">GA</option>
+                                                    <option value="IN">IN</option>
+                                                    <option value="MH">MH</option>
+                                                    <option value="MM">MM</option>
+                                                    <option value="MO">MO</option>
+                                                    <option value="SC">SC</option>
+                                                    <option value="TR">TR</option>
+                                                </select>
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="7" minlength="7" placeholder="xxxxxxx">
+                                            </div>
+                                            <div class="case-format-row">
+                                                <input type="radio" name="case_format_type" value="3" id="third_radio" checked="">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="2" minlength="2" placeholder="County Code" id="case_format_input_first">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="Year" id="case_format_input_second">
+                                                <select class="case_num_format_multiple">
+                                                    <option value="0"></option>
+                                                    <option value="CA">CA</option>
+                                                    <option value="CC">CC</option>
+                                                    <option value="CF">CF</option>
+                                                    <option value="CJ">CJ</option>
+                                                    <option value="CM">CM</option>
+                                                    <option value="CO">CO</option>
+                                                    <option value="CP">CP</option>
+                                                    <option value="CT">CT</option>
+                                                    <option value="DP">DP</option>
+                                                    <option value="DR">DR</option>
+                                                    <option value="GA">GA</option>
+                                                    <option value="IN">IN</option>
+                                                    <option value="MH">MH</option>
+                                                    <option value="MM">MM</option>
+                                                    <option value="MO">MO</option>
+                                                    <option value="SC">SC</option>
+                                                    <option value="TR">TR</option>
+                                                </select>
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="6" minlength="6" placeholder="Case Number" id="case_format_input_three">
+                                                <input type="text" value="XXXX" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" id="case_format_input_four">
+                                                <input type="text" value="XX" class="col-md-2 case_num_format_multiple" maxlength="2" minlength="2" id="case_format_input_five">
+                                            </div>
+                                            <div class="case-format-row">
+                                                <input type="radio" name="case_format_type" value="4" id="fourth_radio">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="7" minlength="7" placeholder="xxxxxx">
+                                                <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
+                                            </div>
+                                            <div class="case-format-row">
+                                                <input type="radio" name="case_format_type" value="5" id="fifth_radio">
+                                                <input type="text" value="" class="col-md-4 case_num_format_multiple" placeholder="xxxxxxxxxxxx">
+                                                <input type="hidden" name="case_num_format" id="case_format_val" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Default Prosecuting Attorney</label>
+                                        <select id="edit_defAttorney" class="form-control"></select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Default Plaintiff</label>
+                                        <input type="text" id="edit_courtPlaintiff" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Default Opposing Attorney</label>
+                                        <select id="edit_oppAttorney" class="form-control"></select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Default Defendant</label>
+                                        <input type="text" id="edit_courtDefendant" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab_scheduling">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4 pt-4">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_emailConfirmations" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_emailConfirmations">
+                                            <label class="form-check-label" for="switch_emailConfirmations">Email Confirmations</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Weeks on Calendar<em>*</em></label>
+                                        <input type="number" id="edit_calendarWeeks" class="form-control" value="0" min="0" required>
+                                        <div class="invalid-feedback">Please enter a valid number of weeks.</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="d-block">Extending Calendar<em>*</em></label>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" class="form-check-input" id="edit_autoExtensionAuto" name="auto_extension" value="1" checked>
+                                            <label class="form-check-label font-weight-normal" for="edit_autoExtensionAuto">Automatic</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" class="form-check-input" id="edit_autoExtensionManual" name="auto_extension" value="0">
+                                            <label class="form-check-label font-weight-normal" for="edit_autoExtensionManual">Manual</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h5 class="text-primary mt-2">Public Settings</h5>
+                                <hr class="mb-0">
+                                <div class="row">
+                                    <div class="col-md-12 pt-4">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_allowWebScheduling" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_allowWebScheduling">
+                                            <label class="form-check-label" for="switch_allowWebScheduling">Allow Web Scheduling&nbsp;<i class="fa-lg fa fa-question-circle text-primary pointer" data-plugin-tooltip="tooltip" data-toggle="tooltip" data-placement="top" title="Disabled if there is no Judge attached to the court."></i></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pt-4">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_publicAvailableTimeslots" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_publicAvailableTimeslots">
+                                            <label class="form-check-label" for="switch_publicAvailableTimeslots">Public Available Timeslots</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 d-none" id="div_lagTime">
+                                        <label>Lagtime for Available Timeslots</label>
+                                        <input type="number" id="edit_lagTime" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Max Available Time Slots</label>
+                                        <input type="number" id="edit_maxAvailableSlots" class="form-control" min="0">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_showDocketInternet" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_showDocketInternet">
+                                            <label class="form-check-label" for="switch_showDocketInternet">Show Docket on Internet</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 d-none" id="div_publicDocketDays">
+                                        <label>Number of Days on Internet</label>
+                                        <input type="number" id="edit_publicDocketDays" class="form-control">
+                                    </div>
+                                </div>
+                                <h5 class="text-primary mt-2">Required Fields</h5>
+                                <hr class="mb-0">
+                                <div class="row">
+                                    <div class="col-md-6 pt-4">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_plaintiffRequired" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_plaintiffRequired">
+                                            <label class="form-check-label" for="switch_plaintiffRequired">Plaintiff required</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pt-4">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_defendantRequired" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_defendantRequired">
+                                            <label class="form-check-label" for="switch_defendantRequired">Defendant required</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_plaintiffAttorneyRequired" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_plaintiffAttorneyRequired">
+                                            <label class="form-check-label" for="switch_plaintiffAttorneyRequired">Plaintiff attorney required</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" id="edit_defendantAttorneyRequired" value="0">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switch_defendantAttorneyRequired">
+                                            <label class="form-check-label" for="switch_defendantAttorneyRequired">Defendant attorney required</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Available Motions</label>
+                                        <select id="edit_availableMotions" class="form-control" name="available_motions[]" multiple="multiple"></select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Restricted Motions</label>
+                                        <select id="edit_restrictedMotions" class="form-control" aria-describedby="helpRestrictedMotions" name="restricted_motions[]" multiple="multiple"></select>
+                                        <div id="helpRestrictedMotions" class="form-text mb-0">Attorneys will be unable to select the above motions on all timeslots</div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Attorney Scheduling Available Hearing Types</label>
+                                        <select id="edit_availableHearingTypes" class="form-control" aria-describedby="helpAvailableHearingTypes" name="available_hearing_types[]" multiple="multiple"></select>
+                                        <div id="helpAvailableHearingTypes" class="form-text mb-0">Attorneys will only be able to select the above hearing type(s) when scheduling</div>
+                                    </div>
+                                    <div class="col-md-12 no-form-group">
+                                        <label>Web Policy</label>
+                                        <div id="editor_webPolicy" class="summernote mb-0"></div>
+                                        <textarea id="edit_webPolicy" class="form-control hidden"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab_custom-email">
+                            <div class="row">
+                                <div class="col-md-12 no-form-group">
+                                    <label>Email Template</label>
+                                    <div id="editor_customEmailBody" class="summernote"></div>
+                                    <textarea id="edit_customEmailBody" class="form-control hidden"></textarea>
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <ul class="list mb-0">
+                                        <li>Case Number: [case]</li>
+                                        <li>Motion: [motion]</li>
+                                        <li>Attorney: [attorney]</li>
+                                        <li>Plaintiff: [plaintiff]</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab_timeslot-search-header">
+                            <div class="col-md-12 no-form-group">
+                                <label>Timeslot Search Header</label>
+                                <div id="editor_timeslotHeader" class="summernote"></div>
+                                <textarea id="edit_timeslotHeader" class="form-control hidden"></textarea>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="tab_docket-print-header">
+                            <div class="col-md-12">
+                                <label>Custom Docket Print Header</label>
+                                <textarea id="edit_customHeader" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>
+                <button type="button" class="btn btn-success" id="edit_cmdSave">
+                    <i class="fas fa-save" aria-hidden="true"></i>&nbsp;Save
+                </button>
+                <a href="/court" class="btn btn-secondary">Cancel</a>
+            </p>
+        </div>
+    </main>
+</div>
+
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/court.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
+<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/datatables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/select2/css/select2.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/select2/css/select2-bootstrap-5-theme.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/select2/js/select2.full.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/summernote/summernote-lite.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/summernote/summernote-lite.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" /><script>
+    var moduleId = <%=ModuleId%>;
+    var service = {
+        path: "JACS",
+        framework: $.ServicesFramework(moduleId)
+    };
+
+    (function ($, Sys) {
+        $(document).ready(function () {
+            try {
+                if (typeof CourtController === 'undefined') {
+                    console.error('CourtController is not defined.');
+                    return;
+                }
+                $('.summernote').summernote();
+                const courtController = new CourtController({
+                    moduleId: moduleId,
+                    userId: <%=UserId%>,
+                    isAdmin: "<%=IsAdmin%>",
+                    adminRole: "<%=AdminRole%>",
+                    service: service,
+                    viewUrl: "<%=CourtListUrl%>",
+                    editUrl: "<%=CourtEditUrl%>",
+                    calendarUrl: "<%=CourtCalendarUrl%>"
+                });
+                courtController.initEdit();
+            } catch (e) {
+                console.error('Error initializing CourtController:', e);
+            }
+        });
+    }(jQuery, window.Sys));
+</script>

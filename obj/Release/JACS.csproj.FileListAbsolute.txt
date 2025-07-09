@@ -1,0 +1,7 @@
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\bin\tjc.Modules.JACS.dll.config
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\bin\tjc.Modules.JACS.dll
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\bin\tjc.Modules.JACS.pdb
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\obj\Release\JACS.csproj.AssemblyReference.cache
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\obj\Release\JACS.csproj.CoreCompileInputs.cache
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\obj\Release\tjc.Modules.JACS.dll
+D:\OneDrive - jud12fl\SourceCode\tjc.modules.local\JACS\obj\Release\tjc.Modules.JACS.pdb
