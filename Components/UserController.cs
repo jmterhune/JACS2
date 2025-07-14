@@ -58,7 +58,7 @@ namespace tjc.Modules.jacs.Components
                 rep.Update(t);
             }
         }
-        public IEnumerable<User> GetUsersPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
+        public IEnumerable<User> GetUsersPaged(string searchTerm,int roleId, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -66,6 +66,7 @@ namespace tjc.Modules.jacs.Components
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_user_paged",
                     searchTerm ?? string.Empty,
+                    roleId,
                     rowOffset,
                     pageSize,
                     sortOrder ?? "description",
@@ -73,14 +74,14 @@ namespace tjc.Modules.jacs.Components
                 );
             }
         }
-        public int GetUsersCount(string searchTerm)
+        public int GetUsersCount(string searchTerm,int roleId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 return ctx.ExecuteScalar<int>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_user_count",
-                    searchTerm ?? string.Empty
+                    searchTerm ?? string.Empty,roleId
                 );
             }
         }

@@ -128,6 +128,9 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public List<CourtListItem> restricted_motion_items { get; set; }
         [JsonProperty("available_hearing_type_items")]
         public List<CourtListItem> available_hearing_type_items { get; set; }
+        [JsonProperty("has_revisions")]
+        public bool has_revisions { get; set; }
+
         private CourtListItem GetAttorneyItem(long attorneyId) { 
         var controller = new AttorneyController();
             return controller.GetAttorneyListItem(attorneyId) ?? new CourtListItem { value = attorneyId, text = string.Empty };

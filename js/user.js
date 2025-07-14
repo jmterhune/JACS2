@@ -25,8 +25,12 @@ class UserController {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}UserAPI/DeleteUser/`;
-
+        const roleId = getValueFromUrl('rid');
         const listUrl = `${this.service.baseUrl}UserAPI/GetUsers/${this.recordCount}`;
+
+        if (roleId) {
+            listUrl = `${this.service.baseUrl}UserAPI/GetUsers/${this.recordCount}/${roleId}`;
+        }
         const detailModalElement = document.getElementById('UserDetailModal');
         if (detailModalElement) {
             detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);

@@ -62,6 +62,15 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkCourt";
+                if(Page.IsPostBack == false)
+                {
+                    var ctl = new CourtController();
+                    Court court = ctl.GetCourt(CourtId);
+                    if (court != null) {
+                        ltCourtName.Text = court.description;
+                        ltJudgeName.Text = court.GetJudge().name;
+                    }
+                }
             }
             catch (Exception exc) //Module failed to load
             {

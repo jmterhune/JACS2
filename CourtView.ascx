@@ -59,6 +59,7 @@
                     adminRole: "<%=AdminRole%>",
                     editUrl: "<%=CourtEditUrl%>",
                     calendarUrl: "<%=CourtCalendarUrl%>",
+                    revisionUrl: "<%=EventRevisionUrl%>",
                     service: service,
                     currentPage: 0,
                     pageSize: 25,

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Caching;
+
 namespace tjc.Modules.jacs.Components
 {
     [TableName("timeslots")]
@@ -36,7 +37,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var ctl = new TimeslotEventController();
                     int eventCount = ctl.GetTimeslotEventsByTimeslot(id).Count();
-                    return quantity> eventCount ;
+                    return quantity > eventCount;
                 }
             }
         }
@@ -48,5 +49,10 @@ namespace tjc.Modules.jacs.Components
                 return start.ToString("MM/dd/yyyy @ hh:mm tt");
             }
         }
+    }
+
+    internal class CustomTimeslot : Timeslot
+    {
+        public int eventCount { get; set; }
     }
 }

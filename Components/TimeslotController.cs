@@ -129,5 +129,33 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query);
             }
         }
+
+        public IEnumerable<CustomTimeslot> GetTimeslotsByCourtId(long courtId, DateTime start, DateTime end)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                select t.*, (select count(*) from timeslot_events te where te.timeslot_id = t.id) as eventCount 
+                from [timeslots] t 
+                inner join [court_timeslots] ct on ct.timeslot_id = t.id 
+                where ct.court_id = @0 and t.start >= @1 and t.[end] < @2 and t.deleted_at is null 
+                order by t.start";
+                return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start, end);
+            }
+        }
+
+        public IEnumerable<Timeslot> GetOverlappingTimeslots(long courtId, DateTime start, DateTime end)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                select t.* from [timeslots] t 
+                inner join [court_timeslots] ct on ct.timeslot_id = t.id 
+                where ct.court_id = @0 
+                and t.deleted_at is null 
+                and not (t.[end] <= @1 or t.start >= @2)";
+                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, start, end);
+            }
+        }
     }
 }

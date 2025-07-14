@@ -45,9 +45,49 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new jacs.Components.UserController();
-                filteredCount = ctl.GetUsersCount(searchTerm);
+                filteredCount = ctl.GetUsersCount(searchTerm,0);
                 if (p1 == 0) { recordCount = filteredCount; }
-                users = ctl.GetUsersPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).Select(user => new UserViewModel(user)).ToList();
+                users = ctl.GetUsersPaged(searchTerm,0, recordOffset, pageSize, sortColumn, sortDirection).Select(user => new UserViewModel(user)).ToList();
+                return Request.CreateResponse(new UserSearchResult { data = users, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new UserSearchResult { data = users, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetUsers(int p1,int p2)
+        {
+            List<UserViewModel> users = new List<UserViewModel>();
+            int recordCount = p1;
+            int filteredCount = 0;
+            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+            string searchTerm = query.ContainsKey("searchText") ? query["searchText"].ToString() : "";
+            int sortIndex = 2; // Default sort index
+            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
+            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
+            string sortColumn = GetSortColumn(sortIndex);
+            string sortDirection = "asc"; // Default sort direction
+
+            // Check if order parameters exist
+            if (query.ContainsKey("order[0].column"))
+            {
+                Int32.TryParse(query["order[0].column"], out sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+            }
+            if (query.ContainsKey("order[0].dir"))
+            {
+                sortDirection = query["order[0].dir"];
+            }
+
+            try
+            {
+                var ctl = new jacs.Components.UserController();
+                filteredCount = ctl.GetUsersCount(searchTerm,p2);
+                if (p1 == 0) { recordCount = filteredCount; }
+                users = ctl.GetUsersPaged(searchTerm,p2, recordOffset, pageSize, sortColumn, sortDirection).Select(user => new UserViewModel(user)).ToList();
                 return Request.CreateResponse(new UserSearchResult { data = users, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (Exception ex)

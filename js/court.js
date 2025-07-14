@@ -9,6 +9,7 @@ class CourtController {
         this.pageSize = params.pageSize || 25;
         this.viewUrl = params.viewUrl || '/';
         this.editUrl = params.editUrl || '/';
+        this.revisionUrl = params.revisionUrl || '/';
         this.calendarUrl = params.calendarUrl || '/';
         this.sortDirection = params.sortDirection || 'asc';
         this.recordCount = params.recordCount || 0;
@@ -30,6 +31,7 @@ class CourtController {
         const listUrl = `${this.service.baseUrl}CourtAPI/GetCourts/${this.recordCount}`;
         const editUrl = this.editUrl;
         const calendarUrl = this.calendarUrl;
+        const revisionUrl = this.revisionUrl;
         this.courtTable = $('#tblCourt').DataTable({
             searching: true,
             autoWidth: true,
@@ -60,7 +62,7 @@ class CourtController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<a href="${calendarUrl}/courtId/${data}" title="View Calendar" data-toggle="tooltip" class="court-detail btn-command"><i class="fas fa-eye"></i></a>`;
+                        return `<a href="${calendarUrl}/cid/${data}" title="View Calendar" data-toggle="tooltip" class="court-detail btn-command"><i class="fa-solid fa-calendar-days"></i></a>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -68,7 +70,7 @@ class CourtController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<a href="${editUrl}/courtId/${data}" title="Edit Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-pencil"></i></a>`;
+                        return `<a href="${editUrl}/cid/${data}" title="Edit Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-pencil"></i></a>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -91,6 +93,18 @@ class CourtController {
                         return data || '';
                     }
                 },
+                {
+                    data: "id",
+                    render: function (data, type, row) {
+                        if (row.has_revisions === true) {
+                            return `<a href="${revisionUrl}/cid/${data}" title="Revisions" data-toggle="tooltip" class="revisions btn-command"><i class="fa-solid fa-clock-rotate-left"></i></a>`;
+                        }
+                        return '';
+                    },
+                    className: "command-item",
+                    orderable: false
+                },
+
                 {
                     data: "id",
                     render: function (data, type, row) {

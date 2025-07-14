@@ -11,7 +11,7 @@ class RoleController {
         this.recordCount = params.recordCount || 0;
         this.sortColumnIndex = params.sortColumnIndex || 2;
         this.currentPage = params.currentPage || 0;
-        this.roleId = -1;
+        this.userUrl = params.userUrl || '';
         this.searchTerm = "";
         this.roleTable = null;
         this.service = params.service || null;
@@ -73,6 +73,7 @@ class RoleController {
                         return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="role-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
+                    searchable: false,
                     orderable: false
                 },
                 {
@@ -81,8 +82,19 @@ class RoleController {
                         return `<button type="button" title="Edit Role" data-toggle="tooltip" data-id="${data}" class="role-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
+                    searchable: false,
                     orderable: false
                 },
+                {
+                    data: "id",
+                    render: function (data) {
+                        return `<a title="View Users in Role" href="${roleControllerInstance.userUrl}/rid/${data}" class="role-users btn-command"><i class="fas fa-users"></i></a>`;
+                    },
+                    className: "command-item",
+                    searchable: false,
+                    orderable: false
+                },
+
                 {
                     data: "name",
                     render: function (data) {
@@ -104,6 +116,7 @@ class RoleController {
                         return '';
                     },
                     className: "command-item",
+                    searchable: false,
                     orderable: false
                 },
             ],

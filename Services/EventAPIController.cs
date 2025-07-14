@@ -75,7 +75,6 @@ namespace tjc.Modules.jacs.Services
                 if (eventData != null)
                     return Request.CreateResponse(new EventSearchResult { data = new EventViewModel(eventData), error = null });
                 return Request.CreateResponse(new EventSearchResult { data = null, error = "No Event Found" });
-
             }
             catch (Exception ex)
             {
@@ -83,7 +82,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(new EventSearchResult { data = null, error = ex.Message });
             }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -102,6 +100,103 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(new EventCancelResult { cancelled = false, error = ex.Message });
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage CancelHearing(long p1)
+        {
+            try
+            {
+                var ctl = new EventController();
+                var result = ctl.CancelEvent(p1);
+                return Request.CreateResponse(new EventCancelResult { cancelled = result, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new EventCancelResult { cancelled = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage CreateEvent(JObject p1)
+        {
+            try
+            {
+                var evt = p1.ToObject<Event>();
+                evt.created_at = DateTime.Now;
+                evt.updated_at = DateTime.Now;
+                var ctl = new EventController();
+                ctl.CreateEvent(evt);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage UpdateEvent(JObject p1)
+        {
+            try
+            {
+                var evt = p1.ToObject<Event>();
+                evt.updated_at = DateTime.Now;
+                var ctl = new EventController();
+                ctl.UpdateEvent(evt);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetEvent(long p1)
+        {
+            try
+            {
+                var ctl = new EventController();
+                var evt = ctl.GetEvent(p1);
+                return Request.CreateResponse(new EventSearchResult
+                {
+                    data = evt != null ? new EventViewModel(evt) : null,
+                    error = null
+                });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new EventSearchResult
+                {
+                    data = null,
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetEventsForTimeslot(long p1)
+        {
+            try
+            {
+                var ctl = new EventController();
+                var events = ctl.GetEventsByTimeslot(p1);
+                return Request.CreateResponse(new { data = events.Select(e => new EventViewModel(e)).ToList() });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, new { error = ex.Message });
+            }
+        }
+
         internal class EventListItemResult
         {
             public List<EventViewModel> data { get; set; }
@@ -116,11 +211,13 @@ namespace tjc.Modules.jacs.Services
             public EventViewModel data { get; set; }
             public string error { get; set; }
         }
+
         internal class EventCancelResult
         {
             public bool cancelled { get; set; }
             public string error { get; set; }
         }
+
         internal class SearchTerm
         {
             public string searchTerm { get; set; }

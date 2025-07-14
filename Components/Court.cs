@@ -1,4 +1,5 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.Common.Utilities;
+using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Web.Caching;
@@ -49,6 +50,7 @@ namespace tjc.Modules.jacs.Components
         public CourtListItem def_attorney_item { get; set; }
         [IgnoreColumn]
         public CourtListItem opp_attorney_item { get; set; }
+       
         public List<CourtListItem> GetCourtMotions(bool allowed)
         {
             var ctl = new CourtMotionController();
@@ -68,6 +70,16 @@ namespace tjc.Modules.jacs.Components
         {
             var ctl = new CourtEventTypeController();
             return ctl.GetCourtEventTypeValuesByCourtId(id);
+        }
+        public Judge GetJudge()
+        {
+            var ctl = new JudgeController();
+            var judge= ctl.GetJudgeByCourt(id);
+            if (judge!=null)
+            {
+                return judge;
+            }
+            return new Judge { id = 0, name = string.Empty };
         }
     }
 }

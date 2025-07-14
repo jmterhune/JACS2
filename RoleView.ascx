@@ -20,6 +20,7 @@
                 <tr>
                     <th></th>
                     <th></th>
+                    <th></th>
                     <th>Name</th>
                     <th>Guard Name</th>
                 </tr>
@@ -132,6 +133,7 @@
                     isAdmin: "<%=IsAdmin%>",
                     adminRole: "<%=AdminRole%>",
                     service: service,
+                    userUrl: "<%=UserListUrl%>",
                     currentPage: 0,
                     pageSize: 25,
                     recordCount: 0,

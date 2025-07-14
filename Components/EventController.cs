@@ -41,6 +41,26 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+        public IEnumerable<EventListItem> GetEventsByCourtId(long courtId)
+        {
+            IEnumerable<EventListItem> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<EventListItem>();
+                t = rep.Get();
+            }
+            return t;
+        }
+        public IEnumerable<Event> GetEventsByCourtId(long courtId, DateTime start, DateTime end)
+        {
+            IEnumerable<Event> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<Event>();
+                t = rep.Get();
+            }
+            return t;
+        }
         public IEnumerable<EventListItem> GetEventListItems(string court, string category, string status)
         {
             IEnumerable<EventListItem> t;
@@ -115,7 +135,7 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, userId);
             }
         }
-        public Event GetEvent(int eventId)
+        public Event GetEvent(long eventId)
         {
             Event t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -266,6 +286,17 @@ namespace tjc.Modules.jacs.Components
             }
 
             return caseNumberError;
+        }
+
+        public IEnumerable<Event> GetEventsByTimeslot(long timeslotId)
+        {
+            IEnumerable<Event> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"select e.* from [events] e inner join [timeslot_events] te on te.event_id = e.id where te.timeslot_id = @0";
+                t = ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, timeslotId);
+            }
+            return t;
         }
     }
 }

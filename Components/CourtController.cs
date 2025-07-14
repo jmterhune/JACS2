@@ -80,6 +80,12 @@ namespace tjc.Modules.jacs.Components
                 }
             }
         }
+        public void CreateRevision()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+            }
+        }
         public void DeleteCourt(long courtId)
         {
             var t = GetCourt(courtId);

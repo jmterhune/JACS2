@@ -36,6 +36,40 @@ namespace tjc.Modules.jacs
                 return -1;
             }
         }
+        public int CourtId
+        {
+            get
+            {
+                var qs = Request.QueryString["cid"];
+                if (qs != null)
+                    return Convert.ToInt32(qs);
+                return -1;
+            }
+        }
+        public int EventId
+        {
+            get
+            {
+                var qs = Request.QueryString["eid"];
+                if (qs != null)
+                    return Convert.ToInt32(qs);
+                return -1;
+            }
+        }
+        public int TimeSlotId
+        {
+            get
+            {
+                var qs = Request.QueryString["tid"];
+                if (qs != null)
+                    return Convert.ToInt32(qs);
+                return -1;
+            }
+        }
+
+
+        #region "Urls"
+
         public string MainViewUrl { get { return _navigationManager.NavigateURL(); } }
         public string UserListUrl { get { return EditUrl("user"); } }
         public string RoleListUrl { get { return EditUrl("role"); } }
@@ -59,7 +93,15 @@ namespace tjc.Modules.jacs
         public string MotionListUrl { get { return EditUrl("motion"); } }
         public string TemplateListUrl { get { return EditUrl("template"); } }
         public string TimeSlotListUrl { get { return EditUrl("time-slot"); } }
+        public string UserDefinedFieldUrl { get { return EditUrl("user-fields"); } }
         public string EventRevisionUrl { get { return EditUrl("revise"); } }
+        public string TruncateCalendarUrl { get { return EditUrl("truncate-calendar"); } }
+        public string ExtendCalendarUrl { get { return EditUrl("extend-calendar"); } }
+        #endregion
+
+        #region Module Settings
+        public string QuickReferenceUrl { get { return Settings.Contains("QuickRefUrl") ? Settings["QuickRefUrl"].ToString() : ""; } }
+
         public bool IsAdmin
         {
             get
@@ -109,15 +151,6 @@ namespace tjc.Modules.jacs
                 return "JACS User";
             }
         }
-        public string QuickReferenceUrl
-        {
-            get
-            {
-                if (Settings.Contains("QuickRefUrl"))
-                    return Settings["QuickRefUrl"].ToString();
-                return "";
-            }
-        }
+        #endregion #endregion
     }
-
 }

@@ -6,146 +6,387 @@
     <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
     </button>
-    <h2 class="mb-0">Edit Court</h2>
+    <h2 class="mb-0">Court Calendar</h2>
 </section>
 
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
-        <div class="container-fluid">
-            <div id="edit_progress-court" class="modal-progress" style="display: none;">
-                <div class="center-progress">
-                    <img alt="" src="/images/loading.gif" />
-                </div>
+        <h3 class="mb-2">
+            Court Name: <span class="text-capitalize"><asp:Literal ID="ltCourtName" runat="server" /></span></h3>
+        <div class="court-header d-flex mb-4">
+            <div class="court-actions me-auto">
+                <a href="#" class="btn btn-primary" id="editCourtBtn"><i class="fas fa-edit"></i> Edit</a>
+                <a href="#" class="btn btn-primary" id="userDefinedFieldsBtn"><i class="fas fa-cog"></i> User Defined Fields</a>
+                <a href="#" class="btn btn-primary" id="truncateBtn"><i class="fas fa-trash"></i> Truncate</a>
+                <a href="#" class="btn btn-primary" id="icalExportBtn"><i class="fas fa-calendar"></i> iCal export</a>
+                <a href="#" class="btn btn-primary" id="monthlyExportBtn"><i class="fas fa-file-export"></i> Monthly Export</a>
+                <a href="#" class="btn btn-primary" id="extendBtn"><i class="fas fa-expand"></i> Extend</a>
+                <a href="#" class="btn btn-primary" id="printCalendarBtn"><i class="fas fa-print"></i> Print Calendar View</a>
             </div>
-            
-            <div class="alert alert-info" role="alert">
-                <h4 class="alert-heading">Note</h4>
-                <p>In addition to the fields marked required, you must also fill out motions and hearing types on the Scheduling Tab.</p>
+            <div class="calendar-actions d-inline-block">
+                <a href="#" class="btn btn-default" id="deleteTimeslotsBtn"><i class="fas fa-trash"></i> Delete Timeslot(s)</a>
+                <a href="#" class="btn btn-default" id="copyTimeslotsBtn"><i class="fas fa-copy"></i> Copy Timeslot(s)</a>
             </div>
+        </div>
 
-            <div class="tab-container mb-2">
-                <div class="nav-tabs-custom" id="form_tabs">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="nav-item">
-                            <a href="#tab_main" aria-controls="tab_main" role="tab" tab_name="main" data-toggle="tab" class="nav-link active">Main</a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a href="#tab_scheduling" aria-controls="tab_scheduling" role="tab" tab_name="scheduling" data-toggle="tab" class="nav-link">Scheduling</a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a href="#tab_custom-email" aria-controls="tab_custom-email" role="tab" tab_name="custom-email" data-toggle="tab" class="nav-link">Custom Email</a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a href="#tab_timeslot-search-header" aria-controls="tab_timeslot-search-header" role="tab" tab_name="timeslot-search-header" data-toggle="tab" class="nav-link">Timeslot Search Header</a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a href="#tab_docket-print-header" aria-controls="tab_docket-print-header" role="tab" tab_name="docket-print-header" data-toggle="tab" class="nav-link">Docket Print Header</a>
-                        </li>
-                    </ul>
+        <div class="calendar-note alert alert-info">
+            <i class="fa fa-info-circle"></i> <strong>Note:</strong> Click and drag the mouse over period of time or just click on the day to create a timeslot.
+        </div>
 
-                    <div class="tab-content p-0">
-                        <div role="tabpanel" class="tab-pane active" id="tab_main">
-                            <input type="hidden" id="edit_hdCourtId">
+        <div class="calendar-judge">
+            <h4>
+                <asp:Literal ID="ltJudgeName" runat="server" /></h4>
+        </div>
+
+        <div id="calendar"></div>
+
+        <!-- Reschedule Hearing Modal -->
+        <div class="modal fade" id="RescheduleHearingModal" tabindex="-1" aria-labelledby="RescheduleHearingModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div id="progress-hearing" class="modal-progress" style="display: none;">
+                        <div class="center-progress">
+                            <img alt="" src="/images/loading.gif" />
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="RescheduleHearingModalLabel">Reschedule Hearing</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
                             <div class="form-group">
                                 <div class="row">
-                                    <div class="col-md-6 required">
-                                        <label>Description<em>*</em></label>
-                                        <input type="text" id="edit_courtDescription" class="form-control" required>
-                                        <div class="invalid-feedback">Description is required.</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Case Number Format</label>
-                                        <input type="text" id="edit_courtCaseNumFormat" class="form-control">
+                                    <div class="col-md-12">
+                                        <label>Close</label>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6 required">
-                                        <label>County<em>*</em></label>
-                                        <select id="edit_courtCounty" class="form-control" required>
-                                        </select>
-                                        <div class="invalid-feedback">Please Select a county.</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Default Plaintiff</label>
-                                        <input type="text" id="edit_courtPlaintiff" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Default Defendant</label>
-                                        <input type="text" id="edit_courtDefendant" class="form-control">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Default Prosecuting Attorney</label>
-                                        <select id="edit_defAttorney" class="form-control"></select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Default Opposing Attorney</label>
-                                        <select id="edit_oppAttorney" class="form-control"></select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_scheduling">
-                            <div class="row">
-                                <div class="form-group col-md-4 pt-4">
-                                    <div class="d-inline-flex">
-                                        <label class="switch switch-sm switch-label switch-pill switch-primary mb-0">
-                                            <input type="hidden" id="edit_emailConfirmations" value="0">
-                                            <input type="checkbox" class="switch-input" id="switch_email_confirmations">
-                                            <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                        </label>
-                                        <label class="font-weight-normal mb-0 ml-2" for="switch_email_confirmations">Email Confirmations</label>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3 required">
-                                    <label>Weeks on Calendar</label>
-                                    <input type="number" id="edit_calendarWeeks" class="form-control" value="0">
-                                </div>
-                                <div class="form-group col-md-4 required">
-                                    <label class="d-block">Extending Calendar</label>
-                                    <div class="form-check form-check-inline">
-                                        <input type="radio" class="form-check-input" id="edit_autoExtensionAuto" name="auto_extension" value="1" checked>
-                                        <label class="form-check-label font-weight-normal" for="edit_autoExtensionAuto">Automatic</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input type="radio" class="form-check-input" id="edit_autoExtensionManual" name="auto_extension" value="0">
-                                        <label class="form-check-label font-weight-normal" for="edit_autoExtensionManual">Manual</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Add other scheduling fields from court.html -->
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_custom-email">
-                            <div class="form-group col-md-12">
-                                <label>Custom Email Body</label>
-                                <textarea id="edit_customEmailBody" class="form-control summernote"></textarea>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_timeslot-search-header">
-                            <div class="form-group col-md-12">
-                                <label>Timeslot Search Header</label>
-                                <textarea id="edit_timeslotHeader" class="form-control"></textarea>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_docket-print-header">
-                            <div class="form-group col-md-12">
-                                <label>Custom Docket Print Header</label>
-                                <textarea id="edit_customHeader" class="form-control"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <button type="button" class="btn btn-success" id="edit_cmdSave">
-                    <i class="fas fa-save" aria-hidden="true"></i>&nbsp;Save
-                </button>
-                <a href="/court" class="btn btn-secondary">Cancel</a>
+        <!-- Timeslot Modal -->
+        <div class="modal fade" id="TimeslotModal" tabindex="-1" aria-labelledby="TimeslotModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <input type="hidden" id="edit_timeslotId">
+                    <div id="progress-timeslot" class="modal-progress" style="display: none;">
+                        <div class="center-progress">
+                            <img alt="" src="/images/loading.gif" />
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="TimeslotModalLabel">Create...</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="tabs">
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item active"><a class="nav-link" data-toggle="tab" href="#timeslotTab">Timeslot(s)</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventTab">Create Event</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventsTab">Event(s)</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="timeslotTab" class="tab-pane active form-group">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Block</label>
+                                                <input type="checkbox" id="timeslot_block" class="form-check-input">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Public Block</label>
+                                                <input type="checkbox" id="timeslot_publicBlock" class="form-check-input">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Block Reason</label>
+                                                <textarea id="timeslot_blockReason" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Concurrent/Consecutive</label>
+                                                <select id="timeslot_concurrent" class="form-control">
+                                                    <option value="yes">Yes (Concurrent)</option>
+                                                    <option value="no">No (Consecutive)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Start Time</label>
+                                                <input type="datetime-local" id="timeslot_startTime" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>End Time</label>
+                                                <input type="datetime-local" id="timeslot_endTime" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Duration</label>
+                                                <select id="timeslot_duration" class="form-control">
+                                                    <option value="5">5 mins</option>
+                                                    <option value="10">10 mins</option>
+                                                    <option value="15">15 mins</option>
+                                                    <option value="20">20 mins</option>
+                                                    <option value="30">30 mins</option>
+                                                    <option value="45">45 mins</option>
+                                                    <option value="60">1 hour</option>
+                                                    <option value="90">1.5 hours</option>
+                                                    <option value="120">2 hours</option>
+                                                    <option value="150">2.5 hours</option>
+                                                    <option value="165">2.75 hours</option>
+                                                    <option value="180">3 hours</option>
+                                                    <option value="210">3.5 hours</option>
+                                                    <option value="240">4 hours</option>
+                                                    <option value="300">5 hours</option>
+                                                    <option value="360">6 hours</option>
+                                                    <option value="480">8 hours</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Quantity</label>
+                                                <input type="number" id="timeslot_quantity" class="form-control" min="1">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Description</label>
+                                                <textarea id="timeslot_description" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Category</label>
+                                                <select id="timeslot_category" class="form-control">
+                                                    <option value="">-</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Restricted Motions</label>
+                                                <input type="text" id="timeslot_restrictedMotions" class="form-control" value="test2">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="eventTab" class="tab-pane fade form-group">
+                                        <input type="hidden" id="edit_eventId">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Edited By</label>
+                                                <input type="text" id="event_editedBy" class="form-control" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Updated On</label>
+                                                <input type="text" id="event_updatedOn" class="form-control" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Addon</label>
+                                                <input type="text" id="event_addon" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Reminder</label>
+                                                <input type="text" id="event_reminder" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Motion</label>
+                                                <input type="text" id="event_motion" class="form-control" value="test2">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Type</label>
+                                                <select id="event_type" class="form-control">
+                                                    <option value="inperson">In Person</option>
+                                                    <option value="remote">Remote</option>
+                                                    <option value="telephone">Telephone</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Other Motion</label>
+                                                <input type="text" id="event_otherMotion" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Attorney</label>
+                                                <input type="text" id="event_attorney" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Opposing Attorney</label>
+                                                <input type="text" id="event_opposingAttorney" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Plaintiff</label>
+                                                <input type="text" id="event_plaintiff" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Defendant</label>
+                                                <input type="text" id="event_defendant" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Plaintiff Email</label>
+                                                <input type="email" id="event_plaintiffEmail" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Defendant Email</label>
+                                                <input type="email" id="event_defendantEmail" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>Notes</label>
+                                                <textarea id="event_notes" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="eventsTab" class="tab-pane fade ">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Case #</th>
+                                                    <th>Motion</th>
+                                                    <th>Attorney</th>
+                                                    <th>Plaintiff</th>
+                                                    <th>Opposing Attorney</th>
+                                                    <th>Defendant</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="eventsTableBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="deleteTimeslotBtn"><i class="fas fa-trash"></i> Delete</button>
+                        <button type="button" class="btn btn-success" id="saveTimeslotBtn"><i class="fas fa-save"></i> Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Modal -->
+        <div class="modal fade" id="EventModal" tabindex="-1" aria-labelledby="EventModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <input type="hidden" id="evt_edit_eventId">
+                    <div id="progress-event" class="modal-progress" style="display: none;">
+                        <div class="center-progress">
+                            <img alt="" src="/images/loading.gif" />
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="EventModalLabel">Event Details</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Edited By</label>
+                                        <input type="text" id="evt_event_editedBy" class="form-control" disabled>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Updated On</label>
+                                        <input type="text" id="evt_event_updatedOn" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Addon</label>
+                                        <input type="text" id="evt_event_addon" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Reminder</label>
+                                        <input type="text" id="evt_event_reminder" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Motion</label>
+                                        <input type="text" id="evt_event_motion" class="form-control" value="test2">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Type</label>
+                                        <select id="evt_event_type" class="form-control">
+                                            <option value="inperson">In Person</option>
+                                            <option value="remote">Remote</option>
+                                            <option value="telephone">Telephone</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Other Motion</label>
+                                        <input type="text" id="evt_event_otherMotion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Attorney</label>
+                                        <input type="text" id="evt_event_attorney" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Opposing Attorney</label>
+                                        <input type="text" id="evt_event_opposingAttorney" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Plaintiff</label>
+                                        <input type="text" id="evt_event_plaintiff" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Defendant</label>
+                                        <input type="text" id="evt_event_defendant" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Plaintiff Email</label>
+                                        <input type="email" id="evt_event_plaintiffEmail" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Defendant Email</label>
+                                        <input type="email" id="evt_event_defendantEmail" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Notes</label>
+                                        <textarea id="evt_event_notes" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="evt_cancelHearingBtn"><i class="fas fa-times"></i> Cancel Hearing</button>
+                        <button type="button" class="btn btn-primary" id="evt_rescheduleBtn"><i class="fas fa-calendar"></i> Re-Schedule</button>
+                        <button type="button" class="btn btn-success" id="evt_saveEventBtn"><i class="fas fa-save"></i> Save changes</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -153,18 +394,15 @@
 
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/court.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
-<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/datatables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/select2/css/select2.min.css" />
-<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/select2/css/select2-bootstrap-5-theme.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/select2/js/select2.full.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/summernote/summernote-bs5.css" />
-<dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/summernote/summernote-bs5.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtCalendar.js" ForceProvider="DnnFormBottomProvider" Priority="102" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.default.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.complete.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/fullcalendar/dist/index.global.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" /><script>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<script>
     var moduleId = <%=ModuleId%>;
     var service = {
         path: "JACS",
@@ -174,20 +412,24 @@
     (function ($, Sys) {
         $(document).ready(function () {
             try {
-                if (typeof CourtController === 'undefined') {
-                    console.error('CourtController is not defined.');
+                if (typeof CourtCalendarController === 'undefined') {
+                    console.error('CourtCalendarController is not defined.');
                     return;
                 }
-                const courtController = new CourtController({
+                const courtCalendarController = new CourtCalendarController({
                     moduleId: moduleId,
                     userId: <%=UserId%>,
                     isAdmin: "<%=IsAdmin%>",
                     adminRole: "<%=AdminRole%>",
-                    service: service
+                    service: service,
+                    courtEditUrl: "<%=CourtEditUrl%>",
+                    userDefinedFieldUrl: "<%=UserDefinedFieldUrl%>",
+                    truncateCalendarUrl: "<%=TruncateCalendarUrl%>",
+                    extendCalendarUrl: "<%=ExtendCalendarUrl%>",
                 });
-                courtController.initEdit();
+                courtCalendarController.init();
             } catch (e) {
-                console.error('Error initializing CourtController:', e);
+                console.error('Error initializing CourtCalendarController:', e);
             }
         });
     }(jQuery, window.Sys));
