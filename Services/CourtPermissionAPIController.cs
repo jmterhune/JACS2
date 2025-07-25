@@ -1,10 +1,12 @@
-﻿using DotNetNuke.Entities.Users;
+﻿// CourtPermissionAPIController.cs
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -60,12 +62,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtPermissionController();
                 ctl.DeleteCourtPermission(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Permission deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -76,12 +78,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtPermissionController();
                 CourtPermission permission = ctl.GetCourtPermission(p1);
-                return Request.CreateResponse(new CourtPermissionResult { data = permission, error = null });
+                if (permission == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new CourtPermissionResult { data = null, error = "Court Permission not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new CourtPermissionResult { data = permission, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CourtPermissionResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtPermissionResult { data = null, error = ex.Message });
             }
         }
 
@@ -93,15 +99,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtPermissionController();
                 var permission = p1.ToObject<CourtPermission>();
+                if (permission.user_id <= 0 || permission.judge_id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "User ID and Judge ID are required." });
+                }
                 permission.created_at = DateTime.Now;
                 permission.updated_at = DateTime.Now;
                 ctl.CreateCourtPermission(permission);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Permission created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -113,46 +123,59 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtPermissionController();
                 var permission = p1.ToObject<CourtPermission>();
+                if (permission.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court Permission ID is required for update." });
+                }
+                if (permission.user_id <= 0 || permission.judge_id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "User ID and Judge ID are required." });
+                }
+                var existingPermission = ctl.GetCourtPermission(permission.id);
+                if (existingPermission == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court Permission not found." });
+                }
                 permission.updated_at = DateTime.Now;
                 ctl.UpdateCourtPermission(permission);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Permission updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
         [HttpGet]
-        public HttpResponseMessage GetUsersForDropdown()
+        public HttpResponseMessage GetUserDropDownItems()
         {
             try
             {
                 var ctl = new CourtPermissionController();
-                var users = ctl.GetUsersForDropdown();
+                var users = ctl.GetUserDropDownItems();
                 return Request.CreateResponse(users);
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpGet]
-        public HttpResponseMessage GetJudgesForDropdown()
+        public HttpResponseMessage GetJudgeDropDownItems()
         {
             try
             {
                 var ctl = new CourtPermissionController();
-                var judges = ctl.GetJudgesForDropdown();
+                var judges = ctl.GetJudgeDropDownItems();
                 return Request.CreateResponse(judges);
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

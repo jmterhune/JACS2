@@ -1,15 +1,16 @@
-﻿using DotNetNuke.Entities.Users;
+﻿// EventTypeAPIController.cs
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
-using static tjc.Modules.jacs.Services.CategoryAPIController;
 
 namespace tjc.Modules.jacs.Services
 {
@@ -79,12 +80,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventTypeController();
                 ctl.DeleteEventType(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event Type deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -95,12 +96,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventTypeController();
                 EventType eventType = ctl.GetEventType(p1);
-                return Request.CreateResponse(new EventTypeResult { data = eventType, error = null });
+                if (eventType == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventTypeResult { data = null, error = "Event Type not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventTypeResult { data = eventType, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventTypeResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventTypeResult { data = null, error = ex.Message });
             }
         }
 
@@ -112,13 +117,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventTypeController();
                 var eventType = p1.ToObject<EventType>();
+                if (string.IsNullOrWhiteSpace(eventType.name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
+                }
+                eventType.created_at = DateTime.Now;
+                eventType.updated_at = DateTime.Now;
                 ctl.CreateEventType(eventType);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event Type created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -130,13 +141,27 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventTypeController();
                 var eventType = p1.ToObject<EventType>();
+                if (eventType.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Event Type ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(eventType.name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
+                }
+                var existingEventType = ctl.GetEventType(eventType.id);
+                if (existingEventType == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Event Type not found." });
+                }
+                eventType.updated_at = DateTime.Now;
                 ctl.UpdateEventType(eventType);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event Type updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 

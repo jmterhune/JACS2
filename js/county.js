@@ -1,4 +1,5 @@
-﻿let countyControllerInstance = null;
+﻿// county.js
+let countyControllerInstance = null;
 
 class CountyController {
     constructor(params = {}) {
@@ -48,21 +49,17 @@ class CountyController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblCounty_processing").hide();
                     if (error.status === 401) {
-                        ShowAlert("Error Retrieving Counties", "Please make sure you are logged in and try again. Error: " + error.statusText);
+                        ShowNotification("Error Retrieving Counties", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
                     } else {
-                        ShowAlert("Error Retrieving Counties", "The following error occurred attempting to retrieve county information. Error: " + error.statusText);
+                        ShowNotification("Error Retrieving Counties", "The following error occurred attempting to retrieve county information. Error: " + error.statusText, 'error');
                     }
                 }
             },
@@ -120,16 +117,18 @@ class CountyController {
         });
         $(".dt-length").prepend($("#lnkAdd"));
         this.countyTable.on('draw', function () {
-            
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const countyId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this County?',
-                    yesText: 'Yes',
-                    noText: 'No',
+                Swal.fire({
                     title: 'Delete County?',
-                    callbackTrue: function () {
+                    text: 'Are you sure you wish to delete this County?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         countyControllerInstance.DeleteCounty(countyId);
                     }
                 });
@@ -166,12 +165,15 @@ class CountyController {
         $("#cmdDelete").on("click", function (e) {
             e.preventDefault();
             var countyId = $("#hdCountyId").val();
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this County?',
-                yesText: 'Yes',
-                noText: 'No',
+            Swal.fire({
                 title: 'Delete County?',
-                callbackTrue: function () {
+                text: 'Are you sure you wish to delete this County?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     countyControllerInstance.DeleteCounty(countyId);
                 }
             });
@@ -208,7 +210,14 @@ class CountyController {
             }
         });
 
-        $("#edit_countyName, #edit_countyCode").on("input", function () {
+        $("#edit_countyName").on("input", function () {
+            const $this = $(this);
+            if ($this.val().trim() !== "") {
+                $this.next(".invalid-feedback").hide();
+                $this.removeClass("is-invalid");
+            }
+        });
+        $("#edit_countyCode").on("input", function () {
             const $this = $(this);
             if ($this.val().trim() !== "") {
                 $this.next(".invalid-feedback").hide();
@@ -228,26 +237,32 @@ class CountyController {
         $.ajax({
             url: this.deleteUrl + countyId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (countyControllerInstance.countyTable) {
-                    countyControllerInstance.countyTable.draw();
-                }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('CountyEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('CountyDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (countyControllerInstance.countyTable) {
+                        countyControllerInstance.countyTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('CountyEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('CountyDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'County deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
             },
             error: function (error) {
-                ShowAlert("Error Deleting County", error.statusText);
+                ShowNotification("Error Deleting County", error.statusText, 'error');
             }
         });
     }
@@ -298,11 +313,7 @@ class CountyController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -317,13 +328,12 @@ class CountyController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowAlert("Error", "Failed to retrieve county details. Please try again later.");
+                        ShowNotification("Error", response.error || "Failed to retrieve county details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch county details');
-                    ShowAlert("Error", "Failed to retrieve county details. Please try again later.");
+                error: function (error) {
+                    ShowNotification("Error Retrieving County Details", error.statusText || "Failed to retrieve county details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -348,40 +358,43 @@ class CountyController {
         try {
             $("#edit_progress-county").show();
             const countyData = {
-                name: $("#edit_countyName").val(),
-                code: $("#edit_countyCode").val()
+                name: $("#edit_countyName").val().trim(),
+                code: $("#edit_countyCode").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CountyAPI/CreateCounty`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(countyData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-county").hide();
-                        ShowAlert("Success", "County created successfully.");
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-county").hide();
+                    if (response && response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message || 'County created successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CountyEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (countyControllerInstance.countyTable) {
+                            countyControllerInstance.countyTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-county").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating county.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-county").hide();
-                    ShowAlert("Error Creating County", error.statusText);
+                    ShowNotification("Error Creating County", error.statusText || "Failed to create county.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-county").hide();
-            ShowAlert("Error Creating County", e.statusText);
+            ShowNotification("Error Creating County", e.message, 'error');
         }
     }
 
@@ -389,41 +402,50 @@ class CountyController {
         try {
             $("#edit_progress-county").show();
             const countyData = {
-                id: $("#edit_hdCountyId").val(),
-                name: $("#edit_countyName").val(),
-                code: $("#edit_countyCode").val()
+                id: parseInt($("#edit_hdCountyId").val()),
+                name: $("#edit_countyName").val().trim(),
+                code: $("#edit_countyCode").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CountyAPI/UpdateCounty`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(countyData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-county").hide();
-                        ShowAlert("Success", "County updated successfully.");
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-county").hide();
+                    if (response && response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message || 'County updated successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CountyEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (countyControllerInstance.countyTable) {
+                            countyControllerInstance.countyTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-county").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating county.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-county").hide();
-                    ShowAlert("Error Updating County", error.statusText);
+                    ShowNotification("Error Updating County", error.statusText || "Failed to update county.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-county").hide();
-            ShowAlert("Error Updating County", e.statusText);
+            ShowNotification("Error Updating County", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

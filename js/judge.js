@@ -1,5 +1,4 @@
 ﻿let judgeControllerInstance = null;
-
 class JudgeController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
@@ -54,17 +53,14 @@ class JudgeController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
+                    $("#tblJudge_processing").hide();
                     if (error.status === 401) {
                         ShowNotification('Error Retrieving Judges', 'Please make sure you are logged in and try again. Error: ' + error.statusText, 'error');
                     } else {
@@ -173,14 +169,12 @@ class JudgeController {
                 $("#JudgeEditModalLabel").html(`Edit Judge`);
                 $("#edit_judgeName").hide();
                 $("#edit_judgeNameText").show();
-
             } else {
                 judgeControllerInstance.ClearEditForm();
-                judgeControllerInstance.populateCourts(false); // Add mode: only unassigned courts
+                judgeControllerInstance.populateCourts(false);
                 $("#JudgeEditModalLabel").html("Create New Judge");
                 $("#edit_judgeName").show();
                 $("#edit_judgeNameText").hide();
-
             }
             editModal.show();
         });
@@ -188,13 +182,13 @@ class JudgeController {
         $("#lnkAdd").on('click', function (e) {
             e.preventDefault();
             judgeControllerInstance.ClearEditForm();
-            judgeControllerInstance.populateCourts(false); // Add mode: only unassigned courts
+            judgeControllerInstance.populateCourts(false);
             $("#JudgeEditModalLabel").html("Create New Judge");
             $("#edit_judgeName").show();
             $("#edit_judgeNameText").hide();
-
             editModal.show();
         });
+
         $("#edit_judgeName, #edit_judgeNameText").on("change", function () {
             const $this = $(this);
             if ($this.val().trim() !== "") {
@@ -202,6 +196,7 @@ class JudgeController {
                 $this.removeClass("is-invalid");
             }
         });
+
         $("#cmdDelete").on("click", function (e) {
             e.preventDefault();
             var judgeId = $("#hdJudgeId").val();
@@ -242,26 +237,24 @@ class JudgeController {
 
     populateJudgeUsers() {
         $.ajax({
-            url: `${this.service.baseUrl}JudgeAPI/GetJudgeUsers/${this.judgeRole}/${this.portalId}`,
+            url: `${this.service.baseUrl}JudgeAPI/GetJudgeDropDownItems/${this.judgeRole}/${this.portalId}`,
             type: 'GET',
             dataType: 'json',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 const $judgeSelect = $("#edit_judgeName");
                 $judgeSelect.empty();
                 $judgeSelect.append('<option value="">Select Judge</option>');
                 if (response.data) {
                     response.data.forEach(user => {
-                        $judgeSelect.append(`<option value="${user.userId}">${user.displayName}</option>`);
+                        $judgeSelect.append(`<option value="${user.Key}">${user.Value}</option>`);
                     });
+                } else {
+                    ShowNotification("Error", response.error || "Failed to load judge users.", 'error');
                 }
             },
-            error: function () {
-                console.error('Failed to fetch judge users');
+            error: function (error) {
+                ShowNotification("Error Loading Judge Users", error.statusText || "Failed to load judge users. Please try again later.", 'error');
             }
         });
     }
@@ -271,11 +264,7 @@ class JudgeController {
             url: `${this.service.baseUrl}CourtAPI/GetCourtsUnassigned`,
             type: 'GET',
             dataType: 'json',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 const $courtSelect = $("#edit_judgeCourt");
                 $courtSelect.empty();
@@ -283,21 +272,21 @@ class JudgeController {
 
                 let courts = response.data || [];
 
-                // In edit mode, add the judge's current court if it exists
                 if (isEditMode && judgeCourtId && judgeCourtName) {
                     courts = [{ id: judgeCourtId, description: judgeCourtName }, ...courts];
                 }
                 courts.forEach(court => {
-                    if (court.id === judgeCourtId)
+                    if (court.id === judgeCourtId) {
                         $courtSelect.append(`<option value="${court.id}" selected>${court.description}</option>`);
-                    else
+                    } else {
                         $courtSelect.append(`<option value="${court.id}">${court.description}</option>`);
+                    }
                 });
 
                 $("#edit_progress_judge").hide();
             },
-            error: function () {
-                console.error('Failed to fetch unassigned courts');
+            error: function (error) {
+                ShowNotification("Error Loading Courts", error.statusText || "Failed to load unassigned courts. Please try again later.", 'error');
                 $("#edit_progress_judge").hide();
             }
         });
@@ -314,42 +303,46 @@ class JudgeController {
         $.ajax({
             url: this.deleteUrl + judgeId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (judgeControllerInstance.judgeTable) {
-                    judgeControllerInstance.judgeTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (judgeControllerInstance.judgeTable) {
+                        judgeControllerInstance.judgeTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('JudgeEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('JudgeDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Judge deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('JudgeEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('JudgeDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Judge deleted successfully.'
-                });
             },
             error: function (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error Deleting Judge',
-                    text: error.statusText
-                });
+                ShowNotification("Error Deleting Judge", error.statusText, 'error');
             }
         });
     }
 
     ClearEditValidations() {
-        $("#edit_judgeName, #edit_judgeNameText").removeClass("is-invalid");
-        $("#edit_judgeName_error").hide();
+        $("#edit_judgeName").removeClass("is-invalid");
+        $("#edit_judgeNameText").removeClass("is-invalid");
+        $("#edit_judgeName").next(".invalid-feedback").hide();
+        $("#edit_judgePhone").removeClass("is-invalid");
+        $("#edit_judgePhone").next(".invalid-feedback").hide();
+        $("#edit_judgeCourt").removeClass("is-invalid");
+        $("#edit_judgeCourt").next(".invalid-feedback").hide();
+        $("#edit_judgeTitle").removeClass("is-invalid");
+        $("#edit_judgeTitle").next(".invalid-feedback").hide();
     }
 
     ViewJudge(judgeId, isEditMode = false) {
@@ -369,11 +362,7 @@ class JudgeController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -383,7 +372,6 @@ class JudgeController {
                             $("#edit_judgeCourt").val(response.data.court_id || "");
                             $("#edit_judgeTitle").val(response.data.title);
                             $("#JudgeEditModalLabel").html(`Edit Judge: ${response.data.name}`);
-                            // Populate courts including the judge's current court
                             judgeControllerInstance.populateCourts(true, response.data.court_id, response.data.court_name);
                         } else {
                             $("#judgeName").html(response.data.name);
@@ -394,13 +382,12 @@ class JudgeController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification('Error', 'Failed to retrieve judge details. Please try again later.', 'error');
+                        ShowNotification('Error', response.error || 'Failed to retrieve judge details. Please try again later.', 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch judge details');
-                    ShowNotification('Error', 'Failed to retrieve judge details. Please try again later.', 'error');
+                error: function (error) {
+                    ShowNotification('Error Retrieving Judge Details', error.statusText || 'Failed to retrieve judge details. Please try again later.', 'error');
                     $(progressId).hide();
                 }
             });
@@ -433,58 +420,45 @@ class JudgeController {
             $("#edit_progress_judge").show();
             const judgeData = {
                 id: $("#edit_judgeName").val(),
-                name: $("#edit_judgeName option:selected").text(),
-                phone: $("#edit_judgePhone").val(),
+                name: $("#edit_judgeName option:selected").text().trim(),
+                phone: $("#edit_judgePhone").val().trim(),
                 court_id: $("#edit_judgeCourt").val() || null,
-                title: $("#edit_judgeTitle").val()
+                title: $("#edit_judgeTitle").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}JudgeAPI/CreateJudge`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(judgeData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress_judge").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress_judge").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Judge created successfully.'
+                            text: response.message || 'Judge created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('JudgeEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (judgeControllerInstance.judgeTable) {
+                            judgeControllerInstance.judgeTable.draw();
+                        }
                     } else {
-                        $("#edit_progress_judge").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating judge.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress_judge").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Creating Judge',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Creating Judge", error.statusText || "Failed to create judge.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress_judge").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Creating Judge',
-                text: e.statusText
-            });
+            ShowNotification("Error Creating Judge", e.message, 'error');
         }
     }
 
@@ -492,59 +466,46 @@ class JudgeController {
         try {
             $("#edit_progress_judge").show();
             const judgeData = {
-                id: $("#edit_hdJudgeId").val(),
-                name: $("#edit_judgeNameText").val(),
-                phone: $("#edit_judgePhone").val(),
+                id: parseInt($("#edit_hdJudgeId").val()),
+                name: $("#edit_judgeNameText").val().trim(),
+                phone: $("#edit_judgePhone").val().trim(),
                 court_id: $("#edit_judgeCourt").val() || null,
-                title: $("#edit_judgeTitle").val()
+                title: $("#edit_judgeTitle").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}JudgeAPI/UpdateJudge`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(judgeData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress_judge").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress_judge").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Judge updated successfully.'
+                            text: response.message || 'Judge updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('JudgeEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (judgeControllerInstance.judgeTable) {
+                            judgeControllerInstance.judgeTable.draw();
+                        }
                     } else {
-                        $("#edit_progress_judge").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating judge.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress_judge").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Updating Judge',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Updating Judge", error.statusText || "Failed to update judge.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress_judge").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Updating Judge',
-                text: e.statusText
-            });
+            ShowNotification("Error Updating Judge", e.message, 'error');
         }
     }
 
@@ -573,5 +534,11 @@ class JudgeController {
         $("#edit_judgeCourt").val("");
         $("#edit_judgeTitle").val("");
         $("#edit_hdJudgeId").val("");
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

@@ -47,21 +47,26 @@ namespace tjc.Modules.jacs.Components
         [IgnoreColumn]
         public string judge_name { get; set; }
         [IgnoreColumn]
-        public CourtListItem def_attorney_item { get; set; }
+        public KeyValuePair<long, string> def_attorney_item { get; set; }
         [IgnoreColumn]
-        public CourtListItem opp_attorney_item { get; set; }
+        public KeyValuePair<long, string> opp_attorney_item { get; set; }
        
-        public List<CourtListItem> GetCourtMotions(bool allowed)
+        public List<KeyValuePair<long, string>> GetCourtMotionDropDownItems(long id,bool allowed)
         {
             var ctl = new CourtMotionController();
-            return ctl.GetCourtMotionsByCourtId(id,allowed);
+            return ctl.GetCourtMotionDropDownItems(id,allowed);
+        }
+        public IEnumerable<CourtMotion> GetCourtMotions(long id)
+        {
+            var ctl = new CourtMotionController();
+            return ctl.GetCourtMotions(id);
         }
         public List<int> GetCourtMotionValues(bool allowed)
         {
             var ctl = new CourtMotionController();
             return ctl.GetCourtMotionValuesByCourtId(id, allowed);
         }
-        public List<CourtListItem> GetCourtEventTypes()
+        public List<KeyValuePair<long, string>> GetCourtEventTypes()
         {
             var ctl = new CourtEventTypeController();
             return ctl.GetCourtEventTypesByCourtId(id);

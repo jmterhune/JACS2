@@ -45,8 +45,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
             available_motions = court.GetCourtMotionValues(true);
             restricted_motions = court.GetCourtMotionValues(false);
             available_hearing_types = court.GetCourtEventTypeValues();
-            restricted_motion_items = court.GetCourtMotions(false);
-            available_motion_items = court.GetCourtMotions(true);
+            restricted_motion_items = court.GetCourtMotionDropDownItems(court.id,false);
+            available_motion_items = court.GetCourtMotionDropDownItems(court.id, true);
             available_hearing_type_items = court.GetCourtEventTypes();
         }
 
@@ -113,9 +113,9 @@ namespace tjc.Modules.jacs.Services.ViewModels
         [JsonProperty("judge_name")]
         public string judge_name { get; set; }
         [JsonProperty("def_attorney_item")]
-        public CourtListItem def_attorney_item { get; set; }
+        public KeyValuePair<long, string> def_attorney_item { get; set; }
         [JsonProperty("opp_attorney_item")]
-        public CourtListItem opp_attorney_item { get; set; }
+        public KeyValuePair<long, string> opp_attorney_item { get; set; }
         [JsonProperty("available_motions")]
         public List<int> available_motions { get; set; }
         [JsonProperty("restricted_motions")]
@@ -123,17 +123,17 @@ namespace tjc.Modules.jacs.Services.ViewModels
         [JsonProperty("available_hearing_types")]
         public List<int> available_hearing_types { get; set; }
         [JsonProperty("available_motion_items")]
-        public List<CourtListItem> available_motion_items { get; set; }
+        public List<KeyValuePair<long, string>> available_motion_items { get; set; }
         [JsonProperty("restricted_motion_items")]
-        public List<CourtListItem> restricted_motion_items { get; set; }
+        public List<KeyValuePair<long, string>> restricted_motion_items { get; set; }
         [JsonProperty("available_hearing_type_items")]
-        public List<CourtListItem> available_hearing_type_items { get; set; }
+        public List<KeyValuePair<long, string>> available_hearing_type_items { get; set; }
         [JsonProperty("has_revisions")]
         public bool has_revisions { get; set; }
 
-        private CourtListItem GetAttorneyItem(long attorneyId) { 
+        private KeyValuePair<long, string> GetAttorneyItem(long attorneyId) { 
         var controller = new AttorneyController();
-            return controller.GetAttorneyListItem(attorneyId) ?? new CourtListItem { value = attorneyId, text = string.Empty };
+            return controller.GetAttorneyListItem(attorneyId);
         }
         private string GetJudgeName(long courtId)
         {
@@ -146,12 +146,4 @@ namespace tjc.Modules.jacs.Services.ViewModels
             return string.Empty;
         }
     }
-    internal class CourtListItem
-    {
-        [JsonProperty("value")]
-        public long value { get; set; }
-        [JsonProperty("text")]
-        public string text { get; set; }
-    }
-
 }

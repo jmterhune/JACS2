@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -60,12 +61,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new HolidayController();
                 ctl.DeleteHoliday(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Holiday deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -76,12 +77,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new HolidayController();
                 Holiday holiday = ctl.GetHoliday(p1);
-                return Request.CreateResponse(new HolidayResult { data = holiday, error = null });
+                if (holiday == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new HolidayResult { data = null, error = "Holiday not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new HolidayResult { data = holiday, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new HolidayResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new HolidayResult { data = null, error = ex.Message });
             }
         }
 
@@ -93,13 +98,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new HolidayController();
                 var holiday = p1.ToObject<Holiday>();
+                if (string.IsNullOrWhiteSpace(holiday.name) || holiday.date == default)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name and Date are required." });
+                }
+                holiday.created_at = DateTime.Now;
+                holiday.updated_at = DateTime.Now;
                 ctl.CreateHoliday(holiday);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Holiday created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -111,13 +122,27 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new HolidayController();
                 var holiday = p1.ToObject<Holiday>();
+                if (holiday.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Holiday ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(holiday.name) || holiday.date == default)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name and Date are required." });
+                }
+                var existingHoliday = ctl.GetHoliday(holiday.id);
+                if (existingHoliday == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Holiday not found." });
+                }
+                holiday.updated_at = DateTime.Now;
                 ctl.UpdateHoliday(holiday);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Holiday updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 

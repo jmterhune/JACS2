@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.Linq;
 namespace tjc.Modules.jacs.Components
 {
     internal class CountyController
@@ -37,6 +38,16 @@ namespace tjc.Modules.jacs.Components
                 t = rep.Get();
             }
             return t;
+        }
+        public List<KeyValuePair<long,string>> GetCountyDropDownItems()
+        {
+            IEnumerable<County> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<County>();
+                t = rep.Get();
+            }
+            return t.Select(c=>new KeyValuePair<long, string>(c.id,c.name)).ToList();
         }
         public County GetCounty(long countyId)
         {

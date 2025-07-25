@@ -11,6 +11,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
         {
             id = courtType.id;
             description = courtType.description;
+            code=courtType.code;
         }
 
         public CourtTypeViewModel() { }
@@ -20,5 +21,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
         [JsonProperty("description")]
         public string description { get; set; }
+        [JsonProperty("code")]
+        public string code { get; set; }
     }
 }

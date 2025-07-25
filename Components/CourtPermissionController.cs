@@ -137,7 +137,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<KeyValuePair<long, string>> GetUsersForDropdown()
+        public IEnumerable<KeyValuePair<long, string>> GetUserDropDownItems()
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -146,7 +146,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<KeyValuePair<long, string>> GetJudgesForDropdown()
+        public IEnumerable<KeyValuePair<long, string>> GetJudgeDropDownItems()
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {

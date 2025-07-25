@@ -1,10 +1,12 @@
-﻿using DotNetNuke.Entities.Users;
+﻿// CourtTemplateAPIController.cs
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -60,12 +62,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTemplateController();
                 ctl.DeleteCourtTemplate(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Template deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -76,12 +78,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTemplateController();
                 CourtTemplate courtTemplate = ctl.GetCourtTemplate(p1);
-                return Request.CreateResponse(new CourtTemplateResult { data = courtTemplate, error = null });
+                if (courtTemplate == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new CourtTemplateResult { data = null, error = "Court Template not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new CourtTemplateResult { data = courtTemplate, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CourtTemplateResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtTemplateResult { data = null, error = ex.Message });
             }
         }
 
@@ -93,15 +99,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTemplateController();
                 var courtTemplate = p1.ToObject<CourtTemplate>();
+                if (string.IsNullOrWhiteSpace(courtTemplate.name) || courtTemplate.court_id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name and Court ID are required." });
+                }
                 courtTemplate.created_at = DateTime.UtcNow;
                 courtTemplate.updated_at = DateTime.UtcNow;
                 ctl.CreateCourtTemplate(courtTemplate);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Template created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -113,14 +123,27 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTemplateController();
                 var courtTemplate = p1.ToObject<CourtTemplate>();
+                if (courtTemplate.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court Template ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(courtTemplate.name) || courtTemplate.court_id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name and Court ID are required." });
+                }
+                var existingCourtTemplate = ctl.GetCourtTemplate(courtTemplate.id);
+                if (existingCourtTemplate == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court Template not found." });
+                }
                 courtTemplate.updated_at = DateTime.UtcNow;
                 ctl.UpdateCourtTemplate(courtTemplate);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Template updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 

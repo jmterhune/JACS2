@@ -1,5 +1,5 @@
-﻿let permissionControllerInstance = null;
-
+﻿// permission.js
+let permissionControllerInstance = null;
 class PermissionController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
@@ -47,23 +47,19 @@ class PermissionController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblPermission_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve permissions.';
                     if (error.status === 401) {
-                        ShowAlert("Error Retrieving Permissions", "Please make sure you are logged in and try again. Error: " + error.statusText);
-                    } else {
-                        ShowAlert("Error Retrieving Permissions", "The following error occurred attempting to retrieve permission information. Error: " + error.statusText);
+                        errorMessage = 'Please make sure you are logged in and try again.';
                     }
+                    ShowNotification('Error Retrieving Permissions', errorMessage, 'error');
                 }
             },
             columns: [
@@ -85,6 +81,12 @@ class PermissionController {
                 },
                 {
                     data: "name",
+                    render: function (data) {
+                        return data || '';
+                    }
+                },
+                {
+                    data: "guard_name",
                     render: function (data) {
                         return data || '';
                     }
@@ -115,16 +117,18 @@ class PermissionController {
 
         $(".dt-length").prepend($("#lnkAdd"));
         this.permissionTable.on('draw', function () {
-            
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const permissionId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Permission?',
-                    yesText: 'Yes',
-                    noText: 'No',
+                Swal.fire({
                     title: 'Delete Permission?',
-                    callbackTrue: function () {
+                    text: 'Are you sure you wish to delete this Permission?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         permissionControllerInstance.DeletePermission(permissionId);
                     }
                 });
@@ -162,12 +166,15 @@ class PermissionController {
         $("#cmdDelete").on("click", function (e) {
             e.preventDefault();
             var permissionId = $("#hdPermissionId").val();
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this Permission?',
-                yesText: 'Yes',
-                noText: 'No',
+            Swal.fire({
                 title: 'Delete Permission?',
-                callbackTrue: function () {
+                text: 'Are you sure you wish to delete this Permission?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     permissionControllerInstance.DeletePermission(permissionId);
                 }
             });
@@ -213,26 +220,31 @@ class PermissionController {
         $.ajax({
             url: this.deleteUrl + permissionId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (permissionControllerInstance.permissionTable) {
-                    permissionControllerInstance.permissionTable.draw();
-                }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('PermissionEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('PermissionDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (permissionControllerInstance.permissionTable) {
+                        permissionControllerInstance.permissionTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('PermissionEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('PermissionDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Permission deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
             },
             error: function (error) {
-                ShowAlert("Error Deleting Permission", error.statusText);
+                ShowNotification("Error Deleting Permission", error.statusText || "Failed to delete permission.", 'error');
             }
         });
     }
@@ -283,32 +295,27 @@ class PermissionController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
                             $("#edit_hdPermissionId").val(response.data.id);
                             $("#edit_permissionName").val(response.data.name);
-                            $("#edit_permissionGuardName").val(response.data.guard_name);
+                            $("#edit_permissionGuardName").val(response.data.guard_name || '');
                             $("#PermissionEditModalLabel").html(`Edit Permission: ${response.data.name}`);
                         } else {
                             $("#permissionName").html(response.data.name);
-                            $("#permissionGuardName").html(response.data.guard_name);
+                            $("#permissionGuardName").html(response.data.guard_name || '');
                             $("#hdPermissionId").val(response.data.id);
                         }
                         $(progressId).hide();
                     } else {
-                        ShowAlert("Error", "Failed to retrieve permission details. Please try again later.");
+                        ShowNotification("Error", response.error || "Failed to retrieve permission details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch permission details');
-                    ShowAlert("Error", "Failed to retrieve permission details. Please try again later.");
+                error: function (error) {
+                    ShowNotification("Error Retrieving Permission Details", error.statusText || "Failed to retrieve permission details.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -333,40 +340,43 @@ class PermissionController {
         try {
             $("#edit_progress-permission").show();
             const permissionData = {
-                name: $("#edit_permissionName").val(),
-                guard_name: $("#edit_permissionGuardName").val()
+                name: $("#edit_permissionName").val().trim(),
+                guard_name: $("#edit_permissionGuardName").val().trim() || null
             };
             $.ajax({
                 url: `${this.service.baseUrl}PermissionAPI/CreatePermission`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(permissionData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-permission").hide();
-                        ShowAlert("Success", "Permission created successfully.");
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-permission").hide();
+                    if (response && response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message || 'Permission created successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('PermissionEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (permissionControllerInstance.permissionTable) {
+                            permissionControllerInstance.permissionTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-permission").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating permission.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-permission").hide();
-                    ShowAlert("Error Creating Permission", error.statusText);
+                    ShowNotification("Error Creating Permission", error.statusText || "Failed to create permission.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-permission").hide();
-            ShowAlert("Error Creating Permission", e.statusText);
+            ShowNotification("Error Creating Permission", e.message, 'error');
         }
     }
 
@@ -374,41 +384,50 @@ class PermissionController {
         try {
             $("#edit_progress-permission").show();
             const permissionData = {
-                id: $("#edit_hdPermissionId").val(),
-                name: $("#edit_permissionName").val(),
-                guard_name: $("#edit_permissionGuardName").val()
+                id: parseInt($("#edit_hdPermissionId").val()),
+                name: $("#edit_permissionName").val().trim(),
+                guard_name: $("#edit_permissionGuardName").val().trim() || null
             };
             $.ajax({
-                url: `${this.service.baseUrl}PermissionAPI/CreatePermission`,
+                url: `${this.service.baseUrl}PermissionAPI/UpdatePermission`, // Fixed incorrect URL
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(permissionData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-permission").hide();
-                        ShowAlert("Success", "Permission updated successfully.");
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-permission").hide();
+                    if (response && response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message || 'Permission updated successfully.'
+                        });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('PermissionEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (permissionControllerInstance.permissionTable) {
+                            permissionControllerInstance.permissionTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-permission").hide();
-                        ShowAlert("Error", "Unexpected Error: Status=" + result);
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating permission.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-permission").hide();
-                    ShowAlert("Error Updating Permission", error.statusText);
+                    ShowNotification("Error Updating Permission", error.statusText || "Failed to update permission.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-permission").hide();
-            ShowAlert("Error Updating Permission", e.statusText);
+            ShowNotification("Error Updating Permission", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

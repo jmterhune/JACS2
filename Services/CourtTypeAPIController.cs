@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -54,18 +55,36 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
+        public HttpResponseMessage GetCourtTypeDropDownItems()
+        {
+            List<KeyValuePair<long, string>> courtTypes = new List<KeyValuePair<long, string>>();
+
+            try
+            {
+                var ctl = new CourtTypeController();
+                courtTypes = ctl.GetCourtTypeDropDownItems();
+                return Request.CreateResponse(new ListItemOptionResult { data = courtTypes, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new ListItemOptionResult { data = courtTypes, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
         public HttpResponseMessage DeleteCourtType(long p1)
         {
             try
             {
                 var ctl = new CourtTypeController();
                 ctl.DeleteCourtType(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Type deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -76,12 +95,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTypeController();
                 CourtType courtType = ctl.GetCourtType(p1);
-                return Request.CreateResponse(new CourtTypeResult { data = courtType, error = null });
+                if (courtType == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new CourtTypeResult { data = null, error = "Court Type not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new CourtTypeResult { data = courtType, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CourtTypeResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtTypeResult { data = null, error = ex.Message });
             }
         }
 
@@ -93,15 +116,22 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTypeController();
                 var courtType = p1.ToObject<CourtType>();
+
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(courtType.description) || string.IsNullOrWhiteSpace(courtType.code))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and Code are required." });
+                }
+
                 courtType.created_at = DateTime.Now;
                 courtType.updated_at = DateTime.Now;
                 ctl.CreateCourtType(courtType);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Type created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -113,14 +143,31 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtTypeController();
                 var courtType = p1.ToObject<CourtType>();
+
+                // Validate required fields
+                if (courtType.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court Type ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(courtType.description) || string.IsNullOrWhiteSpace(courtType.code))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and Code are required." });
+                }
+
+                var existingCourtType = ctl.GetCourtType(courtType.id);
+                if (existingCourtType == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court Type not found." });
+                }
+
                 courtType.updated_at = DateTime.Now;
                 ctl.UpdateCourtType(courtType);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Type updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -141,17 +188,15 @@ namespace tjc.Modules.jacs.Services
 
         private string GetSortColumn(int columnIndex)
         {
-            string fieldName = "description";
             switch (columnIndex)
             {
                 case 2:
-                    fieldName = "description";
-                    break;
+                    return "code";
+                case 3:
+                    return "description";
                 default:
-                    fieldName = "description";
-                    break;
+                    return "description";
             }
-            return fieldName;
         }
     }
 }

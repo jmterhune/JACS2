@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,11 +115,23 @@ namespace tjc.Modules.jacs.Components
         }
         public List<KeyValuePair<long, string>> GetCourtDropDownItems(string searchTerm)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            try
             {
-                var rep = ctx.GetRepository<Court>();
-                return rep.Find("Where description like @0", string.Format("%{0}%", searchTerm))
-                    .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+                // Normalize search term
+                searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? string.Empty : searchTerm.Trim();
+
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var rep = ctx.GetRepository<Court>();
+                    var results = rep.Find("WHERE description LIKE @0", $"%{searchTerm}%")
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+                    return results ?? new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
             }
         }
         public Court GetCourt(long courtId)

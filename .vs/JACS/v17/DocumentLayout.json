@@ -1,7 +1,28 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\courtmotionapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\courtmotionapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\components\\courtmotioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:components\\courtmotioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtpermission.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtpermission.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\courtpermissionapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\courtpermissionapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,8 +30,34 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CourtMotionAPIController.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\CourtMotionAPIController.cs",
+              "RelativeDocumentMoniker": "Services\\CourtMotionAPIController.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\CourtMotionAPIController.cs",
+              "RelativeToolTip": "Services\\CourtMotionAPIController.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAANoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-25T18:22:38.04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CourtMotionController.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\CourtMotionController.cs",
+              "RelativeDocumentMoniker": "Components\\CourtMotionController.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\CourtMotionController.cs",
+              "RelativeToolTip": "Components\\CourtMotionController.cs",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAkwKQAAABPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-25T18:20:34.448Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -22,6 +69,66 @@
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CourtPermissionAPIController.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\CourtPermissionAPIController.cs",
+              "RelativeDocumentMoniker": "Services\\CourtPermissionAPIController.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\CourtPermissionAPIController.cs",
+              "RelativeToolTip": "Services\\CourtPermissionAPIController.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAwwKsAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-25T18:16:59.288Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "a11997b0-e08a-42f6-bb47-cb44f301658a",
+        "Display": 0,
+        "X": 132,
+        "Y": 171,
+        "Width": 1376,
+        "Height": 1008,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "courtPermission.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtPermission.js",
+              "RelativeDocumentMoniker": "js\\courtPermission.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtPermission.js",
+              "RelativeToolTip": "js\\courtPermission.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-07-25T18:20:54.265Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "courtCalendar.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
+              "RelativeDocumentMoniker": "js\\courtCalendar.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
+              "RelativeToolTip": "js\\courtCalendar.js",
+              "ViewState": "AgIAAHoAAAAAAAAAAAAhwJIAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-07-25T18:21:18.692Z",
+              "EditorCaption": ""
             }
           ]
         }

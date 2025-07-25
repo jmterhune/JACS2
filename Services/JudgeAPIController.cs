@@ -55,8 +55,9 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
-        public HttpResponseMessage GetJudgeUsers(string p1, int p2)
+        public HttpResponseMessage GetJudgeDropDownItems(string p1, int p2)
         {
+            List<KeyValuePair<long, string>> userOptions = new List<KeyValuePair<long, string>>();
             try
             {
                 string judgeRole = p1;
@@ -68,16 +69,15 @@ namespace tjc.Modules.jacs.Services
                 var judgeUsers = users
                     .Where(u => !existingJudges.Contains(u.UserID))
                     .Select(u => new
-                    {
-                        userId = u.UserID,
-                        displayName = u.DisplayName
-                    }).ToList();
+                        KeyValuePair<long, string>(u.UserID,u.DisplayName)
+                    ).ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { data = judgeUsers });
+                return Request.CreateResponse(HttpStatusCode.OK, new { data = judgeUsers, error = "" });
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -88,12 +88,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new JudgeController();
                 ctl.DeleteJudge(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Judge deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -104,12 +104,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new JudgeController();
                 Judge judge = ctl.GetJudge(p1);
-                return Request.CreateResponse(new JudgeResult { data = new JudgeViewModel(judge), error = null });
+                if (judge == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new JudgeResult { data = null, error = "Judge not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new JudgeResult { data = new JudgeViewModel(judge), error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new JudgeResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new JudgeResult { data = null, error = ex.Message });
             }
         }
 
@@ -121,13 +125,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new JudgeController();
                 var judge = p1.ToObject<Judge>();
+                if (judge.id <= 0 || string.IsNullOrWhiteSpace(judge.name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Judge ID and Name are required." });
+                }
+                judge.created_at = DateTime.Now;
+                judge.updated_at = DateTime.Now;
                 ctl.CreateJudge(judge);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Judge created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -139,13 +149,27 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new JudgeController();
                 var judge = p1.ToObject<Judge>();
+                if (judge.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Judge ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(judge.name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
+                }
+                var existingJudge = ctl.GetJudge(judge.id);
+                if (existingJudge == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Judge not found." });
+                }
+                judge.updated_at = DateTime.Now;
                 ctl.UpdateJudge(judge);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Judge updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -173,7 +197,13 @@ namespace tjc.Modules.jacs.Services
                     fieldName = "name";
                     break;
                 case 3:
+                    fieldName = "phone";
+                    break;
+                case 4:
                     fieldName = "court_name";
+                    break;
+                case 5:
+                    fieldName = "title";
                     break;
                 default:
                     fieldName = "name";

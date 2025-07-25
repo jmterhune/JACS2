@@ -1,5 +1,7 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 namespace tjc.Modules.jacs.Components
 {
     internal class CourtTypeController
@@ -41,6 +43,17 @@ namespace tjc.Modules.jacs.Components
                 t = rep.Get();
             }
             return t;
+        }
+
+        public List<KeyValuePair<long,string>> GetCourtTypeDropDownItems()
+        {
+            IEnumerable<CourtType> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtType>();
+                t = rep.Get();
+            }
+            return t.Select(ct=>new KeyValuePair<long, string>(ct.id,ct.code)).ToList();
         }
 
         public CourtType GetCourtType(long courtTypeId)

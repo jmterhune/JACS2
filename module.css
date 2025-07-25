@@ -1,4 +1,8 @@
-﻿/* Custom styles for vertical navbar */
+﻿/* Set container width for fullscreen on all module pages*/
+.container:has(.DnnModule-JACS) {
+    max-width: 100% !important;
+}
+/* Custom styles for vertical navbar */
 .sidebar {
     min-height: 100vh;
     background-color: #f8f9fa;
@@ -87,9 +91,32 @@
 .select2-container .select2-selection--single {
     height: 35px !important;
 }
+.select2-search--inline {
+    width: auto !important;
+}
+.select2-selection__choice__remove {
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+}
+.select2-selection__choice {
+    padding: .1em .3em !important;
+    margin-bottom: 0 !important;
+    background-color: #e5eeff;
+}
 .dropdown-toggle::after {
     display: none;
     content: none !important;
+}
+.ts-wrapper.single .ts-control {
+    background-color: transparent !important;
+    background-image: none !important;
+    background-repeat: no-repeat !important;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    ts-pr-caret: 0;
+    
 }
 .case_num_format_multiple {
     font-size: .9rem;
@@ -142,7 +169,7 @@ label em {
     color: red
 }
 
-.form-group .row div {
+.form-group .row > div:first-of-type {
     margin-bottom: 1rem;
 }
     .no-form-group div {
@@ -189,6 +216,9 @@ div.form-check {
 .btn-command {
     border: none;
     background-color: transparent;
+}
+td.dt-type-numeric,th.dt-type-numeric {
+    text-align: left !important;
 }
 /* Modal Styles*/
 .dnnFormPopup .ui-dialog-titlebar {
@@ -257,3 +287,7 @@ div.form-check {
         width: 100%; /* Ensure image fits within center-progress */
         height: auto; /* Maintain aspect ratio */
     }
+/* Button / Icon Styles */
+i.fas, i.fa {
+    margin-right: 8px; /* Adds space after Font Awesome icons */
+}

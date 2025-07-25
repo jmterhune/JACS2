@@ -1,4 +1,5 @@
-﻿let eventTypeControllerInstance = null;
+﻿// eventType.js
+let eventTypeControllerInstance = null;
 
 class EventTypeController {
     constructor(params = {}) {
@@ -48,13 +49,9 @@ class EventTypeController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
@@ -218,28 +215,29 @@ class EventTypeController {
         $.ajax({
             url: this.deleteUrl + eventTypeId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (eventTypeControllerInstance.eventTypeTable) {
-                    eventTypeControllerInstance.eventTypeTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (eventTypeControllerInstance.eventTypeTable) {
+                        eventTypeControllerInstance.eventTypeTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Event Type deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Event Type deleted successfully.'
-                });
             },
             error: function (error) {
                 ShowNotification("Error Deleting Event Type", error.statusText, 'error');
@@ -289,11 +287,7 @@ class EventTypeController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -306,13 +300,12 @@ class EventTypeController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve event type details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve event type details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch event type details');
-                    ShowNotification("Error", "Failed to retrieve event type details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Event Type Details", error.statusText || "Failed to retrieve event type details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -337,43 +330,42 @@ class EventTypeController {
         try {
             $("#edit_progress-eventtype").show();
             const eventTypeData = {
-                name: $("#edit_etName").val()
+                name: $("#edit_etName").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}EventTypeAPI/CreateEventType`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(eventTypeData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-eventtype").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-eventtype").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Event Type created successfully.'
+                            text: response.message || 'Event Type created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (eventTypeControllerInstance.eventTypeTable) {
+                            eventTypeControllerInstance.eventTypeTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-eventtype").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating event type.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-eventtype").hide();
-                    ShowNotification("Error Creating Event Type", error.statusText, 'error');
+                    ShowNotification("Error Creating Event Type", error.statusText || "Failed to create event type.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-eventtype").hide();
-            ShowNotification("Error Creating Event Type", e.statusText, 'error');
+            ShowNotification("Error Creating Event Type", e.message, 'error');
         }
     }
 
@@ -381,44 +373,49 @@ class EventTypeController {
         try {
             $("#edit_progress-eventtype").show();
             const eventTypeData = {
-                id: $("#edit_hdEventTypeId").val(),
-                name: $("#edit_etName").val()
+                id: parseInt($("#edit_hdEventTypeId").val()),
+                name: $("#edit_etName").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}EventTypeAPI/UpdateEventType`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(eventTypeData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-eventtype").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-eventtype").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Event Type updated successfully.'
+                            text: response.message || 'Event Type updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (eventTypeControllerInstance.eventTypeTable) {
+                            eventTypeControllerInstance.eventTypeTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-eventtype").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating event type.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-eventtype").hide();
-                    ShowNotification("Error Updating Event Type", error.statusText, 'error');
+                    ShowNotification("Error Updating Event Type", error.statusText || "Failed to update event type.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-eventtype").hide();
-            ShowNotification("Error Updating Event Type", e.statusText, 'error');
+            ShowNotification("Error Updating Event Type", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

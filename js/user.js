@@ -26,11 +26,11 @@ class UserController {
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}UserAPI/DeleteUser/`;
         const roleId = getValueFromUrl('rid');
-        const listUrl = `${this.service.baseUrl}UserAPI/GetUsers/${this.recordCount}`;
-
+        let listUrl = `${this.service.baseUrl}UserAPI/GetUsers/${this.recordCount}`;
         if (roleId) {
             listUrl = `${this.service.baseUrl}UserAPI/GetUsers/${this.recordCount}/${roleId}`;
         }
+
         const detailModalElement = document.getElementById('UserDetailModal');
         if (detailModalElement) {
             detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
@@ -57,21 +57,17 @@ class UserController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblUser_processing").hide();
                     if (error.status === 401) {
-                        ShowNotification('Error Retrieving Users', 'Please make sure you are logged in and try again. Error: ' + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Users", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
                     } else {
-                        ShowNotification('Error Retrieving Users', 'The following error occurred attempting to retrieve user information. Error: ' + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Users", "The following error occurred attempting to retrieve user information. Error: " + error.statusText, 'error');
                     }
                 }
             },
@@ -262,11 +258,7 @@ class UserController {
             url: `${this.service.baseUrl}UserAPI/GetUsersByRole/${this.jaRole},${this.userRole}`,
             type: 'GET',
             dataType: 'json',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 const $userSelect = $("#edit_userName");
                 $userSelect.empty();
@@ -275,10 +267,12 @@ class UserController {
                     response.data.forEach(user => {
                         $userSelect.append(`<option value="${user.id}" data-email="${user.email}">${user.name}</option>`);
                     });
+                } else {
+                    ShowNotification("Error", response.error || "Failed to load users.", 'error');
                 }
             },
-            error: function () {
-                console.error('Failed to fetch users');
+            error: function (error) {
+                ShowNotification("Error Loading Users", error.statusText || "Failed to load users. Please try again later.", 'error');
             }
         });
     }
@@ -294,35 +288,32 @@ class UserController {
         $.ajax({
             url: this.deleteUrl + userId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (userControllerInstance.userTable) {
-                    userControllerInstance.userTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (userControllerInstance.userTable) {
+                        userControllerInstance.userTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('UserEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('UserDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'User deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('UserEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('UserDetailModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'User deleted successfully.'
-                });
             },
             error: function (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error Deleting User',
-                    text: error.statusText
-                });
+                ShowNotification("Error Deleting User", error.statusText, 'error');
             }
         });
     }
@@ -375,11 +366,7 @@ class UserController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -394,13 +381,12 @@ class UserController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve user details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve user details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch user details');
-                    ShowNotification("Error", "Failed to retrieve user details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving User Details", error.statusText || "Failed to retrieve user details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -427,52 +413,43 @@ class UserController {
             $("#edit_progress-user").show();
             const userData = {
                 id: $("#edit_userName").val(),
-                name: $("#edit_userName option:selected").text(),
-                email: $("#edit_userEmail").val()
+                name: $("#edit_userName option:selected").text().trim(),
+                email: $("#edit_userEmail").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}UserAPI/CreateUser`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(userData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-user").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-user").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'User created successfully.'
+                            text: response.message || 'User created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('UserEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (userControllerInstance.userTable) {
+                            userControllerInstance.userTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-user").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating user.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-user").hide();
-                    ShowNotification("Error Creating User", error.responseJSON, 'error');
+                    ShowNotification("Error Creating User", error.statusText || "Failed to create user.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-user").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Creating User',
-                text: error.statusText
-            });
+            ShowNotification("Error Creating User", e.message, 'error');
         }
     }
 
@@ -480,57 +457,50 @@ class UserController {
         try {
             $("#edit_progress-user").show();
             const userData = {
-                id: $("#edit_hdUserId").val(),
-                name: $("#edit_userNameText").val(),
-                email: $("#edit_userEmail").val()
+                id: parseInt($("#edit_hdUserId").val()),
+                name: $("#edit_userNameText").val().trim(),
+                email: $("#edit_userEmail").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}UserAPI/UpdateUser`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(userData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-user").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-user").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'User updated successfully.'
+                            text: response.message || 'User updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('UserEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (userControllerInstance.userTable) {
+                            userControllerInstance.userTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-user").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating user.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-user").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Updating User',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Updating User", error.statusText || "Failed to update user.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-user").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Updating User',
-                text: e.statusText
-            });
+            ShowNotification("Error Updating User", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

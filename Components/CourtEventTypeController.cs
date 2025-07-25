@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,16 +68,33 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        internal List<CourtListItem> GetCourtEventTypesByCourtId(long courtId)
+        internal List<KeyValuePair<long, string>> GetCourtEventTypesByCourtId(long courtId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            try
             {
-                var query = @"
-            SELECT e.id as value, e.name as text
-            FROM court_event_types ce
-            INNER JOIN event_types e ON ce.event_type_id = e.id
-            WHERE ce.court_id = @0";
-                return ctx.ExecuteQuery<CourtListItem>(System.Data.CommandType.Text, query, courtId).ToList();
+                // Validate input
+                if (courtId <= 0)
+                {
+                    throw new ArgumentException("Court ID must be greater than zero.", nameof(courtId));
+                }
+
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var query = @"
+                        SELECT e.*
+                        FROM court_event_types ce
+                        INNER JOIN event_types e ON ce.event_type_id = e.id
+                        WHERE ce.court_id = @0";
+                    IEnumerable<EventType> results = ctx.ExecuteQuery<EventType>(System.Data.CommandType.Text, query, courtId);
+                    if (results == null || !results.Any())
+                        return new List<KeyValuePair<long, string>>();
+                    return results.Select(evt=> new KeyValuePair<long, string>(evt.id,evt.name)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
             }
         }
         internal List<int> GetCourtEventTypeValuesByCourtId(long courtId)

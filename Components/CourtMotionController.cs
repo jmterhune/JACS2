@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,14 @@ namespace tjc.Modules.jacs.Components
                 return rep.Get();
             }
         }
+        public IEnumerable<CourtMotion> GetCourtMotions(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtMotion>();
+                return rep.Find("Where court_id=@0");
+            }
+        }
 
         internal CourtMotion GetCourtMotion(long courtMotionId)
         {
@@ -56,6 +65,15 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<CourtMotion>();
                 return rep.GetById(courtMotionId);
+            }
+        }
+
+        internal CourtMotion GetCourtMotionByCourtAndMotion(long courtId, long motionId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"SELECT * FROM court_motions WHERE court_id = @0 AND motion_id = @1";
+                return ctx.ExecuteSingleOrDefault<CourtMotion>(System.Data.CommandType.Text, query, courtId, motionId);
             }
         }
 
@@ -96,28 +114,89 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public List<CourtListItem> GetCourtMotionsByCourtId(long courtId, bool allowed)
+        public List<KeyValuePair<long, string>> GetCourtMotionDropDownItems(long courtId, bool allowed)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            try
             {
-                var query = @"
-            SELECT m.id as value, m.description as text
-            FROM court_motions cm
-            INNER JOIN motions m ON cm.motion_id = m.id
-            WHERE cm.court_id = @0 AND cm.allowed = @1";
-                return ctx.ExecuteQuery<CourtListItem>(System.Data.CommandType.Text, query, courtId, allowed).ToList();
+                // Validate input
+                if (courtId <= 0)
+                {
+                    throw new ArgumentException("Court ID must be greater than zero.", nameof(courtId));
+                }
+
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var query = @"
+                SELECT m.*
+                FROM court_motions cm
+                INNER JOIN motions m ON cm.motion_id = m.id
+                WHERE cm.court_id = @0 AND cm.allowed = @1";
+
+                    IEnumerable<Motion> results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, courtId, allowed);
+                    if (results.Count() > 0)
+                    {
+                        return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).ToList();
+                    }
+                    return new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception using DNN's exception logging
+                Exceptions.LogException(ex);
+                // Return an empty list to prevent downstream errors
+                return new List<KeyValuePair<long, string>>();
             }
         }
+
         public List<int> GetCourtMotionValuesByCourtId(long courtId, bool allowed)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-            SELECT m.id
-            FROM court_motions cm
-            INNER JOIN motions m ON cm.motion_id = m.id
-            WHERE cm.court_id = @0 AND cm.allowed = @1";
+                    SELECT m.id
+                    FROM court_motions cm
+                    INNER JOIN motions m ON cm.motion_id = m.id
+                    WHERE cm.court_id = @0 AND cm.allowed = @1";
                 return ctx.ExecuteQuery<int>(System.Data.CommandType.Text, query, courtId, allowed).ToList();
+            }
+        }
+
+        public List<KeyValuePair<long, string>> GetAvailableMotionDropDownItems(long courtId, List<long> excludedIds)
+        {
+            try
+            {
+                // Validate input  
+                if (courtId <= 0)
+                {
+                    throw new ArgumentException("Court ID must be greater than zero.", nameof(courtId));
+                }
+
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var query = @"  
+                        SELECT m.*
+                        FROM court_motions cm  
+                        INNER JOIN motions m ON cm.motion_id = m.id  
+                        WHERE cm.court_id = @0 AND cm.allowed = 1";
+
+                    // Use parameterized query to prevent SQL injection  
+                    var parameters = new List<object> { courtId };
+                    if (excludedIds != null && excludedIds.Any())
+                    {
+                        query += " AND m.id NOT IN (" + string.Join(",", Enumerable.Range(0, excludedIds.Count).Select(i => "@" + (i + 1))) + ")";
+                        parameters.AddRange(excludedIds.Cast<object>()); // Fix: Cast excludedIds to IEnumerable<object>  
+                    }
+                    IEnumerable<Motion> results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, parameters.ToArray());
+                    if (results == null || !results.Any())
+                        return new List<KeyValuePair<long, string>>();
+                    return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
             }
         }
 

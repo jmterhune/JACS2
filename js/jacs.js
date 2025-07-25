@@ -85,7 +85,7 @@ function saveToLocalStorage(key, value) {
         const serializedValue = JSON.stringify(value);
         localStorage.setItem(key, serializedValue);
     } catch (error) {
-        ShowAlert('Error saving to local storage:', error);
+        ShowNotification('Error saving to local storage:', error,'error');
     }
 }
 
@@ -99,7 +99,7 @@ function getFromLocalStorage(key) {
         // Parse JSON string back to original format
         return JSON.parse(serializedValue);
     } catch (error) {
-        ShowAlert('Error retrieving from local storage:', error);
+        ShowNotification('Error retrieving from local storage:', error,'error');
         return null;
     }
 }

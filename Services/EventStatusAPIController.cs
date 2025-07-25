@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -60,12 +61,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventStatusController();
                 ctl.DeleteEventStatus(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event Status deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -76,12 +77,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventStatusController();
                 EventStatus eventStatus = ctl.GetEventStatus(p1);
-                return Request.CreateResponse(new EventStatusResult { data = eventStatus, error = null });
+                if (eventStatus == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventStatusResult { data = null, error = "Event Status not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventStatusResult { data = eventStatus, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventStatusResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventStatusResult { data = null, error = ex.Message });
             }
         }
 
@@ -93,13 +98,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventStatusController();
                 var eventStatus = p1.ToObject<EventStatus>();
+                if (string.IsNullOrWhiteSpace(eventStatus.name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
+                }
+                eventStatus.created_at = DateTime.Now;
+                eventStatus.updated_at = DateTime.Now;
                 ctl.CreateEventStatus(eventStatus);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event Status created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -111,13 +122,27 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventStatusController();
                 var eventStatus = p1.ToObject<EventStatus>();
+                if (eventStatus.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Event Status ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(eventStatus.name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
+                }
+                var existingEventStatus = ctl.GetEventStatus(eventStatus.id);
+                if (existingEventStatus == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Event Status not found." });
+                }
+                eventStatus.updated_at = DateTime.Now;
                 ctl.UpdateEventStatus(eventStatus);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event Status updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 

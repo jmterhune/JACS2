@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -23,7 +24,7 @@ namespace tjc.Modules.jacs.Services
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
 
-            string searchTerm = !query.ContainsKey("searchText") ? "" : query["searchText"].ToString();
+            string searchTerm = query.ContainsKey("searchText") ? query["searchText"].ToString() : "";
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
             Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
@@ -43,22 +44,57 @@ namespace tjc.Modules.jacs.Services
                 var ctl = new MotionController();
                 filteredCount = ctl.GetMotionsCount(searchTerm);
                 if (p1 == 0) { recordCount = filteredCount; }
-                motions = ctl.GetMotionsPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).Select(motion => new MotionViewModel(motion)).ToList();
-                return Request.CreateResponse(new MotionSearchResult { data = motions, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+                var motionsPaged = ctl.GetMotionsPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection);
+                if (motionsPaged == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new MotionSearchResult
+                    {
+                        data = motions,
+                        draw = draw,
+                        recordsFiltered = filteredCount,
+                        recordsTotal = recordCount,
+                        error = "No motions found."
+                    });
+                }
+                motions = motionsPaged.Select(motion => new MotionViewModel(motion)).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new MotionSearchResult
+                {
+                    data = motions,
+                    draw = draw,
+                    recordsFiltered = filteredCount,
+                    recordsTotal = recordCount,
+                    error = null
+                });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new MotionSearchResult { data = motions, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new MotionSearchResult
+                {
+                    data = motions,
+                    draw = draw,
+                    recordsFiltered = filteredCount,
+                    recordsTotal = recordCount,
+                    error = $"Failed to retrieve motions: {ex.Message}"
+                });
             }
         }
+
         [HttpGet]
         public HttpResponseMessage GetMotionDropDownItems()
         {
-            List<MotionViewModel> motions = new List<MotionViewModel>();
-            var ctl = new MotionController();
-            motions = ctl.GetMotions().Select(motion => new MotionViewModel(motion)).ToList();
-            return Request.CreateResponse(new MotionSearchResult { data = motions, error = null });
+            List<KeyValuePair<long, string>> motions = new List<KeyValuePair<long, string>>();
+            try
+            {
+                var ctl = new MotionController();
+                motions = ctl.GetMotions().Select(motion => new KeyValuePair<long, string>(motion.id, motion.description)).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new ListItemOptionResult { data = motions, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ListItemOptionResult { data = motions, error = $"Failed to retrieve motion dropdown items: {ex.Message}" });
+            }
         }
 
         [HttpGet]
@@ -66,14 +102,23 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
+                if (p1 <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid motion ID." });
+                }
                 var ctl = new MotionController();
+                var motion = ctl.GetMotion(p1);
+                if (motion == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Motion not found." });
+                }
                 ctl.DeleteMotion(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Motion deleted successfully." });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to delete motion: {ex.Message}" });
             }
         }
 
@@ -82,14 +127,22 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
+                if (p1 <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new MotionResult { data = null, error = "Invalid motion ID." });
+                }
                 var ctl = new MotionController();
-                Motion motion = ctl.GetMotion(p1);
-                return Request.CreateResponse(new MotionResult { data = motion, error = null });
+                var motion = ctl.GetMotion(p1);
+                if (motion == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new MotionResult { data = null, error = "Motion not found." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new MotionResult { data = motion, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new MotionResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new MotionResult { data = null, error = $"Failed to retrieve motion: {ex.Message}" });
             }
         }
 
@@ -99,15 +152,21 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new MotionController();
                 var motion = p1.ToObject<Motion>();
+                if (string.IsNullOrWhiteSpace(motion.description))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Motion description is required." });
+                }
+                var ctl = new MotionController();
+                motion.created_at = DateTime.Now;
+                motion.updated_at = DateTime.Now;
                 ctl.CreateMotion(motion);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Motion created successfully." });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to create motion: {ex.Message}" });
             }
         }
 
@@ -117,15 +176,29 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new MotionController();
                 var motion = p1.ToObject<Motion>();
+                if (motion.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Motion ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(motion.description))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Motion description is required." });
+                }
+                var ctl = new MotionController();
+                var existingMotion = ctl.GetMotion(motion.id);
+                if (existingMotion == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Motion not found." });
+                }
+                motion.updated_at = DateTime.Now;
                 ctl.UpdateMotion(motion);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Motion updated successfully." });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to update motion: {ex.Message}" });
             }
         }
 
@@ -144,19 +217,20 @@ namespace tjc.Modules.jacs.Services
             public string error { get; set; }
         }
 
+
         private string GetSortColumn(int columnIndex)
         {
-            string fieldName = "description";
             switch (columnIndex)
             {
                 case 2:
-                    fieldName = "description";
-                    break;
+                    return "description";
+                case 3:
+                    return "lag";
+                case 4:
+                    return "lead";
                 default:
-                    fieldName = "description";
-                    break;
+                    return "description";
             }
-            return fieldName;
         }
     }
 }

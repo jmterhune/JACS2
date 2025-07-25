@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
+using System.Linq;
 namespace tjc.Modules.jacs.Components
 {
     internal class EventStatusController
@@ -38,6 +39,16 @@ namespace tjc.Modules.jacs.Components
                 t = rep.Get();
             }
             return t;
+        }
+        public List<KeyValuePair<long,string>> GetEventStatusDropDownItems()
+        {
+            IEnumerable<EventStatus> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<EventStatus>();
+                t = rep.Get();
+            }
+            return t.Select(es=>new KeyValuePair<long, string>(es.id,es.name)).ToList();
         }
         public EventStatus GetEventStatus(long eventStatusId)
         {

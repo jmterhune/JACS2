@@ -4,7 +4,9 @@ using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -16,7 +18,6 @@ namespace tjc.Modules.jacs.Services
     public class EventAPIController : DnnApiController
     {
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public HttpResponseMessage GetEvents(int p1)
         {
             List<EventViewModel> events = new List<EventViewModel>();
@@ -27,11 +28,18 @@ namespace tjc.Modules.jacs.Services
             long courtId = query.ContainsKey("courtId") && long.TryParse(query["courtId"], out long cId) ? cId : 0;
             long categoryId = query.ContainsKey("categoryId") && long.TryParse(query["categoryId"], out long catId) ? catId : 0;
             long statusId = query.ContainsKey("statusId") && long.TryParse(query["statusId"], out long statId) ? statId : 0;
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             Int32.TryParse(query.ContainsKey("length") ? query["length"] : "50", out int pageSize);
             Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
-            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
-            string sortColumn = GetSortColumn(query.ContainsKey("order[0][column]") ? query["order[0][column]"] : "2");
-            string sortDirection = query.ContainsKey("order[0][dir]") ? query["order[0][dir]"] : "asc";
+
+            string sortColumn = "case_num"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                sortColumn = GetSortColumn(query["order[0].column"]);
+                sortDirection = query["order[0].dir"];
+            }
 
             try
             {
@@ -71,15 +79,47 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventController();
                 var caseNumber = p1.ToObject<SearchTerm>();
+                if (string.IsNullOrWhiteSpace(caseNumber.searchTerm))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Case number is required." });
+                }
                 Event eventData = ctl.GetEventByCaseNumber(caseNumber.searchTerm);
-                if (eventData != null)
-                    return Request.CreateResponse(new EventSearchResult { data = new EventViewModel(eventData), error = null });
-                return Request.CreateResponse(new EventSearchResult { data = null, error = "No Event Found" });
+                if (eventData == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventSearchResult { data = null, error = "No Event Found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventSearchResult { data = new EventViewModel(eventData), error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventSearchResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventSearchResult { data = null, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage SearchCaseNumberDetails(JObject p1)
+        {
+            try
+            {
+                var caseNumber = p1.ToObject<SearchTerm>();
+                if (string.IsNullOrWhiteSpace(caseNumber.searchTerm))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Case number is required." });
+                }
+                var ctl = new EventController();
+                var eventData = ctl.GetEventByCaseNumber(caseNumber.searchTerm);
+                if (eventData == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventSearchResult { data = null, error = "No Event Found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventSearchResult { data = new EventViewModel(eventData), error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventSearchResult { data = null, error = ex.Message });
             }
         }
 
@@ -90,14 +130,17 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventController();
-                var eventId = p1;
-                bool result = ctl.CancelEvent(eventId);
-                return Request.CreateResponse(new EventCancelResult { cancelled = result, error = null });
+                bool result = ctl.CancelEvent(p1);
+                if (!result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventCancelResult { cancelled = false, error = "Event not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventCancelResult { cancelled = false, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventCancelResult { cancelled = false, error = ex.Message });
             }
         }
 
@@ -108,13 +151,17 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventController();
-                var result = ctl.CancelEvent(p1);
-                return Request.CreateResponse(new EventCancelResult { cancelled = result, error = null });
+                bool result = ctl.CancelEvent(p1);
+                if (!result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventCancelResult { cancelled = false, error = "Event not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventCancelResult { cancelled = false, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventCancelResult { cancelled = false, error = ex.Message });
             }
         }
 
@@ -125,16 +172,27 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var evt = p1.ToObject<Event>();
+                if (evt == null || string.IsNullOrWhiteSpace(evt.case_num))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Case number is required." });
+                }
                 evt.created_at = DateTime.Now;
                 evt.updated_at = DateTime.Now;
+                evt.plaintiff_email = p1["plaintiff_email"]?.ToString().Replace(";", ",");
+                evt.defendant_email = p1["defendant_email"]?.ToString().Replace(";", ",");
+                evt.template = p1["template"]?.ToString();
                 var ctl = new EventController();
                 ctl.CreateEvent(evt);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event created successfully" });
+            }
+            catch (ValidationException vex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = vex.Message });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, new { error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -145,15 +203,35 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var evt = p1.ToObject<Event>();
-                evt.updated_at = DateTime.Now;
+                if (evt.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Event ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(evt.case_num))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Case number is required." });
+                }
                 var ctl = new EventController();
+                var existingEvent = ctl.GetEvent(evt.id);
+                if (existingEvent == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Event not found." });
+                }
+                evt.updated_at = DateTime.Now;
+                evt.plaintiff_email = p1["plaintiff_email"]?.ToString().Replace(";", ",");
+                evt.defendant_email = p1["defendant_email"]?.ToString().Replace(";", ",");
+                evt.template = p1["template"]?.ToString();
                 ctl.UpdateEvent(evt);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event updated successfully" });
+            }
+            catch (ValidationException vex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = vex.Message });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, new { error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -164,20 +242,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventController();
                 var evt = ctl.GetEvent(p1);
-                return Request.CreateResponse(new EventSearchResult
+                if (evt == null)
                 {
-                    data = evt != null ? new EventViewModel(evt) : null,
-                    error = null
-                });
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventSearchResult { data = null, error = "Event not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new EventSearchResult { data = new EventViewModel(evt), error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventSearchResult
-                {
-                    data = null,
-                    error = ex.Message
-                });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventSearchResult { data = null, error = ex.Message });
             }
         }
 
@@ -188,12 +262,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventController();
                 var events = ctl.GetEventsByTimeslot(p1);
-                return Request.CreateResponse(new { data = events.Select(e => new EventViewModel(e)).ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new EventsResult{ data = events.Select(e => new EventViewModel(e)).ToList(), error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, new { error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -203,6 +277,11 @@ namespace tjc.Modules.jacs.Services
             public int recordsTotal { get; set; }
             public int recordsFiltered { get; set; }
             public int draw { get; set; }
+            public string error { get; set; }
+        }
+        internal class EventsResult
+        {
+            public List<EventViewModel> data { get; set; }
             public string error { get; set; }
         }
 

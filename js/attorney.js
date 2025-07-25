@@ -2,7 +2,6 @@
 
 class AttorneyController {
     constructor(params = {}) {
-        // Default values with parameter overrides
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
         this.isAdmin = params.isAdmin || false;
@@ -26,7 +25,6 @@ class AttorneyController {
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}AttorneyAPI/DeleteAttorney/`;
 
-        // Initialize DataTable for attorney list view
         const listUrl = `${this.service.baseUrl}AttorneyAPI/GetAttorneys/${this.recordCount}`;
         const detailModalElement = document.getElementById('AttorneyDetailModal');
         if (detailModalElement) {
@@ -50,23 +48,19 @@ class AttorneyController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblAttorney_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve attorneys.';
                     if (error.status === 401) {
-                        ShowNotification("Error Retrieving Attorneys", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
-                    } else {
-                        ShowNotification("Error Retrieving Attorneys", "The following error occurred attempting to retrieve attorney information. Error: " + error.statusText, 'error');
+                        errorMessage = 'Please make sure you are logged in and try again.';
                     }
+                    ShowNotification("Error Retrieving Attorneys", errorMessage, 'error');
                 }
             },
             columns: [
@@ -208,7 +202,6 @@ class AttorneyController {
             e.preventDefault();
             let isValid = true;
 
-            // Validate Account Status (radio buttons)
             const isRadioSelected = $("input[name='edit_enabled']:checked").length > 0;
             const $radioError = $("#edit_radio-error");
             const $radioInputs = $("input[name='edit_enabled']");
@@ -221,7 +214,6 @@ class AttorneyController {
                 $radioInputs.removeClass("is-invalid");
             }
 
-            // Validate Name
             const $attyName = $("#edit_attyName");
             const $attyNameError = $attyName.next(".invalid-feedback");
             if ($attyName.val().trim() === "") {
@@ -233,7 +225,6 @@ class AttorneyController {
                 $attyName.removeClass("is-invalid");
             }
 
-            // Validate User ID
             const $attyUserId = $("#edit_attyUserId");
             const $attyUserIdError = $attyUserId.next(".invalid-feedback");
             if ($attyUserId.val().trim() === "" || isNaN($attyUserId.val()) || parseInt($attyUserId.val()) < 0) {
@@ -245,7 +236,6 @@ class AttorneyController {
                 $attyUserId.removeClass("is-invalid");
             }
 
-            // Validate Bar Number
             const $attyBar = $("#edit_attyBar");
             const $attyBarError = $attyBar.next(".invalid-feedback");
             if ($attyBar.val().trim() === "") {
@@ -257,27 +247,27 @@ class AttorneyController {
                 $attyBar.removeClass("is-invalid");
             }
 
-            // Validate Email Addresses
-            const $hdEmails = $("#edit_hdEmails");
-            const $emailError = $("#edit_email-error");
             const $emailList = $("#edit_email-list");
-            const hasEmails = $hdEmails.val().trim() !== "" || $emailList.children().length > 0;
+            const $emailError = $("#edit_email-error");
+            const emails = $("#edit_email-list li input[type='text']").map(function () { return $(this).val().trim(); }).get();
+            const hasEmails = emails.length > 0 && emails.every(e => e !== "");
             if (!hasEmails) {
+                $emailError.text("At least one email address is required.");
                 $emailError.show();
                 $emailList.addClass("is-invalid");
                 isValid = false;
             } else {
-                $emailError.hide();
-                $emailList.removeClass("is-invalid");
-            }
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const emails = $hdEmails.val().split(",").filter(e => e.trim() !== "");
-            const allEmailsValid = emails.every(email => emailRegex.test(email));
-            if (!allEmailsValid) {
-                $emailError.text("All email addresses must be valid.");
-                $emailError.show();
-                $emailList.addClass("is-invalid");
-                isValid = false;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const allEmailsValid = emails.every(email => emailRegex.test(email));
+                if (!allEmailsValid) {
+                    $emailError.text("All email addresses must be valid.");
+                    $emailError.show();
+                    $emailList.addClass("is-invalid");
+                    isValid = false;
+                } else {
+                    $emailError.hide();
+                    $emailList.removeClass("is-invalid");
+                }
             }
 
             if (isValid) {
@@ -308,11 +298,11 @@ class AttorneyController {
                 $this.removeClass("is-invalid");
             }
         });
+
         $("#edit_user_lookup").on("click", function (e) {
             e.preventDefault();
             const barNumber = $("#edit_attyBar").val();
             if (barNumber.trim() !== "") {
-                // Trigger GetSiteUser only in create mode
                 if ($("#edit_hdAttorneyId").val() === "") {
                     attorneyControllerInstance.GetSiteUser(barNumber);
                 }
@@ -322,7 +312,8 @@ class AttorneyController {
         $("#edit_new-email").on("click", function () {
             $("#edit_email-list").append('<li><input type="text" class="form-control me-3 d-inline-block" value=""><a href="#" data-toggle="tooltip" class="delete-email" title="Delete Email Address" role="button" aria-disabled="true" aria-label="Delete Email Address"><i class="fas fa-trash"></i></a></li>');
             setTimeout(() => {
-                if ($("#edit_hdEmails").val().trim() !== "" || $("#edit_email-list").children().length > 0) {
+                const emails = $("#edit_email-list li input[type='text']").map(function () { return $(this).val().trim(); }).get();
+                if (emails.length > 0 && emails.every(e => e !== "")) {
                     $("#edit_email-error").hide();
                     $("#edit_email-list").removeClass("is-invalid");
                 }
@@ -357,31 +348,31 @@ class AttorneyController {
         $.ajax({
             url: this.deleteUrl + attorneyId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (attorneyControllerInstance.attorneyTable) {
-                    attorneyControllerInstance.attorneyTable.draw();
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (attorneyControllerInstance.attorneyTable) {
+                        attorneyControllerInstance.attorneyTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Attorney deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Attorney deleted successfully.'
-                });
             },
             error: function (error) {
-                ShowNotification("Error Deleting Attorney", error.statusText, 'error');
+                ShowNotification("Error Deleting Attorney", error.statusText || "Failed to delete attorney.", 'error');
             }
         });
     }
@@ -422,23 +413,14 @@ class AttorneyController {
     }
 
     ClearEditValidations() {
-        // Clear account status validation
         $("input[name='edit_enabled']").removeClass("is-invalid");
         $("#edit_radio-error").hide();
-
-        // Clear name validation
         $("#edit_attyName").removeClass("is-invalid");
         $("#edit_attyName").next(".invalid-feedback").hide();
-
-        // Clear user ID validation
         $("#edit_attyUserId").removeClass("is-invalid");
         $("#edit_attyUserId").next(".invalid-feedback").hide();
-
-        // Clear bar number validation
         $("#edit_attyBar").removeClass("is-invalid");
         $("#edit_attyBar").next(".invalid-feedback").hide();
-
-        // Clear email validation
         $("#edit_email-list").removeClass("is-invalid");
         $("#edit_email-error").hide();
         $("#edit_email-error").text("At least one email address is required.");
@@ -453,11 +435,7 @@ class AttorneyController {
             url: getUrl,
             method: 'GET',
             dataType: 'json',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 if (response.data) {
                     $("#edit_attyName").val(`${response.data.lastname}, ${response.data.firstname}`);
@@ -470,12 +448,12 @@ class AttorneyController {
                     $("#edit_email-list").removeClass("is-invalid");
                     $("#edit_email-error").hide();
                 } else {
-                    ShowNotification("No User Found", "No user found for the provided Bar Number.", 'error');
+                    ShowNotification("No User Found", response.error || "No user found for the provided Bar Number.", 'error');
                 }
                 $("#edit_progress-attorney").hide();
             },
-            error: function () {
-                ShowNotification("Error", "Failed to retrieve user details. Please try again later.", 'error');
+            error: function (error) {
+                ShowNotification("Error Retrieving User Details", error.statusText || "Failed to retrieve user details.", 'error');
                 $("#edit_progress-attorney").hide();
             }
         });
@@ -498,21 +476,17 @@ class AttorneyController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
                             $("#edit_attyName").val(response.data.name);
                             $("#edit_attyUserId").val(response.data.UserId);
                             $("#edit_attyBar").val(response.data.bar_num);
-                            $("#edit_attyPhone").val(response.data.phone);
-                            $("#edit_attyNotes").val(response.data.notes);
+                            $("#edit_attyPhone").val(response.data.phone || '');
+                            $("#edit_attyNotes").val(response.data.notes || '');
                             $("#edit_hdAttorneyId").val(response.data.id);
-                            $("#edit_hdScheduling").val(response.data.scheduling);
+                            $("#edit_hdScheduling").val(response.data.scheduling || '');
                             if (response.data.enabled) {
                                 $("#edit_radio_enabled").prop('checked', true);
                                 $("#edit_radio_disabled").prop('checked', false);
@@ -528,10 +502,10 @@ class AttorneyController {
                             $("#attyName").html(response.data.name);
                             $("#attyUserId").html(response.data.UserId);
                             $("#attyBar").html(response.data.bar_num);
-                            $("#attyPhone").html(response.data.phone);
+                            $("#attyPhone").html(response.data.phone || '');
                             $("#attySchedule").html(response.data.scheduling ? "Yes" : "No");
                             $("#attyEnabled").html(response.data.enabled ? "Active" : "Disabled");
-                            $("#attyNotes").html(response.data.notes);
+                            $("#attyNotes").html(response.data.notes || '');
                             $("#hdAttorneyId").val(response.data.id);
                             if (response.data.emails?.length > 0) {
                                 $("#attyEmails").html(response.data.emails.map(email => `<span class="d-inline-flex">${email}</span>`).join(' '));
@@ -539,13 +513,12 @@ class AttorneyController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve attorney details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve attorney details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch attorney details');
-                    ShowNotification("Error", "Failed to retrieve attorney details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Attorney Details", error.statusText || "Failed to retrieve attorney details.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -571,49 +544,48 @@ class AttorneyController {
             $("#edit_progress-attorney").show();
             const attorneyData = {
                 UserId: parseInt($("#edit_attyUserId").val()),
-                name: $("#edit_attyName").val(),
-                bar_num: $("#edit_attyBar").val(),
-                phone: $("#edit_attyPhone").val(),
-                scheduling: $("#edit_hdScheduling").val(),
+                name: $("#edit_attyName").val().trim(),
+                bar_num: $("#edit_attyBar").val().trim(),
+                phone: $("#edit_attyPhone").val().trim() || null,
+                scheduling: $("#edit_hdScheduling").val().trim() || null,
                 enabled: $('input[name="edit_enabled"]:checked').val() === "1",
-                notes: $("#edit_attyNotes").val(),
-                emails: $("#edit_email-list li input[type='text']").map(function () { return $(this).val(); }).get()
+                notes: $("#edit_attyNotes").val().trim() || null,
+                emails: $("#edit_email-list li input[type='text']").map(function () { return $(this).val().trim(); }).get().filter(e => e !== "")
             };
             $.ajax({
                 url: `${this.service.baseUrl}AttorneyAPI/CreateAttorney`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(attorneyData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-attorney").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-attorney").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Attorney created successfully.'
+                            text: response.message || 'Attorney created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (attorneyControllerInstance.attorneyTable) {
+                            attorneyControllerInstance.attorneyTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-attorney").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating attorney.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-attorney").hide();
-                    ShowNotification("Error Creating Attorney", error.statusText, 'error');
+                    ShowNotification("Error Creating Attorney", error.statusText || "Failed to create attorney.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-attorney").hide();
-            ShowNotification("Error Creating Attorney", e.statusText, 'error');
+            ShowNotification("Error Creating Attorney", e.message, 'error');
         }
     }
 
@@ -621,51 +593,56 @@ class AttorneyController {
         try {
             $("#edit_progress-attorney").show();
             const attorneyData = {
-                id: $("#edit_hdAttorneyId").val(),
+                id: parseInt($("#edit_hdAttorneyId").val()),
                 UserId: parseInt($("#edit_attyUserId").val()),
-                name: $("#edit_attyName").val(),
-                bar_num: $("#edit_attyBar").val(),
-                phone: $("#edit_attyPhone").val(),
-                scheduling: $("#edit_hdScheduling").val(),
+                name: $("#edit_attyName").val().trim(),
+                bar_num: $("#edit_attyBar").val().trim(),
+                phone: $("#edit_attyPhone").val().trim() || null,
+                scheduling: $("#edit_hdScheduling").val().trim() || null,
                 enabled: $('input[name="edit_enabled"]:checked').val() === "1",
-                notes: $("#edit_attyNotes").val(),
-                emails: $("#edit_email-list li input[type='text']").map(function () { return $(this).val(); }).get()
+                notes: $("#edit_attyNotes").val().trim() || null,
+                emails: $("#edit_email-list li input[type='text']").map(function () { return $(this).val().trim(); }).get().filter(e => e !== "")
             };
             $.ajax({
                 url: `${this.service.baseUrl}AttorneyAPI/UpdateAttorney`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(attorneyData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-attorney").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-attorney").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Attorney updated successfully.'
+                            text: response.message || 'Attorney updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('AttorneyEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (attorneyControllerInstance.attorneyTable) {
+                            attorneyControllerInstance.attorneyTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-attorney").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating attorney.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-attorney").hide();
-                    ShowNotification("Error Updating Attorney", error.statusText, 'error');
+                    ShowNotification("Error Updating Attorney", error.statusText || "Failed to update attorney.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-attorney").hide();
-            ShowNotification("Error Updating Attorney", e.statusText, 'error');
+            ShowNotification("Error Updating Attorney", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

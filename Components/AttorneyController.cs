@@ -54,15 +54,15 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public IEnumerable<Attorney> GetAttorneyDropDownItems(string term)
+        public List<KeyValuePair<long,string>> GetAttorneyDropDownItems(string term)
         {
             IEnumerable<Attorney> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Attorney>();
-                t = rep.Find("Where name like @0",string.Format("%{0}%",term));
+                t = rep.Find("Where name like @0 OR bar_num like @1", string.Format("%{0}%",term), string.Format("{0}%", term));
             }
-            return t;
+            return t.Select(a=>new KeyValuePair<long,string>(a.id,string.Format("{0} - {1}",a.name,a.bar_num))).ToList();
         }
         public Attorney GetAttorney(long attorneyId)
         {
@@ -74,18 +74,14 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public CourtListItem GetAttorneyListItem(long attorneyId)
+        public KeyValuePair<long, string> GetAttorneyListItem(long attorneyId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var attorney = ctx.GetRepository<Attorney>().GetById(attorneyId);
                 return attorney != null
-                    ? new CourtListItem
-                    {
-                        value = attorney.id,
-                        text = attorney.name
-                    }
-                    : new CourtListItem();
+                    ? new KeyValuePair<long, string>(attorney.id,attorney.name)
+                    : new KeyValuePair<long, string>();
             }
         }
 

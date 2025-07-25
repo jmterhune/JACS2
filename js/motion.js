@@ -47,23 +47,19 @@ class MotionController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblMotion_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve motions.';
                     if (error.status === 401) {
-                        ShowNotification('Error Retrieving Motions', 'Please make sure you are logged in and try again. Error: ' + error.statusText, 'error');
-                    } else {
-                        ShowNotification('Error Retrieving Motions', 'The following error occurred attempting to retrieve motion information. Error: ' + error.statusText, 'error');
+                        errorMessage = 'Please make sure you are logged in and try again.';
                     }
+                    ShowNotification('Error Retrieving Motions', errorMessage, 'error');
                 }
             },
             columns: [
@@ -230,35 +226,31 @@ class MotionController {
         $.ajax({
             url: this.deleteUrl + motionId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (motionControllerInstance.motionTable) {
-                    motionControllerInstance.motionTable.draw();
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (motionControllerInstance.motionTable) {
+                        motionControllerInstance.motionTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('MotionEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('MotionDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Motion deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('MotionEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('MotionDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Motion deleted successfully.'
-                });
             },
             error: function (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error Deleting Motion',
-                    text: error.statusText
-                });
+                ShowNotification("Error Deleting Motion", error.statusText || "Failed to delete motion.", 'error');
             }
         });
     }
@@ -309,11 +301,7 @@ class MotionController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -330,13 +318,12 @@ class MotionController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification('Error', 'Failed to retrieve motion details. Please try again later.', 'error');
+                        ShowNotification('Error', response.error || 'Failed to retrieve motion details. Please try again later.', 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch motion details');
-                    ShowNotification('Error', 'Failed to retrieve motion details. Please try again later.', 'error');
+                error: function (error) {
+                    ShowNotification('Error Retrieving Motion Details', error.statusText || 'Failed to retrieve motion details.', 'error');
                     $(progressId).hide();
                 }
             });
@@ -361,57 +348,44 @@ class MotionController {
         try {
             $("#edit_progress-motion").show();
             const motionData = {
-                description: $("#edit_motionDescription").val(),
+                description: $("#edit_motionDescription").val().trim(),
                 lag: $("#edit_motionLag").val() ? parseInt($("#edit_motionLag").val()) : null,
                 lead: $("#edit_motionLead").val() ? parseInt($("#edit_motionLead").val()) : null
             };
             $.ajax({
                 url: `${this.service.baseUrl}MotionAPI/CreateMotion`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(motionData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-motion").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-motion").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Motion created successfully.'
+                            text: response.message || 'Motion created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('MotionEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (motionControllerInstance.motionTable) {
+                            motionControllerInstance.motionTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-motion").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating motion.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-motion").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Creating Motion',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Creating Motion", error.statusText || "Failed to create motion.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-motion").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Creating Motion',
-                text: e.statusText
-            });
+            ShowNotification("Error Creating Motion", e.message, 'error');
         }
     }
 
@@ -419,58 +393,51 @@ class MotionController {
         try {
             $("#edit_progress-motion").show();
             const motionData = {
-                id: $("#edit_hdMotionId").val(),
-                description: $("#edit_motionDescription").val(),
+                id: parseInt($("#edit_hdMotionId").val()),
+                description: $("#edit_motionDescription").val().trim(),
                 lag: $("#edit_motionLag").val() ? parseInt($("#edit_motionLag").val()) : null,
                 lead: $("#edit_motionLead").val() ? parseInt($("#edit_motionLead").val()) : null
             };
             $.ajax({
                 url: `${this.service.baseUrl}MotionAPI/UpdateMotion`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(motionData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-motion").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-motion").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Motion updated successfully.'
+                            text: response.message || 'Motion updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('MotionEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (motionControllerInstance.motionTable) {
+                            motionControllerInstance.motionTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-motion").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating motion.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-motion").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Updating Motion',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Updating Motion", error.statusText || "Failed to update motion.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-motion").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Updating Motion',
-                text: e.statusText
-            });
+            ShowNotification("Error Updating Motion", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

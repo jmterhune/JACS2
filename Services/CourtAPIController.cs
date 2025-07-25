@@ -66,14 +66,15 @@ namespace tjc.Modules.jacs.Services
 
                 var ctl = new CourtController();
                 courts = ctl.GetCourtDropDownItems(searchTerm);
-                return Request.CreateResponse(new CourtListItemResults { data = courts, error = null });
+                return Request.CreateResponse(new ListItemOptionResult { data = courts, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CourtListItemResults { data = courts, error = ex.Message });
+                return Request.CreateResponse(new ListItemOptionResult { data = courts, error = ex.Message });
             }
         }
+
         [HttpGet]
         public HttpResponseMessage GetCourtsUnassigned()
         {
@@ -95,14 +96,15 @@ namespace tjc.Modules.jacs.Services
                         description = c.description
                     }).ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { data = courts });
+                return Request.CreateResponse(HttpStatusCode.OK, new { data = courts, error = "" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
+
         [HttpGet]
         public HttpResponseMessage DeleteCourt(long p1)
         {
@@ -110,12 +112,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtController();
                 ctl.DeleteCourt(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -126,17 +128,17 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtController();
                 Court court = ctl.GetCourt(p1);
-                CourtViewModel courtViewModel = court != null ? new CourtViewModel(court) : null;
-                if (courtViewModel == null)
+                if (court == null)
                 {
-                    return Request.CreateResponse(System.Net.HttpStatusCode.NotFound, new CourtResult { data = null, error = "Court not found" });
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new CourtResult { data = null, error = "Court not found" });
                 }
-                return Request.CreateResponse(new CourtResult { data = courtViewModel, error = null });
+                CourtViewModel courtViewModel = new CourtViewModel(court);
+                return Request.CreateResponse(HttpStatusCode.OK, new CourtResult { data = courtViewModel, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CourtResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtResult { data = null, error = ex.Message });
             }
         }
 
@@ -148,18 +150,17 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CourtController();
                 var court = p1.ToObject<CourtViewModel>();
-                // Ensure required fields are set
                 if (string.IsNullOrWhiteSpace(court.description) || court.county_id <= 0)
                 {
-                    return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, "Description and County are required.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and County are required." });
                 }
                 ctl.CreateCourt(court);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -173,25 +174,24 @@ namespace tjc.Modules.jacs.Services
                 var court = p1.ToObject<CourtViewModel>();
                 if (court.id <= 0)
                 {
-                    return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, "Court ID is required for update.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court ID is required for update." });
                 }
-                // Ensure required fields are set
                 if (string.IsNullOrWhiteSpace(court.description) || court.county_id <= 0)
                 {
-                    return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest, "Description and County are required.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and Countyare required." });
                 }
                 var existingCourt = ctl.GetCourt(court.id);
                 if (existingCourt == null)
                 {
-                    return Request.CreateResponse(System.Net.HttpStatusCode.NotFound, "Court not found.");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
                 }
                 ctl.UpdateCourt(court);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -203,16 +203,7 @@ namespace tjc.Modules.jacs.Services
             public int draw { get; set; }
             public string error { get; set; }
         }
-        internal class CourtListItemResults
-        {
-            public List<KeyValuePair<long, string>> data { get; set; }
-            public string error { get; set; }
-        }
-        internal class CourtResults
-        {
-            public List<Court> data { get; set; }
-            public string error { get; set; }
-        }
+
         internal class CourtResult
         {
             public CourtViewModel data { get; set; }

@@ -63,71 +63,37 @@
                                         <label>Case Number Format</label>
                                         <div>
                                             <div class="case-format-row">
-                                                <input type="radio" name="case_format_type" value="1" id="first_radio">
+                                                <input type="radio" name="case_format_type" value="1" id="radio_1">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="7" minlength="7" placeholder="xxxxxxx">
                                             </div>
                                             <div class="case-format-row">
-                                                <input type="radio" name="case_format_type" value="2" id="second_radio">
+                                                <input type="radio" name="case_format_type" value="2" id="radio_2">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
-                                                <select class="case_num_format_multiple">
+                                                <select class="case_num_format_multiple case_type_select">
                                                     <option value="0"></option>
-                                                    <option value="CA">CA</option>
-                                                    <option value="CC">CC</option>
-                                                    <option value="CF">CF</option>
-                                                    <option value="CJ">CJ</option>
-                                                    <option value="CM">CM</option>
-                                                    <option value="CO">CO</option>
-                                                    <option value="CP">CP</option>
-                                                    <option value="CT">CT</option>
-                                                    <option value="DP">DP</option>
-                                                    <option value="DR">DR</option>
-                                                    <option value="GA">GA</option>
-                                                    <option value="IN">IN</option>
-                                                    <option value="MH">MH</option>
-                                                    <option value="MM">MM</option>
-                                                    <option value="MO">MO</option>
-                                                    <option value="SC">SC</option>
-                                                    <option value="TR">TR</option>
                                                 </select>
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="7" minlength="7" placeholder="xxxxxxx">
                                             </div>
                                             <div class="case-format-row">
-                                                <input type="radio" name="case_format_type" value="3" id="third_radio" checked="">
+                                                <input type="radio" name="case_format_type" value="3" id="radio_3" checked="">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="2" minlength="2" placeholder="County Code" id="case_format_input_first">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="Year" id="case_format_input_second">
-                                                <select class="case_num_format_multiple">
+                                                <select class="case_num_format_multiple case_type_select">
                                                     <option value="0"></option>
-                                                    <option value="CA">CA</option>
-                                                    <option value="CC">CC</option>
-                                                    <option value="CF">CF</option>
-                                                    <option value="CJ">CJ</option>
-                                                    <option value="CM">CM</option>
-                                                    <option value="CO">CO</option>
-                                                    <option value="CP">CP</option>
-                                                    <option value="CT">CT</option>
-                                                    <option value="DP">DP</option>
-                                                    <option value="DR">DR</option>
-                                                    <option value="GA">GA</option>
-                                                    <option value="IN">IN</option>
-                                                    <option value="MH">MH</option>
-                                                    <option value="MM">MM</option>
-                                                    <option value="MO">MO</option>
-                                                    <option value="SC">SC</option>
-                                                    <option value="TR">TR</option>
                                                 </select>
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="6" minlength="6" placeholder="Case Number" id="case_format_input_three">
                                                 <input type="text" value="XXXX" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" id="case_format_input_four">
                                                 <input type="text" value="XX" class="col-md-2 case_num_format_multiple" maxlength="2" minlength="2" id="case_format_input_five">
                                             </div>
                                             <div class="case-format-row">
-                                                <input type="radio" name="case_format_type" value="4" id="fourth_radio">
+                                                <input type="radio" name="case_format_type" value="4" id="radio_4">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="7" minlength="7" placeholder="xxxxxx">
                                                 <input type="text" value="" class="col-md-2 case_num_format_multiple" maxlength="4" minlength="4" placeholder="xxxx">
                                             </div>
                                             <div class="case-format-row">
-                                                <input type="radio" name="case_format_type" value="5" id="fifth_radio">
+                                                <input type="radio" name="case_format_type" value="5" id="radio_5">
                                                 <input type="text" value="" class="col-md-4 case_num_format_multiple" placeholder="xxxxxxxxxxxx">
                                                 <input type="hidden" name="case_num_format" id="case_format_val" value="">
                                             </div>
@@ -216,7 +182,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3 d-none" id="div_publicDocketDays">
-                                        <label>Number of Days on Internet</label>
+                                        <label>Number of Days of Docket on Internet</label>
                                         <input type="number" id="edit_publicDocketDays" class="form-control">
                                     </div>
                                 </div>
@@ -253,7 +219,8 @@
                                     </div>
                                     <div class="col-md-12">
                                         <label>Available Motions</label>
-                                        <select id="edit_availableMotions" class="form-control" name="available_motions[]" multiple="multiple"></select>
+                                        <select id="edit_availableMotions" class="form-control" aria-describedby="helpAvailableMotions" name="available_motions[]" multiple="multiple"></select>
+                                        <div id="helpAvailableMotions" class="form-text mb-0">Attorneys will be able to select the above motions when scheduling</div>
                                     </div>
                                     <div class="col-md-12">
                                         <label>Restricted Motions</label>
@@ -292,7 +259,7 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="tab_timeslot-search-header">
                             <div class="col-md-12 no-form-group">
-                                <label>Timeslot Search Header</label>
+                                <label>Custom Header</label>
                                 <div id="editor_timeslotHeader" class="summernote"></div>
                                 <textarea id="edit_timeslotHeader" class="form-control hidden"></textarea>
                             </div>
@@ -310,7 +277,7 @@
                 <button type="button" class="btn btn-success" id="edit_cmdSave">
                     <i class="fas fa-save" aria-hidden="true"></i>&nbsp;Save
                 </button>
-                <a href="/court" class="btn btn-secondary">Cancel</a>
+                <a href='<%=CourtListUrl %>' class="btn btn-secondary">Cancel</a>
             </p>
         </div>
     </main>
@@ -329,7 +296,8 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" /><script>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<script>
     var moduleId = <%=ModuleId%>;
     var service = {
         path: "JACS",

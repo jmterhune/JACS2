@@ -1,5 +1,8 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -41,6 +44,24 @@ namespace tjc.Modules.jacs.Components
                 t = rep.Get();
             }
             return t;
+        }
+        public List<KeyValuePair<long, string>> GetMotionDropDownItems()
+        {
+            try
+            {
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var rep = ctx.GetRepository<Motion>();
+                    var results = rep.Get()
+                        .Select(m => new KeyValuePair<long, string>(m.id, m.description)).ToList();
+                    return results ?? new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
+            }
         }
 
         public Motion GetMotion(long motionId)

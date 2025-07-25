@@ -1,4 +1,5 @@
-﻿let courtPermissionControllerInstance = null;
+﻿// courtPermission.js
+let courtPermissionControllerInstance = null;
 
 class CourtPermissionController {
     constructor(params = {}) {
@@ -51,15 +52,19 @@ class CourtPermissionController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
+                error: function (error) {
+                    $("#tblCourtPermission_processing").hide();
+                    if (error.status === 401) {
+                        ShowNotification("Error Retrieving Court Permissions", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
+                    } else {
+                        ShowNotification("Error Retrieving Court Permissions", "The following error occurred attempting to retrieve court permission information. Error: " + error.statusText, 'error');
+                    }
+                }
             },
             columns: [
                 {
@@ -249,13 +254,10 @@ class CourtPermissionController {
 
     populateDropdowns() {
         $.ajax({
-            url: `${this.service.baseUrl}CourtPermissionAPI/GetUsersForDropdown`,
+            url: `${this.service.baseUrl}CourtPermissionAPI/GetUserDropDownItems`,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (users) {
                 const $userDropdown = $("#edit_cpUser");
                 $userDropdown.empty().append('<option value="">Select User</option>');
@@ -263,19 +265,16 @@ class CourtPermissionController {
                     $userDropdown.append(`<option value="${user.Key}">${user.Value}</option>`);
                 });
             },
-            error: function () {
-                ShowNotification("Error", "Failed to load users.", 'error');
+            error: function (error) {
+                ShowNotification("Error", "Failed to load users. " + error.statusText, 'error');
             }
         });
 
         $.ajax({
-            url: `${this.service.baseUrl}CourtPermissionAPI/GetJudgesForDropdown`,
+            url: `${this.service.baseUrl}CourtPermissionAPI/GetJudgeDropDownItems`,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (judges) {
                 const $judgeDropdown = $("#edit_cpJudge");
                 $judgeDropdown.empty().append('<option value="">Select Judge</option>');
@@ -283,8 +282,8 @@ class CourtPermissionController {
                     $judgeDropdown.append(`<option value="${judge.Key}">${judge.Value}</option>`);
                 });
             },
-            error: function () {
-                ShowNotification("Error", "Failed to load judges.", 'error');
+            error: function (error) {
+                ShowNotification("Error", "Failed to load judges. " + error.statusText, 'error');
             }
         });
     }
@@ -300,28 +299,29 @@ class CourtPermissionController {
         $.ajax({
             url: this.deleteUrl + courtPermissionId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (courtPermissionControllerInstance.courtPermissionTable) {
-                    courtPermissionControllerInstance.courtPermissionTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (courtPermissionControllerInstance.courtPermissionTable) {
+                        courtPermissionControllerInstance.courtPermissionTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtPermissionEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('CourtPermissionDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Court Permission deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtPermissionEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('CourtPermissionDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Court Permission deleted successfully.'
-                });
             },
             error: function (error) {
                 ShowNotification("Error Deleting Court Permission", error.statusText, 'error');
@@ -378,11 +378,7 @@ class CourtPermissionController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         const permission = response.data;
@@ -397,11 +393,8 @@ class CourtPermissionController {
                             $.ajax({
                                 url: `${courtPermissionControllerInstance.service.baseUrl}CourtPermissionAPI/GetUsersForDropdown`,
                                 type: 'GET',
-                                beforeSend: function (xhr) {
-                                    xhr.setRequestHeader('ModuleId', moduleId);
-                                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                                },
+                                dataType: 'json',
+                                beforeSend: xhr => this.setAjaxHeaders(xhr),
                                 success: function (users) {
                                     const user = users.find(u => u.Key === permission.user_id);
                                     $("#cpUserDisplayName").html(user ? user.Value : "Unknown");
@@ -410,11 +403,8 @@ class CourtPermissionController {
                             $.ajax({
                                 url: `${courtPermissionControllerInstance.service.baseUrl}CourtPermissionAPI/GetJudgesForDropdown`,
                                 type: 'GET',
-                                beforeSend: function (xhr) {
-                                    xhr.setRequestHeader('ModuleId', moduleId);
-                                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                                },
+                                dataType: 'json',
+                                beforeSend: xhr => this.setAjaxHeaders(xhr),
                                 success: function (judges) {
                                     const judge = judges.find(j => j.Key === permission.judge_id);
                                     $("#cpJudgeName").html(judge ? judge.Value : "Unknown");
@@ -426,13 +416,12 @@ class CourtPermissionController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve court permission details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve court permission details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch court permission details');
-                    ShowNotification("Error", "Failed to retrieve court permission details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Court Permission Details", error.statusText || "Failed to retrieve court permission details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -465,38 +454,37 @@ class CourtPermissionController {
             $.ajax({
                 url: `${this.service.baseUrl}CourtPermissionAPI/CreateCourtPermission`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(permissionData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-courtpermission").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courtpermission").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Court Permission created successfully.'
+                            text: response.message || 'Court Permission created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtPermissionEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (courtPermissionControllerInstance.courtPermissionTable) {
+                            courtPermissionControllerInstance.courtPermissionTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-courtpermission").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating court permission.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courtpermission").hide();
-                    ShowNotification("Error Creating Court Permission", error.statusText, 'error');
+                    ShowNotification("Error Creating Court Permission", error.statusText || "Failed to create court permission.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courtpermission").hide();
-            ShowNotification("Error Creating Court Permission", e.statusText, 'error');
+            ShowNotification("Error Creating Court Permission", e.message, 'error');
         }
     }
 
@@ -504,7 +492,7 @@ class CourtPermissionController {
         try {
             $("#edit_progress-courtpermission").show();
             const permissionData = {
-                id: $("#edit_hdCourtPermissionId").val(),
+                id: parseInt($("#edit_hdCourtPermissionId").val()),
                 user_id: $("#edit_cpUser").val(),
                 judge_id: $("#edit_cpJudge").val(),
                 active: $("input[name='cpActive']:checked").val() === "true",
@@ -513,38 +501,43 @@ class CourtPermissionController {
             $.ajax({
                 url: `${this.service.baseUrl}CourtPermissionAPI/UpdateCourtPermission`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(permissionData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-courtpermission").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courtpermission").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Court Permission updated successfully.'
+                            text: response.message || 'Court Permission updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtPermissionEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (courtPermissionControllerInstance.courtPermissionTable) {
+                            courtPermissionControllerInstance.courtPermissionTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-courtpermission").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating court permission.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courtpermission").hide();
-                    ShowNotification("Error Updating Court Permission", error.statusText, 'error');
+                    ShowNotification("Error Updating Court Permission", error.statusText || "Failed to update court permission.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courtpermission").hide();
-            ShowNotification("Error Updating Court Permission", e.statusText, 'error');
+            ShowNotification("Error Updating Court Permission", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

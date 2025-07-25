@@ -1,4 +1,6 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.jacs.Services.ViewModels;
@@ -45,7 +47,24 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-      
+        public List<KeyValuePair<long, string>> GetJudgeDropDownItems()
+        {
+            try
+            {
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var rep = ctx.GetRepository<Judge>();
+                    var results = rep.Get()
+                        .Select(j => new KeyValuePair<long, string>(j.id, j.name)).ToList();
+                    return results ?? new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
+            }
+        }
         public Judge GetJudge(long judgeId)
         {
             Judge t;
@@ -66,6 +85,7 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+
 
         public void UpdateJudge(Judge t)
         {

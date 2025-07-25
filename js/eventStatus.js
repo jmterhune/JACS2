@@ -40,6 +40,7 @@ class EventStatusController {
                 $("#edit_cmdSave").trigger('click');
             }
         });
+
         this.eventStatusTable = $('#tblEventStatus').DataTable({
             searching: true,
             autoWidth: true,
@@ -47,18 +48,14 @@ class EventStatusController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
-                    $("#tblEventStatus").hide();
+                    $("#tblEventStatus_processing").hide();
                     if (error.status === 401) {
                         ShowNotification("Error Retrieving Event Statuses", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
                     } else {
@@ -93,7 +90,7 @@ class EventStatusController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin === "True") {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Status" data-id="${row.id}"><i class="fas fa-trash"></i></ personal-button>`;
+                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Status" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -218,28 +215,29 @@ class EventStatusController {
         $.ajax({
             url: this.deleteUrl + eventStatusId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (eventStatusControllerInstance.eventStatusTable) {
-                    eventStatusControllerInstance.eventStatusTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (eventStatusControllerInstance.eventStatusTable) {
+                        eventStatusControllerInstance.eventStatusTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Event Status deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Event Status deleted successfully.'
-                });
             },
             error: function (error) {
                 ShowNotification("Error Deleting Event Status", error.statusText, 'error');
@@ -289,11 +287,7 @@ class EventStatusController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -306,13 +300,12 @@ class EventStatusController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve event status details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve event status details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch event status details');
-                    ShowNotification("Error", "Failed to retrieve event status details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Event Status Details", error.statusText || "Failed to retrieve event status details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -337,43 +330,42 @@ class EventStatusController {
         try {
             $("#edit_progress-eventstatus").show();
             const eventStatusData = {
-                name: $("#edit_esName").val()
+                name: $("#edit_esName").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}EventStatusAPI/CreateEventStatus`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(eventStatusData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-eventstatus").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-eventstatus").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Event Status created successfully.'
+                            text: response.message || 'Event Status created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (eventStatusControllerInstance.eventStatusTable) {
+                            eventStatusControllerInstance.eventStatusTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-eventstatus").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating event status.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-eventstatus").hide();
-                    ShowNotification("Error Creating Event Status", error.statusText, 'error');
+                    ShowNotification("Error Creating Event Status", error.statusText || "Failed to create event status.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-eventstatus").hide();
-            ShowNotification("Error Creating Event Status", e.statusText, 'error');
+            ShowNotification("Error Creating Event Status", e.message, 'error');
         }
     }
 
@@ -381,44 +373,49 @@ class EventStatusController {
         try {
             $("#edit_progress-eventstatus").show();
             const eventStatusData = {
-                id: $("#edit_hdEventStatusId").val(),
-                name: $("#edit_esName").val()
+                id: parseInt($("#edit_hdEventStatusId").val()),
+                name: $("#edit_esName").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}EventStatusAPI/UpdateEventStatus`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(eventStatusData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-eventstatus").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-eventstatus").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Event Status updated successfully.'
+                            text: response.message || 'Event Status updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (eventStatusControllerInstance.eventStatusTable) {
+                            eventStatusControllerInstance.eventStatusTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-eventstatus").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating event status.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-eventstatus").hide();
-                    ShowNotification("Error Updating Event Status", error.statusText, 'error');
+                    ShowNotification("Error Updating Event Status", error.statusText || "Failed to update event status.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-eventstatus").hide();
-            ShowNotification("Error Updating Event Status", e.statusText, 'error');
+            ShowNotification("Error Updating Event Status", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

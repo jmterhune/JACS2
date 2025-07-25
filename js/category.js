@@ -47,23 +47,19 @@ class CategoryController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
                 },
                 error: function (error) {
                     $("#tblCategory_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve categories.';
                     if (error.status === 401) {
-                        ShowNotification("Error Retrieving Categories", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
-                    } else {
-                        ShowNotification("Error Retrieving Categories", "The following error occurred attempting to retrieve category information. Error: " + error.statusText, 'error');
+                        errorMessage = 'Please make sure you are logged in and try again.';
                     }
+                    ShowNotification("Error Retrieving Categories", errorMessage, 'error');
                 }
             },
             columns: [
@@ -132,6 +128,7 @@ class CategoryController {
                 });
             });
         });
+
         $(document).on('click', '.cat-detail', function (e) {
             e.preventDefault();
             var categoryId = $(this).data("id");
@@ -217,31 +214,31 @@ class CategoryController {
         $.ajax({
             url: this.deleteUrl + categoryId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (categoryControllerInstance.categoryTable) {
-                    categoryControllerInstance.categoryTable.draw();
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (categoryControllerInstance.categoryTable) {
+                        categoryControllerInstance.categoryTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('CategoryEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('CategoryDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Category deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('CategoryEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('CategoryDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Category deleted successfully.'
-                });
             },
             error: function (error) {
-                ShowNotification("Error Deleting Category", error.statusText, 'error');
+                ShowNotification("Error Deleting Category", error.statusText || "Failed to delete category.", 'error');
             }
         });
     }
@@ -288,11 +285,7 @@ class CategoryController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -305,13 +298,12 @@ class CategoryController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve category details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve category details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch category details');
-                    ShowNotification("Error", "Failed to retrieve category details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Category Details", error.statusText || "Failed to retrieve category details.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -336,43 +328,42 @@ class CategoryController {
         try {
             $("#edit_progress-category").show();
             const categoryData = {
-                description: $("#edit_catDescription").val()
+                description: $("#edit_catDescription").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CategoryAPI/CreateCategory`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(categoryData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-category").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-category").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Category created successfully.'
+                            text: response.message || 'Category created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CategoryEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (categoryControllerInstance.categoryTable) {
+                            categoryControllerInstance.categoryTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-category").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating category.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-category").hide();
-                    ShowNotification("Error Creating Category", error.statusText, 'error');
+                    ShowNotification("Error Creating Category", error.statusText || "Failed to create category.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-category").hide();
-            ShowNotification("Error Creating Category", e.statusText, 'error');
+            ShowNotification("Error Creating Category", e.message, 'error');
         }
     }
 
@@ -380,44 +371,49 @@ class CategoryController {
         try {
             $("#edit_progress-category").show();
             const categoryData = {
-                id: $("#edit_hdCategoryId").val(),
-                description: $("#edit_catDescription").val()
+                id: parseInt($("#edit_hdCategoryId").val()),
+                description: $("#edit_catDescription").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CategoryAPI/UpdateCategory`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(categoryData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-category").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-category").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Category updated successfully.'
+                            text: response.message || 'Category updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CategoryEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (categoryControllerInstance.categoryTable) {
+                            categoryControllerInstance.categoryTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-category").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating category.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-category").hide();
-                    ShowNotification("Error Updating Category", error.statusText, 'error');
+                    ShowNotification("Error Updating Category", error.statusText || "Failed to update category.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-category").hide();
-            ShowNotification("Error Updating Category", e.statusText, 'error');
+            ShowNotification("Error Updating Category", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

@@ -1,5 +1,4 @@
 ﻿let courtTypeControllerInstance = null;
-
 class CourtTypeController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
@@ -48,13 +47,9 @@ class CourtTypeController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
@@ -82,6 +77,12 @@ class CourtTypeController {
                     },
                     className: "command-item",
                     orderable: false
+                },
+                {
+                    data: "code",
+                    render: function (data) {
+                        return data || '';
+                    }
                 },
                 {
                     data: "description",
@@ -183,7 +184,9 @@ class CourtTypeController {
             let isValid = true;
 
             const $courtTypeDescription = $("#edit_courtTypeDescription");
+            const $courtTypeCode = $("#edit_courtTypeCode");
             const $courtTypeDescriptionError = $courtTypeDescription.next(".invalid-feedback");
+            const $courtTypeCodeError = $courtTypeCode.next(".invalid-feedback");
             if ($courtTypeDescription.val().trim() === "") {
                 $courtTypeDescriptionError.show();
                 $courtTypeDescription.addClass("is-invalid");
@@ -192,6 +195,14 @@ class CourtTypeController {
                 $courtTypeDescriptionError.hide();
                 $courtTypeDescription.removeClass("is-invalid");
             }
+            if ($courtTypeCode.val().trim() === "") {
+                $courtTypeCodeError.show();
+                $courtTypeCode.addClass("is-invalid");
+                isValid = false;
+            } else {
+                $courtTypeCodeError.hide();
+                $courtTypeCode.removeClass("is-invalid");
+            }
 
             if (isValid) {
                 courtTypeControllerInstance.SaveCourtType();
@@ -199,6 +210,13 @@ class CourtTypeController {
         });
 
         $("#edit_courtTypeDescription").on("input", function () {
+            const $this = $(this);
+            if ($this.val().trim() !== "") {
+                $this.next(".invalid-feedback").hide();
+                $this.removeClass("is-invalid");
+            }
+        });
+        $("#edit_courtTypeCode").on("input", function () {
             const $this = $(this);
             if ($this.val().trim() !== "") {
                 $this.next(".invalid-feedback").hide();
@@ -218,28 +236,28 @@ class CourtTypeController {
         $.ajax({
             url: this.deleteUrl + courtTypeId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (courtTypeControllerInstance.courtTypeTable) {
-                    courtTypeControllerInstance.courtTypeTable.draw();
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (courtTypeControllerInstance.courtTypeTable) {
+                        courtTypeControllerInstance.courtTypeTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTypeEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('CourtTypeDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Court Type deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTypeEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('CourtTypeDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Court Type deleted successfully.'
-                });
             },
             error: function (error) {
                 ShowNotification("Error Deleting Court Type", error.statusText, 'error');
@@ -259,17 +277,21 @@ class CourtTypeController {
 
     ClearDetailForm() {
         $("#courtTypeDescription").html("");
+        $("#courtTypeCode").html("");
         $("#hdCourtTypeId").val("");
     }
 
     ClearEditForm() {
         $("#edit_courtTypeDescription").val("");
+        $("#edit_courtTypeCode").val("");
         $("#edit_hdCourtTypeId").val("");
     }
 
     ClearEditValidations() {
         $("#edit_courtTypeDescription").removeClass("is-invalid");
         $("#edit_courtTypeDescription").next(".invalid-feedback").hide();
+        $("#edit_courtTypeCode").removeClass("is-invalid");
+        $("#edit_courtTypeCode").next(".invalid-feedback").hide();
     }
 
     ViewCourtType(courtTypeId, isEditMode = false) {
@@ -289,30 +311,27 @@ class CourtTypeController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
                             $("#edit_hdCourtTypeId").val(response.data.id);
                             $("#edit_courtTypeDescription").val(response.data.description);
+                            $("#edit_courtTypeCode").val(response.data.code);
                             $("#CourtTypeEditModalLabel").html(`Edit Court Type: ${response.data.description}`);
                         } else {
                             $("#courtTypeDescription").html(response.data.description);
+                            $("#courtTypeCode").html(response.data.code);
                             $("#hdCourtTypeId").val(response.data.id);
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve court type details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve court type details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch court type details');
-                    ShowNotification("Error", "Failed to retrieve court type details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Court Type Details", error.statusText || "Failed to retrieve court type details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -337,43 +356,43 @@ class CourtTypeController {
         try {
             $("#edit_progress-courtType").show();
             const courtTypeData = {
-                description: $("#edit_courtTypeDescription").val()
+                description: $("#edit_courtTypeDescription").val().trim(),
+                code: $("#edit_courtTypeCode").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CourtTypeAPI/CreateCourtType`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(courtTypeData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-courtType").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courtType").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Court Type created successfully.'
+                            text: response.message || 'Court Type created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTypeEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (courtTypeControllerInstance.courtTypeTable) {
+                            courtTypeControllerInstance.courtTypeTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-courtType").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating court type.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courtType").hide();
-                    ShowNotification("Error Creating Court Type", error.statusText, 'error');
+                    ShowNotification("Error Creating Court Type", error.statusText || "Failed to create court type.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courtType").hide();
-            ShowNotification("Error Creating Court Type", e.statusText, 'error');
+            ShowNotification("Error Creating Court Type", e.message, 'error');
         }
     }
 
@@ -381,44 +400,50 @@ class CourtTypeController {
         try {
             $("#edit_progress-courtType").show();
             const courtTypeData = {
-                id: $("#edit_hdCourtTypeId").val(),
-                description: $("#edit_courtTypeDescription").val()
+                id: parseInt($("#edit_hdCourtTypeId").val()),
+                description: $("#edit_courtTypeDescription").val().trim(),
+                code: $("#edit_courtTypeCode").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CourtTypeAPI/UpdateCourtType`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(courtTypeData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-courtType").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courtType").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Court Type updated successfully.'
+                            text: response.message || 'Court Type updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTypeEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (courtTypeControllerInstance.courtTypeTable) {
+                            courtTypeControllerInstance.courtTypeTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-courtType").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating court type.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courtType").hide();
-                    ShowNotification("Error Updating Court Type", error.statusText, 'error');
+                    ShowNotification("Error Updating Court Type", error.statusText || "Failed to update court type.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courtType").hide();
-            ShowNotification("Error Updating Court Type", e.statusText, 'error');
+            ShowNotification("Error Updating Court Type", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

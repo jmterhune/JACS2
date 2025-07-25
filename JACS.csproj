@@ -97,6 +97,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\websites\intranet-new\bin\System.Net.Http.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -115,6 +118,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Common.cs" />
     <Compile Include="EventView.ascx.cs">
       <DependentUpon>EventView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -269,7 +273,6 @@
     <Compile Include="Components\CourtMotionController.cs" />
     <Compile Include="Components\CourtPermission.cs" />
     <Compile Include="Components\CourtPermissionController.cs" />
-    <Compile Include="Components\CourtRestrictedMotionController.cs" />
     <Compile Include="Components\CourtTemplate.cs" />
     <Compile Include="Components\CourtTemplateController.cs" />
     <Compile Include="Components\CourtTemplateOrder.cs" />
@@ -335,7 +338,6 @@
     <Compile Include="Controls\navbar.ascx.designer.cs">
       <DependentUpon>navbar.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Components\CourtRestrictedMotion.cs" />
     <Compile Include="JACSModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

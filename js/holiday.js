@@ -40,6 +40,7 @@ class HolidayController {
                 $("#edit_cmdSave").trigger('click');
             }
         });
+
         this.holidayTable = $('#tblHoliday').DataTable({
             searching: true,
             autoWidth: true,
@@ -47,25 +48,20 @@ class HolidayController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblHoliday_processing").hide();
                     if (error.status === 401) {
-                        ShowNotification('Error Retrieving Holidays', 'Please make sure you are logged in and try again. Error: ' + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Holidays", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
                     } else {
-                        ShowNotification('Error Retrieving Holidays', 'The following error occurred attempting to retrieve holiday information. Error: ' + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Holidays", "The following error occurred attempting to retrieve holiday information. Error: " + error.statusText, 'error');
                     }
                 }
-
             },
             columns: [
                 {
@@ -122,7 +118,6 @@ class HolidayController {
 
         $(".dt-length").prepend($("#lnkAdd"));
         this.holidayTable.on('draw', function () {
-
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const holidayId = $(this).data("id");
@@ -217,7 +212,15 @@ class HolidayController {
             }
         });
 
-        $("#edit_holName, #edit_holDate").on("input", function () {
+        $("#edit_holName").on("input", function () {
+            const $this = $(this);
+            if ($this.val().trim() !== "") {
+                $this.next(".invalid-feedback").hide();
+                $this.removeClass("is-invalid");
+            }
+        });
+
+        $("#edit_holDate").on("change", function () {
             const $this = $(this);
             if ($this.val().trim() !== "") {
                 $this.next(".invalid-feedback").hide();
@@ -237,35 +240,32 @@ class HolidayController {
         $.ajax({
             url: this.deleteUrl + holidayId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (holidayControllerInstance.holidayTable) {
-                    holidayControllerInstance.holidayTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (holidayControllerInstance.holidayTable) {
+                        holidayControllerInstance.holidayTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('HolidayEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('HolidayDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Holiday deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('HolidayEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('HolidayDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Holiday deleted successfully.'
-                });
             },
             error: function (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error Deleting Holiday',
-                    text: error.statusText
-                });
+                ShowNotification("Error Deleting Holiday", error.statusText, 'error');
             }
         });
     }
@@ -293,8 +293,10 @@ class HolidayController {
     }
 
     ClearEditValidations() {
-        $("#edit_holName, #edit_holDate").removeClass("is-invalid");
-        $("#edit_holName, #edit_holDate").next(".invalid-feedback").hide();
+        $("#edit_holName").removeClass("is-invalid");
+        $("#edit_holName").next(".invalid-feedback").hide();
+        $("#edit_holDate").removeClass("is-invalid");
+        $("#edit_holDate").next(".invalid-feedback").hide();
     }
 
     ViewHoliday(holidayId, isEditMode = false) {
@@ -314,11 +316,7 @@ class HolidayController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -333,13 +331,12 @@ class HolidayController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification('Error', 'Failed to retrieve holiday details. Please try again later.', 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve holiday details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch holiday details');
-                    ShowNotification('Error', 'Failed to retrieve holiday details. Please try again later.', 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Holiday Details", error.statusText || "Failed to retrieve holiday details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -364,56 +361,43 @@ class HolidayController {
         try {
             $("#edit_progress-holiday").show();
             const holidayData = {
-                name: $("#edit_holName").val(),
+                name: $("#edit_holName").val().trim(),
                 date: $("#edit_holDate").val()
             };
             $.ajax({
                 url: `${this.service.baseUrl}HolidayAPI/CreateHoliday`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(holidayData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-holiday").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-holiday").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Holiday created successfully.'
+                            text: response.message || 'Holiday created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('HolidayEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (holidayControllerInstance.holidayTable) {
+                            holidayControllerInstance.holidayTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-holiday").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating holiday.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-holiday").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Creating Holiday',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Creating Holiday", error.statusText || "Failed to create holiday.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-holiday").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Creating Holiday',
-                text: e.statusText
-            });
+            ShowNotification("Error Creating Holiday", e.message, 'error');
         }
     }
 
@@ -421,57 +405,50 @@ class HolidayController {
         try {
             $("#edit_progress-holiday").show();
             const holidayData = {
-                id: $("#edit_hdHolidayId").val(),
-                name: $("#edit_holName").val(),
+                id: parseInt($("#edit_hdHolidayId").val()),
+                name: $("#edit_holName").val().trim(),
                 date: $("#edit_holDate").val()
             };
             $.ajax({
                 url: `${this.service.baseUrl}HolidayAPI/UpdateHoliday`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(holidayData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-holiday").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-holiday").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Holiday updated successfully.'
+                            text: response.message || 'Holiday updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('HolidayEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (holidayControllerInstance.holidayTable) {
+                            holidayControllerInstance.holidayTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-holiday").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating holiday.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-holiday").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Updating Holiday',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Updating Holiday", error.statusText || "Failed to update holiday.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-holiday").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Updating Holiday',
-                text: e.statusText
-            });
+            ShowNotification("Error Updating Holiday", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

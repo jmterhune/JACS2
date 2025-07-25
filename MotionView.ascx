@@ -10,7 +10,7 @@
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
-        <a id="lnkAdd" class="btn btn-primary me-3" tabindex="-1" href="#" data-bs-toggle="modal" data-bs-target="#MotionEditModal"><i class="fa fa-plus" aria-hidden="true"></i> Add Motion</a>
+        <a id="lnkAdd" class="btn btn-primary me-3" tabindex="-1" href="#" data-bs-toggle="modal" data-bs-target="#MotionEditModal"><i class="fa fa-plus" aria-hidden="true"></i>Add Motion</a>
         <table id="tblMotion" class="table table-striped w-100">
             <thead>
                 <tr>
@@ -58,8 +58,8 @@
                 <input type="hidden" id="hdMotionId" />
             </div>
             <div class="modal-footer justify-content-around">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#MotionEditModal" id="editMotionBtn"><i class="fas fa-edit me-2"></i> Edit</button>
-                <button type="button" id="cmdDelete" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-trash me-2"></i> Delete</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#MotionEditModal" id="editMotionBtn"><i class="fas fa-edit me-2"></i>Edit</button>
+                <button type="button" id="cmdDelete" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-trash me-2"></i>Delete</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -88,15 +88,11 @@
                                 <input type="text" id="edit_motionDescription" class="form-control" required>
                                 <div class="invalid-feedback">Description is required.</div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <label>Lag</label>
                                 <input type="number" id="edit_motionLag" class="form-control">
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <label>Lead</label>
                                 <input type="number" id="edit_motionLead" class="form-control">
                             </div>
@@ -106,7 +102,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-success" id="edit_cmdSave">
-                    <i class="fas fa-save" aria-hidden="true"></i> Save
+                    <i class="fas fa-save" aria-hidden="true"></i>Save
                 </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
@@ -121,7 +117,8 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" /><script>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<script>
     var moduleId = <%=ModuleId%>;
     var service = {
         path: "JACS",

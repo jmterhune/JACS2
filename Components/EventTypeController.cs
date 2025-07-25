@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,11 +43,23 @@ namespace tjc.Modules.jacs.Components
         }
         public List<KeyValuePair<long, string>> GetEventTypeDropDownItems(string searchTerm)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            try
             {
-                var rep = ctx.GetRepository<EventType>();
-                return rep.Find("Where name like @0", string.Format("%{0}%", searchTerm))
-                    .Select(c => new KeyValuePair<long, string>(c.id, c.name)).ToList();
+                // Normalize search term
+                searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? string.Empty : searchTerm.Trim();
+
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var rep = ctx.GetRepository<EventType>();
+                    var results = rep.Find("WHERE name LIKE @0", $"%{searchTerm}%")
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.name)).ToList();
+                    return results ?? new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
             }
         }
         public EventType GetEventType(long eventtypeId)

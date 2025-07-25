@@ -1,5 +1,7 @@
 ﻿using DotNetNuke.Data;
 using DotNetNuke.Entities.Content.Taxonomy;
+using DotNetNuke.Services.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace tjc.Modules.jacs.Components
@@ -43,11 +45,23 @@ namespace tjc.Modules.jacs.Components
         }
         public List<KeyValuePair<long, string>> GetCategoryDropDownItems(string searchTerm)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            try
             {
-                var rep = ctx.GetRepository<Category>();
-                return rep.Find("Where description like @0", string.Format("%{0}%", searchTerm))
-                    .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+                // Normalize search term
+                searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? string.Empty : searchTerm.Trim();
+
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    var rep = ctx.GetRepository<Category>();
+                    var results = rep.Find("WHERE description LIKE @0", $"%{searchTerm}%")
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+                    return results ?? new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
             }
         }
         public Category GetCategory(long categoryId)

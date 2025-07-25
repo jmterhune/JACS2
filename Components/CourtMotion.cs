@@ -14,5 +14,9 @@ namespace tjc.Modules.jacs.Components
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
         public bool allowed { get; set; }
+        [IgnoreColumn]
+        public string motion_description { get; set; }
+        [IgnoreColumn]
+        public string court_description { get; set; }
     }
 }

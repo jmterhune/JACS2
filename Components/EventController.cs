@@ -2,81 +2,99 @@
 using DotNetNuke.UI.UserControls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using tjc.Modules.jacs.Services.ViewModels;
-using static tjc.Modules.jacs.Services.EventAPIController;
+using Newtonsoft.Json.Linq;
+
 namespace tjc.Modules.jacs.Components
 {
     internal class EventController
     {
-        private const string CONN_JACS = "jacs"; //Connection
+        private const string CONN_JACS = "jacs"; // Connection
+
         public void CreateEvent(Event t)
         {
+            ValidateEvent(t);
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Event>();
                 rep.Insert(t);
             }
         }
+
         public void DeleteEvent(int eventId)
         {
             var t = GetEvent(eventId);
-            DeleteEvent(t);
+            if (t != null)
+            {
+                DeleteEvent(t);
+            }
         }
+
         public void DeleteEvent(Event t)
         {
+            if (t == null) throw new ArgumentNullException(nameof(t));
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Event>();
                 rep.Delete(t);
             }
         }
+
         public IEnumerable<Event> GetEvents()
         {
-            IEnumerable<Event> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Event>();
-                t = rep.Get();
+                return rep.Get();
             }
-            return t;
         }
+
         public IEnumerable<EventListItem> GetEventsByCourtId(long courtId)
         {
-            IEnumerable<EventListItem> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<EventListItem>();
-                t = rep.Get();
+                var query = @"
+                    SELECT e.* 
+                    FROM [events] e
+                    INNER JOIN [timeslot_events] te ON te.event_id = e.id
+                    INNER JOIN [court_timeslots] ct ON ct.timeslot_id = te.timeslot_id
+                    WHERE ct.court_id = @0";
+                return ctx.ExecuteQuery<EventListItem>(System.Data.CommandType.Text, query, courtId);
             }
-            return t;
         }
+
         public IEnumerable<Event> GetEventsByCourtId(long courtId, DateTime start, DateTime end)
         {
-            IEnumerable<Event> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<Event>();
-                t = rep.Get();
+                var query = @"
+                    SELECT e.*
+                    FROM [events] e
+                    INNER JOIN [timeslot_events] te ON te.event_id = e.id
+                    INNER JOIN [timeslots] t ON t.id = te.timeslot_id
+                    INNER JOIN [court_timeslots] ct ON ct.timeslot_id = t.id
+                    WHERE ct.court_id = @0 AND t.start >= @1 AND t.[end] < @2 AND t.deleted_at IS NULL";
+                return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, courtId, start, end);
             }
-            return t;
         }
+
         public IEnumerable<EventListItem> GetEventListItems(string court, string category, string status)
         {
-            IEnumerable<EventListItem> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<EventListItem>();
-                t = rep.Get();
+                return rep.Get();
             }
-            return t;
         }
+
         public IEnumerable<EventListItem> GetEventListItems(string searchTerm, long court_id, long category_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
         {
-            IEnumerable<EventListItem> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t = ctx.ExecuteQuery<EventListItem>(
+                return ctx.ExecuteQuery<EventListItem>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_event_list_paged",
                     searchTerm ?? string.Empty,
@@ -87,66 +105,92 @@ namespace tjc.Modules.jacs.Components
                     pageSize,
                     sortOrder ?? "case_num",
                     direction ?? "asc"
-                    );
+                );
             }
-            return t;
         }
+
         public int GetEventListItemCount(string searchTerm, long court_id, long category_id, long status_id)
         {
-            int t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t = ctx.ExecuteScalar<int>(
+                return ctx.ExecuteScalar<int>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_event_list_count",
                     searchTerm ?? string.Empty,
                     court_id,
                     category_id,
-                    status_id);
+                    status_id
+                );
             }
-            return t;
         }
+
         public IEnumerable<Event> GetEventsForDashboardByJudge(int judgeId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-            select top 10 * from [events] where 
-                exists (select * from [timeslots] inner join [timeslot_events] on [timeslot_events].[timeslot_id] = [timeslots].[id] 
-	            where [events].[id] = [timeslot_events].[event_id] and 
-		        exists (select * from [courts] inner join [court_timeslots] on [court_timeslots].[court_id] = [courts].[id] 
-		        where [timeslots].[id] = [court_timeslots].[timeslot_id] and 
-		        exists (select * from [judges] where [courts].[id] = [judges].[court_id] and [judges].[id] = @0))) order by [created_at] desc";
+                    SELECT TOP 10 * FROM [events] WHERE 
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] 
+                                WHERE [courts].[id] = [judges].[court_id] AND [judges].[id] = @0
+                            )
+                        )
+                    ) 
+                    ORDER BY [created_at] DESC";
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, judgeId);
             }
         }
+
         public IEnumerable<Event> GetEventsForDashboard(int userId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var query = @"select top 10 * from [events] where 
-                exists (select * from [timeslots] inner join [timeslot_events] on [timeslot_events].[timeslot_id] = [timeslots].[id] 
-	            where [events].[id] = [timeslot_events].[event_id] and 
-		        exists (select * from [courts] inner join [court_timeslots] on [court_timeslots].[court_id] = [courts].[id] 
-		        where [timeslots].[id] = [court_timeslots].[timeslot_id] and 
-		        exists (select * from [judges] where [courts].[id] = [judges].[court_id] and 
-		        exists (select * from [users] inner join [court_permissions] on [court_permissions].[user_id] = [users].[id]
-                where [judges].[id] = [court_permissions].[judge_id] and [user_id]=@0 and active=1 and editiable=1)))) order by [created_at] desc";
+                var query = @"
+                    SELECT TOP 10 * FROM [events] WHERE 
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] 
+                                WHERE [courts].[id] = [judges].[court_id] AND 
+                                EXISTS (
+                                    SELECT * FROM [users] 
+                                    INNER JOIN [court_permissions] ON [court_permissions].[user_id] = [users].[id]
+                                    WHERE [judges].[id] = [court_permissions].[judge_id] AND [user_id] = @0 AND active = 1 AND editable = 1
+                                )
+                            )
+                        )
+                    ) 
+                    ORDER BY [created_at] DESC";
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, userId);
             }
         }
+
         public Event GetEvent(long eventId)
         {
-            Event t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Event>();
-                t = rep.GetById(eventId);
+                return rep.GetById(eventId);
             }
-            return t;
         }
+
         public void UpdateEvent(Event t)
         {
+            ValidateEvent(t);
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Event>();
@@ -154,35 +198,73 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        internal object GetEventsForDashBoardByAdmin()
+        public IEnumerable<Event> GetEventsForDashBoardByAdmin()
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var query = @"select top 10 * from [events] where 
-                exists (select * from [timeslots] inner join [timeslot_events] on [timeslot_events].[timeslot_id] = [timeslots].[id] 
-	            where [events].[id] = [timeslot_events].[event_id] and 
-		        exists (select * from [courts] inner join [court_timeslots] on [court_timeslots].[court_id] = [courts].[id] 
-		        where [timeslots].[id] = [court_timeslots].[timeslot_id] and 
-		        exists (select * from [judges] where [courts].[id] = [judges].[court_id]))) order by [created_at] desc";
+                var query = @"
+                    SELECT TOP 10 * FROM [events] WHERE 
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] 
+                                WHERE [courts].[id] = [judges].[court_id]
+                            )
+                        )
+                    ) 
+                    ORDER BY [created_at] DESC";
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query);
             }
         }
 
-        internal Event GetEventByCaseNumber(string caseNumber)
+        public Event GetEventByCaseNumber(string caseNumber)
         {
             string searchTerm = $"%{caseNumber}%";
-            Event t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<Event>();
-                t = rep.Find("Where case_num like @0", searchTerm).FirstOrDefault();
+                var evt = rep.Find("WHERE case_num LIKE @0", searchTerm).FirstOrDefault();
+                if (evt != null)
+                {
+                    // Fetch court template data
+                    var courtTemplates = ctx.ExecuteQuery<CourtTemplate>(
+                        System.Data.CommandType.Text,
+                        "SELECT * FROM court_templates WHERE court_id = (SELECT court_id FROM court_timeslots ct JOIN timeslot_events te ON ct.timeslot_id = te.timeslot_id WHERE te.event_id = @0) AND deleted_at IS NULL",
+                        evt.id);
+                    evt.template = JObject.FromObject(courtTemplates.ToDictionary(ct => $"{ct.name}_|_{ct.court_id}", ct => ct.name)).ToString();
+                }
+                return evt;
             }
-            return t;
         }
-        internal bool CancelEvent(long eventId)
+
+        public bool CancelEvent(long eventId)
         {
-            throw new NotImplementedException();
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var evt = GetEvent(eventId);
+                if (evt == null) return false;
+                evt.status_id = ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT id FROM event_statuses WHERE name = 'Cancelled'");
+                evt.cancellation_reason = "Cancelled via API";
+                UpdateEvent(evt);
+                return true;
+            }
         }
+
+        public IEnumerable<Event> GetEventsByTimeslot(long timeslotId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"SELECT e.* FROM [events] e INNER JOIN [timeslot_events] te ON te.event_id = e.id WHERE te.timeslot_id = @0";
+                return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, timeslotId);
+            }
+        }
+
         public static string ValidateCaseNumber(string caseNumber, string caseFormat)
         {
             string caseNumberError = null;
@@ -288,15 +370,79 @@ namespace tjc.Modules.jacs.Components
             return caseNumberError;
         }
 
-        public IEnumerable<Event> GetEventsByTimeslot(long timeslotId)
+        private void ValidateEvent(Event evt)
         {
-            IEnumerable<Event> t;
+            if (evt == null) throw new ArgumentNullException(nameof(evt));
+            if (string.IsNullOrWhiteSpace(evt.case_num))
+                throw new ValidationException("Case number is required.");
+
+            if (evt.motion_id == 221 && string.IsNullOrWhiteSpace(evt.custom_motion))
+                throw new ValidationException("Other Motion is required when selecting 'Other' motion.");
+            if (evt.motion_id == 221 && evt.custom_motion.Length > 255)
+                throw new ValidationException("Other Motion must not exceed 255 characters.");
+
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var query = @"select e.* from [events] e inner join [timeslot_events] te on te.event_id = e.id where te.timeslot_id = @0";
-                t = ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, timeslotId);
+                // Validate foreign keys
+                if (evt.motion_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM motions WHERE id = @0", evt.motion_id.Value) == 0)
+                    throw new ValidationException("Invalid motion ID.");
+                if (evt.type_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM event_types WHERE id = @0", evt.type_id.Value) == 0)
+                    throw new ValidationException("Invalid type ID.");
+                if (evt.status_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM event_statuses WHERE id = @0", evt.status_id.Value) == 0)
+                    throw new ValidationException("Invalid status ID.");
+                if (evt.attorney_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text,   "SELECT COUNT(*) FROM attorneys WHERE id = @0", evt.attorney_id.Value) == 0)
+                    throw new ValidationException("Invalid attorney ID.");
+                if (evt.opp_attorney_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM attorneys WHERE id = @0", evt.opp_attorney_id.Value) == 0)
+                    throw new ValidationException("Invalid opposing attorney ID.");
+
+                // Validate multiple email addresses
+                var emailValidator = new EmailAddressAttribute();
+                if (!string.IsNullOrEmpty(evt.plaintiff_email))
+                {
+                    var emails = evt.plaintiff_email.Split(',').Select(e => e.Trim());
+                    foreach (var email in emails)
+                    {
+                        if (!emailValidator.IsValid(email))
+                            throw new ValidationException("One or more plaintiff email addresses are invalid.");
+                    }
+                }
+                if (!string.IsNullOrEmpty(evt.defendant_email))
+                {
+                    var emails = evt.defendant_email.Split(',').Select(e => e.Trim());
+                    foreach (var email in emails)
+                    {
+                        if (!emailValidator.IsValid(email))
+                            throw new ValidationException("One or more defendant email addresses are invalid.");
+                    }
+                }
+
+                // Court-specific validation
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourtByEventId(evt.id);
+                if (court != null)
+                {
+                    if (court.plaintiff_required && string.IsNullOrWhiteSpace(evt.plaintiff))
+                        throw new ValidationException("Plaintiff is required for this court.");
+                    if (court.defendant_required && string.IsNullOrWhiteSpace(evt.defendant))
+                        throw new ValidationException("Defendant is required for this court.");
+                    string caseNumberError = ValidateCaseNumber(evt.case_num, court.case_num_format);
+                    if (!string.IsNullOrEmpty(caseNumberError))
+                        throw new ValidationException(caseNumberError);
+                }
+
+                // Validate court template data
+                if (!string.IsNullOrEmpty(evt.template))
+                {
+                    try
+                    {
+                        JObject.Parse(evt.template);
+                    }
+                    catch
+                    {
+                        throw new ValidationException("Invalid court template data format.");
+                    }
+                }
             }
-            return t;
         }
     }
 }

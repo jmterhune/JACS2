@@ -16,6 +16,7 @@
                 <tr>
                     <th></th>
                     <th></th>
+                    <th>Code</th>
                     <th>Description</th>
                     <th></th>
                 </tr>
@@ -39,6 +40,10 @@
             <div class="modal-body">
                 <table class="table table-striped m-0 p-0 w-100">
                     <tbody>
+                        <tr>
+                            <td><strong>Code:</strong></td>
+                            <td><span id="courtTypeCode"></span></td>
+                        </tr>
                         <tr>
                             <td><strong>Description:</strong></td>
                             <td><span id="courtTypeDescription"></span></td>
@@ -73,6 +78,11 @@
                     <input type="hidden" id="edit_hdCourtTypeId">
                     <div class="form-group">
                         <div class="row">
+                            <div class="col-md-3">
+                                <label>Code<em>*</em></label>
+                                <input type="text" id="edit_courtTypeCode" class="form-control" required>
+                                <div class="invalid-feedback" id="edit_code-error">Court Code is Required.</div>
+                            </div>
                             <div class="col-md-6">
                                 <label>Description<em>*</em></label>
                                 <input type="text" id="edit_courtTypeDescription" class="form-control" required>

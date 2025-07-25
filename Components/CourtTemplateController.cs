@@ -45,7 +45,16 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-
+        public List<KeyValuePair<long,string>> GetCourtTemplateDropDownItems()
+        {
+            IEnumerable<CourtTemplate> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtTemplate>();
+                t = rep.Get();
+            }
+            return t.Select(temp=>new KeyValuePair<long, string>(temp.id,temp.name)).ToList();
+        }
         public CourtTemplate GetCourtTemplate(long courttemplateId)
         {
             CourtTemplate t;

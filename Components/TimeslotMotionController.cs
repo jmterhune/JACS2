@@ -13,7 +13,7 @@ namespace tjc.Modules.jacs.Components
                 rep.Insert(t);
             }
         }
-        public void DeleteTimeslotMotion(int timeslotmotionId)
+        public void DeleteTimeslotMotion(long timeslotmotionId)
         {
             var t = GetTimeslotMotion(timeslotmotionId);
             DeleteTimeslotMotion(t);
@@ -36,7 +36,7 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public TimeslotMotion GetTimeslotMotion(int timeslotmotionId)
+        public TimeslotMotion GetTimeslotMotion(long timeslotmotionId)
         {
             TimeslotMotion t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

@@ -9,7 +9,7 @@ class RoleController {
         this.pageSize = params.pageSize || 25;
         this.sortDirection = params.sortDirection || 'asc';
         this.recordCount = params.recordCount || 0;
-        this.sortColumnIndex = params.sortColumnIndex || 2;
+        this.sortColumnIndex = params.sortColumnIndex || 3;
         this.currentPage = params.currentPage || 0;
         this.userUrl = params.userUrl || '';
         this.searchTerm = "";
@@ -47,23 +47,19 @@ class RoleController {
             ajax: {
                 url: listUrl,
                 type: "GET",
-                datatype: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblRole_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve roles.';
                     if (error.status === 401) {
-                        ShowNotification('Error Retrieving Roles', 'Please make sure you are logged in and try again. Error: ' + error.statusText, 'error');
-                    } else {
-                        ShowNotification('Error Retrieving Roles', 'The following error occurred attempting to retrieve role information. Error: ' + error.statusText, 'error');
+                        errorMessage = 'Please make sure you are logged in and try again.';
                     }
+                    ShowNotification('Error Retrieving Roles', errorMessage, 'error');
                 }
             },
             columns: [
@@ -94,7 +90,6 @@ class RoleController {
                     searchable: false,
                     orderable: false
                 },
-
                 {
                     data: "name",
                     render: function (data) {
@@ -134,7 +129,6 @@ class RoleController {
 
         $(".dt-length").prepend($("#lnkAdd"));
         this.roleTable.on('draw', function () {
-
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 const roleId = $(this).data("id");
@@ -204,7 +198,7 @@ class RoleController {
 
             const $roleName = $("#edit_roleName");
             const $roleNameError = $roleName.next(".invalid-feedback");
-            if ($roleName.val() === "") {
+            if ($roleName.val().trim() === "") {
                 $roleNameError.show();
                 $roleName.addClass("is-invalid");
                 isValid = false;
@@ -215,7 +209,7 @@ class RoleController {
 
             const $guardName = $("#edit_roleGuardName");
             const $guardNameError = $guardName.next(".invalid-feedback");
-            if ($guardName.val() === "") {
+            if ($guardName.val().trim() === "") {
                 $guardNameError.show();
                 $guardName.addClass("is-invalid");
                 isValid = false;
@@ -249,35 +243,31 @@ class RoleController {
         $.ajax({
             url: this.deleteUrl + roleId,
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('ModuleId', moduleId);
-                xhr.setRequestHeader('TabId', service.framework.getTabId());
-                xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-            },
-            success: function (result) {
-                if (roleControllerInstance.roleTable) {
-                    roleControllerInstance.roleTable.draw();
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (roleControllerInstance.roleTable) {
+                        roleControllerInstance.roleTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('RoleDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Role deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('RoleDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Role deleted successfully.'
-                });
             },
             error: function (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error Deleting Role',
-                    text: error.statusText
-                });
+                ShowNotification("Error Deleting Role", error.statusText || "Failed to delete role.", 'error');
             }
         });
     }
@@ -328,32 +318,27 @@ class RoleController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
                             $("#edit_hdRoleId").val(response.data.id);
                             $("#edit_roleName").val(response.data.name);
-                            $("#edit_roleGuardName").val(response.data.guard_name);
+                            $("#edit_roleGuardName").val(response.data.guard_name || '');
                             $("#RoleEditModalLabel").html(`Edit Role: ${response.data.name}`);
                         } else {
                             $("#roleName").html(response.data.name);
-                            $("#roleGuardName").html(response.data.guard_name);
+                            $("#roleGuardName").html(response.data.guard_name || '');
                             $("#hdRoleId").val(response.data.id);
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification('Error', 'Failed to retrieve role details. Please try again later.', 'error');
+                        ShowNotification('Error', response.error || 'Failed to retrieve role details. Please try again later.', 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch role details');
-                    ShowNotification('Error', 'Failed to retrieve role details. Please try again later.', 'error');
+                error: function (error) {
+                    ShowNotification('Error Retrieving Role Details', error.statusText || 'Failed to retrieve role details.', 'error');
                     $(progressId).hide();
                 }
             });
@@ -378,56 +363,43 @@ class RoleController {
         try {
             $("#edit_progress-role").show();
             const roleData = {
-                name: $("#edit_roleName").val(),
-                guard_name: $("#edit_roleGuardName").val()
+                name: $("#edit_roleName").val().trim(),
+                guard_name: $("#edit_roleGuardName").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}RoleAPI/CreateRole`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(roleData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-role").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-role").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Role created successfully.'
+                            text: response.message || 'Role created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (roleControllerInstance.roleTable) {
+                            roleControllerInstance.roleTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-role").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating role.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-role").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Creating Role',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Creating Role", error.statusText || "Failed to create role.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-role").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Creating Role',
-                text: e.statusText
-            });
+            ShowNotification("Error Creating Role", e.message, 'error');
         }
     }
 
@@ -435,57 +407,50 @@ class RoleController {
         try {
             $("#edit_progress-role").show();
             const roleData = {
-                id: $("#edit_hdRoleId").val(),
-                name: $("#edit_roleName").val(),
-                guard_name: $("#edit_roleGuardName").val()
+                id: parseInt($("#edit_hdRoleId").val()),
+                name: $("#edit_roleName").val().trim(),
+                guard_name: $("#edit_roleGuardName").val().trim()
             };
             $.ajax({
                 url: `${this.service.baseUrl}RoleAPI/UpdateRole`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(roleData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-role").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-role").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Role updated successfully.'
+                            text: response.message || 'Role updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (roleControllerInstance.roleTable) {
+                            roleControllerInstance.roleTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-role").hide();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Unexpected Error: Status=' + result
-                        });
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating role.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-role").hide();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Updating Role',
-                        text: error.statusText
-                    });
+                    ShowNotification("Error Updating Role", error.statusText || "Failed to update role.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-role").hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Updating Role',
-                text: e.statusText
-            });
+            ShowNotification("Error Updating Role", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

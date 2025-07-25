@@ -1,4 +1,5 @@
-﻿let courtTemplateControllerInstance = null;
+﻿// courtTemplate.js
+let courtTemplateControllerInstance = null;
 
 class CourtTemplateController {
     constructor(params = {}) {
@@ -41,7 +42,6 @@ class CourtTemplateController {
             }
         });
 
-        // Populate court dropdown
         this.populateCourtDropdown();
 
         this.courtTemplateTable = $('#tblCourtTemplate').DataTable({
@@ -52,16 +52,17 @@ class CourtTemplateController {
                 url: listUrl,
                 type: "GET",
                 datatype: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
-                    data.searchText = data.search.value;
+                    data.searchText = data.search?.value || '';
                     delete data.columns;
                 },
                 error: function (error) {
                     $("#tblCourtTemplate_processing").hide();
                     if (error.status === 401) {
-                        ShowNotification("Error Retrieving Templates", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Court Templates", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
                     } else {
-                        ShowNotification("Error Retrieving Templates", "The following error occurred attempting to retrieve template information. Error: " + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Court Templates", "The following error occurred attempting to retrieve court template information. Error: " + error.statusText, 'error');
                     }
                 }
             },
@@ -214,9 +215,16 @@ class CourtTemplateController {
             }
         });
 
-        $("#edit_ctName, #edit_ctCourt").on("input", function () {
+        $("#edit_ctName").on("input", function () {
             const $this = $(this);
             if ($this.val().trim() !== "") {
+                $this.next(".invalid-feedback").hide();
+                $this.removeClass("is-invalid");
+            }
+        });
+        $("#edit_ctCourt").on("change", function () {
+            const $this = $(this);
+            if ($this.val() !== "") {
                 $this.next(".invalid-feedback").hide();
                 $this.removeClass("is-invalid");
             }
@@ -228,6 +236,7 @@ class CourtTemplateController {
             url: `${this.service.baseUrl}CourtAPI/GetCourtDropDownItems`,
             type: 'GET',
             dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 if (response.data) {
                     const $courtSelect = $("#edit_ctCourt");
@@ -236,15 +245,12 @@ class CourtTemplateController {
                     response.data.forEach(court => {
                         $courtSelect.append(`<option value="${court.Key}">${court.Value}</option>`);
                     });
+                } else {
+                    ShowNotification("Error", response.error || "Failed to load courts.", 'error');
                 }
             },
             error: function (error) {
-                if (error.status === 401) {
-                    ShowNotification("Error", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
-                } else {
-                    console.error('Failed to fetch courts');
-                    ShowNotification("Error", "Failed to load courts. Please try again later.", 'error');
-                }
+                ShowNotification("Error Loading Courts", error.statusText || "Failed to load courts. Please try again later.", 'error');
             }
         });
     }
@@ -260,23 +266,29 @@ class CourtTemplateController {
         $.ajax({
             url: this.deleteUrl + courtTemplateId,
             type: 'GET',
-            success: function (result) {
-                if (courtTemplateControllerInstance.courtTemplateTable) {
-                    courtTemplateControllerInstance.courtTemplateTable.draw();
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (courtTemplateControllerInstance.courtTemplateTable) {
+                        courtTemplateControllerInstance.courtTemplateTable.draw();
+                    }
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
+                    if (editModal) {
+                        editModal.hide();
+                    }
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateDetailModal'));
+                    if (detailModal) {
+                        detailModal.hide();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Court Template deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
-                const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
-                if (editModal) {
-                    editModal.hide();
-                }
-                const detailModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateDetailModal'));
-                if (detailModal) {
-                    detailModal.hide();
-                }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Court Template deleted successfully.'
-                });
             },
             error: function (error) {
                 ShowNotification("Error Deleting Court Template", error.statusText, 'error');
@@ -330,6 +342,7 @@ class CourtTemplateController {
                 url: getUrl,
                 method: 'GET',
                 dataType: 'json',
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     if (response.data) {
                         if (isEditMode) {
@@ -344,13 +357,12 @@ class CourtTemplateController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", "Failed to retrieve court template details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve court template details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
-                error: function () {
-                    console.error('Failed to fetch court template details');
-                    ShowNotification("Error", "Failed to retrieve court template details. Please try again later.", 'error');
+                error: function (error) {
+                    ShowNotification("Error Retrieving Court Template Details", error.statusText || "Failed to retrieve court template details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -375,44 +387,43 @@ class CourtTemplateController {
         try {
             $("#edit_progress-courttemplate").show();
             const courtTemplateData = {
-                name: $("#edit_ctName").val(),
+                name: $("#edit_ctName").val().trim(),
                 court_id: $("#edit_ctCourt").val()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CourtTemplateAPI/CreateCourtTemplate`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(courtTemplateData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-courttemplate").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courttemplate").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Court Template created successfully.'
+                            text: response.message || 'Court Template created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (courtTemplateControllerInstance.courtTemplateTable) {
+                            courtTemplateControllerInstance.courtTemplateTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-courttemplate").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating court template.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courttemplate").hide();
-                    ShowNotification("Error Creating Court Template", error.statusText, 'error');
+                    ShowNotification("Error Creating Court Template", error.statusText || "Failed to create court template.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courttemplate").hide();
-            ShowNotification("Error Creating Court Template", e.statusText, 'error');
+            ShowNotification("Error Creating Court Template", e.message, 'error');
         }
     }
 
@@ -420,45 +431,50 @@ class CourtTemplateController {
         try {
             $("#edit_progress-courttemplate").show();
             const courtTemplateData = {
-                id: $("#edit_hdCourtTemplateId").val(),
-                name: $("#edit_ctName").val(),
+                id: parseInt($("#edit_hdCourtTemplateId").val()),
+                name: $("#edit_ctName").val().trim(),
                 court_id: $("#edit_ctCourt").val()
             };
             $.ajax({
                 url: `${this.service.baseUrl}CourtTemplateAPI/UpdateCourtTemplate`,
                 type: 'POST',
+                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(courtTemplateData),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('ModuleId', moduleId);
-                    xhr.setRequestHeader('TabId', service.framework.getTabId());
-                    xhr.setRequestHeader('RequestVerificationToken', service.framework.getAntiForgeryValue());
-                },
-                success: function (result) {
-                    if (result === 200) {
-                        $("#edit_progress-courttemplate").hide();
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courttemplate").hide();
+                    if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Court Template updated successfully.'
+                            text: response.message || 'Court Template updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
+                        if (courtTemplateControllerInstance.courtTemplateTable) {
+                            courtTemplateControllerInstance.courtTemplateTable.draw();
+                        }
                     } else {
-                        $("#edit_progress-courttemplate").hide();
-                        ShowNotification("Error", "Unexpected Error: Status=" + result, 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating court template.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courttemplate").hide();
-                    ShowNotification("Error Updating Court Template", error.statusText, 'error');
+                    ShowNotification("Error Updating Court Template", error.statusText || "Failed to update court template.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courttemplate").hide();
-            ShowNotification("Error Updating Court Template", e.statusText, 'error');
+            ShowNotification("Error Updating Court Template", e.message, 'error');
         }
+    }
+
+    setAjaxHeaders(xhr) {
+        xhr.setRequestHeader('ModuleId', this.moduleId);
+        xhr.setRequestHeader('TabId', this.service.framework.getTabId());
+        xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 }

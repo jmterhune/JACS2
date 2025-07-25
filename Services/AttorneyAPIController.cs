@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -24,7 +25,7 @@ namespace tjc.Modules.jacs.Services
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
 
-            string searchTerm = !query.ContainsKey("searchText") ? "" : query["searchText"].ToString();
+            string searchTerm = query.ContainsKey("searchText") ? query["searchText"].ToString() : "";
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
             Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
@@ -44,32 +45,59 @@ namespace tjc.Modules.jacs.Services
                 var ctl = new AttorneyController();
                 filteredCount = ctl.GetAttorneysCount(searchTerm);
                 if (p1 == 0) { recordCount = filteredCount; }
-                attorneys = ctl.GetAttorneysPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).Select(attorney => new AttorneyViewModel(attorney)).ToList();
-                return Request.CreateResponse(new AttorneySearchResult { data = attorneys, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+                var attorneysPaged = ctl.GetAttorneysPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection);
+                if (attorneysPaged == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new AttorneySearchResult
+                    {
+                        data = attorneys,
+                        draw = draw,
+                        recordsFiltered = filteredCount,
+                        recordsTotal = recordCount,
+                        error = "No attorneys found."
+                    });
+                }
+                attorneys = attorneysPaged.Select(attorney => new AttorneyViewModel(attorney)).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new AttorneySearchResult
+                {
+                    data = attorneys,
+                    draw = draw,
+                    recordsFiltered = filteredCount,
+                    recordsTotal = recordCount,
+                    error = null
+                });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new AttorneySearchResult { data = attorneys, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new AttorneySearchResult
+                {
+                    data = attorneys,
+                    draw = draw,
+                    recordsFiltered = filteredCount,
+                    recordsTotal = recordCount,
+                    error = $"Failed to retrieve attorneys: {ex.Message}"
+                });
             }
         }
+
         [HttpGet]
         public HttpResponseMessage GetAttorneyDropDownItems()
         {
-            List<AttorneyViewModel> attorneys = new List<AttorneyViewModel>();
+            List<KeyValuePair<long, string>> attorneys = new List<KeyValuePair<long, string>>();
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-            string searchTerm = !query.ContainsKey("q") ? "" : query["q"].ToString();
+            string searchTerm = query.ContainsKey("q") ? query["q"].ToString() : "";
 
             try
             {
                 var ctl = new AttorneyController();
-                attorneys = ctl.GetAttorneyDropDownItems(searchTerm).Select(atty=>new AttorneyViewModel(atty)).ToList();
-                return Request.CreateResponse(new AttorneySearchResult { data = attorneys,  error = null });
+                attorneys = ctl.GetAttorneyDropDownItems(searchTerm);
+                return Request.CreateResponse(HttpStatusCode.OK, new ListItemOptionResult { data = attorneys, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new AttorneySearchResult { data = attorneys,  error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ListItemOptionResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
             }
         }
 
@@ -78,14 +106,23 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
+                if (p1 <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid attorney ID." });
+                }
                 var ctl = new AttorneyController();
+                var attorney = ctl.GetAttorney(p1);
+                if (attorney == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Attorney not found." });
+                }
                 ctl.DeleteAttorney(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Attorney deleted successfully." });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to delete attorney: {ex.Message}" });
             }
         }
 
@@ -94,14 +131,22 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
+                if (p1 <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new AttorneyResult { data = null, error = "Invalid attorney ID." });
+                }
                 var ctl = new AttorneyController();
-                Attorney attorney = ctl.GetAttorney(p1);
-                return Request.CreateResponse(new AttorneyResult { data = attorney, error = null });
+                var attorney = ctl.GetAttorney(p1);
+                if (attorney == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new AttorneyResult { data = null, error = "Attorney not found." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new AttorneyResult { data = attorney, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new AttorneyResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new AttorneyResult { data = null, error = $"Failed to retrieve attorney: {ex.Message}" });
             }
         }
 
@@ -110,14 +155,22 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(p1))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new SiteUserResult { data = null, error = "Bar number is required." });
+                }
                 var ctl = new AttorneyController();
-                SiteUser user = ctl.GetSiteUser(0, p1);
-                return Request.CreateResponse(new SiteUserResult { data = SiteUserMapper.ToViewModel(user), error = null });
+                var user = ctl.GetSiteUser(0, p1);
+                if (user == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new SiteUserResult { data = null, error = "User not found for the provided bar number." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new SiteUserResult { data = SiteUserMapper.ToViewModel(user), error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new SiteUserResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new SiteUserResult { data = null, error = $"Failed to retrieve site user: {ex.Message}" });
             }
         }
 
@@ -127,17 +180,21 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new AttorneyController();
                 var attorney = p1.ToObject<Attorney>();
+                if (string.IsNullOrWhiteSpace(attorney.name) || string.IsNullOrWhiteSpace(attorney.bar_num) || attorney.UserId < 0 || (attorney.emails != null && attorney.emails.Any(e => string.IsNullOrWhiteSpace(e))))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, valid user ID, and at least one valid email are required." });
+                }
+                var ctl = new AttorneyController();
                 attorney.created_at = DateTime.Now;
                 attorney.updated_at = DateTime.Now;
                 ctl.CreateAttorney(attorney);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Attorney created successfully." });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to create attorney: {ex.Message}" });
             }
         }
 
@@ -147,16 +204,29 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new AttorneyController();
                 var attorney = p1.ToObject<Attorney>();
+                if (attorney.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Attorney ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(attorney.name) || string.IsNullOrWhiteSpace(attorney.bar_num) || attorney.UserId < 0 || (attorney.emails != null && attorney.emails.Any(e => string.IsNullOrWhiteSpace(e))))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, valid user ID, and at least one valid email are required." });
+                }
+                var ctl = new AttorneyController();
+                var existingAttorney = ctl.GetAttorney(attorney.id);
+                if (existingAttorney == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Attorney not found." });
+                }
                 attorney.updated_at = DateTime.Now;
                 ctl.UpdateAttorney(attorney);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Attorney updated successfully." });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to update attorney: {ex.Message}" });
             }
         }
 
@@ -187,25 +257,25 @@ namespace tjc.Modules.jacs.Services
             public string error { get; set; }
         }
 
+        internal class ListItemOptionResult
+        {
+            public List<KeyValuePair<long, string>> data { get; set; }
+            public string error { get; set; }
+        }
+
         private string GetSortColumn(int columnIndex)
         {
-            string fieldName = "name";
             switch (columnIndex)
             {
                 case 2:
-                    fieldName = "enabled";
-                    break;
+                    return "enabled";
                 case 3:
-                    fieldName = "name";
-                    break;
+                    return "name";
                 case 4:
-                    fieldName = "bar_num";
-                    break;
+                    return "bar_num";
                 default:
-                    fieldName = "name";
-                    break;
+                    return "name";
             }
-            return fieldName;
         }
     }
 }

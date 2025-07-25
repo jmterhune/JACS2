@@ -1,10 +1,12 @@
-﻿using DotNetNuke.Entities.Users;
+﻿// CountyAPIController.cs
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
@@ -55,20 +57,20 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
-        public HttpResponseMessage GetCounties()
+        public HttpResponseMessage GetCountyDropDownItems()
         {
-            List<CountyViewModel> counties = new List<CountyViewModel>();
+            List<KeyValuePair<long, string>> counties = new List<KeyValuePair<long, string>>();
 
             try
             {
                 var ctl = new CountyController();
-                counties = ctl.GetCountys().Select(court => new CountyViewModel(court)).ToList();
-                return Request.CreateResponse(new CountySearchResult { data = counties, error = null });
+                counties = ctl.GetCountyDropDownItems();
+                return Request.CreateResponse(new ListItemOptionResult { data = counties, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CountySearchResult { data = counties, error = ex.Message });
+                return Request.CreateResponse(new ListItemOptionResult { data = counties, error = ex.Message });
             }
         }
 
@@ -79,12 +81,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CountyController();
                 ctl.DeleteCounty(p1);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "County deleted successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -95,12 +97,16 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CountyController();
                 County county = ctl.GetCounty(p1);
-                return Request.CreateResponse(new CountyResult { data = county, error = null });
+                if (county == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new CountyResult { data = null, error = "County not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new CountyResult { data = county, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CountyResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CountyResult { data = null, error = ex.Message });
             }
         }
 
@@ -112,15 +118,19 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CountyController();
                 var county = p1.ToObject<County>();
+                if (string.IsNullOrWhiteSpace(county.name) || string.IsNullOrWhiteSpace(county.code))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name and Code are required." });
+                }
                 county.created_at = DateTime.Now;
                 county.updated_at = DateTime.Now;
                 ctl.CreateCounty(county);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "County created successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -132,14 +142,27 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new CountyController();
                 var county = p1.ToObject<County>();
+                if (county.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "County ID is required for update." });
+                }
+                if (string.IsNullOrWhiteSpace(county.name) || string.IsNullOrWhiteSpace(county.code))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name and Code are required." });
+                }
+                var existingCounty = ctl.GetCounty(county.id);
+                if (existingCounty == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "County not found." });
+                }
                 county.updated_at = DateTime.Now;
                 ctl.UpdateCounty(county);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "County updated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
