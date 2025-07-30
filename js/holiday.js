@@ -5,7 +5,7 @@ class HolidayController {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
         this.isAdmin = params.isAdmin || false;
-        this.adminRole = params.adminRole || 'Admin';
+        this.adminRole = params.adminRole || 'AdminRole';
         this.pageSize = params.pageSize || 25;
         this.sortDirection = params.sortDirection || 'asc';
         this.recordCount = params.recordCount || 0;

@@ -46,6 +46,16 @@ namespace tjc.Modules.jacs
                 return -1;
             }
         }
+        public int TemplateId
+        {
+            get
+            {
+                var qs = Request.QueryString["tid"];
+                if (qs != null)
+                    return Convert.ToInt32(qs);
+                return -1;
+            }
+        }
         public int EventId
         {
             get
@@ -60,7 +70,7 @@ namespace tjc.Modules.jacs
         {
             get
             {
-                var qs = Request.QueryString["tid"];
+                var qs = Request.QueryString["sid"];
                 if (qs != null)
                     return Convert.ToInt32(qs);
                 return -1;
@@ -92,6 +102,7 @@ namespace tjc.Modules.jacs
         public string JudgeListUrl { get { return EditUrl("judge"); } }
         public string MotionListUrl { get { return EditUrl("motion"); } }
         public string TemplateListUrl { get { return EditUrl("template"); } }
+        public string TemplateConfigUrl { get { return EditUrl("template-config"); } }
         public string TimeSlotListUrl { get { return EditUrl("time-slot"); } }
         public string UserDefinedFieldUrl { get { return EditUrl("user-fields"); } }
         public string EventRevisionUrl { get { return EditUrl("revise"); } }

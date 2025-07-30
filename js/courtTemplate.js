@@ -1,22 +1,22 @@
-﻿// courtTemplate.js
-let courtTemplateControllerInstance = null;
+﻿let courtTemplateControllerInstance = null;
 
 class CourtTemplateController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
         this.isAdmin = params.isAdmin || false;
-        this.adminRole = params.adminRole || 'Admin';
+        this.adminRole = params.adminRole || 'AdminRole';
         this.pageSize = params.pageSize || 25;
         this.sortDirection = params.sortDirection || 'asc';
         this.recordCount = params.recordCount || 0;
         this.sortColumnIndex = params.sortColumnIndex || 2;
         this.currentPage = params.currentPage || 0;
-        this.courtTemplateId = -1;
-        this.searchTerm = "";
-        this.courtTemplateTable = null;
+        this.templateId = params.templateId || -1;
+        this.courtId = params.courtId || -1;
+        this.templateTable = null;
         this.service = params.service || null;
         this.deleteUrl = null;
+        this.templateConfigUrl = params.templateConfigUrl || '/';
         courtTemplateControllerInstance = this;
     }
 
@@ -34,17 +34,17 @@ class CourtTemplateController {
         const editModalElement = document.getElementById('CourtTemplateEditModal');
         if (editModalElement) {
             editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+            $(editModalElement).on('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                    e.preventDefault();
+                    $("#edit_cmdSave").trigger('click');
+                }
+            });
         }
-        $(editModalElement).on('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-                e.preventDefault();
-                $("#edit_cmdSave").trigger('click');
-            }
-        });
 
         this.populateCourtDropdown();
 
-        this.courtTemplateTable = $('#tblCourtTemplate').DataTable({
+        this.templateTable = $('#tblCourtTemplate').DataTable({
             searching: true,
             autoWidth: true,
             stateSave: true,
@@ -60,9 +60,9 @@ class CourtTemplateController {
                 error: function (error) {
                     $("#tblCourtTemplate_processing").hide();
                     if (error.status === 401) {
-                        ShowNotification("Error Retrieving Court Templates", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Templates", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
                     } else {
-                        ShowNotification("Error Retrieving Court Templates", "The following error occurred attempting to retrieve court template information. Error: " + error.statusText, 'error');
+                        ShowNotification("Error Retrieving Templates", "The following error occurred attempting to retrieve template information. Error: " + error.statusText, 'error');
                     }
                 }
             },
@@ -70,7 +70,15 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="ct-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="ct-detail btn-command"> <i class="fas fa-eye"></i></button>`;
+                    },
+                    className: "command-item",
+                    orderable: false
+                },
+                {
+                    data: "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" title="Configure Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command"> <i class="fas fa-cog"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -78,7 +86,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit Court Template" data-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit Template" data-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"> <i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -99,7 +107,7 @@ class CourtTemplateController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin === "True") {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Court Template" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Template" data-id="${row.id}"> <i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -120,42 +128,48 @@ class CourtTemplateController {
         });
 
         $(".dt-length").prepend($("#lnkAdd"));
-        this.courtTemplateTable.on('draw', function () {
+        this.templateTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();
-                const courtTemplateId = $(this).data("id");
+                const templateId = $(this).data("id");
                 Swal.fire({
-                    title: 'Delete Court Template?',
-                    text: 'Are you sure you wish to delete this Court Template?',
+                    title: 'Delete Template?',
+                    text: 'Are you sure you wish to delete this Template?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        courtTemplateControllerInstance.DeleteCourtTemplate(courtTemplateId);
+                        courtTemplateControllerInstance.DeleteCourtTemplate(templateId);
                     }
                 });
+            });
+            $(".ct-config").on("click", function (e) {
+                e.preventDefault();
+                const templateId = $(this).data("id");
+                const courtId = $(this).data("court-id");
+                courtTemplateControllerInstance.NavigateToConfig(templateId, courtId);
             });
         });
 
         $(document).on('click', '.ct-detail', function (e) {
             e.preventDefault();
-            var courtTemplateId = $(this).data("id");
-            courtTemplateControllerInstance.ViewCourtTemplate(courtTemplateId, false);
+            var templateId = $(this).data("id");
+            courtTemplateControllerInstance.ViewCourtTemplate(templateId, false);
         });
 
         const editModal = new bootstrap.Modal(document.getElementById('CourtTemplateEditModal'));
         $(document).on('click', '.ct-edit, #editCourtTemplateBtn', function (e) {
             e.preventDefault();
-            var courtTemplateId = $(this).data("id") || $("#hdCourtTemplateId").val();
-            courtTemplateControllerInstance.courtTemplateId = courtTemplateId;
-            if (courtTemplateId) {
-                courtTemplateControllerInstance.ViewCourtTemplate(courtTemplateId, true);
-                $("#CourtTemplateEditModalLabel").html(`Edit Court Template`);
+            var templateId = $(this).data("id") || $("#hdCourtTemplateId").val();
+            courtTemplateControllerInstance.templateId = templateId;
+            if (templateId) {
+                courtTemplateControllerInstance.ViewCourtTemplate(templateId, true);
+                $("#CourtTemplateEditModalLabel").html(`Edit Template`);
             } else {
                 courtTemplateControllerInstance.ClearEditForm();
-                $("#CourtTemplateEditModalLabel").html("Create New Court Template");
+                $("#CourtTemplateEditModalLabel").html("Create New Template");
             }
             editModal.show();
         });
@@ -163,23 +177,23 @@ class CourtTemplateController {
         $("#lnkAdd").on('click', function (e) {
             e.preventDefault();
             courtTemplateControllerInstance.ClearEditForm();
-            $("#CourtTemplateEditModalLabel").html("Create New Court Template");
+            $("#CourtTemplateEditModalLabel").html("Create New Template");
             editModal.show();
         });
 
         $("#cmdDelete").on("click", function (e) {
             e.preventDefault();
-            var courtTemplateId = $("#hdCourtTemplateId").val();
+            var templateId = $("#hdCourtTemplateId").val();
             Swal.fire({
-                title: 'Delete Court Template?',
-                text: 'Are you sure you wish to delete this Court Template?',
+                title: 'Delete Template?',
+                text: 'Are you sure you wish to delete this Template?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    courtTemplateControllerInstance.DeleteCourtTemplate(courtTemplateId);
+                    courtTemplateControllerInstance.DeleteCourtTemplate(templateId);
                 }
             });
         });
@@ -231,6 +245,10 @@ class CourtTemplateController {
         });
     }
 
+    NavigateToConfig(templateId, courtId) {
+        window.location.href = `${this.templateConfigUrl}/tid/${templateId}/cid/${courtId}`;
+    }
+
     populateCourtDropdown() {
         $.ajax({
             url: `${this.service.baseUrl}CourtAPI/GetCourtDropDownItems`,
@@ -256,22 +274,22 @@ class CourtTemplateController {
     }
 
     ClearState() {
-        if (this.courtTemplateTable) {
-            this.courtTemplateTable.state.clear();
+        if (this.templateTable) {
+            this.templateTable.state.clear();
             window.location.reload();
         }
     }
 
-    DeleteCourtTemplate(courtTemplateId) {
+    DeleteCourtTemplate(templateId) {
         $.ajax({
-            url: this.deleteUrl + courtTemplateId,
+            url: this.deleteUrl + templateId,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 if (response.status === 200) {
-                    if (courtTemplateControllerInstance.courtTemplateTable) {
-                        courtTemplateControllerInstance.courtTemplateTable.draw();
+                    if (courtTemplateControllerInstance.templateTable) {
+                        courtTemplateControllerInstance.templateTable.draw();
                     }
                     const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
                     if (editModal) {
@@ -284,26 +302,16 @@ class CourtTemplateController {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
-                        text: response.message || 'Court Template deleted successfully.'
+                        text: response.message || 'Template deleted successfully.'
                     });
                 } else {
                     ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
                 }
             },
             error: function (error) {
-                ShowNotification("Error Deleting Court Template", error.statusText, 'error');
+                ShowNotification("Error Deleting Template", error.statusText, 'error');
             }
         });
-    }
-
-    onModalClose(event) {
-        const modalId = event.target.id;
-        if (modalId === 'CourtTemplateDetailModal') {
-            courtTemplateControllerInstance.ClearDetailForm();
-        } else if (modalId === 'CourtTemplateEditModal') {
-            courtTemplateControllerInstance.ClearEditForm();
-            courtTemplateControllerInstance.ClearEditValidations();
-        }
     }
 
     ClearDetailForm() {
@@ -325,8 +333,8 @@ class CourtTemplateController {
         $("#edit_ctCourt").next(".invalid-feedback").hide();
     }
 
-    ViewCourtTemplate(courtTemplateId, isEditMode = false) {
-        const getUrl = `${this.service.baseUrl}CourtTemplateAPI/GetCourtTemplate/${courtTemplateId}`;
+    ViewCourtTemplate(templateId, isEditMode = false) {
+        const getUrl = `${this.service.baseUrl}CourtTemplateAPI/GetCourtTemplate/${templateId}`;
         const progressId = isEditMode ? "#edit_progress-courttemplate" : "#progress-courttemplate";
         $(progressId).show();
 
@@ -337,7 +345,7 @@ class CourtTemplateController {
             }
         }
 
-        if (courtTemplateId) {
+        if (templateId) {
             $.ajax({
                 url: getUrl,
                 method: 'GET',
@@ -349,7 +357,7 @@ class CourtTemplateController {
                             $("#edit_hdCourtTemplateId").val(response.data.id);
                             $("#edit_ctName").val(response.data.name);
                             $("#edit_ctCourt").val(response.data.court_id);
-                            $("#CourtTemplateEditModalLabel").html(`Edit Court Template: ${response.data.name}`);
+                            $("#CourtTemplateEditModalLabel").html(`Edit Template: ${response.data.name} `);
                         } else {
                             $("#ctName").html(response.data.name);
                             $("#ctCourt").html(response.data.court_description || '');
@@ -357,12 +365,12 @@ class CourtTemplateController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification("Error", response.error || "Failed to retrieve court template details. Please try again later.", 'error');
+                        ShowNotification("Error", response.error || "Failed to retrieve template details. Please try again later.", 'error');
                         $(progressId).hide();
                     }
                 },
                 error: function (error) {
-                    ShowNotification("Error Retrieving Court Template Details", error.statusText || "Failed to retrieve court template details. Please try again later.", 'error');
+                    ShowNotification("Error Retrieving Template Details", error.statusText || "Failed to retrieve template details. Please try again later.", 'error');
                     $(progressId).hide();
                 }
             });
@@ -377,16 +385,16 @@ class CourtTemplateController {
         } else {
             this.UpdateCourtTemplate();
         }
-        if (courtTemplateControllerInstance.courtTemplateTable) {
+        if (courtTemplateControllerInstance.templateTable) {
             courtTemplateControllerInstance.ClearEditForm();
-            courtTemplateControllerInstance.courtTemplateTable.draw();
+            courtTemplateControllerInstance.templateTable.draw();
         }
     }
 
     CreateCourtTemplate() {
         try {
             $("#edit_progress-courttemplate").show();
-            const courtTemplateData = {
+            const templateData = {
                 name: $("#edit_ctName").val().trim(),
                 court_id: $("#edit_ctCourt").val()
             };
@@ -395,7 +403,7 @@ class CourtTemplateController {
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(courtTemplateData),
+                data: JSON.stringify(templateData),
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     $("#edit_progress-courttemplate").hide();
@@ -403,34 +411,34 @@ class CourtTemplateController {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: response.message || 'Court Template created successfully.'
+                            text: response.message || 'Template created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
-                        if (courtTemplateControllerInstance.courtTemplateTable) {
-                            courtTemplateControllerInstance.courtTemplateTable.draw();
+                        if (courtTemplateControllerInstance.templateTable) {
+                            courtTemplateControllerInstance.templateTable.draw();
                         }
                     } else {
-                        ShowNotification("Error", response.message || "Unexpected error occurred while creating court template.", 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while creating template.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courttemplate").hide();
-                    ShowNotification("Error Creating Court Template", error.statusText || "Failed to create court template.", 'error');
+                    ShowNotification("Error Creating Template", error.statusText || "Failed to create template.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courttemplate").hide();
-            ShowNotification("Error Creating Court Template", e.message, 'error');
+            ShowNotification("Error Creating Template", e.message, 'error');
         }
     }
 
     UpdateCourtTemplate() {
         try {
             $("#edit_progress-courttemplate").show();
-            const courtTemplateData = {
+            const templateData = {
                 id: parseInt($("#edit_hdCourtTemplateId").val()),
                 name: $("#edit_ctName").val().trim(),
                 court_id: $("#edit_ctCourt").val()
@@ -440,7 +448,7 @@ class CourtTemplateController {
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(courtTemplateData),
+                data: JSON.stringify(templateData),
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
                     $("#edit_progress-courttemplate").hide();
@@ -448,27 +456,27 @@ class CourtTemplateController {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: response.message || 'Court Template updated successfully.'
+                            text: response.message || 'Template updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('CourtTemplateEditModal'));
                         if (editModal) {
                             editModal.hide();
                         }
-                        if (courtTemplateControllerInstance.courtTemplateTable) {
-                            courtTemplateControllerInstance.courtTemplateTable.draw();
+                        if (courtTemplateControllerInstance.templateTable) {
+                            courtTemplateControllerInstance.templateTable.draw();
                         }
                     } else {
-                        ShowNotification("Error", response.message || "Unexpected error occurred while updating court template.", 'error');
+                        ShowNotification("Error", response.message || "Unexpected error occurred while updating template.", 'error');
                     }
                 },
                 error: function (error) {
                     $("#edit_progress-courttemplate").hide();
-                    ShowNotification("Error Updating Court Template", error.statusText || "Failed to update court template.", 'error');
+                    ShowNotification("Error Updating Template", error.statusText || "Failed to update template.", 'error');
                 }
             });
         } catch (e) {
             $("#edit_progress-courttemplate").hide();
-            ShowNotification("Error Updating Court Template", e.message, 'error');
+            ShowNotification("Error Updating Template", e.message, 'error');
         }
     }
 

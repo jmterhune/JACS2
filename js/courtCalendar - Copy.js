@@ -1,5 +1,4 @@
-﻿// Filename: Resources/js/courtcalendar.js
-let courtCalendarControllerInstance = null;
+﻿let courtCalendarControllerInstance = null;
 
 class CourtCalendarController {
     constructor(params = {}) {
@@ -245,15 +244,15 @@ class CourtCalendarController {
                 success: response => {
                     if (response.data) {
                         const evt = response.data;
-                        const evtMotion = $('#event_motion')[0].tomselect;
-                        if (evtMotion) evtMotion.setValue(evt.motion_id || '');
-                        const evtType = $('#event_type')[0].tomselect;
-                        if (evtType) evtType.setValue(evt.type_id || '');
+                        const motionTom = $('#event_motion')[0].tomselect;
+                        if (motionTom) motionTom.setValue(evt.motion_id || '');
+                        const typeTom = $('#event_type')[0].tomselect;
+                        if (typeTom) typeTom.setValue(evt.type_id || '');
                         $('#event_customMotion').val(evt.custom_motion || '');
-                        const evtAttorney = $('#event_attorney')[0].tomselect;
-                        if (evtAttorney && evt.attorney_id) evtAttorney.setValue(evt.attorney_id);
-                        const evtOppAttorney = $('#event_opposingAttorney')[0].tomselect;
-                        if (evtOppAttorney && evt.opp_attorney_id) evtOppAttorney.setValue(evt.opp_attorney_id);
+                        const attorneyTom = $('#event_attorney')[0].tomselect;
+                        if (attorneyTom && evt.attorney_id) attorneyTom.setValue(evt.attorney_id);
+                        const oppAttorneyTom = $('#event_opposingAttorney')[0].tomselect;
+                        if (oppAttorneyTom && evt.opp_attorney_id) oppAttorneyTom.setValue(evt.opp_attorney_id);
                         $('#event_plaintiff').val(evt.plaintiff || '');
                         $('#event_defendant').val(evt.defendant || '');
                         $('#event_plaintiffEmail').val(evt.plaintiff_email || '');
@@ -1073,15 +1072,15 @@ class CourtCalendarController {
             success: response => {
                 if (response.data) {
                     $('#edit_eventId').val(response.data.id);
-                    const evtMotion = $('#event_motion')[0].tomselect;
-                    if (evtMotion) evtMotion.setValue(response.data.motion_id);
-                    const evtType = $('#event_type')[0].tomselect;
-                    if (evtType) evtType.setValue(response.data.type_id);
+                    const motionTom = $('#event_motion')[0].tomselect;
+                    if (motionTom) motionTom.setValue(response.data.motion_id);
+                    const typeTom = $('#event_type')[0].tomselect;
+                    if (typeTom) typeTom.setValue(response.data.type_id);
                     $('#event_customMotion').val(response.data.custom_motion);
-                    const evtAttorney = $('#event_attorney')[0].tomselect;
-                    if (evtAttorney) evtAttorney.setValue(response.data.attorney_id);
-                    const evtOppAttorney = $('#event_opposingAttorney')[0].tomselect;
-                    if (evtOppAttorney) evtOppAttorney.setValue(response.data.opp_attorney_id);
+                    const attorneyTom = $('#event_attorney')[0].tomselect;
+                    if (attorneyTom) attorneyTom.setValue(response.data.attorney_id);
+                    const oppAttorneyTom = $('#event_opposingAttorney')[0].tomselect;
+                    if (oppAttorneyTom) oppAttorneyTom.setValue(response.data.opp_attorney_id);
                     const caseNumParts = response.data.case_num.split('-');
                     $('#event_caseNum_container .case-num-part').each((index, el) => {
                         $(el).val(caseNumParts[index] || '');
@@ -1214,31 +1213,32 @@ class CourtCalendarController {
                 $('#eventsTableBody').empty();
                 if (response.data) {
                     if (response.data.length === 1) {
-                        const evt = response.data[0];
-                        const evtMotion = $('#event_motion')[0].tomselect;
-                        if (evtMotion) evtMotion.setValue(evt.motion_id);
-                        const evtType = $('#event_type')[0].tomselect;
-                        if (evtType) evtType.setValue(evt.type_id);
-                        $('#event_customMotion').val(evt.custom_motion);
-                        const evtAttorney = $('#event_attorney')[0].tomselect;
-                        if (evtAttorney) evtAttorney.setValue(evt.attorney_id);
-                        const evtOppAttorney = $('#event_opposingAttorney')[0].tomselect;
-                        if (evtOppAttorney) evtOppAttorney.setValue(evt.opp_attorney_id);
-                        const caseNumParts = evt.case_num.split('-');
+                        const e = response.data[0];
+                        $('#edit_eventId').val(e.id);
+                        const motionTom = $('#event_motion')[0].tomselect;
+                        if (motionTom) motionTom.setValue(e.motion_id);
+                        const typeTom = $('#event_type')[0].tomselect;
+                        if (typeTom) typeTom.setValue(e.type_id);
+                        $('#event_customMotion').val(e.custom_motion);
+                        const attorneyTom = $('#event_attorney')[0].tomselect;
+                        if (attorneyTom) attorneyTom.setValue(e.attorney_id);
+                        const oppAttorneyTom = $('#event_opposingAttorney')[0].tomselect;
+                        if (oppAttorneyTom) oppAttorneyTom.setValue(e.opp_attorney_id);
+                        const caseNumParts = e.case_num.split('-');
                         $('#event_caseNum_container .case-num-part').each((index, el) => {
                             $(el).val(caseNumParts[index] || '');
                         });
-                        $('#event_plaintiff').val(evt.plaintiff);
-                        $('#event_defendant').val(evt.defendant);
-                        $('#event_plaintiffEmail').val(evt.plaintiff_email);
-                        $('#event_defendantEmail').val(evt.defendant_email);
-                        $('#event_notes').val(evt.notes);
-                        $('#event_addon_check').prop('checked', evt.addon === '1');
-                        $('#event_addon').val(evt.addon);
-                        $('#event_reminder_check').prop('checked', evt.reminder === '1');
-                        $('#event_reminder').val(evt.reminder);
-                        $('#event_editedBy').val(evt.editedBy || '');
-                        $('#event_updatedOn').val(evt.updatedOn || '');
+                        $('#event_plaintiff').val(e.plaintiff);
+                        $('#event_defendant').val(e.defendant);
+                        $('#event_plaintiffEmail').val(e.plaintiff_email);
+                        $('#event_defendantEmail').val(e.defendant_email);
+                        $('#event_notes').val(e.notes);
+                        $('#event_addon_check').prop('checked', e.addon === '1');
+                        $('#event_addon').val(e.addon);
+                        $('#event_reminder_check').prop('checked', e.reminder === '1');
+                        $('#event_reminder').val(e.reminder);
+                        $('#event_editedBy').val(e.editedBy || '');
+                        $('#event_updatedOn').val(e.updatedOn || '');
                         $('.edited-by').show();
 
                         $('#cancelHearingBtn').show();

@@ -1,7 +1,10 @@
-﻿using DotNetNuke.Data;
+﻿// Filename: CourtTimeslotController.cs
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -28,6 +31,11 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
+        public CourtTimeslot GetCourtTimeslotByTimeslotId(long timeslotId)
+        {
+            return GetCourtTimeslots().FirstOrDefault(ct => ct.timeslot_id == timeslotId);
+        }
+
         public void DeleteCourtTimeslot(CourtTimeslot t)
         {
             if (t == null) throw new ArgumentNullException(nameof(t));
@@ -46,6 +54,15 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 return rep.Get();
+            }
+        }
+
+        public IEnumerable<CourtTimeslot> GetCourtTimeslotsByCourtId(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtTimeslot>();
+                return rep.Find("WHERE court_id = @0", courtId);
             }
         }
 
@@ -89,11 +106,11 @@ namespace tjc.Modules.jacs.Components
             if (t == null) throw new ArgumentNullException(nameof(t));
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                if (t.court_id.HasValue && ctx.ExecuteScalar<long>( System.Data.CommandType.Text,"SELECT COUNT(*) FROM courts WHERE id = @0", t.court_id.Value) == 0)
+                if (t.court_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM courts WHERE id = @0", t.court_id.Value) == 0)
                     throw new ValidationException("Invalid court ID.");
                 if (t.timeslot_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM timeslots WHERE id = @0", t.timeslot_id.Value) == 0)
                     throw new ValidationException("Invalid timeslot ID.");
-                if (ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM court_timeslots WHERE court_id = @0 AND timeslot_id = @1", t.court_id, t.timeslot_id) > 0)
+                if (ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM court_timeslots WHERE court_id = @0 AND timeslot_id = @1 AND id != @2", t.court_id, t.timeslot_id, t.id) > 0)
                     throw new ValidationException("Duplicate court-timeslot association.");
             }
         }

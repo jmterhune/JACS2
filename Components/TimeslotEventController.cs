@@ -38,12 +38,12 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<TimeslotEvent> GetTimeslotEvents()
+        public IEnumerable<TimeslotEvent> GetTimeslotEventsByTimeSlot(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
-                return rep.Get();
+                return rep.Find("Where timeslot_id=@0",timeslotId);
             }
         }
 

@@ -64,7 +64,9 @@
 .calendar-day-link {
     cursor: pointer;
 }
-
+.fc-event-main {
+    overflow: hidden;
+}
 .calendar-day-header-link {
     cursor: pointer;
 }

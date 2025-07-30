@@ -119,6 +119,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\Common.cs" />
+    <Compile Include="Services\CourtBlockedTimeslotsAPIController.cs" />
+    <Compile Include="Services\CourtEventAPIController.cs" />
+    <Compile Include="Services\CourtTemplateOrderAPIController.cs" />
+    <Compile Include="Services\CourtTimeslotsAPIController.cs" />
+    <Compile Include="Services\TemplateAPIController.cs" />
+    <Compile Include="Services\TemplateTimeslotAPIController.cs" />
+    <Compile Include="TemplateConfigView.ascx.cs">
+      <DependentUpon>TemplateConfigView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TemplateConfigView.ascx.designer.cs">
+      <DependentUpon>TemplateConfigView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="EventView.ascx.cs">
       <DependentUpon>EventView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -399,6 +412,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\templateConfig.js" />
+    <Content Include="TemplateConfigView.ascx" />
     <Content Include="EventView.ascx" />
     <Content Include="js\courtCalendar.js" />
     <Content Include="js\event.js" />

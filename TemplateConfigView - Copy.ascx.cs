@@ -35,7 +35,7 @@ namespace tjc.Modules.jacs
     /// 
     /// </summary>
     /// -----------------------------------------------------------------------------
-    public partial class CourtCalendarView : JACSModuleBase
+    public partial class TemplateConfigView : JACSModuleBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -61,15 +61,21 @@ namespace tjc.Modules.jacs
                 navbar.UserListUrl = UserListUrl;
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
-                navbar.ActiveLink = "lnkCourt";
+                navbar.ActiveLink = "lnkTemplate";
                 if(Page.IsPostBack == false)
                 {
+                    if (CourtId <= 0 || TemplateId <= 0)
+                    {
+                        throw new Exception("Invalid Court or Template ID.");
+                    }
                     var ctl = new CourtController();
                     Court court = ctl.GetCourt(CourtId);
                     if (court != null) {
-                        ltCourtName.Text = court.description;
-                        ltJudgeName.Text = court.GetJudge().name;
+                        ltCourtName.Text = court?.description ?? "Unknown Court";
                     }
+                    var templateController = new CourtTemplateController();
+                    var template = templateController.GetCourtTemplate(TemplateId);
+                    ltTemplateName.Text = template?.name ?? "Unknown Template";
                 }
             }
             catch (Exception exc) //Module failed to load

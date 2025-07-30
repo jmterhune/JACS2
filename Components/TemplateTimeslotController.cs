@@ -36,7 +36,8 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public TemplateTimeslot GetTemplateTimeslot(int templatetimeslotId)
+        
+        public TemplateTimeslot GetTemplateTimeslot(int templatetimeslotId)//court_template_id
         {
             TemplateTimeslot t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

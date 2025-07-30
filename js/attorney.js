@@ -5,7 +5,7 @@ class AttorneyController {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
         this.isAdmin = params.isAdmin || false;
-        this.adminRole = params.adminRole || 'Admin';
+        this.adminRole = params.adminRole || 'AdminRole';
         this.editUrl = params.editUrl || '';
         this.pageSize = params.pageSize || 25;
         this.sortDirection = params.sortDirection || 'asc';
@@ -303,9 +303,7 @@ class AttorneyController {
             e.preventDefault();
             const barNumber = $("#edit_attyBar").val();
             if (barNumber.trim() !== "") {
-                if ($("#edit_hdAttorneyId").val() === "") {
                     attorneyControllerInstance.GetSiteUser(barNumber);
-                }
             }
         });
 

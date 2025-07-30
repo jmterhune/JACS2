@@ -1,5 +1,4 @@
-﻿// Filename: CourtAPIController.cs
-using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -112,11 +111,6 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new CourtController();
-                var court = ctl.GetCourt(p1);
-                if (court == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
-                }
                 ctl.DeleteCourt(p1);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court deleted successfully" });
             }
@@ -184,7 +178,7 @@ namespace tjc.Modules.jacs.Services
                 }
                 if (string.IsNullOrWhiteSpace(court.description) || court.county_id <= 0)
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and County are required." });
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and Countyare required." });
                 }
                 var existingCourt = ctl.GetCourt(court.id);
                 if (existingCourt == null)
@@ -193,119 +187,6 @@ namespace tjc.Modules.jacs.Services
                 }
                 ctl.UpdateCourt(court);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        public HttpResponseMessage ExtendCalendar(long courtId)
-        {
-            try
-            {
-                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-                DateTime.TryParse(query.ContainsKey("startDate") ? query["startDate"] : DateTime.Now.ToString(), out DateTime startDate);
-                Int32.TryParse(query.ContainsKey("weeks") ? query["weeks"] : "0", out int weeks);
-                Int32.TryParse(query.ContainsKey("startTemplate") ? query["startTemplate"] : "0", out int startTemplate);
-
-                var courtCtl = new CourtController();
-                var court = courtCtl.GetCourt(courtId);
-                if (court == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
-                }
-
-                var templateOrderCtl = new CourtTemplateOrderController();
-                if (court.auto_extension == false)
-                {
-                    for (int i = 0; i < weeks; i++)
-                    {
-                        var date = startDate.AddDays(i * 7).Date;
-                        templateOrderCtl.CreateCourtTemplateOrder(new CourtTemplateOrder
-                        {
-                            court_id = courtId,
-                            date = date,
-                            auto = false,
-                            created_at = DateTime.Now,
-                            updated_at = DateTime.Now
-                        });
-                    }
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Calendar extended successfully" });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        public HttpResponseMessage TruncateCalendar(long courtId)
-        {
-            try
-            {
-                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-                DateTime.TryParse(query.ContainsKey("date") ? query["date"] : DateTime.Now.ToString(), out DateTime date);
-                string filter = query.ContainsKey("filter") ? query["filter"] : string.Empty;
-
-                var courtCtl = new CourtController();
-                var court = courtCtl.GetCourt(courtId);
-                if (court == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
-                }
-
-                var timeslotCtl = new TimeslotController();
-                var courtTimeslotCtl = new CourtTimeslotController();
-                var timeslots = courtTimeslotCtl.GetCourtTimeslotsByCourtId(courtId)
-                    .Where(ct => ct.Timeslot.start >= date)
-                    .ToList();
-
-                foreach (var courtTimeslot in timeslots)
-                {
-                    timeslotCtl.DeleteTimeslot(courtTimeslot.timeslot_id.Value);
-                    courtTimeslotCtl.DeleteCourtTimeslot(courtTimeslot.id);
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Calendar truncated successfully" });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage UploadData(long courtId, JObject p2)
-        {
-            try
-            {
-                // Placeholder for upload data logic; PHP files reference file upload but lack full implementation
-                // Would typically involve handling file uploads (e.g., iCal or CSV) and parsing to create timeslots or events
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Data upload not fully implemented in PHP source." });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage ExtendCalendarManual(long courtId, JObject p2)
-        {
-            try
-            {
-                // Placeholder for extend manual logic; PHP files reference manual template ordering but lack full implementation
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Manual calendar extension not fully implemented in PHP source." });
             }
             catch (Exception ex)
             {

@@ -38,10 +38,7 @@ namespace tjc.Modules.jacs.Components
             {
                 if (motion_id.HasValue)
                 {
-                    var ctl = new MotionController();
-                    var m = ctl.GetMotion(motion_id.Value);
-                    if (m != null)
-                        return m.description;
+                    return Motion.description;
                 }
                 return string.Empty;
             }
@@ -115,6 +112,19 @@ namespace tjc.Modules.jacs.Components
                     return court.description;
                 }
                 return string.Empty;
+            }
+        }
+        [IgnoreColumn]
+        public Motion Motion
+        {
+            get
+            {
+                if (motion_id.HasValue)
+                {
+                    var ctl = new MotionController();
+                    return ctl.GetMotion(motion_id.Value);
+                }
+                return null;
             }
         }
     }

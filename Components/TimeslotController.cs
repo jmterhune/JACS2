@@ -205,6 +205,27 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
+        public int GetEventCountForTimeslot(long timeslotId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT COUNT(*) 
+                    FROM timeslot_events 
+                    WHERE timeslot_id = @0";
+                return ctx.ExecuteScalar<int>(System.Data.CommandType.Text, query, timeslotId);
+            }
+        }
+
+        public TimeslotMotion GetTimeslotMotion(long timeslotMotionId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<TimeslotMotion>();
+                return rep.GetById(timeslotMotionId);
+            }
+        }
+
         public void CreateTimeslotMotion(TimeslotMotion timeslotMotion)
         {
             ValidateTimeslotMotion(timeslotMotion);
@@ -281,7 +302,7 @@ namespace tjc.Modules.jacs.Components
                     "SELECT COUNT(*) FROM timeslots ts JOIN court_timeslots ct ON ts.id = ct.timeslot_id " +
                     "WHERE ct.court_id = (SELECT court_id FROM court_timeslots WHERE timeslot_id = @0) " +
                     "AND ts.id != @0 " +
-                    "AND (ts.start < @2 AND ts.end > @1 OR ts.start BETWEEN @1 AND @2 OR ts.end BETWEEN @1 AND @2)",
+                    "AND (ts.start < @2 AND ts.[end] > @1 OR ts.start BETWEEN @1 AND @2 OR ts.[end] BETWEEN @1 AND @2)",
                     t.id, t.start, t.end);
 
                 if (overlaps > 0 && !t.allDay)

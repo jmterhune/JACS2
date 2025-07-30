@@ -5,7 +5,7 @@ class UserController {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
         this.isAdmin = params.isAdmin || false;
-        this.adminRole = params.adminRole || 'Admin';
+        this.adminRole = params.adminRole || 'AdminRole';
         this.userRole = params.userRole || 'JACSUser';
         this.jaRole = params.jaRole || 'Judicial Assistant';
         this.pageSize = params.pageSize || 25;

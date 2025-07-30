@@ -16,6 +16,7 @@
                 <tr>
                     <th></th>
                     <th></th>
+                    <th></th>
                     <th>Template Name</th>
                     <th>Judge Name</th>
                     <th></th>
@@ -134,8 +135,9 @@
                     currentPage: 0,
                     pageSize: 25,
                     recordCount: 0,
-                    sortColumnIndex: 2,
-                    sortDirection: "asc"
+                    sortColumnIndex: 3,
+                    sortDirection: "asc",
+                    templateConfigUrl: "<%=TemplateConfigUrl%>",
                 });
                 courtTemplateController.init();
             } catch (e) {

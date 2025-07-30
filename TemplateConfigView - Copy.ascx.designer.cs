@@ -11,7 +11,7 @@ namespace tjc.Modules.jacs
 {
 
 
-    public partial class CourtCalendarView
+    public partial class TemplateConfigView
     {
 
         /// <summary>
@@ -33,12 +33,12 @@ namespace tjc.Modules.jacs
         protected global::System.Web.UI.WebControls.Literal ltCourtName;
 
         /// <summary>
-        /// ltJudgeName control.
+        /// ltTemplateName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltJudgeName;
+        protected global::System.Web.UI.WebControls.Literal ltTemplateName;
     }
 }

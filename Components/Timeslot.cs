@@ -1,4 +1,5 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿// Filename: Timeslot.cs
+using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,10 @@ namespace tjc.Modules.jacs.Components
                 return start.ToString("MM/dd/yyyy @ hh:mm tt");
             }
         }
+        [IgnoreColumn]
+        public ICollection<TimeslotEvent> TimeslotEvents { get; set; } = new List<TimeslotEvent>();
+        [IgnoreColumn]
+        public ICollection<TimeslotMotion> Motions { get; set; } = new List<TimeslotMotion>();
     }
 
     internal class CustomTimeslot : Timeslot
