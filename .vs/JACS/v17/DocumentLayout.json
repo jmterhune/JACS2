@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\templateconfig.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\templateconfig.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\templateconfig - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\templateconfig - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\templateapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -38,8 +34,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "templateConfig.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\templateConfig.js",
+              "RelativeDocumentMoniker": "js\\templateConfig.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\templateConfig.js",
+              "RelativeToolTip": "js\\templateConfig.js",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAADAAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-07-30T21:57:40.193Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -54,13 +63,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "courtCalendar.js",
               "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
               "RelativeDocumentMoniker": "js\\courtCalendar.js",
               "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
               "RelativeToolTip": "js\\courtCalendar.js",
-              "ViewState": "AgIAADsBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAOwBAAAAAAAAAAAhwO8BAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
               "WhenOpened": "2025-07-30T21:07:53.079Z",
               "EditorCaption": ""
@@ -68,19 +77,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "templateConfig - Copy.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\templateConfig - Copy.js",
-              "RelativeDocumentMoniker": "js\\templateConfig - Copy.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\templateConfig - Copy.js",
-              "RelativeToolTip": "js\\templateConfig - Copy.js",
-              "ViewState": "AgIAAKsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-07-30T21:03:21.386Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "TemplateAPIController.cs",
               "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\TemplateAPIController.cs",
               "RelativeDocumentMoniker": "Services\\TemplateAPIController.cs",
@@ -93,7 +89,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "court.js",
               "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court.js",
               "RelativeDocumentMoniker": "js\\court.js",
@@ -106,7 +102,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "TemplateConfigView.ascx",
               "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\TemplateConfigView.ascx",
               "RelativeDocumentMoniker": "TemplateConfigView.ascx",
@@ -119,7 +115,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "TemplateTimeslot.cs",
               "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\TemplateTimeslot.cs",
               "RelativeDocumentMoniker": "Components\\TemplateTimeslot.cs",
@@ -128,40 +124,6 @@
               "ViewState": "AgIAABAAAAAAAAAAAAA0wBwAAABbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-30T18:35:13.57Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "0c5e2351-f5da-44fb-a352-24a3cd9cbc46",
-        "Display": 0,
-        "X": 277,
-        "Y": 144,
-        "Width": 1376,
-        "Height": 1008,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "templateConfig.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\templateConfig.js",
-              "RelativeDocumentMoniker": "js\\templateConfig.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\templateConfig.js",
-              "RelativeToolTip": "js\\templateConfig.js",
-              "ViewState": "AgIAACUAAAAAAAAAAAAhwDkAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-07-30T18:21:38.897Z",
               "EditorCaption": ""
             }
           ]

@@ -46,6 +46,7 @@ class TemplateConfigController {
                 }
             },
             editable: true,
+            droppable: true,
             selectable: true,
             events: `${this.service.baseUrl}TemplateAPI/Show/${this.templateId}`,
             weekends: false,
