@@ -1,5 +1,6 @@
 ﻿// CourtTemplateAPIController.cs
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.UI;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
 
@@ -139,6 +141,68 @@ namespace tjc.Modules.jacs.Services
                 courtTemplate.updated_at = DateTime.UtcNow;
                 ctl.UpdateCourtTemplate(courtTemplate);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Template updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage CopyCourtTemplate(JObject p1)
+        {
+            try
+            {
+                UserInfo currentUser = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (currentUser == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to edit this template." });
+                }
+
+                var ctl = new CourtTemplateController();
+                var timeslotMotionCtl = new TimeslotMotionController();
+                var templateTimeslotCtl = new TemplateTimeslotController();
+                var permissionController = new CourtPermissionController();
+                var templateId = p1.ToObject<long>();
+                if (templateId <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court Template ID is required for Copy Functionality." });
+                }
+
+                var existingTemplate = ctl.GetCourtTemplate(templateId);
+                if (existingTemplate == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court Template not found." });
+                }
+                var court = new CourtController().GetCourt(existingTemplate.court_id);
+                var judge = court.GetJudge();
+                var hasPermission = permissionController.HasCourtPermission(currentUser.UserID, judge.id);
+                if (!hasPermission && !currentUser.IsAdmin)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to edit this template." });
+                }
+
+                var clonedTemplate = (CourtTemplate)existingTemplate.Clone();
+                if (clonedTemplate == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = "Failed to copy Court Template." });
+                }
+                ctl.CreateCourtTemplate(clonedTemplate);
+                foreach (TemplateTimeslot existingTimeslot in existingTemplate.template_timeslots)
+                {
+                   var clonedTimeslot=(TemplateTimeslot)existingTimeslot.Clone();
+                    templateTimeslotCtl.CreateTemplateTimeslot(clonedTimeslot);
+                    if (clonedTimeslot != null)
+                    {
+                        foreach (var timeslotMotion in existingTimeslot.timeslot_motions)
+                        {
+                           var clonedTimeslotMotion =(TimeslotMotion)timeslotMotion.Clone();
+                            timeslotMotionCtl.CreateTimeslotMotion(clonedTimeslotMotion);
+                        }
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Template Copied successfully" });
             }
             catch (Exception ex)
             {

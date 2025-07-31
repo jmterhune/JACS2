@@ -14,6 +14,9 @@ namespace tjc.Modules.jacs.Components
             ValidateTimeslotEvent(t);
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
+                t.created_at = DateTime.Now;
+                t.updated_at = DateTime.Now;
+
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 rep.Insert(t);
             }
@@ -61,6 +64,8 @@ namespace tjc.Modules.jacs.Components
             ValidateTimeslotEvent(t);
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
+                t.updated_at = DateTime.Now;
+
                 var rep = ctx.GetRepository<TimeslotEvent>();
                 rep.Update(t);
             }

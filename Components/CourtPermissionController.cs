@@ -1,4 +1,7 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.UI.UserControls;
 using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.jacs.Services.ViewModels;
@@ -65,6 +68,21 @@ namespace tjc.Modules.jacs.Components
                 t = rep.Find("Where user_id=@0 and active=1",userId);
             }
             return t;
+        }
+        public bool HasCourtPermission(int userId,long judgeId)
+        {
+            CourtPermission t;
+            
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtPermission>();
+                t = rep.Find("Where user_id=@0 AND judge_id=@1 AND active=1", userId, judgeId).FirstOrDefault();
+                if (t == null)
+                {
+                    return false;
+                }
+                return t.editable;
+            }
         }
 
         public void UpdateCourtPermission(CourtPermission t)

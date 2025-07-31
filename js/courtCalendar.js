@@ -336,8 +336,8 @@ class CourtCalendarController {
             selectAllow: function (selectInfo) {
                 return selectInfo.start.getDay() !== 0 && selectInfo.start.getDay() !== 6;
             },
-            slotMinTime: '06:00:00',
-            slotMaxTime: '17:00:00',
+            slotMinTime: '07:30:00',
+            slotMaxTime: '17:30:00',
             slotDuration: '00:15:00',
             allDaySlot: false,
             height: 'auto',

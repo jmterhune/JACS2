@@ -9,8 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Services
@@ -19,7 +17,7 @@ namespace tjc.Modules.jacs.Services
     public class TemplateAPIController : DnnApiController
     {
         [HttpGet]
-        public HttpResponseMessage Show(long p1)
+        public HttpResponseMessage GetCourtTemplate(long p1)
         {
             try
             {
@@ -59,7 +57,7 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage Update(JObject p1)
+        public HttpResponseMessage UpdateTemplateTimeslot(JObject p1)
         {
             try
             {
@@ -128,8 +126,48 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage UpdateTemplateTimeslotTime(JObject p1)
+        {
+            try
+            {
+                var timeslot = p1.ToObject<TemplateTimeslot>();
+                if (timeslot.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Template timeslot ID is required for update." });
+                }
+                if (timeslot.start == default || timeslot.end == default || timeslot.end <= timeslot.start)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Valid start and end times are required." });
+                }
+
+                var ctl = new CourtTemplateController();
+                var existingTimeslot = ctl.GetTemplateTimeslot(timeslot.id);
+                if (existingTimeslot == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Template timeslot not found." });
+                }
+                existingTimeslot.day = (int)timeslot.start.DayOfWeek;
+                existingTimeslot.updated_at = DateTime.Now;
+                existingTimeslot.start = DateTime.SpecifyKind(timeslot.start, DateTimeKind.Local);
+                existingTimeslot.end = DateTime.SpecifyKind(timeslot.end, DateTimeKind.Local);
+                var minutesDifference = (int)(existingTimeslot.end - existingTimeslot.start).TotalMinutes;
+                var quantity = minutesDifference / existingTimeslot.duration;
+                existingTimeslot.quantity = quantity > 0 ? quantity : 1; // Ensure at least one slot
+
+                ctl.UpdateTemplateTimeslot(existingTimeslot);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Template timeslot updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
         [HttpGet]
-        public HttpResponseMessage Edit(long p1)
+        public HttpResponseMessage EditTemplateTimeslot(long p1)
         {
             try
             {
@@ -167,7 +205,7 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
-        public HttpResponseMessage Destroy(long p1)
+        public HttpResponseMessage DeleteTemplateTimeslot(long p1)
         {
             try
             {
@@ -195,7 +233,7 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage Store(JObject p1)
+        public HttpResponseMessage CreateTemplateTimeslot(JObject p1)
         {
             try
             {
@@ -347,49 +385,50 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage DestroyMulti(JArray p1)
+        public HttpResponseMessage DeleteTemplateTimeslots(JArray p1) //Delete multiple template timeslots
         {
             try
             {
-                var templateIds = p1.ToObject<List<long>>();
-                if (templateIds == null || !templateIds.Any())
+                UserInfo currentUser = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (currentUser == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "At least one template ID is required." });
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to delete this timeslot." });
+                }
+                var timeslotIds = p1.ToObject<List<long>>();
+                if (timeslotIds == null || !timeslotIds.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "At least one timeslot ID is required." });
                 }
                 var ctl = new CourtTemplateController();
                 var timeslotMotionCtl = new TimeslotMotionController();
-                var templateOrderCtl = new CourtTemplateOrderController();
-                var deletedIds = new List<long>();
-                foreach (var id in templateIds)
+                var permissionController = new CourtPermissionController();
+                var firstTemplateTimeslot = ctl.GetTemplateTimeslot(timeslotIds.First());
+                var template = ctl.GetCourtTemplate(firstTemplateTimeslot.court_template_id.Value);
+                var court = new CourtController().GetCourt(template.court_id);
+                var judge = court.GetJudge();
+
+                foreach (var id in timeslotIds)
                 {
-                    var courtTemplate = ctl.GetCourtTemplate(id);
-                    if (courtTemplate == null)
+                    var templateTimeslot = ctl.GetTemplateTimeslot(id);
+                    var hasPermission = permissionController.HasCourtPermission(currentUser.UserID, judge.id);
+                    if (!hasPermission && !currentUser.IsAdmin)
                     {
-                        continue; // Skip non-existent templates
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to delete this timeslot." });
                     }
-                    var templateTimeslots = ctl.GetTemplateTimeslots(id);
-                    foreach (var timeslot in templateTimeslots)
+                    foreach (var motion in templateTimeslot.motions)
                     {
-                        var timeslotMotions = timeslotMotionCtl.GetTemplateTimeslotMotions(timeslot.id, "App\\Models\\TemplateTimeslot");
+                        var timeslotMotions = timeslotMotionCtl.GetTemplateTimeslotMotions(id, "App\\Models\\TemplateTimeslot");
                         foreach (var timeslotMotion in timeslotMotions)
                         {
                             timeslotMotionCtl.DeleteTimeslotMotion(timeslotMotion.id);
                         }
-                        ctl.DeleteTemplateTimeslot(timeslot.id);
                     }
-                    var courtTemplateOrders = templateOrderCtl.GetCourtTemplateOrdersByTemplateId(id);
-                    foreach (var templateOrder in courtTemplateOrders)
-                    {
-                        templateOrderCtl.DeleteCourtTemplateOrder(templateOrder.id);
-                    }
-                    ctl.DeleteCourtTemplate(id);
-                    deletedIds.Add(id);
+                    ctl.DeleteTemplateTimeslot(id);
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     status = 200,
-                    message = "Templates deleted successfully",
-                    deletedIds
+                    message = "Templates deleted successfully"
                 });
             }
             catch (Exception ex)
@@ -401,64 +440,52 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage Clone(long p1)
+        public HttpResponseMessage CopyTemplateTimeslots(JArray p1)
         {
             try
             {
-                var ctl = new CourtTemplateController();
-                var oldTemplate = ctl.GetCourtTemplate(p1);
-                if (oldTemplate == null)
+                UserInfo currentUser = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (currentUser == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Template not found." });
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to edit this template." });
                 }
-                var newTemplate = new CourtTemplate
+                var timeslotIds = p1.ToObject<List<long>>();
+                if (timeslotIds == null || !timeslotIds.Any())
                 {
-                    name = oldTemplate.name + " (Copy)",
-                    court_id = oldTemplate.court_id,
-                    created_at = DateTime.Now,
-                    updated_at = DateTime.Now
-                };
-                ctl.CreateCourtTemplate(newTemplate);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "At least one timeslot ID is required." });
+                }
+
+                var ctl = new CourtTemplateController();
                 var timeslotMotionCtl = new TimeslotMotionController();
-                var timeslots = ctl.GetTemplateTimeslots(p1);
-                foreach (var timeslot in timeslots)
+                var permissionController = new CourtPermissionController();
+                var firstTemplateTimeslot = ctl.GetTemplateTimeslot(timeslotIds.First());
+                var template = ctl.GetCourtTemplate(firstTemplateTimeslot.court_template_id.Value);
+                var court = new CourtController().GetCourt(template.court_id);
+                var judge = court.GetJudge();
+
+                foreach (var id in timeslotIds)
                 {
-                    var newTimeslot = new TemplateTimeslot
+                    var existingTimeslot = ctl.GetTemplateTimeslot(id);
+                    var hasPermission = permissionController.HasCourtPermission(currentUser.UserID, judge.id);
+                    if (!hasPermission && !currentUser.IsAdmin)
                     {
-                        start = timeslot.start,
-                        end = timeslot.end,
-                        duration = timeslot.duration,
-                        quantity = timeslot.quantity,
-                        allDay = timeslot.allDay,
-                        day = timeslot.day,
-                        court_template_id = newTemplate.id,
-                        description = timeslot.description,
-                        category_id = timeslot.category_id,
-                        blocked = timeslot.blocked,
-                        public_block = timeslot.public_block,
-                        block_reason = timeslot.block_reason,
-                        created_at = DateTime.Now,
-                        updated_at = DateTime.Now
-                    };
-                    ctl.CreateTemplateTimeslot(newTimeslot);
-                    var timeslotMotions = timeslotMotionCtl.GetTemplateTimeslotMotions(timeslot.id, "App\\Models\\TemplateTimeslot");
-                    foreach (var timeslotMotion in timeslotMotions)
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to edit this template." });
+                    }
+                    var clonedTimeslot = (TemplateTimeslot)existingTimeslot.Clone();
+                    ctl.CreateTemplateTimeslot(clonedTimeslot);
+                    if (clonedTimeslot != null)
                     {
-                        timeslotMotionCtl.CreateTimeslotMotion(new TimeslotMotion
+                        foreach (var timeslotMotion in existingTimeslot.timeslot_motions)
                         {
-                            timeslotable_type = timeslotMotion.timeslotable_type,
-                            timeslotable_id = newTimeslot.id,
-                            motion_id = timeslotMotion.motion_id,
-                            created_at = DateTime.Now,
-                            updated_at = DateTime.Now
-                        });
+                            var clonedTimeslotMotion = (TimeslotMotion)timeslotMotion.Clone();
+                            timeslotMotionCtl.CreateTimeslotMotion(clonedTimeslotMotion);
+                        }
                     }
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     status = 200,
-                    message = "Template cloned successfully",
-                    id = newTemplate.id
+                    message = "Template Timeslots Copied successfully"
                 });
             }
             catch (Exception ex)

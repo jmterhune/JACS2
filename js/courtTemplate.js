@@ -77,14 +77,6 @@ class CourtTemplateController {
                 },
                 {
                     data: "id",
-                    render: function (data, type, row) {
-                        return `<button type="button" title="Configure Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command"> <i class="fas fa-cog"></i></button>`;
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-                {
-                    data: "id",
                     render: function (data) {
                         return `<button type="button" title="Edit Template" data-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"> <i class="fas fa-pencil"></i></button>`;
                     },
@@ -102,6 +94,22 @@ class CourtTemplateController {
                     render: function (data) {
                         return data || '';
                     }
+                },
+                {
+                    data: "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" title="Configure Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command"> <i class="fas fa-cog"></i></button>`;
+                    },
+                    className: "command-item",
+                    orderable: false
+                },
+                {
+                    data: "id",
+                    render: function (data, type, row) {
+                        return `<button type="button" title="Copy Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-copy btn-command"> <i class="fas fa-copy"></i></button>`;
+                    },
+                    className: "command-item",
+                    orderable: false
                 },
                 {
                     data: "id",
@@ -477,6 +485,42 @@ class CourtTemplateController {
         } catch (e) {
             $("#edit_progress-courttemplate").hide();
             ShowNotification("Error Updating Template", e.message, 'error');
+        }
+    }
+    CopyCourtTemplate(templateId) {
+        try {
+            $("#edit_progress-courttemplate").show();
+           
+            $.ajax({
+                url: `${this.service.baseUrl}CourtTemplateAPI/CopyCourtTemplate`,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(templateId),
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#edit_progress-courttemplate").hide();
+                    if (response && response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message || 'Template Copied successfully.'
+                        });
+                        if (courtTemplateControllerInstance.templateTable) {
+                            courtTemplateControllerInstance.templateTable.draw();
+                        }
+                    } else {
+                        ShowNotification("Error", response.message || "Unexpected error occurred while copying template.", 'error');
+                    }
+                },
+                error: function (error) {
+                    $("#edit_progress-courttemplate").hide();
+                    ShowNotification("Error Copying Template", error.statusText || "Failed to copy template.", 'error');
+                }
+            });
+        } catch (e) {
+            $("#edit_progress-courttemplate").hide();
+            ShowNotification("Error Copying Template", e.message, 'error');
         }
     }
 

@@ -13,6 +13,9 @@ namespace tjc.Modules.jacs.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
+                t.created_at = DateTime.Now;
+                t.updated_at = DateTime.Now;
+
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 rep.Insert(t);
             }
@@ -64,6 +67,7 @@ namespace tjc.Modules.jacs.Components
             if (t == null) throw new ArgumentNullException(nameof(t));
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
+                t.updated_at = DateTime.Now;
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 rep.Update(t);
             }

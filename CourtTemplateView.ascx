@@ -16,10 +16,9 @@
                 <tr>
                     <th></th>
                     <th></th>
-                    <th></th>
                     <th>Template Name</th>
                     <th>Judge Name</th>
-                    <th></th>
+                    <th colspan="3">Actions</th>
                 </tr>
             </thead>
         </table>
@@ -112,7 +111,8 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" /><script>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<script>
     var moduleId = <%=ModuleId%>;
     var service = {
         path: "JACS",

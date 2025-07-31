@@ -15,8 +15,8 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplate>();
-                t.created_at = DateTime.UtcNow;
-                t.updated_at = DateTime.UtcNow;
+                t.created_at = DateTime.Now;
+                t.updated_at = DateTime.Now;
                 rep.Insert(t);
 
                 // Create court template orders for calendar weeks
@@ -159,7 +159,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplate>();
-                t.updated_at = DateTime.UtcNow;
+                t.updated_at = DateTime.Now;
                 rep.Update(t);
             }
         }

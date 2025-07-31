@@ -8,7 +8,7 @@ namespace tjc.Modules.jacs.Components
     [TableName("template_timeslots")]
     [PrimaryKey("id", AutoIncrement = true)]
     [Cacheable("TemplateTimeslots", CacheItemPriority.Default, 20)]
-    internal class TemplateTimeslot
+    internal class TemplateTimeslot: ICloneable
     {
         public long id { get; set; }
         public DateTime start { get; set; }
@@ -79,6 +79,15 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
+        public IEnumerable<TimeslotMotion> timeslot_motions
+        {
+            get
+            {
+                var ctl = new TimeslotMotionController();
+                return ctl.GetTemplateTimeslotMotions(id, "App\\Models\\TemplateTimeslot");
+            }
+        }
+        [IgnoreColumn]
         public IEnumerable<Motion> motions
         {
             get
@@ -99,6 +108,24 @@ namespace tjc.Modules.jacs.Components
                 }
                 return null;
             }
+        }
+        public object Clone()
+        {
+            return new TemplateTimeslot
+            {
+                start = this.start,
+                end = this.end,
+                duration = this.duration,
+                quantity = this.quantity,
+                allDay = this.allDay,
+                day = this.day,
+                court_template_id = this.court_template_id,
+                description = this.description,
+                category_id = this.category_id,
+                blocked = this.blocked,
+                public_block = this.public_block,
+                block_reason = this.block_reason,
+            };
         }
     }
 }

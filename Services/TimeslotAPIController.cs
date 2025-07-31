@@ -17,7 +17,7 @@ namespace tjc.Modules.jacs.Services
     public class TimeslotAPIController : DnnApiController
     {
         [HttpGet]
-        public HttpResponseMessage GetCourtTimeslots(long courtId)
+        public HttpResponseMessage GetCourtTimeslots(long p1)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace tjc.Modules.jacs.Services
                     end = start.AddDays(7);
                 }
                 var ctl = new TimeslotController();
-                var timeslots = ctl.GetTimeslotsByCourtId(courtId, start, end);
+                var timeslots = ctl.GetTimeslotsByCourtId(p1, start, end);
                 var events = timeslots.Select(t => new
                 {
                     id = t.id,

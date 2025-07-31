@@ -46,12 +46,11 @@ class TemplateConfigController {
                 }
             },
             editable: true,
-            droppable: true,
             selectable: true,
-            events: `${this.service.baseUrl}TemplateAPI/Show/${this.templateId}`,
+            events: `${this.service.baseUrl}TemplateAPI/GetCourtTemplate/${this.templateId}`,
             weekends: false,
             slotDuration: '00:05:00',
-            slotMinTime: '06:00:00',
+            slotMinTime: '07:30:00',
             slotMaxTime: '17:30:00',
             allDaySlot: false,
             selectMirror: true,
@@ -61,15 +60,12 @@ class TemplateConfigController {
             eventDrop: this.handleEventDrop.bind(this),
             eventDragStop: this.handleEventDragStop.bind(this),
             eventRemove: this.handleDeleteTimeslot.bind(this),
-            eventConstraint: {
-                startTime: '08:00',
-                endTime: '17:30',
-                daysOfWeek: [1, 2, 3, 4, 5]
-            },
             eventContent: function (arg) {
                 let divEl = document.createElement('div');
                 let timeEl = document.createElement('span');
-                timeEl.innerHTML = arg.timeText + `<input style="top:.8rem;width:.95rem;height:.95rem;" class="m-1 float-right" disabled type="checkbox" id="cb${arg.event.id}" value="${arg.event.id}"/>`;
+                timeEl.style.display = 'block';
+                timeEl.style.overflow = 'hidden';
+                timeEl.innerHTML = arg.timeText + `<input style="top:.8rem;width:.95rem;height:.95rem; pointer-events: none;" class="m-1 float-end multi-check" disabled type="checkbox" id="cb${arg.event.id}" value="${arg.event.id}"/>`;
                 let contentEl = document.createElement('div');
                 contentEl.innerHTML = arg.event.extendedProps.total_length === "5 minutes" ? ' -- ' + arg.event.title : arg.event.title;
                 divEl.appendChild(timeEl);
@@ -183,13 +179,13 @@ class TemplateConfigController {
             $('.cattle-call, .time-selection').hide();
             $('#duration, #quantity').removeAttr('required');
         }
-        $('#timeslotForm').attr('data-action', `${this.service.baseUrl}TemplateAPI/Store`);
+        $('#timeslotForm').attr('data-action', `${this.service.baseUrl}TemplateAPI/CreateTemplateTimeslot`);
         new bootstrap.Modal(document.getElementById('TimeslotModal')).show();
     }
 
     handleEventClick(info) {
         if (info.jsEvent.ctrlKey) {
-            const checkbox = info.el.querySelector('.m-1.float-right');
+            const checkbox = info.el.querySelector('.multi-check');
             if (checkbox) {
                 checkbox.checked = !checkbox.checked;
                 if (checkbox.checked) {
@@ -260,7 +256,7 @@ class TemplateConfigController {
         }).then(result => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `${this.service.baseUrl}TemplateAPI/DestroyMulti`,
+                    url: `${this.service.baseUrl}TemplateAPI/DeleteTemplateTimeslots`,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(this.multi_timeslots),
@@ -284,7 +280,7 @@ class TemplateConfigController {
             return;
         }
         $.ajax({
-            url: `${this.service.baseUrl}TemplateAPI/Clone`,
+            url: `${this.service.baseUrl}TemplateAPI/CopyTemplateTimeslots`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(this.multi_timeslots),
@@ -338,7 +334,7 @@ class TemplateConfigController {
             }).then(result => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `${this.service.baseUrl}TemplateAPI/Destroy/${timeslotId}`,
+                        url: `${this.service.baseUrl}TemplateAPI/DeleteTemplateTimeslot/${timeslotId}`,
                         type: 'GET',
                         beforeSend: xhr => this.setAjaxHeaders(xhr),
                         success: response => {
@@ -423,7 +419,7 @@ class TemplateConfigController {
 
     editTimeslot(info) {
         $.ajax({
-            url: `${this.service.baseUrl}TemplateAPI/Edit/${info.event.id}`,
+            url: `${this.service.baseUrl}TemplateAPI/EditTemplateTimeslot/${info.event.id}`,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
@@ -449,7 +445,7 @@ class TemplateConfigController {
                     const tomSelect = $('#timeslot_motions')[0].tomselect;
                     tomSelect.clear();
                     data.motions.forEach(m => tomSelect.addItem(m.motion_id));
-                    $('#timeslotForm').attr('data-action', `${this.service.baseUrl}TemplateAPI/Update`);
+                    $('#timeslotForm').attr('data-action', `${this.service.baseUrl}TemplateAPI/UpdateTemplateTimeslot`);
                     new bootstrap.Modal(document.getElementById('TimeslotModal')).show();
                 } else {
                     ShowNotification('Error', 'Failed to retrieve timeslot details.', 'error');
@@ -467,7 +463,7 @@ class TemplateConfigController {
             day: moment(info.event.start).isoWeekday()
         };
         $.ajax({
-            url: `${this.service.baseUrl}TemplateAPI/Update`,
+            url: `${this.service.baseUrl}TemplateAPI/UpdateTemplateTimeslotTime`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(timeslotData),
@@ -492,7 +488,7 @@ class TemplateConfigController {
             day: moment(event.start).isoWeekday()
         };
         $.ajax({
-            url: `${this.service.baseUrl}TemplateAPI/Update`,
+            url: `${this.service.baseUrl}TemplateAPI/UpdateTemplateTimeslotTime`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(timeslotData),

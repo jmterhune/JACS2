@@ -61,6 +61,10 @@
     }
 }
  /* Calendar Styles */
+.fc-event-main div {
+    word-wrap: break-word;
+    white-space: normal;
+}
 .calendar-day-link {
     cursor: pointer;
 }

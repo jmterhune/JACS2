@@ -15,6 +15,8 @@ namespace tjc.Modules.jacs.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
+                t.created_at = System.DateTime.Now;
+                t.updated_at = System.DateTime.Now;
                 var rep = ctx.GetRepository<CourtMotion>();
                 rep.Insert(t);
             }
