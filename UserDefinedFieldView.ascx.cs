@@ -35,7 +35,7 @@ namespace tjc.Modules.jacs
     /// 
     /// </summary>
     /// -----------------------------------------------------------------------------
-    public partial class CourtCalendarView : JACSModuleBase
+    public partial class UserDefinedFieldView : JACSModuleBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -62,15 +62,11 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkCourt";
-                if(Page.IsPostBack == false)
+                if(!IsPostBack)
                 {
-                    var ctl = new CourtController();
-                    Court court = ctl.GetCourt(CourtId);
-                    if (court != null) {
-                        ltCourtName.Text = court.description;
-                        ltJudgeName.Text = court.GetJudge().name;
-                    }
+                    edit_hdCourtId.Value = CourtId.ToString();
                 }
+             
             }
             catch (Exception exc) //Module failed to load
             {

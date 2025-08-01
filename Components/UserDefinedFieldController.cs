@@ -1,6 +1,7 @@
 ﻿using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
+
 namespace tjc.Modules.jacs.Components
 {
     internal class UserDefinedFieldController
@@ -17,9 +18,9 @@ namespace tjc.Modules.jacs.Components
                 rep.Insert(t);
             }
         }
-        public void DeleteUserDefinedField(int userdefinedfieldId)
+        public void DeleteUserDefinedField(long userDefinedFieldId)
         {
-            var t = GetUserDefinedField(userdefinedfieldId);
+            var t = GetUserDefinedField(userDefinedFieldId);
             DeleteUserDefinedField(t);
         }
         public void DeleteUserDefinedField(UserDefinedField t)
@@ -40,13 +41,13 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public UserDefinedField GetUserDefinedField(int userdefinedfieldId)
+        public UserDefinedField GetUserDefinedField(long userDefinedFieldId)
         {
             UserDefinedField t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<UserDefinedField>();
-                t = rep.GetById(userdefinedfieldId);
+                t = rep.GetById(userDefinedFieldId);
             }
             return t;
         }
@@ -58,6 +59,35 @@ namespace tjc.Modules.jacs.Components
 
                 var rep = ctx.GetRepository<UserDefinedField>();
                 rep.Update(t);
+            }
+        }
+
+        public IEnumerable<UserDefinedField> GetUserDefinedFieldsPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc, long courtId = 0)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteQuery<UserDefinedField>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_user_defined_field_paged",
+                    searchTerm ?? string.Empty,
+                    rowOffset,
+                    pageSize,
+                    sortOrder ?? "field_name",
+                    sortDesc ?? "asc",
+                    courtId
+                );
+            }
+        }
+        public int GetUserDefinedFieldsCount(string searchTerm, long courtId = 0)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<int>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_user_defined_field_count",
+                    searchTerm ?? string.Empty,
+                    courtId
+                );
             }
         }
     }

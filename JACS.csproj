@@ -118,7 +118,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UserDefinedFieldView.ascx.cs">
+      <DependentUpon>UserDefinedFieldView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserDefinedFieldView.ascx.designer.cs">
+      <DependentUpon>UserDefinedFieldView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Components\Common.cs" />
+    <Compile Include="Services\UserDefinedFieldAPIController.cs" />
     <Compile Include="Services\CourtBlockedTimeslotsAPIController.cs" />
     <Compile Include="Services\CourtEventAPIController.cs" />
     <Compile Include="Services\CourtTemplateOrderAPIController.cs" />
@@ -412,6 +420,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\userDefinedField.js" />
+    <Content Include="UserDefinedFieldView.ascx" />
     <Content Include="js\templateConfig.js" />
     <Content Include="TemplateConfigView.ascx" />
     <Content Include="EventView.ascx" />

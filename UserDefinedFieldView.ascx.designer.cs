@@ -11,7 +11,7 @@ namespace tjc.Modules.jacs
 {
 
 
-    public partial class CourtCalendarView
+    public partial class UserDefinedFieldView
     {
 
         /// <summary>
@@ -24,21 +24,12 @@ namespace tjc.Modules.jacs
         protected global::tjc.Modules.jacs.Controls.navbar navbar;
 
         /// <summary>
-        /// ltCourtName control.
+        /// edit_hdCourtId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltCourtName;
-
-        /// <summary>
-        /// ltJudgeName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltJudgeName;
+        protected global::System.Web.UI.WebControls.HiddenField edit_hdCourtId;
     }
 }
