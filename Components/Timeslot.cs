@@ -60,4 +60,15 @@ namespace tjc.Modules.jacs.Components
     {
         public int eventCount { get; set; }
     }
+    internal class TimeslotListResult
+    {
+        public int RecordsTotal { get; set; }
+        public int RecordsFiltered { get; set; }
+        public IEnumerable<TimeslotListItem> Data { get; set; }
+    }
+
+    internal class TimeslotListItem : CustomTimeslot
+    {
+        public string court_name { get; set; }
+    }
 }

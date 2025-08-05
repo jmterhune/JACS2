@@ -65,8 +65,13 @@ namespace tjc.Modules.jacs
                 if(!IsPostBack)
                 {
                     edit_hdCourtId.Value = CourtId.ToString();
+                    var ctl = new CourtController();
+                    var court=ctl.GetCourt(CourtId);
+                    if (court != null)
+                    {
+                        ltCourtName.Text = court.description;
+                    }
                 }
-             
             }
             catch (Exception exc) //Module failed to load
             {

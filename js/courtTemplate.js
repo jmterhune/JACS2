@@ -1,4 +1,5 @@
-﻿let courtTemplateControllerInstance = null;
+﻿// Updated courtTemplate.js (added ct-copy handler and updated CopyCourtTemplate to GET)
+let courtTemplateControllerInstance = null;
 
 class CourtTemplateController {
     constructor(params = {}) {
@@ -70,7 +71,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="ct-detail btn-command"> <i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="ct-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -78,7 +79,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit Template" data-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"> <i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit Template" data-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -98,7 +99,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data, type, row) {
-                        return `<button type="button" title="Configure Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command"> <i class="fas fa-cog"></i></button>`;
+                        return `<button type="button" title="Configure Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command">Configure <i class="fas fa-cog"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -106,7 +107,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data, type, row) {
-                        return `<button type="button" title="Copy Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-copy btn-command"> <i class="fas fa-copy"></i></button>`;
+                        return `<button type="button" title="Copy Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-copy btn-command">Clone <i class="fas fa-copy"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -115,7 +116,7 @@ class CourtTemplateController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin === "True") {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Template" data-id="${row.id}"> <i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Template" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -158,6 +159,22 @@ class CourtTemplateController {
                 const templateId = $(this).data("id");
                 const courtId = $(this).data("court-id");
                 courtTemplateControllerInstance.NavigateToConfig(templateId, courtId);
+            });
+            $(".ct-copy").on("click", function (e) {
+                e.preventDefault();
+                const templateId = $(this).data("id");
+                Swal.fire({
+                    title: 'Copy Template?',
+                    text: 'Are you sure you wish to copy this Template?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        courtTemplateControllerInstance.CopyCourtTemplate(templateId);
+                    }
+                });
             });
         });
 
@@ -489,17 +506,12 @@ class CourtTemplateController {
     }
     CopyCourtTemplate(templateId) {
         try {
-            $("#edit_progress-courttemplate").show();
-           
             $.ajax({
-                url: `${this.service.baseUrl}CourtTemplateAPI/CopyCourtTemplate`,
-                type: 'POST',
+                url: `${this.service.baseUrl}TemplateAPI/CloneTemplate/${templateId}`,
+                type: 'GET',
                 dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(templateId),
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: function (response) {
-                    $("#edit_progress-courttemplate").hide();
                     if (response && response.status === 200) {
                         Swal.fire({
                             icon: 'success',
@@ -514,12 +526,10 @@ class CourtTemplateController {
                     }
                 },
                 error: function (error) {
-                    $("#edit_progress-courttemplate").hide();
                     ShowNotification("Error Copying Template", error.statusText || "Failed to copy template.", 'error');
                 }
             });
         } catch (e) {
-            $("#edit_progress-courttemplate").hide();
             ShowNotification("Error Copying Template", e.message, 'error');
         }
     }

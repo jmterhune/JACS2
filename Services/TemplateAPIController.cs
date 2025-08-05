@@ -1,4 +1,4 @@
-﻿// Filename: TemplateAPIController.cs
+﻿// Updated TemplateAPIController.cs (added CloneTemplate method)
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
@@ -487,6 +487,22 @@ namespace tjc.Modules.jacs.Services
                     status = 200,
                     message = "Template Timeslots Copied successfully"
                 });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage CloneTemplate(long p1)
+        {
+            try
+            {
+                var ctl = new CourtTemplateController();
+                ctl.CloneTemplate(p1);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Template cloned successfully" });
             }
             catch (Exception ex)
             {

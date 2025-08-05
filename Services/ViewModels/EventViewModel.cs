@@ -1,4 +1,4 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿    using DotNetNuke.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

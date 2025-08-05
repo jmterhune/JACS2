@@ -85,7 +85,6 @@ namespace tjc.Modules.jacs.Components
         }
         public IEnumerable<Motion> GetMotionsByTemplateTimeslot(long timeslotId)
         {
-            IEnumerable<Motion> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"

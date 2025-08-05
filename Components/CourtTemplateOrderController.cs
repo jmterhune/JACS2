@@ -53,6 +53,14 @@ namespace tjc.Modules.jacs.Components
                 return rep.Find("Where template_id = @0",templateId);
             }
         }
+        public IEnumerable<CourtTemplateOrder> GetCourtTemplateOrdersByCourtId(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtTemplateOrder>();
+                return rep.Find("Where court_id = @0", courtId);
+            }
+        }
         public CourtTemplateOrder GetCourtTemplateOrder(long courttemplateorderId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

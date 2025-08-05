@@ -1,4 +1,5 @@
-﻿// Filename: TimeslotAPIController.cs
+﻿// TimeslotAPIController.cs
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
@@ -10,12 +11,69 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
+using tjc.Modules.jacs.Services.ViewModels;
+using static tjc.Modules.jacs.Services.EventAPIController;
 
 namespace tjc.Modules.jacs.Services
 {
     [DnnAuthorize]
     public class TimeslotAPIController : DnnApiController
     {
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage GetTimeslots(int p1)
+        {
+            List<TimeslotViewModel> timeslots = new List<TimeslotViewModel>();
+            int recordCount = p1;
+            int filteredCount = 0;
+            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+            long userId = query.ContainsKey("userId") && long.TryParse(query["userId"], out long uid) ? uid : 0;
+            string searchTerm = query.ContainsKey("searchText") ? query["searchText"] : "";
+            long courtId = query.ContainsKey("courtId") && long.TryParse(query["courtId"], out long cId) ? cId : 0;
+            DateTime startDate = query.ContainsKey("start_date") && DateTime.TryParse(query["start_date"], out DateTime start) ? start : DateTime.Today;
+            DateTime endDate = query.ContainsKey("end_date") && DateTime.TryParse(query["end_date"], out DateTime end) ? end : DateTime.Today.AddDays(31);
+            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
+            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "50", out int pageSize);
+            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
+
+            string sortColumn = "ts.start"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                sortColumn = GetSortColumn(query["order[0].column"]);
+                sortDirection = query["order[0].dir"];
+            }
+
+            try
+            {
+                var ctl = new TimeslotController();
+                filteredCount = ctl.GetTimeslotListCount(userId,searchTerm, courtId, startDate, endDate);
+                if (p1 == 0) { recordCount = filteredCount; }
+                timeslots = ctl.GetTimeslotListItems(userId, searchTerm, courtId, startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(ts=>new TimeslotViewModel(ts)).ToList();
+                return Request.CreateResponse(new TimeslotListItemResult
+                {
+                    data = timeslots,
+                    draw = draw,
+                    recordsFiltered = filteredCount,
+                    recordsTotal = recordCount,
+                    error = null
+                });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new TimeslotListItemResult
+                {
+                    data = timeslots,
+                    draw = draw,
+                    recordsFiltered = filteredCount,
+                    recordsTotal = recordCount,
+                    error = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         public HttpResponseMessage GetCourtTimeslots(long p1)
         {
@@ -782,6 +840,27 @@ namespace tjc.Modules.jacs.Services
             {
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+        internal class TimeslotListItemResult
+        {
+            public List<TimeslotViewModel> data { get; set; }
+            public int recordsTotal { get; set; }
+            public int recordsFiltered { get; set; }
+            public int draw { get; set; }
+            public string error { get; set; }
+        }
+        
+        
+        private string GetSortColumn(string columnIndex)
+        {
+            switch (columnIndex)
+            {
+                case "1": return "ct.description";
+                case "2": return "ts.start";
+                case "3": return "ts.duration";
+                case "4": return "ts.quantity";
+                default: return "ts.start";
             }
         }
     }

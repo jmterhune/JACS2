@@ -51,7 +51,7 @@ class UserDefinedFieldController {
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 data(data) {
                     data.searchText = data.search?.value || '';
-                    data.courtId = $("#hfCourtId").val();
+                    data.courtId = $("#edit_hdCourtId").val();
                     delete data.columns;
                 },
                 error: function (error) {
@@ -253,7 +253,7 @@ class UserDefinedFieldController {
 
         $("#edit_fieldType").on("change", function () {
             const val = $(this).val();
-            if (val === "CHARGE" || val === "yes_no") {
+            if (val === "yes_no") {
                 $("#edit_defaultValue").prop('disabled', true);
             } else {
                 $("#edit_defaultValue").prop('disabled', false);
@@ -319,7 +319,6 @@ class UserDefinedFieldController {
     }
 
     ClearDetailForm() {
-        $("#courtId").html("");
         $("#fieldName").html("");
         $("#fieldType").html("");
         $("#alignment").html("");
@@ -333,7 +332,6 @@ class UserDefinedFieldController {
     }
 
     ClearEditForm() {
-        $("#edit_hdCourtId").val($("#hfCourtId").val());
         $("#edit_fieldName").val("");
         $("#edit_fieldType").val("");
         $("#edit_alignment").val("");
@@ -386,7 +384,6 @@ class UserDefinedFieldController {
                             $("#UserDefinedFieldEditModalLabel").html(`Edit User Defined Field: ${response.data.field_name}`);
                             $("#edit_fieldType").trigger("change");
                         } else {
-                            $("#courtId").html(response.data.court_id);
                             $("#fieldName").html(response.data.field_name);
                             $("#fieldType").html(response.data.field_type);
                             $("#alignment").html(response.data.alignment);

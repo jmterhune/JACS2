@@ -23,7 +23,6 @@ namespace tjc.Modules.jacs.Components
                 rep.Insert(t);
             }
         }
-
         public void DeleteTimeslot(long timeslotId)
         {
             var t = GetTimeslot(timeslotId);
@@ -32,7 +31,6 @@ namespace tjc.Modules.jacs.Components
                 DeleteTimeslot(t);
             }
         }
-
         public void DeleteTimeslot(Timeslot t)
         {
             if (t == null) throw new ArgumentNullException(nameof(t));
@@ -46,7 +44,6 @@ namespace tjc.Modules.jacs.Components
                 rep.Delete(t);
             }
         }
-
         public IEnumerable<Timeslot> GetTimeslots()
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -55,7 +52,6 @@ namespace tjc.Modules.jacs.Components
                 return rep.Get();
             }
         }
-
         public IEnumerable<Timeslot> GetTimeslotsForDashboardByJudge(long judgeId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -76,7 +72,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, judgeId);
             }
         }
-
         public IEnumerable<Timeslot> GetTimeslotsForDashboard(long userId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -102,7 +97,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, userId);
             }
         }
-
         public Court GetCourtByTimeslot(long id)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -115,7 +109,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteSingleOrDefault<Court>(System.Data.CommandType.Text, query, id);
             }
         }
-
         public Timeslot GetTimeslot(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -124,7 +117,6 @@ namespace tjc.Modules.jacs.Components
                 return rep.GetById(timeslotId);
             }
         }
-
         public Timeslot GetTimeslotByEventId(long id)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -137,7 +129,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteSingleOrDefault<Timeslot>(System.Data.CommandType.Text, query, id);
             }
         }
-
         public void UpdateTimeslot(Timeslot t)
         {
             ValidateTimeslot(t);
@@ -149,7 +140,6 @@ namespace tjc.Modules.jacs.Components
                 rep.Update(t);
             }
         }
-
         public IEnumerable<Timeslot> GetTimeslotsForDashBoardByAdmin()
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -170,7 +160,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query);
             }
         }
-
         public IEnumerable<CustomTimeslot> GetTimeslotsByCourtId(long courtId, DateTime start, DateTime end)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -184,7 +173,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start, end);
             }
         }
-
         public IEnumerable<Timeslot> GetOverlappingTimeslots(long courtId, DateTime start, DateTime end)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -198,7 +186,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, start, end);
             }
         }
-
         public long[] GetRestrictedMotionsForTimeslot(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -209,7 +196,6 @@ namespace tjc.Modules.jacs.Components
                     timeslotId).Select(m => m.motion_id).ToArray();
             }
         }
-
         public int GetEventCountForTimeslot(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -221,7 +207,6 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteScalar<int>(System.Data.CommandType.Text, query, timeslotId);
             }
         }
-
         public TimeslotMotion GetTimeslotMotion(long timeslotMotionId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -230,7 +215,6 @@ namespace tjc.Modules.jacs.Components
                 return rep.GetById(timeslotMotionId);
             }
         }
-
         public void CreateTimeslotMotion(TimeslotMotion timeslotMotion)
         {
             ValidateTimeslotMotion(timeslotMotion);
@@ -239,7 +223,6 @@ namespace tjc.Modules.jacs.Components
                 ctx.GetRepository<TimeslotMotion>().Insert(timeslotMotion);
             }
         }
-
         public void UpdateTimeslotMotion(TimeslotMotion timeslotMotion)
         {
             ValidateTimeslotMotion(timeslotMotion);
@@ -253,7 +236,6 @@ namespace tjc.Modules.jacs.Components
                 ctx.GetRepository<TimeslotMotion>().Update(timeslotMotion);
             }
         }
-
         public void DeleteTimeslotMotion(long timeslotMotionId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -266,7 +248,6 @@ namespace tjc.Modules.jacs.Components
                 ctx.GetRepository<TimeslotMotion>().Delete(timeslotMotion);
             }
         }
-
         public void DeleteTimeslotMotionsForTimeslot(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -276,7 +257,6 @@ namespace tjc.Modules.jacs.Components
                     timeslotId);
             }
         }
-
         public IEnumerable<TimeslotMotion> GetTimeslotMotions(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -287,7 +267,6 @@ namespace tjc.Modules.jacs.Components
                     timeslotId);
             }
         }
-
         private void ValidateTimeslot(Timeslot t)
         {
             if (t == null) throw new ArgumentNullException(nameof(t));
@@ -314,7 +293,6 @@ namespace tjc.Modules.jacs.Components
                     throw new ValidationException("Timeslot overlaps with existing timeslots.");
             }
         }
-
         private void ValidateTimeslotMotion(TimeslotMotion timeslotMotion)
         {
             if (timeslotMotion == null) throw new ArgumentNullException(nameof(timeslotMotion));
@@ -327,6 +305,54 @@ namespace tjc.Modules.jacs.Components
                 var courtId = ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT court_id FROM court_timeslots WHERE timeslot_id = @0", timeslotMotion.timeslotable_id);
                 if (ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM court_motions WHERE court_id = @0 AND motion_id = @1 AND allowed = 1", courtId, timeslotMotion.motion_id) == 0)
                     throw new ValidationException("Motion is not allowed in this court.");
+            }
+        }
+        private long[] GetUserCourts(int userId)
+        {
+            using (IDataContext ctx = DataContext.Instance("jacs"))
+            {
+                string query = @"
+                    SELECT DISTINCT c.id 
+                    FROM courts c 
+                    INNER JOIN judges j ON j.court_id = c.id
+                    INNER JOIN court_permissions cp ON cp.judge_id = j.id
+                    WHERE cp.user_id = @0 AND cp.active = 1";
+                var courts = ctx.ExecuteQuery<long>(System.Data.CommandType.Text, query, userId);
+                return courts.ToArray();
+            }
+        }
+        public IEnumerable<TimeslotListItem> GetTimeslotListItems(long userId, string searchTerm, long court_id, DateTime startDate, DateTime endDate, int offset, int pageSize, string sortOrder, string direction)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteQuery<TimeslotListItem>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_timeslot_list_paged",
+                    userId,
+                    searchTerm ?? string.Empty,
+                    court_id,
+                    startDate.ToShortDateString(),
+                    endDate.ToShortDateString(),
+                    offset,
+                    pageSize,
+                    sortOrder ?? "ts.start",
+                    direction ?? "asc"
+                );
+            }
+        }
+        public int GetTimeslotListCount(long userId, string searchTerm, long court_id, DateTime startDate, DateTime endDate)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<int>(
+                    System.Data.CommandType.StoredProcedure,
+                    "tjc_jacs_get_timeslot_list_count",
+                    userId,
+                    searchTerm ?? string.Empty,
+                    court_id,
+                    startDate.ToShortDateString(),
+                    endDate.ToShortDateString()
+                );
             }
         }
     }

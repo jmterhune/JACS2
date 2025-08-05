@@ -5,7 +5,7 @@
     <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
     </button>
-    <h2 class="mb-0">User Defined Fields</h2>
+    <h2 class="mb-0">User Defined Fields for <asp:Literal ID="ltCourtName" runat="server" /></h2>
 </section>
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />
@@ -51,10 +51,6 @@
             <div class="modal-body">
                 <table class="table table-striped m-0 p-0 w-100">
                     <tbody>
-                        <tr>
-                            <td><strong>Court ID:</strong></td>
-                            <td><span id="courtId"></span></td>
-                        </tr>
                         <tr>
                             <td><strong>Field Name:</strong></td>
                             <td><span id="fieldName"></span></td>
@@ -136,7 +132,6 @@
                                     <option value="number">Number</option>
                                     <option value="date">Date</option>
                                     <option value="yes_no">Yes/No</option>
-                                    <option value="CHARGE">Charge</option>
                                 </select>
                             </div>
                             <div class="col-md-6">

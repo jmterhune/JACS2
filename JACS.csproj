@@ -118,6 +118,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\CourtExtendController.cs" />
+    <Compile Include="CourtExtendView.ascx.cs">
+      <DependentUpon>CourtExtendView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CourtExtendView.ascx.designer.cs">
+      <DependentUpon>CourtExtendView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ViewModels\TimeslotViewModel.cs" />
     <Compile Include="UserDefinedFieldView.ascx.cs">
       <DependentUpon>UserDefinedFieldView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -420,6 +429,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CourtExtendView.ascx" />
+    <Content Include="js\CourtExtend.js" />
+    <Content Include="js\timeslot.js" />
     <Content Include="js\userDefinedField.js" />
     <Content Include="UserDefinedFieldView.ascx" />
     <Content Include="js\templateConfig.js" />

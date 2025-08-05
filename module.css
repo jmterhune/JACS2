@@ -61,6 +61,15 @@
     }
 }
  /* Calendar Styles */
+.daterangepicker .calendar-table th, .daterangepicker .calendar-table td {
+    padding: 0 !important;
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 24px !important;
+}
+.daterangepicker .ranges li {
+    padding: 2px 5px !important;
+}
 .fc-event-main div {
     word-wrap: break-word;
     white-space: normal;
@@ -113,6 +122,21 @@
 .dropdown-toggle::after {
     display: none;
     content: none !important;
+}
+.dropdown-menu .select2-container {
+    width: 100% !important;
+}
+
+.dropdown-menu .select2-dropdown {
+   /* border: none;*/
+}
+
+.dropdown-menu {
+    min-width: 15rem !important;
+}
+.select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
 }
 .ts-wrapper.single .ts-control {
     background-color: transparent !important;
@@ -193,17 +217,6 @@ div.form-check {
 .form-group .row div.invalid-feedback {
     margin-bottom: 0px !important;
 }
-.dropdown-menu .select2-container {
-    width: 100% !important;
-}
-
-.dropdown-menu .select2-dropdown {
-    border: none;
-}
-
-.dropdown-menu {
-    min-width: 200px; /* Adjust as needed */
-}
 .navbar-filters a,.navbar-filters a:link, .navbar-filters a:visited, .navbar-filters a:hover, .navbar-filters a:active, .navbar-toggler {
     color: #869ab8 !important
 }
@@ -217,6 +230,7 @@ div.form-check {
     cursor: pointer;
     width: 16px;
     text-align: center;
+    white-space:nowrap;
 }
 
 .btn-command {
