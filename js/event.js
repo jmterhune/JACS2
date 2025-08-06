@@ -20,6 +20,9 @@ class EventController {
 
     init() {
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
+        if (this.isAdmin) {
+            this.userId = 0; // Admins can view all timeslots, so set userId to 0
+        }
         const baseUrl = this.service.baseUrl;
         this.initFilters(baseUrl);
         this.initTable(baseUrl);
@@ -79,6 +82,7 @@ class EventController {
                 type: "GET",
                 dataType: 'json',
                 data: data => ({
+                    userId: this.userId,
                     courtId: $("#courtFilter").val(),
                     categoryId: $("#categoryFilter").val(),
                     statusId: $("#statusFilter").val(),

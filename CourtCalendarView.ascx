@@ -45,8 +45,13 @@
 <div class="modal fade" id="RescheduleHearingModal" tabindex="-1" aria-labelledby="RescheduleHearingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <div id="progress-hearing" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif" />
+                </div>
+            </div>
             <div class="modal-header">
-                <h5 class="modal-title" id="RescheduleHearingModalLabel">Reschedule Hearing</h5>
+                <h4 class="modal-title" id="RescheduleHearingModalLabel">Reschedule Hearing</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -64,43 +69,245 @@
         </div>
     </div>
 </div>
-
 <!-- Timeslot Modal -->
 <div class="modal fade" id="TimeslotModal" tabindex="-1" aria-labelledby="TimeslotModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <input type="hidden" id="edit_timeslotId">
+            <div id="progress-timeslot" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif" />
+                </div>
+            </div>
             <div class="modal-header">
-                <h5 class="modal-title" id="TimeslotModalLabel">Create...</h5>
+                <h4 class="modal-title" id="TimeslotModalLabel">Create...</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="timeslot-tab" data-bs-toggle="tab" data-bs-target="#timeslotTab" type="button" role="tab" aria-controls="timeslotTab" aria-selected="true">Timeslot(s)</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="event-tab" data-bs-toggle="tab" data-bs-target="#eventTab" type="button" role="tab" aria-controls="eventTab" aria-selected="false">Create Event</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="events-tab" data-bs-toggle="tab" data-bs-target="#eventsTab" type="button" role="tab" aria-controls="eventsTab" aria-selected="false">Event(s)</button>
-                    </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="timeslotTab" role="tabpanel" aria-labelledby="timeslot-tab">
-                        <!-- Timeslot form content -->
-                    </div>
-                    <div class="tab-pane fade" id="eventTab" role="tabpanel" aria-labelledby="event-tab">
-                        <!-- Event form content -->
-                    </div>
-                    <div class="tab-pane fade" id="eventsTab" role="tabpanel" aria-labelledby="events-tab">
-                        <!-- Events table content -->
+                <div class="container-fluid p-0">
+                    <div class="tabs mb-0">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item active"><a class="nav-link" data-toggle="tab" href="#timeslotTab">Timeslot(s)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventTab">Create Event</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventsTab">Event(s)</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="timeslotTab" class="tab-pane active form-group mb-0">
+
+                                <div class="row blocking">
+                                    <div class="col-md-6">
+                                        <label>Block</label>
+                                        <input type="checkbox" id="timeslot_block" class="form-check-input" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-6 public_block" style="display: none;">
+                                        <label>Public Block</label>
+                                        <input type="checkbox" id="timeslot_publicBlock" class="form-check-input" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="row block_reason" style="display: none;">
+                                    <div class="col-md-12">
+                                        <label>Block Reason</label>
+                                        <textarea id="timeslot_blockReason" class="form-control" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="timeslot_allDay" value="false">
+                                    </div>
+                                </div>
+                                <div class="row cattle-call">
+                                    <div class="col-md-6">
+                                        <label>Concurrent/Consecutive</label>
+                                        <div class="form-check">
+                                            <input type="radio" id="cattlecall_yes" name="timeslot_concurrent" value="1" class="form-check-input" autocomplete="off" checked>
+                                            <label class="form-check-label" for="cattlecall_yes">Concurrent</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="radio" id="cattlecall_no" name="timeslot_concurrent" value="0" class="form-check-input" autocomplete="off">
+                                            <label class="form-check-label" for="cattlecall_no">Consecutive</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row time-selection">
+                                    <div class="col-md-6">
+                                        <label>Start Time</label>
+                                        <input type="datetime-local" id="timeslot_startTime" class="form-control" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>End Time</label>
+                                        <input type="datetime-local" id="timeslot_endTime" class="form-control" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="row quantity-group">
+                                    <div class="col-md-6">
+                                        <label>Duration</label>
+                                        <select id="timeslot_duration" class="form-control" autocomplete="off" required>
+                                            <option value="5">5 mins</option>
+                                            <option value="10">10 mins</option>
+                                            <option value="15">15 mins</option>
+                                            <option value="20">20 mins</option>
+                                            <option value="30">30 mins</option>
+                                            <option value="45">45 mins</option>
+                                            <option value="60">1 hour</option>
+                                            <option value="90">1.5 hours</option>
+                                            <option value="120">2 hours</option>
+                                            <option value="150">2.5 hours</option>
+                                            <option value="165">2.75 hours</option>
+                                            <option value="180">3 hours</option>
+                                            <option value="210">3.5 hours</option>
+                                            <option value="240">4 hours</option>
+                                            <option value="300">5 hours</option>
+                                            <option value="360">6 hours</option>
+                                            <option value="480">8 hours</option>
+                                            <option value="1440">All Day</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Quantity</label>
+                                        <input type="number" id="timeslot_quantity" class="form-control" min="1" autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Description</label>
+                                        <textarea id="timeslot_description" class="form-control" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Category</label>
+                                        <select id="timeslot_category" class="form-control" autocomplete="off">
+                                            <option value="">-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Restricted Motions</label>
+                                        <select id="timeslot_restrictedMotions" multiple autocomplete="off"></select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12 text-end mb-0">
+                                        <button type="button" class="btn btn-danger delete-button" id="deleteTimeslotPaneBtn"><i class="fas fa-trash"></i>Delete</button>
+                                        <button type="button" class="btn btn-success" id="saveTimeslotPaneBtn"><i class="fas fa-save"></i>Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="eventTab" class="tab-pane fade form-group mb-0">
+                                <input type="hidden" id="edit_eventId">
+                                <div class="row edited-by" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label>Edited By</label>
+                                        <span id="event_editedBy"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Updated On</label>
+                                         <span id="event_updatedOn"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Addon</label>
+                                        <input type="checkbox" id="event_addon_check" class="form-check-input" autocomplete="off">
+                                        <input type="hidden" id="event_addon" value="0">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Reminder</label>
+                                        <input type="checkbox" id="event_reminder_check" class="form-check-input" autocomplete="off">
+                                        <input type="hidden" id="event_reminder" value="0">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Motion</label>
+                                        <select id="event_motion" class="form-control" autocomplete="off"></select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Type</label>
+                                        <select id="event_type" class="form-control" autocomplete="off"></select>
+                                    </div>
+                                </div>
+                                <div class="row" id="other_motion_row" style="display: none;">
+                                    <div class="col-md-12">
+                                        <label>Other Motion</label>
+                                        <input type="text" id="event_otherMotion" class="form-control" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Case Number</label>
+                                        <div id="event_caseNum_container" class="d-flex"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Attorney</label>
+                                        <select id="event_attorney" autocomplete="off"></select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Opposing Attorney</label>
+                                        <select id="event_opposingAttorney" autocomplete="off"></select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Plaintiff</label>
+                                        <input type="text" id="event_plaintiff" class="form-control" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Defendant</label>
+                                        <input type="text" id="event_defendant" class="form-control" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Plaintiff Email</label>
+                                        <input type="email" id="event_plaintiffEmail" class="form-control" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Defendant Email</label>
+                                        <input type="email" id="event_defendantEmail" class="form-control" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Notes</label>
+                                        <textarea id="event_notes" class="form-control" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12 text-end mb-0">
+                                        <button type="button" class="btn btn-danger" id="cancelHearingBtn" style="display: none;"><i class="fas fa-times"></i>Cancel Hearing</button>
+                                        <button type="button" class="btn btn-primary" id="rescheduleBtn" style="display: none;"><i class="fas fa-calendar"></i>Re-Schedule</button>
+                                        <button type="button" class="btn btn-success" id="saveEventPaneBtn"><i class="fas fa-save"></i>Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="eventsTab" class="tab-pane fade mb-0">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th>Case #</th>
+                                            <th>Motion</th>
+                                            <th>Attorney</th>
+                                            <th>Plaintiff</th>
+                                            <th>Opposing Attorney</th>
+                                            <th>Defendant</th>
+                                            <th>&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="eventsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/court.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtcalendar.js" ForceProvider="DnnFormBottomProvider" Priority="102" />
@@ -129,12 +336,12 @@
                     moduleId: moduleId,
                     userId: <%=UserId%>,
                     isAdmin: "<%=IsAdmin%>",
-                    adminRole: 'AdminRole',
+                    adminRole: "<%=AdminRole%>",
                     service: service,
-                    courtEditUrl: "/Court/Edit",
-                    userDefinedFieldUrl: "/Court/CustomFields",
-                    truncateCalendarUrl: "/Court/Truncate",
-                    extendCalendarUrl: "/Court/Extend"
+                    courtEditUrl: "<%=CourtEditUrl%>",
+                    userDefinedFieldUrl: "<%=UserDefinedFieldUrl%>",
+                    truncateCalendarUrl: "<%=TruncateCalendarUrl%>",
+                    extendCalendarUrl: "<%=ExtendCalendarUrl%>",
                 });
                 courtCalendarController.init();
             } catch (e) {

@@ -1,4 +1,4 @@
-﻿// Filename: courtcalendar.js
+﻿// Filename: Resources/js/courtcalendar.js
 let courtCalendarControllerInstance = null;
 
 class CourtCalendarController {
@@ -10,10 +10,10 @@ class CourtCalendarController {
         this.service = params.service || null;
         this.calendar = null;
         this.courtId = this.getCourtIdFromUrl();
-        this.courtEditUrl = params.courtEditUrl || '/Court/Edit';
-        this.userDefinedFieldUrl = params.userDefinedFieldUrl || '/Court/CustomFields';
-        this.truncateCalendarUrl = params.truncateCalendarUrl || '/Court/Truncate';
-        this.extendCalendarUrl = params.extendCalendarUrl || '/Court/Extend';
+        this.courtEditUrl = params.courtEditUrl || '/court-edit';
+        this.userDefinedFieldUrl = params.userDefinedFieldUrl || '/user-fields';
+        this.truncateCalendarUrl = params.truncateCalendarUrl || '/truncate-calendar';
+        this.extendCalendarUrl = params.extendCalendarUrl || '/extend-calendar';
         this.courtData = null;
         courtCalendarControllerInstance = this;
     }
@@ -336,8 +336,8 @@ class CourtCalendarController {
             selectAllow: function (selectInfo) {
                 return selectInfo.start.getDay() !== 0 && selectInfo.start.getDay() !== 6;
             },
-            slotMinTime: '07:30:00',
-            slotMaxTime: '17:30:00',
+            slotMinTime: '06:00:00',
+            slotMaxTime: '17:00:00',
             slotDuration: '00:15:00',
             allDaySlot: false,
             height: 'auto',
@@ -621,52 +621,14 @@ class CourtCalendarController {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
-                const selectedTimeslots = [];
-                $('#calendar input:checked').each((i, el) => selectedTimeslots.push(parseInt($(el).val())));
-                if (selectedTimeslots.length === 0) {
-                    ShowNotification('No Timeslots Selected', 'Please select at least one timeslot to delete.', 'warning');
-                    return;
-                }
-                $.ajax({
-                    url: `${this.service.baseUrl}TimeslotAPI/DestroyMulti`,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(selectedTimeslots),
-                    beforeSend: xhr => this.setAjaxHeaders(xhr),
-                    success: () => {
-                        this.calendar.refetchEvents();
-                        ShowNotification('Success', 'Timeslots deleted successfully.', 'success');
-                    },
-                    error: error => {
-                        ShowNotification('Error Deleting Timeslots', error.statusText, 'error');
-                    }
-                });
+                // Implement timeslot deletion logic
             }
         });
     }
 
     handleCopyTimeslots(e) {
         e.preventDefault();
-        const selectedTimeslots = [];
-        $('#calendar input:checked').each((i, el) => selectedTimeslots.push(parseInt($(el).val())));
-        if (selectedTimeslots.length === 0) {
-            ShowNotification('No Timeslots Selected', 'Please select at least one timeslot to copy.', 'warning');
-            return;
-        }
-        $.ajax({
-            url: `${this.service.baseUrl}TimeslotAPI/Copy`,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(selectedTimeslots),
-            beforeSend: xhr => this.setAjaxHeaders(xhr),
-            success: () => {
-                this.calendar.refetchEvents();
-                ShowNotification('Success', 'Timeslots copied successfully.', 'success');
-            },
-            error: error => {
-                ShowNotification('Error Copying Timeslots', error.statusText, 'error');
-            }
-        });
+        // Implement timeslot copying logic
     }
 
     handleSaveTimeslot(e) {
@@ -870,6 +832,7 @@ class CourtCalendarController {
         } else {
             $defendantEmail.removeClass('is-invalid');
         }
+        // Validate case number parts
         let caseNumValid = true;
         $('#event_caseNum_container .case-num-part').each(function () {
             const val = $(this).val().trim();
@@ -881,12 +844,14 @@ class CourtCalendarController {
             }
         });
         if (!caseNumValid) isValid = false;
+        // Validate other motion
         if ($('#event_motion').val() === '221' && !$('#event_customMotion').val().trim()) {
             $('#event_customMotion').addClass('is-invalid');
             isValid = false;
         } else {
             $('#event_customMotion').removeClass('is-invalid');
         }
+        // Validate court template fields
         let templateValid = true;
         $('#court_template_fields [required]').each(function () {
             const val = $(this).val().trim();

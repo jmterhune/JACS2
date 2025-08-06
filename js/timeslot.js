@@ -122,6 +122,7 @@ class TimeslotController {
                 type: "GET",
                 dataType: 'json',
                 data: data => ({
+                    userId: this.userId,
                     courtId: $("#courtFilter").val(),
                     start_date: timeslotControllerInstance.startDate,
                     end_date: timeslotControllerInstance.endDate,

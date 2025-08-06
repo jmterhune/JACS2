@@ -62,31 +62,32 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<UserDefinedField> GetUserDefinedFieldsPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc, long courtId = 0)
+        public IEnumerable<UserDefinedField> GetUserDefinedFieldsPaged(long courtId,string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 return ctx.ExecuteQuery<UserDefinedField>(
                     System.Data.CommandType.StoredProcedure,
-                    "tjc_jacs_get_user_defined_field_paged",
+                    "tjc_jacs_get_udf_paged",
+                     courtId,
                     searchTerm ?? string.Empty,
                     rowOffset,
                     pageSize,
                     sortOrder ?? "field_name",
-                    sortDesc ?? "asc",
-                    courtId
+                    sortDesc ?? "asc"
+                   
                 );
             }
         }
-        public int GetUserDefinedFieldsCount(string searchTerm, long courtId = 0)
+        public int GetUserDefinedFieldsCount(long courtId,string searchTerm)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 return ctx.ExecuteScalar<int>(
                     System.Data.CommandType.StoredProcedure,
-                    "tjc_jacs_get_user_defined_field_count",
-                    searchTerm ?? string.Empty,
-                    courtId
+                    "tjc_jacs_get_udf_count",
+                    courtId,
+                    searchTerm ?? string.Empty
                 );
             }
         }

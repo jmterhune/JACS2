@@ -142,6 +142,15 @@ namespace tjc.Modules.jacs
                 return "Judge";
             }
         }
+        public bool IsJudge
+        {
+            get
+            {
+                if (UserInfo.IsInRole(JudgeRole))
+                    return true;
+                return false;
+            }
+        }
         public string JaRole
         {
             get

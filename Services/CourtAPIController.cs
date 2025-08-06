@@ -106,6 +106,73 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage TruncateCalendar(JObject p1)
+        {
+            try
+            {
+                long courtId = p1["courtId"].ToObject<long>();
+                DateTime date = DateTime.Parse(p1["date"].ToString()).Date;
+                string filter = p1["filter"].ToString().ToLower();
+
+                var timeslotCtl = new TimeslotController();
+                var eventCtl = new EventController();
+                var courtCtl = new CourtController();
+
+                // Get timeslots for the court >= date
+                var timeslots = timeslotCtl.GetTimeslotsByCourtIdAfterDate(courtId, date);
+
+                IEnumerable<Timeslot> toDelete;
+                switch (filter)
+                {
+                    case "all":
+                        toDelete = timeslots;
+                        foreach (var ts in toDelete)
+                        {
+                            // Handle events for all
+                            var events = eventCtl.GetEventsByTimeslot(ts.id);
+                            foreach (var evt in events)
+                            {
+                                eventCtl.CancelEvent(evt.id); // Or set status=1
+                              //  eventCtl.CancelEvent(evt.id, "Calendar Truncated"); // Or set status=1
+                            }
+                            timeslotCtl.DeleteTimeslot(ts.id);
+                        }
+                        break;
+                    case "hearings":
+                        toDelete = timeslots.Where(ts => !ts.TimeslotEvents.Any());
+                        foreach (var ts in toDelete)
+                        {
+                            timeslotCtl.DeleteTimeslot(ts.id);
+                        }
+                        break;
+                    case "templates":
+                        toDelete = timeslots.Where(ts => ts.template_id != null && !ts.blocked);
+                        foreach (var ts in toDelete)
+                        {
+                            timeslotCtl.DeleteTimeslot(ts.id);
+                        }
+                        break;
+                    case "both":
+                        toDelete = timeslots.Where(ts => !ts.TimeslotEvents.Any() && ts.template_id != null);
+                        foreach (var ts in toDelete)
+                        {
+                            timeslotCtl.DeleteTimeslot(ts.id);
+                        }
+                        break;
+                    default:
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid filter." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Truncate Successful" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
         [HttpGet]
         public HttpResponseMessage DeleteCourt(long p1)
         {

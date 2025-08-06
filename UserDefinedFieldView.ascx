@@ -5,7 +5,7 @@
     <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
     </button>
-    <h2 class="mb-0">User Defined Fields for <asp:Literal ID="ltCourtName" runat="server" /></h2>
+    <h2 class="mb-0"><asp:Literal ID="ltCourtName" runat="server" />'s User Defined Fields </h2>
 </section>
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />

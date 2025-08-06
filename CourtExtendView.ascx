@@ -1,5 +1,4 @@
-﻿<!-- Filename: Views/CourtExtendView.ascx -->
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CourtExtendView.ascx.cs" Inherits="tjc.Modules.jacs.CourtExtendView" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CourtExtendView.ascx.cs" Inherits="tjc.Modules.jacs.CourtExtendView" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Src="Controls/navbar.ascx" TagPrefix="tb" TagName="navbar" %>
 
@@ -65,25 +64,27 @@
         path: "JACS",
         framework: $.ServicesFramework(moduleId)
     };
-
-    $(document).ready(function () {
-        try {
-            if (typeof CourtExtendController === 'undefined') {
-                console.error('CourtExtendController is not defined.');
-                return;
+    (function ($, Sys) {
+        $(document).ready(function () {
+            try {
+                if (typeof CourtExtendController === 'undefined') {
+                    console.error('CourtExtendController is not defined.');
+                    return;
+                }
+                const courtExtendController = new CourtExtendController({
+                    moduleId: moduleId,
+                    userId: <%=UserId%>,
+                    isAdmin: "<%=IsAdmin%>",
+                    adminRole: 'AdminRole',
+                    service: service,
+                    courtId: <%=CourtId%>,
+                    cancelUrl:"<%=CourtCalendarUrl%>"
+                });
+                courtExtendController.init();
+            } catch (e) {
+                console.error('Error initializing CourtExtendController:', e);
             }
-            const courtExtendController = new CourtExtendController({
-                moduleId: moduleId,
-                userId: <%=UserId%>,
-                isAdmin: "<%=IsAdmin%>",
-                adminRole: 'AdminRole',
-                service: service,
-                courtId: <%=CourtId%>,
-                cancelUrl:"<%=CourtCalendarUrl%>"
-            });
-            courtExtendController.init();
-        } catch (e) {
-            console.error('Error initializing CourtExtendController:', e);
-        }
-    });
+        });
+    }(jQuery, window.Sys));
+
 </script>

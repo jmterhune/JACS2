@@ -119,6 +119,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\CourtExtendController.cs" />
+    <Compile Include="TruncateCalendar.ascx.cs">
+      <DependentUpon>TruncateCalendar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TruncateCalendar.ascx.designer.cs">
+      <DependentUpon>TruncateCalendar.ascx</DependentUpon>
+    </Compile>
     <Compile Include="CourtExtendView.ascx.cs">
       <DependentUpon>CourtExtendView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -429,8 +436,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\truncateCalendar.js" />
+    <Content Include="TruncateCalendar.ascx" />
     <Content Include="CourtExtendView.ascx" />
-    <Content Include="js\CourtExtend.js" />
+    <Content Include="js\courtExtend.js" />
+    <Content Include="js\dashboard.js" />
     <Content Include="js\timeslot.js" />
     <Content Include="js\userDefinedField.js" />
     <Content Include="UserDefinedFieldView.ascx" />

@@ -92,13 +92,14 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<EventListItem> GetEventListItems(string searchTerm, long court_id, long category_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
+        public IEnumerable<EventListItem> GetEventListItems(long userId, string searchTerm, long court_id, long category_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 return ctx.ExecuteQuery<EventListItem>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_event_list_paged",
+                    userId,
                     searchTerm ?? string.Empty,
                     court_id,
                     category_id,
@@ -111,22 +112,23 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public int GetEventListItemCount(string searchTerm, long court_id, long category_id, long status_id)
+        public int GetEventListItemCount(long userId, string searchTerm, long court_id, long category_id, long status_id)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 return ctx.ExecuteScalar<int>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_event_list_count",
-                    searchTerm ?? string.Empty,
-                    court_id,
-                    category_id,
-                    status_id
+                     userId,
+                     searchTerm ?? string.Empty,
+                     court_id,
+                     category_id,
+                     status_id
                 );
             }
         }
 
-        public IEnumerable<Event> GetEventsForDashboardByJudge(int judgeId)
+        public IEnumerable<Event> GetEventsForDashboardByJudge(long judgeId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -151,7 +153,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<Event> GetEventsForDashboard(int userId)
+        public IEnumerable<Event> GetEventsForDashboard(long userId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -393,7 +395,7 @@ namespace tjc.Modules.jacs.Components
                     throw new ValidationException("Invalid type ID.");
                 if (evt.status_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM event_statuses WHERE id = @0", evt.status_id.Value) == 0)
                     throw new ValidationException("Invalid status ID.");
-                if (evt.attorney_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text,   "SELECT COUNT(*) FROM attorneys WHERE id = @0", evt.attorney_id.Value) == 0)
+                if (evt.attorney_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM attorneys WHERE id = @0", evt.attorney_id.Value) == 0)
                     throw new ValidationException("Invalid attorney ID.");
                 if (evt.opp_attorney_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM attorneys WHERE id = @0", evt.opp_attorney_id.Value) == 0)
                     throw new ValidationException("Invalid opposing attorney ID.");

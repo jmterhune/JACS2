@@ -1,5 +1,4 @@
-﻿// TimeslotAPIController.cs
-using DotNetNuke.Data;
+﻿using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
@@ -48,9 +47,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new TimeslotController();
-                filteredCount = ctl.GetTimeslotListCount(userId,searchTerm, courtId, startDate, endDate);
+                filteredCount = ctl.GetTimeslotListCount(userId, searchTerm, courtId, startDate, endDate);
                 if (p1 == 0) { recordCount = filteredCount; }
-                timeslots = ctl.GetTimeslotListItems(userId, searchTerm, courtId, startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(ts=>new TimeslotViewModel(ts)).ToList();
+                timeslots = ctl.GetTimeslotListItems(userId, searchTerm, courtId, startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(ts => new TimeslotViewModel(ts)).ToList();
                 return Request.CreateResponse(new TimeslotListItemResult
                 {
                     data = timeslots,
@@ -71,6 +70,39 @@ namespace tjc.Modules.jacs.Services
                     recordsTotal = recordCount,
                     error = ex.Message
                 });
+            }
+        }
+
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage GetDashboardTimeslots()
+        {
+            try
+            {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                long userId = query.ContainsKey("userId") && long.TryParse(query["userId"], out long uid) ? uid : 0;
+                bool isJudge = query.ContainsKey("isJudge") && bool.TryParse(query["isJudge"], out bool judge) ? judge : false;
+
+                var ctl = new TimeslotController();
+                List<TimeslotViewModel> timeslots = new List<TimeslotViewModel>();
+                if (UserInfo.IsAdmin)
+                {
+                    timeslots = ctl.GetTimeslotsForDashBoardByAdmin().Select(ts => new TimeslotViewModel(ts)).ToList();
+                }
+                else if (isJudge)
+                {
+                    timeslots = ctl.GetTimeslotsForDashboardByJudge(UserInfo.UserID).Select(ts => new TimeslotViewModel(ts)).ToList();
+                }
+                else
+                {
+                    timeslots = ctl.GetTimeslotsForDashboard(userId).Select(ts => new TimeslotViewModel(ts)).ToList();
+                }
+                    return Request.CreateResponse(new { data = timeslots });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
             }
         }
 
@@ -626,7 +658,7 @@ namespace tjc.Modules.jacs.Services
                     var timeslot = ctl.GetTimeslot(id);
                     if (timeslot == null)
                     {
-                        continue; // Skip non-existent timeslots
+                        continue;
                     }
                     var timeslotMotions = ctl.GetTimeslotMotions(id);
                     foreach (var motion in timeslotMotions)
@@ -674,7 +706,7 @@ namespace tjc.Modules.jacs.Services
                     var original = ctl.GetTimeslot(id);
                     if (original == null)
                     {
-                        continue; // Skip non-existent timeslots
+                        continue;
                     }
                     var newTimeslot = new Timeslot
                     {
@@ -768,7 +800,7 @@ namespace tjc.Modules.jacs.Services
                     var original = ctl.GetTimeslot(id);
                     if (original == null)
                     {
-                        continue; // Skip non-existent timeslots
+                        continue;
                     }
                     var newTimeslot = new Timeslot
                     {
@@ -850,8 +882,8 @@ namespace tjc.Modules.jacs.Services
             public int draw { get; set; }
             public string error { get; set; }
         }
-        
-        
+
+
         private string GetSortColumn(string columnIndex)
         {
             switch (columnIndex)

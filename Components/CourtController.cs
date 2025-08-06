@@ -81,19 +81,11 @@ namespace tjc.Modules.jacs.Components
                 }
             }
         }
-        public void CreateRevision()
-        {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
-            {
-            }
-        }
+
         public void DeleteCourt(long courtId)
         {
             var t = GetCourt(courtId);
-            if (t != null)
-            {
-                DeleteCourt(t);
-            }
+            DeleteCourt(t);
         }
 
         public void DeleteCourt(Court t)
@@ -107,11 +99,12 @@ namespace tjc.Modules.jacs.Components
 
         public IEnumerable<Court> GetCourts()
         {
+            IEnumerable<Court> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<Court>();
-                return rep.Get();
+                t = ctx.GetRepository<Court>().Get();
             }
+            return t;
         }
         public List<KeyValuePair<long, string>> GetCourtDropDownItems(string searchTerm)
         {
@@ -136,31 +129,31 @@ namespace tjc.Modules.jacs.Components
         }
         public Court GetCourt(long courtId)
         {
+            Court t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<Court>();
-                return rep.GetById(courtId);
+                t = ctx.GetRepository<Court>().GetById(courtId);
             }
+            return t;
         }
 
         public void UpdateCourt(Court t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                t.updated_at = DateTime.Now;
                 var rep = ctx.GetRepository<Court>();
+                t.updated_at = DateTime.Now;
                 rep.Update(t);
             }
         }
+
         public void UpdateCourt(CourtViewModel t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<Court>();
                 var ctl = new CourtMotionController();
                 var ctlEvent = new CourtEventTypeController();
-                Court court = rep.GetById(t.id); // Ensure the court exists before updating
-                // Convert CourtViewModel to Court entity
+                Court court = GetCourt(t.id);
                 if (court != null)
                 {
                     court.county_id = t.county_id;
@@ -192,6 +185,7 @@ namespace tjc.Modules.jacs.Components
                     court.twitter_notification = t.twitter_notification;
                     court.updated_at = DateTime.Now;
                 }
+                var rep = ctx.GetRepository<Court>();
 
                 rep.Update(court);
                 ctl.DeleteCourtMotionsByCourtId(court.id);
@@ -251,6 +245,33 @@ namespace tjc.Modules.jacs.Components
                 t = ctx.ExecuteSingleOrDefault<Court>(System.Data.CommandType.Text, query, id);
             }
             return t;
+        }
+
+        public DateTime? GetLastTimeslotDate(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT MAX(ts.start) 
+                    FROM timeslots ts 
+                    INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id 
+                    WHERE ct.court_id = @0 AND ts.deleted_at IS NULL";
+                return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text, query, courtId);
+            }
+        }
+
+        public DateTime? GetLastHearingDate(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT MAX(ts.start) 
+                    FROM timeslots ts 
+                    INNER JOIN timeslot_events te ON te.timeslot_id = ts.id 
+                    INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id 
+                    WHERE ct.court_id = @0 AND ts.deleted_at IS NULL";
+                return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text, query, courtId);
+            }
         }
     }
 }

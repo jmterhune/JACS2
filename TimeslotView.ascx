@@ -71,7 +71,6 @@
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/select2/css/select2.min.css" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/select2/css/select2-bootstrap-5-theme.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/select2/js/select2.full.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/sweetalert/sweetalert2.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="~/Resources/Libraries/Noty/noty.min.js" />

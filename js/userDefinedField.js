@@ -89,7 +89,7 @@ class UserDefinedFieldController {
                 {
                     data: "field_type",
                     render: function (data) {
-                        return data || '';
+                        return data == "yes_no" ? "YES/NO" : data.toUpperCase();
                     }
                 },
                 {
@@ -373,7 +373,7 @@ class UserDefinedFieldController {
                             $("#edit_hdUserDefinedFieldId").val(response.data.id);
                             $("#edit_hdCourtId").val(response.data.court_id);
                             $("#edit_fieldName").val(response.data.field_name);
-                            $("#edit_fieldType").val(response.data.field_type.toUpperCase());
+                            $("#edit_fieldType").val(response.data.field_type);
                             $("#edit_alignment").val(response.data.alignment);
                             $("#edit_defaultValue").val(response.data.default_value);
                             $("#edit_required").prop("checked", response.data.required == 1);
@@ -382,7 +382,6 @@ class UserDefinedFieldController {
                             $("#edit_displayOnSchedule").prop("checked", response.data.display_on_schedule == 1);
                             $("#edit_useInAttorneyScheduling").prop("checked", response.data.use_in_attorany_scheduling == 1);
                             $("#UserDefinedFieldEditModalLabel").html(`Edit User Defined Field: ${response.data.field_name}`);
-                            $("#edit_fieldType").trigger("change");
                         } else {
                             $("#fieldName").html(response.data.field_name);
                             $("#fieldType").html(response.data.field_type);

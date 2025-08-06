@@ -97,6 +97,25 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, userId);
             }
         }
+        public IEnumerable<Timeslot> GetTimeslotsByCourtIdAfterDate(long courtId, DateTime date)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT ts.*
+                    FROM timeslots ts
+                    INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id
+                    WHERE ct.court_id = @0 AND ts.start >= @1 AND ts.deleted_at IS NULL";
+                var timeslots = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, date);
+                // Load related TimeslotEvents if needed for filtering
+                var teCtl = new TimeslotEventController();
+                foreach (var ts in timeslots)
+                {
+                    ts.TimeslotEvents = teCtl.GetTimeslotEventsByTimeslot(ts.id).ToList();
+                }
+                return timeslots;
+            }
+        }
         public Court GetCourtByTimeslot(long id)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

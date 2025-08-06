@@ -43,9 +43,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new UserDefinedFieldController();
-                filteredCount = ctl.GetUserDefinedFieldsCount(searchTerm, courtId);
+                filteredCount = ctl.GetUserDefinedFieldsCount(courtId, searchTerm);
                 if (p1 == 0) { recordCount = filteredCount; }
-                var udfsPaged = ctl.GetUserDefinedFieldsPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection, courtId);
+                var udfsPaged = ctl.GetUserDefinedFieldsPaged(courtId, searchTerm, recordOffset, pageSize, sortColumn, sortDirection);
                 if (udfsPaged == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new UserDefinedFieldSearchResult

@@ -24,6 +24,7 @@ namespace tjc.Modules.jacs.Services
             int recordCount = p1;
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+            long userId = query.ContainsKey("userId") && long.TryParse(query["userId"], out long uid) ? uid : 0;
             string searchTerm = query.ContainsKey("searchText") ? query["searchText"] : "";
             long courtId = query.ContainsKey("courtId") && long.TryParse(query["courtId"], out long cId) ? cId : 0;
             long categoryId = query.ContainsKey("categoryId") && long.TryParse(query["categoryId"], out long catId) ? catId : 0;
@@ -44,9 +45,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventController();
-                filteredCount = ctl.GetEventListItemCount(searchTerm, courtId, categoryId, statusId);
+                filteredCount = ctl.GetEventListItemCount(userId,searchTerm, courtId, categoryId, statusId);
                 if (p1 == 0) { recordCount = filteredCount; }
-                events = ctl.GetEventListItems(searchTerm, courtId, categoryId, statusId, recordOffset, pageSize, sortColumn, sortDirection)
+                events = ctl.GetEventListItems(userId,searchTerm, courtId, categoryId, statusId, recordOffset, pageSize, sortColumn, sortDirection)
                            .Select(evt => new EventViewModel(evt)).ToList();
                 return Request.CreateResponse(new EventListItemResult
                 {
@@ -68,6 +69,36 @@ namespace tjc.Modules.jacs.Services
                     recordsTotal = recordCount,
                     error = ex.Message
                 });
+            }
+        }
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage GetDashsboardEvents()
+        {
+            try
+            {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                long userId = query.ContainsKey("userId") && long.TryParse(query["userId"], out long uid) ? uid : 0;
+                bool isJudge = query.ContainsKey("isJudge") && bool.TryParse(query["isJudge"], out bool judge) ? judge : false;
+                var ctl = new EventController();
+                var events = new List<EventViewModel>();
+                if (isJudge)
+                {
+                    events=ctl.GetEventsForDashboardByJudge(userId).Select(evt => new EventViewModel(evt)).ToList();
+                }else if (UserInfo.IsAdmin)
+                {
+                    events = ctl.GetEventsForDashBoardByAdmin().Select(evt => new EventViewModel(evt)).ToList();
+                }
+                else
+                {
+                    events = ctl.GetEventsForDashboard(userId).Select(evt => new EventViewModel(evt)).ToList();
+                }
+                return Request.CreateResponse(new { data = events });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
             }
         }
 
@@ -262,7 +293,7 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventController();
                 var events = ctl.GetEventsByTimeslot(p1);
-                return Request.CreateResponse(HttpStatusCode.OK, new EventsResult{ data = events.Select(e => new EventViewModel(e)).ToList(), error = null });
+                return Request.CreateResponse(HttpStatusCode.OK, new EventsResult { data = events.Select(e => new EventViewModel(e)).ToList(), error = null });
             }
             catch (Exception ex)
             {

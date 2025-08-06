@@ -1,28 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\module.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:module.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\timeslotview.ascx||{F390D63C-F7D8-4E74-AA04-57C1ECF53D4D}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:timeslotview.ascx||{F390D63C-F7D8-4E74-AA04-57C1ECF53D4D}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\timeslot.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\timeslot.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|D:\\OneDrive - jud12fl\\SourceCode\\JACS\\services\\timeslotapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\timeslotapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|D:\\OneDrive - jud12fl\\SourceCode\\JACS\\components\\timeslotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:components\\timeslotcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -30,21 +9,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "TimeslotView.ascx",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\TimeslotView.ascx",
-              "RelativeDocumentMoniker": "TimeslotView.ascx",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\TimeslotView.ascx",
-              "RelativeToolTip": "TimeslotView.ascx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003302|",
-              "WhenOpened": "2025-08-05T19:05:02.009Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -56,77 +22,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "TimeslotAPIController.cs",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\TimeslotAPIController.cs",
-              "RelativeDocumentMoniker": "Services\\TimeslotAPIController.cs",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\TimeslotAPIController.cs",
-              "RelativeToolTip": "Services\\TimeslotAPIController.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAAB8AAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-05T17:55:28.663Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "TimeslotController.cs",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\TimeslotController.cs",
-              "RelativeDocumentMoniker": "Components\\TimeslotController.cs",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\TimeslotController.cs",
-              "RelativeToolTip": "Components\\TimeslotController.cs",
-              "ViewState": "AgIAANEAAAAAAAAAAIAywFkBAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-05T17:55:28.67Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "timeslot.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\timeslot.js",
-              "RelativeDocumentMoniker": "js\\timeslot.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\timeslot.js",
-              "RelativeToolTip": "js\\timeslot.js",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAEkAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-08-05T17:51:46.65Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "0e8609c1-2e4b-4cfe-bfa8-7b2651af58a1",
-        "Display": 0,
-        "X": 1858,
-        "Y": 201,
-        "Width": 1376,
-        "Height": 1315,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "module.css",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\module.css",
-              "RelativeDocumentMoniker": "module.css",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\module.css",
-              "RelativeToolTip": "module.css",
-              "ViewState": "AgIAAF4AAAAAAAAAAAAqwIQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-08-05T18:52:14.017Z",
-              "EditorCaption": ""
             }
           ]
         }
