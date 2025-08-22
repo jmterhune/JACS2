@@ -136,6 +136,25 @@ namespace tjc.Modules.jacs.Components
                 return templates.Select(temp => new KeyValuePair<long, string>(temp.id, temp.name)).ToList();
             }
         }
+        public List<KeyValuePair<long, string>> GetCourtTemplateDropDownItems(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtTemplate>();
+                var templates = rep.Find("Where court_id=@0 AND deleted_at IS NULL",courtId);
+                
+                return templates.Select(temp => new KeyValuePair<long, string>(temp.id, temp.name)).ToList();
+            }
+        }
+
+        public IEnumerable<CourtTemplate> GetCourtTemplatesByCourt(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtTemplate>();
+                return rep.Find("Where court_id=@0 AND deleted_at IS NULL",courtId);
+            }
+        }
 
         public CourtTemplate GetCourtTemplate(long courttemplateId)
         {

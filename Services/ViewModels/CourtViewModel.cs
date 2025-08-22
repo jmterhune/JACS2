@@ -117,11 +117,11 @@ namespace tjc.Modules.jacs.Services.ViewModels
         [JsonProperty("opp_attorney_item")]
         public KeyValuePair<long, string> opp_attorney_item { get; set; }
         [JsonProperty("available_motions")]
-        public List<int> available_motions { get; set; }
+        public List<long> available_motions { get; set; }
         [JsonProperty("restricted_motions")]
-        public List<int> restricted_motions { get; set; }
+        public List<long> restricted_motions { get; set; }
         [JsonProperty("available_hearing_types")]
-        public List<int> available_hearing_types { get; set; }
+        public List<long> available_hearing_types { get; set; }
         [JsonProperty("available_motion_items")]
         public List<KeyValuePair<long, string>> available_motion_items { get; set; }
         [JsonProperty("restricted_motion_items")]

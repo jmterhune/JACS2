@@ -60,6 +60,7 @@
                     editUrl: "<%=CourtEditUrl%>",
                     calendarUrl: "<%=CourtCalendarUrl%>",
                     revisionUrl: "<%=EventRevisionUrl%>",
+                    viewUrl: "<%=CourtListUrl%>",
                     service: service,
                     currentPage: 0,
                     pageSize: 25,

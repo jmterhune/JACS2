@@ -1,4 +1,4 @@
-﻿// CourtTemplateAPIController.cs
+﻿// CourtTemplateAPIController.cs (added GetTemplateOptions)
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
@@ -56,15 +56,18 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(new CourtTemplateSearchResult { data = courtTemplates, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
-
+       
         [HttpGet]
-        public HttpResponseMessage DeleteCourtTemplate(long p1)
+        public HttpResponseMessage GetTemplatesByCourt(long p1)
         {
             try
             {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+
                 var ctl = new CourtTemplateController();
-                ctl.DeleteCourtTemplate(p1);
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court Template deleted successfully" });
+                var templates = ctl.GetCourtTemplatesByCourt(p1);                
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, data = templates });
             }
             catch (Exception ex)
             {
@@ -72,7 +75,50 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
+        [HttpGet]
+        public HttpResponseMessage GetCourtTemplateDropDownItems(long p1)
+        {
+            List<KeyValuePair<long, string>> courtTemplates = new List<KeyValuePair<long, string>>();
+            try
+            {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                string searchTerm = !query.ContainsKey("q") ? "" : query["q"].ToString();
+                long userId = -1;
+                UserInfo user = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (user != null && user.UserID > 0)
+                {
+                    if (user.IsAdmin)
+                        userId = 0; // Admin can see all courts
+                    else
+                        userId = user.UserID;
+                }
+                var ctl = new CourtTemplateController();
+                courtTemplates = ctl.GetCourtTemplateDropDownItems(p1);
+                return Request.CreateResponse(new ListItemOptionResult { data = courtTemplates, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new ListItemOptionResult { data = courtTemplates, error = ex.Message });
+            }
+        }
 
+        [HttpGet]
+        public HttpResponseMessage GetTemplateOptions()
+        {
+            try
+            {
+                var ctl = new CourtTemplateController();
+                var templates = ctl.GetCourtTemplatesPaged("", 0, 1000, "name", "asc");
+                var options = templates.Select(t => new { value = t.id, text = t.name }).ToList();
+                return Request.CreateResponse(options);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
+            }
+        }
         [HttpGet]
         public HttpResponseMessage GetCourtTemplate(long p1)
         {
@@ -191,13 +237,13 @@ namespace tjc.Modules.jacs.Services
                 ctl.CreateCourtTemplate(clonedTemplate);
                 foreach (TemplateTimeslot existingTimeslot in existingTemplate.template_timeslots)
                 {
-                   var clonedTimeslot=(TemplateTimeslot)existingTimeslot.Clone();
+                    var clonedTimeslot = (TemplateTimeslot)existingTimeslot.Clone();
                     templateTimeslotCtl.CreateTemplateTimeslot(clonedTimeslot);
                     if (clonedTimeslot != null)
                     {
                         foreach (var timeslotMotion in existingTimeslot.timeslot_motions)
                         {
-                           var clonedTimeslotMotion =(TimeslotMotion)timeslotMotion.Clone();
+                            var clonedTimeslotMotion = (TimeslotMotion)timeslotMotion.Clone();
                             timeslotMotionCtl.CreateTimeslotMotion(clonedTimeslotMotion);
                         }
                     }

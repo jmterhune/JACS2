@@ -45,7 +45,7 @@
                             <td><span id="ctName"></span></td>
                         </tr>
                         <tr>
-                            <td><strong>Court:</strong></td>
+                            <td><strong>Judge:</strong></td>
                             <td><span id="ctCourt"></span></td>
                         </tr>
                     </tbody>
@@ -84,11 +84,10 @@
                                 <div class="invalid-feedback" id="edit_name-error">Template Name is Required.</div>
                             </div>
                             <div class="col-md-6">
-                                <label>Court<em>*</em></label>
+                                <label>Judge<em>*</em></label>
                                 <select id="edit_ctCourt" class="form-control" required>
-                                    <option value="">Select a Court</option>
                                 </select>
-                                <div class="invalid-feedback" id="edit_ctCourt-error">Court is Required.</div>
+                                <div class="invalid-feedback" id="edit_ctCourt-error">Judge is Required.</div>
                             </div>
                         </div>
                     </div>

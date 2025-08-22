@@ -61,7 +61,7 @@ namespace tjc.Modules.jacs.Components
             var ctl = new CourtMotionController();
             return ctl.GetCourtMotions(id);
         }
-        public List<int> GetCourtMotionValues(bool allowed)
+        public List<long> GetCourtMotionValues(bool allowed)
         {
             var ctl = new CourtMotionController();
             return ctl.GetCourtMotionValuesByCourtId(id, allowed);
@@ -71,7 +71,7 @@ namespace tjc.Modules.jacs.Components
             var ctl = new CourtEventTypeController();
             return ctl.GetCourtEventTypesByCourtId(id);
         }
-        public List<int> GetCourtEventTypeValues()
+        public List<long> GetCourtEventTypeValues()
         {
             var ctl = new CourtEventTypeController();
             return ctl.GetCourtEventTypeValuesByCourtId(id);
@@ -86,5 +86,10 @@ namespace tjc.Modules.jacs.Components
             }
             return new Judge { id = 0, name = string.Empty };
         }
+    }
+    [TableName("getUserCourtViewPermissions")] // Optional: Specify if not inferring from class name
+    public class MyResultModel
+    {
+        public long court_id { get; set; }
     }
 }

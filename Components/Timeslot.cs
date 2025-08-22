@@ -54,6 +54,22 @@ namespace tjc.Modules.jacs.Components
         public ICollection<TimeslotEvent> TimeslotEvents { get; set; } = new List<TimeslotEvent>();
         [IgnoreColumn]
         public ICollection<TimeslotMotion> Motions { get; set; } = new List<TimeslotMotion>();
+        [IgnoreColumn]
+        public Category Category
+        {
+            get
+            {
+
+                if (this.category_id.HasValue)
+                {
+                    var ctl = new CategoryController();
+                    var et = ctl.GetCategory(category_id.Value);
+                    if (et != null)
+                        return et;
+                }
+                return new Category();
+            }
+        }
     }
 
     internal class CustomTimeslot : Timeslot

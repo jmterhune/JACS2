@@ -2,6 +2,7 @@
 using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using tjc.Modules.jacs.Services.ViewModels;
 
@@ -46,6 +47,26 @@ namespace tjc.Modules.jacs.Components
                 t = rep.Get();
             }
             return t;
+        }
+        public IEnumerable<Judge> GetFilteredJudges(long userId)
+        {
+            IEnumerable<Judge> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<Judge>();
+                t = rep.Find("Where court_id IN (select court_id from dbo.getUserCourtViewPermissions(@0))",userId);
+            }
+            return t;
+        }
+        public List<KeyValuePair<long, string>> GetJudgeCourtDropDownItems(long userId)
+        {
+            using (IDataContext ctx = DataContext.Instance("jacs"))
+            {
+                var rep = ctx.GetRepository<Judge>();
+                var results = rep.Find("Where court_id in (Select court_id from dbo.getUserCourtViewPermissions(@0))",userId)
+                       .Select(j => new KeyValuePair<long, string>(j.court_id.Value, j.name)).ToList();
+                return results ?? new List<KeyValuePair<long, string>>();
+            }
         }
         public List<KeyValuePair<long, string>> GetJudgeDropDownItems()
         {

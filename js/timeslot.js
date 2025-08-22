@@ -57,7 +57,7 @@ class TimeslotController {
                     error: () => {
                         ShowNotification("Error", `Failed to retrieve records for ${selector}. Please try again later.`, 'error');
                     },
-                    cache: true
+                    cache: false
                 },
                 placeholder: placeholder,
                 allowClear: true,
@@ -122,7 +122,7 @@ class TimeslotController {
                 type: "GET",
                 dataType: 'json',
                 data: data => ({
-                    userId: this.userId,
+                    userId: timeslotControllerInstance.userId,
                     courtId: $("#courtFilter").val(),
                     start_date: timeslotControllerInstance.startDate,
                     end_date: timeslotControllerInstance.endDate,

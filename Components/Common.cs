@@ -14,4 +14,12 @@ namespace tjc.Modules.jacs.Components
         [JsonProperty("error")]
         public string error { get; set; }
     }
+    public static class Common
+    {
+        public static DateTime GetMondayOfCurrentWeek(DateTime currentDate)
+        {
+            int diff = ((int)currentDate.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+            return currentDate.AddDays(-diff).Date;
+        }
+    }
 }

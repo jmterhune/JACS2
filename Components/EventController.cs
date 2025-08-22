@@ -26,7 +26,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public void DeleteEvent(int eventId)
+        public void DeleteEvent(long eventId)
         {
             var t = GetEvent(eventId);
             if (t != null)

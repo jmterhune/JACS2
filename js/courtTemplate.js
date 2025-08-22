@@ -276,7 +276,7 @@ class CourtTemplateController {
 
     populateCourtDropdown() {
         $.ajax({
-            url: `${this.service.baseUrl}CourtAPI/GetCourtDropDownItems`,
+            url: `${this.service.baseUrl}JudgeAPI/GetJudgeCourtDropDownItems/${this.userId}`,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
@@ -284,7 +284,7 @@ class CourtTemplateController {
                 if (response.data) {
                     const $courtSelect = $("#edit_ctCourt");
                     $courtSelect.empty();
-                    $courtSelect.append('<option value="">Select a Court</option>');
+                    $courtSelect.append('<option value="">Select a Judge</option>');
                     response.data.forEach(court => {
                         $courtSelect.append(`<option value="${court.Key}">${court.Value}</option>`);
                     });

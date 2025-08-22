@@ -26,7 +26,14 @@ namespace tjc.Modules.jacs.Components
             var t = GetCourtTemplateOrder(courttemplateorderId);
             DeleteCourtTemplateOrder(t);
         }
-
+        public void DeleteCourtTemplateOrdersByCourtId(long courtId, bool auto = false)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<CourtTemplateOrder>();
+                rep.Delete($"WHERE court_id = @0 AND auto = @1", courtId, auto ? 1 : 0);
+            }
+        }
         public void DeleteCourtTemplateOrder(CourtTemplateOrder t)
         {
             if (t == null) throw new ArgumentNullException(nameof(t));
@@ -53,12 +60,17 @@ namespace tjc.Modules.jacs.Components
                 return rep.Find("Where template_id = @0",templateId);
             }
         }
-        public IEnumerable<CourtTemplateOrder> GetCourtTemplateOrdersByCourtId(long courtId)
+        public IEnumerable<CourtTemplateOrder> GetCourtTemplateOrdersByCourtId(long courtId,bool auto)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
-                return rep.Find("Where court_id = @0", courtId);
+                string query = "Where court_id = @0";
+                if(!auto)
+                {
+                    query += " AND date >= @1";
+                }
+                return rep.Find(query, courtId, Common.GetMondayOfCurrentWeek(DateTime.Now).AddDays(7)).OrderBy(to=>to.date);
             }
         }
         public CourtTemplateOrder GetCourtTemplateOrder(long courttemplateorderId)

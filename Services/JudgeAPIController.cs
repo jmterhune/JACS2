@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -61,15 +62,27 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 string judgeRole = p1;
-                int portalId = p2;
+                PortalSettings ps = PortalController.Instance.GetCurrentSettings() as PortalSettings;
+                int portalId = ps.PortalId;
                 var users = DotNetNuke.Security.Roles.RoleController.Instance.GetUsersByRole(portalId, judgeRole);
                 var ctl = new JudgeController();
-                var existingJudges = ctl.GetJudges().Select(j => j.id).ToList();
-
+                var existingJudges = new List<long>();
+                if (p2==1)
+                {
+                    var user = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                    if (user == null || user.UserID <= 0)
+                    {
+                        existingJudges = ctl.GetFilteredJudges(user.UserID).Select(j => j.id).ToList();
+                    }
+                }
+                else
+                {
+                    existingJudges = ctl.GetJudges().Select(j => j.id).ToList();
+                }
                 var judgeUsers = users
                     .Where(u => !existingJudges.Contains(u.UserID))
                     .Select(u => new
-                        KeyValuePair<long, string>(u.UserID,u.DisplayName)
+                        KeyValuePair<long, string>(u.UserID, u.DisplayName)
                     ).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { data = judgeUsers, error = "" });
@@ -80,7 +93,25 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        public HttpResponseMessage GetJudgeCourtDropDownItems(long p1)
+        {
+            List<KeyValuePair<long, string>> courts = new List<KeyValuePair<long, string>>();
+            try
+            {
+                var user = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (user.IsAdmin)
+                    p1 = 0;
+                var ctl = new JudgeController();
+                courts = ctl.GetJudgeCourtDropDownItems(p1);
+                return Request.CreateResponse(new ListItemOptionResult { data = courts, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new ListItemOptionResult { data = courts, error = ex.Message });
+            }
+        }
         [HttpGet]
         public HttpResponseMessage DeleteJudge(long p1)
         {

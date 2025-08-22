@@ -151,7 +151,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public List<int> GetCourtMotionValuesByCourtId(long courtId, bool allowed)
+        public List<long> GetCourtMotionValuesByCourtId(long courtId, bool allowed)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -160,7 +160,7 @@ namespace tjc.Modules.jacs.Components
                     FROM court_motions cm
                     INNER JOIN motions m ON cm.motion_id = m.id
                     WHERE cm.court_id = @0 AND cm.allowed = @1";
-                return ctx.ExecuteQuery<int>(System.Data.CommandType.Text, query, courtId, allowed).ToList();
+                return ctx.ExecuteQuery<long>(System.Data.CommandType.Text, query, courtId, allowed).ToList();
             }
         }
 

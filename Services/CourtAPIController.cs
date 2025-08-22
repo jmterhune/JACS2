@@ -1,5 +1,4 @@
-﻿// Filename: CourtAPIController.cs
-using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -25,6 +24,7 @@ namespace tjc.Modules.jacs.Services
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
 
+            long userId = query.ContainsKey("userId") && long.TryParse(query["userId"], out long uid) ? uid : 0;
             string searchTerm = query.ContainsKey("searchText") ? query["searchText"] : string.Empty;
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
@@ -43,9 +43,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new CourtController();
-                filteredCount = ctl.GetCourtsCount(searchTerm);
+                filteredCount = ctl.GetCourtsCount(userId, searchTerm);
                 if (p1 == 0) { recordCount = filteredCount; }
-                courts = ctl.GetCourtsPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).ToList();
+                courts = ctl.GetCourtsPaged(userId, searchTerm, recordOffset, pageSize, sortColumn, sortDirection).ToList();
                 return Request.CreateResponse(new CourtSearchResult { data = courts, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (Exception ex)
@@ -59,14 +59,21 @@ namespace tjc.Modules.jacs.Services
         public HttpResponseMessage GetCourtDropDownItems()
         {
             List<KeyValuePair<long, string>> courts = new List<KeyValuePair<long, string>>();
-
             try
             {
                 var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
                 string searchTerm = !query.ContainsKey("q") ? "" : query["q"].ToString();
-
+                long userId = -1;
+                UserInfo user = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (user != null && user.UserID > 0)
+                {
+                    if (user.IsAdmin)
+                        userId = 0; // Admin can see all courts
+                    else
+                        userId = user.UserID;
+                }
                 var ctl = new CourtController();
-                courts = ctl.GetCourtDropDownItems(searchTerm);
+                courts = ctl.GetCourtDropDownItems(userId, searchTerm);
                 return Request.CreateResponse(new ListItemOptionResult { data = courts, error = null });
             }
             catch (Exception ex)
@@ -76,6 +83,25 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetCourt(long p1)
+        {
+            try
+            {
+                var ctl = new CourtController();
+                var court = ctl.GetCourt(p1);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new CourtResult { data = null, error = "Court not found" });
+                }
+                return Request.CreateResponse(new CourtResult { data = new CourtViewModel(court), error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtResult { data = null, error = ex.Message });
+            }
+        }
         [HttpGet]
         public HttpResponseMessage GetCourtsUnassigned()
         {
@@ -105,85 +131,12 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage TruncateCalendar(JObject p1)
-        {
-            try
-            {
-                long courtId = p1["courtId"].ToObject<long>();
-                DateTime date = DateTime.Parse(p1["date"].ToString()).Date;
-                string filter = p1["filter"].ToString().ToLower();
-
-                var timeslotCtl = new TimeslotController();
-                var eventCtl = new EventController();
-                var courtCtl = new CourtController();
-
-                // Get timeslots for the court >= date
-                var timeslots = timeslotCtl.GetTimeslotsByCourtIdAfterDate(courtId, date);
-
-                IEnumerable<Timeslot> toDelete;
-                switch (filter)
-                {
-                    case "all":
-                        toDelete = timeslots;
-                        foreach (var ts in toDelete)
-                        {
-                            // Handle events for all
-                            var events = eventCtl.GetEventsByTimeslot(ts.id);
-                            foreach (var evt in events)
-                            {
-                                eventCtl.CancelEvent(evt.id); // Or set status=1
-                              //  eventCtl.CancelEvent(evt.id, "Calendar Truncated"); // Or set status=1
-                            }
-                            timeslotCtl.DeleteTimeslot(ts.id);
-                        }
-                        break;
-                    case "hearings":
-                        toDelete = timeslots.Where(ts => !ts.TimeslotEvents.Any());
-                        foreach (var ts in toDelete)
-                        {
-                            timeslotCtl.DeleteTimeslot(ts.id);
-                        }
-                        break;
-                    case "templates":
-                        toDelete = timeslots.Where(ts => ts.template_id != null && !ts.blocked);
-                        foreach (var ts in toDelete)
-                        {
-                            timeslotCtl.DeleteTimeslot(ts.id);
-                        }
-                        break;
-                    case "both":
-                        toDelete = timeslots.Where(ts => !ts.TimeslotEvents.Any() && ts.template_id != null);
-                        foreach (var ts in toDelete)
-                        {
-                            timeslotCtl.DeleteTimeslot(ts.id);
-                        }
-                        break;
-                    default:
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid filter." });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Truncate Successful" });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
         [HttpGet]
         public HttpResponseMessage DeleteCourt(long p1)
         {
             try
             {
                 var ctl = new CourtController();
-                var court = ctl.GetCourt(p1);
-                if (court == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
-                }
                 ctl.DeleteCourt(p1);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court deleted successfully" });
             }
@@ -195,25 +148,34 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
-        public HttpResponseMessage GetCourt(long p1)
+        public HttpResponseMessage GetTemplates(long p1)
         {
             try
             {
-                var ctl = new CourtController();
-                Court court = ctl.GetCourt(p1);
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(p1);
                 if (court == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new CourtResult { data = null, error = "Court not found" });
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
                 }
-                CourtViewModel courtViewModel = new CourtViewModel(court);
-                return Request.CreateResponse(HttpStatusCode.OK, new CourtResult { data = courtViewModel, error = null });
+
+                var templateCtl = new CourtTemplateController();
+                var templates = templateCtl.GetCourtTemplatesPaged("", 0, 1000, "name", "asc")
+                    .Where(t => t.court_id == p1)
+                    .Select(t => new { Key = t.id, Value = t.name })
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, data = templates });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -221,14 +183,90 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new CourtController();
-                var court = p1.ToObject<CourtViewModel>();
-                if (string.IsNullOrWhiteSpace(court.description) || court.county_id <= 0)
+                var court = p1.ToObject<Court>();
+                if (string.IsNullOrEmpty(court.description) || court.county_id <= 0)
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and County are required." });
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and county are required." });
                 }
+                var ctl = new CourtController();
+                court.created_at = DateTime.Now;
+                court.updated_at = DateTime.Now;
                 ctl.CreateCourt(court);
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court created successfully" });
+
+                // Handle motions
+                var motionCtl = new CourtMotionController();
+                var motions = p1["available_motions"]?.ToObject<List<long>>() ?? new List<long>();
+                foreach (var motion in motions)
+                {
+                    motionCtl.CreateCourtMotion(new CourtMotion { court_id = court.id, motion_id = motion, allowed = true });
+                }
+                var restrictedMotions = p1["restricted_motions"]?.ToObject<List<long>>() ?? new List<long>();
+                foreach (var motion in restrictedMotions)
+                {
+                    motionCtl.CreateCourtMotion(new CourtMotion { court_id = court.id, motion_id = motion, allowed = false });
+                }
+
+                // Handle event types
+                var eventTypeCtl = new CourtEventTypeController();
+                var eventTypes = p1["available_hearing_types"]?.ToObject<List<long>>() ?? new List<long>();
+                foreach (var eventType in eventTypes)
+                {
+                    eventTypeCtl.CreateCourtEventType(new CourtEventType { court_id = court.id, event_type_id = eventType });
+                }
+
+                // Handle templates
+                var templateOrderCtl = new CourtTemplateOrderController();
+                var templates = p1["templates"]?.ToObject<List<JObject>>() ?? new List<JObject>();
+                foreach (var t in templates)
+                {
+                    var templateId = t["templateId"]?.ToObject<long>();
+                    var week = t["week"]?.ToObject<int?>();
+                    var dateStr = t["date"]?.ToString();
+                    var auto = t["auto"]?.ToObject<bool>() ?? false;
+                    DateTime? date = null;
+
+                    if (templateId == null || templateId <= 0)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid template ID." });
+                    }
+
+                    if (auto && week.HasValue)
+                    {
+                        date = DateTime.UtcNow.Date.AddDays((week.Value - 1) * 7);
+                    }
+                    else if (!auto && !string.IsNullOrEmpty(dateStr))
+                    {
+                        if (!DateTime.TryParse(dateStr, out var parsedDate))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid date format in templates." });
+                        }
+                        date = parsedDate;
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Week or date required for template." });
+                    }
+
+                    var templateCtl = new CourtTemplateController();
+                    var template = templateCtl.GetCourtTemplate(templateId.Value);
+                    if (template == null || template.court_id != court.id)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = $"Template ID {templateId} not found or does not belong to court {court.id}." });
+                    }
+
+                    var order = new CourtTemplateOrder
+                    {
+                        court_id = court.id,
+                        template_id = templateId.Value,
+                        date = date,
+                        auto = auto,
+                        created_at = DateTime.Now,
+                        updated_at = DateTime.Now
+                    };
+                    templateOrderCtl.CreateCourtTemplateOrder(order);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court created successfully", data = new CourtViewModel(court) });
             }
             catch (Exception ex)
             {
@@ -243,174 +281,83 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new CourtController();
                 var court = p1.ToObject<CourtViewModel>();
-                if (court.id <= 0)
+                if (court.id <= 0 || string.IsNullOrEmpty(court.description) || court.county_id <= 0)
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court ID is required for update." });
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court ID, description, and county are required." });
                 }
-                if (string.IsNullOrWhiteSpace(court.description) || court.county_id <= 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Description and County are required." });
-                }
+                var ctl = new CourtController();
                 var existingCourt = ctl.GetCourt(court.id);
                 if (existingCourt == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
                 }
                 ctl.UpdateCourt(court);
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
 
-        [HttpGet]
-        public HttpResponseMessage ExtendCalendar(long courtId)
-        {
-            try
-            {
-                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-                DateTime.TryParse(query.ContainsKey("startDate") ? query["startDate"] : DateTime.Now.ToString(), out DateTime startDate);
-                Int32.TryParse(query.ContainsKey("weeks") ? query["weeks"] : "0", out int weeks);
-                Int32.TryParse(query.ContainsKey("startTemplate") ? query["startTemplate"] : "0", out int startTemplate);
-
-                var courtController = new CourtController();
-                var court = courtController.GetCourt(courtId);
-                if (court == null)
+                // Handle motions
+                var motionCtl = new CourtMotionController();
+                motionCtl.DeleteCourtMotionsByCourtId(court.id);
+                var motions = p1["available_motions"]?.ToObject<List<long>>() ?? new List<long>();
+                foreach (var motion in motions)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
+                    motionCtl.CreateCourtMotion(new CourtMotion { court_id = court.id, motion_id = motion, allowed = true });
+                }
+                var restrictedMotions = p1["restricted_motions"]?.ToObject<List<long>>() ?? new List<long>();
+                foreach (var motion in restrictedMotions)
+                {
+                    motionCtl.CreateCourtMotion(new CourtMotion { court_id = court.id, motion_id = motion, allowed = false });
                 }
 
-                var holidayController = new HolidayController();
-                var holidays = holidayController.GetHolidays();
-
-                var timeslotController = new TimeslotController();
-                var courtTimeslotController = new CourtTimeslotController();
-                var templateController = new CourtTemplateController();
-                var templateOrderController = new CourtTemplateOrderController();
-
-                var lastTimeslot = courtTimeslotController.GetCourtTimeslotsByCourtId(courtId)
-                    .Where(ct => ct.Timeslot.template_id.HasValue)
-                    .OrderByDescending(ct => ct.Timeslot.start)
-                    .FirstOrDefault();
-
-                if (lastTimeslot == null)
+                // Handle event types
+                var eventTypeCtl = new CourtEventTypeController();
+                eventTypeCtl.DeleteCourtEventTypesByCourtId(court.id);
+                var eventTypes = p1["available_hearing_types"]?.ToObject<List<long>>() ?? new List<long>();
+                foreach (var eventType in eventTypes)
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No template timeslots found for this court." });
+                    eventTypeCtl.CreateCourtEventType(new CourtEventType { court_id = court.id, event_type_id = eventType });
                 }
 
-                var startTemplateObj = templateController.GetCourtTemplate(lastTimeslot.Timeslot.template_id.Value);
-                if (startTemplateObj == null)
+                // Handle templates
+                var templateOrderCtl = new CourtTemplateOrderController();
+                templateOrderCtl.DeleteCourtTemplateOrdersByCourtId(court.id, court.auto_extension);
+                var templates = p1["templates"]?.ToObject<List<JObject>>() ?? new List<JObject>();
+                foreach (var t in templates)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Starting template not found." });
-                }
+                    var newTemplate = t.ToObject<CourtTemplateOrderViewModel>();
 
-                var startOrder = templateOrderController.GetCourtTemplateOrdersByCourtId(courtId)
-                    .Where(t => t.template_id == startTemplateObj.id && t.auto)
-                    .Select(t => t.order)
-                    .FirstOrDefault();
-
-                if (startOrder == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No valid template order found." });
-                }
-
-                DateTime endDate = DateTime.Today.AddDays(court.calendar_weeks * 7);
-                var period = GetDateRange(lastTimeslot.Timeslot.start, endDate)
-                    .Where(d => d.DayOfWeek != DayOfWeek.Saturday && d.DayOfWeek != DayOfWeek.Sunday)
-                    .ToList();
-
-                int? templateOrder = startOrder;
-                CourtTemplate currentTemplate = startTemplateObj;
-
-                foreach (var date in period)
-                {
-                    var templateOrderObj = templateOrderController.GetCourtTemplateOrdersByCourtId(courtId)
-                        .Where(t => t.order == templateOrder && t.auto)
-                        .FirstOrDefault();
-
-                    if (templateOrderObj == null)
+                    if (!newTemplate.auto && newTemplate.date == null)
                     {
-                        templateOrder = 1;
-                        templateOrderObj = templateOrderController.GetCourtTemplateOrdersByCourtId(courtId)
-                            .Where(t => t.order == templateOrder && t.auto)
-                            .FirstOrDefault();
-                    }
-
-                    if (templateOrderObj != null)
-                    {
-                        currentTemplate = templateController.GetCourtTemplate(templateOrderObj.template_id.Value);
-                    }
-
-                    if (currentTemplate == null)
-                        continue;
-
-                    var templateTimeslots = templateController.GetTemplateTimeslots(currentTemplate.id)
-                        .Where(t => t.day == (int)date.DayOfWeek)
-                        .ToList();
-
-                    var existingTimeslots = courtTimeslotController.GetCourtTimeslotsByCourtId(courtId)
-                        .Where(ct => ct.Timeslot.start.Date == date.Date)
-                        .ToList();
-
-                    foreach (var templateTimeslot in templateTimeslots)
-                    {
-                        var start = new DateTime(date.Year, date.Month, date.Day, templateTimeslot.start.Hour, templateTimeslot.start.Minute, templateTimeslot.start.Second);
-                        var end = new DateTime(date.Year, date.Month, date.Day, templateTimeslot.end.Hour, templateTimeslot.end.Minute, templateTimeslot.end.Second);
-
-                        if (holidays.Any(h => h.date.Date == date.Date))
-                            continue;
-
-                        var matchingTimeslots = existingTimeslots
-                            .Where(ct => ct.Timeslot.start <= start && ct.Timeslot.end >= end)
-                            .ToList();
-
-                        if (!matchingTimeslots.Any() && !existingTimeslots.Any(ct => ct.Timeslot.created_at < DateTime.Today))
+                        if (newTemplate.date == null)
                         {
-                            var newTimeslot = new Timeslot
-                            {
-                                start = start,
-                                end = end,
-                                allDay = templateTimeslot.allDay,
-                                duration = templateTimeslot.duration,
-                                quantity = templateTimeslot.quantity,
-                                blocked = templateTimeslot.blocked,
-                                public_block = templateTimeslot.public_block,
-                                block_reason = string.IsNullOrEmpty(templateTimeslot.block_reason) ? null : templateTimeslot.block_reason,
-                                category_id = templateTimeslot.category_id,
-                                template_id = templateTimeslot.court_template_id,
-                                description = templateTimeslot.description,
-                                created_at = DateTime.Now,
-                                updated_at = DateTime.Now
-                            };
-
-                            timeslotController.CreateTimeslot(newTimeslot);
-
-                            courtTimeslotController.CreateCourtTimeslot(new CourtTimeslot
-                            {
-                                court_id = courtId,
-                                timeslot_id = newTimeslot.id,
-                                created_at = DateTime.Now,
-                                updated_at = DateTime.Now
-                            });
-                        }
-                        else if (matchingTimeslots.Any())
-                        {
-                            var duplicate = matchingTimeslots.First();
-                            duplicate.Timeslot.template_id = templateTimeslot.court_template_id;
-                            timeslotController.UpdateTimeslot(duplicate.Timeslot);
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid date format in templates." });
                         }
                     }
+                    else if(newTemplate.auto && newTemplate.order == null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Week required for auto template." });
+                    }
 
-                    if (date.DayOfWeek == DayOfWeek.Friday)
-                        templateOrder++;
+                    var templateCtl = new CourtTemplateController();
+                    var template = templateCtl.GetCourtTemplate(newTemplate.template_id.Value);
+                    if (template != null && template.court_id != court.id)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = $"Template ID {newTemplate.template_id}  does not belong to court {court.id}." });
+                    }
+
+                    var courtTemplateOrder = new CourtTemplateOrder
+                    {
+                        court_id = court.id,
+                        template_id = newTemplate.template_id,
+                        date = newTemplate.date,
+                        order = newTemplate.order,
+                        auto = newTemplate.auto,
+                        created_at = DateTime.Now,
+                        updated_at = DateTime.Now
+                    };
+                    templateOrderCtl.CreateCourtTemplateOrder(courtTemplateOrder);
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Calendar extended successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Court updated successfully", data = court });
             }
             catch (Exception ex)
             {
@@ -421,119 +368,42 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage ExtendCalendarManual(long courtId, JObject p2)
+        public HttpResponseMessage TruncateCalendar(JObject p1)
         {
             try
             {
-                var courtController = new CourtController();
-                var court = courtController.GetCourt(courtId);
-                if (court == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
-                }
+                long courtId = p1["courtId"].ToObject<long>();
+                DateTime date = DateTime.Parse(p1["date"].ToString()).Date;
+                string filter = p1["filter"].ToString().ToLower();
 
-                var holidayController = new HolidayController();
-                var holidays = holidayController.GetHolidays();
-
-                var templateOrderController = new CourtTemplateOrderController();
-                var templates = templateOrderController.GetCourtTemplateOrdersByCourtId(courtId)
-                    .Where(t => !t.auto)
+                var timeslotCtl = new TimeslotController();
+                var eventCtl = new EventController();
+                var courtCtl = new CourtController();
+                var courtTimeslotCtl = new CourtTimeslotController();
+                var timeslots = courtTimeslotCtl.GetCourtTimeslotsByCourtId(courtId)
+                    .Where(ct => ct.Timeslot.start >= date)
                     .ToList();
 
-                var timeslotController = new TimeslotController();
-                var courtTimeslotController = new CourtTimeslotController();
-                var templateController = new CourtTemplateController();
-
-                foreach (var courtTemplateOrder in templates)
+                foreach (var ct in timeslots)
                 {
-                    var template = templateController.GetCourtTemplate(courtTemplateOrder.template_id.Value);
-                    if (template == null)
-                        continue;
-
-                    var weekStart = courtTemplateOrder.date;
-                    var timeslots = templateController.GetTemplateTimeslots(template.id);
-
-                    for (int i = 0; i < 5; i++)
+                    var ts = ct.Timeslot;
+                    if (filter == "all" || (filter == "reserved" && ts.quantity > 0) || (filter == "unreserved" && ts.quantity == 0))
                     {
-                        var day = weekStart.Value.AddDays(i);
-                        var dayTimeslots = timeslots.Where(t => t.day == (int)day.DayOfWeek).ToList();
-
-                        foreach (var timeslot in dayTimeslots)
+                        var events = eventCtl.GetEventsByTimeslot(ts.id);
+                        foreach (var ev in events)
                         {
-                            if (holidays.Any(h => h.date.Date == day.Date))
-                                continue;
-
-                            var start = new DateTime(day.Year, day.Month, day.Day, timeslot.start.Hour, timeslot.start.Minute, timeslot.start.Second);
-                            var end = new DateTime(day.Year, day.Month, day.Day, timeslot.end.Hour, timeslot.end.Minute, timeslot.end.Second);
-
-                            var existingTimeslots = courtTimeslotController.GetCourtTimeslotsByCourtId(courtId)
-                                .Where(ct => ct.Timeslot.start.Date == start.Date)
-                                .ToList();
-
-                            var match = existingTimeslots.FirstOrDefault(ct => ct.Timeslot.start == start && ct.Timeslot.template_id == template.id);
-
-                            if (match == null)
-                            {
-                                var newTimeslot = new Timeslot
-                                {
-                                    start = start,
-                                    end = end,
-                                    description = timeslot.description,
-                                    allDay = timeslot.allDay,
-                                    duration = timeslot.duration,
-                                    quantity = timeslot.quantity,
-                                    blocked = timeslot.blocked,
-                                    block_reason = timeslot.block_reason,
-                                    public_block = timeslot.public_block,
-                                    category_id = timeslot.category_id,
-                                    template_id = template.id,
-                                    created_at = DateTime.Now,
-                                    updated_at = DateTime.Now
-                                };
-
-                                timeslotController.CreateTimeslot(newTimeslot);
-
-                                courtTimeslotController.CreateCourtTimeslot(new CourtTimeslot
-                                {
-                                    court_id = courtId,
-                                    timeslot_id = newTimeslot.id,
-                                    created_at = DateTime.Now,
-                                    updated_at = DateTime.Now
-                                });
-                            }
+                            eventCtl.DeleteEvent(ev.id);
                         }
+                        timeslotCtl.DeleteTimeslot(ts.id);
                     }
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Manual calendar extension completed successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Calendar truncated successfully" });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage UploadData(long courtId, JObject p2)
-        {
-            try
-            {
-                // Placeholder for upload data logic; requires implementation for handling file uploads (e.g., iCal or CSV)
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Data upload not fully implemented." });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
-
-        private IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end)
-        {
-            for (var date = start.Date; date <= end.Date; date = date.AddDays(1))
-                yield return date;
         }
 
         internal class CourtSearchResult

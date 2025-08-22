@@ -116,7 +116,7 @@ namespace tjc.Modules.jacs
                         ltLastHearing.Text = $"<p>The last scheduled hearing in the calendar is on <span class='text-primary'>{lastHearing.Timeslot.start:MM/dd/yyyy}</span></p>";
 
                     // Populate template dropdown
-                    var templates = templateOrderController.GetCourtTemplateOrdersByCourtId(CourtId)
+                    var templates = templateOrderController.GetCourtTemplateOrdersByCourtId(CourtId,court.auto_extension)
                         .Where(t => t.auto)
                         .OrderBy(t => t.order)
                         .Select(t => new { t.order, t.template_id, Name = templateController.GetCourtTemplate(t.template_id.Value)?.name })

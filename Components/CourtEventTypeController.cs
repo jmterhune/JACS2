@@ -100,7 +100,7 @@ namespace tjc.Modules.jacs.Components
                 return new List<KeyValuePair<long, string>>();
             }
         }
-        internal List<int> GetCourtEventTypeValuesByCourtId(long courtId)
+        internal List<long> GetCourtEventTypeValuesByCourtId(long courtId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -109,7 +109,7 @@ namespace tjc.Modules.jacs.Components
             FROM court_event_types ce
             INNER JOIN event_types e ON ce.event_type_id = e.id
             WHERE ce.court_id = @0";
-                return ctx.ExecuteQuery<int>(System.Data.CommandType.Text, query, courtId).ToList();
+                return ctx.ExecuteQuery<long>(System.Data.CommandType.Text, query, courtId).ToList();
             }
         }
 

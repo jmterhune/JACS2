@@ -148,21 +148,15 @@
     ts-pr-caret: 0;
     
 }
-.case_num_format_multiple {
+.case-num-format-multi {
     font-size: .9rem;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
-    background-clip: padding-box;
+    padding: .2rem .6rem;
     border: 1px solid #ced4da;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.case-format-row {
+    margin-bottom: .5rem;
 }
 .input-group-append button {
     border-top-left-radius: 0;
@@ -199,7 +193,7 @@ label em {
     color: red
 }
 
-.form-group .row > div:first-of-type {
+.form-group .row > div {
     margin-bottom: 1rem;
 }
     .no-form-group div {

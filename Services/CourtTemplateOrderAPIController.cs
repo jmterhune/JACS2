@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
+using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Services
 {
@@ -71,7 +72,49 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        public HttpResponseMessage GetTemplateOrdersByCourt(long p1)
+        {
+            try
+            {
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(p1);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
+                }
+                var templateOrderCtl = new CourtTemplateOrderController();
+                var templateOrders = templateOrderCtl.GetCourtTemplateOrdersByCourtId(p1, court.auto_extension).Select(to=>new CourtTemplateOrderViewModel(to)).ToList();
+                // If auto_extension is false, ensure we have enough template orders for the next calendar weeks
+                if (!court.auto_extension && templateOrders.Count < court.calendar_weeks)
+                {
+                    DateTime mondayDate = templateOrders.Count > 0 ? templateOrders.Max(d => d.date).Value : Common.GetMondayOfCurrentWeek(DateTime.Now);
+                    // Calculate how many weeks we need to add
+                    for (int i = templateOrders.Count; i < court.calendar_weeks; i++)
+                    {
+                        mondayDate= mondayDate.AddDays(7); // Move to the next week
+                        var newOrder = new CourtTemplateOrder
+                        {
+                            court_id = p1,
+                            template_id = null,
+                            order = null,
+                            date = mondayDate,
+                            auto = false,
+                            created_at = DateTime.Now,
+                            updated_at = DateTime.Now
+                        };
+                        templateOrderCtl.CreateCourtTemplateOrder(newOrder);
+                        templateOrders.Add(new CourtTemplateOrderViewModel(newOrder));
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, data = templateOrders });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
         [HttpGet]
         public HttpResponseMessage Show(long id)
         {
@@ -91,7 +134,7 @@ namespace tjc.Modules.jacs.Services
                         id = templateOrder.id,
                         court_id = templateOrder.court_id,
                         template_id = templateOrder.template_id,
-                        date = templateOrder.date.HasValue?templateOrder.date.Value.ToString("yyyy-MM-dd"):null,
+                        date = templateOrder.date.HasValue ? templateOrder.date.Value.ToString("yyyy-MM-dd") : null,
                         auto = templateOrder.auto,
                         created_at = templateOrder.created_at,
                         updated_at = templateOrder.updated_at

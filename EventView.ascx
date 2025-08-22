@@ -12,6 +12,10 @@
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
+                <div class="alert alert-info"><strong class="fs-3"><i class="fas fa-info-circle fs-4"></i>Note</strong><div class="mt-3">This section list all hearings, and their status, for a specific calender.<br />
+To add an event, use the Court's Calendar tool. </div>
+        </div>
+
         <nav class="navbar navbar-expand-lg navbar-filters mb-0 pb-0 pt-0">
             <a class="nav-item d-none d-lg-block"><i class="fa fa-filter"></i></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bp-filters-navbar" aria-controls="bp-filters-navbar" aria-expanded="false" aria-label="Toggle filters">

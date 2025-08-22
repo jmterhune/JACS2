@@ -3,7 +3,7 @@ class EventController {
     constructor(options) {
         this.moduleId = options.moduleId || -1;
         this.userId = options.userId || -1;
-        this.isAdmin = options.isAdmin === "True";
+        this.isAdmin = options.isAdmin === "True"|| false;
         this.adminRole = options.adminRole || 'Admin';
         this.editUrl = options.editUrl;
         this.calendarUrl = options.calendarUrl;
@@ -56,7 +56,7 @@ class EventController {
                     error: () => {
                         ShowNotification("Error", `Failed to retrieve records for ${selector}. Please try again later.`, 'error');
                     },
-                    cache: true
+                    cache: false
                 },
                 placeholder: placeholder,
                 allowClear: true,
@@ -82,7 +82,7 @@ class EventController {
                 type: "GET",
                 dataType: 'json',
                 data: data => ({
-                    userId: this.userId,
+                    userId: eventControllerInstance.userId,
                     courtId: $("#courtFilter").val(),
                     categoryId: $("#categoryFilter").val(),
                     statusId: $("#statusFilter").val(),

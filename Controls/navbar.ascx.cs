@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,23 @@ namespace tjc.Modules.jacs.Controls
         public string ActiveLink { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
+            if(!IsPostBack)
+            {
+                var user = UserController.Instance.GetCurrentUserInfo();
+                if (user != null) {
+                    if (user.IsAdmin)
+                    {
+                        pnlAdminMenu.Visible = true;
+                        pnlUserMenu.Visible = false;
+                    }
+                    else
+                    {
+                        pnlAdminMenu.Visible = false;
+                        pnlUserMenu.Visible = true;
+                    }
+                }
 
+            }
         }
     }
 }

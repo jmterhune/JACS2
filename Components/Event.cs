@@ -127,6 +127,53 @@ namespace tjc.Modules.jacs.Components
                 return null;
             }
         }
+        [IgnoreColumn]
+        public Attorney Attorney
+        {
+            get
+            {
+                if (attorney_id.HasValue)
+                {
+                    var ctl = new AttorneyController();
+                    var a = ctl.GetAttorney(attorney_id.Value);
+                    if (a != null)
+                        return a;
+                }
+                return new Attorney();
+            }
+        }
+        [IgnoreColumn]
+        public Attorney OppAttorney
+        {
+            get
+            {
+                if (opp_attorney_id.HasValue)
+                {
+                    var ctl = new AttorneyController();
+                    var a = ctl.GetAttorney(opp_attorney_id.Value);
+                    if (a != null)
+                        return a;
+                }
+                return new Attorney();
+            }
+        }
+        [IgnoreColumn]
+        public EventType EventType
+        {
+            get
+            {
+
+                if (type_id.HasValue)
+                {
+                    var ctl = new EventTypeController();
+                    var et = ctl.GetEventType(type_id.Value);
+                    if (et != null)
+                        return et;
+                }
+                return new EventType();
+            }
+        }
+       
     }
     [TableName("event_list")]
     [PrimaryKey("id", AutoIncrement = false)]

@@ -218,7 +218,7 @@ class CourtCalendarController {
         if (this.courtData && this.courtData.case_num_format) {
             const parts = this.courtData.case_num_format.split('-');
             parts.forEach((part, index) => {
-                const input = $(`<input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple${index + 1}" placeholder="${part}" required>`);
+                const input = $(`<input type="text" class="form-control case-num-part mr-1" id="case-num-format-multi${index + 1}" placeholder="${part}" required>`);
                 input.on('change keyup', () => this.evaluateCaseNumberFields());
                 container.append(input);
                 if (index < parts.length - 1) {

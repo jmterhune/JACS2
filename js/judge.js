@@ -237,7 +237,7 @@ class JudgeController {
 
     populateJudgeUsers() {
         $.ajax({
-            url: `${this.service.baseUrl}JudgeAPI/GetJudgeDropDownItems/${this.judgeRole}/${this.portalId}`,
+            url: `${this.service.baseUrl}JudgeAPI/GetJudgeDropDownItems/${this.judgeRole}/0`,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),

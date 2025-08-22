@@ -43,6 +43,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>packages\DocumentFormat.OpenXml.3.3.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>packages\DocumentFormat.OpenXml.Framework.3.3.0\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+      <Private>True</Private>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="DotNetNuke, Version=9.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
@@ -116,9 +126,19 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\CourtExtendController.cs" />
+    <Compile Include="DocketView.ascx.cs">
+      <DependentUpon>DocketView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DocketView.ascx.designer.cs">
+      <DependentUpon>DocketView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\DocketAPIController.cs" />
+    <Compile Include="Services\ViewModels\CourtTemplateOrderViewModel.cs" />
     <Compile Include="TruncateCalendar.ascx.cs">
       <DependentUpon>TruncateCalendar.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -436,7 +456,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\court-edit - Copy.js" />
+    <Content Include="js\court-edit.js" />
+    <Content Include="js\docket.js" />
     <Content Include="js\truncateCalendar.js" />
+    <Content Include="DocketView.ascx" />
     <Content Include="TruncateCalendar.ascx" />
     <Content Include="CourtExtendView.ascx" />
     <Content Include="js\courtExtend.js" />
