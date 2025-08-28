@@ -2,6 +2,7 @@
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Caching;
 using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
@@ -16,9 +17,9 @@ namespace tjc.Modules.jacs.Components
         public string description { get; set; }
         public string case_num_format { get; set; }
         public long county_id { get; set; }
-        public long def_attorney_id { get; set; }
+        public long? def_attorney_id { get; set; }
         public string plaintiff { get; set; }
-        public long opp_attorney_id { get; set; }
+        public long? opp_attorney_id { get; set; }
         public string defendant { get; set; }
         public bool scheduling { get; set; }
         public string web_policy { get; set; }
@@ -85,6 +86,12 @@ namespace tjc.Modules.jacs.Components
                 return judge;
             }
             return new Judge { id = 0, name = string.Empty };
+        }
+
+        public IEnumerable<UserDefinedField> GetUserDefinedFields(long courtId)
+        {
+            var ctl = new UserDefinedFieldController();
+            return ctl.GetUserDefinedFieldsByCourtId(courtId);
         }
     }
     [TableName("getUserCourtViewPermissions")] // Optional: Specify if not inferring from class name

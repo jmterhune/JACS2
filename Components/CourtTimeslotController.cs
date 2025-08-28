@@ -1,4 +1,5 @@
 ﻿// Filename: CourtTimeslotController.cs
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,7 @@ namespace tjc.Modules.jacs.Components
                     "DELETE FROM timeslot_motions WHERE timeslotable_type = 'Timeslot' AND timeslotable_id = @0", t.timeslot_id);
                 var rep = ctx.GetRepository<CourtTimeslot>();
                 rep.Delete(t);
+                DataCache.ClearCache("TimeslotMotions");
             }
         }
 

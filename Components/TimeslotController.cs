@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -42,6 +43,8 @@ namespace tjc.Modules.jacs.Components
                     "DELETE FROM timeslot_motions WHERE timeslotable_type = 'Timeslot' AND timeslotable_id = @0", t.id);
                 var rep = ctx.GetRepository<Timeslot>();
                 rep.Delete(t);
+                DataCache.ClearCache("CourtTimeslots");
+                DataCache.ClearCache("TimeslotMotions");
             }
         }
         public IEnumerable<Timeslot> GetTimeslots()
@@ -274,6 +277,8 @@ namespace tjc.Modules.jacs.Components
                 ctx.Execute(System.Data.CommandType.Text,
                     "DELETE FROM timeslot_motions WHERE timeslotable_type = 'Timeslot' AND timeslotable_id = @0",
                     timeslotId);
+                DataCache.ClearCache("TimeslotMotions");
+                
             }
         }
         public IEnumerable<TimeslotMotion> GetTimeslotMotions(long timeslotId)

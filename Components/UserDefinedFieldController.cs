@@ -91,5 +91,16 @@ namespace tjc.Modules.jacs.Components
                 );
             }
         }
+
+        public IEnumerable<UserDefinedField> GetUserDefinedFieldsByCourtId(long courtId)
+        {
+            IEnumerable<UserDefinedField> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<UserDefinedField>();
+                t = rep.Find("Where court_id=@0",courtId);
+            }
+            return t;
+        }
     }
 }

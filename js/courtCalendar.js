@@ -1,5 +1,4 @@
-﻿// Filename: Resources/js/courtcalendar.js
-let courtCalendarControllerInstance = null;
+﻿let courtCalendarControllerInstance = null;
 
 class CourtCalendarController {
     constructor(params = {}) {
@@ -15,13 +14,13 @@ class CourtCalendarController {
         this.truncateCalendarUrl = params.truncateCalendarUrl || '/truncate-calendar';
         this.extendCalendarUrl = params.extendCalendarUrl || '/extend-calendar';
         this.courtData = null;
+        this.caseTypes = null;
         courtCalendarControllerInstance = this;
     }
 
     getCourtIdFromUrl() {
         return parseInt(getValueFromUrl('cid')) || -1;
     }
-
     init() {
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.fetchCourtData();
@@ -30,10 +29,77 @@ class CourtCalendarController {
         this.initTomSelect();
         this.populateCategorySelect();
         this.populateEventTypeSelect();
+        this.populateCaseTypes();
+        const courtTypeSelect = $(".court-types option:selected").text();
+        if (courtTypeSelect.length) {
+            this.changeLabel(courtTypeSelect);
+        }
+        $('.case-num-part').on('keyup change', () => this.evaluateCaseNumberFields());
         const timeslotModalElement = document.getElementById('TimeslotModal');
         if (timeslotModalElement) {
             timeslotModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
             timeslotModalElement.addEventListener('shown.bs.modal', this.onTimeslotModalShow.bind(this));
+        }
+    }
+    populateEventDefaults() {
+        if (!this.courtData) return;
+
+        const attorneyTom = $('#event_attorney')[0]?.tomselect;
+        if (attorneyTom && this.courtData.def_attorney_id) {
+            attorneyTom.setValue(this.courtData.def_attorney_id);
+        }
+
+        const oppTom = $('#event_opposingAttorney')[0]?.tomselect;
+        if (oppTom && this.courtData.opp_attorney_id) {
+            oppTom.setValue(this.courtData.opp_attorney_id);
+        }
+
+        $('#event_plaintiff').val(this.courtData.plaintiff || '');
+        $('#event_defendant').val(this.courtData.defendant || '');
+
+        $('#event_plaintiff').prop('required', this.courtData.plaintiff_required);
+        $('#event_defendant').prop('required', this.courtData.defendant_required);
+        $('#event_attorney').prop('required', this.courtData.plaintiff_attorney_required);
+        $('#event_opposingAttorney').prop('required', this.courtData.defendant_attorney_required);
+
+        // Update labels for plaintiff and defendant
+        const plaintiffLabel = $('label[for="event_plaintiff"]');
+        const defendantLabel = $('label[for="event_defendant"]');
+        plaintiffLabel.html(this.courtData.plaintiff_required ? 'Plaintiff <em>*</em>' : 'Plaintiff');
+        defendantLabel.html(this.courtData.defendant_required ? 'Defendant <em>*</em>' : 'Defendant');
+
+        const format = this.courtData.case_num_format;
+        if (!format) return;
+        const split = format.split('-');
+
+        let typeSelectId;
+        let typeVal;
+        if (split.length === 3) {
+            if (split[1].length === 2 || split[1] === '0') {
+                typeSelectId = '#case_num_format_multiple2';
+                typeVal = split[1];
+            } else {
+                $('#case_num_format_multiple1').val(split[0]);
+                $('#case_num_format_multiple2').val(split[1]);
+                $('#case_num_format_multiple3').val(split[2]);
+            }
+        } else if (split.length >= 4 && split.length <= 6) {
+            typeSelectId = '#case_num_format_multiple3';
+            typeVal = split[2];
+            $('#case_num_format_multiple1').val(split[0]);
+            if (split.length > 4) {
+                $('#case_num_format_multiple5').val(split[4]);
+            }
+            if (split.length === 6) {
+                $('#case_num_format_multiple6').val(split[5]);
+            }
+        }
+
+        if (typeSelectId && typeVal) {
+            const typeSelect = $(typeSelectId);
+            if (typeSelect.length) {
+                typeSelect.val(typeVal !== '0' ? typeVal : '');
+            }
         }
     }
 
@@ -47,7 +113,7 @@ class CourtCalendarController {
                 if (response.data) {
                     this.courtData = response.data;
                     this.populateAttorneySelects();
-                    this.populateCaseNumFields();
+                    this.populateCourtTemplateFields();
                 }
             },
             error: () => {
@@ -89,6 +155,23 @@ class CourtCalendarController {
             },
             error: () => {
                 ShowNotification('Error', 'Failed to load motions to restrict.', 'error');
+            }
+        });
+    }
+    populateCaseTypes() {
+        $.ajax({
+            url: `${this.service.baseUrl}CourtTypeAPI/GetCourtTypeDropDownItems`,
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.data) {
+                    courtCalendarControllerInstance.caseTypes = response.data;
+                }
+            },
+            error: function (error) {
+                console.error('Failed to fetch court types for dropdown');
+                ShowNotification("Error", "Failed to load court types. Please try again later.", 'error');
             }
         });
     }
@@ -212,23 +295,99 @@ class CourtCalendarController {
         });
     }
 
-    populateCaseNumFields() {
-        const container = $('#event_caseNum_container');
-        container.empty();
-        if (this.courtData && this.courtData.case_num_format) {
-            const parts = this.courtData.case_num_format.split('-');
-            parts.forEach((part, index) => {
-                const input = $(`<input type="text" class="form-control case-num-part mr-1" id="case-num-format-multi${index + 1}" placeholder="${part}" required>`);
-                input.on('change keyup', () => this.evaluateCaseNumberFields());
-                container.append(input);
-                if (index < parts.length - 1) {
-                    container.append('<span class="mr-1">-</span>');
-                }
-            });
-        } else {
-            const input = $('<input type="text" id="event_caseNum" class="form-control case-num-part" required>');
-            input.on('change keyup', () => this.evaluateCaseNumberFields());
-            container.append(input);
+    //populateCaseNumFields() {
+    //    const container = $('#event_caseNum_container');
+    //    container.empty();
+    //    let fields = '';
+    //    const court_types = this.caseTypes;
+
+    //    if (this.courtData && this.courtData.case_num_format) {
+    //        const format = this.courtData.case_num_format;
+    //        const split_format = format.split('-');
+
+    //        if (split_format.length === 1) {
+    //            fields = `<input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple1" required value="${split_format[0]}">`;
+    //        } else if (split_format.length === 2) {
+    //            fields = `<input type="text" class="form-control case-num-part mr-1" maxlength="4" id="case_num_format_multiple1" required value="${split_format[0]}">
+    //                <span>-</span>
+    //                <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple2" maxlength="7" required value="${split_format[1]}">`;
+    //        } else if (split_format.length === 3) {
+    //            if (split_format[1].length === 2 || split_format[1] == '0') {
+    //                fields = `<input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple1" maxlength="4" required value="${split_format[0]}">
+    //                    <span>-</span>
+    //                    <select class="form-control case-num-part mr-1 court_type_change_label" id="case_num_format_multiple2" required ">
+    //                        ${court_types.map(court_type => `
+    //                            <option value="${court_type.Value}" ${court_type.Value === split_format[1] ? 'selected' : ''}>${court_type.Value}</option>
+    //                        `).join('')}
+    //                    </select>
+    //                    <span>-</span>
+    //                    <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple3" maxlength="7" required value="${split_format[2]}">`;
+    //            } else {
+    //                fields = `<input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple1" maxlength="4" required value="${split_format[0]}">
+    //                    <span>-</span>
+    //                    <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple2" maxlength="7" required value="${split_format[1]}">
+    //                    <span>-</span>
+    //                    <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple3" maxlength="4" required value="${split_format[2]}">`;
+    //            }
+    //        } else if (split_format.length >= 4 && split_format.length <= 6) {
+    //            const disabled = split_format.length === 6 ? "disabled" : "";
+    //            fields = `<input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple1" maxlength="2" required value="${split_format[0]}" ${disabled}>
+    //                <span>-</span>
+    //                <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple2" maxlength="4" required value="${split_format[1]}" placeholder="Complete Year">
+    //                <span>-</span>
+    //                <select class="form-control case-num-part mr-1 court_type_change_label" id="case_num_format_multiple3" required ">
+    //                    <option value="" ${split_format[2] == '0' ? 'selected' : ''}></option>
+    //                    ${court_types.map(court_type => `
+    //                        <option value="${court_type.Value}" ${court_type.Value === split_format[2] ? 'selected' : ''}>${court_type.Value}</option>
+    //                    `).join('')}
+    //                </select>
+    //                <span>-</span>
+    //                <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple4" maxlength="6" required value="${split_format[3]}" placeholder="Case Number">
+    //                <span>-</span>
+    //                <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple5" maxlength="4" required value="${split_format[4] || ''}">
+    //            ${split_format.length === 6 ? `<span>-</span>
+    //                <input type="text" class="form-control case-num-part mr-1" id="case_num_format_multiple6" maxlength="2" required value="${split_format[5]}" ${disabled}>`
+    //                : ''}`;
+    //        }
+    //    } else {
+    //        fields = `<input type="text" class="form-control case-num-part mr-1" required>`;
+    //    }
+
+    //    container.html(fields);
+
+    //    // Trigger changeLabel if a court type select exists
+    //    const courtTypeSelect = document.getElementsByClassName('court_type_change_label')[0];
+    //    if (courtTypeSelect) {
+    //        this.changeLabel(courtTypeSelect.value);
+    //    }
+
+    //    // Bind event handlers for input validation
+    //    //$('.case-num-part').on('keyup change', () => this.evaluateCaseNumberFields());
+    //}
+    changeLabel(courtType) {
+        if (courtType == "GA") {
+            document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Ward";
+            document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Ward Email";
+            document.getElementsByClassName("defendant-label")[0].innerHTML = "Petitioner";
+            document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Petitioner Email";
+        }
+        else if (courtType == "DR") {
+            document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Petitioner";
+            document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Petitioner Email";
+            document.getElementsByClassName("defendant-label")[0].innerHTML = "Respondent";
+            document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Respondent Email";
+        }
+        else if (courtType == "MH") {
+            document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Petitioner";
+            document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Petitioner Email";
+            document.getElementsByClassName("defendant-label")[0].innerHTML = "Patient";
+            document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Patient Email";
+        }
+        else {
+            document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Plaintiff";
+            document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Plaintiff Email";
+            document.getElementsByClassName("defendant-label")[0].innerHTML = "Defendant";
+            document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Defendant Email";
         }
     }
 
@@ -278,7 +437,7 @@ class CourtCalendarController {
                     }
                 },
                 error: () => {
-                    ShowNotification('Error', 'Failed to fetch event details by case number.', 'error');
+                    ShowNotification('Case Events', 'No events for selected case number.', 'alert');
                 }
             });
         }
@@ -287,36 +446,61 @@ class CourtCalendarController {
     populateCourtTemplateFields() {
         const container = $('#court_template_fields');
         container.empty();
-        if (this.courtData && this.courtData.court_templates) {
-            this.courtData.court_templates.forEach((template, index) => {
-                const fieldName = `${template.name}_|${template.court_id}`;
-                const sanitizedId = fieldName.replace(/[^A-Za-z0-9-]/g, '');
+        if (this.courtData && this.courtData.user_defined_fields) {
+            this.courtData.user_defined_fields.forEach((field, index) => {
+                let key = `${field.field_name}_|${field.alignment}_|${field.field_type}`;
+                let sanitizedId = key.replace(/[^A-Za-z0-9-]/g, '');
                 let fieldHtml = '';
-                if (template.field_type === 'yes_no') {
+                let requiredAttr = '';
+                let requiredLabel = '';
+                if (field.field_type === 'yes_no') {
+                    if (field.yes_answer_required == 1) {
+                        requiredAttr = 'required';
+                        requiredLabel = "<em>*</em>";
+                    }
                     fieldHtml = `
                         <div class="col-md-4 mb-3">
-                            <label>${template.name}</label>
+                            <label>${field.field_name}${requiredLabel}</label>
                             <div>
-                                <label style="margin-left: 30px;">
-                                    <input type="radio" id="user_customer_field${index}" name="template[${fieldName}]" value="yes" class="form-check-input">Yes
+                                <label>
+                                    <input type="radio" id="${sanitizedId}_yes" name="template[${key}]" value="yes" class="form-check-input" ${requiredAttr}>Yes
                                 </label>
-                                <label style="margin-left: 30px;">
-                                    <input type="radio" id="user_customer_field${index}" name="template[${fieldName}]" value="no" class="form-check-input">No
+                                <label>
+                                    <input type="radio" id="${sanitizedId}_no" name="template[${key}]" value="no" class="form-check-input" ${requiredAttr}>No
                                 </label>
                             </div>
                         </div>`;
                 } else {
+                    if (field.required == 1) {
+                        requiredAttr = 'required';
+                        requiredLabel = "<em>*</em>";
+                    }
+                    let type = field.field_type.toLowerCase() || 'text';
                     fieldHtml = `
                         <div class="col-md-4 mb-3">
-                            <label>${template.name}</label>
-                            <input type="${template.field_type || 'text'}" class="form-control" name="template[${fieldName}]" id="${sanitizedId}">
+                            <label for="${sanitizedId}">${field.field_name}${requiredLabel}</label>
+                            <input type="${type}" class="form-control" name="template[${key}]" id="${sanitizedId}" ${requiredAttr}>
                         </div>`;
                 }
                 container.append(fieldHtml);
             });
         }
     }
-
+    getTemplateData() {
+        let template = {};
+        $('[name^="template["]').each(function () {
+            let el = $(this);
+            let key = el.attr('name').match(/template\[(.*?)\]/)[1];
+            if (el.is(':radio')) {
+                if (el.is(':checked')) {
+                    template[key] = el.val();
+                }
+            } else {
+                template[key] = el.val();
+            }
+        });
+        return JSON.stringify(template);
+    }
     initCalendar() {
         const calendarEl = document.getElementById('calendar');
         this.calendar = new FullCalendar.Calendar(calendarEl, {
@@ -401,6 +585,7 @@ class CourtCalendarController {
     bindEventHandlers() {
         $('#editCourtBtn').on('click', this.handleEditCourt.bind(this));
         $('#userDefinedFieldsBtn').on('click', this.handleUserDefinedFields.bind(this));
+        $(document).on('change', '.case-num-part', (e) => this.changeLabel(e.target.value));
         $('#truncateBtn').on('click', this.handleTruncate.bind(this));
         $('#extendBtn').on('click', this.handleExtend.bind(this));
         $('#deleteTimeslotsBtn').on('click', this.handleDeleteTimeslots.bind(this));
@@ -442,7 +627,6 @@ class CourtCalendarController {
         $('.nav-tabs a').on('shown.bs.tab', (e) => {
             if (e.target.hash === '#eventTab') {
                 this.populateMotionSelectExcludingRestricted();
-                this.populateCourtTemplateFields();
                 $('#other_motion_row').toggle($('#event_motion').val() === '221');
             }
         });
@@ -897,17 +1081,17 @@ class CourtCalendarController {
     getEventFormData() {
         const evtIdVal = $('#edit_eventId').val();
         const evtId = evtIdVal ? parseInt(evtIdVal) : 0;
-        const motionTom = $('#event_motion')[0].tomselect;
-        const typeTom = $('#event_type')[0].tomselect;
+        const motionTom = $('#event_motion').val();
+        const typeTom = $('#event_type').val();
         const attorneyTom = $('#event_attorney')[0].tomselect;
         const opposingAttorneyTom = $('#event_opposingAttorney')[0].tomselect;
         const caseNumParts = $('#event_caseNum_container .case-num-part').map(function () { return $(this).val(); }).get();
         const caseNum = caseNumParts.join('-');
-        const templateData = {};
-        $('#court_template_fields [name^="template["]').each(function () {
-            const name = $(this).attr('name').match(/\[(.+?)\]/)[1];
-            templateData[name] = $(this).is(':radio') ? $(`input[name="template[${name}]"]:checked`).val() : $(this).val();
-        });
+        // const templateData = this.getTemplateData();
+        //$('#court_template_fields [name^="template["]').each(function () {
+        //    const name = $(this).attr('name').match(/\[(.+?)\]/)[1];
+        //    templateData[name] = $(this).is(':radio') ? $(`input[name="template[${name}]"]:checked`).val() : $(this).val();
+        //});
         return {
             id: evtId,
             case_num: caseNum,
@@ -918,12 +1102,12 @@ class CourtCalendarController {
             opp_attorney_id: opposingAttorneyTom ? opposingAttorneyTom.getValue() : '',
             plaintiff: $('#event_plaintiff').val(),
             defendant: $('#event_defendant').val(),
-            plaintiff_email: $('#event_plaintiffEmail').val(),
-            defendant_email: $('#event_defendantEmail').val(),
+            plaintiff_email: $('#event_plaintiffEmail').val().replace(';', ','),
+            defendant_email: $('#event_defendantEmail').val().replace(';', ','),
             notes: $('#event_notes').val(),
-            addon: $('#event_addon').val(),
-            reminder: $('#event_reminder').val(),
-            template: JSON.stringify(templateData)
+            addon: $('#event_addon_check').is(':checked') ? $('#event_addon').val() : 0,
+            reminder: $('#event_reminder_check').is(':checked') ? $('#event_reminder').val() : 0,
+            template: this.getTemplateData(),
         };
     }
 
@@ -1354,6 +1538,7 @@ class CourtCalendarController {
             courtCalendarControllerInstance.clearTimeslotForm();
             courtCalendarControllerInstance.clearEventForm();
             $('#eventsTableBody').empty();
+            this.populateEventDefaults();
         }
     }
 

@@ -456,9 +456,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="js\court-edit - Copy.js" />
     <Content Include="js\court-edit.js" />
+    <Content Include="js\courtCalendar.js" />
     <Content Include="js\docket.js" />
+    <Content Include="js\php-calendar.js" />
     <Content Include="js\truncateCalendar.js" />
     <Content Include="DocketView.ascx" />
     <Content Include="TruncateCalendar.ascx" />
@@ -471,7 +472,6 @@
     <Content Include="js\templateConfig.js" />
     <Content Include="TemplateConfigView.ascx" />
     <Content Include="EventView.ascx" />
-    <Content Include="js\courtCalendar.js" />
     <Content Include="js\event.js" />
     <Content Include="TimeslotView.ascx" />
     <Content Include="CourtCalendarView.ascx" />

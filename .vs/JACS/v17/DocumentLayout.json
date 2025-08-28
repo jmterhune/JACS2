@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\court-edit.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\court-edit.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\court-edit - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\court-edit - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\courtapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\courtapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -35,40 +31,48 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "court-edit - Copy.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court-edit - Copy.js",
-              "RelativeDocumentMoniker": "js\\court-edit - Copy.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court-edit - Copy.js",
-              "RelativeToolTip": "js\\court-edit - Copy.js",
-              "ViewState": "AgIAAEgDAAAAAAAAAAAkwIgDAAABAAAAAAAAAA==",
+              "Title": "courtCalendar - Copy.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar - Copy.js",
+              "RelativeDocumentMoniker": "js\\courtCalendar - Copy.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar - Copy.js",
+              "RelativeToolTip": "js\\courtCalendar - Copy.js",
+              "ViewState": "AgIAANkFAAAAAAAAAAAkwBkGAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-08-22T19:39:58.577Z",
+              "WhenOpened": "2025-08-28T14:37:56.52Z",
               "EditorCaption": ""
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "1a373223-e22e-4bd0-ac20-7815a1a2922c",
+        "Display": 0,
+        "X": 400,
+        "Y": 212,
+        "Width": 1368,
+        "Height": 1315,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "court-edit.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court-edit.js",
-              "RelativeDocumentMoniker": "js\\court-edit.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court-edit.js",
-              "RelativeToolTip": "js\\court-edit.js",
-              "ViewState": "AgIAAEcDAAAAAAAAAAAkwIcDAAABAAAAAAAAAA==",
+              "Title": "courtCalendar.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
+              "RelativeDocumentMoniker": "js\\courtCalendar.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
+              "RelativeToolTip": "js\\courtCalendar.js",
+              "ViewState": "AgIAANkFAAAAAAAAAAAkwBkGAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-08-22T19:07:31.346Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CourtAPIController.cs",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\CourtAPIController.cs",
-              "RelativeDocumentMoniker": "Services\\CourtAPIController.cs",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\CourtAPIController.cs",
-              "RelativeToolTip": "Services\\CourtAPIController.cs",
-              "ViewState": "AgIAADEBAAAAAAAAAADgv0YBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-22T18:58:44.046Z",
+              "WhenOpened": "2025-08-28T13:28:08.746Z",
               "EditorCaption": ""
             }
           ]

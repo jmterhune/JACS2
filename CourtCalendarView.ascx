@@ -1,5 +1,4 @@
-﻿<!-- Filename: Views/CourtCalendarView.ascx -->
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CourtCalendarView.ascx.cs" Inherits="tjc.Modules.jacs.CourtCalendarView" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CourtCalendarView.ascx.cs" Inherits="tjc.Modules.jacs.CourtCalendarView" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Src="Controls/navbar.ascx" TagPrefix="tb" TagName="navbar" %>
 
@@ -203,7 +202,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>Updated On</label>
-                                         <span id="event_updatedOn"></span>
+                                        <span id="event_updatedOn"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -237,38 +236,50 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label>Case Number</label>
-                                        <div id="event_caseNum_container" class="d-flex"></div>
+                                        <div id="event_caseNum_container" class="d-flex">
+                                            <asp:Literal ID="ltCaseNumber" runat="server" />
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>Attorney</label>
                                         <select id="event_attorney" autocomplete="off"></select>
+                                        <div class="invalid-feedback">This Attorney is Required.</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label>Opposing Attorney</label>
                                         <select id="event_opposingAttorney" autocomplete="off"></select>
+                                        <div class="invalid-feedback">This Attorney is Required.</div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label>Plaintiff</label>
+                                        <label class="plaintiff-label">Plaintiff</label>
                                         <input type="text" id="event_plaintiff" class="form-control" autocomplete="off">
+                                        <div class="invalid-feedback plaintiff-feedback">Plaintiff is Required.</div>
+
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Defendant</label>
+                                        <label class="defendant-label">Defendant</label>
                                         <input type="text" id="event_defendant" class="form-control" autocomplete="off">
+                                        <div class="invalid-feedback defendant-feedback">Defendant is Required.</div>
+
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label>Plaintiff Email</label>
+                                        <label class="plaintiff-email-label">Plaintiff Email</label>
                                         <input type="email" id="event_plaintiffEmail" class="form-control" autocomplete="off">
+                                        <div class="invalid-feedback plaintiff-email-feedback">Plaintiff Email is Required.</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Defendant Email</label>
+                                        <label class="defendant-email-label">Defendant Email</label>
                                         <input type="email" id="event_defendantEmail" class="form-control" autocomplete="off">
+                                        <div class="invalid-feedback defendant-email-feedback">Defendant Email is Required.</div>
                                     </div>
+                                </div>
+                                <div id="court_template_fields" class="row">
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -309,7 +320,7 @@
     </div>
 </div>
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
-<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/court.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/court-edit.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtcalendar.js" ForceProvider="DnnFormBottomProvider" Priority="102" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.default.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.complete.min.js" />

@@ -64,7 +64,7 @@
                 <li class="nav-item"><a class="nav-link" id="lnkCourtPermission" href="<%=CourtPermissionListUrl %>"><i class="fas fa-calendar"></i>Active Calendar</a></li>
                 <li class="nav-item"><a class="nav-link" id="lnkDocketPrint" href="<%=DocketPrintUrl %>"><i class="fas fa-print"></i>Docket Print</a></li>
                 <li class="nav-item"><a class="nav-link" id="lnkEvent" href="<%=EventListUrl %>"><i class="fas fa-user-clock"></i>Events</a></li>
-                <li class="nav-item"><a class="nav-link" id="lnkTemplate" href="<%=TemplateListUrl %>"><i class="fas fa-object-ungroup"></i>Templates</a></li>
+                <li class="nav-item hidden"><a class="nav-link" id="lnkTemplate" href="<%=TemplateListUrl %>"><i class="fas fa-object-ungroup"></i>Templates</a></li>
                 <li class="nav-item"><a class="nav-link" id="lnkTimeSlot" href="<%=TimeSlotListUrl %>"><i class="fas fa-clock"></i>Timeslots</a></li>
                 <li class="nav-item"><a class="nav-link" id="lnkQuickRef" href="<%=QuickReferenceUrl %>"><i class="far fa-file-lines"></i>Quick Reference</a></li>
             </ul>

@@ -40,14 +40,17 @@ namespace tjc.Modules.jacs.Services.ViewModels
             case_format_type = court.case_format_type;
             county_name = court.county_name;
             judge_name = GetJudgeName(court.id);
-            def_attorney_item = GetAttorneyItem(court.def_attorney_id);
-            opp_attorney_item = GetAttorneyItem(court.opp_attorney_id);
+            if (court.def_attorney_id.HasValue)
+                def_attorney_item = GetAttorneyItem(court.def_attorney_id.Value);
+            if (court.opp_attorney_id.HasValue)
+                opp_attorney_item = GetAttorneyItem(court.opp_attorney_id.Value);
             available_motions = court.GetCourtMotionValues(true);
             restricted_motions = court.GetCourtMotionValues(false);
             available_hearing_types = court.GetCourtEventTypeValues();
-            restricted_motion_items = court.GetCourtMotionDropDownItems(court.id,false);
+            restricted_motion_items = court.GetCourtMotionDropDownItems(court.id, false);
             available_motion_items = court.GetCourtMotionDropDownItems(court.id, true);
             available_hearing_type_items = court.GetCourtEventTypes();
+            user_defined_fields = court.GetUserDefinedFields(court.id);
         }
 
         public CourtViewModel() { }
@@ -61,7 +64,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
         [JsonProperty("county_id")]
         public long county_id { get; set; }
         [JsonProperty("def_attorney_id")]
-        public long? def_attorney_id { get; set; }        
+        public long? def_attorney_id { get; set; }
         [JsonProperty("plaintiff")]
         public string plaintiff { get; set; }
         [JsonProperty("opp_attorney_id")]
@@ -120,6 +123,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public List<long> available_motions { get; set; }
         [JsonProperty("restricted_motions")]
         public List<long> restricted_motions { get; set; }
+        [JsonProperty("user_defined_fields")]
+        public IEnumerable<UserDefinedField> user_defined_fields { get; set; }
         [JsonProperty("available_hearing_types")]
         public List<long> available_hearing_types { get; set; }
         [JsonProperty("available_motion_items")]
@@ -131,14 +136,15 @@ namespace tjc.Modules.jacs.Services.ViewModels
         [JsonProperty("has_revisions")]
         public bool has_revisions { get; set; }
 
-        private KeyValuePair<long, string> GetAttorneyItem(long attorneyId) { 
-        var controller = new AttorneyController();
+        private KeyValuePair<long, string> GetAttorneyItem(long attorneyId)
+        {
+            var controller = new AttorneyController();
             return controller.GetAttorneyListItem(attorneyId);
         }
         private string GetJudgeName(long courtId)
         {
             var controller = new JudgeController();
-            var judge= controller.GetJudgeByCourt(courtId);
+            var judge = controller.GetJudgeByCourt(courtId);
             if (judge != null)
             {
                 return judge.name;
