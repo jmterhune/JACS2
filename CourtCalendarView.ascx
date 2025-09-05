@@ -15,11 +15,12 @@
             <asp:Literal ID="ltCourtName" runat="server" /></span></h3>
         <div class="court-header d-flex mb-4">
             <div class="court-actions me-auto">
-                <a href="#" class="btn btn-primary" id="editCourtBtn"><i class="fas fa-edit"></i>Edit</a>
-                <a href="#" class="btn btn-primary" id="userDefinedFieldsBtn"><i class="fas fa-cog"></i>User Defined Fields</a>
-                <a href="#" class="btn btn-primary" id="truncateBtn"><i class="fas fa-trash"></i>Truncate</a>
-                <a href="#" class="btn btn-primary" id="icalExportBtn"><i class="fas fa-calendar"></i>iCal export</a>
-                <a href="#" class="btn btn-primary" id="monthlyExportBtn"><i class="fas fa-file-export"></i>Monthly Export</a>
+                <a href="#" class="btn btn-primary" id="editCourtBtn"><i class="fas fa-lg fa-edit"></i>Edit</a>
+                <a href="#" class="btn btn-primary" id="userDefinedFieldsBtn"><i class="fas fa-lg fa-cog"></i>User Defined Fields</a>
+                <a href="#" class="btn btn-primary" id="truncateBtn"><i class="fas fa-lg fa-trash"></i>Truncate</a>
+                <a href="#" class="btn btn-primary" id="icalExportBtn"><i class="fas fa-lg fa-calendar"></i>iCal export</a>
+                <a href="#" class="btn btn-primary" id="monthlyExportBtn"><i class="fas fa-lg fa-file-export"></i>Monthly Export</a>
+                <a href="#" class="btn btn-primary" id="extendBtn"><i class="fas fa-lg fa-fast-forward"></i>Extend Calendar</a>
             </div>
             <div class="calendar-actions d-inline-block">
                 <a href="#" class="btn btn-default" id="deleteTimeslotsBtn"><i class="fas fa-trash"></i>Delete Timeslot(s)</a>
@@ -70,7 +71,7 @@
 </div>
 <!-- Timeslot Modal -->
 <div class="modal fade" id="TimeslotModal" tabindex="-1" aria-labelledby="TimeslotModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xlg">
         <div class="modal-content">
             <input type="hidden" id="edit_timeslotId">
             <div id="progress-timeslot" class="modal-progress" style="display: none;">
@@ -109,36 +110,33 @@
                                         <textarea id="timeslot_blockReason" class="form-control" autocomplete="off"></textarea>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <input type="hidden" id="timeslot_allDay" value="false">
-                                    </div>
-                                </div>
                                 <div class="row cattle-call">
                                     <div class="col-md-6">
                                         <label>Concurrent/Consecutive</label>
                                         <div class="form-check">
-                                            <input type="radio" id="cattlecall_yes" name="timeslot_concurrent" value="1" class="form-check-input" autocomplete="off" checked>
+                                            <input type="radio" id="cattlecall_yes" name="timeslot_cattlecall" value="1" class="form-check-input" autocomplete="off" checked>
                                             <label class="form-check-label" for="cattlecall_yes">Concurrent</label>
                                         </div>
                                         <div class="form-check">
-                                            <input type="radio" id="cattlecall_no" name="timeslot_concurrent" value="0" class="form-check-input" autocomplete="off">
+                                            <input type="radio" id="cattlecall_no" name="timeslot_cattlecall" value="0" class="form-check-input" autocomplete="off">
                                             <label class="form-check-label" for="cattlecall_no">Consecutive</label>
                                         </div>
+                                        <input type="hidden" id="timeslot_allDay" value="false">
                                     </div>
                                 </div>
-                                <div class="row time-selection">
-                                    <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-2 mb-0">
                                         <label>Start Time</label>
-                                        <input type="datetime-local" id="timeslot_startTime" class="form-control" autocomplete="off">
+                                        <input type="text" id="timeslot_startTime" class="form-control" autocomplete="off">
+                                        <input type="hidden" name="t_start" id="t_start" />
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-2 mb-0">
                                         <label>End Time</label>
-                                        <input type="datetime-local" id="timeslot_endTime" class="form-control" autocomplete="off">
+                                        <input type="text" id="timeslot_endTime" class="form-control" autocomplete="off">
+
+                                        <input type="hidden" name="t_end" id="t_end" />
                                     </div>
-                                </div>
-                                <div class="row quantity-group">
-                                    <div class="col-md-6">
+                                    <div class="col-md-3 mb-0">
                                         <label>Duration</label>
                                         <select id="timeslot_duration" class="form-control" autocomplete="off" required>
                                             <option value="5">5 mins</option>
@@ -161,19 +159,22 @@
                                             <option value="1440">All Day</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-3  quantity-group mb-0">
                                         <label>Quantity</label>
                                         <input type="number" id="timeslot_quantity" class="form-control" min="1" autocomplete="off" required>
                                     </div>
+                                <div class="invalid-feedback startTime-feedback">Start Time is Required</div>
+                                <div class="invalid-feedback endTime-feedback">End Time is Required</div>
+                                <div class="invalid-feedback duration-feedback">Duration is Required</div>
+                                <div class="invalid-feedback quantity-feedback">Quantity must be at least 1</div>
+
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <label>Description</label>
                                         <textarea id="timeslot_description" class="form-control" autocomplete="off"></textarea>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <label>Category</label>
                                         <select id="timeslot_category" class="form-control" autocomplete="off">
                                             <option value="">-</option>
@@ -230,7 +231,7 @@
                                 <div class="row" id="other_motion_row" style="display: none;">
                                     <div class="col-md-12">
                                         <label>Other Motion</label>
-                                        <input type="text" id="event_otherMotion" class="form-control" autocomplete="off">
+                                        <input type="text" id="event_customMotion" class="form-control" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -320,8 +321,8 @@
     </div>
 </div>
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
-<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/court-edit.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtcalendar.js" ForceProvider="DnnFormBottomProvider" Priority="102" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/moment/moment.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.default.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.complete.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/fullcalendar/dist/index.global.min.js" />

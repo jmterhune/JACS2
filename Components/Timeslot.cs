@@ -1,8 +1,10 @@
 ﻿// Filename: Timeslot.cs
+using DocumentFormat.OpenXml.Drawing;
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Caching;
 
 namespace tjc.Modules.jacs.Components
@@ -28,6 +30,15 @@ namespace tjc.Modules.jacs.Components
         public DateTime? updated_at { get; set; }
         public DateTime? deleted_at { get; set; }
         [IgnoreColumn]
+        public IEnumerable<Event> events
+        {
+            get
+            {
+                var ctl = new EventController();
+                return ctl.GetEventsByTimeslot(id);
+            }
+        }
+        [IgnoreColumn]
         public bool available
         {
             get
@@ -51,9 +62,9 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public ICollection<TimeslotEvent> TimeslotEvents { get; set; } = new List<TimeslotEvent>();
+        public ICollection<TimeslotEvent> timeslot_events { get; set; } = new List<TimeslotEvent>();
         [IgnoreColumn]
-        public ICollection<TimeslotMotion> Motions { get; set; } = new List<TimeslotMotion>();
+        public ICollection<TimeslotMotion> motions { get; set; } = new List<TimeslotMotion>();
         [IgnoreColumn]
         public Category Category
         {
@@ -70,6 +81,203 @@ namespace tjc.Modules.jacs.Components
                 return new Category();
             }
         }
+        [IgnoreColumn]
+        public string title
+        {
+            get
+            {
+                var start = this.start;
+                var end = this.end;
+                double diff = (end - start).TotalMinutes;
+                int available = quantity * duration;
+                int eventsCount = events?.Count() ?? 0;
+                string title = string.Empty;
+
+                if (eventsCount * duration > diff && eventsCount != quantity)
+                {
+                    if (blocked)
+                    {
+                        if (public_block)
+                        {
+                            title = "Public Blocked <br>" + (!string.IsNullOrEmpty(block_reason) ? block_reason : description);
+                        }
+                        else
+                        {
+                            title = "Blocked <br>" + (!string.IsNullOrEmpty(block_reason) ? block_reason : description);
+                        }
+                    }
+                    else
+                    {
+                        int availableCount = (int)Math.Floor(diff / duration) - eventsCount;
+                        string countStr = availableCount > 0
+                            ? availableCount + " Available <br> " + (quantity - (int)Math.Floor(diff / duration)) + " Overbooked"
+                            : (eventsCount - (int)Math.Floor(diff / duration)) + " Overbooked";
+                    }
+                    title += "<br>";
+                    if (events != null)
+                    {
+                        foreach (var evt in events)
+                        {
+                            title += evt.case_num + "<br>";
+                        }
+                    }
+                }
+                else
+                {
+                    if (eventsCount == quantity)
+                    {
+                        if (events != null)
+                        {
+                            foreach (var evt in events)
+                            {
+                                title += evt.case_num + "<br>";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (blocked)
+                        {
+                            if (public_block)
+                            {
+                                title = "Public blocked <br>" + (!string.IsNullOrEmpty(block_reason) ? block_reason : description);
+                            }
+                            else
+                            {
+                                title = "blocked <br>" + (!string.IsNullOrEmpty(block_reason) ? block_reason : description);
+                            }
+                        }
+                        else
+                        {
+                            if (quantity - eventsCount < 1)
+                            {
+                                if (events != null)
+                                {
+                                    foreach (var evt in events)
+                                    {
+                                        title += evt.case_num + "<br>";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                title = (quantity - eventsCount) + " Available";
+                                if (Category != null && !string.IsNullOrEmpty(Category.description))
+                                {
+                                    title += " (" + Category.description + ")";
+                                }
+                                if (description != null)
+                                {
+                                    title += " (" + description + ")";
+                                }
+                            }
+                        }
+                        title += "<br>";
+                        if (events != null)
+                        {
+                            foreach (var evt in events)
+                            {
+                                title += evt.case_num + "<br>";
+                            }
+                        }
+                    }
+                }
+
+                return title;
+            }
+        }
+        [IgnoreColumn]
+        public string total_length {
+            get
+            {
+                TimeSpan ts = TimeSpan.FromMinutes(duration * quantity);
+                List<string> parts = new List<string>();
+                if (ts.Days > 0) parts.Add($"{ts.Days} day{(ts.Days > 1 ? "s" : "")}");
+                if (ts.Hours > 0) parts.Add($"{ts.Hours} hour{(ts.Hours > 1 ? "s" : "")}");
+                if (ts.Minutes > 0) parts.Add($"{ts.Minutes} minute{(ts.Minutes > 1 ? "s" : "")}");
+                return string.Join(" ", parts);
+            }
+        }
+        [IgnoreColumn]
+        public string display => "auto";
+
+        [IgnoreColumn]
+        public string color
+        {
+            get
+            {
+                string color = null;
+                var start = this.start;
+                var end = this.end;
+                double diff = (end - start).TotalMinutes;
+                int available = quantity * duration;
+                string host = HttpContext.Current?.Request.ServerVariables["SERVER_NAME"] ?? string.Empty;
+                int eventsCount = events?.Count() ?? 0;
+
+                if (available > diff && host != "jacs.flcourts18.net" && eventsCount != quantity)
+                {
+                    color = blocked ? "#808080" : "#dc3545";
+                }
+                else
+                {
+                    if (eventsCount == quantity)
+                    {
+                        color = "#28a745";
+                    }
+                    else
+                    {
+                        if (blocked)
+                        {
+                            color = blocked && public_block ? "rgba(0, 0, 255, 0.5)" : "#808080";
+                        }
+                        else
+                        {
+                            color = (quantity - eventsCount < 1) ? "#dc3545" : "#007bff";
+                        }
+                    }
+                }
+
+                return color;
+            }
+        }
+
+        [IgnoreColumn]
+        public string date => start.ToString("MM/dd/yyyy");
+
+        [IgnoreColumn]
+        public string startTime => start.ToString("h:mm tt").ToLower();
+
+        [IgnoreColumn]
+        public string endTime => end.ToString("h:mm tt").ToLower();
+
+        [IgnoreColumn]
+        public string length
+        {
+            get
+            {
+                TimeSpan ts = TimeSpan.FromMinutes(duration);
+                List<string> parts = new List<string>();
+                if (ts.Days > 0) parts.Add($"{ts.Days} day{(ts.Days > 1 ? "s" : "")}");
+                if (ts.Hours > 0) parts.Add($"{ts.Hours} hour{(ts.Hours > 1 ? "s" : "")}");
+                if (ts.Minutes > 0) parts.Add($"{ts.Minutes} minute{(ts.Minutes > 1 ? "s" : "")}");
+                return string.Join(" ", parts.Take(2));
+            }
+        }
+        [IgnoreColumn]
+        public string TableDisplay => $"{this.start.ToString("MM/dd/yyyy")} @ {this.start.ToString("h:mm tt").ToLower()}";
+
+        [IgnoreColumn]
+        public string CategoryTable => Category?.description ?? "-";
+
+        // Scope not directly translatable to C# property; approximate as a method
+        // Assuming Court relation is has-one, count is 0 or 1; adapt based on context
+        public static IEnumerable<Timeslot> Active(IEnumerable<Timeslot> timeslots, int courtCount)
+        {
+            return timeslots.Where(t => t.quantity <= courtCount);
+        }
+
+        [IgnoreColumn]
+        public bool Clickable => !public_block;
     }
 
     internal class CustomTimeslot : Timeslot

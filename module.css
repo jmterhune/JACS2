@@ -61,6 +61,14 @@
     }
 }
  /* Calendar Styles */
+.modal-xlg{max-width:1000px !important;}}
+.calendar-select {
+    top: .8rem;
+    width: .95rem;
+    height: .95rem;
+    float: right;
+    margin: .25rem !important
+}
 .daterangepicker .calendar-table th, .daterangepicker .calendar-table td {
     padding: 0 !important;
     min-width: 28px !important;

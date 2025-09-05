@@ -143,9 +143,9 @@ namespace tjc.Modules.jacs.Services
                                         { "plaintiff", CleanString(evt.plaintiff) },
                                         { "defendant", CleanString(evt.defendant) },
                                         { "plaintiff_attorney", evt.Attorney?.name ?? null },
-                                        { "defendant_attorney", evt.OppAttorney?.name ?? null },
+                                        { "defendant_attorney", evt.opposing_attorney?.name ?? null },
                                         { "plaintiff_attorney_phone", evt.Attorney?.phone ?? null },
-                                        { "defendant_attorney_phone", evt.OppAttorney?.phone ?? null },
+                                        { "defendant_attorney_phone", evt.opposing_attorney?.phone ?? null },
                                         { "category", ts.Category?.description ?? null },
                                         { "notes", CleanString(evt.notes) },
                                         { "user_defined_fields", evt.template ?? null }

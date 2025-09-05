@@ -45,9 +45,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventController();
-                filteredCount = ctl.GetEventListItemCount(userId,searchTerm, courtId, categoryId, statusId);
+                filteredCount = ctl.GetEventListItemCount(userId, searchTerm, courtId, categoryId, statusId);
                 if (p1 == 0) { recordCount = filteredCount; }
-                events = ctl.GetEventListItems(userId,searchTerm, courtId, categoryId, statusId, recordOffset, pageSize, sortColumn, sortDirection)
+                events = ctl.GetEventListItems(userId, searchTerm, courtId, categoryId, statusId, recordOffset, pageSize, sortColumn, sortDirection)
                            .Select(evt => new EventViewModel(evt)).ToList();
                 return Request.CreateResponse(new EventListItemResult
                 {
@@ -84,8 +84,9 @@ namespace tjc.Modules.jacs.Services
                 var events = new List<EventViewModel>();
                 if (isJudge)
                 {
-                    events=ctl.GetEventsForDashboardByJudge(userId).Select(evt => new EventViewModel(evt)).ToList();
-                }else if (UserInfo.IsAdmin)
+                    events = ctl.GetEventsForDashboardByJudge(userId).Select(evt => new EventViewModel(evt)).ToList();
+                }
+                else if (UserInfo.IsAdmin)
                 {
                     events = ctl.GetEventsForDashBoardByAdmin().Select(evt => new EventViewModel(evt)).ToList();
                 }
@@ -202,18 +203,57 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var evt = p1.ToObject<Event>();
-                if (evt == null || string.IsNullOrWhiteSpace(evt.case_num))
+                var eventViewModel = p1.ToObject<EventViewModel>();
+                if (eventViewModel == null || string.IsNullOrWhiteSpace(eventViewModel.case_num))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Case number is required." });
                 }
-                evt.created_at = DateTime.Now;
-                evt.updated_at = DateTime.Now;
-                evt.plaintiff_email = p1["plaintiff_email"]?.ToString().Replace(";", ",");
-                evt.defendant_email = p1["defendant_email"]?.ToString().Replace(";", ",");
-                evt.template = p1["template"]?.ToString();
+                eventViewModel.created_at = DateTime.Now;
+                eventViewModel.updated_at = DateTime.Now;
+                eventViewModel.plaintiff_email = eventViewModel.plaintiff_email?.ToString().Replace(";", ",");
+                eventViewModel.defendant_email = eventViewModel.defendant_email?.ToString().Replace(";", ",");
+                eventViewModel.template = eventViewModel.template?.ToString();
+
                 var ctl = new EventController();
+                var ctlStatus = new EventStatusController();
+                var status = ctlStatus.GetEventStatusByName("Scheduled");
+                Event evt = new Event
+                {
+                    case_num = eventViewModel.case_num,
+                    notes = eventViewModel.notes,
+                    plaintiff = eventViewModel.plaintiff,
+                    defendant = eventViewModel.defendant,
+                    motion_id = eventViewModel.motion_id,
+                    attorney_id = eventViewModel.attorney_id,
+                    type_id = eventViewModel.type_id,
+                    status_id = status != null ? status.id : (long?)null,
+                    reminder = eventViewModel.reminder,
+                    opp_attorney_id = eventViewModel.opp_attorney_id,
+                    owner_id = eventViewModel.owner_id,
+                    owner_type = eventViewModel.owner_type,
+                    addon = eventViewModel.addon,
+                    plaintiff_email = eventViewModel.plaintiff_email,
+                    defendant_email = eventViewModel.defendant_email,
+                    cancellation_reason = eventViewModel.cancellation_reason,
+                    template = eventViewModel.template,
+                    telephone = eventViewModel.telephone,
+                    custom_motion = eventViewModel.custom_motion,
+                    created_at = eventViewModel.created_at,
+                    updated_at = eventViewModel.updated_at
+                };
                 ctl.CreateEvent(evt);
+                if (evt.id > 0)
+                {
+                    var timeslotCtl = new TimeslotEventController();
+                    TimeslotEvent timeslotEvent = new TimeslotEvent
+                    {
+                        event_id = evt.id,
+                        created_at = DateTime.Now,
+                        updated_at = DateTime.Now,
+                        timeslot_id = eventViewModel.timeslot_id > 0 ? eventViewModel.timeslot_id : (long?)null
+                    };
+                    timeslotCtl.CreateTimeslotEvent(timeslotEvent);
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event created successfully" });
             }
             catch (ValidationException vex)
@@ -293,6 +333,21 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new EventController();
                 var events = ctl.GetEventsByTimeslot(p1);
+                return Request.CreateResponse(HttpStatusCode.OK, new EventsResult { data = events.Select(e => new EventViewModel(e)).ToList(), error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetEventListItemsForTimeslot(long p1)
+        {
+            try
+            {
+                var ctl = new EventController();
+                var events = ctl.GetEventListItemsByTimeslot(p1);
                 return Request.CreateResponse(HttpStatusCode.OK, new EventsResult { data = events.Select(e => new EventViewModel(e)).ToList(), error = null });
             }
             catch (Exception ex)

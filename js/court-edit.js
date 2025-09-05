@@ -118,96 +118,27 @@ class CourtController {
             $("#edit_defendantAttorneyRequired").val(this.checked ? "1" : "0");
         });
 
-        $(".case-num-format-multi").on("input change", function () {
-            courtControllerInstance.updateCaseNumFormatPreview();
-        });
-        $("[name='case_format_type']").on("change", function () {
-            courtControllerInstance.updateCaseNumFormatPreview();
-        });
         $('[data-toggle="tooltip"]').tooltip();
     }
 
-    ViewCourt(edit = false) {
-        const progressId = "#edit_progress-court";
-        $(progressId).show();
-        $.ajax({
-            url: `${this.service.baseUrl}CourtAPI/GetCourt/${this.courtId}`,
-            type: 'GET',
-            dataType: 'json',
-            data: { userId: this.userId },
-            beforeSend: xhr => this.setAjaxHeaders(xhr),
-            success: function (result) {
-                if (result && result.data) {
-                    const court = result.data;
-                    $("#edit_hdCourtId").val(court.id);
-                    $("#edit_courtDescription").val(court.description);
-                    $("#edit_courtCounty").val(court.county_id);
-                    $("#edit_courtPlaintiff").val(court.plaintiff);
-                    $("#edit_courtDefendant").val(court.defendant);
-                    if (court.def_attorney_id) {
-                        courtControllerInstance.preselectSelect2Option('#edit_defAttorney', court.def_attorney_item);
-                    }
-                    if (court.opp_attorney_id) {
-                        courtControllerInstance.preselectSelect2Option('#edit_oppAttorney', court.opp_attorney_item);
-                    }
-                    $("#switch_emailConfirmations").prop('checked', court.email_confirmations).trigger('change');
-                    $("#edit_calendarWeeks").val(court.calendar_weeks);
-                    if (court.auto_extension) {
-                        $("#edit_autoExtensionAuto").prop('checked', true);
-                        $("#auto_extension_label").text("Automatic");
-                        $("#add_template_row").show();
-                    } else {
-                        $("#edit_autoExtensionManual").prop('checked', true);
-                        $("#auto_extension_label").text("Manual");
-                        $("#add_template_row").hide();
-
-                    }
-                    $('#editor_customEmailBody').summernote('code', court.custom_email_body);
-                    $('#editor_timeslotHeader').summernote('code', court.timeslot_header);
-                    $("#edit_customHeader").val(court.custom_header);
-                    $('#editor_webPolicy').summernote('code', court.web_policy);
-                    $("#switch_allowWebScheduling").prop('checked', court.scheduling).trigger('change');
-                    $("#switch_publicAvailableTimeslots").prop('checked', court.public_timeslot).trigger('change');
-                    $("#switch_showDocketInternet").prop('checked', court.public_docket).trigger('change');
-                    $("#edit_maxAvailableSlots").val(court.max_lagtime);
-                    $("#edit_publicDocketDays").val(court.public_docket_days);
-                    $("#switch_plaintiffRequired").prop('checked', court.plaintiff_required).trigger('change');
-                    $("#switch_defendantRequired").prop('checked', court.defendant_required).trigger('change');
-                    $("#switch_plaintiffAttorneyRequired").prop('checked', court.plaintiff_attorney_required).trigger('change');
-                    $("#switch_defendantAttorneyRequired").prop('checked', court.defendant_attorney_required).trigger('change');
-                    courtControllerInstance.preselectSelect2Options('#edit_availableMotions', court.available_motion_items);
-                    courtControllerInstance.preselectSelect2Options('#edit_restrictedMotions', court.restricted_motion_items);
-                    courtControllerInstance.preselectSelect2Options('#edit_availableHearingTypes', court.available_hearing_type_items);
-                    $("[name='case_format_type'][value='" + court.case_format_type + "']").prop('checked', true).trigger('change');
-                    const selectedRadio = $("[name='case_format_type']:checked");
-                    const $row = selectedRadio.closest(".case-format-row");
-                    const values = court.case_num_format.split("-");
-                    const $inputs = $row.find(".case-num-format-multi");
-                    $inputs.each(function (index) {
-                        $(this).val(values[index]);
-                        if ($(this).is('select')) {
-                            $(this).trigger('change');
-                        }
-                    });
-                    courtControllerInstance.loadTemplates();
-                    if (!court.judge_name || court.judge_name <= 0) {
-                        $('#switch_allowWebScheduling').prop('disabled', true);
-                    } else {
-                        $('#switch_allowWebScheduling').prop('disabled', false);
-                    }
-                    courtControllerInstance.updateLagTimeDisplay();
-                    courtControllerInstance.updatePublicDocketDaysDisplay();
-                    $(progressId).hide();
-
-                } else {
-                    $(progressId).hide();
-                }
-            },
-            error: function (error) {
-                ShowNotification("Error", "Failed to load court: " + error.statusText, 'error');
-            }
+    initTemplatesTable() {
+        $("#add_template_row").on("click", function () {
+            courtControllerInstance.addTemplateRow();
+        });
+        $('#templates_table tbody').on('click', '.delete-template', function (e) {
+            e.preventDefault();
+            courtControllerInstance.deleteTemplateRow(this);
+        });
+        $('#templates_table tbody').on('change', '.template-select', function () {
+            const $row = $(this).closest('tr');
+            $row.data('templateId', $(this).val());
+        });
+        $('#templates_table tbody').on('input change', '.week-input', function () {
+            const $row = $(this).closest('tr');
+            $row.data('week', $(this).val());
         });
     }
+
 
     populateCaseTypeDropdown() {
         $.ajax({
@@ -233,62 +164,33 @@ class CourtController {
             }
         });
     }
+
     validateCaseNumFormat() {
         const selectedRadio = $("[name='case_format_type']:checked");
         if (!selectedRadio.length) return false;
-
         const formatType = parseInt(selectedRadio.val());
         const $row = selectedRadio.closest(".case-format-row");
         const $inputs = $row.find(".case-num-format-multi");
         const values = $inputs
             .map(function () {
-                return $(this).val() || $(this).attr("placeholder");
+                return $(this).val() || "N";
             })
             .get()
             .filter(val => val);
-
         // Validation rules based on case_format_type
         switch (formatType) {
             case 1:
-                return values.length === 2 && values[0].length === 4 && values[1].length === 7;
+                return values.length === 2 && (values[0].length === 4 || values[0] === "N") && (values[1].length === 7 || values[1] === "N");
             case 2:
-                return values.length === 3 && values[0].length === 4 && values[1].length === 2 && values[2].length === 7;
+                return values.length === 3 && (values[0].length === 4 || values[0] === "N") && (values[1].length === 2 || values[1] === "N") && (values[2].length === 7 || values[2] === "N");
             case 3:
-                return values.length === 5 && values[0].length === 2 && values[1].length === 4 && values[2].length === 2 && values[3].length === 6 && values[4].length === 4;
+                return values.length === 6 && (values[0].length === 2 || values[0] === "N") && (values[1].length === 4 || values[1] === "N") && (values[2].length === 2 || values[2] === "N") && (values[3].length === 6 || values[3] === "N") && (values[4].length === 4 || values[4] === "N");
             case 4:
-                return values.length === 3 && values[0].length === 4 && values[1].length === 7 && values[2].length === 4;
+                return values.length === 3 && (values[0].length === 4 || values[0] === "N") && (values[1].length === 7 || values[1] === "N") && (values[2].length === 4 || values[2] === "N");
             case 5:
-                return values.length === 1 && values[0].length <= 12;
+                return values.length === 1 && (values[0].length <= 12 || values[0] === "N");
             default:
                 return false;
-        }
-    }
-
-    updateCaseNumFormatPreview() {
-        const selectedRadio = $("[name='case_format_type']:checked");
-        if (!selectedRadio.length) return;
-
-        const formatType = parseInt(selectedRadio.val());
-        const $row = selectedRadio.closest(".case-format-row");
-        const $inputs = $row.find(".case-num-format-multi");
-        const values = $inputs
-            .map(function () {
-                return $(this).val() || $(this).attr("placeholder");
-            })
-            .get()
-            .filter(val => val);
-
-        const caseNumFormat = values.join("-");
-        $("#edit_courtCaseNumFormat").val(caseNumFormat);
-
-        // Validate on update
-        const $caseNumFormatError = $("#edit_courtCaseNumFormat").next(".invalid-feedback");
-        if (this.validateCaseNumFormat()) {
-            $caseNumFormatError.hide();
-            $("#edit_courtCaseNumFormat").removeClass("is-invalid");
-        } else {
-            $caseNumFormatError.show();
-            $("#edit_courtCaseNumFormat").addClass("is-invalid");
         }
     }
 
@@ -482,6 +384,7 @@ class CourtController {
             }
         });
     }
+
     addTemplateRow(templateId = '', week = '', date = '', auto = null) {
         const isAuto = auto !== null ? auto : $("#edit_autoExtensionAuto").is(":checked");
         const rowId = 'template_' + Math.random().toString(36).substring(2, 9);
@@ -516,6 +419,7 @@ class CourtController {
             $newSelect.val(templateId).trigger('change');
         }
     }
+
     loadTemplates() {
         $.ajax({
             url: `${this.service.baseUrl}CourtTemplateAPI/GetTemplatesByCourt/${this.courtId}`,
@@ -536,6 +440,7 @@ class CourtController {
             }
         });
     }
+
     populateTemplates() {
         $.ajax({
             url: `${this.service.baseUrl}CourtTemplateOrderAPI/GetTemplateOrdersByCourt/${this.courtId}`,
@@ -560,51 +465,87 @@ class CourtController {
             }
         });
     }
-    updateCaseNumFormatPreview() {
-        const selectedRadio = $("[name='case_format_type']:checked");
-        if (!selectedRadio.length) return;
 
-        const formatType = parseInt(selectedRadio.val());
-        const $row = selectedRadio.closest(".case-format-row");
-        const $inputs = $row.find(".case-num-format-multi");
-        const values = $inputs
-            .map(function () {
-                return $(this).val() || $(this).attr("placeholder");
-            })
-            .get()
-            .filter(val => val); // Remove empty values
-        const caseNumFormat = values.join("-");
-        $("#edit_courtCaseNumFormat").val(caseNumFormat);
-    }
-    // Function to validate the case number format based on type
-    validateCaseNumFormat() {
-        const selectedRadio = $("[name='case_format_type']:checked");
-        if (!selectedRadio.length) return false;
+    ViewCourt(edit = false) {
+        const progressId = "#edit_progress-court";
+        $(progressId).show();
+        $.ajax({
+            url: `${this.service.baseUrl}CourtAPI/GetCourt/${this.courtId}`,
+            type: 'GET',
+            dataType: 'json',
+            data: { userId: this.userId },
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (result) {
+                if (result && result.data) {
+                    const court = result.data;
+                    $("#edit_hdCourtId").val(court.id);
+                    $("#edit_courtDescription").val(court.description);
+                    $("#edit_courtCounty").val(court.county_id);
+                    $("#edit_courtPlaintiff").val(court.plaintiff);
+                    $("#edit_courtDefendant").val(court.defendant);
+                    if (court.def_attorney_id) {
+                        courtControllerInstance.preselectSelect2Option('#edit_defAttorney', court.def_attorney_item);
+                    }
+                    if (court.opp_attorney_id) {
+                        courtControllerInstance.preselectSelect2Option('#edit_oppAttorney', court.opp_attorney_item);
+                    }
+                    $("#switch_emailConfirmations").prop('checked', court.email_confirmations).trigger('change');
+                    $("#edit_calendarWeeks").val(court.calendar_weeks);
+                    if (court.auto_extension) {
+                        $("#edit_autoExtensionAuto").prop('checked', true);
+                        $("#auto_extension_label").text("Automatic");
+                        $("#add_template_row").show();
+                    } else {
+                        $("#edit_autoExtensionManual").prop('checked', true);
+                        $("#auto_extension_label").text("Manual");
+                        $("#add_template_row").hide();
 
-        const formatType = selectedRadio.val();
-        const $row = selectedRadio.closest(".case-format-row");
-        const $inputs = $row.find(".case-num-format-multi");
-        const values = $inputs
-            .map(function () {
-                return $(this).val() || $(this).attr("placeholder");
-            })
-            .get()
-            .filter(val => val);
+                    }
+                    $('#editor_customEmailBody').summernote('code', court.custom_email_body);
+                    $('#editor_timeslotHeader').summernote('code', court.timeslot_header);
+                    $("#edit_customHeader").val(court.custom_header);
+                    $('#editor_webPolicy').summernote('code', court.web_policy);
+                    $("#switch_allowWebScheduling").prop('checked', court.scheduling).trigger('change');
+                    $("#switch_publicAvailableTimeslots").prop('checked', court.public_timeslot).trigger('change');
+                    $("#switch_showDocketInternet").prop('checked', court.public_docket).trigger('change');
+                    $("#edit_maxAvailableSlots").val(court.max_lagtime);
+                    $("#edit_publicDocketDays").val(court.public_docket_days);
+                    $("#switch_plaintiffRequired").prop('checked', court.plaintiff_required).trigger('change');
+                    $("#switch_defendantRequired").prop('checked', court.defendant_required).trigger('change');
+                    $("#switch_plaintiffAttorneyRequired").prop('checked', court.plaintiff_attorney_required).trigger('change');
+                    $("#switch_defendantAttorneyRequired").prop('checked', court.defendant_attorney_required).trigger('change');
+                    courtControllerInstance.preselectSelect2Options('#edit_availableMotions', court.available_motion_items);
+                    courtControllerInstance.preselectSelect2Options('#edit_restrictedMotions', court.restricted_motion_items);
+                    courtControllerInstance.preselectSelect2Options('#edit_availableHearingTypes', court.available_hearing_type_items);
+                    $("[name='case_format_type'][value='" + court.case_format_type + "']").prop('checked', true).trigger('change');
+                    const selectedRadio = $("[name='case_format_type']:checked");
+                    const $row = selectedRadio.closest(".case-format-row");
+                    const values = court.case_num_format.split("-");
+                    const $inputs = $row.find(".case-num-format-multi");
+                    $inputs.each(function (index) {
+                        $(this).val(values[index]);
+                        if ($(this).is('select')) {
+                            $(this).trigger('change');
+                        }
+                    });
+                    courtControllerInstance.loadTemplates();
+                    if (!court.judge_name || court.judge_name <= 0) {
+                        $('#switch_allowWebScheduling').prop('disabled', true);
+                    } else {
+                        $('#switch_allowWebScheduling').prop('disabled', false);
+                    }
+                    courtControllerInstance.updateLagTimeDisplay();
+                    courtControllerInstance.updatePublicDocketDaysDisplay();
+                    $(progressId).hide();
 
-        switch (formatType) {
-            case '1':
-                return values.length === 2;
-            case '2':
-                return values.length === 3;
-            case '3':
-                return values.length === 6;
-            case '4':
-                return values.length === 3;
-            case '5':
-                return values.length === 1;
-            default:
-                return false;
-        }
+                } else {
+                    $(progressId).hide();
+                }
+            },
+            error: function (error) {
+                ShowNotification("Error", "Failed to load court: " + error.statusText, 'error');
+            }
+        });
     }
 
     SaveCourt() {
@@ -628,11 +569,12 @@ class CourtController {
             const $inputs = $row.find(".case-num-format-multi");
             const values = $inputs
                 .map(function () {
-                    return $(this).val() || $(this).attr("placeholder");
+                    return $(this).val() || "|";
                 })
                 .get()
                 .filter(val => val);
-            const caseNumFormat = values.join("-");
+            var caseNumFormat = values.join("-");
+            caseNumFormat = caseNumFormat.replace(/\|/g, '');
 
             if (!this.validateCaseNumFormat()) {
                 $("#edit_progress-court").hide();
@@ -715,11 +657,12 @@ class CourtController {
             const $inputs = $row.find(".case-num-format-multi");
             const values = $inputs
                 .map(function () {
-                    return $(this).val() || $(this).attr("placeholder");
+                    return $(this).val() || "|";
                 })
                 .get()
                 .filter(val => val);
-            const caseNumFormat = values.join("-");
+            var caseNumFormat = values.join("-");
+            caseNumFormat = caseNumFormat.replace(/\|/g, '');
 
             if (!this.validateCaseNumFormat()) {
                 $("#edit_progress-court").hide();
@@ -878,24 +821,6 @@ class CourtController {
         xhr.setRequestHeader('ModuleId', this.moduleId);
         xhr.setRequestHeader('TabId', this.service.framework.getTabId());
         xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
-    }
-
-    initTemplatesTable() {
-        $("#add_template_row").on("click", function () {
-            courtControllerInstance.addTemplateRow();
-        });
-        $('#templates_table tbody').on('click', '.delete-template', function (e) {
-            e.preventDefault();
-            courtControllerInstance.deleteTemplateRow(this);
-        });
-        $('#templates_table tbody').on('change', '.template-select', function () {
-            const $row = $(this).closest('tr');
-            $row.data('templateId', $(this).val());
-        });
-        $('#templates_table tbody').on('input change', '.week-input', function () {
-            const $row = $(this).closest('tr');
-            $row.data('week', $(this).val());
-        });
     }
 
     deleteTemplateRow(deleteLink) {

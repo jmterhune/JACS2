@@ -109,12 +109,12 @@ namespace tjc.Modules.jacs.Components
                     FROM timeslots ts
                     INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id
                     WHERE ct.court_id = @0 AND ts.start >= @1 AND ts.deleted_at IS NULL";
-                var timeslots = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, date);
+                var timeslots = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, date.ToString("yyyy-MM-dd HH:mm:ss"));
                 // Load related TimeslotEvents if needed for filtering
                 var teCtl = new TimeslotEventController();
                 foreach (var ts in timeslots)
                 {
-                    ts.TimeslotEvents = teCtl.GetTimeslotEventsByTimeslot(ts.id).ToList();
+                    ts.timeslot_events = teCtl.GetTimeslotEventsByTimeslot(ts.id).ToList();
                 }
                 return timeslots;
             }
@@ -187,12 +187,12 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT t.*, (SELECT COUNT(*) FROM timeslot_events te WHERE te.timeslot_id = t.id) AS eventCount 
+                    SELECT t.*, (SELECT COUNT(*) FROM timeslot_events te WHERE te.timeslot_id = t.id) AS event_count 
                     FROM [timeslots] t 
                     INNER JOIN [court_timeslots] ct ON ct.timeslot_id = t.id 
                     WHERE ct.court_id = @0 AND t.start >= @1 AND t.[end] < @2 AND t.deleted_at IS NULL 
                     ORDER BY t.start";
-                return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start, end);
+                return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"), end.ToString("yyyy-MM-dd HH:mm:ss"));
             }
         }
         public IEnumerable<Timeslot> GetOverlappingTimeslots(long courtId, DateTime start, DateTime end)
@@ -205,7 +205,7 @@ namespace tjc.Modules.jacs.Components
                     WHERE ct.court_id = @0 
                     AND t.deleted_at IS NULL 
                     AND NOT (t.[end] <= @1 OR t.start >= @2)";
-                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, start, end);
+                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"), end.ToString("yyyy-MM-dd HH:mm:ss"));
             }
         }
         public long[] GetRestrictedMotionsForTimeslot(long timeslotId)
@@ -306,15 +306,15 @@ namespace tjc.Modules.jacs.Components
                 if (t.category_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM categories WHERE id = @0", t.category_id.Value) == 0)
                     throw new ValidationException("Invalid category ID.");
 
-                var overlaps = ctx.ExecuteScalar<long>(System.Data.CommandType.Text,
-                    "SELECT COUNT(*) FROM timeslots ts JOIN court_timeslots ct ON ts.id = ct.timeslot_id " +
-                    "WHERE ct.court_id = (SELECT court_id FROM court_timeslots WHERE timeslot_id = @0) " +
-                    "AND ts.id != @0 " +
-                    "AND (ts.start < @2 AND ts.[end] > @1 OR ts.start BETWEEN @1 AND @2 OR ts.[end] BETWEEN @1 AND @2)",
-                    t.id, t.start, t.end);
+                //var overlaps = ctx.ExecuteScalar<long>(System.Data.CommandType.Text,
+                //    "SELECT COUNT(*) FROM timeslots ts JOIN court_timeslots ct ON ts.id = ct.timeslot_id " +
+                //    "WHERE ct.court_id = (SELECT court_id FROM court_timeslots WHERE timeslot_id = @0) " +
+                //    "AND ts.id != @0 " +
+                //    "AND (ts.start < @2 AND ts.[end] > @1 OR ts.start BETWEEN @1 AND @2 OR ts.[end] BETWEEN @1 AND @2)",
+                //    t.id, t.start.ToString("yyyy-MM-dd HH:mm:ss"), t.end.ToString("yyyy-MM-dd HH:mm:ss"));
 
-                if (overlaps > 0 && !t.allDay)
-                    throw new ValidationException("Timeslot overlaps with existing timeslots.");
+                //if (overlaps > 0 && !t.allDay)
+                //    throw new ValidationException("Timeslot overlaps with existing timeslots.");
             }
         }
         private void ValidateTimeslotMotion(TimeslotMotion timeslotMotion)

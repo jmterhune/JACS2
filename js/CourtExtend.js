@@ -1,18 +1,18 @@
 ﻿let courtExtendControllerInstance = null;
 class CourtExtendController {
     constructor(params = {}) {
-        this.moduleId = config.moduleId;
-        this.userId = config.userId;
-        this.isAdmin = config.isAdmin;
-        this.adminRole = config.adminRole;
-        this.service = config.service;
-        this.courtId = config.courtId;
-        this.cancelUrl = config.cancelUrl;
+        this.moduleId = params.moduleId;
+        this.userId = params.userId;
+        this.isAdmin = params.isAdmin;
+        this.adminRole = params.adminRole;
+        this.service = params.service;
+        this.courtId = params.courtId;
+        this.cancelUrl = params.cancelUrl;
         courtExtendControllerInstance = this;
     }
-    int() {
+    init() {
         // Initialize datepicker
-        $('#<%= txtStartDate.ClientID %>').datepicker({
+        $('#txtStartDate').datepicker({
             autoclose: true,
             format: 'mm/dd/yyyy'
         });
@@ -20,7 +20,7 @@ class CourtExtendController {
         // Handle cancel button
         $('#btnCancel').click(function (e) {
             e.preventDefault();
-            window.location.href = config.cancelUrl;
+            window.location.href = this.cancelUrl;
         });
 
         // Form submission
@@ -32,10 +32,10 @@ class CourtExtendController {
     }
 
     submitExtendForm() {
-        var startTemplate = $('#<%= ddlStartTemplate.ClientID %>').val();
-        var weeks = $('#<%= txtWeeks.ClientID %>').val();
-        var startDate = $('#<%= txtStartDate.ClientID %>').val();
-        var courtId = $('#<%= hfCourtId.ClientID %>').val();
+        var startTemplate = $('#ddlStartTemplate').val();
+        var weeks = $('#txtWeeks').val();
+        var startDate = $('#txtStartDate').val();
+        var courtId = $('#hfCourtId').val();
 
         if (!startTemplate || !weeks || !startDate) {
             Swal.fire({
@@ -55,7 +55,7 @@ class CourtExtendController {
             return false;
         }
 
-        $('#<%= btnExtend.ClientID %>').prop('disabled', true).find('i').removeClass('fas fa-save').addClass('fas fa-spinner fa-spin');
+        $('#btnExtend').prop('disabled', true).find('i').removeClass('fas fa-save').addClass('fas fa-spinner fa-spin');
         const getUrl = `${this.service.baseUrl}CourtAPI/ExtendCalendar`;
         $.ajax({
             url: getUrl,
@@ -75,7 +75,7 @@ class CourtExtendController {
                         text: response.message,
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = config.cancelUrl;
+                        window.location.href = this.cancelUrl;
                     });
                 } else {
                     Swal.fire({
@@ -93,7 +93,7 @@ class CourtExtendController {
                 });
             },
             complete: function () {
-                $('#<%= btnExtend.ClientID %>').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas fa-save');
+                $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas fa-save');
             }
         });
         return false; // Prevent default form submission

@@ -71,6 +71,10 @@ namespace tjc.Modules.jacs.Services.ViewModels
             timeslot_desc = eventData.timeslot_desc;
             court_name = eventData.court_name;
             category_name = eventData.category_name;
+            start_date = eventData.start.HasValue?eventData.start.Value.ToShortDateString():"";
+            start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
+            duration = eventData.duration.ToString();
+
         }
         public EventViewModel() { }
 
@@ -128,9 +132,17 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string status_name { get; set; }
         [JsonProperty("timeslot_desc")]
         public string timeslot_desc { get; set; }
+        [JsonProperty("timeslot_id")]
+        public long timeslot_id { get; set; }
         [JsonProperty("court_name")]
         public string court_name { get; set; }
         [JsonProperty("category_name")]
         public string category_name { get; set; }
+        [JsonProperty("duration")]
+        public string duration { get; set; }
+        [JsonProperty("start_date")]
+        public string start_date { get; set; }
+        [JsonProperty("start_time")]
+        public string start_time { get; set; }
     }
 }

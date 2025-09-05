@@ -48,12 +48,12 @@ namespace tjc.Modules.jacs.Services
                 filteredCount = ctl.GetCourtTemplatesCount(searchTerm);
                 if (p1 == 0) { recordCount = filteredCount; }
                 courtTemplates = ctl.GetCourtTemplatesPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).ToList();
-                return Request.CreateResponse(new CourtTemplateSearchResult { data = courtTemplates, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+                return Request.CreateResponse(new CourtTemplateSearchResult { data = courtTemplates, draw = draw, recordsFiltered = filteredCount, records_total = recordCount, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CourtTemplateSearchResult { data = courtTemplates, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+                return Request.CreateResponse(new CourtTemplateSearchResult { data = courtTemplates, draw = draw, recordsFiltered = filteredCount, records_total = recordCount, error = ex.Message });
             }
         }
        
@@ -260,7 +260,7 @@ namespace tjc.Modules.jacs.Services
         internal class CourtTemplateSearchResult
         {
             public List<CourtTemplateViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
+            public int records_total { get; set; }
             public int recordsFiltered { get; set; }
             public int draw { get; set; }
             public string error { get; set; }

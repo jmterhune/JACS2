@@ -145,7 +145,7 @@ class TimeslotController {
                     searchable: false
                 },
                 { data: "court_name" },
-                { data: "FormattedStart" },
+                { data: "formatted_start" },
                 { data: "duration" },
                 { data: "available", render: function (data) { return data ? 'Yes' : 'No' } },
                 { data: "quantity" },

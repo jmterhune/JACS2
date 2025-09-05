@@ -85,8 +85,8 @@
                                                     <option value="0"></option>
                                                 </select>
                                                 <input type="text" value="" class="col-md-2 case-num-format-multi" maxlength="6" minlength="6" placeholder="Case Number" id="case_format_input_three">
-                                                <input type="text" value="XXXX" class="col-md-2 case-num-format-multi" maxlength="4" minlength="4" id="case_format_input_four">
-                                                <input type="text" value="XX" class="col-md-2 case-num-format-multi" maxlength="2" minlength="2" id="case_format_input_five">
+                                                <input type="text" value="" class="col-md-2 case-num-format-multi" maxlength="4" minlength="4" id="case_format_input_four" placeholder="xxxx">
+                                                <input type="text" value="" class="col-md-2 case-num-format-multi" maxlength="2" minlength="2" id="case_format_input_five" placeholder="xx">
                                             </div>
                                             <div class="case-format-row">
                                                 <input type="radio" name="case_format_type" value="4" id="radio_4">

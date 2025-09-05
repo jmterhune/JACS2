@@ -19,30 +19,30 @@
         <div class="row">
             <div class="col-md-8">
                 <form id="extendForm" action="#" method="post">
-                    <asp:HiddenField ID="hdCourtId" runat="server" />
-                    <div class="card">
+                    <asp:HiddenField ID="hdCourtId"  ClientIDMode="Static"  runat="server" />
+                    <div class="card form-group">
                         <div class="card-body row">
-                            <div class="form-group col-md-12">
+                            <div class="col-md-12">
                                 <asp:Literal ID="ltLastTimeslot" runat="server" />
                                 <asp:Literal ID="ltLastTemplateTimeslot" runat="server" />
                                 <asp:Literal ID="ltLastHearing" runat="server" />
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="startTemplate">Starting Template</label>
-                                <asp:DropDownList ID="ddlStartTemplate" runat="server" CssClass="form-control" required="required" />
+                            <div class= "col-md-6">
+                                <label for="startTemplate">Starting Template<em>*</em></label>
+                                <asp:DropDownList  ClientIDMode="Static"  ID="ddlStartTemplate" runat="server" CssClass="form-control" required="required" />
                             </div>
-                            <div class="form-group col-md-6 required">
-                                <label for="weeks">Weeks to Extend</label>
-                                <asp:TextBox ID="txtWeeks" runat="server" CssClass="form-control" TextMode="Number" required="required" />
+                            <div class="col-md-6">
+                                <label for="weeks">Weeks to Extend<em>*</em></label>
+                                <asp:TextBox ID="txtWeeks"  ClientIDMode="Static"  runat="server" CssClass="form-control" TextMode="Number" required="required" />
                             </div>
-                            <div class="form-group col-md-6 required">
-                                <label for="startDate">Start Date</label>
-                                <asp:TextBox ID="txtStartDate" runat="server" CssClass="form-control datepicker" required="required" />
+                            <div class="col-md-6">
+                                <label for="startDate">Start Date<em>*</em></label>
+                                <asp:TextBox ID="txtStartDate" ClientIDMode="Static" runat="server" CssClass="form-control datepicker" required="required" />
                             </div>
                         </div>
                     </div>
                     <div class="form-group mt-3">
-                        <asp:Button ID="btnExtend" runat="server" CssClass="btn btn-success" Text="Extend" OnClientClick="return submitExtendForm();" />
+                        <asp:Button ClientIDMode="Static" ID="btnExtend" runat="server" CssClass="btn btn-success" Text="Extend" OnClientClick="return submitExtendForm();" />
                         <a href="#" class="btn btn-default" id="btnCancel">Cancel</a>
                     </div>
                 </form>

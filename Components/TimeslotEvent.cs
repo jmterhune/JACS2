@@ -15,8 +15,8 @@ namespace tjc.Modules.jacs.Components
         public long? event_id { get; set; }
         public long? timeslot_id { get; set; }
         [IgnoreColumn]
-        public Event Event { get; set; } = new Event();
+        public Event timeslot_event { get; set; } = new Event();
         [IgnoreColumn]
-        public Timeslot Timeslot { get; set; } = new Timeslot();
+        public Timeslot timeslot { get; set; } = new Timeslot();
     }
 }

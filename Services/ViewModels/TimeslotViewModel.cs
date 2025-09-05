@@ -25,7 +25,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             updated_at = timeslotData.updated_at;
             deleted_at = timeslotData.deleted_at;
             court_name = timeslotData.court_name;
-            event_count = timeslotData.TimeslotEvents.Count;
+            event_count = timeslotData.timeslot_events.Count;
             available=timeslotData.available;
             description = timeslotData.description ?? string.Empty;
 
@@ -47,7 +47,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             created_at = timeslotData.created_at;
             updated_at = timeslotData.updated_at;
             deleted_at = timeslotData.deleted_at;
-            event_count = timeslotData.TimeslotEvents.Count;
+            event_count = timeslotData.timeslot_events.Count;
             available = timeslotData.available;
             description = timeslotData.description ?? string.Empty;
         }

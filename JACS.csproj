@@ -346,7 +346,7 @@
     <Compile Include="Components\EventReminderController.cs" />
     <Compile Include="Components\EventStatus.cs" />
     <Compile Include="Components\EventStatusController.cs" />
-    <Compile Include="Components\EventType.cs" />
+    <Compile Include="Components\event_type.cs" />
     <Compile Include="Components\EventTypeController.cs" />
     <Compile Include="Components\FailedJob.cs" />
     <Compile Include="Components\FailedJobController.cs" />
@@ -459,7 +459,6 @@
     <Content Include="js\court-edit.js" />
     <Content Include="js\courtCalendar.js" />
     <Content Include="js\docket.js" />
-    <Content Include="js\php-calendar.js" />
     <Content Include="js\truncateCalendar.js" />
     <Content Include="DocketView.ascx" />
     <Content Include="TruncateCalendar.ascx" />

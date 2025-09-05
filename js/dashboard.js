@@ -44,47 +44,47 @@ class DashboardController {
                     searchable: false
                 },
                 {
-                    data: "CaseNumber", orderable: false,
+                    data: "case_num", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Motion", orderable: false,
+                    data: "motion_name", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Timeslot", orderable: false,
+                    data: "timeslot_desc", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Duration", orderable: false,
+                    data: "duration", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Court", orderable: false,
+                    data: "court_name", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Status", orderable: false,
+                    data: "status_name", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Attorney", orderable: false,
+                    data: "attorney_name", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "OpposingAttorney", orderable: false,
+                    data: "opp_attorney_name", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Plaintiff", orderable: false,
+                    data: "plaintiff", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Defendant", orderable: false,
+                    data: "defendant", orderable: false,
                     searchable: false
                 },
                 {
-                    data: "Category", orderable: false,
+                    data: "category_name", orderable: false,
                     searchable: false
                 },
             ],
@@ -175,20 +175,20 @@ class DashboardController {
                 }
                 const data = response.data;
                 const caseDetails = '<tbody>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Case Number:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.CaseNum + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Motion:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.Motion ? data.Motion.Description : '-') + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Timeslot:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.Timeslot.Date + ' @ ' + data.Timeslot.StartTime + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Court:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.Timeslot.Court.Description + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Status:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.Status ? data.Status.Name : '-') + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Attorney:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.Attorney ? data.Attorney.Name : '-') + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Opposing Attorney:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.OppAttorney ? data.OppAttorney.Name : '-') + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Plaintiff:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.Plaintiff ? data.Plaintiff : '-') + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Defendant:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.Defendant ? data.Defendant : '-') + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Category:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.Timeslot.Category ? data.Timeslot.Category.Description : '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Case Number:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.case_num + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Motion:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.motion_name ? data.motion_name: '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Timeslot:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.start_date + ' @ ' + data.start_time + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Court:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.court_name + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Status:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.status_name ? data.status_name : '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Attorney:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.attorney_name ? data.attorney_name : '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Opposing Attorney:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.opp_attorney_name ? data.opp_attorney_name : '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Plaintiff:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.plaintiff ? data.plaintiff : '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Defendant:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.defendant ? data.defendant : '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Category:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.category ? data.category : '-') + '</td></tr>' +
                     '<tr><td style="vertical-align:top; border:none;"><strong>Actions:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' +
-                    '<a href="' + this.eventEditUrl + '/eid/' + data.Id + '" class="btn btn-sm btn-link"><i class="la la-edit"></i> Edit</a>' +
-                    '<a href="javascript:void(0)" onclick="dashboardControllerInstance.cancelEntry(' + data.Id + ')" class="btn btn-sm btn-link" data-button-type="delete"><i class="la la-trash"></i> Cancel</a>' +
-                    '<a href="' + this.eventRevisionUrl + '/eid/' + data.Id + '" class="btn btn-sm btn-link"><i class="la la-history"></i> Revisions</a>' +
+                    '<a href="' + this.eventEditUrl + '/eid/' + data.id + '" class="btn btn-sm btn-link"><i class="la la-edit"></i> Edit</a>' +
+                    '<a href="javascript:void(0)" onclick="dashboardControllerInstance.cancelEntry(' + data.id + ')" class="btn btn-sm btn-link" data-button-type="delete"><i class="la la-trash"></i> Cancel</a>' +
+                    '<a href="' + this.eventRevisionUrl + '/eid/' + data.id + '" class="btn btn-sm btn-link"><i class="la la-history"></i> Revisions</a>' +
                     '</td></tr>' +
                     '</tbody>';
                 $("#caseDetailsTable").empty().append(caseDetails);

@@ -3,12 +3,40 @@
   "WorkspaceRootPath": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\module.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:module.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\courtcalendarview.ascx||{F390D63C-F7D8-4E74-AA04-57C1ECF53D4D}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:courtcalendarview.ascx||{F390D63C-F7D8-4E74-AA04-57C1ECF53D4D}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtcalendar - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtcalendar - copy.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\components\\event.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:components\\event.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\viewmodels\\eventviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\viewmodels\\eventviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\eventapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\eventapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\components\\eventcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:components\\eventcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\components\\timeslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:components\\timeslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\services\\docketapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:services\\docketapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +46,99 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "module.css",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\module.css",
+              "RelativeDocumentMoniker": "module.css",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\module.css",
+              "RelativeToolTip": "module.css",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAD8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-09-05T16:47:37.89Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CourtCalendarView.ascx",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\CourtCalendarView.ascx",
+              "RelativeDocumentMoniker": "CourtCalendarView.ascx",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\CourtCalendarView.ascx",
+              "RelativeToolTip": "CourtCalendarView.ascx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003302|",
+              "WhenOpened": "2025-09-05T16:45:35.93Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EventViewModel.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\ViewModels\\EventViewModel.cs",
+              "RelativeDocumentMoniker": "Services\\ViewModels\\EventViewModel.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\ViewModels\\EventViewModel.cs",
+              "RelativeToolTip": "Services\\ViewModels\\EventViewModel.cs",
+              "ViewState": "AgIAAGsAAAAAAAAAAAA3wCoAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T16:33:46.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DocketAPIController.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\DocketAPIController.cs",
+              "RelativeDocumentMoniker": "Services\\DocketAPIController.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\DocketAPIController.cs",
+              "RelativeToolTip": "Services\\DocketAPIController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAWwNABAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T16:32:24.179Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "EventController.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\EventController.cs",
+              "RelativeDocumentMoniker": "Components\\EventController.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\EventController.cs",
+              "RelativeToolTip": "Components\\EventController.cs",
+              "ViewState": "AgIAAPkAAAAAAAAAAAAYwBMBAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T16:31:25.295Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Timeslot.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\Timeslot.cs",
+              "RelativeDocumentMoniker": "Components\\Timeslot.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\Timeslot.cs",
+              "RelativeToolTip": "Components\\Timeslot.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAArwCUAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T16:32:13.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "EventAPIController.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\EventAPIController.cs",
+              "RelativeDocumentMoniker": "Services\\EventAPIController.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Services\\EventAPIController.cs",
+              "RelativeToolTip": "Services\\EventAPIController.cs",
+              "ViewState": "AgIAAEcBAAAAAAAAAAAcwFgBAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T16:25:19.162Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -30,15 +149,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "courtCalendar - Copy.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar - Copy.js",
-              "RelativeDocumentMoniker": "js\\courtCalendar - Copy.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar - Copy.js",
-              "RelativeToolTip": "js\\courtCalendar - Copy.js",
-              "ViewState": "AgIAANkFAAAAAAAAAAAkwBkGAAABAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "courtCalendar.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
+              "RelativeDocumentMoniker": "js\\courtCalendar.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
+              "RelativeToolTip": "js\\courtCalendar.js",
+              "ViewState": "AgIAAPIEAAAAAAAAAAAqwPwEAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-08-28T14:37:56.52Z",
+              "WhenOpened": "2025-09-05T16:24:09.5Z",
               "EditorCaption": ""
             }
           ]
@@ -49,12 +168,12 @@
       "Orientation": 0,
       "VerticalTabListWidth": 256,
       "FloatingWindowState": {
-        "Id": "1a373223-e22e-4bd0-ac20-7815a1a2922c",
+        "Id": "3a61ae9b-e1a2-4a29-85e5-79d308d3e5a5",
         "Display": 0,
-        "X": 400,
-        "Y": 212,
+        "X": 192,
+        "Y": 157,
         "Width": 1368,
-        "Height": 1315,
+        "Height": 811,
         "WindowState": 0
       },
       "DocumentGroups": [
@@ -64,15 +183,15 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "courtCalendar.js",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
-              "RelativeDocumentMoniker": "js\\courtCalendar.js",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtCalendar.js",
-              "RelativeToolTip": "js\\courtCalendar.js",
-              "ViewState": "AgIAANkFAAAAAAAAAAAkwBkGAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-08-28T13:28:08.746Z",
+              "DocumentIndex": 3,
+              "Title": "Event.cs",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\Event.cs",
+              "RelativeDocumentMoniker": "Components\\Event.cs",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\Event.cs",
+              "RelativeToolTip": "Components\\Event.cs",
+              "ViewState": "AgIAALEAAAAAAAAAAAAkwMsAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T16:34:27.7Z",
               "EditorCaption": ""
             }
           ]

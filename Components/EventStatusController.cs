@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace tjc.Modules.jacs.Components
@@ -94,6 +95,17 @@ namespace tjc.Modules.jacs.Components
                     searchTerm ?? string.Empty
                 );
             }
+        }
+
+        public EventStatus GetEventStatusByName(string statusName)
+        {
+            EventStatus t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<EventStatus>();
+                t = rep.Find("Where name = @0",statusName).FirstOrDefault();
+            }
+            return t;
         }
     }
 }

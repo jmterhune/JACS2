@@ -103,7 +103,7 @@ namespace tjc.Modules.jacs
 
                     var lastTimeslot = timeslots.FirstOrDefault();
                     var lastTemplateTimeslot = timeslots.FirstOrDefault(ct => ct.Timeslot.template_id.HasValue);
-                    var lastHearing = timeslots.FirstOrDefault(ct => ct.Timeslot.TimeslotEvents.Any());
+                    var lastHearing = timeslots.FirstOrDefault(ct => ct.Timeslot.timeslot_events.Any());
 
                     if (lastTimeslot != null)
                         ltLastTimeslot.Text = $"<p>The last timeslot date in the calendar is <span class='text-primary'>{lastTimeslot.Timeslot.start:MM/dd/yyyy}</span></p>";

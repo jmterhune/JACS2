@@ -10,16 +10,9 @@
 ' 
 */
 
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using System;
 using System.Linq;
-using System.Web.UI.WebControls;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs
@@ -82,10 +75,10 @@ namespace tjc.Modules.jacs
                     }
                     else if (split_format.Length == 3)
                     {
-                        var options = string.Join("", court_types.Select(ct => $"<option value=\"{ct.Value}\" {(ct.Value == split_format[1] ? "selected=\"selected\"" : "")}>{ct.Value}</option>"));
+                        var options = $"<option value=\"\" {(split_format[1] == "0" ? "selected=\"selected\"" : "")}>-</option>" + string.Join("", court_types.Select(ct => $"<option value=\"{ct.Value}\" {(ct.Value == split_format[1] ? "selected=\"selected\"" : "")}>{ct.Value}</option>"));
                         if (split_format[1].Length == 2 || split_format[1] == "0")
                         {
-                            fields = $"<input type=\"text\" class=\"form-control case-num-part mr-1\" maxlength=\"4\" id=\"case_num_format_multiple1\" required=\"\" value=\"\" placeholder=\"Complete Year\" />" +
+                            fields = $"<input type=\"text\" class=\"form-control case-num-part mr-1\" maxlength=\"4\" id=\"case_num_format_multiple1\" required=\"\" value=\"\" placeholder=\"Year\" />" +
                                 "<span> - </span>" +
                                 $"<select class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple2\" required=\"\">" +
                                 options +
@@ -104,21 +97,21 @@ namespace tjc.Modules.jacs
                     }
                     else if (split_format.Length >= 4 && split_format.Length <= 6)
                     {
-                        var options = $"<option value=\"\" {(split_format[2] == "0" ? "selected=\"selected\"" : "")}></option>" +
+                        var options = $"<option value=\"\" {(split_format[2] == "0" ? "selected=\"selected\"" : "")}>-</option>" +
                             string.Join("", court_types.Select(ct => $"<option value=\"{ct.Value}\" {(ct.Value == split_format[2] ? "selected=\"selected\"" : "")}>{ct.Value}</option>"));
                         string disabled = split_format.Length == 6 ? "disabled=\"\"" : "";
                         fields = $"<input type=\"text\" class=\"form-control case-num-part\" id=\"case_num_format_multiple1\" style=\"max-width:3rem\" maxlength=\"2\" value=\"{split_format[0]}\" {disabled} />" +
                             "<span> - </span>" +
-                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple2\" style=\"max-width:4rem\" maxlength=\"4\" required=\"\" value=\"\" placeholder=\"Complete Year\" />" +
+                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple2\" style=\"max-width:4rem\" maxlength=\"4\" required=\"\" value=\"{split_format[1]}\" placeholder=\"Year\" />" +
                             "<span> - </span>" +
                             $"<select class=\"form-control case-num-part mr-1 court_type_change_label\" style='max-width:4rem' id=\"case_num_format_multiple3\" required=\"\">" +
                             options +
                             "</select>" +
                             "<span> - </span>" +
-                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple4\" maxlength=\"6\" required=\"\" value=\"\" placeholder=\"Case Number\" />" +
+                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple4\" maxlength=\"6\" required=\"\" value=\"{split_format[3]}\" placeholder=\"Case Number\" />" +
                             "<span> - </span>" +
-                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple5\" maxlength=\"4\" style=\"max-width:6rem\" required=\"\" value=\"\" placeholder=\"{(split_format.Length > 4 ? split_format[4] : "")}\" />" +
-                            (split_format.Length == 6 ? "<span> - </span>" + $"<input type=\"text\" class=\"form-control case-num-part mr-1\" style=\"max-width:4rem\" id=\"case_num_format_multiple6\" maxlength=\"2\" value=\"{split_format[5]}\" {disabled} />" : "");
+                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple5\" maxlength=\"4\" style=\"max-width:6rem\" required=\"\" value=\"{split_format[4]}\" placeholder=\"xxxx\" />" +
+                            (split_format.Length == 6 ? "<span> - </span>" + $"<input type=\"text\" class=\"form-control case-num-part mr-1\" style=\"max-width:4rem\" id=\"case_num_format_multiple6\" maxlength=\"2\" placeholder='xx' value=\"{split_format[5]}\" />" : "");
                     }
                     else
                     {

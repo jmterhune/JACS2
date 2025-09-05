@@ -107,7 +107,7 @@ namespace tjc.Modules.jacs.Services
                 }
                 if (motion > 0)
                 {
-                    queryTimeslots = queryTimeslots.Where(ct => !ct.Timeslot.Motions.Any() || ct.Timeslot.Motions.Any(m => m.motion_id == motion));
+                    queryTimeslots = queryTimeslots.Where(ct => !ct.Timeslot.motions.Any() || ct.Timeslot.motions.Any(m => m.motion_id == motion));
                 }
                 var timeslots = queryTimeslots.ToList()
                     .Where(ct => ct.Timeslot.quantity > timeslotCtl.GetEventCountForTimeslot(ct.Timeslot.id))
@@ -174,12 +174,12 @@ namespace tjc.Modules.jacs.Services
                 var result = new List<object>();
                 foreach (var timeslot in timeslots.OrderBy(t => t.start))
                 {
-                    var events = timeslot.TimeslotEvents?.Select(te => new
+                    var events = timeslot.timeslot_events?.Select(te => new
                     {
-                        case_num = te.Event?.case_num,
-                        plaintiff = te.Event?.plaintiff,
-                        defendant = te.Event?.defendant,
-                        motion = te.Event?.Motion?.description
+                        case_num = te.timeslot_event?.case_num,
+                        plaintiff = te.timeslot_event?.plaintiff,
+                        defendant = te.timeslot_event?.defendant,
+                        motion = te.timeslot_event?.Motion?.description
                     }).ToList();
                     result.Add(new
                     {
@@ -254,12 +254,12 @@ namespace tjc.Modules.jacs.Services
                     public_block = t.public_block,
                     block_reason = t.block_reason,
                     category_id = t.category_id,
-                    events = t.TimeslotEvents?.Select(te => new
+                    events = t.timeslot_events?.Select(te => new
                     {
-                        case_num = te.Event?.case_num,
-                        plaintiff = te.Event?.plaintiff,
-                        defendant = te.Event?.defendant,
-                        motion = te.Event?.Motion?.description
+                        case_num = te.timeslot_event?.case_num,
+                        plaintiff = te.timeslot_event?.plaintiff,
+                        defendant = te.timeslot_event?.defendant,
+                        motion = te.timeslot_event?.Motion?.description
                     }).ToList()
                 });
                 // Placeholder for PDF generation; PHP uses a PDF library (not specified)

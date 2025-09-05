@@ -143,7 +143,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public Attorney OppAttorney
+        public Attorney opposing_attorney
         {
             get
             {
@@ -158,7 +158,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public EventType EventType
+        public event_type EventType
         {
             get
             {
@@ -170,7 +170,7 @@ namespace tjc.Modules.jacs.Components
                     if (et != null)
                         return et;
                 }
-                return new EventType();
+                return new event_type();
             }
         }
        
@@ -209,5 +209,10 @@ namespace tjc.Modules.jacs.Components
         public string category_name { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
+        public DateTime? start { get; set; }
+        public int duration { get; set; }
+        public long? timeslot_id { get; set; }
+        public string event_type { get; set; }
+
     }
 }

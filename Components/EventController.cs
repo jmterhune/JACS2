@@ -269,6 +269,14 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, timeslotId);
             }
         }
+        public IEnumerable<EventListItem> GetEventListItemsByTimeslot(long timeslotId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"SELECT * FROM event_list WHERE timeslot_id = @0";
+                return ctx.ExecuteQuery<EventListItem>(System.Data.CommandType.Text, query, timeslotId);
+            }
+        }
 
         public static string ValidateCaseNumber(string caseNumber, string caseFormat)
         {

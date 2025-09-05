@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
@@ -118,24 +119,47 @@ namespace tjc.Modules.jacs.Services
                 {
                     end = start.AddDays(7);
                 }
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(p1);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
+                }
+
                 var ctl = new TimeslotController();
                 var timeslots = ctl.GetTimeslotsByCourtId(p1, start, end);
-                var events = timeslots.Select(t => new
+                var holidayCtl = new HolidayController();
+                var holidays = holidayCtl.GetHolidays();
+                var timeslotEventCtl = new EventController();
+                
+                var result = timeslots.Concat(holidays.Select(h => new CustomTimeslot
+                {
+                    id = h.id,
+                    start = h.date,
+                    end = h.date.AddDays(1),
+                    allDay = true,
+                    blocked = true,
+                    description = h.name
+                })).ToList();
+                var events = result.Select(t => new
                 {
                     id = t.id,
-                    title = t.description,
                     start = t.start.ToString("yyyy-MM-ddTHH:mm"),
                     end = t.end.ToString("yyyy-MM-ddTHH:mm"),
                     allDay = t.allDay,
-                    extendedProps = new
-                    {
-                        availableSlots = t.blocked || t.public_block ? 0 : t.quantity - t.eventCount,
-                        blockReason = t.block_reason,
-                        blocked = t.blocked,
-                        publicBlock = t.public_block
-                    }
+                    description = t.description,
+                    quantity = t.quantity,
+                    duration = t.duration,
+                    blocked = t.blocked,
+                    public_block = t.public_block,
+                    block_reason = t.block_reason,
+                    category_id = t.category_id,
+                    eventCount = t.eventCount,
+                    availableSlots = t.blocked || t.public_block ? 0 : t.quantity - t.eventCount,
+                    title = t.title,
                 }).ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, events);
+                return Request.CreateResponse(events);
+                // return Request.CreateResponse(HttpStatusCode.OK, events);
             }
             catch (Exception ex)
             {
@@ -185,7 +209,7 @@ namespace tjc.Modules.jacs.Services
                         return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = $"Invalid or not allowed motion ID: {motionId}" });
                     }
                 }
-                bool isConcurrent = p1["cattlecall"]?.ToObject<string>() == "1";
+                bool isConcurrent = p1["cattlecall"]?.ToObject<string>() == "True";
                 if (timeslot.quantity == 0 && !timeslot.allDay)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Quantity must be positive for non-all-day timeslots." });
@@ -478,45 +502,45 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        [HttpGet]
-        public HttpResponseMessage GetOverlappingTimeslots(long p1)
-        {
-            try
-            {
-                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-                DateTime.TryParse(query.ContainsKey("start") ? query["start"] : DateTime.Now.ToString(), out DateTime start);
-                DateTime.TryParse(query.ContainsKey("end") ? query["end"] : null, out DateTime end);
-                if (end == DateTime.MinValue)
-                {
-                    end = start.AddDays(7);
-                }
-                start = DateTime.SpecifyKind(start, DateTimeKind.Local);
-                end = DateTime.SpecifyKind(end, DateTimeKind.Local);
-                var ctl = new TimeslotController();
-                var timeslots = ctl.GetOverlappingTimeslots(p1, start, end);
-                var response = timeslots.Select(t => new
-                {
-                    id = t.id,
-                    start = t.start.ToString("yyyy-MM-ddTHH:mm"),
-                    end = t.end.ToString("yyyy-MM-ddTHH:mm"),
-                    allDay = t.allDay,
-                    description = t.description,
-                    quantity = t.quantity,
-                    duration = t.duration,
-                    blocked = t.blocked,
-                    publicBlock = t.public_block,
-                    blockReason = t.block_reason,
-                    category = t.category_id,
-                    restrictedMotions = ctl.GetRestrictedMotionsForTimeslot(t.id)
-                }).ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
-            }
-        }
+        //[HttpGet]
+        //public HttpResponseMessage GetOverlappingTimeslots(long p1)
+        //{
+        //    try
+        //    {
+        //        var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+        //        DateTime.TryParse(query.ContainsKey("start") ? query["start"] : DateTime.Now.ToString(), out DateTime start);
+        //        DateTime.TryParse(query.ContainsKey("end") ? query["end"] : null, out DateTime end);
+        //        if (end == DateTime.MinValue)
+        //        {
+        //            end = start.AddDays(7);
+        //        }
+        //        start = DateTime.SpecifyKind(start, DateTimeKind.Local);
+        //        end = DateTime.SpecifyKind(end, DateTimeKind.Local);
+        //        var ctl = new TimeslotController();
+        //        var timeslots = ctl.GetOverlappingTimeslots(p1, start, end);
+        //        var response = timeslots.Select(t => new
+        //        {
+        //            id = t.id,
+        //            start = t.start.ToString("yyyy-MM-ddTHH:mm"),
+        //            end = t.end.ToString("yyyy-MM-ddTHH:mm"),
+        //            allDay = t.allDay,
+        //            description = t.description,
+        //            quantity = t.quantity,
+        //            duration = t.duration,
+        //            blocked = t.blocked,
+        //            publicBlock = t.public_block,
+        //            blockReason = t.block_reason,
+        //            category = t.category_id,
+        //            restrictedMotions = ctl.GetRestrictedMotionsForTimeslot(t.id)
+        //        }).ToList();
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Exceptions.LogException(ex);
+        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
+        //    }
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -95,7 +95,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventTypeController();
-                EventType eventType = ctl.GetEventType(p1);
+                event_type eventType = ctl.GetEventType(p1);
                 if (eventType == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new EventTypeResult { data = null, error = "Event Type not found" });
@@ -116,7 +116,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventTypeController();
-                var eventType = p1.ToObject<EventType>();
+                var eventType = p1.ToObject<event_type>();
                 if (string.IsNullOrWhiteSpace(eventType.name))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
@@ -140,7 +140,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventTypeController();
-                var eventType = p1.ToObject<EventType>();
+                var eventType = p1.ToObject<event_type>();
                 if (eventType.id <= 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Event Type ID is required for update." });
@@ -181,7 +181,7 @@ namespace tjc.Modules.jacs.Services
 
         internal class EventTypeResult
         {
-            public EventType data { get; set; }
+            public event_type data { get; set; }
             public string error { get; set; }
         }
 

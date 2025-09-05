@@ -175,10 +175,6 @@ class TemplateConfigController {
         document.getElementById('TimeslotModalLabel').textContent = `${startDate.format('dddd @ h:mm a')} - ${endDate.format('h:mm a')}`;
         $('.quantity-group, .cattle-call, .time-selection').show();
         $('.delete-button').hide();
-        if (info.allDay) {
-            $('.cattle-call, .time-selection').hide();
-            $('#duration, #quantity').removeAttr('required');
-        }
         $('#timeslotForm').attr('data-action', `${this.service.baseUrl}TemplateAPI/CreateTemplateTimeslot`);
         new bootstrap.Modal(document.getElementById('TimeslotModal')).show();
     }
