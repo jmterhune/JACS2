@@ -708,7 +708,7 @@ namespace tjc.Modules.TranscriptDatabase
                 if (hasPresidingJudge)
                     evt.PresidingJudgeID = judgeId;
                 else
-                    evt.PresidingJudgeID = -1;
+                    evt.PresidingJudgeID = Null.NullInteger;
                 if (hasCourtReporter)
                 {
                     oldCourtReporterId = evt.CourtReporterID;
@@ -717,32 +717,32 @@ namespace tjc.Modules.TranscriptDatabase
                 else
                 {
                     oldCourtReporterId = evt.CourtReporterID;
-                    evt.CourtReporterID = -1;
+                    evt.CourtReporterID = Null.NullInteger;
                 }
                 if (!string.IsNullOrEmpty(txtEstimagedPages.Text))
                     evt.Pages = Int32.Parse(txtEstimagedPages.Text);
                 else
-                    evt.Pages = -1;
+                    evt.Pages = 0;
                 if (!string.IsNullOrEmpty(txtDaysUntilCompletion.Text))
                     evt.DaysUntilComplete = Int32.Parse(txtDaysUntilCompletion.Text);
                 else
-                    evt.DaysUntilComplete = -1;
+                    evt.DaysUntilComplete = 0;
                 if (hasScopist)
                     evt.ScopistID = scopistId;
                 else
-                    evt.ScopistID = -1;
+                    evt.ScopistID =  Null.NullInteger;
                 if (hasTranscriptionist)
                     evt.TranscriptionistID = transcriptionistId;
                 else
-                    evt.TranscriptionistID = -1;
+                    evt.TranscriptionistID = Null.NullInteger;
                 if (hasEditor)
                     evt.EditorID = editorId;
                 else
-                    evt.EditorID = -1;
+                    evt.EditorID = Null.NullInteger;
                 if (hasProofer)
                     evt.ProoferID = proofterId;
                 else
-                    evt.ProoferID = -1;
+                    evt.ProoferID = Null.NullInteger;
                 if (hasScopSentDate)
                     evt.ScopSent = scopSentDate;
                 else
@@ -778,39 +778,39 @@ namespace tjc.Modules.TranscriptDatabase
                 if (!string.IsNullOrEmpty(txtScopePagesIn.Text))
                     evt.ScopPagesIn = Int32.Parse(txtScopePagesIn.Text);
                 else
-                    evt.ScopPagesIn = -1;
+                    evt.ScopPagesIn = 0;
                 if (!string.IsNullOrEmpty(txtScopePagesOut.Text))
                     evt.ScopPagesOut = Int32.Parse(txtScopePagesOut.Text);
                 else
-                    evt.ScopPagesOut = -1;
+                    evt.ScopPagesOut = 0;
                 if (!string.IsNullOrEmpty(txtTransPagesIn.Text))
                     evt.TransPagesIn = Int32.Parse(txtTransPagesIn.Text);
                 else
-                    evt.TransPagesIn = -1;
+                    evt.TransPagesIn = 0;
                 if (!string.IsNullOrEmpty(txtTransPagesOut.Text))
                     evt.TransPagesOut = Int32.Parse(txtTransPagesOut.Text);
                 else
-                    evt.TransPagesOut = -1;
+                    evt.TransPagesOut = 0;
                 if (!string.IsNullOrEmpty(txtEditPagesIn.Text))
                     evt.EditPagesIn = Int32.Parse(txtEditPagesIn.Text);
                 else
-                    evt.EditPagesIn = -1;
+                    evt.EditPagesIn = 0;
                 if (!string.IsNullOrEmpty(txtEditPagesOut.Text))
                     evt.EditPagesOut = Int32.Parse(txtEditPagesOut.Text);
                 else
-                    evt.EditPagesOut = -1;
+                    evt.EditPagesOut = 0;
                 if (!string.IsNullOrEmpty(txtProofPagesIn.Text))
                     evt.ProofPagesIn = Int32.Parse(txtProofPagesIn.Text);
                 else
-                    evt.ProofPagesIn = -1;
+                    evt.ProofPagesIn = 0;
                 if (!string.IsNullOrEmpty(txtProofPagesOut.Text))
                     evt.ProofPagesOut = Int32.Parse(txtProofPagesOut.Text);
                 else
-                    evt.ProofPagesOut = -1;
+                    evt.ProofPagesOut = 0;
                 if (!string.IsNullOrEmpty(txtCompletedPages.Text))
                     evt.CompletedPages = Int32.Parse(txtCompletedPages.Text);
                 else
-                    evt.CompletedPages = -1;
+                    evt.CompletedPages = 0;
                 evt.LastModifiedByUserID = UserId;
                 evt.LastModifiedDate = DateTime.Now;
                 if (hasEvent)

@@ -25,7 +25,9 @@
         </li>
         <li class="nav-item active">
             <a class="nav-link" href="#reports" data-toggle="tab">Reporting</a>
-        </li>
+        </li>        <li class="nav-item">
+    <a class="nav-link" href="https://jud12fl.sharepoint.com/sites/CourtReporting">Team Site</a>
+</li>
     </ul>
     <div id="reports" class="tab-content pb-0">
         <div id="designation" class="tab-pane active">

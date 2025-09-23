@@ -295,17 +295,12 @@ namespace tjc.Modules.HearingLog.Components.Services
                 selectedJudgeValue = query["selectedJudge"].ToString();
             int selectedJudge = selectedJudgeValue == string.Empty ? -1 : Int32.Parse(selectedJudgeValue);
             string searchText = query["searchText"].ToString();
+            Int32.TryParse(query["order[0].column"], out int sortIndex);
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = "HearingDate"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
-            {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
-                sortColumn = GetSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
-            }
+            string sortColumn = GetSortColumn(sortIndex);
+            string sortDirection = query["order[0].dir"];
             try
             {
                 var user = UserController.Instance.GetCurrentUserInfo();
@@ -322,8 +317,32 @@ namespace tjc.Modules.HearingLog.Components.Services
                     }
                 }
                 var ctl = new Components.HearingController();
-                // Rest of the method remains unchanged
-                // ...
+                if (selectedJudge >= 0)
+                {
+                    filteredCount = ctl.GetHearingLogCount(userId, status, startDate, endDate, searchText, selectedJudge);
+                    if (count == 0) { recordCount = filteredCount; }
+                    loglistItems = ctl.GetHearingLogPaged(userId, status, startDate, endDate, searchText, selectedJudge, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new LogItemViewModel(loglistItem)).ToList();
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        filteredCount = ctl.GetHearingLogCount(userId, status, startDate, endDate);
+                    }
+                    else
+                    {
+                        filteredCount = ctl.GetHearingLogCount(userId, status, startDate, endDate, searchText);
+                    }
+                    if (count == 0) { recordCount = filteredCount; }
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        loglistItems = ctl.GetHearingLogPaged(userId, status, startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new LogItemViewModel(loglistItem)).ToList();
+                    }
+                    else
+                    {
+                        loglistItems = ctl.GetHearingLogPaged(userId, status, startDate, endDate, searchText, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new LogItemViewModel(loglistItem)).ToList();
+                    }
+                }
                 return Request.CreateResponse(new LogSearchResult { data = loglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (System.Exception ex)
@@ -332,7 +351,6 @@ namespace tjc.Modules.HearingLog.Components.Services
                 return Request.CreateResponse(new LogSearchResult { data = loglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
-
         [HttpGet]
         [DnnAuthorize]
         public HttpResponseMessage GetCourtCounselItems(int count)
@@ -351,17 +369,12 @@ namespace tjc.Modules.HearingLog.Components.Services
                 selectedJudgeValue = query["selectedJudge"].ToString();
             int selectedJudge = selectedJudgeValue == string.Empty ? -1 : Int32.Parse(selectedJudgeValue);
             string searchText = query["searchText"].ToString();
+            Int32.TryParse(query["order[0].column"], out int sortIndex);
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = "DateReceived"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
-            {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
-                sortColumn = GetCcSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
-            }
+            string sortColumn = GetCcSortColumn(sortIndex);
+            string sortDirection = query["order[0].dir"];
             try
             {
                 var user = UserController.Instance.GetCurrentUserInfo();
@@ -378,8 +391,32 @@ namespace tjc.Modules.HearingLog.Components.Services
                     }
                 }
                 var ctl = new Components.CourtCounselController();
-                // Rest of the method remains unchanged
-                // ...
+                if (selectedJudge >= 0)
+                {
+                    filteredCount = ctl.GetCourtCounselLogCount(startDate, endDate, searchText, selectedJudge);
+                    if (count == 0) { recordCount = filteredCount; }
+                    loglistItems = ctl.GetCourtCounselLogPaged(startDate, endDate, searchText, selectedJudge, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        filteredCount = ctl.GetCourtCounselLogCount(userId, startDate, endDate);
+                    }
+                    else
+                    {
+                        filteredCount = ctl.GetCourtCounselLogCount(userId, startDate, endDate, searchText);
+                    }
+                    if (count == 0) { recordCount = filteredCount; }
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        loglistItems = ctl.GetCourtCounselLogPaged(userId, startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
+                    }
+                    else
+                    {
+                        loglistItems = ctl.GetCourtCounselLogPaged(userId, startDate, endDate, searchText, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
+                    }
+                }
                 return Request.CreateResponse(new CourtCounselSearchResult { data = loglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (System.Exception ex)
@@ -387,6 +424,7 @@ namespace tjc.Modules.HearingLog.Components.Services
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(new CourtCounselSearchResult { data = loglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
+
         }
         private string GetSortColumn(int columnIndex)
         {

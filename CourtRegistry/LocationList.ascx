@@ -17,7 +17,7 @@
         </div>
         <div class="col-auto">
             <label for="drpYear">Year</label>
-            <asp:DropDownList ID="drpYear" runat="server" ClientIDMode="Static" CssClass="form-control"></asp:DropDownList>
+            <asp:DropDownList ID="drpYear" runat="server" ClientIDMode="Static" CssClass="form-control" AppendDataBoundItems="true"><asp:ListItem Text="2021" /></asp:DropDownList>
         </div>
     </div>
     <div class="mt-3">

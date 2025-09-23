@@ -242,7 +242,7 @@ namespace tjc.Modules.Purchasing
         private void SendEmail(Components.SupplyOrder supplyOrder)
         {
             string subject = "Supply Order Form";
-            string fromAddress = "noreply.intranet@jud12.flcourts.org";
+            string fromAddress = "webhelp@jud12.flcourts.org";
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
             StringBuilder sb = new StringBuilder();
             sb.Append("<h2>Supply Order Details</h2>");

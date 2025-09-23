@@ -118,9 +118,10 @@ namespace tjc.Modules.TranscriptDatabase
                         Response.Redirect(_navigationManager.NavigateURL());
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
-                    PopulateForm();
+                    PopulateForm();  
+                    AttorneyArray = AttorneyList();
                 }
-                AttorneyArray = AttorneyList();
+              
             }
             catch (Exception exc) //Module failed to load
             {

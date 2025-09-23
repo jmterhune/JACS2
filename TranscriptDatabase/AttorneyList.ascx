@@ -26,6 +26,9 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=ReportListUrl%>">Reporting</a>
         </li>
+        <li class="nav-item">
+    <a class="nav-link" href="https://jud12fl.sharepoint.com/sites/CourtReporting">Team Site</a>
+</li>
     </ul>
     <div class="tab-content pb-0">
         <div id="attorneys" class="tab-pane active">

@@ -25,7 +25,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ReportListUrl%>">Reporting</a>
-        </li>
+        </li>        <li class="nav-item">
+    <a class="nav-link" href="https://jud12fl.sharepoint.com/sites/CourtReporting">Team Site</a>
+</li>
     </ul>
     <div class="tab-content pb-0">
         <asp:UpdatePanel ID="pnlStatus" runat="server" RenderMode="Block" UpdateMode="Always" OnUnload="pnlStatus_Unload">
@@ -1180,36 +1182,42 @@
     function ValidateDateType(sender, args) {
         args.IsValid = false;
         var controlId = sender.controltovalidate;
-        var dateValue = $("#" + controlId).val();
+        var dateValue = $("#" + controlId).val().trim();
         dateValue = dateValue.replace(/\.|-/g, "/");
-        const currentYear = new Date().getFullYear().toString();
-        const indexOfSlash = dateValue.lastIndexOf('/');
-        if (indexOfSlash == dateValue.length - 1) {
-            dateValue += currentYear;
-        } else {
-            if (dateValue.length <= 5) {
-                dateValue += "/" + currentYear;
-            }
+        var currentYear = new Date().getFullYear();
+        var parts = dateValue.split('/').filter(p => p !== '');
+        if (parts.length === 2) {
+            parts.push(currentYear.toString());
+        } else if (parts.length !== 3) {
+            return;
         }
-        var isDate = isValidDate(dateValue);
+        var monthStr = parts[0], dayStr = parts[1], yearStr = parts[2];
+        var month = parseInt(monthStr, 10), day = parseInt(dayStr, 10), year = parseInt(yearStr, 10);
+        if (isNaN(month) || isNaN(day) || isNaN(year) || month < 1 || month > 12 || day < 1 || day > 31) {
+            return;
+        }
+        if (yearStr.length === 2) {
+            year = (year < 50 ? 2000 : 1900) + year;
+            yearStr = year.toString();
+        } else if (yearStr.length !== 4) {
+            return;
+        }
+        var dateString = monthStr + '/' + dayStr + '/' + yearStr;
+        const regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+        if (!regex.test(dateString)) return;
+        const date = new Date(Date.UTC(year, month - 1, day));
+        var isDate = (
+            date.getUTCFullYear() === year &&
+            date.getUTCMonth() === month - 1 &&
+            date.getUTCDate() === day
+        );
         if (isDate) {
-            $("#" + controlId).val(dateValue);
+            var formatted = (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day) + '/' + year;
+            $("#" + controlId).val(formatted);
             args.IsValid = true;
         }
     }
-    function isValidDate(dateString) {
-        const regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
-        if (!regex.test(dateString)) return false;
-
-        const [month, day, year] = dateString.split('/').map(Number);
-        const date = new Date(`${year}-${month}-${day}`);
-
-        return (
-            date.getFullYear() === year &&
-            date.getMonth() === month - 1 &&
-            date.getDate() === day
-        );
-    }
+    
     function SetupFileSelectionForm(type) {
         $("#txtRequestedDays").val("");
         $("#txtRequestedDueDate").val("");

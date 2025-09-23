@@ -78,9 +78,9 @@ namespace tjc.Modules.CourtRegistry
             drpJacCode.Items.Insert(0, new ListItem("ALL", ""));
             if (drpYear.Items.Count <= 0)
             {
-                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(-1).Year.ToString()));
                 drpYear.Items.Add(new ListItem(DateTime.Now.Year.ToString()));
                 drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(1).Year.ToString()));
+                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(-1).Year.ToString()));
             }
         }
         private void BindDropdownLists(int casetypeId)
@@ -93,9 +93,9 @@ namespace tjc.Modules.CourtRegistry
             drpJacCode.Items.Insert(0, new ListItem("ALL", ""));
             if (drpYear.Items.Count <= 0)
             {
-                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(-1).Year.ToString()));
                 drpYear.Items.Add(new ListItem(DateTime.Now.Year.ToString()));
                 drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(1).Year.ToString()));
+                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(-1).Year.ToString()));
             }
         }
 
@@ -196,7 +196,5 @@ namespace tjc.Modules.CourtRegistry
             }
         }
         #endregion
-
-
     }
 }

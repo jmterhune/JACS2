@@ -5,7 +5,7 @@
 
 <div class="supply-order-container purchasing">
     <div id="supply-order-form">
-        <div class="alert alert-info"><i class="fa fa-info-circle"></i>Add one or more supply items to your order! Then use the Save Order button to submit your order</div>
+        <div class="alert alert-info"><i class="fa fa-info-circle"></i>Add one or more supply items to your order! Then use the Submit Order button to send the order to Purchasing</div>
         <fieldset class="row g-3">
             <asp:HiddenField ID="hdOrderId" ClientIDMode="Static" runat="server" />
             <div class="col-md-4">

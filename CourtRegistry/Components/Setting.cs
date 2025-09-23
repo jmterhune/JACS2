@@ -17,11 +17,11 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     [TableName("tjc_car_settings")]
     //setup the primary key for table
-    [PrimaryKey("SettingID", AutoIncrement = true)]
+    [PrimaryKey("ID", AutoIncrement = true)]
     //configure caching using PetaPoco
     internal class Setting
     {
-        public int SettingID { get; set; }
+        public int ID { get; set; }
         public string VerificationNote { get; set; }
         public string EditAttorneyNote { get; set; }
         public string EditApplicationNote { get; set; }
