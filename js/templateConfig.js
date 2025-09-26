@@ -408,7 +408,7 @@ class TemplateConfigController {
             block_reason: $form.find('#block_reason').val(),
             description: $form.find('#description').val(),
             category_id: parseInt($form.find('#category_id').val()) || null,
-            timeslot_motions: tomSelect ? tomSelect.getValue().map(id => parseInt(id)) : [],
+            restricted_motions: tomSelect ? tomSelect.getValue().map(id => parseInt(id)) : [],
             cattlecall: $form.find('#cattlecall_yes').is(':checked') ? 1 : 0
         };
     }

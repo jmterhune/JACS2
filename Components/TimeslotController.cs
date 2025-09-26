@@ -1,4 +1,7 @@
-﻿using DotNetNuke.Common.Utilities;
+﻿using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -195,17 +198,23 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"), end.ToString("yyyy-MM-dd HH:mm:ss"));
             }
         }
-        public IEnumerable<Timeslot> GetOverlappingTimeslots(long courtId, DateTime start, DateTime end)
+        public IEnumerable<CustomTimeslot> GetAvailableTimeslotsByCourtId(long courtId, DateTime start,int duration,long motionId)
         {
+            DateTime nextMonthStart = new DateTime(start.AddMonths(1).Year, start.AddMonths(1).Month, 1);
+            string endDate = nextMonthStart.ToString("yyyy-MM-dd HH:mm:ss");
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT t.* FROM [timeslots] t 
-                    INNER JOIN [court_timeslots] ct ON ct.timeslot_id = t.id 
-                    WHERE ct.court_id = @0 
-                    AND t.deleted_at IS NULL 
-                    AND NOT (t.[end] <= @1 OR t.start >= @2)";
-                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"), end.ToString("yyyy-MM-dd HH:mm:ss"));
+                    SELECT t.*, (SELECT COUNT(*) FROM timeslot_events te WHERE te.timeslot_id = t.id) AS event_count 
+                    FROM [timeslots] t 
+                        INNER JOIN [court_timeslots] ct ON ct.timeslot_id = t.id 
+                    WHERE ct.court_id = @0 AND t.start >= @1 AND t.start <= @2 AND t.deleted_at IS NULL AND t.blocked = 0 And t.duration >= @3
+                        AND (NOT EXISTS(SELECT * FROM [timeslot_motions] where t.[id] = [timeslot_motions].[timeslotable_id] 
+                            AND [timeslot_motions].[timeslotable_type] = 'App\Models\Timeslot') OR EXISTS(SELECT * FROM [timeslot_motions]
+                            WHERE t.[id] = [timeslot_motions].[timeslotable_id] 
+                                AND [timeslot_motions].[timeslotable_type] = 'App\Models\Timeslot' AND [motion_id] = @4))
+                    ORDER BY t.start";
+                return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"),endDate,duration, motionId);
             }
         }
         public long[] GetRestrictedMotionsForTimeslot(long timeslotId)
@@ -378,6 +387,20 @@ namespace tjc.Modules.jacs.Components
                     endDate.ToShortDateString()
                 );
             }
+        }
+
+        internal IEnumerable<Timeslot> GetTimeslotsByCourtAndDate(long courtId, DateTime date)
+        {
+            using (IDataContext ctx = DataContext.Instance("jacs"))
+            {
+                string query = @"
+                    select [timeslots].* from [timeslots] inner join [court_timeslots] on 
+                        [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 
+                            and cast([start] as date) = @1 and [timeslots].[deleted_at] is null";
+                var courts = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId,date);
+                return courts.ToArray();
+            }
+            throw new NotImplementedException();
         }
     }
 }

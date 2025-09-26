@@ -32,9 +32,11 @@ class CourtTruncateController {
     }
 
     submitTruncateForm() {
-        var truncateDate = $('#txtTruncateDate').val();
-        var filter = $('#ddlFilter').val();
-        var courtId = $('#hdCourtId').val();
+        var formData = {
+            CourtId: parseInt($('#hdCourtId').val()),
+            StartDate: $('#txtTruncateDate').val(),
+            Filter: $('#ddlFilter').val()
+        };
 
         if (!truncateDate) {
             Swal.fire({
@@ -56,9 +58,10 @@ class CourtTruncateController {
         }).then((result) => {
             if (result.isConfirmed) {
                 $('#btnTruncate').prop('disabled', true).find('i').removeClass('fas fa-trash').addClass('fas fa-spinner fa-spin');
+                $('#btnTruncate').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas fa-trash');
 
                 $.ajax({
-                    url: `${this.service.baseUrl}CourtAPI/TruncateCalendar`,
+                    url: `${this.service.baseUrl}CourtAPI/TruncateTimeslots`,
                     type: 'POST',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',

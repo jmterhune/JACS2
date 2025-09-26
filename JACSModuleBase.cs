@@ -79,7 +79,7 @@ namespace tjc.Modules.jacs
 
 
         #region "Urls"
-
+        
         public string MainViewUrl { get { return _navigationManager.NavigateURL(); } }
         public string UserListUrl { get { return EditUrl("user"); } }
         public string RoleListUrl { get { return EditUrl("role"); } }

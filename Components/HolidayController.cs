@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Data;
+using System;
 using System.Collections.Generic;
 
 namespace tjc.Modules.jacs.Components
@@ -40,6 +41,16 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<Holiday>();
                 t = rep.Get();
+            }
+            return t;
+        }
+        public IEnumerable<Holiday> GetHolidaysAfterDate(DateTime startDate)
+        {
+            IEnumerable<Holiday> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<Holiday>();
+                t = rep.Find("Where date>=@0",startDate);
             }
             return t;
         }

@@ -4,6 +4,7 @@ using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using tjc.Modules.jacs.Components;
 
@@ -33,7 +34,32 @@ namespace tjc.Modules.jacs.Components
                 DeleteCourtTimeslot(t);
             }
         }
+        public DateTime? GetLastTimeslot(int courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<DateTime?>(CommandType.Text,
+                    @"SELECT MAX(ts.[start]) 
+                      FROM timeslots ts 
+                      INNER JOIN court_timeslots ct ON ts.id = ct.timeslot_id 
+                      WHERE ct.court_id = @0 AND ts.[start] > GETDATE()",
+                    courtId);
+            }
+        }
 
+        public DateTime? GetLastHearing(int courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<DateTime?>(CommandType.Text,
+                    @"SELECT MAX(ts.[start]) 
+                      FROM timeslots ts 
+                      INNER JOIN court_timeslots ct ON ts.id = ct.timeslot_id 
+                      WHERE ct.court_id = @0 
+                      AND EXISTS (SELECT 1 FROM timeslot_events te WHERE te.timeslot_id = ts.id)",
+                    courtId);
+            }
+        }
         public CourtTimeslot GetCourtTimeslotByTimeslotId(long timeslotId)
         {
             return GetCourtTimeslots().FirstOrDefault(ct => ct.timeslot_id == timeslotId);

@@ -41,9 +41,60 @@
         <div id="calendar"></div>
     </main>
 </div>
+<!-- Extend Calendar Modal -->
+<div class="modal fade" id="ExtendCalendarModal" tabindex="-1" aria-labelledby="ExtendCalendarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div id="progress-extend" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif" />
+                </div>
+            </div>
+            <div class="modal-header">
+                <h4 class="modal-title" id="ExtendCalendarModalLabel">Extend Calendar</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info mb-4">
+                    <i class="fa fa-info-circle"></i><strong>Note:</strong> This will extend the calendar based on the order of the automated templates.
+                </div>
+                <div class="container-fluid">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <asp:Literal ID="ltLastTimeslot" runat="server" />
+                                <asp:Literal ID="ltLastTemplateTimeslot" runat="server" />
+                                <asp:Literal ID="ltLastHearing" runat="server" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="startTemplate">Starting Template<em>*</em></label>
+                                <asp:DropDownList ClientIDMode="Static" ID="ddlStartTemplate" runat="server" CssClass="form-control" required="required" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="weeks">Weeks to Extend<em>*</em></label>
+                                <asp:TextBox ID="txtWeeks" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="Number" required="required" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="startDate">Start Date<em>*</em></label>
+                                <asp:TextBox ID="txtStartDate" ClientIDMode="Static" runat="server" CssClass="form-control datepicker" required="required" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer  justify-content-between">
+                <button id="btnExtend" type="submit" class="btn btn-success"><i class="fa fa-save"></i>Extend</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-ban"></i>Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Reschedule Hearing Modal -->
 <div class="modal fade" id="RescheduleHearingModal" tabindex="-1" aria-labelledby="RescheduleHearingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div id="progress-hearing" class="modal-progress" style="display: none;">
                 <div class="center-progress">
@@ -52,25 +103,29 @@
             </div>
             <div class="modal-header">
                 <h4 class="modal-title" id="RescheduleHearingModalLabel">Reschedule Hearing</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-12">
-                                <label>Close</label>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <div id="reschedule-calendar" style="height: 500px;"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
 <!-- Timeslot Modal -->
-<div class="modal fade" id="TimeslotModal" tabindex="-1" aria-labelledby="TimeslotModalLabel" aria-hidden="true">
+<div class="modal fade" id="TimeslotModal" tabindex="-1" aria-labelledby="TimeslotModalLabel" aria-hidden="true" data-bs-focus="false">
     <div class="modal-dialog modal-xlg">
         <div class="modal-content">
             <input type="hidden" id="edit_timeslotId">
@@ -163,10 +218,10 @@
                                         <label>Quantity</label>
                                         <input type="number" id="timeslot_quantity" class="form-control" min="1" autocomplete="off" required>
                                     </div>
-                                <div class="invalid-feedback startTime-feedback">Start Time is Required</div>
-                                <div class="invalid-feedback endTime-feedback">End Time is Required</div>
-                                <div class="invalid-feedback duration-feedback">Duration is Required</div>
-                                <div class="invalid-feedback quantity-feedback">Quantity must be at least 1</div>
+                                    <div class="invalid-feedback startTime-feedback">Start Time is Required</div>
+                                    <div class="invalid-feedback endTime-feedback">End Time is Required</div>
+                                    <div class="invalid-feedback duration-feedback">Duration is Required</div>
+                                    <div class="invalid-feedback quantity-feedback">Quantity must be at least 1</div>
 
                                 </div>
                                 <div class="row">
@@ -203,7 +258,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>Updated On</label>
-                                        <span id="event_updatedOn"></span>
+                                        <span id="event_updatedAt"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -307,7 +362,6 @@
                                             <th>Plaintiff</th>
                                             <th>Opposing Attorney</th>
                                             <th>Defendant</th>
-                                            <th>&nbsp;</th>
                                         </tr>
                                     </thead>
                                     <tbody id="eventsTableBody"></tbody>
@@ -323,6 +377,8 @@
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtcalendar.js" ForceProvider="DnnFormBottomProvider" Priority="102" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/moment/moment.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Bootstrap/bootstrap-datepicker.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Bootstrap/bootstrap-datepicker.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.default.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.complete.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/fullcalendar/dist/index.global.min.js" />
@@ -353,7 +409,6 @@
                     courtEditUrl: "<%=CourtEditUrl%>",
                     userDefinedFieldUrl: "<%=UserDefinedFieldUrl%>",
                     truncateCalendarUrl: "<%=TruncateCalendarUrl%>",
-                    extendCalendarUrl: "<%=ExtendCalendarUrl%>",
                 });
                 courtCalendarController.init();
             } catch (e) {

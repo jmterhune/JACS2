@@ -14,7 +14,7 @@ using DotNetNuke.Services.Exceptions;
 using System;
 using System.Linq;
 using tjc.Modules.jacs.Components;
-
+using System.Web.UI.WebControls;
 namespace tjc.Modules.jacs
 {
     /// -----------------------------------------------------------------------------
@@ -118,6 +118,45 @@ namespace tjc.Modules.jacs
                         fields = "<input type=\"text\" class=\"form-control case-num-part mr-1\" required=\"\">";
                     }
                     ltCaseNumber.Text = fields;
+                    var timeslotController = new TimeslotController();
+                    var courtTimeslotController = new CourtTimeslotController();
+                    var templateController = new CourtTemplateController();
+                    var templateOrderController = new CourtTemplateOrderController();
+                    var timeslots = courtTimeslotController.GetCourtTimeslotsByCourtId(CourtId)
+                        .OrderByDescending(ct => ct.Timeslot.start)
+                        .ToList();
+
+                    var lastTimeslot = timeslots.FirstOrDefault();
+                    var lastTemplateTimeslot = timeslots.FirstOrDefault(ct => ct.Timeslot.template_id.HasValue);
+                    var lastHearing = timeslots.FirstOrDefault(ct => ct.Timeslot.timeslot_events.Any());
+
+                    if (lastTimeslot != null)
+                        ltLastTimeslot.Text = $"<p>The last timeslot date in the calendar is <span class='text-primary'>{lastTimeslot.Timeslot.start:MM/dd/yyyy}</span></p>";
+                    if (lastTemplateTimeslot != null)
+                    {
+                        var template = templateController.GetCourtTemplate(lastTemplateTimeslot.Timeslot.template_id.Value);
+                        ltLastTemplateTimeslot.Text = $"<p>The last template used: <span class='text-primary'>{template?.name ?? "Unknown"}</span> on <span class='text-primary'>{lastTemplateTimeslot.Timeslot.start:MM/dd/yyyy}</span></p>";
+                    }
+                    if (lastHearing != null)
+                        ltLastHearing.Text = $"<p>The last scheduled hearing in the calendar is on <span class='text-primary'>{lastHearing.Timeslot.start:MM/dd/yyyy}</span></p>";
+
+                    // Populate template dropdown
+                    var templates = templateOrderController.GetCourtTemplateOrdersByCourtId(CourtId, court.auto_extension)
+                        .Where(t => t.auto)
+                        .OrderBy(t => t.order)
+                        .Select(t => new { t.order, t.template_id, Name = templateController.GetCourtTemplate(t.template_id.Value)?.name })
+                        .ToList();
+
+                    ddlStartTemplate.Items.Clear();
+                    foreach (var template in templates)
+                    {
+                        if (template.Name != null)
+                            ddlStartTemplate.Items.Add(new ListItem(template.Name, template.order.ToString()));
+                    }
+
+                    // Initialize datepicker
+                    txtStartDate.Text = lastTemplateTimeslot?.Timeslot.start.ToString("MM/dd/yyyy") ?? DateTime.Now.ToString("MM/dd/yyyy");
+
                 }
             }
             catch (Exception exc) //Module failed to load

@@ -1,9 +1,12 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -174,8 +177,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -406,6 +407,89 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+        public HttpResponseMessage TruncateTimeslots(TruncateRequest request)
+        {
+          var timeslotSQL="select [timeslots].*, [court_timeslots].[court_id] as [laravel_through_key] from [timeslots] inner join [court_timeslots] on [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 and [start] >= @1";
+            try
+            {
+                var courtCtl = new CourtController();
+                courtCtl.TruncateTimeslots(request.CourtId, request.StartDate, request.Filter);
+                using (IDataContext ctx = DataContext.Instance("jacs"))
+                {
+                    string timeslotFilter = string.Empty;
+                    bool handleEvents = false;
+
+                    switch (request.Filter)
+                    {
+                        case "all":
+                            handleEvents = true;
+                            break;
+                        case "hearings":
+                            timeslotFilter = " AND NOT EXISTS (SELECT 1 FROM timeslot_events te WHERE te.timeslot_id = ts.id)";
+                            break;
+                        case "templates":
+                            timeslotFilter = " AND ts.template_id IS NOT NULL AND ts.blocked = 0";
+                            handleEvents = true; // Added to prevent potential FK issues, even if not in PHP
+                            break;
+                        case "both":
+                            timeslotFilter = " AND ts.template_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM timeslot_events te WHERE te.timeslot_id = ts.id)";
+                            break;
+                        default:
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid filter");
+                    }
+
+                    if (handleEvents)
+                    {
+                        // Update events
+                        ctx.Execute(CommandType.Text,
+                            @"UPDATE e SET status_id = 1 
+                      FROM events e 
+                      INNER JOIN timeslot_events te ON e.id = te.event_id 
+                      INNER JOIN timeslots ts ON te.timeslot_id = ts.id 
+                      WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
+                            request.CourtId, request.StartDate);
+
+                        // Delete timeslot_events
+                        ctx.Execute(CommandType.Text,
+                            @"DELETE te 
+                      FROM timeslot_events te 
+                      INNER JOIN timeslots ts ON te.timeslot_id = ts.id 
+                      WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
+                            request.CourtId, request.StartDate);
+                    }
+
+                    // Delete motions
+                    ctx.Execute(CommandType.Text,
+                        @"DELETE m 
+                  FROM timeslot_motions m 
+                  INNER JOIN timeslots ts ON m.timeslot_id = ts.id 
+                  WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
+                        request.CourtId, request.StartDate);
+
+                    // Delete timeslots
+                    ctx.Execute(CommandType.Text,
+                        @"DELETE ts 
+                  FROM timeslots ts 
+                  WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
+                        request.CourtId, request.StartDate);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Truncate Successful" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        public class TruncateRequest
+        {
+            public int CourtId { get; set; }
+            public DateTime StartDate { get; set; }
+            public string Filter { get; set; }
+        }
         internal class CourtSearchResult
         {
             public List<CourtViewModel> data { get; set; }

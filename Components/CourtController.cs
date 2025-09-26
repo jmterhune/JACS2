@@ -1,10 +1,12 @@
-﻿using DotNetNuke.Common.Utilities;
+﻿using DocumentFormat.OpenXml.Office2016.Excel;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Components
@@ -32,40 +34,40 @@ namespace tjc.Modules.jacs.Components
                 var ctl = new CourtMotionController();
                 var ctlEvent = new CourtEventTypeController();
                 var rep = ctx.GetRepository<Court>();
-                    Court court = new Court
-                    {
-                        county_id = t.county_id,
-                        auto_extension = t.auto_extension,
-                        calendar_weeks = t.calendar_weeks,
-                        case_format_type = t.case_format_type,
-                        case_num_format = t.case_num_format,
-                        category_print = t.category_print,
-                        custom_email_body = t.custom_email_body,
-                        custom_header = t.custom_header,
-                        defendant = t.defendant,
-                        def_attorney_id= t.def_attorney_id.HasValue? t.def_attorney_id.Value : (long?)null,
-                        opp_attorney_id = t.opp_attorney_id.HasValue? t.opp_attorney_id.Value:(long?)null,
-                        defendant_attorney_required = t.defendant_attorney_required,
-                        defendant_required = t.defendant_required,
-                        description = t.description,
-                        email_confirmations = t.email_confirmations,
-                        lagtime = t.lagtime,
-                        max_lagtime = t.max_lagtime,
-                        plaintiff = t.plaintiff,
-                        plaintiff_attorney_required = t.plaintiff_attorney_required,
-                        plaintiff_required = t.plaintiff_required,
-                        public_docket = t.public_docket,
-                        public_docket_days = t.public_docket_days,
-                        public_timeslot = t.public_timeslot,
-                        scheduling = t.scheduling,
-                        timeslot_header = t.timeslot_header,
-                        web_policy = t.web_policy,
-                        twitter_notification = t.twitter_notification,
-                        created_at = DateTime.Now,
-                        updated_at = DateTime.Now,
-                    };
-                    rep.Insert(court);
-                    courtId = court.id;
+                Court court = new Court
+                {
+                    county_id = t.county_id,
+                    auto_extension = t.auto_extension,
+                    calendar_weeks = t.calendar_weeks,
+                    case_format_type = t.case_format_type,
+                    case_num_format = t.case_num_format,
+                    category_print = t.category_print,
+                    custom_email_body = t.custom_email_body,
+                    custom_header = t.custom_header,
+                    defendant = t.defendant,
+                    def_attorney_id = t.def_attorney_id.HasValue ? t.def_attorney_id.Value : (long?)null,
+                    opp_attorney_id = t.opp_attorney_id.HasValue ? t.opp_attorney_id.Value : (long?)null,
+                    defendant_attorney_required = t.defendant_attorney_required,
+                    defendant_required = t.defendant_required,
+                    description = t.description,
+                    email_confirmations = t.email_confirmations,
+                    lagtime = t.lagtime,
+                    max_lagtime = t.max_lagtime,
+                    plaintiff = t.plaintiff,
+                    plaintiff_attorney_required = t.plaintiff_attorney_required,
+                    plaintiff_required = t.plaintiff_required,
+                    public_docket = t.public_docket,
+                    public_docket_days = t.public_docket_days,
+                    public_timeslot = t.public_timeslot,
+                    scheduling = t.scheduling,
+                    timeslot_header = t.timeslot_header,
+                    web_policy = t.web_policy,
+                    twitter_notification = t.twitter_notification,
+                    created_at = DateTime.Now,
+                    updated_at = DateTime.Now,
+                };
+                rep.Insert(court);
+                courtId = court.id;
                 if (t.id > 0)
                 {
                     foreach (var motion in t.restricted_motions)
@@ -195,13 +197,13 @@ namespace tjc.Modules.jacs.Components
                     court.defendant = t.defendant;
                     court.defendant_attorney_required = t.defendant_attorney_required;
                     court.defendant_required = t.defendant_required;
-                    if(t.def_attorney_id.HasValue)
+                    if (t.def_attorney_id.HasValue)
                         court.def_attorney_id = t.def_attorney_id.Value;
                     court.description = t.description;
                     court.email_confirmations = t.email_confirmations;
                     court.lagtime = t.lagtime;
                     court.max_lagtime = t.max_lagtime;
-                    if(t.opp_attorney_id.HasValue)
+                    if (t.opp_attorney_id.HasValue)
                         court.opp_attorney_id = t.opp_attorney_id.Value;
                     court.plaintiff = t.plaintiff;
                     court.plaintiff_attorney_required = t.plaintiff_attorney_required;
@@ -331,6 +333,58 @@ namespace tjc.Modules.jacs.Components
                     WHERE ct.court_id = @0 AND ts.deleted_at IS NULL";
                 return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text, query, courtId);
             }
+        }
+        public bool TruncateTimeslots(long courtId, DateTime startDate, string filter)
+        {
+            var timeslotSQL = "select [timeslots].* from [timeslots] inner join [court_timeslots] on [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 and [start] >= @1";
+            bool handleEvents = false;
+            switch (filter)
+            {
+                case "all":
+                    timeslotSQL += " and [timeslots].[deleted_at] is null";
+                    handleEvents = true;
+                    break;
+                case "hearings":
+                    timeslotSQL += " and not exists (select * from [events] inner join [timeslot_events] on [timeslot_events].[event_id] = [events].[id] where [timeslots].[id] = [timeslot_events].[timeslot_id] and [timeslot_events].[deleted_at] is null) and [timeslots].[deleted_at] is null";
+
+                    break;
+                case "templates":
+                    handleEvents = true;
+                    timeslotSQL += " and [template_id] is not null and [blocked] = 0 and [timeslots].[deleted_at] is null";
+                    break;
+                case "both":
+                    timeslotSQL += " and not exists (select * from [events] inner join [timeslot_events] on [timeslot_events].[event_id] = [events].[id] where [timeslots].[id] = [timeslot_events].[timeslot_id] and [timeslot_events].[deleted_at] is null) and [template_id] is not null and [timeslots].[deleted_at] is null";
+
+                    break;
+                default:
+                    break;
+            }
+
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var timeslots= ctx.ExecuteQuery<Timeslot>(CommandType.Text, timeslotSQL, courtId, startDate);
+                foreach (var timeslot in timeslots)
+                {
+                    if (handleEvents)
+                    {
+                        var ctlEvent = new EventController();
+                        var events = ctlEvent.GetEventsByTimeslot(timeslot.id);
+                        foreach (var ev in events)
+                        {
+                            // in clerk interface, when truncating timeslots, we cancel events then delete the timeslot
+                            ev.status_id = 1;// cancelled
+                            ev.updated_at = DateTime.Now;
+                            ev.cancellation_reason = "Calendar Truncated.";
+                        }
+                    }
+                    var ctl = new TimeslotController();
+                    ctl.DeleteTimeslot(timeslot);
+                }
+
+
+            }
+
+            return true;
         }
     }
 }

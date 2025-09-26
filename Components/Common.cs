@@ -21,5 +21,10 @@ namespace tjc.Modules.jacs.Components
             int diff = ((int)currentDate.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
             return currentDate.AddDays(-diff).Date;
         }
+        public static DateTime StartOfWeek(this DateTime dt)
+        {
+            int diff = (7 + ((int)dt.DayOfWeek - (int)DayOfWeek.Monday)) % 7;
+            return dt.AddDays(-1 * diff).Date;
+        }
     }
 }

@@ -78,11 +78,13 @@ namespace tjc.Modules.jacs
                         ltCourtName.Text = "Unknown Court";
                     }
 
-                    var lastTimeslotDate = courtCtl.GetLastTimeslotDate(CourtId);
-                    ltLastTimeslot.Text = $"Last Timeslot: {lastTimeslotDate?.ToString("MM/dd/yyyy") ?? "N/A"}<br />";
 
+                    var lastTimeslotDate = courtCtl.GetLastTimeslotDate(CourtId);
+                    if (lastTimeslotDate != null) 
+                    ltLastTimeslot.Text = $"<p>The last timeslot date in the calendar is {lastTimeslotDate?.ToString("MM/dd/yyyy") ?? "N/A"}</p>";
                     var lastHearingDate = courtCtl.GetLastHearingDate(CourtId);
-                    ltLastHearing.Text = $"Last Hearing: {lastHearingDate?.ToString("MM/dd/yyyy") ?? "N/A"}<br />";
+                    if (lastHearingDate != null)
+                        ltLastTimeslot.Text += $"<p>The last scheduled hearing in the calendar is on: {lastHearingDate?.ToString("MM/dd/yyyy") ?? "N/A"}</p>";
                 }
             }
             catch (Exception exc) //Module failed to load

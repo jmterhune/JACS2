@@ -283,6 +283,7 @@ namespace tjc.Modules.jacs.Components
     internal class CustomTimeslot : Timeslot
     {
         public int eventCount { get; set; }
+        public string reschedule_title { get; set; }
     }
     internal class TimeslotListResult
     {

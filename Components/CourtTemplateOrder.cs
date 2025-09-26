@@ -1,4 +1,5 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DocumentFormat.OpenXml.Presentation;
+using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
@@ -16,5 +17,10 @@ namespace tjc.Modules.jacs.Components
         public bool auto { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
+        [IgnoreColumn]
+        public CourtTemplate template { get { 
+            var ctl = new CourtTemplateController();
+                return ctl.GetCourtTemplate((long)(template_id ?? 0) );
+            } }
     }
 }

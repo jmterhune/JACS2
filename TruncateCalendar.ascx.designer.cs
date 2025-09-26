@@ -51,15 +51,6 @@ namespace tjc.Modules.jacs
         protected global::System.Web.UI.WebControls.Literal ltLastTimeslot;
 
         /// <summary>
-        /// ltLastHearing control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltLastHearing;
-
-        /// <summary>
         /// txtTruncateDate control.
         /// </summary>
         /// <remarks>
@@ -75,7 +66,7 @@ namespace tjc.Modules.jacs
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlFilter;
+        protected global::System.Web.UI.WebControls.RadioButtonList ddlFilter;
 
         /// <summary>
         /// btnTruncate control.

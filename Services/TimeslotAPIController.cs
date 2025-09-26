@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
@@ -98,7 +99,7 @@ namespace tjc.Modules.jacs.Services
                 {
                     timeslots = ctl.GetTimeslotsForDashboard(userId).Select(ts => new TimeslotViewModel(ts)).ToList();
                 }
-                    return Request.CreateResponse(new { data = timeslots });
+                return Request.CreateResponse(new { data = timeslots });
             }
             catch (Exception ex)
             {
@@ -131,7 +132,7 @@ namespace tjc.Modules.jacs.Services
                 var holidayCtl = new HolidayController();
                 var holidays = holidayCtl.GetHolidays();
                 var timeslotEventCtl = new EventController();
-                
+
                 var result = timeslots.Concat(holidays.Select(h => new CustomTimeslot
                 {
                     id = h.id,
@@ -139,7 +140,8 @@ namespace tjc.Modules.jacs.Services
                     end = h.date.AddDays(1),
                     allDay = true,
                     blocked = true,
-                    description = h.name
+                    description = h.name,
+                    block_reason = "Holiday",
                 })).ToList();
                 var events = result.Select(t => new
                 {
@@ -165,6 +167,110 @@ namespace tjc.Modules.jacs.Services
             {
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetAvailableCourtTimeslots(long p1, long p2,int p3) // p1=courtId,p2=motionId,p3=duration
+        {
+            try
+            {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                DateTime.TryParse(query.ContainsKey("startDate") ? query["startDate"] : DateTime.Now.ToString(), out DateTime start);
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(p1);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
+                }
+                var ctl = new TimeslotController();
+                var teCtl = new TimeslotEventController();
+                var holidayCtl = new HolidayController();
+                var holidays = holidayCtl.GetHolidaysAfterDate(start);
+                var eventCtl = new EventController();
+                var timeslots = ctl.GetAvailableTimeslotsByCourtId(p1, start, p3,p2).ToList();
+                foreach (var ts in timeslots.ToList())
+                {
+                    if (ts.duration != p3 || ts.blocked)
+                    {
+                        timeslots.Remove(ts);
+                        continue;
+                    }
+                    var tes = teCtl.GetTimeslotEventsByTimeslot(ts.id);
+                    int booked = tes.Count();
+                    int remaining = ts.quantity - booked;
+                    if (remaining <= 0)
+                    {
+                        timeslots.Remove(ts);
+                        continue;
+                    }
+                    var events = tes.Select(te => eventCtl.GetEvent(te.event_id.Value)).Where(e => e != null).ToList();
+                    ts.reschedule_title = $"{remaining} Available";
+                    if (ts.Category != null && !string.IsNullOrEmpty(ts.Category.description))
+                    {
+                        ts.reschedule_title += " (" + ts.Category.description + ")";
+                    }
+                    if(ts.description != null && !string.IsNullOrEmpty(ts.description))
+                    {
+                        ts.reschedule_title += " (" + ts.description +")";
+                    }
+                }
+                var timeslotEvents = timeslots.Select(t => new
+                {
+                    id = t.id,
+                    title = t.reschedule_title,
+                    start = t.start.ToString("yyyy-MM-ddTHH:mm"),
+                    end = t.end.ToString("yyyy-MM-ddTHH:mm"),
+                    allDay = t.allDay,
+                    description = t.description,
+                    blocked = t.blocked,
+                    public_block = t.public_block,
+                    block_reason = t.block_reason,
+                    created_at = t.created_at,
+                    updated_at = t.updated_at,
+                    deleted_at = t.deleted_at,
+                    extendedProps = new
+                    {
+                        duration = t.duration,
+                        quantity = t.quantity,
+                        event_count = t.eventCount,
+                        category_id = t.category_id,
+                        template_id = t.template_id,
+                    }
+                });
+                var holidayEvents = holidays.Select(h => new
+                {
+                    id = h.id,
+                    title = h.name,
+                    start = h.date.ToString("yyyy-MM-ddTHH:mm"),
+                    end = h.date.AddDays(1).ToString("yyyy-MM-ddTHH:mm"),
+                    allDay = true,
+                    description = h.name,
+                    blocked = true,
+                    public_block = false,
+                    block_reason = "Holiday",
+                    created_at = (DateTime?)null,
+                    updated_at = (DateTime?)null,
+                    deleted_at = (DateTime?)null,
+                    extendedProps = new
+                    {
+                        duration = 0,
+                        quantity = 0,
+                        event_count = 0,
+                        category_id = (long?)null,
+                        template_id = (long?)null,
+                    }
+                });
+
+                // Ensure both lists are of the same type and concatenate them
+                var resultEvents = timeslotEvents.Concat(holidayEvents).ToList();
+
+                return Request.CreateResponse(resultEvents);
+
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
 
@@ -253,7 +359,7 @@ namespace tjc.Modules.jacs.Services
                         {
                             ctl.CreateTimeslotMotion(new TimeslotMotion
                             {
-                                timeslotable_type = "Timeslot",
+                                timeslotable_type = "\"App\\Models\\Timeslot\"",
                                 timeslotable_id = newTimeslot.id,
                                 motion_id = motionId,
                                 created_at = DateTime.Now,
@@ -304,7 +410,7 @@ namespace tjc.Modules.jacs.Services
                     {
                         ctl.CreateTimeslotMotion(new TimeslotMotion
                         {
-                            timeslotable_type = "Timeslot",
+                            timeslotable_type = "\"App\\Models\\Timeslot\"",
                             timeslotable_id = timeslot.id,
                             motion_id = motionId,
                             created_at = DateTime.Now,
@@ -401,7 +507,7 @@ namespace tjc.Modules.jacs.Services
                 {
                     ctl.CreateTimeslotMotion(new TimeslotMotion
                     {
-                        timeslotable_type = "Timeslot",
+                        timeslotable_type = "\"App\\Models\\Timeslot\"",
                         timeslotable_id = timeslot.id,
                         motion_id = motionId,
                         created_at = DateTime.Now,
@@ -501,46 +607,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
             }
         }
-
-        //[HttpGet]
-        //public HttpResponseMessage GetOverlappingTimeslots(long p1)
-        //{
-        //    try
-        //    {
-        //        var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-        //        DateTime.TryParse(query.ContainsKey("start") ? query["start"] : DateTime.Now.ToString(), out DateTime start);
-        //        DateTime.TryParse(query.ContainsKey("end") ? query["end"] : null, out DateTime end);
-        //        if (end == DateTime.MinValue)
-        //        {
-        //            end = start.AddDays(7);
-        //        }
-        //        start = DateTime.SpecifyKind(start, DateTimeKind.Local);
-        //        end = DateTime.SpecifyKind(end, DateTimeKind.Local);
-        //        var ctl = new TimeslotController();
-        //        var timeslots = ctl.GetOverlappingTimeslots(p1, start, end);
-        //        var response = timeslots.Select(t => new
-        //        {
-        //            id = t.id,
-        //            start = t.start.ToString("yyyy-MM-ddTHH:mm"),
-        //            end = t.end.ToString("yyyy-MM-ddTHH:mm"),
-        //            allDay = t.allDay,
-        //            description = t.description,
-        //            quantity = t.quantity,
-        //            duration = t.duration,
-        //            blocked = t.blocked,
-        //            publicBlock = t.public_block,
-        //            blockReason = t.block_reason,
-        //            category = t.category_id,
-        //            restrictedMotions = ctl.GetRestrictedMotionsForTimeslot(t.id)
-        //        }).ToList();
-        //        return Request.CreateResponse(HttpStatusCode.OK, response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Exceptions.LogException(ex);
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
-        //    }
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]

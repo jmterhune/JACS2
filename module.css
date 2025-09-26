@@ -82,7 +82,7 @@
     word-wrap: break-word;
     white-space: normal;
 }
-.calendar-day-link {
+.calendar-day-link, .fc-list-event {
     cursor: pointer;
 }
 .fc-event-main {

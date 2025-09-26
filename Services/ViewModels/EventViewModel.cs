@@ -39,6 +39,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
             status_name = eventData.status_name;
             timeslot_desc = eventData.timeslot_desc;
             court_name = eventData.court_name;
+            updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
+            duration = GetTimeslotDuration(eventData.id);
         }
         public EventViewModel(EventListItem eventData)
         {
@@ -71,9 +73,10 @@ namespace tjc.Modules.jacs.Services.ViewModels
             timeslot_desc = eventData.timeslot_desc;
             court_name = eventData.court_name;
             category_name = eventData.category_name;
-            start_date = eventData.start.HasValue?eventData.start.Value.ToShortDateString():"";
+            start_date = eventData.start.HasValue ? eventData.start.Value.ToShortDateString() : "";
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
-            duration = eventData.duration.ToString();
+            duration = eventData.duration;
+            updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
 
         }
         public EventViewModel() { }
@@ -139,10 +142,45 @@ namespace tjc.Modules.jacs.Services.ViewModels
         [JsonProperty("category_name")]
         public string category_name { get; set; }
         [JsonProperty("duration")]
-        public string duration { get; set; }
+        public int duration { get; set; }
         [JsonProperty("start_date")]
         public string start_date { get; set; }
         [JsonProperty("start_time")]
         public string start_time { get; set; }
-    }
+        [JsonProperty("updated_by_name")]
+        public string updated_by_name { get; set; }
+        private string GetUserName(long userId)
+        {
+            try
+            {
+                var user = DotNetNuke.Entities.Users.UserController.GetUserById(DotNetNuke.Entities.Portals.PortalSettings.Current.PortalId, (int)userId);
+                if (user != null)
+                {
+                    return user.DisplayName;
+                }
+            }
+            catch
+            {
+                // Log exception if necessary
+            }
+            return "";
+        }
+        private int GetTimeslotDuration(long eventId)
+        {
+            try
+            {
+                var ctl = new TimeslotController();
+                var timeslot = ctl.GetTimeslotByEventId(eventId);
+                if (timeslot != null)
+                {
+                    return timeslot.duration;
+                }
+            }
+            catch
+            {
+                // Log exception if necessary
+            }
+            return 0;
+        }
+    } 
 }

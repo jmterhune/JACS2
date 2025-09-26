@@ -139,19 +139,13 @@
     </Compile>
     <Compile Include="Services\DocketAPIController.cs" />
     <Compile Include="Services\ViewModels\CourtTemplateOrderViewModel.cs" />
+    <Compile Include="Services\ViewModels\RescheduleModel.cs" />
     <Compile Include="TruncateCalendar.ascx.cs">
       <DependentUpon>TruncateCalendar.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="TruncateCalendar.ascx.designer.cs">
       <DependentUpon>TruncateCalendar.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="CourtExtendView.ascx.cs">
-      <DependentUpon>CourtExtendView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CourtExtendView.ascx.designer.cs">
-      <DependentUpon>CourtExtendView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Services\ViewModels\TimeslotViewModel.cs" />
     <Compile Include="UserDefinedFieldView.ascx.cs">
@@ -168,7 +162,6 @@
     <Compile Include="Services\CourtTemplateOrderAPIController.cs" />
     <Compile Include="Services\CourtTimeslotsAPIController.cs" />
     <Compile Include="Services\TemplateAPIController.cs" />
-    <Compile Include="Services\TemplateTimeslotAPIController.cs" />
     <Compile Include="TemplateConfigView.ascx.cs">
       <DependentUpon>TemplateConfigView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -462,8 +455,6 @@
     <Content Include="js\truncateCalendar.js" />
     <Content Include="DocketView.ascx" />
     <Content Include="TruncateCalendar.ascx" />
-    <Content Include="CourtExtendView.ascx" />
-    <Content Include="js\courtExtend.js" />
     <Content Include="js\dashboard.js" />
     <Content Include="js\timeslot.js" />
     <Content Include="js\userDefinedField.js" />

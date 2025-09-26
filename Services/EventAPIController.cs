@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -11,6 +12,7 @@ using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace tjc.Modules.jacs.Services
 {
@@ -161,34 +163,35 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new EventController();
-                bool result = ctl.CancelEvent(p1);
-                if (!result)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventCancelResult { cancelled = false, error = "Event not found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventCancelResult { cancelled = false, error = ex.Message });
-            }
-        }
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                string reason = query.ContainsKey("cancellation_reason") ? query["cancellation_reason"] : string.Empty;
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage CancelHearing(long p1)
-        {
-            try
-            {
+                if (p1 <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventCancelResult { cancelled = false, error = "Event ID is required" });
+
+                }
                 var ctl = new EventController();
-                bool result = ctl.CancelEvent(p1);
-                if (!result)
+                var teCtl = new TimeslotEventController();
+                var tsCtl = new TimeslotController();
+                var eventStatusCtl = new EventStatusController();
+                var cancelledStatus = eventStatusCtl.GetEventStatusByName("Cancelled");
+                var eventToCancel = ctl.GetEvent(p1);
+                if (eventToCancel == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new EventCancelResult { cancelled = false, error = "Event not found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null });
+                var timeslotEvents = teCtl.GetTimeslotEventsByEvent(p1);
+                foreach (var te in timeslotEvents)
+                {
+                    teCtl.DeleteTimeslotEvent(te.id);
+                }
+                eventToCancel.cancellation_reason = reason;
+                eventToCancel.status_id =  cancelledStatus != null ? cancelledStatus.id : (long?)null;
+                eventToCancel.updated_at = DateTime.Now;
+                ctl.UpdateEvent(eventToCancel);
+                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null});
+
             }
             catch (Exception ex)
             {
@@ -349,6 +352,99 @@ namespace tjc.Modules.jacs.Services
                 var ctl = new EventController();
                 var events = ctl.GetEventListItemsByTimeslot(p1);
                 return Request.CreateResponse(HttpStatusCode.OK, new EventsResult { data = events.Select(e => new EventViewModel(e)).ToList(), error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetEventDuration(long p1)
+        {
+            try
+            {
+                var teCtl = new TimeslotEventController();
+                var tsCtl = new TimeslotController();
+                var timeslotEvents = teCtl.GetTimeslotEventsByEvent(p1);
+                if (!timeslotEvents.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "No timeslots found for event." });
+                }
+                var timeslots = timeslotEvents.Select(te => tsCtl.GetTimeslot(te.timeslot_id.Value)).OrderBy(ts => ts.start).ToList();
+                var firstStart = timeslots.First().start;
+                var lastEnd = timeslots.Last().end;
+                var totalDuration = (lastEnd - firstStart).TotalMinutes;
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, duration = totalDuration });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage RescheduleEvent(RescheduleModel p1)
+        {
+            try
+            {
+                var ctl = new EventController();
+                var teCtl = new TimeslotEventController();
+                var tsCtl = new TimeslotController();
+                var courtCtl = new CourtController();
+                var eventToReschedule = ctl.GetEvent(p1.event_id);
+                var eventStatusCtl = new EventStatusController();
+                var rescheduledStatus = eventStatusCtl.GetEventStatusByName("Rescheduled");
+
+                if (eventToReschedule == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Event not found." });
+                }
+                var timeslotEvent = teCtl.GetTimeslotEventsByEvent(p1.event_id).FirstOrDefault();
+                
+                if (timeslotEvent==null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No timeslots found for event." });
+                }
+                
+                var currentTimeslot = tsCtl.GetTimeslot(timeslotEvent.timeslot_id.Value);
+                var selectedtimeslot = tsCtl.GetTimeslot(p1.timeslot_id);
+                var selectedtimeslotEvents = teCtl.GetTimeslotEventsByTimeslot(selectedtimeslot.id);
+                int eventCount = selectedtimeslotEvents.Count();
+                if (eventCount>=selectedtimeslot.quantity)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "The selected timeslot has no space available for event assignment." });
+                }
+                var currentDuration = currentTimeslot.duration;
+                var selectedDuration = (selectedtimeslot.duration);
+                if (selectedDuration != currentDuration)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Selected duration must match original hearing duration." });
+                }
+                //var oldIds = timeslots.Select(ts => ts.id).ToArray();
+                //using (IDataContext ctx = DataContext.Instance("jacs"))
+                //{
+                //    var overlapQuery = @"
+                //        SELECT COUNT(*) FROM timeslots ts
+                //        INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id
+                //        WHERE ct.court_id = @0
+                //        AND ts.deleted_at IS NULL
+                //        AND ts.id NOT IN (" + string.Join(",", oldIds) + @")
+                //        AND (ts.start < @2 AND ts.end > @1)
+                //    ";
+                //    var overlaps = ctx.ExecuteScalar<int>(System.Data.CommandType.Text, overlapQuery, courtId, p1.start_new, p1.end_new);
+                //    if (overlaps > 0)
+                //    {
+                //        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "The selected time range overlaps with existing timeslots." });
+                //    }
+                //}
+                timeslotEvent.timeslot_id = selectedtimeslot.id;
+                teCtl.UpdateTimeslotEvent(timeslotEvent);
+                eventToReschedule.status_id =  rescheduledStatus != null ? rescheduledStatus.id : (long?)null;
+                eventToReschedule.updated_at = DateTime.Now;
+                ctl.UpdateEvent(eventToReschedule);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event rescheduled successfully" });
             }
             catch (Exception ex)
             {

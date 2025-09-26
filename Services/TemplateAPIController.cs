@@ -84,7 +84,7 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Template timeslot not found." });
                 }
-                var restrictedMotions = p1["timeslot_motions"]?.ToObject<long[]>() ?? new long[0];
+                var restrictedMotions = p1["restricted_motions"]?.ToObject<long[]>() ?? new long[0];
                 var courtMotionCtl = new CourtMotionController();
                 var template = ctl.GetCourtTemplate(timeslot.court_template_id.Value);
                 if (template == null)
@@ -105,12 +105,12 @@ namespace tjc.Modules.jacs.Services
                 timeslot.end = DateTime.SpecifyKind(timeslot.end, DateTimeKind.Local);
                 ctl.UpdateTemplateTimeslot(timeslot);
                 var timeslotMotionCtl = new TimeslotMotionController();
-                timeslotMotionCtl.DeleteTimeslotMotions(timeslot.id, "TemplateTimeslot");
+                timeslotMotionCtl.DeleteTimeslotMotions(timeslot.id, "App\\Models\\TemplateTimeslot");
                 foreach (var motionId in restrictedMotions)
                 {
                     timeslotMotionCtl.CreateTimeslotMotion(new TimeslotMotion
                     {
-                        timeslotable_type = "TemplateTimeslot",
+                        timeslotable_type = "App\\Models\\TemplateTimeslot",
                         timeslotable_id = timeslot.id,
                         motion_id = motionId,
                         created_at = DateTime.Now,
@@ -260,7 +260,7 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Template not found." });
                 }
-                var restrictedMotions = p1["timeslot_motions"]?.ToObject<long[]>() ?? new long[0];
+                var restrictedMotions = p1["restricted_motions"]?.ToObject<long[]>() ?? new long[0];
                 var courtMotionCtl = new CourtMotionController();
                 foreach (var motionId in restrictedMotions)
                 {
@@ -382,7 +382,7 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage DeleteTemplateTimeslots(JArray p1) //Delete multiple template timeslots

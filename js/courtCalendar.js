@@ -9,13 +9,15 @@ class CourtCalendarController {
         this.adminRole = params.adminRole || 'AdminRole';
         this.service = params.service || null;
         this.calendar = null;
+        this.rescheduleCalendar = null;
         this.courtId = this.getCourtIdFromUrl();
         this.courtEditUrl = params.courtEditUrl || '/court-edit';
         this.userDefinedFieldUrl = params.userDefinedFieldUrl || '/user-fields';
         this.truncateCalendarUrl = params.truncateCalendarUrl || '/truncate-calendar';
-        this.extendCalendarUrl = params.extendCalendarUrl || '/extend-calendar';
         this.courtData = null;
         this.caseTypes = null;
+        this.currentEvent = null;
+        this.currentTimeslot = null; // Default duration in minutes
         courtCalendarControllerInstance = this;
     }
 
@@ -33,12 +35,21 @@ class CourtCalendarController {
         if (courtTypeSelect.length) {
             this.changeLabel(courtTypeSelect);
         }
-        //$('.case-num-part').on('keyup change', () => this.evaluateCaseNumberFields());
         const timeslotModalElement = document.getElementById('TimeslotModal');
         if (timeslotModalElement) {
             timeslotModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
             timeslotModalElement.addEventListener('shown.bs.modal', this.onTimeslotModalShow.bind(this));
         }
+        const rescheduleModalElement = document.getElementById('RescheduleHearingModal');
+        if (rescheduleModalElement) {
+            rescheduleModalElement.addEventListener('hidden.bs.modal', () => {
+                if (this.rescheduleCalendar) {
+                    this.rescheduleCalendar.destroy();
+                    this.rescheduleCalendar = null;
+                }
+            });
+        }
+
         $.when(promCourt, promCategory, promEventType, promCaseTypes, promAttorney).then(
             () => this.populateEventDefaults()).fail(() => console.error('One or more data fetches failed'));
     }
@@ -134,6 +145,24 @@ class CourtCalendarController {
             }
         });
         this.calendar.render();
+    }
+
+    initRescheduleCalendar() {
+        const resCalendarEl = document.getElementById('reschedule-calendar');
+        const startDate = this.formatLocalDateTime(this.currentTimeslot.start);
+        this.rescheduleCalendar = new FullCalendar.Calendar(resCalendarEl, {
+            initialView: 'listMonth',
+            headerToolbar: {
+                left: 'prev,next',
+                center: 'title',
+                right: ''
+            }, navLinks: true,
+            weekends: false,
+            events: `${this.service.baseUrl}TimeslotAPI/GetAvailableCourtTimeslots/${this.courtId}/${this.currentEvent.motion_id}/${this.currentTimeslot.duration}?startDate=${startDate}`,
+            eventClick: this.handleRescheduleClick.bind(this),
+            height: 500
+        });
+        this.rescheduleCalendar.render();
     }
 
     fetchCourtData() {
@@ -508,10 +537,8 @@ class CourtCalendarController {
                 success: response => {
                     if (response.data) {
                         const evt = response.data;
-                        const evtMotion = $('#event_motion')[0].tomselect;
-                        if (evtMotion) evtMotion.setValue(evt.motion_id || '');
-                        const evtType = $('#event_type')[0].tomselect;
-                        if (evtType) evtType.setValue(evt.type_id || '');
+                        $('#event_motion').val(evt.motion_id || '');
+                        $('#event_type').val(evt.type_id || '');
                         $('#event_customMotion').val(evt.custom_motion || '');
                         const evtAttorney = $('#event_attorney')[0].tomselect;
                         if (evtAttorney && evt.attorney_id) evtAttorney.setValue(evt.attorney_id);
@@ -548,6 +575,8 @@ class CourtCalendarController {
     }
 
     bindEventHandlers() {
+        $('#txtStartDate').datepicker({ autoclose: true, format: 'mm/dd/yyyy' });
+        $('#btnExtend').on('click', this.handleAutoExtendCalendar.bind(this));
         $('#editCourtBtn').on('click', this.handleEditCourt.bind(this));
         $('#userDefinedFieldsBtn').on('click', this.handleUserDefinedFields.bind(this));
         $(document).on('change', '.case-num-part', (e) => this.changeLabel(e.target.value));
@@ -687,64 +716,121 @@ class CourtCalendarController {
             }
         }
     }
+    handleRescheduleClick(clickInfo) {
+        const start = clickInfo.event.start;
+        const end = clickInfo.event.end;
+        const timeslotId = parseInt(clickInfo.event.id);
+        const selectedDuration = clickInfo.event.extendedProps.duration ? clickInfo.event.extendedProps.duration : 0;
+        if (selectedDuration !== this.currentEvent.duration) {
+            Swal.fire('Invalid Selection', 'The selected duration must match the original hearing duration.', 'error');
 
-    handleCancelHearing(e, cancellationReason) {
-        e.preventDefault();
-        const eventId = parseInt($('#edit_eventId').val());
-        if (!isNaN(eventId) && eventId > 0) {
-            $.ajax({
-                url: `${this.service.baseUrl}EventAPI/CancelEvent/${eventId}`,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ cancellation_reason: cancellationReason }),
-                beforeSend: xhr => this.setAjaxHeaders(xhr),
-                success: () => {
-                    ShowNotification('Success', 'Hearing cancelled successfully.', 'success');
-                    this.calendar.refetchEvents();
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('TimeslotModal'));
-                    if (modal) modal.hide();
-                },
-                error: jqXHR => {
-                    let response = {};
-                    try {
-                        response = JSON.parse(jqXHR.responseText);
-                    } catch (e) {
-                        response.message = jqXHR.responseText || 'An unknown error occurred.';
-                    }
-                    ShowNotification('Error Cancelling Hearing', response.message || 'An unknown error occurred.', 'error');
-                },
-            });
+            return;
         }
+        Swal.fire({
+            title: 'Reschedule Hearing?',
+            text: `Reschedule to ${this.getDateRangeTitle(start, end)}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.performReschedule(this.currentEvent.id, timeslotId);
+
+            }
+        });
     }
 
+    handleCancelHearing(e) {
+        e.preventDefault();
+        const eventId = parseInt($('#edit_eventId').val());
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            input: 'textarea',
+            inputLabel: 'Cancellation Reason',
+            inputPlaceholder: 'Type your message here...',
+            inputAttributes: {
+                'aria-label': 'Type your message here'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            keydownListenerCapture: true,
+
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to provide a cancellation reason!'
+                }
+            }
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${this.service.baseUrl}EventAPI/CancelEvent/${eventId}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ cancellation_reason: result.value }),
+                    beforeSend: xhr => this.setAjaxHeaders(xhr),
+                    success: () => {
+                        Swal.fire(
+                            'Cancelled!',
+                            'Your hearing has now been cancelled.',
+                            'success'
+                        ).then(() => {
+                            this.calendar.refetchEvents();
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('TimeslotModal'));
+                            if (modal) modal.hide();
+                        })
+                    },
+                    error: jqXHR => {
+                        let response = {};
+                        try {
+                            response = JSON.parse(jqXHR.responseText);
+                        } catch (e) {
+                            response.message = jqXHR.responseText || 'An unknown error occurred.';
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.message,
+                        })
+                    },
+                });
+            }
+        })
+    }
     handleReschedule(e) {
         e.preventDefault();
-        const timeslotModal = bootstrap.Modal.getInstance(document.getElementById('TimeslotModal'));
-        if (timeslotModal) {
-            timeslotModal.hide();
+        const eventId = this.currentEvent.id;
+        if (!eventId) {
+            ShowNotification('Error', 'No event selected for rescheduling.', 'error');
+            return;
         }
-        const rescheduleModal = new bootstrap.Modal(document.getElementById('RescheduleHearingModal'));
-        rescheduleModal.show();
+        $('#TimeslotModal').modal('hide');
+        $('#RescheduleHearingModal').modal('show');
+        this.initRescheduleCalendar();
     }
 
     handleDateSelect(info) {
 
-        const start = this.formatLocalDateTime(info.start);
-        const end = this.formatLocalDateTime(info.end);
-        const startTime = moment(info.start);
-        const endTime = moment(info.end);
-        document.getElementById('t_start').value = startTime.format('YYYY-MM-DD HH:mm:ss');
-        document.getElementById('t_end').value = endTime.format('YYYY-MM-DD HH:mm:ss');
+        const startTime = this.formatLocalTime(info.start);
+        const endTime = this.formatLocalTime(info.end);
+        const startDateTime = moment(info.start);
+        const endDateTime = moment(info.end);
         this.clearTimeslotForm();
-        $('#timeslot_startTime').val(start);
-        $('#timeslot_endTime').val(end);
-        $('#t_start').val(startTime.format('YYYY-MM-DD HH:mm:ss'));
-        $('#t_end').val(endTime.format('YYYY-MM-DD HH:mm:ss'));
+        $('#timeslot_startTime').val(startTime);
+        $('#timeslot_endTime').val(endTime);
+        $('#t_start').val(this.formatLocalDateTime(startDateTime));
+        $('#t_end').val(this.formatLocalDateTime(endDateTime));
         $('#timeslot_allDay').val('false');
         $('.time-selection').show();
         $('.quantity-group').show();
-        if (endTime.isValid() && startTime.isValid()) {
-            const totalMinutes = endTime.diff(startTime, 'minutes');
+        if (endDateTime.isValid() && startDateTime.isValid()) {
+            const totalMinutes = endDateTime.diff(startDateTime, 'minutes');
             if (totalMinutes <= 5) {
                 $('#timeslot_quantity').val('1');
                 $('#timeslot_cattlecall_no').prop('checked', true).trigger('change');
@@ -753,7 +839,7 @@ class CourtCalendarController {
                 $('#timeslot_cattlecall_yes').prop('checked', true).trigger('change');
             }
         }
-        const title = this.getDateRangeTitle(new Date(start), new Date(end));
+        const title = this.getDateRangeTitle(new Date(startTime), new Date(endTime));
         $('#TimeslotModalLabel').text(title);
         const timeslotModal = new bootstrap.Modal(document.getElementById('TimeslotModal'));
         timeslotModal.show();
@@ -846,8 +932,40 @@ class CourtCalendarController {
 
     handleExtend(e) {
         e.preventDefault();
-        if (this.courtId !== -1) {
-            window.location.href = `${this.extendCalendarUrl}/cid/${this.courtId}`;
+        if (this.courtId !== -1 && this.courtData != null) {
+            Swal.fire({
+                title: 'Extend Calendar?',
+                text: 'Are you sure you wish to extend the calendar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (this.courtData.auto_extension) {
+                        const extendModal = new bootstrap.Modal(document.getElementById('ExtendCalendarModal'));
+                        extendModal.show();
+                    } else {
+                        $.ajax({
+                            url: `${this.service.baseUrl}CourtTemplateAPI/ExtendManual/${this.courtId}`,
+                            type: 'GET',
+                            dataType: 'json',
+                            beforeSend: xhr => this.setAjaxHeaders(xhr),
+                            success: response => {
+                                if (response.status === 200) {
+                                    ShowNotification('Successfully manually extended the calendar', response.message, 'success');
+                                    this.calendar.refetchEvents();
+                                } else {
+                                    ShowNotification('Error', response.message || 'Failed to extend the calendar manually.', 'error');
+                                }
+                            },
+                            error: (error) => {
+                                ShowNotification('Error', `Failed to extend the calendar manually. (${error})`, 'error');
+                            }
+                        });
+                    }
+                }
+            });
         } else {
             ShowNotification('Error', 'Court ID is not available.', 'error');
         }
@@ -926,6 +1044,63 @@ class CourtCalendarController {
             });
         }
     }
+    handleAutoExtendCalendar(e) {
+        $('#btnExtend').prop('disabled', true).find('i').removeClass('fas fa-save').addClass('fas fa-spinner fa-spin');
+        e.preventDefault();
+        var startTemplate = $('#ddlStartTemplate').val();
+        var weeks = $('#txtWeeks').val();
+        var startDate = $('#txtStartDate').val();
+        if (!startTemplate || !weeks || !startDate) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'All fields are required.'
+            });
+            $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
+            return false;
+        }
+
+        if (weeks <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Weeks to extend must be greater than 0.'
+            });
+            $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
+            return false;
+        }
+
+        const getUrl = `${this.service.baseUrl}CourtTemplateAPI/AutoExtend`;
+        var formData = {
+            CourtId: this.courtId,
+            StartTemplateId: parseInt($('#ddlStartTemplate').val()),
+            Weeks: parseInt($('#txtWeeks').val()),
+            StartDate: $('#txtStartDate').val()
+        };
+        $.ajax({
+            url: getUrl,
+            type: 'POST',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: response => {
+                if (response.success) {
+                    this.calendar.refetchEvents();
+                    Swal.fire('Success', response.message, 'success');
+                    const extendModal = new bootstrap.Modal(document.getElementById('ExtendCalendarModal'));
+                    extendModal.hide();
+                } else {
+                    Swal.fire('Error', 'Extension failed', 'error');
+                }
+                $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
+            },
+            error: error => {
+                Swal.fire('Error', error.responseJSON.message, 'error');
+                $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
+            }
+        });
+        return false; // Prevent default form submission
+    }
 
     getTimeslotFormData() {
         const tsIdVal = $('#edit_timeslotId').val();
@@ -979,12 +1154,33 @@ class CourtCalendarController {
             plaintiff_email: $('#event_plaintiffEmail').val().replace(';', ','),
             defendant_email: $('#event_defendantEmail').val().replace(';', ','),
             notes: $('#event_notes').val(),
-            addon: $('#event_addon_check').is(':checked') ? $('#event_addon').val() : 0,
-            reminder: $('#event_reminder_check').is(':checked') ? $('#event_reminder').val() : 0,
+            addon: $('#event_addon_check').is(':checked') ? true : false,
+            reminder: $('#event_reminder_check').is(':checked') ? true : false,
             owner_type: 'App\\Models\\User',
             owner_id: this.userId,
             template: this.fetchTemplateData(),
         };
+    }
+
+    performReschedule(eventId, timeslotId) {
+        $.ajax({
+            url: `${this.service.baseUrl}EventAPI/RescheduleEvent`,
+            type: 'POST',
+            data: JSON.stringify({ event_id: eventId, timeslot_id: timeslotId }),
+            contentType: 'application/json',
+            beforeSend: this.setAjaxHeaders.bind(this),
+            success: (response) => {
+                if (response.status === 200) {
+                    ShowNotification('Success', 'Hearing rescheduled successfully.', 'success');
+                    $('#RescheduleHearingModal').modal('hide');
+                    this.calendar.refetchEvents();
+                    $('#TimeslotModal').modal('hide');
+                } else {
+                    ShowNotification('Error', response.message, 'error');
+                }
+            },
+            error: () => ShowNotification('Error', 'Failed to reschedule hearing.', 'error')
+        });
     }
 
     createTimeslot(timeslotData, isForEvent = false) {
@@ -1133,66 +1329,97 @@ class CourtCalendarController {
     }
 
     viewEvent(eventId) {
-        const getUrl = `${this.service.baseUrl}EventAPI/GetEvent/${eventId}`;
-        $('#progress-timeslot').show();
-        return $.ajax({
-            url: getUrl,
-            method: 'GET',
+        $("#progress-timeslot").show();
+        $.ajax({
+            url: `${this.service.baseUrl}EventAPI/GetEvent/${eventId}`,
+            type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
                 if (response.data) {
-                    $('#edit_eventId').val(response.data.id);
-                    const evtMotion = $('#event_motion')[0].tomselect;
-                    if (evtMotion) evtMotion.setValue(response.data.motion_id);
-                    const evtType = $('#event_type')[0].tomselect;
-                    if (evtType) evtType.setValue(response.data.type_id);
-                    $('#event_customMotion').val(response.data.custom_motion);
-                    const evtAttorney = $('#event_attorney')[0].tomselect;
-                    if (evtAttorney) evtAttorney.setValue(response.data.attorney_id);
-                    const evtOppAttorney = $('#event_opposingAttorney')[0].tomselect;
-                    if (evtOppAttorney) evtOppAttorney.setValue(response.data.opp_attorney_id);
-                    const caseNumParts = response.data.case_num.split('-');
-                    $('#event_caseNum_container .case-num-part').each((index, el) => {
-                        $(el).val(caseNumParts[index] || '');
-                    });
-                    $('#event_plaintiff').val(response.data.plaintiff);
-                    $('#event_defendant').val(response.data.defendant);
-                    $('#event_plaintiffEmail').val(response.data.plaintiff_email);
-                    $('#event_defendantEmail').val(response.data.defendant_email);
-                    $('#event_notes').val(response.data.notes);
-                    $('#event_addon_check').prop('checked', response.data.addon === '1');
-                    $('#event_addon').val(response.data.addon);
-                    $('#event_reminder_check').prop('checked', response.data.reminder === '1');
-                    $('#event_reminder').val(response.data.reminder);
-                    $('#event_editedBy').val(response.data.editedBy || '');
-                    $('#event_updatedOn').val(response.data.updatedOn || '');
-                    $('.edited-by').show();
+                    const event = response.data;
+                    this.currentEvent = event;
+                    this.clearEventForm(); // Clear form first to reset defaults
 
-                    $('#cancelHearingBtn').show();
-                    $('#rescheduleBtn').show();
-
-                    const modal = new bootstrap.Modal(document.getElementById('TimeslotModal'));
-                    modal.show();
-                    //$('.nav-tabs a[href="#eventTab"]').tab('show');
-                    $('.cattle-call').hide();
-                    if (response.data.motion_id === 221) {
+                    $('#edit_eventId').val(event.id);
+                    $('#event_motion').val(event.motion_id);
+                    $('#event_type').val(event.type_id);
+                    if (event.motion_id === 221) {
+                        $('#event_customMotion').val(event.custom_motion || '');
                         $('#other_motion_row').show();
                     } else {
                         $('#other_motion_row').hide();
                     }
+
+                    // Attorney
+                    const attorneyTom = $('#event_attorney')[0].tomselect;
+                    attorneyTom.setValue(event.attorney_id ? event.attorney_id.toString() : '');
+
+                    // Opposing Attorney
+                    const oppTom = $('#event_opposingAttorney')[0].tomselect;
+                    oppTom.setValue(event.opp_attorney_id ? event.opp_attorney_id.toString() : '');
+
+                    // Plaintiff and Defendant
+                    $('#event_plaintiff').val(event.plaintiff || '');
+                    $('#event_defendant').val(event.defendant || '');
+                    $('#event_plaintiffEmail').val(event.plaintiff_email || '');
+                    $('#event_defendantEmail').val(event.defendant_email || '');
+
+                    // Notes
+                    $('#event_notes').val(event.notes || '');
+
+                    // Addon
+                    $('#event_addon_check').prop('checked', !!event.addon);
+                    $('#event_addon').val(event.addon || '0');
+
+                    // Reminder
+                    $('#event_reminder_check').prop('checked', !!event.reminder);
+                    $('#event_reminder').val(event.reminder || '0');
+
+                    // Case Number Parts
+                    const caseNum = event.case_num || '';
+                    const parts = caseNum.split('-');
+                    $('.case-num-part').each((index, el) => {
+                        $(el).val(parts[index] || '');
+                    });
+
+                    // Template Fields
+                    const template = event.template ? JSON.parse(event.template) : {};
+                    $('#court_template_fields [name^="template["]').each(function () {
+                        const el = $(this);
+                        const key = el.attr('name').match(/template\[(.*?)\]/)[1];
+                        const value = template[key] || '';
+                        if (el.is(':radio') || el.is(':checkbox')) {
+                            el.prop('checked', el.val() === value || (!!value && el.val() === '1'));
+                        } else {
+                            el.val(value);
+                        }
+                    });
+
+                    // Edited By
+                    if (event.updated_at) {
+                        $('#event_editedBy').text(event.updated_by_name);
+                        $('#event_updatedAt').text(event.updated_at ? moment(event.updated_at).format('MM/DD/YYYY h:mm A') : '');
+                        $('.edited-by').show();
+                    }
+
+                    // Show buttons
+                    $('#cancelHearingBtn').show();
+                    $('#rescheduleBtn').show();
+                    $('.cattle-call').hide();
+                    $('.nav-tabs a[href="#eventTab"]').tab('show'); //show event tab
+                    $("#progress-timeslot").hide();
                 } else {
+                    $("#progress-timeslot").hide();
                     ShowNotification('Error', 'Failed to retrieve event details.', 'error');
                 }
-                $('#progress-timeslot').hide();
             },
             error: () => {
-                ShowNotification('Error', 'Failed to retrieve event details.', 'error');
-                $('#progress-timeslot').hide();
+                $("#progress-timeslot").hide();
+                ShowNotification('Error', 'Failed to load event details.', 'error');
             }
         });
     }
-
     viewTimeslot(timeslotId) {
         const getUrl = `${this.service.baseUrl}TimeslotAPI/GetTimeslot/${timeslotId}`;
         $('#progress-timeslot').show();
@@ -1202,6 +1429,7 @@ class CourtCalendarController {
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
+                this.currentTimeslot = response;
                 if (response) {
                     $('#edit_timeslotId').val(response.id);
                     $('#timeslot_startTime').val(this.formatLocalDateTime(new Date(response.start)));
@@ -1215,6 +1443,7 @@ class CourtCalendarController {
                     $('#timeslot_publicBlock').prop('checked', response.publicBlock);
                     $('#timeslot_blockReason').val(response.blockReason);
                     $('#timeslot_duration').val(response.duration);
+                    this.currentDuration = response.duration;
                     $('#timeslot_quantity').val(response.quantity);
                     $('#timeslot_description').val(response.description);
                     $('#timeslot_category').val(response.category);
@@ -1278,45 +1507,15 @@ class CourtCalendarController {
                                 <td>${e.plaintiff}</td>
                                 <td>${e.opp_attorney_name}</td>
                                 <td>${e.defendant}</td>
-                                <td>
-                                    <a href="#" class="deleteEventBtn" data-id="${e.id}"><i class="fas fa-trash"></i></a>
-                                </td>
                             </tr>`;
                         $('#eventsTableBody').append(row);
                     });
                     $('.editEventBtn').on('click', (ev) => {
                         ev.preventDefault();
                         this.viewEvent(parseInt($(ev.target).closest('a').data('id')));
-                    });
-                    $('.deleteEventBtn').on('click', (ev) => {
-                        ev.preventDefault();
-                        const eventId = parseInt($(ev.target).closest('a').data('id'));
-                        Swal.fire({
-                            title: 'Delete Event?',
-                            text: 'Are you sure you wish to delete this event?',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes',
-                            cancelButtonText: 'No'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: `${this.service.baseUrl}EventAPI/DeleteEvent/${eventId}`,
-                                    type: 'GET',
-                                    beforeSend: xhr => this.setAjaxHeaders(xhr),
-                                    success: () => {
-                                        ShowNotification('Success', 'Event deleted successfully.', 'success');
-                                        this.loadEventsForTimeslot(timeslotId);
-                                    },
-                                    error: error => {
-                                        ShowNotification('Error Deleting Event', error.responseText.message, 'error');
-                                    }
-                                });
-                            }
-                        });
+                        $('.nav-tabs a[href="#event"]').tab('show');
                     });
                 }
-                //$('.cattle-call').hide();
             },
             error: () => {
                 ShowNotification('Error', 'Failed to load events for timeslot.', 'error');
@@ -1325,6 +1524,9 @@ class CourtCalendarController {
     }
 
     formatLocalDateTime(date) {
+        return moment(date).format('YYYY-MM-DD HH:mm:ss');
+    }
+    formatLocalTime(date) {
         return moment(date).format('h:mm A');
     }
 
@@ -1524,7 +1726,7 @@ class CourtCalendarController {
         $('#event_reminder_check').prop('checked', false);
         $('#event_reminder').val('0');
         $('#event_editedBy').val('');
-        $('#event_updatedOn').val('');
+        $('#event_updatedAt').text('');
         $('.edited-by').hide();
         $('#cancelHearingBtn').hide();
         $('#rescheduleBtn').hide();
@@ -1542,6 +1744,7 @@ class CourtCalendarController {
             courtCalendarControllerInstance.clearTimeslotForm();
             courtCalendarControllerInstance.clearEventForm();
             $('#eventsTableBody').empty();
+            $('.nav-tabs a[href="#timeslotTab"]').tab('show'); //show event tab
         }
     }
 

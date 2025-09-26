@@ -11,7 +11,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             id = judge.id;
             name = judge.name;
             phone = judge.phone;
-            court_name = GetJudgeCourtName(judge.court_id.Value);
+            court_name = judge.court_id.HasValue?GetJudgeCourtName(judge.court_id.Value):"";
             court_id = judge.court_id ?? 0;
             title = judge.title;
         }

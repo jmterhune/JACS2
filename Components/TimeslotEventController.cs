@@ -22,7 +22,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public void DeleteTimeslotEvent(int timeslotEventId)
+        public void DeleteTimeslotEvent(long timeslotEventId)
         {
             var t = GetTimeslotEvent(timeslotEventId);
             if (t != null)
@@ -50,7 +50,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public TimeslotEvent GetTimeslotEvent(int timeslotEventId)
+        public TimeslotEvent GetTimeslotEvent(long timeslotEventId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
