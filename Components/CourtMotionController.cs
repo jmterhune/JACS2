@@ -137,7 +137,7 @@ namespace tjc.Modules.jacs.Components
                     IEnumerable<Motion> results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, courtId, allowed);
                     if (results.Count() > 0)
                     {
-                        return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).ToList();
+                        return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(m => m.Value).ToList();
                     }
                     return new List<KeyValuePair<long, string>>();
                 }
@@ -192,7 +192,7 @@ namespace tjc.Modules.jacs.Components
                     IEnumerable<Motion> results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, parameters.ToArray());
                     if (results == null || !results.Any())
                         return new List<KeyValuePair<long, string>>();
-                    return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).ToList();
+                    return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(m => m.Value).ToList();
                 }
             }
             catch (Exception ex)

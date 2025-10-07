@@ -96,7 +96,7 @@ namespace tjc.Modules.jacs.Components
                 var ctl = new TimeslotController();
                 var tslot = ctl.GetTimeslotByEventId(id);
                 if (tslot != null)
-                    return tslot.FormattedStart;
+                    return tslot.formatted_start;
                 return string.Empty;
             }
         }
@@ -173,7 +173,16 @@ namespace tjc.Modules.jacs.Components
                 return new event_type();
             }
         }
-       
+        [IgnoreColumn]
+        public Timeslot timeslot
+        {
+            get
+            {
+                var ctl = new TimeslotController();
+                return ctl.GetTimeslotByEventId(id);
+            }
+        }
+
     }
     [TableName("event_list")]
     [PrimaryKey("id", AutoIncrement = false)]
@@ -206,6 +215,7 @@ namespace tjc.Modules.jacs.Components
         public string status_name { get; set; }
         public string timeslot_desc { get; set; }
         public string court_name { get; set; }
+        public long ? court_id { get; set; }
         public string category_name { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
@@ -214,5 +224,13 @@ namespace tjc.Modules.jacs.Components
         public long? timeslot_id { get; set; }
         public string event_type { get; set; }
 
+    }
+    public class CalendarItem
+    {
+        public long calendarId { get; set; }
+        public long timeslotId { get; set; }
+        public long eventId { get; set; }
+        public DateTime start { get; set; }
+        public DateTime end { get; set; }
     }
 }

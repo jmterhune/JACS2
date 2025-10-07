@@ -22,11 +22,18 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public void DeleteTimeslotEvent(long timeslotEventId)
+        public void DeleteTimeslotEvent(long timeslotEventId,bool dbDelete)
         {
             var t = GetTimeslotEvent(timeslotEventId);
             if (t != null)
             {
+                if (dbDelete == false)
+                {
+                    t.updated_at = DateTime.Now;
+                    t.deleted_at = DateTime.Now;
+                    UpdateTimeslotEvent(t);
+                    return;
+                }
                 DeleteTimeslotEvent(t);
             }
         }

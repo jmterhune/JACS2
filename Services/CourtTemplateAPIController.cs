@@ -262,141 +262,12 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage ExtendManual(long p1)
-        {
-            try
-            {
-                UserInfo currentUser = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
-                if (currentUser == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to perform this action." });
-                }
-
-                long courtId = (long)p1;
-                if (courtId <= 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court ID is required." });
-                }
-
-                var courtCtl = new CourtController();
-                var court = courtCtl.GetCourt(courtId);
-                if (court == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
-                }
-
-                var judge = court.GetJudge();
-                var permissionCtl = new CourtPermissionController();
-                var hasPermission = permissionCtl.HasCourtPermission(currentUser.UserID, judge.id);
-                if (!hasPermission && !currentUser.IsAdmin)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to perform this action." });
-                }
-
-                var orderCtl = new CourtTemplateOrderController();
-                var manualTemplateOrders = orderCtl.GetManualTemplateOrders(courtId);
-
-                var holidayCtl = new HolidayController();
-                var holidays = holidayCtl.GetHolidays();
-
-                foreach (var templateOrder in manualTemplateOrders)
-                {
-                    CourtTemplate template = templateOrder.template;
-                    if (template != null)
-                    {
-                        DateTime.TryParse(templateOrder.date.Value.ToShortDateString(), out DateTime week);
-                        var timeslots = template.template_timeslots;
-
-                        for (int x = 0; x < 5; x++)
-                        {
-                            string day = week.ToString("yyyy-MM-dd");
-                            DateTime dayDate = week;
-
-                            foreach (var timeslot in timeslots.Where(t => t.day == x + 1))
-                            {
-                                DateTime start = new DateTime(week.Year, week.Month, week.Day, timeslot.start.Hour, timeslot.start.Minute, timeslot.start.Second);
-                                DateTime end = new DateTime(week.Year, week.Month, week.Day, timeslot.end.Hour, timeslot.end.Minute, timeslot.end.Second);
-
-                                if (!holidays.Any(h => h.date.ToString("yyyy-MM-dd") == day))
-                                {
-                                    var timeslotCtl = new TimeslotController();
-                                    var current_timeslots = timeslotCtl.GetTimeslotsByCourtAndDate(courtId, start.Date);
-
-                                    var match = current_timeslots.Where(ts => ts.start == start && ts.template_id == template.id);
-
-                                    if (!match.Any())
-                                    {
-                                        var new_timeslot = new Timeslot
-                                        {
-                                            start = start,
-                                            end = end,
-                                            description = timeslot.description,
-                                            allDay = timeslot.allDay,
-                                            duration = timeslot.duration,
-                                            quantity = timeslot.quantity,
-                                            blocked = timeslot.blocked,
-                                            block_reason = timeslot.block_reason,
-                                            public_block = timeslot.public_block,
-                                            category_id = timeslot.category_id,
-                                            template_id = template.id
-                                        };
-
-                                        timeslotCtl.CreateTimeslot(new_timeslot);
-
-                                        var courtTimeslotCtl = new CourtTimeslotController();
-                                        var newCourtTimeslot = new CourtTimeslot
-                                        {
-                                            court_id = courtId,
-                                            timeslot_id = new_timeslot.id
-                                        };
-                                        courtTimeslotCtl.CreateCourtTimeslot(newCourtTimeslot);
-                                    }
-                                }
-                            }
-
-                            week = week.AddDays(1);
-                        }
-                    }
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Extending Successful" });
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
-            }
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public HttpResponseMessage AutoExtend(ExtendRequest request)
-        {
-            try
-            {
-                var controller = new CourtTemplateOrderController();
-                var success = controller.AutoExtendCalendar(request.CourtId, request.StartTemplateId, request.StartDate, request.Weeks);
-                if (success)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Extension Successful" });
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "Extend Failed" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
-            }
-        }
-        [HttpGet]
         public HttpResponseMessage DeleteCourtTemplate(long p1)
         {
             try
             {
                 var ctl = new CourtTemplateController();
-                ctl.DeleteCourtTemplate(p1);
+                ctl.DeleteCourtTemplate(p1,false);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Template deleted successfully" });
             }
             catch (Exception ex)
@@ -405,13 +276,7 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-        public class ExtendRequest
-        {
-            public int CourtId { get; set; }
-            public int StartTemplateId { get; set; }
-            public DateTime StartDate { get; set; }
-            public int Weeks { get; set; }
-        }
+      
         internal class CourtTemplateSearchResult
         {
             public List<CourtTemplateViewModel> data { get; set; }

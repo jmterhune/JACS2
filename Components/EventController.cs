@@ -26,11 +26,18 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public void DeleteEvent(long eventId)
+        public void DeleteEvent(long eventId, bool dbDelete)
         {
             var t = GetEvent(eventId);
             if (t != null)
             {
+                if (dbDelete == false)
+                {
+                    t.updated_at = DateTime.Now;
+                    t.status_id = 2; // Set status to Cancelled
+                    UpdateEvent(t);
+                    return;
+                }
                 DeleteEvent(t);
             }
         }
@@ -53,7 +60,20 @@ namespace tjc.Modules.jacs.Components
                 return rep.Get();
             }
         }
-
+        public long GetCourtIdByEventId(long eventId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<long>(
+                    System.Data.CommandType.Text,
+                    @"SELECT ct.court_id 
+                      FROM court_timeslots ct 
+                      INNER JOIN timeslot_events te ON te.timeslot_id = ct.timeslot_id 
+                      WHERE te.event_id = @0",
+                    eventId
+                );
+            }
+        }
         public IEnumerable<EventListItem> GetEventsByCourtId(long courtId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -82,6 +102,7 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, courtId, start, end);
             }
         }
+
 
         public IEnumerable<EventListItem> GetEventListItems(string court, string category, string status)
         {
@@ -128,16 +149,16 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<Event> GetEventsForDashboardByJudge(long judgeId)
+        public IEnumerable<EventListItem> GetEventsForDashboardByJudge(long judgeId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 10 * FROM [events] WHERE 
+                    SELECT TOP 10 * FROM [event_list] WHERE 
                     EXISTS (
                         SELECT * FROM [timeslots] 
                         INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
-                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        WHERE [event_list].[id] = [timeslot_events].[event_id] AND 
                         EXISTS (
                             SELECT * FROM [courts] 
                             INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
@@ -149,20 +170,20 @@ namespace tjc.Modules.jacs.Components
                         )
                     ) 
                     ORDER BY [created_at] DESC";
-                return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, judgeId);
+                return ctx.ExecuteQuery<EventListItem>(System.Data.CommandType.Text, query, judgeId);
             }
         }
 
-        public IEnumerable<Event> GetEventsForDashboard(long userId)
+        public IEnumerable<EventListItem> GetEventsForDashboard(long userId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 10 * FROM [events] WHERE 
+                    SELECT TOP 10 * FROM [event_list] WHERE 
                     EXISTS (
                         SELECT * FROM [timeslots] 
                         INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
-                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        WHERE [event_list].[id] = [timeslot_events].[event_id] AND 
                         EXISTS (
                             SELECT * FROM [courts] 
                             INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
@@ -179,9 +200,35 @@ namespace tjc.Modules.jacs.Components
                         )
                     ) 
                     ORDER BY [created_at] DESC";
-                return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, userId);
+                return ctx.ExecuteQuery<EventListItem>(System.Data.CommandType.Text, query, userId);
             }
         }
+
+        public IEnumerable<EventListItem> GetEventsForDashBoardByAdmin()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT TOP 10 * FROM [event_list] WHERE 
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [event_list].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] 
+                                WHERE [courts].[id] = [judges].[court_id]
+                            )
+                        )
+                    ) 
+                    ORDER BY [created_at] DESC";
+                return ctx.ExecuteQuery<EventListItem>(System.Data.CommandType.Text, query);
+            }
+        }
+
 
         public Event GetEvent(long eventId)
         {
@@ -203,30 +250,6 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<Event> GetEventsForDashBoardByAdmin()
-        {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
-            {
-                var query = @"
-                    SELECT TOP 10 * FROM [events] WHERE 
-                    EXISTS (
-                        SELECT * FROM [timeslots] 
-                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
-                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
-                        EXISTS (
-                            SELECT * FROM [courts] 
-                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
-                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
-                            EXISTS (
-                                SELECT * FROM [judges] 
-                                WHERE [courts].[id] = [judges].[court_id]
-                            )
-                        )
-                    ) 
-                    ORDER BY [created_at] DESC";
-                return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query);
-            }
-        }
 
         public Event GetEventByCaseNumber(string caseNumber)
         {
@@ -265,7 +288,7 @@ namespace tjc.Modules.jacs.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var query = @"SELECT e.* FROM [events] e INNER JOIN [timeslot_events] te ON te.event_id = e.id WHERE te.timeslot_id = @0";
+                var query = @"SELECT e.* FROM [events] e INNER JOIN [timeslot_events] te ON te.event_id = e.id WHERE te.timeslot_id = @0 and te.[deleted_at] is null";
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, timeslotId);
             }
         }

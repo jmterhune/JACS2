@@ -58,14 +58,18 @@ class TemplateConfigController {
             eventClick: this.handleEventClick.bind(this),
             eventResize: this.handleEventResize.bind(this),
             eventDrop: this.handleEventDrop.bind(this),
-            eventDragStop: this.handleEventDragStop.bind(this),
+            eventDragStop: function (info) {
+                $('#calendar input:checked').each(function () {
+                    templateConfigControllerInstance.dragEvents.push($(this).val());
+                });
+            },
             eventRemove: this.handleDeleteTimeslot.bind(this),
             eventContent: function (arg) {
                 let divEl = document.createElement('div');
                 let timeEl = document.createElement('span');
                 timeEl.style.display = 'block';
                 timeEl.style.overflow = 'hidden';
-                timeEl.innerHTML = arg.timeText + `<input style="top:.8rem;width:.95rem;height:.95rem; pointer-events: none;" class="m-1 float-end multi-check" disabled type="checkbox" id="cb${arg.event.id}" value="${arg.event.id}"/>`;
+                timeEl.innerHTML = arg.timeText + `<input class="calendar-select" disabled type="checkbox" id="cb${arg.event.id}" value="${arg.event.id}"/>`;
                 let contentEl = document.createElement('div');
                 contentEl.innerHTML = arg.event.extendedProps.total_length === "5 minutes" ? ' -- ' + arg.event.title : arg.event.title;
                 divEl.appendChild(timeEl);
@@ -181,7 +185,7 @@ class TemplateConfigController {
 
     handleEventClick(info) {
         if (info.jsEvent.ctrlKey) {
-            const checkbox = info.el.querySelector('.multi-check');
+            const checkbox = info.el.querySelector('.calendar-select');
             if (checkbox) {
                 checkbox.checked = !checkbox.checked;
                 if (checkbox.checked) {
@@ -204,38 +208,64 @@ class TemplateConfigController {
     handleEventDrop(info) {
         const oldTime = moment(info.oldEvent.start);
         const difference = moment(info.event.start).diff(oldTime);
-        const index = this.dragEvents.indexOf(info.event.id);
-        this.dragEvents.splice(index, 1);
+        let courtId = this.courtId;
+        let initialId = info.event.id;
+        if (this.dragEvents.length > 0) {
+            this.dragEvents.forEach(id => {
+                var timeslotData = null;
+                let event = this.calendar.getEventById(id);
+                let timeslotId = null;
+                if (initialId == event.id) {
+                    timeslotId = parseInt(initialId);
+                    timeslotData = {
+                        id: timeslotId,
+                        start: this.formatLocalDateTime(info.event.start),
+                        end: this.formatLocalDateTime(info.event.end),
+                        courtId: courtId,
+                    };
+                } else {
+                   
+                    let newStart = moment(event.start).add(difference);
+                    let newEnd = moment(event.end).add(difference);
+                    timeslotId = parseInt(event.id);
+                    if (newStart.day() > 5 || newEnd.day() > 5) {
+                        newStart.day(5);
+                        newEnd.day(5);
+                    }
+                    if (newStart.day() < 1 || newEnd.day() < 1) {
+                        newStart.day(1);
+                        newEnd.day(1);
+                    }
+                    if (newStart.hour() < 8) {
+                        newStart.hour(8).minute(0);
+                    }
+                    if (newEnd.hour() > 17) {
+                        newEnd.hour(17).minute(0);
+                    }
+                    timeslotData = {
+                        id: timeslotId,
+                        start: newStart.format('YYYY-MM-DD HH:mm:ss'),
+                        end: newEnd.format('YYYY-MM-DD HH:mm:ss'),
+                        courtId: courtId,
+                    };
+                   // event.setDates(newStart.format(), newEnd.format());
+                }
+                this.updateMoveTimeslot(timeslotData);
+            });
+            this.dragEvents = [];
+            this.multi_timeslots = [];
 
-        this.dragEvents.forEach(id => {
-            let event = this.calendar.getEventById(id);
-            let newStart = moment(event.start).add(difference);
-            let newEnd = moment(event.end).add(difference);
-            if (newStart.day() > 5 || newEnd.day() > 5) {
-                newStart.day(5);
-                newEnd.day(5);
-            }
-            if (newStart.day() < 1 || newEnd.day() < 1) {
-                newStart.day(1);
-                newEnd.day(1);
-            }
-            if (newStart.hour() < 8) {
-                newStart.hour(8).minute(0);
-            }
-            if (newEnd.hour() > 17) {
-                newEnd.hour(17).minute(0);
-            }
-            event.setDates(newStart.format(), newEnd.format());
-            this.updateMoveTimeslot(event);
-        });
-
-        this.updateTimeslot(info);
+        } else {
+            const timeslotId = parseInt(info.event.id);
+            const timeslotData = {
+                id: timeslotId,
+                start: this.formatLocalDateTime(info.event.start),
+                end: this.formatLocalDateTime(info.event.end),
+                courtId: courtId,
+            };
+            this.updateMoveTimeslot(timeslotData);
+        }
     }
-
-    handleEventDragStop(info) {
-        $('#calendar input:checked').each((i, el) => this.dragEvents.push($(el).val()));
-    }
-
     handleMultiDeleteTimeslots(e) {
         e.preventDefault();
         if (this.multi_timeslots.length === 0) {
@@ -408,7 +438,7 @@ class TemplateConfigController {
             block_reason: $form.find('#block_reason').val(),
             description: $form.find('#description').val(),
             category_id: parseInt($form.find('#category_id').val()) || null,
-            timeslot_motions: tomSelect ? tomSelect.getValue().map(id => parseInt(id)) : [],
+            restricted_motions: tomSelect ? tomSelect.getValue().map(id => parseInt(id)) : [],
             cattlecall: $form.find('#cattlecall_yes').is(':checked') ? 1 : 0
         };
     }
@@ -476,7 +506,7 @@ class TemplateConfigController {
         });
     }
 
-    updateMoveTimeslot(event) {
+    updateMoveTimeslotold(event) {
         const timeslotData = {
             id: parseInt(event.id),
             start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
@@ -501,7 +531,30 @@ class TemplateConfigController {
             error: error => ShowNotification('Error Updating Timeslot', error.statusText, 'error')
         });
     }
-
+    updateMoveTimeslot(timeslotData) {
+        $.ajax({
+            url: `${this.service.baseUrl}TemplateAPI/UpdateTemplateTimeslotTime`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(timeslotData),
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: result => {
+                ShowNotification('Success', `Timeslots Moved Successfully.`, 'success');
+            },
+            error: jqXHR => {
+                let response = {};
+                try {
+                    response = JSON.parse(jqXHR.responseText);
+                } catch (e) {
+                    response.message = jqXHR.responseText || 'An unknown error occurred.';
+                }
+                ShowNotification('Error Updating Timeslots', response.message || 'An unknown error occurred.', 'error');
+            },
+            complete: () => {
+                this.calendar.refetchEvents();
+            }
+        });
+    }
     updateQuantity() {
         const toTime = moment($('#timeslot_end').val(), 'HH:mm', true);
         const fromTime = moment($('#timeslot_start').val(), 'HH:mm', true);
@@ -541,6 +594,9 @@ class TemplateConfigController {
 
     onModalClose() {
         this.resetForm();
+    }
+    formatLocalDateTime(date) {
+        return moment(date).format('YYYY-MM-DD HH:mm:ss');
     }
 
     setAjaxHeaders(xhr) {

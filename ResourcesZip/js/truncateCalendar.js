@@ -7,7 +7,7 @@ class CourtTruncateController {
         this.adminRole = config.adminRole;
         this.service = config.service;
         this.courtId = config.courtId;
-        this.cancelUrl = config.cancelUrl;
+        this.cancelUrl = `${config.cancelUrl}/cid/${config.courtId}`;
         courtTruncateControllerInstance = this;
     }
 
@@ -25,16 +25,17 @@ class CourtTruncateController {
         });
 
         // Form submission
-        $('#truncateForm').submit((e) => {
+        $('#btnTruncate').click((e) => {
             e.preventDefault();
             this.submitTruncateForm();
         });
+        this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
     }
 
     submitTruncateForm() {
+        var courtId = parseInt(this.courtId);
         var truncateDate = $('#txtTruncateDate').val();
-        var filter = $('#ddlFilter').val();
-        var courtId = $('#hdCourtId').val();
+        var filter = $('#ddlFilter input[type=radio]:checked').val();
 
         if (!truncateDate) {
             Swal.fire({
@@ -56,20 +57,20 @@ class CourtTruncateController {
         }).then((result) => {
             if (result.isConfirmed) {
                 $('#btnTruncate').prop('disabled', true).find('i').removeClass('fas fa-trash').addClass('fas fa-spinner fa-spin');
-
+                $('#btnTruncate').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas fa-trash');
                 $.ajax({
-                    url: `${this.service.baseUrl}CourtAPI/TruncateCalendar`,
+                    url: `${this.service.baseUrl}CourtAPI/TruncateTimeslots`,
                     type: 'POST',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify({
                         courtId: courtId,
-                        date: truncateDate,
+                        startDate: truncateDate,
                         filter: filter
                     }),
                     beforeSend: xhr => this.setAjaxHeaders(xhr),
                     success: (response) => {
-                        if (response.status === 200) {
+                        if (response.success) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success',
@@ -90,7 +91,7 @@ class CourtTruncateController {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: xhr.responseJSON?.message || 'An error occurred while truncating the calendar.'
+                            text: xhr.responseJSON || 'An error occurred while truncating the calendar.'
                         });
                     },
                     complete: () => {
@@ -107,5 +108,4 @@ class CourtTruncateController {
         xhr.setRequestHeader('TabId', this.service.framework.getTabId());
         xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
-
 }

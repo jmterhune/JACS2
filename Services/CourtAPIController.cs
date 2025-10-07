@@ -1,4 +1,6 @@
-﻿using DotNetNuke.Data;
+﻿using DocumentFormat.OpenXml.EMMA;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
@@ -13,6 +15,7 @@ using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
+using static tjc.Modules.jacs.Services.CourtTemplateAPIController;
 
 namespace tjc.Modules.jacs.Services
 {
@@ -333,7 +336,7 @@ namespace tjc.Modules.jacs.Services
                             return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid date format in templates." });
                         }
                     }
-                    else if(newTemplate.auto && newTemplate.order == null)
+                    else if (newTemplate.auto && newTemplate.order == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Week required for auto template." });
                     }
@@ -366,39 +369,108 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
-        [HttpPost]
+        [HttpGet]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage TruncateCalendar(JObject p1)
+        public HttpResponseMessage ExtendManual(long p1)
         {
             try
             {
-                long courtId = p1["courtId"].ToObject<long>();
-                DateTime date = DateTime.Parse(p1["date"].ToString()).Date;
-                string filter = p1["filter"].ToString().ToLower();
-
-                var timeslotCtl = new TimeslotController();
-                var eventCtl = new EventController();
-                var courtCtl = new CourtController();
-                var courtTimeslotCtl = new CourtTimeslotController();
-                var timeslots = courtTimeslotCtl.GetCourtTimeslotsByCourtId(courtId)
-                    .Where(ct => ct.Timeslot.start >= date)
-                    .ToList();
-
-                foreach (var ct in timeslots)
+                UserInfo currentUser = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+                if (currentUser == null)
                 {
-                    var ts = ct.Timeslot;
-                    if (filter == "all" || (filter == "reserved" && ts.quantity > 0) || (filter == "unreserved" && ts.quantity == 0))
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to perform this action." });
+                }
+
+                long courtId = (long)p1;
+                if (courtId <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Court ID is required." });
+                }
+
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(courtId);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
+                }
+
+                var judge = court.GetJudge();
+                var permissionCtl = new CourtPermissionController();
+                var hasPermission = permissionCtl.HasCourtPermission(currentUser.UserID, judge.id);
+                if (!hasPermission && !currentUser.IsAdmin)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new { status = 403, message = "You do not have permission to perform this action." });
+                }
+
+                var orderCtl = new CourtTemplateOrderController();
+                var manualTemplateOrders = orderCtl.GetManualTemplateOrders(courtId, court.calendar_weeks);
+                var timeCtl = new TimeslotController();
+                var courtTimeslotCtl = new CourtTimeslotController();
+                var holidayCtl = new HolidayController();
+                var holidays = holidayCtl.GetHolidays().ToList();
+
+                foreach (var courtTemplateOrder in manualTemplateOrders)
+                {
+                    if (!courtTemplateOrder.template_id.HasValue) continue;
+
+                    CourtTemplate template = courtTemplateOrder.template;
+                    if (template == null) continue;
+
+                    // Assuming courtTemplateOrder.date is the start of the week; no formatting needed as it's DateTime
+                    DateTime week = courtTemplateOrder.date.Value.Date;
+
+                    var timeslots = template.template_timeslots;
+
+                    for (int x = 0; x < 5; x++)
                     {
-                        var events = eventCtl.GetEventsByTimeslot(ts.id);
-                        foreach (var ev in events)
+                        DateTime dayDate = week.Date;
+                        string dayString = week.ToString("yyyy-MM-dd");
+
+                        var dayTimeslots = timeslots.Where(ts => ts.day == x + 1);
+
+                        foreach (var timeslot in dayTimeslots)
                         {
-                            eventCtl.DeleteEvent(ev.id);
+                            DateTime start = dayDate.Add(timeslot.start.TimeOfDay);
+                            DateTime end = dayDate.Add(timeslot.end.TimeOfDay);
+
+                            if (!holidays.Any(h => h.date.ToString("yyyy-MM-dd") == dayString))
+                            {
+                                // Check if match exists
+                                bool matchExists = timeCtl.TimeslotExists(p1, start, courtTemplateOrder.template_id);
+
+                                if (!matchExists)
+                                {
+                                    var newTimeslot = new Timeslot
+                                    {
+                                        start = start,
+                                        end = end,
+                                        description = timeslot.description,
+                                        allDay = timeslot.allDay,
+                                        duration = timeslot.duration,
+                                        quantity = timeslot.quantity,
+                                        blocked = timeslot.blocked,
+                                        block_reason = timeslot.block_reason,
+                                        public_block = timeslot.public_block,
+                                        category_id = timeslot.category_id,
+                                        template_id = courtTemplateOrder.template_id
+                                    };
+
+                                    timeCtl.CreateTimeslot(newTimeslot);
+                                    // Assuming always created if !exists, so always create CourtTimeslot
+                                    var newCourtTimeslot = new CourtTimeslot
+                                    {
+                                        court_id = courtTemplateOrder.court_id,
+                                        timeslot_id = newTimeslot.id
+                                    };
+                                    courtTimeslotCtl.CreateCourtTimeslot(newCourtTimeslot);
+                                }
+                            }
                         }
-                        timeslotCtl.DeleteTimeslot(ts.id);
+                        week = week.AddDays(1);
                     }
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Calendar truncated successfully" });
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Extending Successful" });
             }
             catch (Exception ex)
             {
@@ -406,103 +478,38 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
-        public HttpResponseMessage TruncateTimeslots(TruncateRequest request)
+        public HttpResponseMessage AutoExtend(ExtendRequest request)
         {
-          var timeslotSQL="select [timeslots].*, [court_timeslots].[court_id] as [laravel_through_key] from [timeslots] inner join [court_timeslots] on [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 and [start] >= @1";
             try
             {
                 var courtCtl = new CourtController();
-                courtCtl.TruncateTimeslots(request.CourtId, request.StartDate, request.Filter);
-                using (IDataContext ctx = DataContext.Instance("jacs"))
-                {
-                    string timeslotFilter = string.Empty;
-                    bool handleEvents = false;
+                var court = courtCtl.GetCourt(request.CourtId);
+                var extensionResponse = courtCtl.AutoExtendCalendar( request,court);
+                return Request.CreateResponse(HttpStatusCode.OK, extensionResponse);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ExtendResponse { success = false, message = "Auto Extend Failed! Error: " + ex.Message });
+            }
+        }
 
-                    switch (request.Filter)
-                    {
-                        case "all":
-                            handleEvents = true;
-                            break;
-                        case "hearings":
-                            timeslotFilter = " AND NOT EXISTS (SELECT 1 FROM timeslot_events te WHERE te.timeslot_id = ts.id)";
-                            break;
-                        case "templates":
-                            timeslotFilter = " AND ts.template_id IS NOT NULL AND ts.blocked = 0";
-                            handleEvents = true; // Added to prevent potential FK issues, even if not in PHP
-                            break;
-                        case "both":
-                            timeslotFilter = " AND ts.template_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM timeslot_events te WHERE te.timeslot_id = ts.id)";
-                            break;
-                        default:
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid filter");
-                    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage TruncateTimeslots(TruncateRequest request)
+        {
+            try
+            {
+                var courtCtl = new CourtController();
+                var response = courtCtl.TruncateTimeslots(request.CourtId, request.StartDate, request.Filter);
 
-                    if (handleEvents)
-                    {
-                        // Update events
-                        ctx.Execute(CommandType.Text,
-                            @"UPDATE e SET status_id = 1 
-                      FROM events e 
-                      INNER JOIN timeslot_events te ON e.id = te.event_id 
-                      INNER JOIN timeslots ts ON te.timeslot_id = ts.id 
-                      WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
-                            request.CourtId, request.StartDate);
-
-                        // Delete timeslot_events
-                        ctx.Execute(CommandType.Text,
-                            @"DELETE te 
-                      FROM timeslot_events te 
-                      INNER JOIN timeslots ts ON te.timeslot_id = ts.id 
-                      WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
-                            request.CourtId, request.StartDate);
-                    }
-
-                    // Delete motions
-                    ctx.Execute(CommandType.Text,
-                        @"DELETE m 
-                  FROM timeslot_motions m 
-                  INNER JOIN timeslots ts ON m.timeslot_id = ts.id 
-                  WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
-                        request.CourtId, request.StartDate);
-
-                    // Delete timeslots
-                    ctx.Execute(CommandType.Text,
-                        @"DELETE ts 
-                  FROM timeslots ts 
-                  WHERE ts.court_id = @0 AND ts.start >= @1" + timeslotFilter,
-                        request.CourtId, request.StartDate);
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Truncate Successful" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response.Success, message = response.Error });
             }
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
-        }
-        public class TruncateRequest
-        {
-            public int CourtId { get; set; }
-            public DateTime StartDate { get; set; }
-            public string Filter { get; set; }
-        }
-        internal class CourtSearchResult
-        {
-            public List<CourtViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class CourtResult
-        {
-            public CourtViewModel data { get; set; }
-            public string error { get; set; }
         }
 
         private string GetSortColumn(int columnIndex)

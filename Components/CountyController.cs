@@ -47,7 +47,7 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<County>();
                 t = rep.Get();
             }
-            return t.Select(c=>new KeyValuePair<long, string>(c.id,c.name)).ToList();
+            return t.Select(c=>new KeyValuePair<long, string>(c.id,c.name)).OrderBy(c=>c.Value).ToList();
         }
         public County GetCounty(long countyId)
         {

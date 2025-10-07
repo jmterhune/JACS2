@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DotNetNuke.Common.Utilities;
@@ -27,12 +28,21 @@ namespace tjc.Modules.jacs.Components
                 rep.Insert(t);
             }
         }
-        public void DeleteTimeslot(long timeslotId)
+        public void DeleteTimeslot(long timeslotId, bool dbDelete)
         {
             var t = GetTimeslot(timeslotId);
             if (t != null)
             {
-                DeleteTimeslot(t);
+                if (dbDelete)
+                {
+                    DeleteTimeslot(t);
+                }
+                else
+                {
+                    t.deleted_at = DateTime.Now;
+                    t.updated_at = DateTime.Now;
+                    UpdateTimeslot(t);
+                }
             }
         }
         public void DeleteTimeslot(Timeslot t)
@@ -58,12 +68,37 @@ namespace tjc.Modules.jacs.Components
                 return rep.Get();
             }
         }
-        public IEnumerable<Timeslot> GetTimeslotsForDashboardByJudge(long judgeId)
+        public long GetCourtIdByTimeslotId(long timeslotId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<long>(
+                    System.Data.CommandType.Text,
+                    "SELECT court_id FROM court_timeslots WHERE timeslot_id = @0",
+                    timeslotId
+                );
+            }
+        }
+        public bool TimeslotExists(long courtId, DateTime start, long? templateId)
+        {
+            if (!templateId.HasValue) return false;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<long>(System.Data.CommandType.Text,
+                    @"SELECT COUNT(*) FROM timeslots t 
+              INNER JOIN court_timeslots ct ON ct.timeslot_id = t.id 
+              WHERE ct.court_id = @0 AND t.start = @1 AND t.template_id = @2 AND t.deleted_at is null",
+                    courtId, start, templateId.Value) > 0;
+            }
+        }
+        public IEnumerable<TimeslotListItem> GetTimeslotsForDashboardByJudge(long judgeId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 15 * FROM [timeslots] 
+                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id FROM [timeslots] 
+                        INNER JOIN [court_timeslots] ON [court_timeslots].[timeslot_id] = [timeslots].[id]
+                        INNER JOIN [courts] ct ON ct.id = [court_timeslots].[court_id]
                     WHERE EXISTS (
                         SELECT * FROM [courts] 
                         INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
@@ -75,15 +110,17 @@ namespace tjc.Modules.jacs.Components
                     ) 
                     AND [start] >= GETDATE() AND [timeslots].[deleted_at] IS NULL 
                     ORDER BY [start] DESC";
-                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, judgeId);
+                return ctx.ExecuteQuery<TimeslotListItem>(System.Data.CommandType.Text, query, judgeId);
             }
         }
-        public IEnumerable<Timeslot> GetTimeslotsForDashboard(long userId)
+        public IEnumerable<TimeslotListItem> GetTimeslotsForDashboard(long userId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 15 * FROM [timeslots] 
+                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id FROM [timeslots] 
+                        INNER JOIN [court_timeslots] ON [court_timeslots].[timeslot_id] = [timeslots].[id]
+                        INNER JOIN [courts] ct ON ct.id = [court_timeslots].[court_id]
                     WHERE EXISTS (
                         SELECT * FROM [courts] 
                         INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
@@ -100,10 +137,33 @@ namespace tjc.Modules.jacs.Components
                     ) 
                     AND [start] >= GETDATE() AND [timeslots].[deleted_at] IS NULL 
                     ORDER BY [start] DESC";
-                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, userId);
+                return ctx.ExecuteQuery<TimeslotListItem>(System.Data.CommandType.Text, query, userId);
             }
         }
-        public IEnumerable<Timeslot> GetTimeslotsByCourtIdAfterDate(long courtId, DateTime date)
+        public IEnumerable<TimeslotListItem> GetTimeslotsForDashBoardByAdmin()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id FROM [timeslots] 
+                        INNER JOIN [court_timeslots] ON [court_timeslots].[timeslot_id] = [timeslots].[id]
+                        INNER JOIN [courts] ct ON ct.id = [court_timeslots].[court_id]
+                    WHERE EXISTS (
+                        SELECT * FROM [courts] 
+                        INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                        WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                        EXISTS (
+                            SELECT * FROM [judges] 
+                            WHERE [courts].[id] = [judges].[court_id]
+                        )
+                    ) 
+                    AND [start] >= GETDATE() AND [timeslots].[deleted_at] IS NULL 
+                    ORDER BY [start] DESC";
+                return ctx.ExecuteQuery<TimeslotListItem>(System.Data.CommandType.Text, query);
+            }
+        }
+
+        public IEnumerable<TimeslotListItem> GetTimeslotsByCourtIdAfterDate(long courtId, DateTime date)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -112,7 +172,7 @@ namespace tjc.Modules.jacs.Components
                     FROM timeslots ts
                     INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id
                     WHERE ct.court_id = @0 AND ts.start >= @1 AND ts.deleted_at IS NULL";
-                var timeslots = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, date.ToString("yyyy-MM-dd HH:mm:ss"));
+                var timeslots = ctx.ExecuteQuery<TimeslotListItem>(System.Data.CommandType.Text, query, courtId, date.ToString("yyyy-MM-dd HH:mm:ss"));
                 // Load related TimeslotEvents if needed for filtering
                 var teCtl = new TimeslotEventController();
                 foreach (var ts in timeslots)
@@ -154,6 +214,19 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteSingleOrDefault<Timeslot>(System.Data.CommandType.Text, query, id);
             }
         }
+        public Timeslot GetLastTemplateTimeslot(long id)
+        {
+            Timeslot lastTemplateTimeslot;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                lastTemplateTimeslot = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text,
+            @"SELECT TOP 1 t.* FROM timeslots t INNER JOIN court_timeslots ct ON ct.timeslot_id = t.id 
+              WHERE ct.court_id = @0 AND t.template_id IS NOT NULL 
+              ORDER BY t.start DESC",
+            id).FirstOrDefault();
+            }
+            return lastTemplateTimeslot;
+        }
         public void UpdateTimeslot(Timeslot t)
         {
             ValidateTimeslot(t);
@@ -165,24 +238,23 @@ namespace tjc.Modules.jacs.Components
                 rep.Update(t);
             }
         }
-        public IEnumerable<Timeslot> GetTimeslotsForDashBoardByAdmin()
+
+        public List<long> GetScheduledEvents(long courtId, DateTime date)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var query = @"
-                    SELECT TOP 15 * FROM [timeslots] 
-                    WHERE EXISTS (
-                        SELECT * FROM [courts] 
-                        INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
-                        WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
-                        EXISTS (
-                            SELECT * FROM [judges] 
-                            WHERE [courts].[id] = [judges].[court_id]
-                        )
-                    ) 
-                    AND [start] >= GETDATE() AND [timeslots].[deleted_at] IS NULL 
-                    ORDER BY [start] DESC";
-                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query);
+                string query = @"
+                    SELECT e.id FROM events e
+                    INNER JOIN timeslot_events te ON te.event_id = e.id
+                    INNER JOIN timeslots ts ON ts.id = te.timeslot_id
+                    INNER JOIN court_timeslots ct ON ct.timeslot_id = ts.id
+                    WHERE ct.court_id = @0
+                    AND DAY(ts.start) = @1 AND MONTH(ts.start) = @2 AND YEAR(ts.start) = @3
+                    AND e.status_id != 2
+                    AND ts.blocked = 0
+                    AND te.deleted_at IS NULL
+                    AND ts.deleted_at IS NULL";
+                return ctx.ExecuteQuery<long>(System.Data.CommandType.Text, query, courtId, date.Day, date.Month, date.Year).ToList();
             }
         }
         public IEnumerable<CustomTimeslot> GetTimeslotsByCourtId(long courtId, DateTime start, DateTime end)
@@ -198,7 +270,7 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"), end.ToString("yyyy-MM-dd HH:mm:ss"));
             }
         }
-        public IEnumerable<CustomTimeslot> GetAvailableTimeslotsByCourtId(long courtId, DateTime start,int duration,long motionId)
+        public IEnumerable<CustomTimeslot> GetAvailableTimeslotsByCourtId(long courtId, DateTime start, int duration, long motionId)
         {
             DateTime nextMonthStart = new DateTime(start.AddMonths(1).Year, start.AddMonths(1).Month, 1);
             string endDate = nextMonthStart.ToString("yyyy-MM-dd HH:mm:ss");
@@ -214,7 +286,7 @@ namespace tjc.Modules.jacs.Components
                             WHERE t.[id] = [timeslot_motions].[timeslotable_id] 
                                 AND [timeslot_motions].[timeslotable_type] = 'App\Models\Timeslot' AND [motion_id] = @4))
                     ORDER BY t.start";
-                return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"),endDate,duration, motionId);
+                return ctx.ExecuteQuery<CustomTimeslot>(System.Data.CommandType.Text, query, courtId, start.ToString("yyyy-MM-dd HH:mm:ss"), endDate, duration, motionId);
             }
         }
         public long[] GetRestrictedMotionsForTimeslot(long timeslotId)
@@ -287,7 +359,7 @@ namespace tjc.Modules.jacs.Components
                     "DELETE FROM timeslot_motions WHERE timeslotable_type = 'Timeslot' AND timeslotable_id = @0",
                     timeslotId);
                 DataCache.ClearCache("TimeslotMotions");
-                
+
             }
         }
         public IEnumerable<TimeslotMotion> GetTimeslotMotions(long timeslotId)
@@ -342,7 +414,7 @@ namespace tjc.Modules.jacs.Components
         }
         private long[] GetUserCourts(int userId)
         {
-            using (IDataContext ctx = DataContext.Instance("jacs"))
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 string query = @"
                     SELECT DISTINCT c.id 
@@ -391,13 +463,13 @@ namespace tjc.Modules.jacs.Components
 
         internal IEnumerable<Timeslot> GetTimeslotsByCourtAndDate(long courtId, DateTime date)
         {
-            using (IDataContext ctx = DataContext.Instance("jacs"))
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 string query = @"
                     select [timeslots].* from [timeslots] inner join [court_timeslots] on 
                         [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 
                             and cast([start] as date) = @1 and [timeslots].[deleted_at] is null";
-                var courts = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId,date);
+                var courts = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text, query, courtId, date);
                 return courts.ToArray();
             }
             throw new NotImplementedException();

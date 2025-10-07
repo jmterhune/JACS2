@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using tjc.Modules.jacs.Components;
 
@@ -151,5 +152,13 @@ namespace tjc.Modules.jacs.Services.ViewModels
             }
             return string.Empty;
         }
+    }
+    internal class ExtendViewModel
+    {
+        public Court Court { get; set; }
+        public DateTime? LastTimeslot { get; set; }
+        public DateTime? LastHearing { get; set; }
+        public Timeslot LastTemplateTimeslot { get; set; }
+        public List<CourtTemplateOrder> Templates { get; set; }
     }
 }

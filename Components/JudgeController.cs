@@ -64,7 +64,7 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<Judge>();
                 var results = rep.Find("Where court_id in (Select court_id from dbo.getUserCourtViewPermissions(@0))",userId)
-                       .Select(j => new KeyValuePair<long, string>(j.court_id.Value, j.name)).ToList();
+                       .Select(j => new KeyValuePair<long, string>(j.court_id.Value, j.name)).OrderBy(j=>j.Value).ToList();
                 return results ?? new List<KeyValuePair<long, string>>();
             }
         }
@@ -76,7 +76,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var rep = ctx.GetRepository<Judge>();
                     var results = rep.Get()
-                        .Select(j => new KeyValuePair<long, string>(j.id, j.name)).ToList();
+                        .Select(j => new KeyValuePair<long, string>(j.id, j.name)).OrderBy(j => j.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
                 }
             }

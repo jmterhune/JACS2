@@ -49,7 +49,7 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<EventStatus>();
                 t = rep.Get();
             }
-            return t.Select(es=>new KeyValuePair<long, string>(es.id,es.name)).ToList();
+            return t.Select(es => new KeyValuePair<long, string>(es.id, es.name)).OrderBy(es => es.Value).ToList();
         }
         public EventStatus GetEventStatus(long eventStatusId)
         {

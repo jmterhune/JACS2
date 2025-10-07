@@ -94,8 +94,8 @@ namespace tjc.Modules.jacs
         public string CourtPermissionListUrl { get { return EditUrl("court-permission"); } }
         public string DocketPrintUrl { get { return EditUrl("docket-print"); } }
         public string EventListUrl { get { return EditUrl("event"); } }
-        public string EventEditUrl { get { return EditUrl("event-edit"); } }
-        public string EventCalendarUrl { get { return EditUrl("event-calendar"); } }
+        //public string EventEditUrl { get { return EditUrl("event-edit"); } }
+        //public string EventCalendarUrl { get { return EditUrl("event-calendar"); } }
         public string EventStatusListUrl { get { return EditUrl("event-status"); } }
         public string EventTypeListUrl { get { return EditUrl("event-type"); } }
         public string HolidayListUrl { get { return EditUrl("holiday"); } }

@@ -13,7 +13,6 @@ class EventController {
         this.recordCount = options.recordCount || 0;
         this.sortColumnIndex = options.sortColumnIndex || 1;
         this.sortDirection = options.sortDirection || 'asc';
-        this.revisionsUrl = options.revisionsUrl;
         this.table = null;
         eventControllerInstance = this;
     }
@@ -110,17 +109,11 @@ class EventController {
                 { data: "duration" },
                 { data: "court_name" },
                 { data: "status_name" },
-                { data: "attorney" },
+                { data: "attorney_name" },
                 { data: "opp_attorney_name" },
                 { data: "plaintiff" },
                 { data: "defendant" },
                 { data: "category_name" },
-                {
-                    data: "id",
-                    orderable: false,
-                    searchable: false,
-                    render: data => `<a href="${this.revisionsUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-history"></i> Revisions</a>`
-                }
             ],
             order: [[this.sortColumnIndex, this.sortDirection]],
             pageLength: this.pageSize,

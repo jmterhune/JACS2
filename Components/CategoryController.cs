@@ -54,7 +54,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var rep = ctx.GetRepository<Category>();
                     var results = rep.Find("WHERE description LIKE @0", $"%{searchTerm}%")
-                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).OrderBy(c=>c.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
                 }
             }

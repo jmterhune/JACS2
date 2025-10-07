@@ -9,7 +9,7 @@
     <h2 class="mb-0">Court Calendar</h2>
 </section>
 <div class="d-flex">
-    <tb:navbar runat="server" ID="navbar" />
+    <tb:navbar runat="server" id="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
         <h3 class="mb-2">Court Name: <span class="text-capitalize">
             <asp:Literal ID="ltCourtName" runat="server" /></span></h3>
@@ -25,7 +25,7 @@
             <div class="calendar-actions d-inline-block">
                 <a href="#" class="btn btn-default" id="deleteTimeslotsBtn"><i class="fas fa-trash"></i>Delete Timeslot(s)</a>
                 <a href="#" class="btn btn-default" id="copyTimeslotsBtn"><i class="fas fa-copy"></i>Copy Timeslot(s)</a>
-                <a href="#" class="btn btn-secondary" id="printCalendarBtn"><i class="fas fa-print"></i>Print Calendar View</a>
+                <button type="button" style="display: none;" id="printCalendarBtn" class="btn btn-secondary" onclick="window.print()"><i class="fas fa-print"></i>Print Calendar View</button>
             </div>
         </div>
 
@@ -374,18 +374,18 @@
         </div>
     </div>
 </div>
-<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
-<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtcalendar.js" ForceProvider="DnnFormBottomProvider" Priority="102" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/moment/moment.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Bootstrap/bootstrap-datepicker.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Bootstrap/bootstrap-datepicker.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.default.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/TomSelect/tom-select.complete.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/fullcalendar/dist/index.global.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" forceprovider="DnnFormBottomProvider" priority="100" />
+<dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/JACS/js/courtcalendar.js" forceprovider="DnnFormBottomProvider" priority="102" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/moment/moment.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap-datepicker.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap-datepicker.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/TomSelect/tom-select.default.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/TomSelect/tom-select.complete.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/fullcalendar/dist/index.global.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Noty/noty.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/Noty/noty.min.css" />
 <script>
     var moduleId = <%=ModuleId%>;
     var service = {
@@ -407,8 +407,10 @@
                     adminRole: "<%=AdminRole%>",
                     service: service,
                     courtEditUrl: "<%=CourtEditUrl%>",
+                    calendarUrl: "<%=CourtCalendarUrl%>",
                     userDefinedFieldUrl: "<%=UserDefinedFieldUrl%>",
                     truncateCalendarUrl: "<%=TruncateCalendarUrl%>",
+                    calendarItem:<%=JsonCalendarItem%>
                 });
                 courtCalendarController.init();
             } catch (e) {

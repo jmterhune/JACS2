@@ -54,7 +54,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public string FormattedStart
+        public string formatted_start
         {
             get
             {
@@ -211,10 +211,9 @@ namespace tjc.Modules.jacs.Components
                 var end = this.end;
                 double diff = (end - start).TotalMinutes;
                 int available = quantity * duration;
-                string host = HttpContext.Current?.Request.ServerVariables["SERVER_NAME"] ?? string.Empty;
                 int eventsCount = events?.Count() ?? 0;
 
-                if (available > diff && host != "jacs.flcourts18.net" && eventsCount != quantity)
+                if (available > diff && eventsCount != quantity)
                 {
                     color = blocked ? "#808080" : "#dc3545";
                 }
@@ -263,8 +262,8 @@ namespace tjc.Modules.jacs.Components
                 return string.Join(" ", parts.Take(2));
             }
         }
-        [IgnoreColumn]
-        public string TableDisplay => $"{this.start.ToString("MM/dd/yyyy")} @ {this.start.ToString("h:mm tt").ToLower()}";
+        //[IgnoreColumn]
+        //public string TableDisplay => $"{this.start.ToString("MM/dd/yyyy")} @ {this.start.ToString("h:mm tt").ToLower()}";
 
         [IgnoreColumn]
         public string CategoryTable => Category?.description ?? "-";
@@ -282,7 +281,7 @@ namespace tjc.Modules.jacs.Components
 
     internal class CustomTimeslot : Timeslot
     {
-        public int eventCount { get; set; }
+        public int eventCount { get { return this.events.Count(); } }
         public string reschedule_title { get; set; }
     }
     internal class TimeslotListResult
@@ -295,5 +294,17 @@ namespace tjc.Modules.jacs.Components
     internal class TimeslotListItem : CustomTimeslot
     {
         public string court_name { get; set; }
+        public long court_id { get; set; }
+    }
+    internal class MonthlySummaryItem
+    {
+        public DateTime start { get; set; }
+        public DateTime end { get; set; }
+        public bool allDay { get; set; }
+        public string title { get; set; }
+        public int tCount { get; set; }
+        public string color { get; set; }
+        public int order { get; set; }
+        public string timeslotDescription { get; set; }
     }
 }

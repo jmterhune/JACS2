@@ -45,12 +45,21 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public void DeleteCourtTemplate(long courttemplateId)
+        public void DeleteCourtTemplate(long courttemplateId,bool dbDelete)
         {
             var t = GetCourtTemplate(courttemplateId);
             if (t != null)
             {
-                DeleteCourtTemplate(t);
+                if(dbDelete)
+                {
+                    DeleteCourtTemplate(t);
+                }
+                else
+                {
+                    t.updated_at = DateTime.Now;
+                    t.deleted_at = DateTime.Now;
+                    UpdateCourtTemplate(t);
+                }
             }
         }
 
@@ -133,7 +142,7 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<CourtTemplate>();
                 var templates = rep.Get();
-                return templates.Select(temp => new KeyValuePair<long, string>(temp.id, temp.name)).ToList();
+                return templates.Select(temp => new KeyValuePair<long, string>(temp.id, temp.name)).OrderBy(temp => temp.Value).ToList();
             }
         }
         public List<KeyValuePair<long, string>> GetCourtTemplateDropDownItems(long courtId)
@@ -143,7 +152,7 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<CourtTemplate>();
                 var templates = rep.Find("Where court_id=@0 AND deleted_at IS NULL",courtId);
                 
-                return templates.Select(temp => new KeyValuePair<long, string>(temp.id, temp.name)).ToList();
+                return templates.Select(temp => new KeyValuePair<long, string>(temp.id, temp.name)).OrderBy(temp => temp.Value).ToList();
             }
         }
 

@@ -62,7 +62,7 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.Find("Where name like @0 OR bar_num like @1", string.Format("%{0}%",term), string.Format("{0}%", term));
             }
-            return t.Select(a=>new KeyValuePair<long,string>(a.id,string.Format("{0} - {1}",a.name,a.bar_num))).ToList();
+            return t.Select(a=>new KeyValuePair<long,string>(a.id,string.Format("{0} - {1}",a.name,a.bar_num))).OrderBy(a=>a.Value).ToList();
         }
         public Attorney GetAttorney(long attorneyId)
         {

@@ -74,7 +74,6 @@ To add an event, use the Court's Calendar tool. </div>
                     <th>Plaintiff</th>
                     <th>Defendant</th>
                     <th>Category</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,9 +123,8 @@ To add an event, use the Court's Calendar tool. </div>
                     userId: <%=UserId%>,
                     isAdmin: "<%=IsAdmin%>",
                     adminRole: "<%=AdminRole%>",
-                    editUrl: "<%=EventEditUrl%>",
-                    calendarUrl: "<%=EventCalendarUrl%>",
-                    revisionsUrl: "<%=EventRevisionUrl%>",
+                    editUrl: "<%=CourtCalendarUrl%>",
+                    calendarUrl: "<%=CourtCalendarUrl%>",
                     service: service,
                     currentPage: 0,
                     pageSize: 25,

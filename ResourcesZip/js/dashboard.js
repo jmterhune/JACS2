@@ -4,7 +4,7 @@ class DashboardController {
         this.moduleId = options.moduleId || -1;
         this.service = options.service || null;
         this.eventEditUrl = options.eventEditUrl;
-        this.eventRevisionUrl = options.eventRevisionUrl;
+        this.timeslotEditUrl = options.timeslotEditUrl;
         this.userId = options.userId || -1;
         this.isJudge = options.isJudge || false;
         dashboardControllerInstance = this;
@@ -38,7 +38,7 @@ class DashboardController {
             columns: [
                 {
                     data: "id",
-                    render: data => `<a href="${this.editUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-pencil"></i></a>`,
+                    render: data => `<a href="${this.eventEditUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-pencil"></i></a>`,
                     className: "command-item",
                     orderable: false,
                     searchable: false
@@ -118,7 +118,7 @@ class DashboardController {
             columns: [
                 {
                     data: "id",
-                    render: data => `<a href="${this.editUrl}/sid/${data}" class="btn-command edit-timeslot"><i class="fas fa-pencil"></i></a>`,
+                    render: data => `<a href="${this.timeslotEditUrl}/sid/${data}" class="btn-command edit-timeslot"><i class="fas fa-pencil"></i></a>`,
                     className: "command-item",
                     orderable: false,
                     searchable: false
@@ -129,7 +129,7 @@ class DashboardController {
                     searchable: false
                 },
                 {
-                    data: "FormattedStart", orderable: false,
+                    data: "formatted_start", orderable: false,
                     searchable: false
                 },
                 {

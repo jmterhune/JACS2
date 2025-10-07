@@ -51,11 +51,11 @@ namespace tjc.Modules.jacs.Components
         public KeyValuePair<long, string> def_attorney_item { get; set; }
         [IgnoreColumn]
         public KeyValuePair<long, string> opp_attorney_item { get; set; }
-       
-        public List<KeyValuePair<long, string>> GetCourtMotionDropDownItems(long id,bool allowed)
+
+        public List<KeyValuePair<long, string>> GetCourtMotionDropDownItems(long id, bool allowed)
         {
             var ctl = new CourtMotionController();
-            return ctl.GetCourtMotionDropDownItems(id,allowed);
+            return ctl.GetCourtMotionDropDownItems(id, allowed);
         }
         public IEnumerable<CourtMotion> GetCourtMotions(long id)
         {
@@ -80,8 +80,8 @@ namespace tjc.Modules.jacs.Components
         public Judge GetJudge()
         {
             var ctl = new JudgeController();
-            var judge= ctl.GetJudgeByCourt(id);
-            if (judge!=null)
+            var judge = ctl.GetJudgeByCourt(id);
+            if (judge != null)
             {
                 return judge;
             }
@@ -99,4 +99,44 @@ namespace tjc.Modules.jacs.Components
     {
         public long court_id { get; set; }
     }
+    public class TruncateResponse
+    {
+        public bool Success { get; set; }
+        public string Error { get; set; }
+    }
+    public class TruncateRequest
+    {
+        public int CourtId { get; set; }
+        public DateTime StartDate { get; set; }
+        public string Filter { get; set; }
+    }
+    public class ExtendRequest
+    {
+        public long CourtId { get; set; }
+        public long StartTemplateId { get; set; }
+        public DateTime StartDate { get; set; }
+        public int Weeks { get; set; }
+    }
+    public class ExtendResponse
+    {
+        public bool success { get; set; }
+        public string message { get; set; }
+        public int extendedCount { get; set; }
+    }
+
+    internal class CourtSearchResult
+    {
+        public List<CourtViewModel> data { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
+    }
+    
+    internal class CourtResult
+    {
+        public CourtViewModel data { get; set; }
+        public string error { get; set; }
+    }
+
 }

@@ -152,9 +152,6 @@ namespace tjc.Modules.jacs.Services
                 existingTimeslot.updated_at = DateTime.Now;
                 existingTimeslot.start = DateTime.SpecifyKind(timeslot.start, DateTimeKind.Local);
                 existingTimeslot.end = DateTime.SpecifyKind(timeslot.end, DateTimeKind.Local);
-                var minutesDifference = (int)(existingTimeslot.end - existingTimeslot.start).TotalMinutes;
-                var quantity = minutesDifference / existingTimeslot.duration;
-                existingTimeslot.quantity = quantity > 0 ? quantity : 1; // Ensure at least one slot
 
                 ctl.UpdateTemplateTimeslot(existingTimeslot);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Template timeslot updated successfully" });

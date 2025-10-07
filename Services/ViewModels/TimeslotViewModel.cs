@@ -12,7 +12,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             id = timeslotData.id;
             end = timeslotData.end;
             start = timeslotData.start;
-            FormattedStart= timeslotData.FormattedStart;
+            formatted_start= timeslotData.formatted_start;
             allDay = timeslotData.allDay;
             quantity = timeslotData.quantity;
             duration = timeslotData.duration;
@@ -25,6 +25,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             updated_at = timeslotData.updated_at;
             deleted_at = timeslotData.deleted_at;
             court_name = timeslotData.court_name;
+            court_id = timeslotData.court_id;
             event_count = timeslotData.timeslot_events.Count;
             available=timeslotData.available;
             description = timeslotData.description ?? string.Empty;
@@ -35,7 +36,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             id = timeslotData.id;
             end = timeslotData.end;
             start = timeslotData.start;
-            FormattedStart = timeslotData.FormattedStart;
+            formatted_start = timeslotData.formatted_start;
             allDay = timeslotData.allDay;
             quantity = timeslotData.quantity;
             duration = timeslotData.duration;
@@ -59,8 +60,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public DateTime end { get; set; }
         [JsonProperty("start")]
         public DateTime start { get; set; }
-        [JsonProperty("FormattedStart")]
-        public string FormattedStart { get; set; }
+        [JsonProperty("formatted_start")]
+        public string formatted_start { get; set; }
         [JsonProperty("description")]
         public string description { get; set; }
         [JsonProperty("allDay")]
@@ -89,6 +90,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public bool available { get; set; }
         [JsonProperty("court_name")]
         public string court_name { get; set; }
+        [JsonProperty("court_id")]
+        public long court_id { get; set; }
         [JsonProperty("event_count")]
         public int event_count { get; set; }
     }

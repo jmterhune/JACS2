@@ -52,7 +52,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var rep = ctx.GetRepository<event_type>();
                     var results = rep.Find("WHERE name LIKE @0", $"%{searchTerm}%")
-                        .Select(c => new KeyValuePair<long, string>(c.id, c.name)).ToList();
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.name)).OrderBy(c=>c.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
                 }
             }

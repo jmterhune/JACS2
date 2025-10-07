@@ -93,12 +93,20 @@ namespace tjc.Modules.jacs.Components
                 }
             }
         }
-        public IEnumerable<CourtTemplateOrder> GetManualTemplateOrders(long courtId)
+        public IEnumerable<CourtTemplateOrder> GetManualTemplateOrders(long courtId,int weeks)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
-                return rep.Find("Where court_id = @0 AND auto = 0", courtId).OrderBy(to => to.date);
+                return rep.Find("WHERE court_id = @0 AND auto = 0 AND date >= @1 ORDER BY date", courtId,DateTime.Today).Take(weeks);
+            }
+        }
+        public  IEnumerable<CourtTemplateOrder> GetAutoCourtTemplateOrders(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var repo = ctx.GetRepository<CourtTemplateOrder>();
+                return repo.Find("WHERE court_id = @0 AND auto = 1 ORDER BY [order]", courtId);
             }
         }
         public CourtTemplateOrder GetCourtTemplateOrder(long courttemplateorderId)
@@ -144,144 +152,6 @@ namespace tjc.Modules.jacs.Components
                     pageSize,
                     sortColumn,
                     sortDirection);
-            }
-        }
-        public bool AutoExtendCalendar(long courtId, long startTemplateId, DateTime startDate, int weeks)
-        {
-            try
-            {
-                using (IDataContext ctx = DataContext.Instance(CONN_JACS))
-                {
-                    // Validate court exists
-                    var court = ctx.ExecuteSingleOrDefault<Dictionary<string, object>>(
-                        CommandType.Text,
-                        "SELECT id FROM courts WHERE id = @0",
-                        courtId);
-
-                    if (court == null)
-                    {
-                        return false;
-                    }
-
-                    // Get auto template orders
-                    var lastTemplateTimeslot = ctx.ExecuteQuery<Timeslot>(
-                        CommandType.Text,
-                        @"SELECT TOP (1) t.* FROM timeslots AS t
-                            INNER JOIN court_timeslots AS ct ON t.id = ct.timeslot_id
-                            WHERE ct.court_id = @0 AND t.template_id IS NOT NULL
-                            ORDER BY t.start DESC",courtId).FirstOrDefault();
-                    var ctlHolidays = new HolidayController();
-                    var holidays = ctlHolidays.GetHolidays();
-                    // Find starting order
-                    var orderedTemplates = ctx.ExecuteQuery<CourtTemplateOrder>(
-                        CommandType.Text,
-                        @"SELECT *
-                        FROM court_template_order
-                        WHERE court_id = @0 AND auto = 1
-                        ORDER BY [order] ASC", courtId);
-
-                    long startOrder = startTemplateId;
-
-                    DateTime startWeek;
-
-                    if (lastTemplateTimeslot != null)
-                    {
-                        DateTime lastDate = lastTemplateTimeslot.start;
-                        if (lastDate == startDate.Date)
-                        {
-                            startWeek = lastTemplateTimeslot.start.AddDays(7).StartOfWeek();
-                        }
-                        else
-                        {
-                            startWeek = startDate.StartOfWeek();
-                        }
-                    }
-                    else
-                    {
-                        startWeek = Common.StartOfWeek(DateTime.Now);
-                    }
-
-                    for (int x = 0; x < weeks; x++)
-                    {
-                        CourtTemplate currentTemplate;
-                        IEnumerable<TemplateTimeslot> timeslots;
-
-                        if (x == 0)
-                        {
-                            var orderItem = orderedTemplates.FirstOrDefault(o => o.order == startOrder);
-                            currentTemplate = orderItem?.template;
-                            timeslots = currentTemplate.template_timeslots.Count() > 0 ? currentTemplate.template_timeslots: Enumerable.Empty<TemplateTimeslot>();
-                        }
-                        else
-                        {
-                            var orderItem = orderedTemplates.FirstOrDefault(o => o.order == startOrder);
-                            if (orderItem != null)
-                            {
-                                currentTemplate = orderItem.template;
-                                timeslots = currentTemplate.template_timeslots;
-                            }
-                            else
-                            {
-                                startOrder = 1;
-                                orderItem = orderedTemplates.FirstOrDefault(o => o.order == startOrder);
-                                currentTemplate = orderItem?.template;
-                                timeslots = currentTemplate.template_timeslots.Count()>0 ? currentTemplate.template_timeslots: Enumerable.Empty<TemplateTimeslot>();
-                            }
-                        }
-
-                        startOrder++;
-
-                        for (int y = 0; y < 5; y++)
-                        {
-                            string day = startWeek.ToString("yyyy-MM-dd");
-
-                            foreach (var timeslot in timeslots.Where(ts => ts.day == y + 1))
-                            {
-                                string timeStart = timeslot.start.ToString("HH:mm:ss");
-                                string timeEnd = timeslot.end.ToString("HH:mm:ss");
-
-                                DateTime start = DateTime.ParseExact($"{day} {timeStart}", "yyyy-MM-dd HH:mm:ss", null);
-                                DateTime end = DateTime.ParseExact($"{day} {timeEnd}", "yyyy-MM-dd HH:mm:ss", null);
-
-                                var newTimeslot = new Timeslot
-                                {
-                                    start = start,
-                                    end = end,
-                                    description = timeslot.description,
-                                    allDay = timeslot.allDay,
-                                    duration = timeslot.duration,
-                                    quantity = timeslot.quantity,
-                                    blocked = !holidays.Any(h => h.date.ToString("yyyy-MM-dd") == day) ? timeslot.blocked : true,
-                                    block_reason = string.IsNullOrEmpty(timeslot.block_reason) ? null : timeslot.block_reason,
-                                    public_block = timeslot.public_block,
-                                    category_id = timeslot.category_id,
-                                    template_id = currentTemplate?.id
-                                };
-                                var ctlTimeslot = new TimeslotController();
-                                ctlTimeslot.CreateTimeslot(newTimeslot);
-
-                                var courtTimeslot = new CourtTimeslot
-                                {
-                                    court_id = courtId,
-                                    timeslot_id = newTimeslot.id
-                                };
-                                var ctlCourtTimeslot = new CourtTimeslotController();
-                                ctlCourtTimeslot.CreateCourtTimeslot(courtTimeslot);
-                            }
-
-                            startWeek = startWeek.AddDays(1);
-                        }
-
-                        startWeek = startWeek.AddDays(7);
-                        startWeek = Common.StartOfWeek(startWeek);
-                    }
-
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
     }

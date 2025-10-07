@@ -61,6 +61,7 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+       
         public void UpdateTemplateTimeslot(TemplateTimeslot t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

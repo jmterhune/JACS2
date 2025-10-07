@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office2016.Excel;
+﻿using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using DotNetNuke.Services.Exceptions;
@@ -146,7 +147,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var rep = ctx.GetRepository<Court>();
                     var results = rep.Find("WHERE id in (select court_id from dbo.getUserCourtViewPermissions(@0)) AND description LIKE @1", userId, $"%{searchTerm}%")
-                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).ToList();
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).OrderBy(c=>c.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
                 }
             }
@@ -334,7 +335,7 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text, query, courtId);
             }
         }
-        public bool TruncateTimeslots(long courtId, DateTime startDate, string filter)
+        public TruncateResponse TruncateTimeslots(long courtId, DateTime startDate, string filter)
         {
             var timeslotSQL = "select [timeslots].* from [timeslots] inner join [court_timeslots] on [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 and [start] >= @1";
             bool handleEvents = false;
@@ -359,10 +360,11 @@ namespace tjc.Modules.jacs.Components
                 default:
                     break;
             }
-
+            bool success = true;
+            string error = string.Empty;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var timeslots= ctx.ExecuteQuery<Timeslot>(CommandType.Text, timeslotSQL, courtId, startDate);
+                var timeslots = ctx.ExecuteQuery<Timeslot>(CommandType.Text, timeslotSQL, courtId, startDate);
                 foreach (var timeslot in timeslots)
                 {
                     if (handleEvents)
@@ -375,16 +377,130 @@ namespace tjc.Modules.jacs.Components
                             ev.status_id = 1;// cancelled
                             ev.updated_at = DateTime.Now;
                             ev.cancellation_reason = "Calendar Truncated.";
+                            // if(!ClerkAPI.CancelEvent(ev.clerkeventId){success=false; error+="Clerk event number " + ev.clerkeventId + " could not be cancelled" + environment.newline; }
                         }
                     }
                     var ctl = new TimeslotController();
-                    ctl.DeleteTimeslot(timeslot);
+                    timeslot.deleted_at = DateTime.Now;
+                    timeslot.updated_at = DateTime.Now;
+                    ctl.UpdateTimeslot(timeslot);
                 }
-
-
             }
+            return new TruncateResponse { Success = success, Error = error };
+        }
+        public ExtendResponse AutoExtendCalendar(ExtendRequest request,Court court)
+        {
+            try
+            {
+                var holidayCtl = new HolidayController();
+                var courtTemplateCtl = new CourtTemplateController();
+                var courtTemplateOrderCtl = new CourtTemplateOrderController();
+                var timeslotCtl = new TimeslotController();
+                var courtTimeslotCtl = new CourtTimeslotController();
+                if (court == null)
+                    return new ExtendResponse { success = false, message = "Court Does not Exist" };
+                var lastTimeslot = courtTimeslotCtl.GetLastTimeslotStart(request.CourtId);
+                var lastHearing = courtTimeslotCtl.GetLastHearingStart(request.CourtId);
+                var lastTemplateTimeslot = courtTimeslotCtl.GetLastTemplateTimeslot(request.CourtId);
+                var orderedTemplates = courtTemplateOrderCtl.GetAutoCourtTemplateOrders(request.CourtId).ToList();
+                var holidays = holidayCtl.GetHolidays().ToList();
+                long startOrder = request.StartTemplateId;
+                DateTime startWeek;
+                if (lastTemplateTimeslot != null)
+                {
+                    if (request.StartDate.Date == lastTemplateTimeslot.start.Date)
+                    {
+                        startWeek = lastTemplateTimeslot.start.AddDays(7).StartOfWeek();
+                    }
+                    else
+                    {
+                        startWeek = request.StartDate.StartOfWeek();
+                    }
+                }
+                else
+                {
+                    startWeek = DateTime.Now.StartOfWeek();
+                }
+                DateTime currentWeekStart = startWeek;
+                for (int x = 0; x < request.Weeks; x++)
+                {
+                    CourtTemplateOrder currentTemplateOrder;
+                    CourtTemplate currentTemplate;
+                    IEnumerable<TemplateTimeslot> timeslots;
+                    if (x == 0)
+                    {
+                        currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
+                        if (currentTemplateOrder == null || !currentTemplateOrder.template_id.HasValue) continue;
+                        currentTemplate = courtTemplateCtl.GetCourtTemplate(currentTemplateOrder.template_id.Value);
+                        timeslots = courtTemplateCtl.GetTemplateTimeslots(currentTemplate.id);
+                        startOrder++;
+                    }
+                    else
+                    {
+                        currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
+                        if (currentTemplateOrder != null && currentTemplateOrder.template_id.HasValue)
+                        {
+                            currentTemplate = courtTemplateCtl.GetCourtTemplate(currentTemplateOrder.template_id.Value);
+                            timeslots = courtTemplateCtl.GetTemplateTimeslots(currentTemplate.id);
+                            startOrder++;
+                        }
+                        else
+                        {
+                            startOrder = 1;
+                            currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
+                            if (currentTemplateOrder == null || !currentTemplateOrder.template_id.HasValue) continue;
+                            currentTemplate = courtTemplateCtl.GetCourtTemplate(currentTemplateOrder.template_id.Value);
+                            timeslots = courtTemplateCtl.GetTemplateTimeslots(currentTemplate.id);
+                            startOrder++;
+                        }
+                    }
+                    DateTime currentDay = currentWeekStart;
+                    for (int y = 0; y < 5; y++)
+                    {
+                        DateTime dayDate = currentDay.Date;
+                        string dayString = dayDate.ToString("yyyy-MM-dd");
 
-            return true;
+                        foreach (var timeslot in timeslots.Where(ts => ts.day == y + 1))
+                        {
+                            DateTime start = dayDate.Add(timeslot.start.TimeOfDay);
+                            DateTime end = dayDate.Add(timeslot.end.TimeOfDay);
+
+                            bool isHoliday = holidays.Any(h => h.date.Date == dayDate);
+
+                            var newTimeslot = new Timeslot
+                            {
+                                start = start,
+                                end = end,
+                                description = timeslot.description,
+                                allDay = timeslot.allDay,
+                                duration = timeslot.duration,
+                                quantity = timeslot.quantity,
+                                blocked = isHoliday ? true : timeslot.blocked,
+                                block_reason = string.IsNullOrEmpty(timeslot.block_reason) ? null : timeslot.block_reason,
+                                public_block = timeslot.public_block,
+                                category_id = timeslot.category_id,
+                                template_id = currentTemplate?.id
+                            };
+
+                            timeslotCtl.CreateTimeslot(newTimeslot);
+                            long newTimeslotId =newTimeslot.id;
+                            var newCourtTimeslot = new CourtTimeslot
+                            {
+                                court_id = court.id,
+                                timeslot_id = newTimeslotId
+                            };
+                            courtTimeslotCtl.CreateCourtTimeslot(newCourtTimeslot);
+                        }
+                        currentDay = currentDay.AddDays(1);
+                    }
+                    currentWeekStart = currentWeekStart.AddDays(7).StartOfWeek();
+                }
+                return new ExtendResponse { success = true, message = "Auto Extension Successful" };
+            }
+            catch (Exception ex)
+            {
+                return new ExtendResponse { success = false, message = "Auto Extend Failed! Error: " + ex.Message};
+            }
         }
     }
 }

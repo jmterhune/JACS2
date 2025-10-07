@@ -34,32 +34,7 @@ namespace tjc.Modules.jacs.Components
                 DeleteCourtTimeslot(t);
             }
         }
-        public DateTime? GetLastTimeslot(int courtId)
-        {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
-            {
-                return ctx.ExecuteScalar<DateTime?>(CommandType.Text,
-                    @"SELECT MAX(ts.[start]) 
-                      FROM timeslots ts 
-                      INNER JOIN court_timeslots ct ON ts.id = ct.timeslot_id 
-                      WHERE ct.court_id = @0 AND ts.[start] > GETDATE()",
-                    courtId);
-            }
-        }
-
-        public DateTime? GetLastHearing(int courtId)
-        {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
-            {
-                return ctx.ExecuteScalar<DateTime?>(CommandType.Text,
-                    @"SELECT MAX(ts.[start]) 
-                      FROM timeslots ts 
-                      INNER JOIN court_timeslots ct ON ts.id = ct.timeslot_id 
-                      WHERE ct.court_id = @0 
-                      AND EXISTS (SELECT 1 FROM timeslot_events te WHERE te.timeslot_id = ts.id)",
-                    courtId);
-            }
-        }
+       
         public CourtTimeslot GetCourtTimeslotByTimeslotId(long timeslotId)
         {
             return GetCourtTimeslots().FirstOrDefault(ct => ct.timeslot_id == timeslotId);
@@ -145,5 +120,48 @@ namespace tjc.Modules.jacs.Components
                     throw new ValidationException("Duplicate court-timeslot association.");
             }
         }
+        public  DateTime? GetLastTimeslotStart(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text,
+                    @"SELECT TOP 1 t.start FROM timeslots t 
+              INNER JOIN court_timeslots ct ON ct.timeslot_id = t.id 
+              WHERE ct.court_id = @0 AND t.deleted_at IS NULL 
+              ORDER BY t.start DESC",
+                    courtId);
+            }
+        }
+
+        public  DateTime? GetLastHearingStart(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text,
+                    @"SELECT TOP 1 t.start FROM timeslots t 
+              INNER JOIN court_timeslots ct ON ct.timeslot_id = t.id 
+              WHERE ct.court_id = @0 AND EXISTS (SELECT 1 FROM events e INNER JOIN timeslot_events te ON e.id=te.event_id 
+                    WHERE te.timeslot_id = t.id AND te.deleted_at IS NULL)
+                    AND t.deleted_at IS NULL
+              ORDER BY t.start DESC",
+                    courtId);
+            }
+        }
+
+        public  Timeslot GetLastTemplateTimeslot(long courtId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text,
+                    @"SELECT TOP 1 t.* FROM timeslots t 
+              INNER JOIN court_timeslots ct ON ct.timeslot_id = t.id 
+              WHERE ct.court_id = @0 AND t.template_id IS NOT NULL AND t.deleted_at IS NULL 
+              ORDER BY t.start DESC",
+                    courtId).FirstOrDefault();
+            }
+        }
     }
+    //select top 1 [start] from [timeslots] inner join [court_timeslots] on
+    //[court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @P1 and
+    //[timeslots].[deleted_at] is null order by [start] desc
 }

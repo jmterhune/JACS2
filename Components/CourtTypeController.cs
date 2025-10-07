@@ -53,7 +53,7 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<CourtType>();
                 t = rep.Get();
             }
-            return t.Select(ct=>new KeyValuePair<long, string>(ct.id,ct.code)).ToList();
+            return t.Select(ct=>new KeyValuePair<long, string>(ct.id,ct.code)).OrderBy(ct=>ct.Value).ToList();
         }
 
         public CourtType GetCourtType(long courtTypeId)

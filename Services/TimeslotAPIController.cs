@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
+using tjc.Modules.jacs.Handlers;
 using tjc.Modules.jacs.Services.ViewModels;
 using static tjc.Modules.jacs.Services.EventAPIController;
 
@@ -157,11 +158,101 @@ namespace tjc.Modules.jacs.Services
                     block_reason = t.block_reason,
                     category_id = t.category_id,
                     eventCount = t.eventCount,
+                    total_length = t.total_length,
                     availableSlots = t.blocked || t.public_block ? 0 : t.quantity - t.eventCount,
                     title = t.title,
+                    color=t.color,
                 }).ToList();
                 return Request.CreateResponse(events);
-                // return Request.CreateResponse(HttpStatusCode.OK, events);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetMonthlyCourtTimeslots(long p1)
+        {
+            try
+            {
+                var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                DateTime.TryParse(query.ContainsKey("start") ? query["start"] : DateTime.Now.ToString(), out DateTime start);
+                DateTime.TryParse(query.ContainsKey("end") ? query["end"] : DateTime.Now.AddMonths(1).ToString(), out DateTime end);
+
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(p1);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Court not found." });
+                }
+
+                var tsCtl = new TimeslotController();
+                var holidayCtl = new HolidayController(); // Assuming exists; else add below
+                var holidays = holidayCtl.GetHolidays().Select(h => h.date.Date).ToList();
+
+                var startTime = start.Date;
+                var endTime = end.Date;
+                var hearingCounts = new List<MonthlySummaryItem>();
+                
+                for (DateTime date = startTime; date <= endTime; date = date.AddDays(1))
+                {
+                    var blockedSlots = tsCtl.GetTimeslotsByCourtAndDate(p1, date)
+                        .Where(t => t.blocked || t.public_block)
+                        .OrderBy(t => t.start)
+                        .ToList();
+
+                    var scheduledEvents = tsCtl.GetScheduledEvents(p1, date);
+
+                    string title = "";
+                    if (blockedSlots.Any())
+                    {
+                        title = "Blocked<br>";
+                    }
+
+                    if (scheduledEvents.Any())
+                    {
+                        title += $"{scheduledEvents.Count} Events Scheduled<br>";
+                    }
+
+                    if (title.Length > 0)
+                    {
+                        hearingCounts.Add(new MonthlySummaryItem
+                        {
+                            start = date,
+                            end = date.AddDays(1).AddTicks(-1),
+                            allDay = true,
+                            title = title,
+                            color="green",
+                            order = hearingCounts.Count // Incremental order for sorting
+                        });
+                    }
+                }
+
+                // Merge with holidays (as per PHP mergeRecursive)
+                foreach (var holiday in holidays.Where(h => h >= startTime && h <= endTime))
+                {
+                    hearingCounts.Add(new MonthlySummaryItem
+                    {
+                        start = holiday,
+                        end = holiday.AddDays(1).AddTicks(-1),
+                        allDay = true,
+                        title = "Holiday<br>",
+                        order = hearingCounts.Count
+                    });
+                }
+
+                return Request.CreateResponse( 
+                    hearingCounts.Select(h => new
+                    {
+                        order = h.order,
+                        start = h.start.ToString("yyyy-MM-dd"),
+                        end = h.end.ToString("yyyy-MM-dd"),
+                        allDay = h.allDay,
+                        title = h.title,
+                    })
+                );
             }
             catch (Exception ex)
             {
@@ -170,7 +261,7 @@ namespace tjc.Modules.jacs.Services
             }
         }
         [HttpGet]
-        public HttpResponseMessage GetAvailableCourtTimeslots(long p1, long p2,int p3) // p1=courtId,p2=motionId,p3=duration
+        public HttpResponseMessage GetAvailableCourtTimeslots(long p1, long p2, int p3) // p1=courtId,p2=motionId,p3=duration
         {
             try
             {
@@ -187,7 +278,7 @@ namespace tjc.Modules.jacs.Services
                 var holidayCtl = new HolidayController();
                 var holidays = holidayCtl.GetHolidaysAfterDate(start);
                 var eventCtl = new EventController();
-                var timeslots = ctl.GetAvailableTimeslotsByCourtId(p1, start, p3,p2).ToList();
+                var timeslots = ctl.GetAvailableTimeslotsByCourtId(p1, start, p3, p2).ToList();
                 foreach (var ts in timeslots.ToList())
                 {
                     if (ts.duration != p3 || ts.blocked)
@@ -209,9 +300,9 @@ namespace tjc.Modules.jacs.Services
                     {
                         ts.reschedule_title += " (" + ts.Category.description + ")";
                     }
-                    if(ts.description != null && !string.IsNullOrEmpty(ts.description))
+                    if (ts.description != null && !string.IsNullOrEmpty(ts.description))
                     {
-                        ts.reschedule_title += " (" + ts.description +")";
+                        ts.reschedule_title += " (" + ts.description + ")";
                     }
                 }
                 var timeslotEvents = timeslots.Select(t => new
@@ -444,6 +535,40 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage UpdateMoveTimeslot(JObject p1)
+        {
+            try
+            {
+                var timeslot = p1.ToObject<Timeslot>();
+                var ctl = new TimeslotController();
+
+                if (timeslot.id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Timeslot ID is required for update." });
+                }
+                if (timeslot.start == default || timeslot.end == default || timeslot.end <= timeslot.start)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Valid start and end times are required." });
+                }
+                var existingTimeslot = ctl.GetTimeslot(timeslot.id);
+                if (existingTimeslot == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Timeslot not found." });
+                }
+                existingTimeslot.start = timeslot.start;
+                existingTimeslot.end = timeslot.end;
+                existingTimeslot.updated_at = DateTime.Now;
+                ctl.UpdateTimeslot(existingTimeslot);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Updated Timeslot" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -468,7 +593,6 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Duration must be positive for non-all-day timeslots." });
                 }
-                timeslot.updated_at = DateTime.Now;
                 timeslot.start = DateTime.SpecifyKind(timeslot.start, DateTimeKind.Local);
                 timeslot.end = DateTime.SpecifyKind(timeslot.end, DateTimeKind.Local);
                 var ctl = new TimeslotController();
@@ -477,6 +601,7 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Timeslot not found." });
                 }
+
                 long courtId = p1["courtId"].ToObject<long>();
                 var courtCtl = new CourtController();
                 var court = courtCtl.GetCourt(courtId);
@@ -541,7 +666,8 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        [HttpGet]
+        [HttpDelete]
+        [ValidateAntiForgeryToken]
         public HttpResponseMessage DeleteTimeslot(long p1)
         {
             try
@@ -563,7 +689,7 @@ namespace tjc.Modules.jacs.Services
                 {
                     ctl.DeleteTimeslotMotion(motion.id);
                 }
-                ctl.DeleteTimeslot(p1);
+                ctl.DeleteTimeslot(p1, false);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Timeslot deleted successfully" });
             }
             catch (Exception ex)
@@ -729,9 +855,9 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage DestroyMulti(JArray p1)
+        public HttpResponseMessage DeleteMulti(JArray p1)
         {
             try
             {
@@ -760,7 +886,7 @@ namespace tjc.Modules.jacs.Services
                     {
                         courtTimeslotCtl.DeleteCourtTimeslot(courtTimeslot.id);
                     }
-                    ctl.DeleteTimeslot(id);
+                    ctl.DeleteTimeslot(id, false);
                     deletedIds.Add(id);
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -779,7 +905,7 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage Copy(JArray p1)
+        public HttpResponseMessage CopyMulti(JArray p1)
         {
             try
             {

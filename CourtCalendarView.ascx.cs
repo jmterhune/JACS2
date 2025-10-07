@@ -13,8 +13,10 @@
 using DotNetNuke.Services.Exceptions;
 using System;
 using System.Linq;
-using tjc.Modules.jacs.Components;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Web.UI.WebControls;
+using tjc.Modules.jacs.Components;
 namespace tjc.Modules.jacs
 {
     /// -----------------------------------------------------------------------------
@@ -32,10 +34,26 @@ namespace tjc.Modules.jacs
     /// -----------------------------------------------------------------------------
     public partial class CourtCalendarView : JACSModuleBase
     {
+        public string GetJsonCalendarItem(CalendarItem calendarItem)
+        {
+            // Serialize to JSON string
+            string json = System.Text.Json.JsonSerializer.Serialize(calendarItem);
+
+            // Optional: Customize serialization (e.g., ignore nulls, handle cycles if any exist in nested types, or format dates)
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,  // Skip null properties
+                ReferenceHandler = ReferenceHandler.Preserve  // Handle potential reference loops in nested objects like Timeslot.events
+            };
+            return System.Text.Json.JsonSerializer.Serialize(calendarItem, options);
+
+        }
+        public string JsonCalendarItem { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
+                JsonCalendarItem=null;
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
                 navbar.CategoryListUrl = CategoryListUrl;
@@ -61,7 +79,42 @@ namespace tjc.Modules.jacs
                 // Moved the following block outside of the !IsPostBack check to ensure fields are always populated,
                 // as ViewState may not reliably preserve Literal control values in certain DNN scenarios or if modified by JS.
                 var ctl = new CourtController();
-                Court court = ctl.GetCourt(CourtId);
+                long courtIdParam = CourtId;
+                if (courtIdParam <= 0)
+                {
+                    CalendarItem calendarItem = new CalendarItem();
+                    var ctlTs = new TimeslotController();
+                    Timeslot ts = new Timeslot();
+                    Components.Event evt = new Components.Event();
+                    if (TimeSlotId >= 0)
+                    {
+                        courtIdParam = ctlTs.GetCourtIdByTimeslotId(TimeSlotId);
+                        calendarItem.timeslotId = TimeSlotId;
+                    }
+                    else if (EventId >= 0)
+                    {
+                        var ctlEv = new EventController();
+                        courtIdParam = ctlEv.GetCourtIdByEventId(EventId);
+                        evt = ctlEv.GetEvent(EventId);
+                        calendarItem.eventId = EventId;
+                        if (evt != null)
+                        {
+                            ts = ctlTs.GetTimeslotByEventId(TimeSlotId);
+                            calendarItem.timeslotId = ts.id;
+
+                        }
+                    }
+                    var dates = DateTimeExtensions.GetWeekStartEnd(ts.start);
+                    calendarItem.start = dates.Start;
+                    calendarItem.end = dates.End;
+                    JsonCalendarItem= GetJsonCalendarItem(calendarItem);
+                }
+                if (courtIdParam <= 0)
+                {
+                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No court selected. Please select a court from the Court List.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    return;
+                }
+                Court court = ctl.GetCourt(courtIdParam);
                 var court_types = new CourtTypeController().GetCourtTypeDropDownItems();
                 string fields = string.Empty;
                 if (court != null)
@@ -118,30 +171,26 @@ namespace tjc.Modules.jacs
                         fields = "<input type=\"text\" class=\"form-control case-num-part mr-1\" required=\"\">";
                     }
                     ltCaseNumber.Text = fields;
-                    var timeslotController = new TimeslotController();
+                    var courtCtl = new CourtController();
                     var courtTimeslotController = new CourtTimeslotController();
                     var templateController = new CourtTemplateController();
                     var templateOrderController = new CourtTemplateOrderController();
-                    var timeslots = courtTimeslotController.GetCourtTimeslotsByCourtId(CourtId)
-                        .OrderByDescending(ct => ct.Timeslot.start)
-                        .ToList();
+                    var lastTimeslotDate = courtCtl.GetLastTimeslotDate(courtIdParam);
+                    var lastTemplateTimeslot = courtTimeslotController.GetLastTemplateTimeslot(courtIdParam);
 
-                    var lastTimeslot = timeslots.FirstOrDefault();
-                    var lastTemplateTimeslot = timeslots.FirstOrDefault(ct => ct.Timeslot.template_id.HasValue);
-                    var lastHearing = timeslots.FirstOrDefault(ct => ct.Timeslot.timeslot_events.Any());
-
-                    if (lastTimeslot != null)
-                        ltLastTimeslot.Text = $"<p>The last timeslot date in the calendar is <span class='text-primary'>{lastTimeslot.Timeslot.start:MM/dd/yyyy}</span></p>";
+                    var lastHearingDate = courtCtl.GetLastHearingDate(courtIdParam);
+                    if (lastTimeslotDate != null)
+                        ltLastTimeslot.Text = $"<p>The last timeslot date in the calendar is <span class='text-primary'>{lastTimeslotDate:MM/dd/yyyy}</span></p>";
                     if (lastTemplateTimeslot != null)
                     {
-                        var template = templateController.GetCourtTemplate(lastTemplateTimeslot.Timeslot.template_id.Value);
-                        ltLastTemplateTimeslot.Text = $"<p>The last template used: <span class='text-primary'>{template?.name ?? "Unknown"}</span> on <span class='text-primary'>{lastTemplateTimeslot.Timeslot.start:MM/dd/yyyy}</span></p>";
+                        var template = templateController.GetCourtTemplate(lastTemplateTimeslot.template_id.Value);
+                        ltLastTemplateTimeslot.Text = $"<p>The last template used: <span class='text-primary'>{template?.name ?? "Unknown"}</span> on <span class='text-primary'>{lastTemplateTimeslot.start:MM/dd/yyyy}</span></p>";
                     }
-                    if (lastHearing != null)
-                        ltLastHearing.Text = $"<p>The last scheduled hearing in the calendar is on <span class='text-primary'>{lastHearing.Timeslot.start:MM/dd/yyyy}</span></p>";
+                    if (lastHearingDate != null)
+                        ltLastHearing.Text = $"<p>The last scheduled hearing in the calendar is on <span class='text-primary'>{lastHearingDate:MM/dd/yyyy}</span></p>";
 
                     // Populate template dropdown
-                    var templates = templateOrderController.GetCourtTemplateOrdersByCourtId(CourtId, court.auto_extension)
+                    var templates = templateOrderController.GetCourtTemplateOrdersByCourtId(courtIdParam, court.auto_extension)
                         .Where(t => t.auto)
                         .OrderBy(t => t.order)
                         .Select(t => new { t.order, t.template_id, Name = templateController.GetCourtTemplate(t.template_id.Value)?.name })
@@ -155,8 +204,7 @@ namespace tjc.Modules.jacs
                     }
 
                     // Initialize datepicker
-                    txtStartDate.Text = lastTemplateTimeslot?.Timeslot.start.ToString("MM/dd/yyyy") ?? DateTime.Now.ToString("MM/dd/yyyy");
-
+                    txtStartDate.Text = lastTemplateTimeslot?.start.ToString("MM/dd/yyyy") ?? DateTime.Now.ToString("MM/dd/yyyy");
                 }
             }
             catch (Exception exc) //Module failed to load

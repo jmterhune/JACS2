@@ -118,8 +118,8 @@
                 userId:<%=UserId%>,
                 isJudge: (str.toLowerCase() === "false" ? false : Boolean(str)),
                 service: service,
-                eventEditUrl: "<%=EventEditUrl%>",
-                eventRevisionUrl: "<%=EventRevisionUrl%>"
+                eventEditUrl: "<%=CourtCalendarUrl%>",
+                timeslotEditUrl: "<%=CourtCalendarUrl%>"
             });
             dashboardController.init();
         });

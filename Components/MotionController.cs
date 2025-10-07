@@ -53,7 +53,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var rep = ctx.GetRepository<Motion>();
                     var results = rep.Get()
-                        .Select(m => new KeyValuePair<long, string>(m.id, m.description)).ToList();
+                        .Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(v => v.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
                 }
             }

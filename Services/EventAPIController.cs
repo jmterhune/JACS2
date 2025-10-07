@@ -84,13 +84,13 @@ namespace tjc.Modules.jacs.Services
                 bool isJudge = query.ContainsKey("isJudge") && bool.TryParse(query["isJudge"], out bool judge) ? judge : false;
                 var ctl = new EventController();
                 var events = new List<EventViewModel>();
-                if (isJudge)
-                {
-                    events = ctl.GetEventsForDashboardByJudge(userId).Select(evt => new EventViewModel(evt)).ToList();
-                }
-                else if (UserInfo.IsAdmin)
+                if (UserInfo.IsAdmin)
                 {
                     events = ctl.GetEventsForDashBoardByAdmin().Select(evt => new EventViewModel(evt)).ToList();
+                }
+                else if (isJudge)
+                {
+                    events = ctl.GetEventsForDashboardByJudge(userId).Select(evt => new EventViewModel(evt)).ToList();
                 }
                 else
                 {
@@ -184,7 +184,7 @@ namespace tjc.Modules.jacs.Services
                 var timeslotEvents = teCtl.GetTimeslotEventsByEvent(p1);
                 foreach (var te in timeslotEvents)
                 {
-                    teCtl.DeleteTimeslotEvent(te.id);
+                    teCtl.DeleteTimeslotEvent(te.id,false);
                 }
                 eventToCancel.cancellation_reason = reason;
                 eventToCancel.status_id =  cancelledStatus != null ? cancelledStatus.id : (long?)null;
