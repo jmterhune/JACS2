@@ -79,7 +79,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
             duration = eventData.duration;
             updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
-
+            
         }
         public EventViewModel() { }
 
@@ -153,6 +153,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string start_time { get; set; }
         [JsonProperty("updated_by_name")]
         public string updated_by_name { get; set; }
+        [JsonProperty("editable")]
+        public bool editable { get; set; }
         private string GetUserName(long userId)
         {
             try

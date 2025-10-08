@@ -1,0 +1,315 @@
+﻿/* Set container width for fullscreen on all module pages*/
+.container:has(.DnnModule-JACS) {
+    max-width: 100% !important;
+}
+/* Custom styles for vertical navbar */
+.sidebar {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    width: 250px; /* Fixed width for sidebar */
+}
+
+    .sidebar .nav-link {
+        color: #333;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+    }
+
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+.sub-menu .nav-link {
+    padding-left: 40px; /* Indent sub-menu items */
+    font-size: 0.9em;
+}
+
+.nav-link[data-bs-toggle="collapse"]::after {
+    content: "▼";
+    float: right;
+    font-size: 0.8em;
+    transition: transform 0.2s;
+}
+
+.nav-link[data-bs-toggle="collapse"].collapsed::after {
+    transform: rotate(-90deg);
+}
+
+.nav-link i {
+    margin-right: 10px; /* Space between icon and text */
+    font-size: 1.2em;
+}
+
+.sub-menu .nav-link i {
+    font-size: 1em; /* Smaller icons for sub-menu */
+}
+#sidebarMenu.show {
+    display: block !important;
+}
+@media (max-width: 767.98px) {
+    .sidebar {
+        min-height: auto;
+        width: 100%; /* Full width on small screens */
+    }
+}
+ /* Calendar Styles */
+.modal-xlg{max-width:1000px !important;}
+input.calendar-select {
+    top: .8rem;
+    width: .95rem;
+    height: .95rem;
+    float: right;
+    margin: .25rem !important
+}
+.daterangepicker .calendar-table th, .daterangepicker .calendar-table td {
+    padding: 0 !important;
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 24px !important;
+}
+.daterangepicker .ranges li {
+    padding: 2px 5px !important;
+}
+.fc-event-main div {
+    word-wrap: break-word;
+    white-space: normal;
+}
+.calendar-day-link, .fc-list-event {
+    cursor: pointer;
+}
+.fc-event-main {
+    overflow: hidden;
+}
+.calendar-day-header-link {
+    cursor: pointer;
+}
+
+.fc-dayGridMonth-view .fc-col-header-cell a {
+    color: black;
+    text-decoration: none;
+}
+
+.fc-timeGridDay-view .fc-col-header-cell a {
+    color: black;
+    text-decoration: none;
+}
+/* Form Styles*/
+.pointer {
+    cursor: pointer;
+}
+.note-btn-group, .note-frame {
+    margin-bottom: 0px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 35px !important;
+}
+.select2-container .select2-selection--single {
+    height: 35px !important;
+}
+.select2-search--inline {
+    width: auto !important;
+}
+.select2-selection__choice__remove {
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+}
+.select2-selection__choice {
+    padding: .1em .3em !important;
+    margin-bottom: 0 !important;
+    background-color: #e5eeff;
+}
+.dropdown-toggle::after {
+    display: none;
+    content: none !important;
+}
+.dropdown-menu .select2-container {
+    width: 100% !important;
+}
+
+.dropdown-menu .select2-dropdown {
+   /* border: none;*/
+}
+
+.dropdown-menu {
+    min-width: 15rem !important;
+}
+.select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+}
+.ts-wrapper.single .ts-control {
+    background-color: transparent !important;
+    background-image: none !important;
+    background-repeat: no-repeat !important;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    ts-pr-caret: 0;
+    
+}
+.case-num-format-multi {
+    font-size: .9rem;
+    padding: .2rem .6rem;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.case-format-row {
+    margin-bottom: .5rem;
+}
+.input-group-append button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.card {
+    padding: 1rem;
+    border-radius: 0 !important;
+    margin-bottom: 1rem;
+    padding-bottom: 0;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-top {
+    margin-bottom: 0px !important;
+}
+
+#email-list input, #edit_email-list input {
+    max-width: 400px !important;
+}
+
+#email-list li, #edit_email-list li {
+    margin-bottom: 0.5rem
+}
+
+.main label {
+    font-weight: bold;
+    color: #333;
+}
+
+label em {
+    color: red
+}
+
+.form-group .row > div {
+    margin-bottom: 1rem;
+}
+    .no-form-group div {
+        margin-bottom: 0 !important;
+    }
+
+div.form-check {
+    margin-bottom: 0 !important;
+}
+
+.form-check-input.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+.form-group .row div.invalid-feedback {
+    margin-bottom: 0px !important;
+}
+.navbar-filters a,.navbar-filters a:link, .navbar-filters a:visited, .navbar-filters a:hover, .navbar-filters a:active, .navbar-toggler {
+    color: #869ab8 !important
+}
+    .navbar-filters a:hover {
+        color: #333 !important;
+        background-color:transparent !important;
+    }
+
+/* List Styles*/
+.command-item {
+    cursor: pointer;
+    width: 16px;
+    text-align: center;
+    white-space:nowrap;
+}
+
+.btn-command {
+    border: none;
+    background-color: transparent;
+}
+td.dt-type-numeric,th.dt-type-numeric {
+    text-align: left !important;
+}
+/* Modal Styles*/
+.dnnFormPopup .ui-dialog-titlebar {
+    padding: 10px !important
+}
+
+.dnnFormPopup {
+    z-index: 9999 !important;
+}
+/* Fieldset Styles*/
+.outline-fieldset {
+    padding: 10px 5px 5px 5px;
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ced4da;
+    border-radius: 5px;
+    margin: 10px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px
+}
+
+    .outline-fieldset legend {
+        width: auto;
+        display: inline-block;
+        padding: 0 5px;
+        font-size: .9rem;
+        font-weight: 700;
+        float: none;
+    }
+
+        .outline-fieldset legend.small {
+            font-size: .75rem;
+        }
+/* Process Styles*/
+.modal-progress {
+    position: absolute; /* Position relative to modal-content */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; /* Cover only the modal-content area */
+    z-index: 1061; /* Below center-progress but above modal content */
+    background-color: rgba(0, 0, 0, 0.2); /* Modern opacity */
+}
+
+.center-progress {
+    position: absolute; /* Center within modal-progress */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center horizontally and vertically */
+    z-index: 1062; /* Above modal-progress */
+    padding: 10px;
+    width: 70px; /* Fixed width for the spinner image */
+    opacity: 1; /* Fully opaque spinner */
+}
+
+    .center-progress img {
+        width: 100%; /* Ensure image fits within center-progress */
+        height: auto; /* Maintain aspect ratio */
+    }
+/* Button / Icon Styles */
+i.fas, i.fa {
+    margin-right: 8px; /* Adds space after Font Awesome icons */
+}

@@ -49,11 +49,12 @@ namespace tjc.Modules.jacs
 
         }
         public string JsonCalendarItem { get; set; }
+        public long paramCourtId { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                JsonCalendarItem=null;
+                JsonCalendarItem="{}";
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
                 navbar.CategoryListUrl = CategoryListUrl;
@@ -90,6 +91,7 @@ namespace tjc.Modules.jacs
                     {
                         courtIdParam = ctlTs.GetCourtIdByTimeslotId(TimeSlotId);
                         calendarItem.timeslotId = TimeSlotId;
+                        ts = ctlTs.GetTimeslot(TimeSlotId);
                     }
                     else if (EventId >= 0)
                     {
@@ -99,7 +101,7 @@ namespace tjc.Modules.jacs
                         calendarItem.eventId = EventId;
                         if (evt != null)
                         {
-                            ts = ctlTs.GetTimeslotByEventId(TimeSlotId);
+                            ts = ctlTs.GetTimeslotByEventId(EventId);
                             calendarItem.timeslotId = ts.id;
 
                         }
@@ -114,6 +116,7 @@ namespace tjc.Modules.jacs
                     DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No court selected. Please select a court from the Court List.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
                     return;
                 }
+                paramCourtId = courtIdParam;
                 Court court = ctl.GetCourt(courtIdParam);
                 var court_types = new CourtTypeController().GetCourtTypeDropDownItems();
                 string fields = string.Empty;

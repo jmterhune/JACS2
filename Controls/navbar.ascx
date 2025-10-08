@@ -16,7 +16,6 @@
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"><a class="nav-link" id="lnkUser" href="<%=UserListUrl %>"><i class="fas fa-user"></i>Users</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkRole" href="<%=RoleListUrl %>"><i class="fas fa-id-badge"></i>Roles</a></li>
-                            <li class="nav-item"><a class="nav-link" id="lnkPermission" href="<%=PermissionListUrl %>"><i class="fas fa-key"></i>Permissions</a></li>
                         </ul>
                     </div>
 

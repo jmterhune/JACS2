@@ -11,7 +11,7 @@ class CourtCalendarController {
         this.service = params.service || null;
         this.calendar = null;
         this.rescheduleCalendar = null;
-        this.courtId = this.getCourtIdFromUrl();
+        this.courtId = params.courtId;
         this.courtEditUrl = params.courtEditUrl || '/court-edit';
         this.userDefinedFieldUrl = params.userDefinedFieldUrl || '/user-fields';
         this.truncateCalendarUrl = params.truncateCalendarUrl || '/truncate-calendar';
@@ -20,6 +20,10 @@ class CourtCalendarController {
         this.caseTypes = null;
         this.currentEvent = null;
         this.currentTimeslot = null; // Default duration in minutes
+        this.calendarItem = params.calendarItem || null;
+        this.initialDate = new Date();
+        this.initialView = 'timeGridWeek';
+        this.pendingTab = null;
         courtCalendarControllerInstance = this;
     }
     // Initialization Methods
@@ -30,6 +34,20 @@ class CourtCalendarController {
         const promEventType = this.populateEventTypeSelect();
         const promCaseTypes = this.populateCaseTypes();
         const promAttorney = this.populateAttorneySelects();
+        if (this.calendarItem && this.calendarItem.start) {
+            const itemStart = new Date(this.calendarItem.start);
+            const itemEnd = new Date(this.calendarItem.end);
+            const diffHours = (itemEnd - itemStart) / (1000 * 60 * 60);
+
+            this.initialDate = itemStart;
+            this.initialView = diffHours < 24 ? 'timeGridDay' : 'timeGridWeek';
+
+            if (this.calendarItem.timeslotId > 0) {
+                if (this.calendarItem.eventId > 0) {
+                    this.pendingTab = '#eventsTab';
+                }
+            }
+        }
         this.initCalendar();
         this.bindEventHandlers();
         this.populateCourtMotions();
@@ -54,12 +72,16 @@ class CourtCalendarController {
 
         $.when(promCourt, promCategory, promEventType, promCaseTypes, promAttorney).then(
             () => this.populateEventDefaults()).fail(() => console.error('One or more data fetches failed'));
+        if (this.calendarItem && this.calendarItem.timeslotId > 0) {
+            this.showTimeslotModal(this.calendarItem.timeslotId);
+        }
     }
 
     initCalendar() {
         const calendarEl = document.getElementById('calendar');
         this.calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
+           initialDate: this.initialDate || new Date(),
+            initialView: this.initialView,
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -514,7 +536,16 @@ class CourtCalendarController {
             });
         }
     }
- 
+    showTimeslotModal(timeslotId) {
+        // Populate Timeslot tab if timeslot data is available
+        if (this.calendarItem && this.calendarItem.eventId > 0) {
+            $('.nav-tabs a[href="#eventTab"]').tab('show'); //show event tab
+            this.viewEvent(this.calendarItem.eventId);
+        }
+        if (timeslotId) {
+            this.viewTimeslot(timeslotId);
+        }     
+    }
     //Event Handlers
     bindEventHandlers() {
         $('#txtStartDate').datepicker({ autoclose: true, format: 'mm/dd/yyyy' });
@@ -557,7 +588,6 @@ class CourtCalendarController {
         $('#timeslot_startTime').on('change', this.handleStartTimeChange.bind(this));
         $('#timeslot_endTime').on('change', this.handleEndTimeChange.bind(this));
     }
-
     handleStartTimeChange() {
         const timeStr = $('#timeslot_startTime').val().trim();
         const dateStr = $('#t_start').val().trim();
@@ -612,6 +642,10 @@ class CourtCalendarController {
             } else {
                 $('#saveEventPaneBtn').prop('disabled', false);
             }
+        }
+        if (this.pendingTab) {
+            $('#timeslotTabs a[href="' + this.pendingTab + '"]').tab('show');
+            this.pendingTab = null;
         }
     }
 
@@ -1153,7 +1187,6 @@ class CourtCalendarController {
     //Timeslot Methods
     viewTimeslot(timeslotId) {
         const getUrl = `${this.service.baseUrl}TimeslotAPI/GetTimeslot/${timeslotId}`;
-        $('#progress-timeslot').show();
         return $.ajax({
             url: getUrl,
             method: 'GET',
@@ -1163,8 +1196,8 @@ class CourtCalendarController {
                 this.currentTimeslot = response;
                 if (response) {
                     $('#edit_timeslotId').val(response.id);
-                    $('#timeslot_startTime').val(this.formatLocalDateTime(new Date(response.start)));
-                    $('#timeslot_endTime').val(this.formatLocalDateTime(new Date(response.end)));
+                    $('#timeslot_startTime').val(this.formatLocalTime(new Date(response.start)));
+                    $('#timeslot_endTime').val(this.formatLocalTime(new Date(response.end)));
                     $('#t_start').val(response.start);
                     $('#t_end').val(response.end);
                     $('#timeslot_allDay').val('false');
@@ -1207,12 +1240,11 @@ class CourtCalendarController {
                 } else {
                     ShowNotification('Error', 'Failed to retrieve timeslot details.', 'error');
                 }
-                $('#progress-timeslot').hide();
+               
             },
             error: () => {
                 ShowNotification('Error', 'Failed to retrieve timeslot details.', 'error');
-                $('#progress-timeslot').hide();
-            }
+            },
         });
     }
 
@@ -1548,16 +1580,14 @@ class CourtCalendarController {
                     $('#rescheduleBtn').show();
                     $('.cattle-call').hide();
                     $('.nav-tabs a[href="#eventTab"]').tab('show'); //show event tab
-                    $("#progress-timeslot").hide();
                 } else {
-                    $("#progress-timeslot").hide();
                     ShowNotification('Error', 'Failed to retrieve event details.', 'error');
                 }
             },
             error: () => {
-                $("#progress-timeslot").hide();
                 ShowNotification('Error', 'Failed to load event details.', 'error');
-            }
+            },
+            complete: () => $("#progress-timeslot").hide(),
         });
     }
 
@@ -1704,7 +1734,6 @@ class CourtCalendarController {
                     $('.editEventBtn').on('click', (ev) => {
                         ev.preventDefault();
                         this.viewEvent(parseInt($(ev.target).closest('a').data('id')));
-                        $('.nav-tabs a[href="#event"]').tab('show');
                     });
                 }
             },

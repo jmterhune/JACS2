@@ -107,3 +107,6 @@ D:\OneDrive - jud12fl\SourceCode\JACS\bin\System.Security.Cryptography.Pkcs.xml
 D:\OneDrive - jud12fl\SourceCode\JACS\bin\System.Threading.Tasks.Extensions.xml
 D:\OneDrive - jud12fl\SourceCode\JACS\bin\System.ValueTuple.xml
 D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\JACS.csproj.Up2Date
+D:\OneDrive - jud12fl\SourceCode\JACS\bin\System.Text.Json.dll
+D:\OneDrive - jud12fl\SourceCode\JACS\bin\System.Text.Encodings.Web.dll
+D:\OneDrive - jud12fl\SourceCode\JACS\bin\System.Text.Json.xml

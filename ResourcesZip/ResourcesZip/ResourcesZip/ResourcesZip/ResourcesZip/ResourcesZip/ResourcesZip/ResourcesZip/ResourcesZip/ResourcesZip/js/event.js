@@ -98,7 +98,7 @@ class EventController {
             columns: [
                 {
                     data: "id",
-                    render: (data, type, row) => `<a href="${this.editUrl}/cid/${row.court_id}eid/${data}" class="btn-command revisions"><i class="fas fa-pencil"></i></a>`,
+                    render: data => `<a href="${this.editUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-pencil"></i></a>`,
                     className: "command-item",
                     orderable: false,
                     searchable: false

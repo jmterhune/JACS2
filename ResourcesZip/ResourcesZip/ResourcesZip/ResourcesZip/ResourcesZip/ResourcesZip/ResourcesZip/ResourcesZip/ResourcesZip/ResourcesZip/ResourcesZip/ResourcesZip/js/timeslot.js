@@ -139,7 +139,7 @@ class TimeslotController {
             columns: [
                 {
                     data: "id",
-                    render: (data,type,row) => `<a href="${this.editUrl}/cid/${row.court_id}/sid/${data}" class="btn-command edit-timeslot"><i class="fas fa-pencil"></i></a>`,
+                    render: data => `<a href="${this.editUrl}/sid/${data}" class="btn-command edit-timeslot"><i class="fas fa-pencil"></i></a>`,
                     className: "command-item",
                     orderable: false,
                     searchable: false

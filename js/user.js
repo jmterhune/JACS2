@@ -439,12 +439,24 @@ class UserController {
                             userControllerInstance.userTable.draw();
                         }
                     } else {
-                        ShowNotification("Error", response.message || "Unexpected error occurred while creating user.", 'error');
+                        let errorResponse = {};
+                        try {
+                            errorResponse = JSON.parse(response.responseText);
+                        } catch (e) {
+                            errorResponse.message = jqXHR.responseText || 'An unknown error occurred.';
+                        }
+                        ShowNotification("Error", errorResponse.message || "Unexpected error occurred while creating user.", 'error');
                     }
                 },
                 error: function (error) {
+                    let response = {};
+                    try {
+                        response = JSON.parse(error.responseText);
+                    } catch (e) {
+                        response.message = error.responseText || 'An unknown error occurred.';
+                    }
                     $("#edit_progress-user").hide();
-                    ShowNotification("Error Creating User", error.statusText || "Failed to create user.", 'error');
+                    ShowNotification("Error Creating User", response.message || "Failed to create user.", 'error');
                 }
             });
         } catch (e) {

@@ -405,11 +405,13 @@
                     userId: <%=UserId%>,
                     isAdmin: "<%=IsAdmin%>",
                     adminRole: "<%=AdminRole%>",
+                    courtId:<%=paramCourtId%>,
                     service: service,
                     courtEditUrl: "<%=CourtEditUrl%>",
                     calendarUrl: "<%=CourtCalendarUrl%>",
                     userDefinedFieldUrl: "<%=UserDefinedFieldUrl%>",
                     truncateCalendarUrl: "<%=TruncateCalendarUrl%>",
+                    calendarItem: <%=JsonCalendarItem%> || null
                 });
                 courtCalendarController.init();
             } catch (e) {

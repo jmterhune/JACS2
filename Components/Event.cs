@@ -223,6 +223,8 @@ namespace tjc.Modules.jacs.Components
         public int duration { get; set; }
         public long? timeslot_id { get; set; }
         public string event_type { get; set; }
+        [IgnoreColumn]
+        public bool editable { get; set; }
 
     }
     public class CalendarItem
