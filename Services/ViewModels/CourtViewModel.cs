@@ -1,5 +1,4 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using tjc.Modules.jacs.Components;
@@ -52,6 +51,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             available_motion_items = court.GetCourtMotionDropDownItems(court.id, true);
             available_hearing_type_items = court.GetCourtEventTypes();
             user_defined_fields = court.GetUserDefinedFields(court.id);
+            editable = true; // Default to true, implement logic if needed
         }
 
         public CourtViewModel() { }
@@ -116,6 +116,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string county_name { get; set; }
         [JsonProperty("judge_name")]
         public string judge_name { get; set; }
+        [JsonProperty("judge_id")]
+        public long? judge_id { get; set; }
         [JsonProperty("def_attorney_item")]
         public KeyValuePair<long, string> def_attorney_item { get; set; }
         [JsonProperty("opp_attorney_item")]
@@ -134,6 +136,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public List<KeyValuePair<long, string>> restricted_motion_items { get; set; }
         [JsonProperty("available_hearing_type_items")]
         public List<KeyValuePair<long, string>> available_hearing_type_items { get; set; }
+        [JsonProperty("editable")]
+        public bool editable { get; set; }
         [JsonProperty("has_revisions")]
         public bool has_revisions { get; set; }
 

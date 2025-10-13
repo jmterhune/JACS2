@@ -1,8 +1,4 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
-using DotNetNuke.Entities.Users;
-using DotNetNuke.Security;
+﻿using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -15,7 +11,6 @@ using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
-using static tjc.Modules.jacs.Services.CourtTemplateAPIController;
 
 namespace tjc.Modules.jacs.Services
 {

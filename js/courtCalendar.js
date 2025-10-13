@@ -6,7 +6,7 @@ class CourtCalendarController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
-        this.isAdmin = params.isAdmin || false;
+        this.isAdmin = params.isAdmin == "True" ? true : false || false;
         this.adminRole = params.adminRole || 'AdminRole';
         this.service = params.service || null;
         this.calendar = null;
@@ -21,20 +21,39 @@ class CourtCalendarController {
         this.currentEvent = null;
         this.currentTimeslot = null; // Default duration in minutes
         this.calendarItem = params.calendarItem || null;
-        this.initialDate = null;
+        this.initialDate = new Date();
         this.initialView = 'timeGridWeek';
         this.pendingTab = null;
+        this.editable = params.editable == "True" ? true : false || false;
         courtCalendarControllerInstance = this;
     }
     // Initialization Methods
     init() {
+        const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         const promCourt = this.fetchCourtData();
         const promCategory = this.populateCategorySelect();
         const promEventType = this.populateEventTypeSelect();
         const promCaseTypes = this.populateCaseTypes();
         const promAttorney = this.populateAttorneySelects();
-        if (this.calendarItem) {
+        if (this.editable) {
+            $('#copyTimeslotsBtn').show();
+            $('#deleteTimeslotsBtn').show();
+            $('#editCourtBtn').show();
+            $('#extendBtn').show();
+            $('#userDefinedFieldsBtn').show();
+        } else {
+            $('#btnExtend').hide();
+            $('#cancelHearingBtn').hide();
+            $('#rescheduleBtn').hide();
+            $('#saveEventPaneBtn').hide();
+            $('#btnExtend').hide();
+            $('#deleteTimeslotPaneBtn').hide();
+            $('#saveTimeslotPaneBtn').hide();
+        }
+        if (isAdmin)
+            $("#truncateBtn").show();
+        if (this.calendarItem && this.calendarItem.start) {
             const itemStart = new Date(this.calendarItem.start);
             const itemEnd = new Date(this.calendarItem.end);
             const diffHours = (itemEnd - itemStart) / (1000 * 60 * 60);
@@ -89,9 +108,9 @@ class CourtCalendarController {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             },
-            selectable: true,
+            selectable: this.editable,
             selectMirror: true,
-            editable: true,
+            editable: this.editable,
             select: this.handleDateSelect.bind(this),
             eventClick: this.handleEventClick.bind(this),
             eventDrop: this.handleEventDrop.bind(this),
@@ -538,7 +557,7 @@ class CourtCalendarController {
             });
         }
     }
- 
+
     //Event Handlers
     bindEventHandlers() {
         $('#txtStartDate').datepicker({ autoclose: true, format: 'mm/dd/yyyy' });
@@ -1571,8 +1590,10 @@ class CourtCalendarController {
                     }
 
                     // Show buttons
-                    $('#cancelHearingBtn').show();
-                    $('#rescheduleBtn').show();
+                    if (this.editable) {
+                        $('#cancelHearingBtn').show();
+                        $('#rescheduleBtn').show();
+                    }
                     $('.cattle-call').hide();
                     $('.nav-tabs a[href="#eventTab"]').tab('show'); //show event tab
                     $("#progress-timeslot").hide();

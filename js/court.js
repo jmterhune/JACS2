@@ -4,7 +4,7 @@ class CourtController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
-        this.isAdmin = params.isAdmin === "True" || false;
+        this.isAdmin = params.isAdmin == "True" ? true : false || false;
         this.adminRole = params.adminRole || 'AdminRole';
         this.pageSize = params.pageSize || 25;
         this.viewUrl = params.viewUrl || '/';
@@ -27,13 +27,13 @@ class CourtController {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}CourtAPI/DeleteCourt/`;
-        if (this.isAdmin) {
+        if (isAdmin) {
             this.userId = 0; // Admins can view all timeslots, so set userId to 0
+            $("#lnkAdd").show(); 
         }
         const listUrl = `${this.service.baseUrl}CourtAPI/GetCourts/${this.recordCount}`;
         const editUrl = this.editUrl;
         const calendarUrl = this.calendarUrl;
-        const revisionUrl = this.revisionUrl;
         this.courtTable = $('#tblCourt').DataTable({
             searching: true,
             autoWidth: true,
@@ -68,9 +68,8 @@ class CourtController {
                 },
                 {
                     data: "id",
-                    render: function (data) {
-                        return `<a href="${editUrl}/cid/${data}" title="Edit Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-pencil"></i></a>`;
-                    },
+                    render: (data, type, row) => row.editable ? `<a href="${editUrl}/cid/${data}" title="Edit Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-pencil"></i></a>` :
+                        `<a href="${editUrl}/cid/${data}" title="View Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-search"></i></a>`,
                     className: "command-item",
                     orderable: false
                 },
@@ -95,19 +94,7 @@ class CourtController {
                 {
                     data: "id",
                     render: function (data, type, row) {
-                        if (row.has_revisions === true) {
-                            return `<a href="${revisionUrl}/cid/${data}" title="Revisions" data-toggle="tooltip" class="revisions btn-command"><i class="fa-solid fa-clock-rotate-left"></i></a>`;
-                        }
-                        return '';
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-
-                {
-                    data: "id",
-                    render: function (data, type, row) {
-                        if (isAdmin === true) {
+                        if (isAdmin) {
                             return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Court" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
@@ -131,6 +118,7 @@ class CourtController {
         this.courtTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();
+                if (!isAdmin) { return; }
                 const courtId = $(this).data("id");
                 Swal.fire({
                     title: 'Delete Court?',

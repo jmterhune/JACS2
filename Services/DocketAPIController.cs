@@ -1,5 +1,6 @@
-﻿// Filename: DocketAPIController.cs
-using DotNetNuke.Entities.Users;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -13,9 +14,6 @@ using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace tjc.Modules.jacs.Services
 {

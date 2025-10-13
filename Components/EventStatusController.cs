@@ -1,5 +1,4 @@
 ﻿using DotNetNuke.Data;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace tjc.Modules.jacs.Components
@@ -41,7 +40,29 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public List<KeyValuePair<long,string>> GetEventStatusDropDownItems()
+        public IEnumerable<long> GetEventActiveStatusIds()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT id
+                    FROM event_statuses es 
+                    WHERE name = 'Scheduled' OR name = 'Rescheduled'";
+                return ctx.ExecuteQuery<long>(System.Data.CommandType.Text, query);
+            }
+        }
+        public long GetEventPastStatusId()
+        {
+            long pastStatusId = -1;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<EventStatus>();
+                var t = rep.Find("Where name = 'Past'");
+                pastStatusId = t.FirstOrDefault()?.id ?? -1;
+            }
+            return pastStatusId;
+        }
+        public List<KeyValuePair<long, string>> GetEventStatusDropDownItems()
         {
             IEnumerable<EventStatus> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -103,7 +124,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<EventStatus>();
-                t = rep.Find("Where name = @0",statusName).FirstOrDefault();
+                t = rep.Find("Where name = @0", statusName).FirstOrDefault();
             }
             return t;
         }

@@ -1,7 +1,5 @@
-﻿    using DotNetNuke.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Services.ViewModels
@@ -42,6 +40,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             
             updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
             duration = GetTimeslotDuration(eventData.id);
+            editable = true; // Assume true for Event object
         }
         public EventViewModel(EventListItem eventData)
         {
@@ -79,7 +78,45 @@ namespace tjc.Modules.jacs.Services.ViewModels
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
             duration = eventData.duration;
             updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
-
+            editable = true; // Assume true for EventListItem
+        }
+        public EventViewModel(EventListItemPaged eventData)
+        {
+            id = eventData.id;
+            case_num = eventData.case_num;
+            notes = eventData.notes;
+            plaintiff = eventData.plaintiff;
+            defendant = eventData.defendant;
+            motion_id = eventData.motion_id ?? -1;
+            attorney_id = eventData.attorney_id ?? -1;
+            type_id = eventData.type_id ?? -1;
+            status_id = eventData.status_id ?? -1;
+            reminder = eventData.reminder;
+            opp_attorney_id = eventData.opp_attorney_id ?? -1;
+            owner_id = eventData.owner_id ?? -1;
+            owner_type = eventData.owner_type;
+            addon = eventData.addon ?? false;
+            plaintiff_email = eventData.plaintiff_email;
+            defendant_email = eventData.defendant_email;
+            cancellation_reason = eventData.cancellation_reason;
+            template = eventData.template;
+            telephone = eventData.telephone;
+            custom_motion = eventData.custom_motion;
+            created_at = eventData.created_at ?? DateTime.Now;
+            updated_at = eventData.updated_at ?? DateTime.Now;
+            motion_name = eventData.motion_name;
+            attorney_name = eventData.attorney_name;
+            opp_attorney_name = eventData.opp_attorney_name;
+            status_name = eventData.status_name;
+            timeslot_desc = eventData.timeslot_desc;
+            court_name = eventData.court_name;
+            court_id = eventData.court_id ?? -1;
+            category_name = eventData.category_name;
+            start_date = eventData.start.HasValue ? eventData.start.Value.ToShortDateString() : "";
+            start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
+            duration = eventData.duration;
+            updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
+            editable = eventData.editable;
         }
         public EventViewModel() { }
 
@@ -153,6 +190,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string start_time { get; set; }
         [JsonProperty("updated_by_name")]
         public string updated_by_name { get; set; }
+        [JsonProperty("editable")]
+        public bool editable { get; set; }
         private string GetUserName(long userId)
         {
             try

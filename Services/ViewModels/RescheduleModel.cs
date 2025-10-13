@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace tjc.Modules.jacs.Services.ViewModels
+﻿namespace tjc.Modules.jacs.Services.ViewModels
 {
     public class RescheduleModel
     {

@@ -4,7 +4,7 @@ class PermissionController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
-        this.isAdmin = params.isAdmin || false;
+        this.isAdmin = params.isAdmin == "True" ? true : false || false;
         this.adminRole = params.adminRole || 'AdminRole';
         this.pageSize = params.pageSize || 25;
         this.sortDirection = params.sortDirection || 'asc';
@@ -94,7 +94,7 @@ class PermissionController {
                 {
                     data: "id",
                     render: function (data, type, row) {
-                        if (isAdmin === "True") {
+                        if (isAdmin) {
                             return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Permission" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';

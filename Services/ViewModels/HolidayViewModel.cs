@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Services.ViewModels

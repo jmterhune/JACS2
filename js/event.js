@@ -3,7 +3,7 @@ class EventController {
     constructor(options) {
         this.moduleId = options.moduleId || -1;
         this.userId = options.userId || -1;
-        this.isAdmin = options.isAdmin === "True"|| false;
+        this.isAdmin = options.isAdmin == "True" ? true : false || false;
         this.adminRole = options.adminRole || 'Admin';
         this.editUrl = options.editUrl;
         this.calendarUrl = options.calendarUrl;
@@ -98,7 +98,7 @@ class EventController {
             columns: [
                 {
                     data: "id",
-                    render: data => `<a href="${this.editUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-pencil"></i></a>`,
+                    render: (data, type, row) => row.editable ? `<a href="${this.editUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-pencil" title="Select to Edit Record" ></i></a>` :'<i class="fas fa-ban text-danger" title="You do not have edit permissions for this record"></i>',
                     className: "command-item",
                     orderable: false,
                     searchable: false

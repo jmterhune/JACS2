@@ -1,5 +1,4 @@
 ﻿using DotNetNuke.Data;
-using DotNetNuke.Entities.Content.Taxonomy;
 using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;

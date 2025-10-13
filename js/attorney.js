@@ -4,7 +4,7 @@ class AttorneyController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
-        this.isAdmin = params.isAdmin || false;
+        this.isAdmin = params.isAdmin == "True" ? true : false || false;
         this.adminRole = params.adminRole || 'AdminRole';
         this.editUrl = params.editUrl || '';
         this.pageSize = params.pageSize || 25;

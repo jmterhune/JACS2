@@ -10,7 +10,7 @@
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
-        <a id="lnkAdd" class="btn btn-primary me-3" href="<%=CourtEditUrl %>" tabindex="-1"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Court</a>
+        <a id="lnkAdd" class="btn btn-primary me-3" style="display:none" href="<%=CourtEditUrl %>" tabindex="-1"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Court</a>
         <table id="tblCourt" class="table table-striped w-100">
             <thead>
                 <tr>
@@ -59,7 +59,6 @@
                     adminRole: "<%=AdminRole%>",
                     editUrl: "<%=CourtEditUrl%>",
                     calendarUrl: "<%=CourtCalendarUrl%>",
-                    revisionUrl: "<%=EventRevisionUrl%>",
                     viewUrl: "<%=CourtListUrl%>",
                     service: service,
                     currentPage: 0,

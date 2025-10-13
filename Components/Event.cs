@@ -1,6 +1,5 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
-using System.Linq;
 using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
 {
@@ -223,6 +222,10 @@ namespace tjc.Modules.jacs.Components
         public int duration { get; set; }
         public long? timeslot_id { get; set; }
         public string event_type { get; set; }
+
+    }
+    internal class EventListItemPaged :EventListItem{ 
+        public bool editable { get; set; }
 
     }
     public class CalendarItem

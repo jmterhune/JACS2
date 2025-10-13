@@ -3,7 +3,6 @@ using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Components
 {

@@ -16,7 +16,6 @@
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"><a class="nav-link" id="lnkUser" href="<%=UserListUrl %>"><i class="fas fa-user"></i>Users</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkRole" href="<%=RoleListUrl %>"><i class="fas fa-id-badge"></i>Roles</a></li>
-                            <li class="nav-item"><a class="nav-link" id="lnkPermission" href="<%=PermissionListUrl %>"><i class="fas fa-key"></i>Permissions</a></li>
                         </ul>
                     </div>
 
@@ -61,7 +60,6 @@
                     </a>
                 </li>
                 <li class="nav-item"><a class="nav-link" id="lnkCourt" href="<%=CourtListUrl %>"><i class="fas fa-building-columns"></i>Courts</a></li>
-                <li class="nav-item"><a class="nav-link" id="lnkCourtPermission" href="<%=CourtPermissionListUrl %>"><i class="fas fa-calendar"></i>Active Calendar</a></li>
                 <li class="nav-item"><a class="nav-link" id="lnkDocketPrint" href="<%=DocketPrintUrl %>"><i class="fas fa-print"></i>Docket Print</a></li>
                 <li class="nav-item"><a class="nav-link" id="lnkEvent" href="<%=EventListUrl %>"><i class="fas fa-user-clock"></i>Events</a></li>
                 <li class="nav-item hidden"><a class="nav-link" id="lnkTemplate" href="<%=TemplateListUrl %>"><i class="fas fa-object-ungroup"></i>Templates</a></li>

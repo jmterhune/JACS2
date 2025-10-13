@@ -1,10 +1,8 @@
 ﻿// Filename: Timeslot.cs
-using DocumentFormat.OpenXml.Drawing;
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Caching;
 
 namespace tjc.Modules.jacs.Components
@@ -295,6 +293,8 @@ namespace tjc.Modules.jacs.Components
     {
         public string court_name { get; set; }
         public long court_id { get; set; }
+        public bool editable { get; set; }
+
     }
     internal class MonthlySummaryItem
     {

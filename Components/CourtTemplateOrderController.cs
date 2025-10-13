@@ -1,13 +1,8 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2016.Excel;
-using DotNetNuke.Common.Utilities;
-using DotNetNuke.Data;
+﻿using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -64,6 +59,28 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<CourtTemplateOrder>();
                 return rep.Find("Where template_id = @0", templateId);
+            }
+        }
+        public CourtTemplateOrder GetAutoExtendCourtTemplateOrders(long courtId,long templateId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<CourtTemplateOrder>(CommandType.Text,
+                    @"SELECT TOP 1 * FROM [court_template_order] 
+                    WHERE [court_id] = @0 AND [auto] = 1 AND [template_id] = @1",
+                    courtId, templateId);
+            }
+        }
+        public CourtTemplateOrder GetCourtTemplateOrderToExtend(long courtId, long order)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<CourtTemplateOrder>(CommandType.Text,
+                    @"SELECT TOP 1 *
+                    FROM [court_template_order]
+                    WHERE [court_id] = @0 AND [auto] = 1 AND [order] = @1
+                    ORDER BY [order]",
+                    courtId, order);
             }
         }
         public IEnumerable<CourtTemplateOrder> GetCourtTemplateOrdersByCourtId(long courtId, bool auto)

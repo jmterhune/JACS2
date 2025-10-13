@@ -4,9 +4,7 @@ using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Linq;
-using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Components
 {

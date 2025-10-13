@@ -1,6 +1,4 @@
 ﻿using DotNetNuke.Web.Api;
-using System.Web.Http;
-using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Services
 {

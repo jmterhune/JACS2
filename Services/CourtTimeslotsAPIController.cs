@@ -1,7 +1,5 @@
-﻿using DotNetNuke.Entities.Users;
-using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;

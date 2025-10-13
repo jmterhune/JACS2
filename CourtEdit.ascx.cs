@@ -10,14 +10,9 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
+using DocumentFormat.OpenXml.Office2013.Excel;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
 using System;
-using System.Web.UI.WebControls;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs
@@ -62,7 +57,34 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkCourt";
-            }
+                var ctl = new CourtController();
+                Court court = ctl.GetCourt(CourtId);
+                string fields = string.Empty;
+                if (court != null)
+                {
+                    if (IsAdmin)
+                    {
+                        Editable = true;
+                    }
+                    else if (IsJudge)
+                    {
+                        var courtJudge = court.GetJudge();
+                        if (courtJudge != null && courtJudge.id == UserId)
+                        {
+                            Editable = true;
+                        }
+                    }
+                    else
+                    {
+                        var permissionsCtl = new CourtPermissionController();
+                        var courtPermissions = permissionsCtl.GetCourtPermissionByCourt(court.id, UserId);
+                        if (courtPermissions != null)
+                        {
+                            Editable = courtPermissions.editable;
+                        }
+                    }
+                }
+                }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);

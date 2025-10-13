@@ -1,5 +1,4 @@
-﻿using DotNetNuke.Data;
-using DotNetNuke.Security;
+﻿using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json;
 using System;

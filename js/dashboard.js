@@ -6,10 +6,9 @@ class DashboardController {
         this.eventEditUrl = options.eventEditUrl;
         this.timeslotEditUrl = options.timeslotEditUrl;
         this.userId = options.userId || -1;
-        this.isJudge = options.isJudge || false;
+        this.isJudge = options.isJudge == "True" ? true : false || false;
         dashboardControllerInstance = this;
     }
-
     init() {
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         const baseUrl = this.service.baseUrl;
@@ -38,7 +37,7 @@ class DashboardController {
             columns: [
                 {
                     data: "id",
-                    render: data => `<a href="${this.eventEditUrl}/eid/${data}" class="btn-command revisions"><i class="fas fa-pencil"></i></a>`,
+                    render: (data, type, row) => row.editable ? `<a href="${this.eventEditUrl}/eid/${data}" class="btn-command revisions"><i title="Select to Edit Record" class="fas fa-pencil"></i></a>` : '<i class="fas fa-ban text-danger" title="You do not have edit permissions for this record"></i>',
                     className: "command-item",
                     orderable: false,
                     searchable: false
@@ -93,7 +92,7 @@ class DashboardController {
             paging: false,
             ordering: false,
             searching: false,
-            
+
         });
     }
 
@@ -118,7 +117,7 @@ class DashboardController {
             columns: [
                 {
                     data: "id",
-                    render: data => `<a href="${this.timeslotEditUrl}/sid/${data}" class="btn-command edit-timeslot"><i class="fas fa-pencil"></i></a>`,
+                    render: (data, type, row) => row.editable ? `<a href="${this.timeslotEditUrl}/sid/${data}" class="btn-command edit-timeslot"><i class="fas fa-pencil" title="Select to Edit Record" ></i></a>` : '<i class="fas fa-ban text-danger" title="You do not have edit permissions for this record"></i>',
                     className: "command-item",
                     orderable: false,
                     searchable: false
@@ -176,7 +175,7 @@ class DashboardController {
                 const data = response.data;
                 const caseDetails = '<tbody>' +
                     '<tr><td style="vertical-align:top; border:none;"><strong>Case Number:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.case_num + '</td></tr>' +
-                    '<tr><td style="vertical-align:top; border:none;"><strong>Motion:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.motion_name ? data.motion_name: '-') + '</td></tr>' +
+                    '<tr><td style="vertical-align:top; border:none;"><strong>Motion:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.motion_name ? data.motion_name : '-') + '</td></tr>' +
                     '<tr><td style="vertical-align:top; border:none;"><strong>Timeslot:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.start_date + ' @ ' + data.start_time + '</td></tr>' +
                     '<tr><td style="vertical-align:top; border:none;"><strong>Court:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + data.court_name + '</td></tr>' +
                     '<tr><td style="vertical-align:top; border:none;"><strong>Status:</strong></td><td style="padding-left:10px;padding-bottom:10px; border:none;">' + (data.status_name ? data.status_name : '-') + '</td></tr>' +

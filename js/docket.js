@@ -3,7 +3,7 @@ class DocketController {
     constructor(options) {
         this.moduleId = options.moduleId || -1;
         this.userId = options.userId || -1;
-        this.isAdmin = options.isAdmin === "True";
+        this.isAdmin = options.isAdmin == "True" ? true : false || false;
         this.adminRole = options.adminRole || 'Admin';
         this.service = options.service || null;
         docketControllerInstance = this;

@@ -3,7 +3,7 @@ class CourtTruncateController {
     constructor(config) {
         this.moduleId = config.moduleId;
         this.userId = config.userId;
-        this.isAdmin = config.isAdmin;
+        this.isAdmin = config.isAdmin == "True" ? true : false || false;
         this.adminRole = config.adminRole;
         this.service = config.service;
         this.courtId = config.courtId;

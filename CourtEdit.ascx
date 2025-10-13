@@ -31,16 +31,16 @@
                             <a href="#tab_scheduling" aria-controls="tab_scheduling" role="tab" data-toggle="tab" class="nav-link">Scheduling</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_custom-email" aria-controls="tab_custom-email" role="tab" data-toggle="tab" class="nav-link">Custom Email</a>
+                            <a href="#tab_custom_email" aria-controls="tab_custom_email" role="tab" data-toggle="tab" class="nav-link">Custom Email</a>
                         </li>
                         <li role="presentation" class="nav-item">
                             <a href="#tab_templates" aria-controls="tab_templates" role="tab" data-toggle="tab" class="nav-link">Templates</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_timeslot-search-header" aria-controls="tab_timeslot-search-header" role="tab" data-toggle="tab" class="nav-link">Timeslot Search Header</a>
+                            <a href="#tab_timeslot_search_header" aria-controls="tab_timeslot_search_header" role="tab" data-toggle="tab" class="nav-link">Timeslot Search Header</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_docket-print-header" aria-controls="tab_docket-print-header" role="tab" data-toggle="tab" class="nav-link">Docket Print Header</a>
+                            <a href="#tab_docket_print_header" aria-controls="tab_docket_print_header" role="tab" data-toggle="tab" class="nav-link">Docket Print Header</a>
                         </li>
                     </ul>
                     <div class="tab-content p-3">
@@ -242,7 +242,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_custom-email">
+                        <div role="tabpanel" class="tab-pane" id="tab_custom_email">
                             <div class="row">
                                 <div class="col-md-12 no-form-group">
                                     <label>Email Template</label>
@@ -279,14 +279,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_timeslot-search-header">
+                        <div role="tabpanel" class="tab-pane" id="tab_timeslot_search_header">
                             <div class="col-md-12 no-form-group">
                                 <label>Custom Header</label>
                                 <div id="editor_timeslotHeader" class="summernote"></div>
                                 <textarea id="edit_timeslotHeader" class="form-control hidden"></textarea>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="tab_docket-print-header">
+                        <div role="tabpanel" class="tab-pane" id="tab_docket_print_header">
                             <div class="col-md-12">
                                 <label>Custom Docket Print Header</label>
                                 <textarea id="edit_customHeader" class="form-control"></textarea>
@@ -296,7 +296,7 @@
                 </div>
             </div>
             <p>
-                <button type="button" class="btn btn-success" id="edit_cmdSave">
+                <button type="button" class="btn btn-success" style="display:none" id="edit_cmdSave">
                     <i class="fas fa-save" aria-hidden="true"></i>&nbsp;Save
                 </button>
                 <a href='<%=CourtListUrl %>' class="btn btn-secondary">Cancel</a>
@@ -333,7 +333,6 @@
                     console.error('CourtController is not defined.');
                     return;
                 }
-                $('.summernote').summernote();
                 const courtController = new CourtController({
                     moduleId: moduleId,
                     userId: <%=UserId%>,
@@ -342,6 +341,7 @@
                     service: service,
                     viewUrl: "<%=CourtListUrl%>",
                     editUrl: "<%=CourtEditUrl%>",
+                    editable: "<%=Editable%>",
                     calendarUrl: "<%=CourtCalendarUrl%>"
                 });
                 courtController.initEdit();

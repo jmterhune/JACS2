@@ -26,6 +26,8 @@ namespace tjc.Modules.jacs
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
             JavaScript.RequestRegistration(CommonJs.DnnPlugins);
         }
+        public bool Editable { get; set; }
+
         public int AttorneyId
         {
             get

@@ -51,7 +51,6 @@ namespace tjc.Modules.jacs.Controls
                         pnlUserMenu.Visible = true;
                     }
                 }
-
             }
         }
     }

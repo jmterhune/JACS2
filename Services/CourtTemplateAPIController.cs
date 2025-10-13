@@ -1,19 +1,13 @@
-﻿// CourtTemplateAPIController.cs (added GetTemplateOptions)
-using DotNetNuke.Entities.Users;
-using DotNetNuke.Security;
-using DotNetNuke.Security.Permissions;
+﻿using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.UI;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
 

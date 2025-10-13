@@ -1,8 +1,4 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Drawing;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DotNetNuke.Common.Utilities;
+﻿using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -96,7 +92,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id FROM [timeslots] 
+                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id,1 AS editable FROM [timeslots] 
                         INNER JOIN [court_timeslots] ON [court_timeslots].[timeslot_id] = [timeslots].[id]
                         INNER JOIN [courts] ct ON ct.id = [court_timeslots].[court_id]
                     WHERE EXISTS (
@@ -118,24 +114,13 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id FROM [timeslots] 
-                        INNER JOIN [court_timeslots] ON [court_timeslots].[timeslot_id] = [timeslots].[id]
-                        INNER JOIN [courts] ct ON ct.id = [court_timeslots].[court_id]
-                    WHERE EXISTS (
-                        SELECT * FROM [courts] 
-                        INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
-                        WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
-                        EXISTS (
-                            SELECT * FROM [judges] 
-                            WHERE [courts].[id] = [judges].[court_id] AND 
-                            EXISTS (
-                                SELECT * FROM [users] 
-                                INNER JOIN [court_permissions] ON [court_permissions].[user_id] = [users].[id] 
-                                WHERE [judges].[id] = [court_permissions].[judge_id] AND [user_id] = @0 AND active = 1 AND editable = 1
-                            )
-                        )
-                    ) 
-                    AND [start] >= GETDATE() AND [timeslots].[deleted_at] IS NULL 
+                    SELECT TOP 15 ts.*,ct.description as court_name,ct.id AS court_id,cp.editable FROM [timeslots] ts
+                        INNER JOIN [court_timeslots] cts ON cts.[timeslot_id] = ts.[id]
+                        INNER JOIN [courts] ct ON ct.id = cts.[court_id]
+                        INNER JOIN [judges] j on j.court_id = ct.[id]
+                        INNER JOIN [court_permissions] cp ON cp.judge_id = j.id
+                    WHERE  [user_id] = @0 AND active = 1 
+                        AND [start] >= GETDATE() AND ts.[deleted_at] IS NULL 
                     ORDER BY [start] DESC";
                 return ctx.ExecuteQuery<TimeslotListItem>(System.Data.CommandType.Text, query, userId);
             }
@@ -145,7 +130,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id FROM [timeslots] 
+                    SELECT TOP 15 [timeslots].*,ct.description as court_name,ct.id AS court_id,1 AS editable FROM [timeslots] 
                         INNER JOIN [court_timeslots] ON [court_timeslots].[timeslot_id] = [timeslots].[id]
                         INNER JOIN [courts] ct ON ct.id = [court_timeslots].[court_id]
                     WHERE EXISTS (
@@ -210,7 +195,7 @@ namespace tjc.Modules.jacs.Components
                     SELECT TOP 1 [timeslots].*
                     FROM [timeslots] 
                     INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
-                    WHERE [timeslot_events].[event_id] = @0";
+                    WHERE [timeslot_events].[event_id] = @0 AND [timeslot_events].deleted_at IS NULL";
                 return ctx.ExecuteSingleOrDefault<Timeslot>(System.Data.CommandType.Text, query, id);
             }
         }
@@ -221,7 +206,7 @@ namespace tjc.Modules.jacs.Components
             {
                 lastTemplateTimeslot = ctx.ExecuteQuery<Timeslot>(System.Data.CommandType.Text,
             @"SELECT TOP 1 t.* FROM timeslots t INNER JOIN court_timeslots ct ON ct.timeslot_id = t.id 
-              WHERE ct.court_id = @0 AND t.template_id IS NOT NULL 
+              WHERE ct.court_id = @0 AND t.template_id IS NOT NULL  AND t.deleted_at IS NULL
               ORDER BY t.start DESC",
             id).FirstOrDefault();
             }
@@ -306,7 +291,7 @@ namespace tjc.Modules.jacs.Components
                 var query = @"
                     SELECT COUNT(*) 
                     FROM timeslot_events 
-                    WHERE timeslot_id = @0";
+                    WHERE timeslot_id = @0 AND timeslot_events.deleted_at IS NULL";
                 return ctx.ExecuteScalar<int>(System.Data.CommandType.Text, query, timeslotId);
             }
         }

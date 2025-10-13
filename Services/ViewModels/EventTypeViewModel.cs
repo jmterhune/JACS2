@@ -1,5 +1,4 @@
-﻿// File: EventTypeViewModel.cs
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Services.ViewModels

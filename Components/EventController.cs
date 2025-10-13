@@ -1,12 +1,9 @@
 ﻿using DotNetNuke.Data;
-using DotNetNuke.UI.UserControls;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.RegularExpressions;
-using tjc.Modules.jacs.Services.ViewModels;
-using Newtonsoft.Json.Linq;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -103,6 +100,14 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
+        public IEnumerable<Event> GetEventsByStatus(IEnumerable<long> statusIds)
+        {
+            using (IDataContext ctx = DataContext.Instance("jacs"))
+            {
+                var repo = ctx.GetRepository<Event>();
+                return repo.Find("WHERE status_id IN (@0)", statusIds);
+            }
+        }
 
         public IEnumerable<EventListItem> GetEventListItems(string court, string category, string status)
         {
@@ -113,11 +118,11 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<EventListItem> GetEventListItems(long userId, string searchTerm, long court_id, long category_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
+        public IEnumerable<EventListItemPaged> GetEventListItems(long userId, string searchTerm, long court_id, long category_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                return ctx.ExecuteQuery<EventListItem>(
+                return ctx.ExecuteQuery<EventListItemPaged>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_event_list_paged",
                     userId,
@@ -154,7 +159,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 10 * FROM [event_list] WHERE 
+                    SELECT TOP 10 *,1 AS editable FROM [event_list] WHERE 
                     EXISTS (
                         SELECT * FROM [timeslots] 
                         INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
@@ -174,33 +179,17 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<EventListItem> GetEventsForDashboard(long userId)
+        public IEnumerable<EventListItemPaged> GetEventsForDashboard(long userId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 10 * FROM [event_list] WHERE 
-                    EXISTS (
-                        SELECT * FROM [timeslots] 
-                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
-                        WHERE [event_list].[id] = [timeslot_events].[event_id] AND 
-                        EXISTS (
-                            SELECT * FROM [courts] 
-                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
-                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
-                            EXISTS (
-                                SELECT * FROM [judges] 
-                                WHERE [courts].[id] = [judges].[court_id] AND 
-                                EXISTS (
-                                    SELECT * FROM [users] 
-                                    INNER JOIN [court_permissions] ON [court_permissions].[user_id] = [users].[id]
-                                    WHERE [judges].[id] = [court_permissions].[judge_id] AND [user_id] = @0 AND active = 1 AND editable = 1
-                                )
-                            )
-                        )
-                    ) 
-                    ORDER BY [created_at] DESC";
-                return ctx.ExecuteQuery<EventListItem>(System.Data.CommandType.Text, query, userId);
+                    SELECT TOP 10 *,cp.editable FROM [event_list] el
+                        INNER JOIN [judges] j on j.court_id=el.court_id
+                        INNER JOIN [court_permissions] cp ON cp.judge_id = j.id
+                    WHERE cp.user_id = @0 and cp.active = 1 
+                    ORDER BY el.[created_at] DESC";
+                return ctx.ExecuteQuery<EventListItemPaged>(System.Data.CommandType.Text, query, userId);
             }
         }
 
@@ -209,7 +198,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 10 * FROM [event_list] WHERE 
+                    SELECT TOP 10 *,1 AS editable FROM [event_list] WHERE 
                     EXISTS (
                         SELECT * FROM [timeslots] 
                         INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
@@ -242,6 +231,17 @@ namespace tjc.Modules.jacs.Components
         public void UpdateEvent(Event t)
         {
             ValidateEvent(t);
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                t.updated_at = DateTime.Now;
+                var rep = ctx.GetRepository<Event>();
+                rep.Update(t);
+            }
+        }
+        public void UpdateEvent(Event t, bool validate)
+        {
+            if (validate)
+                ValidateEvent(t);
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 t.updated_at = DateTime.Now;
@@ -480,5 +480,6 @@ namespace tjc.Modules.jacs.Components
                 }
             }
         }
+
     }
 }

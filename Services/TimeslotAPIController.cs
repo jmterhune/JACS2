@@ -1,7 +1,4 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Drawing;
-using DotNetNuke.Data;
-using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -12,9 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
-using tjc.Modules.jacs.Handlers;
 using tjc.Modules.jacs.Services.ViewModels;
-using static tjc.Modules.jacs.Services.EventAPIController;
 
 namespace tjc.Modules.jacs.Services
 {

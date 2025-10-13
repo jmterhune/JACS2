@@ -1,7 +1,6 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Web.Caching;
-using tjc.Modules.jacs.Components;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("court_timeslots")]

@@ -1,5 +1,4 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
-using System;
 using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
 {

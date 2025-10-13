@@ -53,7 +53,8 @@ namespace tjc.Modules.jacs
         {
             try
             {
-                JsonCalendarItem=null;
+                Editable = false;
+                JsonCalendarItem = "null";
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
                 navbar.CategoryListUrl = CategoryListUrl;
@@ -107,7 +108,9 @@ namespace tjc.Modules.jacs
                     var dates = DateTimeExtensions.GetWeekStartEnd(ts.start);
                     calendarItem.start = dates.Start;
                     calendarItem.end = dates.End;
-                    JsonCalendarItem= GetJsonCalendarItem(calendarItem);
+                    var jsonCalendarItem = GetJsonCalendarItem(calendarItem);
+                    if (jsonCalendarItem != null)
+                        JsonCalendarItem = GetJsonCalendarItem(calendarItem);
                 }
                 if (courtIdParam <= 0)
                 {
@@ -119,6 +122,28 @@ namespace tjc.Modules.jacs
                 string fields = string.Empty;
                 if (court != null)
                 {
+                    if (IsAdmin)
+                    {
+                        Editable = true;
+                    }
+                    else if (IsJudge)
+                    {
+                        var courtJudge = court.GetJudge();
+                        if (courtJudge != null && courtJudge.id == UserId)
+                        {
+                            Editable = true;
+                        }
+                    }
+                    else
+                    {
+                        var permissionsCtl = new CourtPermissionController();
+                        var courtPermissions = permissionsCtl.GetCourtPermissionByCourt(court.id, UserId);
+                        if (courtPermissions != null)
+                        {
+                                Editable = courtPermissions.editable;
+                        }
+                    }
+
                     ltCourtName.Text = court.description;
                     ltJudgeName.Text = court.GetJudge().name;
                     var split_format = court.case_num_format.Split('-');

@@ -1,8 +1,6 @@
-﻿using DotNetNuke.Common.Utilities;
-using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Caching;
 using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
@@ -94,6 +92,11 @@ namespace tjc.Modules.jacs.Components
             return ctl.GetUserDefinedFieldsByCourtId(courtId);
         }
     }
+    internal class CourtListItem:Court
+    {
+        public bool editable { get; set; }
+    }
+
     [TableName("getUserCourtViewPermissions")] // Optional: Specify if not inferring from class name
     public class MyResultModel
     {

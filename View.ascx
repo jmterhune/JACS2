@@ -112,11 +112,10 @@
     (function ($, Sys) {
         $(document).ready(function () {
             setActiveLink("lnkMain");
-            let str = '<%=IsJudge%>';
             const dashboardController = new DashboardController({
                 moduleId: moduleId,
                 userId:<%=UserId%>,
-                isJudge: (str.toLowerCase() === "false" ? false : Boolean(str)),
+                isJudge: "<%=IsJudge%>",
                 service: service,
                 eventEditUrl: "<%=CourtCalendarUrl%>",
                 timeslotEditUrl: "<%=CourtCalendarUrl%>"

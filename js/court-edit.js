@@ -4,7 +4,7 @@ class CourtController {
     constructor(params = {}) {
         this.moduleId = params.moduleId || -1;
         this.userId = params.userId || -1;
-        this.isAdmin = params.isAdmin === "True" || false;
+        this.isAdmin = params.isAdmin == "True" ? true : false || false;
         this.adminRole = params.adminRole || 'AdminRole';
         this.pageSize = params.pageSize || 25;
         this.viewUrl = params.viewUrl || '/';
@@ -21,10 +21,12 @@ class CourtController {
         this.service = params.service || null;
         this.deleteUrl = null;
         this.templateOptions = [];
+        this.editable = params.editable == "True" ? true : false || false;
         courtControllerInstance = this;
     }
 
     initEdit() {
+        const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}CourtAPI/DeleteCourt/`;
         this.populateCountyDropdown();
@@ -35,6 +37,18 @@ class CourtController {
         this.populateEventTypeDropdown('#edit_availableHearingTypes', 'Select entries');
         this.populateCaseTypeDropdown();
         this.initTemplatesTable();
+        if (this.editable) {
+            $('.summernote').summernote();
+            $("#edit_cmdSave").show();
+        } else {
+            $("#tab_main").find('input, select, textarea, button').prop('disabled', true);
+            $("#tab_scheduling").find('input, select, textarea, button').prop('disabled', true);
+            $("#tab_custom_email").find('input, select, textarea, button').prop('disabled', true);
+            $("#tab_templates").find('input, select, textarea, button').prop('disabled', true);
+            $("#tab_timeslot_search_header").find('input, select, textarea, button').prop('disabled', true);
+            $("#tab_docket_print_header").find('input, select, textarea, button').prop('disabled', true);
+            $('.summernote').summernote('disable');
+        }
         $('li a[href="#tab_templates"]').parent().hide();
         if (this.courtId) {
             this.ViewCourt(true);
@@ -42,7 +56,10 @@ class CourtController {
         } else {
             $('#switch_allowWebScheduling').prop('disabled', true);
         }
-
+        if (!isAdmin) {
+            $("#tab_main").find('input, select, textarea, button').prop('disabled', true);
+            $('#tab_main').find('input[type="text"], textarea').prop('readonly', true);
+        }
         $("#edit_cmdSave").on("click", function (e) {
             e.preventDefault();
             let isValid = true;
@@ -400,7 +417,7 @@ class CourtController {
             <tr data-row-id="${rowId}" data-template-id="${templateId}" data-week="${week}" data-date="${date}" data-auto="${isAuto}">
                 <td>${weekInput}</td>
                 <td>
-                    <select class="form-control template-select" style="width: 100%"></select>
+                    <select class="form-control template-select" style="width: 100%" ${this.editable?"":"disabled='disabled'"}></select>
                     <input type="hidden" class="auto-input" value="${isAuto ? 1 : 0}">
                 </td>
                 ${commandButtons}
@@ -462,7 +479,13 @@ class CourtController {
             },
             error: function (error) {
                 ShowNotification("Error", "Failed to load court templates: " + error.statusText, 'error');
-            }
+            },
+            complete: function() {
+                if (!courtControllerInstance.isAdmin) {
+                    $("#tab_templates").find('input, select, textarea, button').prop('disabled', true);
+                    $('#tab_templates').find('input[type="text"], textarea').prop('readonly', true);
+                }
+            },
         });
     }
 
@@ -501,10 +524,16 @@ class CourtController {
                         $("#add_template_row").hide();
 
                     }
+                   
                     $('#editor_customEmailBody').summernote('code', court.custom_email_body);
                     $('#editor_timeslotHeader').summernote('code', court.timeslot_header);
                     $("#edit_customHeader").val(court.custom_header);
                     $('#editor_webPolicy').summernote('code', court.web_policy);
+                    if (!courtControllerInstance.editable) {
+                        $('#editor_customEmailBody').summernote('disable');
+                        $('#editor_timeslotHeader').summernote('disable');
+                        $('#editor_webPolicy').summernote('disable');
+                    }
                     $("#switch_allowWebScheduling").prop('checked', court.scheduling).trigger('change');
                     $("#switch_publicAvailableTimeslots").prop('checked', court.public_timeslot).trigger('change');
                     $("#switch_showDocketInternet").prop('checked', court.public_docket).trigger('change');

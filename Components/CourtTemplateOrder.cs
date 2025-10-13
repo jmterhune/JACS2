@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Presentation;
-using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Web.Caching;
 namespace tjc.Modules.jacs.Components

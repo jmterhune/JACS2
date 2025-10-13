@@ -1,5 +1,4 @@
 ﻿// CountyAPIController.cs
-using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
@@ -11,7 +10,6 @@ using System.Net.Http;
 using System.Web.Http;
 using tjc.Modules.jacs.Components;
 using tjc.Modules.jacs.Services.ViewModels;
-using static tjc.Modules.jacs.Services.CourtAPIController;
 
 namespace tjc.Modules.jacs.Services
 {

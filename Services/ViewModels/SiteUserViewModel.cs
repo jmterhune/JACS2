@@ -1,9 +1,4 @@
-﻿using DotNetNuke.Entities.Users;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Newtonsoft.Json;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs.Services.ViewModels

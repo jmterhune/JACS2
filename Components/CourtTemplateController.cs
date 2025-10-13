@@ -1,6 +1,7 @@
 ﻿using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using tjc.Modules.jacs.Services.ViewModels;
 
@@ -181,6 +182,20 @@ namespace tjc.Modules.jacs.Components
                 return t;
             }
         }
+
+        public CourtTemplate GetCourtTemplateToExtend(long courtId,long order)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteScalar<CourtTemplate>(CommandType.Text,
+                    @"SELECT TOP 1 t.*
+                    FROM court_templates t
+                    INNER JOIN court_template_order cto ON cto.template_id = t.id
+                    WHERE cto.court_id = @0 AND cto.auto = 1 AND cto.[order] = @1",
+                    courtId, order);
+            }
+        }
+       
 
         public void UpdateCourtTemplate(CourtTemplate t)
         {

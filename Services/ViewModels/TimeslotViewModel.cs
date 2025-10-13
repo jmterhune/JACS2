@@ -12,7 +12,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             id = timeslotData.id;
             end = timeslotData.end;
             start = timeslotData.start;
-            formatted_start= timeslotData.formatted_start;
+            formatted_start = timeslotData.formatted_start;
             allDay = timeslotData.allDay;
             quantity = timeslotData.quantity;
             duration = timeslotData.duration;
@@ -27,8 +27,9 @@ namespace tjc.Modules.jacs.Services.ViewModels
             court_name = timeslotData.court_name;
             court_id = timeslotData.court_id;
             event_count = timeslotData.timeslot_events.Count;
-            available=timeslotData.available;
+            available = timeslotData.available;
             description = timeslotData.description ?? string.Empty;
+            editable= timeslotData.editable;
 
         }
         public TimeslotViewModel(Timeslot timeslotData)
@@ -51,6 +52,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             event_count = timeslotData.timeslot_events.Count;
             available = timeslotData.available;
             description = timeslotData.description ?? string.Empty;
+            editable = true;
         }
         public TimeslotViewModel() { }
 
@@ -94,5 +96,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public long court_id { get; set; }
         [JsonProperty("event_count")]
         public int event_count { get; set; }
+        [JsonProperty("editable")]
+        public bool editable { get; set; }
     }
 }

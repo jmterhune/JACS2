@@ -1,9 +1,5 @@
-﻿// Filename: CourtExtendController.cs
-using DotNetNuke.Entities.Users;
-using DotNetNuke.Security.Permissions;
-using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Services.Exceptions;
 using System;
-using System.Linq;
 using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs

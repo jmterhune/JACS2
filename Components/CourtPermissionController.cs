@@ -1,7 +1,4 @@
 ﻿using DotNetNuke.Data;
-using DotNetNuke.Entities.Portals;
-using DotNetNuke.Entities.Users;
-using DotNetNuke.UI.UserControls;
 using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.jacs.Services.ViewModels;
@@ -58,6 +55,18 @@ namespace tjc.Modules.jacs.Components
                 t = rep.GetById(courtPermissionId);
             }
             return t;
+        }
+        public CourtPermission GetCourtPermissionByCourt(long courtId,int userId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var query = @"
+                    SELECT cp.* FROM courts c 
+                        INNER JOIN judges j ON c.id=j.court_id 
+                        INNER JOIN court_permissions cp ON cp.judge_id=j.id
+                    WHERE cp.user_id=@0 AND c.id=@1";
+                return ctx.ExecuteQuery<CourtPermission>(System.Data.CommandType.Text, query,userId, courtId).FirstOrDefault();
+            }
         }
         public IEnumerable<CourtPermission> GetCourtPermission(int userId)
         {
