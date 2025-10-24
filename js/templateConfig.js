@@ -266,6 +266,7 @@ class TemplateConfigController {
             this.updateMoveTimeslot(timeslotData);
         }
     }
+
     handleMultiDeleteTimeslots(e) {
         e.preventDefault();
         if (this.multi_timeslots.length === 0) {
@@ -464,8 +465,9 @@ class TemplateConfigController {
                     $('#blocked').prop('checked', data.blocked);
                     $('#public_block').prop('checked', data.public_block);
                     $(`#cattlecall_${data.quantity > 1 ? 'yes' : 'no'}`).prop('checked', true);
+                    $(".cattle-call").hide();
                     $('.public_block, .block_reason').toggle(data.blocked);
-                    $('.quantity-group').toggle(data.quantity > 1);
+                    $('.quantity-group').toggle(data.quantity >= 1);
                     $('.delete-button').show().attr('onclick', `templateConfigControllerInstance.handleDeleteTimeslot(event)`);
                     $('#TimeslotModalLabel').text(`${moment(data.start).format('ddd, h:mm a')} - ${moment(data.end).format('h:mm a')}`);
                     const tomSelect = $('#timeslot_motions')[0].tomselect;
@@ -583,6 +585,9 @@ class TemplateConfigController {
         $('.quantity-group, .cattle-call, .time-selection').show();
         $('#duration').attr('required', true);
         $('#quantity').attr('required', true);
+        $('#blocked').prop('checked', false);
+        $('#public_block').prop('checked', false);
+        $(".cattle-call").show();
         const tomSelect = $('#timeslot_motions')[0].tomselect;
         if (tomSelect) tomSelect.clear();
     }

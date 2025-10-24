@@ -1,7 +1,8 @@
-﻿using DotNetNuke.Entities.Users;
-using DotNetNuke.Entities.Portals;
+﻿using DotNetNuke.Entities.Portals;
+using DotNetNuke.Entities.Users;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -69,7 +70,22 @@ namespace tjc.Modules.jacs.Components
             int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
             return date.AddDays(-diff).Date;
         }
+        public static int GetWeekOfMonth(DateTime date)
+        {
+            date = date.Date;
+            DateTime firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+            DateTime firstWeekDay = firstDayOfMonth.AddDays(
+                -(int)firstDayOfMonth.DayOfWeek + (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek
+            );
 
+            // Adjust if the calculated first weekday falls outside the reasonable range for the month start
+            if (firstWeekDay > firstDayOfMonth || firstWeekDay <= firstDayOfMonth.AddDays(-7))
+            {
+                firstWeekDay = firstWeekDay.AddDays(7);
+            }
+
+            return ((date - firstWeekDay).Days / 7) + 1;
+        }
         /// <summary>
         /// Gets the start and end dates of the week containing the specified date.
         /// The week starts on Monday and ends on Sunday.

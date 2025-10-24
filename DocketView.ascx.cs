@@ -38,6 +38,7 @@ namespace tjc.Modules.jacs
     /// -----------------------------------------------------------------------------
     public partial class DocketView : JACSModuleBase
     {
+        public string DocketHandlerUrl = "/desktopmodules/tjc.modules/jacs/Handlers/DocketHandler.ashx";
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -65,7 +66,7 @@ namespace tjc.Modules.jacs
                 navbar.ActiveLink = "lnkDocketPrint";
                 if (!IsPostBack)
                 {
-
+                    DocketHandlerUrl=TemplateSourceDirectory + "/Handlers/DocketHandler.ashx";
                 }
             }
             catch (Exception exc) //Module failed to load

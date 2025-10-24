@@ -5,16 +5,12 @@
     <button class="btn btn-default me-3" id="btnToggleMenu" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
     </button>
-    <h2 class="mb-0">Categories</h2>
+    <h2 class="mb-0">Court Rooms</h2>
 </section>
 <div class="d-flex">
     <tb:navbar runat="server" ID="navbar" />
     <main class="main flex-grow-1 p-3 pt-0">
-        <div class="alert alert-info mt-3" role="alert">
-            <strong><i class="fas fa-info-circle"></i>&nbsp;Note:</strong>
-            This section was previously named courtrooms and was renamed to categories.
-        </div>
-        <a id="lnkAdd" class="btn btn-primary me-3" tabindex="-1" href="#" data-bs-toggle="modal" data-bs-target="#CategoryEditModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Category</a>
+        <a id="lnkAdd" class="btn btn-primary me-3" tabindex="-1" href="#" data-bs-toggle="modal" data-bs-target="#CategoryEditModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Courtroom</a>
         <table id="tblCategory" class="table table-striped w-100">
             <thead>
                 <tr>
@@ -37,7 +33,7 @@
                 </div>
             </div>
             <div class="modal-header">
-                <h4 class="modal-title" id="CategoryDetailModalLabel">Category Details</h4>
+                <h4 class="modal-title" id="CategoryDetailModalLabel">Courtroom Details</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -69,7 +65,7 @@
                 </div>
             </div>
             <div class="modal-header">
-                <h4 class="modal-title" id="CategoryEditModalLabel">Edit Category</h4>
+                <h4 class="modal-title" id="CategoryEditModalLabel">Edit Courtroom</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -80,7 +76,7 @@
                             <div class="col-md-6">
                                 <label>Description<em>*</em></label>
                                 <input type="text" id="edit_catDescription" class="form-control" required>
-                                <div class="invalid-feedback" id="edit_description-error">Category Description is Required.</div>
+                                <div class="invalid-feedback" id="edit_description-error">Courtroom Description is Required.</div>
                             </div>
                         </div>
                     </div>

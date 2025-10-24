@@ -27,7 +27,7 @@
                     <div class="collapse" id="jacsMenu">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"><a class="nav-link" id="lnkAttorney" href="<%=AttorneyListUrl %>"><i class="fas fa-circle-user"></i>Attorneys</a></li>
-                            <li class="nav-item"><a class="nav-link" id="lnkCategory" href="<%=CategoryListUrl %>"><i class="fas fa-bars-staggered"></i>Categories</a></li>
+                            <li class="nav-item"><a class="nav-link" id="lnkCategory" href="<%=CategoryListUrl %>"><i class="fas fa-people-roof"></i>Courtrooms</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkCounty" href="<%=CountyListUrl %>"><i class="fas fa-earth-americas"></i>Counties</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkCourt" href="<%=CourtListUrl %>"><i class="fas fa-building-columns"></i>Courts</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkCourtType" href="<%=CourtTypeListUrl %>"><i class="fas fa-tags"></i>Court types</a></li>

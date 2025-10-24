@@ -62,11 +62,7 @@ namespace tjc.Modules.jacs
                 string fields = string.Empty;
                 if (court != null)
                 {
-                    if (IsAdmin)
-                    {
-                        Editable = true;
-                    }
-                    else if (IsJudge)
+                    if (IsJudge)
                     {
                         var courtJudge = court.GetJudge();
                         if (courtJudge != null && courtJudge.id == UserId)
@@ -84,7 +80,11 @@ namespace tjc.Modules.jacs
                         }
                     }
                 }
+                if (IsAdmin)
+                {
+                    Editable = true;
                 }
+            }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);

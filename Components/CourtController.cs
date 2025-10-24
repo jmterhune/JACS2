@@ -144,7 +144,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     var rep = ctx.GetRepository<Court>();
                     var results = rep.Find("WHERE id in (select court_id from dbo.getUserCourtViewPermissions(@0)) AND description LIKE @1", userId, $"%{searchTerm}%")
-                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).OrderBy(c=>c.Value).ToList();
+                        .Select(c => new KeyValuePair<long, string>(c.id, c.description)).OrderBy(c => c.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
                 }
             }
@@ -385,7 +385,7 @@ namespace tjc.Modules.jacs.Components
             }
             return new TruncateResponse { Success = success, Error = error };
         }
-        public ExtendResponse AutoExtendCalendar(ExtendRequest request,Court court)
+        public ExtendResponse AutoExtendCalendar(ExtendRequest request, Court court)
         {
             try
             {
@@ -400,30 +400,28 @@ namespace tjc.Modules.jacs.Components
                 var lastHearing = courtTimeslotCtl.GetLastHearingStart(request.CourtId);
                 var lastTemplateTimeslot = courtTimeslotCtl.GetLastTemplateTimeslot(request.CourtId);
                 var orderedTemplates = courtTemplateOrderCtl.GetAutoCourtTemplateOrders(request.CourtId).ToList();
+                int maxOrder = orderedTemplates.Count > 0 ? orderedTemplates.Max(t => t.order).Value : 0;
                 var holidays = holidayCtl.GetHolidays().ToList();
-                long startOrder = request.StartTemplateId;
-                DateTime startWeek;
+                long startOrder = request.StartTemplateOrder;
+                DateTime extendStartDate;
                 if (lastTemplateTimeslot != null)
                 {
-                    if (request.StartDate.Date == lastTemplateTimeslot.start.Date)
-                    {
-                        startWeek = lastTemplateTimeslot.start.AddDays(7).StartOfWeek();
-                    }
-                    else
-                    {
-                        startWeek = request.StartDate.StartOfWeek();
-                    }
+                    extendStartDate = request.StartDate;
                 }
                 else
                 {
-                    startWeek = DateTime.Now.StartOfWeek();
+                    extendStartDate = DateTime.Now;
                 }
-                DateTime currentWeekStart = startWeek;
+                DateTime currentWeekStart = extendStartDate;
                 for (int x = 0; x < request.Weeks; x++)
                 {
                     CourtTemplateOrder currentTemplateOrder;
                     CourtTemplate currentTemplate;
                     IEnumerable<TemplateTimeslot> timeslots;
+                    if (startOrder > maxOrder)
+                    {
+                        startOrder = 1;
+                    }
                     if (x == 0)
                     {
                         currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
@@ -476,11 +474,12 @@ namespace tjc.Modules.jacs.Components
                                 block_reason = string.IsNullOrEmpty(timeslot.block_reason) ? null : timeslot.block_reason,
                                 public_block = timeslot.public_block,
                                 category_id = timeslot.category_id,
-                                template_id = currentTemplate?.id
+                                template_id = currentTemplate?.id,
+                                court_template_order_id = currentTemplateOrder.id,
                             };
 
                             timeslotCtl.CreateTimeslot(newTimeslot);
-                            long newTimeslotId =newTimeslot.id;
+                            long newTimeslotId = newTimeslot.id;
                             var newCourtTimeslot = new CourtTimeslot
                             {
                                 court_id = court.id,
@@ -496,7 +495,7 @@ namespace tjc.Modules.jacs.Components
             }
             catch (Exception ex)
             {
-                return new ExtendResponse { success = false, message = "Auto Extend Failed! Error: " + ex.Message};
+                return new ExtendResponse { success = false, message = "Auto Extend Failed! Error: " + ex.Message };
             }
         }
     }

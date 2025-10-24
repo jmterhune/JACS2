@@ -447,7 +447,9 @@ namespace tjc.Modules.jacs.Services
                                         block_reason = timeslot.block_reason,
                                         public_block = timeslot.public_block,
                                         category_id = timeslot.category_id,
-                                        template_id = courtTemplateOrder.template_id
+                                        template_id = courtTemplateOrder.template_id,
+                                        court_template_order_id=courtTemplateOrder.id,
+
                                     };
 
                                     timeCtl.CreateTimeslot(newTimeslot);

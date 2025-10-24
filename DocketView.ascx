@@ -14,6 +14,11 @@
     <main class="main flex-grow-1 p-3 pt-0">
         <div class="row">
             <div class="col-md-7 col-sm-12 bold-labels">
+                <div id="docket_process" class="modal-progress" style="display: none;">
+                    <div class="center-progress">
+                        <img alt="" src="/images/loading.gif" />
+                    </div>
+                </div>
                 <div class="alert alert-info">
                     <strong class="fs-3"><i class="fas fa-info-circle fs-4"></i>Note</strong><div class="mt-3">This allows a user to print the docket report for a calendar they have access to. </div>
                 </div>
@@ -25,7 +30,7 @@
                                 <select id="courtFilter" name="court" class="form-control"></select>
                             </div>
                             <div class="col-md-12">
-                                <label>Categories</label>
+                                <label>Courtroom</label>
                                 <select id="categoryFilter" name="category" class="form-control categories_select" style="width: 100%">
                                     <option value="0">All</option>
                                 </select>
@@ -37,32 +42,6 @@
                             <div class="col-md-6">
                                 <label>To Date</label>
                                 <input type="date" class="form-control" name="to" id="to" />
-                            </div>
-                            <div class="col-md-12">
-                                <label class="d-block">Hearings</label>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" name="hearing" value="all" id="all" checked />
-                                    <label class="radio-inline form-check-label font-weight-normal" for="all">All</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" name="hearing" value="addon" id="addon" />
-                                    <label class="radio-inline form-check-label font-weight-normal" for="addon">Add On Only</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" name="hearing" value="noaddon" id="noaddon" />
-                                    <label class="radio-inline form-check-label font-weight-normal" for="noaddon">No Add On</label>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 mb-0 mt-2">
-                                <h6 class="text-primary mt-4">Optional Fields</h6>
-                                <hr class="mb-0" />
-                            </div>
-                            <div class="col-md-12">
-                                <label class="d-block"></label>
-                                <div class="form-check form-check-inline">
-                                    <input type="checkbox" class="form-check-input" id="categoryPrint" name="category_print" value="1" checked />
-                                    <label class="form-check-label" for="categoryPrint">Print Category</label>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -110,6 +89,7 @@
                     userId: <%=UserId%>,
                     isAdmin: "<%=IsAdmin%>",
                     adminRole: "<%=AdminRole%>",
+                    handlerUrl:"<%=DocketHandlerUrl%>",
                     service: service,
                 });
                 docketController.init();

@@ -30,6 +30,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             available = timeslotData.available;
             description = timeslotData.description ?? string.Empty;
             editable= timeslotData.editable;
+            template_week_order = timeslotData.template_week_order;
 
         }
         public TimeslotViewModel(Timeslot timeslotData)
@@ -52,6 +53,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             event_count = timeslotData.timeslot_events.Count;
             available = timeslotData.available;
             description = timeslotData.description ?? string.Empty;
+            template_week_order=timeslotData.template_week_order;
             editable = true;
         }
         public TimeslotViewModel() { }
@@ -98,5 +100,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public int event_count { get; set; }
         [JsonProperty("editable")]
         public bool editable { get; set; }
+        [JsonProperty("template_week_order")]
+        public int template_week_order { get; set; }
     }
 }

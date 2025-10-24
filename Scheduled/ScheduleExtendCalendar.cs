@@ -101,7 +101,7 @@ namespace tjc.Modules.jacs.Scheduled
                                 if (match == null && noOldCreated)
                                 {
                                     // Log for debugging
-                                    ScheduleHistoryItem.AddLogNote($"Creating timeslot for {startDt} - {endDt}");
+                                   // ScheduleHistoryItem.AddLogNote($"Creating timeslot for {startDt} - {endDt}");
 
                                     var newTimeslot = new Timeslot
                                     {
@@ -115,6 +115,7 @@ namespace tjc.Modules.jacs.Scheduled
                                         block_reason = string.IsNullOrEmpty(templateTimeslot.block_reason) ? null : templateTimeslot.block_reason,
                                         category_id = templateTimeslot.category_id,
                                         template_id = templateTimeslot.court_template_id,
+                                        court_template_order_id = orderItem.id,
                                         description = templateTimeslot.description,
                                         created_at = DateTime.Now,
                                         updated_at = DateTime.Now
@@ -153,6 +154,7 @@ namespace tjc.Modules.jacs.Scheduled
             {
                 ScheduleHistoryItem.Succeeded = false;
                 ScheduleHistoryItem.AddLogNote($"Error: {ex.Message}");
+                Errored(ref ex);
                 DotNetNuke.Services.Exceptions.Exceptions.LogException(ex);
             }
         }

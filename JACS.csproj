@@ -264,6 +264,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\CourtExtendController.cs" />
+    <Compile Include="Handlers\DocketHandler.ashx.cs">
+      <DependentUpon>DocketHandler.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Scheduled\ScheduleExpireEvents.cs" />
     <Compile Include="Scheduled\ScheduleExtendCalendar.cs" />
     <Compile Include="DocketView.ascx.cs">
@@ -279,7 +282,6 @@
     <Compile Include="Handlers\ExportHandler.ashx.cs">
       <DependentUpon>ExportHandler.ashx</DependentUpon>
     </Compile>
-    <Compile Include="Services\DocketAPIController.cs" />
     <Compile Include="Services\TemplateTimeslotAPIController.cs" />
     <Compile Include="Services\TimeslotAPIController.cs" />
     <Compile Include="Services\ViewModels\CourtTemplateOrderViewModel.cs" />
@@ -667,6 +669,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Handlers\ExportCalendar.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Handlers\DocketHandler.ashx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

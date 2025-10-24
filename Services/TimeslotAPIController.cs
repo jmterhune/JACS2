@@ -154,9 +154,10 @@ namespace tjc.Modules.jacs.Services
                     category_id = t.category_id,
                     eventCount = t.eventCount,
                     total_length = t.total_length,
+                    template_week_order = t.template_week_order,
                     availableSlots = t.blocked || t.public_block ? 0 : t.quantity - t.eventCount,
                     title = t.title,
-                    color=t.color,
+                    color = t.color,
                 }).ToList();
                 return Request.CreateResponse(events);
             }
@@ -190,7 +191,7 @@ namespace tjc.Modules.jacs.Services
                 var startTime = start.Date;
                 var endTime = end.Date;
                 var hearingCounts = new List<MonthlySummaryItem>();
-                
+
                 for (DateTime date = startTime; date <= endTime; date = date.AddDays(1))
                 {
                     var blockedSlots = tsCtl.GetTimeslotsByCourtAndDate(p1, date)
@@ -219,7 +220,7 @@ namespace tjc.Modules.jacs.Services
                             end = date.AddDays(1).AddTicks(-1),
                             allDay = true,
                             title = title,
-                            color="green",
+                            color = "green",
                             order = hearingCounts.Count // Incremental order for sorting
                         });
                     }
@@ -238,7 +239,7 @@ namespace tjc.Modules.jacs.Services
                     });
                 }
 
-                return Request.CreateResponse( 
+                return Request.CreateResponse(
                     hearingCounts.Select(h => new
                     {
                         order = h.order,
@@ -321,6 +322,7 @@ namespace tjc.Modules.jacs.Services
                         event_count = t.eventCount,
                         category_id = t.category_id,
                         template_id = t.template_id,
+                        court_template_order_id = t.court_template_order_id
                     }
                 });
                 var holidayEvents = holidays.Select(h => new
@@ -344,6 +346,7 @@ namespace tjc.Modules.jacs.Services
                         event_count = 0,
                         category_id = (long?)null,
                         template_id = (long?)null,
+                        court_template_order_id = (long?)null,
                     }
                 });
 

@@ -65,7 +65,7 @@
                                 <th>Opposing Attorney</th>
                                 <th>Plaintiff</th>
                                 <th>Defendant</th>
-                                <th>Category</th>
+                                <th>Courtroom</th>
                             </tr>
                         </thead>
                         <tbody>

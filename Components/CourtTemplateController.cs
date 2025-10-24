@@ -187,7 +187,7 @@ namespace tjc.Modules.jacs.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                return ctx.ExecuteScalar<CourtTemplate>(CommandType.Text,
+                return ctx.ExecuteSingleOrDefault<CourtTemplate>(CommandType.Text,
                     @"SELECT TOP 1 t.*
                     FROM court_templates t
                     INNER JOIN court_template_order cto ON cto.template_id = t.id

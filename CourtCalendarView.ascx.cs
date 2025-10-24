@@ -34,6 +34,7 @@ namespace tjc.Modules.jacs
     /// -----------------------------------------------------------------------------
     public partial class CourtCalendarView : JACSModuleBase
     {
+        public long courtIdParam { get; set; }
         public string GetJsonCalendarItem(CalendarItem calendarItem)
         {
             // Serialize to JSON string
@@ -80,7 +81,7 @@ namespace tjc.Modules.jacs
                 // Moved the following block outside of the !IsPostBack check to ensure fields are always populated,
                 // as ViewState may not reliably preserve Literal control values in certain DNN scenarios or if modified by JS.
                 var ctl = new CourtController();
-                long courtIdParam = CourtId;
+                courtIdParam = CourtId;
                 if (courtIdParam <= 0)
                 {
                     CalendarItem calendarItem = new CalendarItem();
@@ -91,6 +92,7 @@ namespace tjc.Modules.jacs
                     {
                         courtIdParam = ctlTs.GetCourtIdByTimeslotId(TimeSlotId);
                         calendarItem.timeslotId = TimeSlotId;
+                        ts= ctlTs.GetTimeslot(TimeSlotId);
                     }
                     else if (EventId >= 0)
                     {
@@ -100,9 +102,8 @@ namespace tjc.Modules.jacs
                         calendarItem.eventId = EventId;
                         if (evt != null)
                         {
-                            ts = ctlTs.GetTimeslotByEventId(TimeSlotId);
+                            ts = ctlTs.GetTimeslotByEventId(evt.id);
                             calendarItem.timeslotId = ts.id;
-
                         }
                     }
                     var dates = DateTimeExtensions.GetWeekStartEnd(ts.start);
@@ -120,13 +121,14 @@ namespace tjc.Modules.jacs
                 Court court = ctl.GetCourt(courtIdParam);
                 var court_types = new CourtTypeController().GetCourtTypeDropDownItems();
                 string fields = string.Empty;
+                if (IsAdmin)
+                {
+                    Editable = true;
+                }
+
                 if (court != null)
                 {
-                    if (IsAdmin)
-                    {
-                        Editable = true;
-                    }
-                    else if (IsJudge)
+                    if (IsJudge)
                     {
                         var courtJudge = court.GetJudge();
                         if (courtJudge != null && courtJudge.id == UserId)

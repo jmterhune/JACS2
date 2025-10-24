@@ -230,7 +230,7 @@
                                         <textarea id="timeslot_description" class="form-control" autocomplete="off"></textarea>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Category</label>
+                                        <label>Courtroom</label>
                                         <select id="timeslot_category" class="form-control" autocomplete="off">
                                             <option value="">-</option>
                                         </select>
@@ -410,6 +410,7 @@
                     calendarUrl: "<%=CourtCalendarUrl%>",
                     userDefinedFieldUrl: "<%=UserDefinedFieldUrl%>",
                     truncateCalendarUrl: "<%=TruncateCalendarUrl%>",
+                    courtId:<%=courtIdParam%>,
                     editable:"<%=Editable%>",
                     calendarItem:<%=JsonCalendarItem%>,
                 });

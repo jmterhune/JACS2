@@ -116,7 +116,7 @@ namespace tjc.Modules.jacs.Components
     public class ExtendRequest
     {
         public long CourtId { get; set; }
-        public long StartTemplateId { get; set; }
+        public long StartTemplateOrder { get; set; }
         public DateTime StartDate { get; set; }
         public int Weeks { get; set; }
     }

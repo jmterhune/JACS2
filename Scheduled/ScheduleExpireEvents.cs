@@ -58,7 +58,9 @@ namespace tjc.Modules.jacs.Scheduled
             {
                 ScheduleHistoryItem.Succeeded = false;
                 ScheduleHistoryItem.AddLogNote($"Error: {ex.Message}");
+                Errored(ref ex);
                 DotNetNuke.Services.Exceptions.Exceptions.LogException(ex);
+
             }
         }
     }

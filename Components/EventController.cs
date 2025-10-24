@@ -184,7 +184,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var query = @"
-                    SELECT TOP 10 *,cp.editable FROM [event_list] el
+                    SELECT TOP 10 el.*,cp.editable FROM [event_list] el
                         INNER JOIN [judges] j on j.court_id=el.court_id
                         INNER JOIN [court_permissions] cp ON cp.judge_id = j.id
                     WHERE cp.user_id = @0 and cp.active = 1 

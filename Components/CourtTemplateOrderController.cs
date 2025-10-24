@@ -65,7 +65,7 @@ namespace tjc.Modules.jacs.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                return ctx.ExecuteScalar<CourtTemplateOrder>(CommandType.Text,
+                return ctx.ExecuteSingleOrDefault<CourtTemplateOrder>(CommandType.Text,
                     @"SELECT TOP 1 * FROM [court_template_order] 
                     WHERE [court_id] = @0 AND [auto] = 1 AND [template_id] = @1",
                     courtId, templateId);
@@ -75,7 +75,7 @@ namespace tjc.Modules.jacs.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                return ctx.ExecuteScalar<CourtTemplateOrder>(CommandType.Text,
+                return ctx.ExecuteSingleOrDefault<CourtTemplateOrder>(CommandType.Text,
                     @"SELECT TOP 1 *
                     FROM [court_template_order]
                     WHERE [court_id] = @0 AND [auto] = 1 AND [order] = @1

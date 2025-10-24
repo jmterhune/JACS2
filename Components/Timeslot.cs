@@ -3,6 +3,7 @@ using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Web.Caching;
 
 namespace tjc.Modules.jacs.Components
@@ -24,9 +25,32 @@ namespace tjc.Modules.jacs.Components
         public string block_reason { get; set; }
         public long? category_id { get; set; }
         public long? template_id { get; set; }
+        public long? court_template_order_id { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
         public DateTime? deleted_at { get; set; }
+        [IgnoreColumn]
+        public int template_week_order
+        {
+            get
+            {
+                int weekDay = 0;
+                if (court_template_order_id.HasValue)
+                {
+                    var ctl = new CourtTemplateOrderController();
+                    var cto = ctl.GetCourtTemplateOrder(court_template_order_id.Value);
+                    if (cto != null && cto.auto && cto.order.HasValue)
+                    {
+                        weekDay = cto.order.Value;
+                    }
+                    else if (cto != null && !cto.auto && cto.date.HasValue)
+                    {
+                        weekDay = DateTimeExtensions.GetWeekOfMonth(cto.date.Value);
+                    }
+                }
+                return weekDay;
+            }
+        }
         [IgnoreColumn]
         public IEnumerable<Event> events
         {
@@ -164,7 +188,7 @@ namespace tjc.Modules.jacs.Components
                                 {
                                     title += " (" + Category.description + ")";
                                 }
-                                if (description != null)
+                                if (description != null && !string.IsNullOrEmpty(description))
                                 {
                                     title += " (" + description + ")";
                                 }
@@ -185,7 +209,8 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public string total_length {
+        public string total_length
+        {
             get
             {
                 TimeSpan ts = TimeSpan.FromMinutes(duration * quantity);

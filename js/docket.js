@@ -6,6 +6,7 @@ class DocketController {
         this.isAdmin = options.isAdmin == "True" ? true : false || false;
         this.adminRole = options.adminRole || 'Admin';
         this.service = options.service || null;
+        this.handlerUrl = options.handlerUrl || "/desktopmodules/tjc.modules/jacs/Handlers/DocketHandler.ashx";
         docketControllerInstance = this;
     }
 
@@ -118,14 +119,14 @@ class DocketController {
         });
 
         $('#printDocket').on('click', () => {
-            const baseUrl = this.service.baseUrl;
+            const progressId = "#docket_process";
+            $(progressId).show();
+            const handlerUrl = this.handlerUrl;
             const postData = {
                 court: $("#courtFilter").val() || 0,
                 category: $("#categoryFilter").val() || 0,
                 from: $("#from").val(),
                 to: $("#to").val(),
-                hearing: $('input[name="hearing"]:checked').val() || 'all',
-                category_print: $("#categoryPrint").is(":checked")
             };
 
             if (!postData.court) {
@@ -138,7 +139,7 @@ class DocketController {
             }
 
             $.ajax({
-                url: `${baseUrl}DocketAPI/GenerateDocketReport/`,
+                url: handlerUrl,
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(postData),
@@ -157,6 +158,9 @@ class DocketController {
                 },
                 error: (xhr) => {
                     ShowNotification("Error", "Failed to generate docket report.", 'error');
+                },
+                complete: () => {
+                    $(progressId).hide();
                 }
             });
         });
