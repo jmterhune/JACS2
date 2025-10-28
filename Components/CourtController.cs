@@ -400,28 +400,30 @@ namespace tjc.Modules.jacs.Components
                 var lastHearing = courtTimeslotCtl.GetLastHearingStart(request.CourtId);
                 var lastTemplateTimeslot = courtTimeslotCtl.GetLastTemplateTimeslot(request.CourtId);
                 var orderedTemplates = courtTemplateOrderCtl.GetAutoCourtTemplateOrders(request.CourtId).ToList();
-                int maxOrder = orderedTemplates.Count > 0 ? orderedTemplates.Max(t => t.order).Value : 0;
                 var holidays = holidayCtl.GetHolidays().ToList();
                 long startOrder = request.StartTemplateOrder;
-                DateTime extendStartDate;
+                DateTime startWeek;
                 if (lastTemplateTimeslot != null)
                 {
-                    extendStartDate = request.StartDate;
+                    if (request.StartDate.Date == lastTemplateTimeslot.start.Date)
+                    {
+                        startWeek = lastTemplateTimeslot.start.AddDays(7).StartOfWeek();
+                    }
+                    else
+                    {
+                        startWeek = request.StartDate.StartOfWeek();
+                    }
                 }
                 else
                 {
-                    extendStartDate = DateTime.Now;
+                    startWeek = DateTime.Now.StartOfWeek();
                 }
-                DateTime currentWeekStart = extendStartDate;
+                DateTime currentWeekStart = startWeek;
                 for (int x = 0; x < request.Weeks; x++)
                 {
                     CourtTemplateOrder currentTemplateOrder;
                     CourtTemplate currentTemplate;
                     IEnumerable<TemplateTimeslot> timeslots;
-                    if (startOrder > maxOrder)
-                    {
-                        startOrder = 1;
-                    }
                     if (x == 0)
                     {
                         currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
