@@ -389,115 +389,103 @@ namespace tjc.Modules.jacs.Components
         {
             try
             {
+                // --------------------------------------------------------------------
+                // Controllers & data
+                // --------------------------------------------------------------------
                 var holidayCtl = new HolidayController();
                 var courtTemplateCtl = new CourtTemplateController();
                 var courtTemplateOrderCtl = new CourtTemplateOrderController();
                 var timeslotCtl = new TimeslotController();
                 var courtTimeslotCtl = new CourtTimeslotController();
+
                 if (court == null)
-                    return new ExtendResponse { success = false, message = "Court Does not Exist" };
-                var lastTimeslot = courtTimeslotCtl.GetLastTimeslotStart(request.CourtId);
-                var lastHearing = courtTimeslotCtl.GetLastHearingStart(request.CourtId);
-                var lastTemplateTimeslot = courtTimeslotCtl.GetLastTemplateTimeslot(request.CourtId);
-                var orderedTemplates = courtTemplateOrderCtl.GetAutoCourtTemplateOrders(request.CourtId).ToList();
+                    return new ExtendResponse { success = false, message = "Court does not exist" };
+
                 var holidays = holidayCtl.GetHolidays().ToList();
-                long startOrder = request.StartTemplateOrder;
-                DateTime startWeek;
-                if (lastTemplateTimeslot != null)
+                var orderedTemplates = courtTemplateOrderCtl.GetAutoCourtTemplateOrders(request.CourtId)
+                                                              .OrderBy(t => t.order)
+                                                              .ToList();
+
+                if (!orderedTemplates.Any())
+                    return new ExtendResponse { success = false, message = "No auto-templates defined for this court" };
+
+                // --------------------------------------------------------------------
+                // Determine the *first* day we will write timeslots for
+                // --------------------------------------------------------------------
+                DateTime startDate = request.StartDate.Date;               // user-selected start
+                DateTime endDate = startDate.AddDays(request.Weeks * 7); // exclusive upper bound
+
+                // Find the first template that matches the requested order
+                var firstTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == request.StartTemplateOrder);
+                if (firstTemplateOrder?.template_id == null)
+                    return new ExtendResponse { success = false, message = "Requested start-template order not found" };
+
+                // --------------------------------------------------------------------
+                // Walk day-by-day from startDate → endDate
+                // --------------------------------------------------------------------
+                long currentTemplateIdx = orderedTemplates.IndexOf(firstTemplateOrder);
+                int createdCount = 0;
+
+                for (DateTime day = startDate; day < endDate; day = day.AddDays(1))
                 {
-                    if (request.StartDate.Date == lastTemplateTimeslot.start.Date)
+                    // ----- pick the template for this day (round-robin by order) -----
+                    var orderItem = orderedTemplates[(int)currentTemplateIdx];
+                    var template = courtTemplateCtl.GetCourtTemplate(orderItem.template_id.Value);
+
+                    var tmplSlots = courtTemplateCtl.GetTemplateTimeslots(template.id)
+                                  .Where(ts => ts.day == (int)day.DayOfWeek)
+                                  .ToList();
+                    bool isHoliday = holidays.Any(h => h.date.Date == day);
+
+                    foreach (var ts in tmplSlots)
                     {
-                        startWeek = lastTemplateTimeslot.start.AddDays(7).StartOfWeek();
+                        var newTs = new Timeslot
+                        {
+                            start = day.Add(ts.start.TimeOfDay),
+                            end = day.Add(ts.end.TimeOfDay),
+                            description = ts.description,
+                            allDay = ts.allDay,
+                            duration = ts.duration,
+                            quantity = ts.quantity,
+                            blocked = isHoliday ? true : ts.blocked,
+                            block_reason = string.IsNullOrEmpty(ts.block_reason) ? null : ts.block_reason,
+                            public_block = ts.public_block,
+                            category_id = ts.category_id,
+                            template_id = template.id,
+                            court_template_order_id = orderItem.id,
+                            created_at = DateTime.Now,
+                            updated_at = DateTime.Now
+                        };
+
+                        timeslotCtl.CreateTimeslot(newTs);
+                        courtTimeslotCtl.CreateCourtTimeslot(new CourtTimeslot
+                        {
+                            court_id = court.id,
+                            timeslot_id = newTs.id,
+                            created_at = DateTime.Now,
+                            updated_at = DateTime.Now
+                        });
+
+                        createdCount++;
                     }
-                    else
-                    {
-                        startWeek = request.StartDate.StartOfWeek();
-                    }
+                    if (day.DayOfWeek == DayOfWeek.Saturday)
+                        currentTemplateIdx = (currentTemplateIdx + 1) % orderedTemplates.Count;
+
                 }
-                else
+                return new ExtendResponse
                 {
-                    startWeek = DateTime.Now.StartOfWeek();
-                }
-                DateTime currentWeekStart = startWeek;
-                for (int x = 0; x < request.Weeks; x++)
-                {
-                    CourtTemplateOrder currentTemplateOrder;
-                    CourtTemplate currentTemplate;
-                    IEnumerable<TemplateTimeslot> timeslots;
-                    if (x == 0)
-                    {
-                        currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
-                        if (currentTemplateOrder == null || !currentTemplateOrder.template_id.HasValue) continue;
-                        currentTemplate = courtTemplateCtl.GetCourtTemplate(currentTemplateOrder.template_id.Value);
-                        timeslots = courtTemplateCtl.GetTemplateTimeslots(currentTemplate.id);
-                        startOrder++;
-                    }
-                    else
-                    {
-                        currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
-                        if (currentTemplateOrder != null && currentTemplateOrder.template_id.HasValue)
-                        {
-                            currentTemplate = courtTemplateCtl.GetCourtTemplate(currentTemplateOrder.template_id.Value);
-                            timeslots = courtTemplateCtl.GetTemplateTimeslots(currentTemplate.id);
-                            startOrder++;
-                        }
-                        else
-                        {
-                            startOrder = 1;
-                            currentTemplateOrder = orderedTemplates.FirstOrDefault(t => t.order == startOrder);
-                            if (currentTemplateOrder == null || !currentTemplateOrder.template_id.HasValue) continue;
-                            currentTemplate = courtTemplateCtl.GetCourtTemplate(currentTemplateOrder.template_id.Value);
-                            timeslots = courtTemplateCtl.GetTemplateTimeslots(currentTemplate.id);
-                            startOrder++;
-                        }
-                    }
-                    DateTime currentDay = currentWeekStart;
-                    for (int y = 0; y < 5; y++)
-                    {
-                        DateTime dayDate = currentDay.Date;
-                        string dayString = dayDate.ToString("yyyy-MM-dd");
-
-                        foreach (var timeslot in timeslots.Where(ts => ts.day == y + 1))
-                        {
-                            DateTime start = dayDate.Add(timeslot.start.TimeOfDay);
-                            DateTime end = dayDate.Add(timeslot.end.TimeOfDay);
-
-                            bool isHoliday = holidays.Any(h => h.date.Date == dayDate);
-
-                            var newTimeslot = new Timeslot
-                            {
-                                start = start,
-                                end = end,
-                                description = timeslot.description,
-                                allDay = timeslot.allDay,
-                                duration = timeslot.duration,
-                                quantity = timeslot.quantity,
-                                blocked = isHoliday ? true : timeslot.blocked,
-                                block_reason = string.IsNullOrEmpty(timeslot.block_reason) ? null : timeslot.block_reason,
-                                public_block = timeslot.public_block,
-                                category_id = timeslot.category_id,
-                                template_id = currentTemplate?.id,
-                                court_template_order_id = currentTemplateOrder.id,
-                            };
-
-                            timeslotCtl.CreateTimeslot(newTimeslot);
-                            long newTimeslotId = newTimeslot.id;
-                            var newCourtTimeslot = new CourtTimeslot
-                            {
-                                court_id = court.id,
-                                timeslot_id = newTimeslotId
-                            };
-                            courtTimeslotCtl.CreateCourtTimeslot(newCourtTimeslot);
-                        }
-                        currentDay = currentDay.AddDays(1);
-                    }
-                    currentWeekStart = currentWeekStart.AddDays(7).StartOfWeek();
-                }
-                return new ExtendResponse { success = true, message = "Auto Extension Successful" };
+                    success = true,
+                    message = "Auto Extension Successful",
+                    extendedCount = createdCount
+                };
             }
             catch (Exception ex)
             {
-                return new ExtendResponse { success = false, message = "Auto Extend Failed! Error: " + ex.Message };
+                return new ExtendResponse
+                {
+                    success = false,
+                    message = $"Auto Extend Failed! Error: {ex.Message}"
+                };
             }
         }
     }

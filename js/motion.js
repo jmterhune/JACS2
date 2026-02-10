@@ -121,7 +121,7 @@ class MotionController {
             displayStart: this.currentPage * this.pageSize,
         });
 
-        $(".dt-length").prepend($("#lnkAdd"));
+        $(".dataTables_length").prepend($("#lnkAdd"));
         this.motionTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();

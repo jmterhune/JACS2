@@ -12,7 +12,7 @@
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup>
-    <ReferencePath>D:\websites\intranet-new\bin\;C:\Websites\intranet-new\bin\</ReferencePath>
+    <ReferencePath>D:\websites\intranet-new\bin\;C:\Websites\intranet-new\bin\;D:\websites\apps.jud12.flcourts.org\bin\</ReferencePath>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

@@ -817,7 +817,7 @@ class CourtCalendarController {
                 $('#cattlecall_yes').prop('checked', true).trigger('change');
             }
         }
-        const title = this.getDateRangeTitle(new Date(startTime), new Date(endTime));
+        const title = this.getDateRangeTitle(new Date(startDateTime), new Date(endDateTime));
         $('#TimeslotModalLabel').text(title);
         const timeslotModal = new bootstrap.Modal(document.getElementById('TimeslotModal'));
         timeslotModal.show();
@@ -1146,7 +1146,7 @@ class CourtCalendarController {
         const getUrl = `${this.service.baseUrl}CourtAPI/AutoExtend`;
         var formData = {
             CourtId: this.courtId,
-            StartTemplateId: parseInt($('#ddlStartTemplate').val()),
+            StartTemplateOrder: parseInt($('#ddlStartTemplate').val()),
             Weeks: parseInt($('#txtWeeks').val()),
             StartDate: $('#txtStartDate').val()
         };

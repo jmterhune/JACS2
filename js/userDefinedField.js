@@ -158,7 +158,7 @@ class UserDefinedFieldController {
             displayStart: this.currentPage * this.pageSize,
         });
 
-        $(".dt-length").prepend($("#lnkAdd"));
+        $(".dataTables_length").prepend($("#lnkAdd"));
         this.userDefinedFieldTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();
@@ -278,7 +278,7 @@ class UserDefinedFieldController {
     DeleteUserDefinedField(userDefinedFieldId) {
         $.ajax({
             url: this.deleteUrl + userDefinedFieldId,
-            type: 'GET',
+            type: 'DELETE',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
                 if (response.status === 200) {

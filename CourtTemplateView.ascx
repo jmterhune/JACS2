@@ -18,7 +18,9 @@
                     <th></th>
                     <th>Template Name</th>
                     <th>Judge Name</th>
-                    <th colspan="3">Actions</th>
+                    <th>Actions</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
         </table>

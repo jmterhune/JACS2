@@ -538,6 +538,7 @@ class CourtController {
                     $("#switch_publicAvailableTimeslots").prop('checked', court.public_timeslot).trigger('change');
                     $("#switch_showDocketInternet").prop('checked', court.public_docket).trigger('change');
                     $("#edit_maxAvailableSlots").val(court.max_lagtime);
+                    $("#edit_lagTime").val(court.lagtime);
                     $("#edit_publicDocketDays").val(court.public_docket_days);
                     $("#switch_plaintiffRequired").prop('checked', court.plaintiff_required).trigger('change');
                     $("#switch_defendantRequired").prop('checked', court.defendant_required).trigger('change');
@@ -631,6 +632,7 @@ class CourtController {
                 public_timeslot: $("#edit_publicAvailableTimeslots").val() === "1",
                 public_docket: $("#edit_showDocketInternet").val() === "1",
                 max_lagtime: parseInt($("#edit_maxAvailableSlots").val()) || null,
+                lagtime: parseInt($("#edit_lagTime").val()) || null,
                 public_docket_days: parseInt($("#edit_publicDocketDays").val()) || null,
                 plaintiff_required: $("#edit_plaintiffRequired").val() === "1",
                 defendant_required: $("#edit_defendantRequired").val() === "1",
@@ -736,6 +738,7 @@ class CourtController {
                 public_timeslot: $("#edit_publicAvailableTimeslots").val() === "1",
                 public_docket: $("#edit_showDocketInternet").val() === "1",
                 max_lagtime: parseInt($("#edit_maxAvailableSlots").val()) || null,
+                lagtime: parseInt($("#edit_lagTime").val()) || null,
                 public_docket_days: parseInt($("#edit_publicDocketDays").val()) || null,
                 plaintiff_required: $("#edit_plaintiffRequired").val() === "1",
                 defendant_required: $("#edit_defendantRequired").val() === "1",

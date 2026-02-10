@@ -124,7 +124,7 @@ class AttorneyController {
         });
         $.fn.dataTable.ext.errMode = 'none';
 
-        $(".dt-length").prepend($("#lnkAdd"));
+        $(".dataTables_length").prepend($("#lnkAdd"));
         this.attorneyTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();

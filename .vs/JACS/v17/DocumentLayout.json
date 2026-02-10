@@ -3,8 +3,68 @@
   "WorkspaceRootPath": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\components\\courtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:components\\courtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courttemplate.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courttemplate.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\attorney.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\attorney.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\category.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\category.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\county.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\county.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\court.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\court.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courtpermission.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courtpermission.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\courttype.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\courttype.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\eventstatus.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\eventstatus.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\eventtype.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\eventtype.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\holiday.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\holiday.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\judge.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\judge.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\motion.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\motion.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\permission.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\permission.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\role.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\role.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\user.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\user.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|d:\\onedrive - jud12fl\\sourcecode\\jacs\\js\\userdefinedfield.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}|JACS.csproj|solutionrelative:js\\userdefinedfield.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,14 +91,209 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "CourtController.cs",
-              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\CourtController.cs",
-              "RelativeDocumentMoniker": "Components\\CourtController.cs",
-              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\Components\\CourtController.cs",
-              "RelativeToolTip": "Components\\CourtController.cs",
-              "ViewState": "AgIAAJcBAAAAAAAAAADgv6EBAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-27T17:40:48.446Z",
+              "Title": "courtTemplate.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtTemplate.js",
+              "RelativeDocumentMoniker": "js\\courtTemplate.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtTemplate.js",
+              "RelativeToolTip": "js\\courtTemplate.js",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAkwIoAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:24:37.036Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "motion.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\motion.js",
+              "RelativeDocumentMoniker": "js\\motion.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\motion.js",
+              "RelativeToolTip": "js\\motion.js",
+              "ViewState": "AgIAAGIAAAAAAAAAAAArwHsAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:29.707Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "judge.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\judge.js",
+              "RelativeDocumentMoniker": "js\\judge.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\judge.js",
+              "RelativeToolTip": "js\\judge.js",
+              "ViewState": "AgIAAG4AAAAAAAAAAAArwIcAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:28.661Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "holiday.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\holiday.js",
+              "RelativeDocumentMoniker": "js\\holiday.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\holiday.js",
+              "RelativeToolTip": "js\\holiday.js",
+              "ViewState": "AgIAAF0AAAAAAAAAAAArwHYAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:27.658Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "eventType.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\eventType.js",
+              "RelativeDocumentMoniker": "js\\eventType.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\eventType.js",
+              "RelativeToolTip": "js\\eventType.js",
+              "ViewState": "AgIAAFcAAAAAAAAAAAArwHAAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:26.656Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "eventStatus.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\eventStatus.js",
+              "RelativeDocumentMoniker": "js\\eventStatus.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\eventStatus.js",
+              "RelativeToolTip": "js\\eventStatus.js",
+              "ViewState": "AgIAAFcAAAAAAAAAAAArwHAAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:25.336Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "courtType.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtType.js",
+              "RelativeDocumentMoniker": "js\\courtType.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtType.js",
+              "RelativeToolTip": "js\\courtType.js",
+              "ViewState": "AgIAAFsAAAAAAAAAAAArwHQAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:23.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "courtPermission.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtPermission.js",
+              "RelativeDocumentMoniker": "js\\courtPermission.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\courtPermission.js",
+              "RelativeToolTip": "js\\courtPermission.js",
+              "ViewState": "AgIAAGwAAAAAAAAAAAArwIUAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:23.048Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "court.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court.js",
+              "RelativeDocumentMoniker": "js\\court.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\court.js",
+              "RelativeToolTip": "js\\court.js",
+              "ViewState": "AgIAAFsAAAAAAAAAAAArwHQAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:21.21Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "county.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\county.js",
+              "RelativeDocumentMoniker": "js\\county.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\county.js",
+              "RelativeToolTip": "js\\county.js",
+              "ViewState": "AgIAAFwAAAAAAAAAAAArwHUAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:19.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "category.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\category.js",
+              "RelativeDocumentMoniker": "js\\category.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\category.js",
+              "RelativeToolTip": "js\\category.js",
+              "ViewState": "AgIAAFYAAAAAAAAAAAArwG8AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:15.223Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "attorney.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\attorney.js",
+              "RelativeDocumentMoniker": "js\\attorney.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\attorney.js",
+              "RelativeToolTip": "js\\attorney.js",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAAAH4AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:19:35.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "permission.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\permission.js",
+              "RelativeDocumentMoniker": "js\\permission.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\permission.js",
+              "RelativeToolTip": "js\\permission.js",
+              "ViewState": "AgIAAFwAAAAAAAAAAAArwHUAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:30.72Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "role.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\role.js",
+              "RelativeDocumentMoniker": "js\\role.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\role.js",
+              "RelativeToolTip": "js\\role.js",
+              "ViewState": "AgIAAGgAAAAAAAAAAAArwIEAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:31.807Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "user.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\user.js",
+              "RelativeDocumentMoniker": "js\\user.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\user.js",
+              "RelativeToolTip": "js\\user.js",
+              "ViewState": "AgIAAF8AAAAAAAAAAAArwHgAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:34.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "userDefinedField.js",
+              "DocumentMoniker": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\userDefinedField.js",
+              "RelativeDocumentMoniker": "js\\userDefinedField.js",
+              "ToolTip": "D:\\OneDrive - jud12fl\\SourceCode\\JACS\\js\\userDefinedField.js",
+              "RelativeToolTip": "js\\userDefinedField.js",
+              "ViewState": "AgIAAIcAAAAAAAAAAAArwKAAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-02-09T16:20:35.432Z",
               "EditorCaption": ""
             }
           ]

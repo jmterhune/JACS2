@@ -263,6 +263,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\CourtController.cs" />
     <Compile Include="Components\CourtExtendController.cs" />
     <Compile Include="Handlers\DocketHandler.ashx.cs">
       <DependentUpon>DocketHandler.ashx</DependentUpon>
@@ -461,7 +462,6 @@
     <Compile Include="Components\County.cs" />
     <Compile Include="Components\CountyController.cs" />
     <Compile Include="Components\Court.cs" />
-    <Compile Include="Components\CourtController.cs" />
     <Compile Include="Components\CourtEventType.cs" />
     <Compile Include="Components\CourtEventTypeController.cs" />
     <Compile Include="Components\CourtMotion.cs" />
@@ -500,14 +500,8 @@
     <Compile Include="Components\ModelPermissionController.cs" />
     <Compile Include="Components\Motion.cs" />
     <Compile Include="Components\MotionController.cs" />
-    <Compile Include="Components\Party.cs" />
-    <Compile Include="Components\PartyContoller.cs" />
     <Compile Include="Components\Permission.cs" />
     <Compile Include="Components\PermissionController.cs" />
-    <Compile Include="Components\PersonalAccessToken.cs" />
-    <Compile Include="Components\PersonalAccessTokenController.cs" />
-    <Compile Include="Components\Revision.cs" />
-    <Compile Include="Components\RevisionController.cs" />
     <Compile Include="Components\RoleHasPermission.cs" />
     <Compile Include="Components\RoleHasPermissionController.cs" />
     <Compile Include="Components\TemplateTimeslot.cs" />

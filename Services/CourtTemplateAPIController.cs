@@ -255,7 +255,7 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        [HttpGet]
+        [HttpDelete]
         public HttpResponseMessage DeleteCourtTemplate(long p1)
         {
             try

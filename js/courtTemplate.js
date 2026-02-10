@@ -136,7 +136,7 @@ class CourtTemplateController {
             displayStart: this.currentPage * this.pageSize,
         });
 
-        $(".dt-length").prepend($("#lnkAdd"));
+        $("#tblCourtTemplate_length").prepend($("#lnkAdd"));
         this.templateTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();
@@ -308,7 +308,7 @@ class CourtTemplateController {
     DeleteCourtTemplate(templateId) {
         $.ajax({
             url: this.deleteUrl + templateId,
-            type: 'GET',
+            type: 'DELETE',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
