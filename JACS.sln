@@ -26,6 +26,26 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "JACS2-PHP", "..\..\..\JACS2
 		SlnRelativePath = "..\..\..\JACS2-PHP\"
 	EndProjectSection
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "apps.jud12.flcourts.org", "..\..\..\websites\apps.jud12.flcourts.org\", "{F5E9C3F9-9D55-11EB-10ED-A1B9A529DABC}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_59147"
+		Debug.AspNetCompiler.PhysicalPath = "..\..\..\websites\apps.jud12.flcourts.org\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59147\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_59147"
+		Release.AspNetCompiler.PhysicalPath = "..\..\..\websites\apps.jud12.flcourts.org\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59147\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "59147"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +60,10 @@ Global
 		{80557620-A82E-EDC0-6D2F-4AC50489B740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80557620-A82E-EDC0-6D2F-4AC50489B740}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{80557620-A82E-EDC0-6D2F-4AC50489B740}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{F5E9C3F9-9D55-11EB-10ED-A1B9A529DABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5E9C3F9-9D55-11EB-10ED-A1B9A529DABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5E9C3F9-9D55-11EB-10ED-A1B9A529DABC}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5E9C3F9-9D55-11EB-10ED-A1B9A529DABC}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

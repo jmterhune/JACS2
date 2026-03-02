@@ -60,22 +60,25 @@ namespace tjc.Modules.jacs.Scheduled
                     {
                         var date = dates[key];
 
-                        Components.CourtTemplate templateMask;
+                        CourtTemplateOrder currentOrderItem;
+                        CourtTemplate templateMask;
                         if (key == 0)
                         {
+                            currentOrderItem = orderItem;
                             templateMask = crtTmpCtl.GetCourtTemplateToExtend(court.id, orderOfTemplate);
                         }
                         else
                         {
-                            var courtTemplateOrder = ctoCtl.GetCourtTemplateOrderToExtend(court.id, orderOfTemplate);
-                            if (courtTemplateOrder != null)
+                            currentOrderItem = ctoCtl.GetCourtTemplateOrderToExtend(court.id, orderOfTemplate);
+                            if (currentOrderItem != null)
                             {
-                                templateMask = courtTemplateOrder.template;
+                                templateMask = currentOrderItem.template;
                             }
                             else
                             {
                                 orderOfTemplate = 1;
-                                templateMask = ctoCtl.GetCourtTemplateOrderToExtend(court.id, orderOfTemplate)?.template;
+                                currentOrderItem = ctoCtl.GetCourtTemplateOrderToExtend(court.id, orderOfTemplate);
+                                templateMask = currentOrderItem?.template;
                             }
                         }
 
@@ -101,7 +104,7 @@ namespace tjc.Modules.jacs.Scheduled
                                 if (match == null && noOldCreated)
                                 {
                                     // Log for debugging
-                                   // ScheduleHistoryItem.AddLogNote($"Creating timeslot for {startDt} - {endDt}");
+                                    // ScheduleHistoryItem.AddLogNote($"Creating timeslot for {startDt} - {endDt}");
 
                                     var newTimeslot = new Timeslot
                                     {
@@ -115,7 +118,7 @@ namespace tjc.Modules.jacs.Scheduled
                                         block_reason = string.IsNullOrEmpty(templateTimeslot.block_reason) ? null : templateTimeslot.block_reason,
                                         category_id = templateTimeslot.category_id,
                                         template_id = templateTimeslot.court_template_id,
-                                        court_template_order_id = orderItem.id,
+                                        court_template_order_id = currentOrderItem.id,
                                         description = templateTimeslot.description,
                                         created_at = DateTime.Now,
                                         updated_at = DateTime.Now
@@ -136,6 +139,7 @@ namespace tjc.Modules.jacs.Scheduled
                                 else if (match != null)
                                 {
                                     match.template_id = templateTimeslot.court_template_id;
+                                    match.court_template_order_id = currentOrderItem.id;
                                     tsCtl.UpdateTimeslot(match);
                                 }
                             }

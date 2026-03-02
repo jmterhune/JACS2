@@ -119,7 +119,7 @@ namespace tjc.Modules.jacs.Components
                         INNER JOIN [courts] ct ON ct.id = cts.[court_id]
                         INNER JOIN [judges] j on j.court_id = ct.[id]
                         INNER JOIN [court_permissions] cp ON cp.judge_id = j.id
-                    WHERE  [user_id] = @0 AND active = 1 
+                    WHERE  cp.[user_id] = @0 AND active = 1 
                         AND [start] >= GETDATE() AND ts.[deleted_at] IS NULL 
                     ORDER BY [start] DESC";
                 return ctx.ExecuteQuery<TimeslotListItem>(System.Data.CommandType.Text, query, userId);

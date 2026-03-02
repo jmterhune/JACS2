@@ -313,3 +313,17 @@ td.dt-type-numeric,th.dt-type-numeric {
 i.fas, i.fa {
     margin-right: 8px; /* Adds space after Font Awesome icons */
 }
+
+@media print {
+    /* CSS rules for printing go here */
+    .personaBarContainer, #header, #footer, .page-top, .main .court-header, .calendar-note, #pnlAdminMenu, .navbar, .no-night {
+        display: none !important;
+    }
+    #calendar {
+        visibility: visible;
+        position: relative;
+        max-width: 1000px;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

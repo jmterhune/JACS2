@@ -431,7 +431,6 @@ namespace tjc.Modules.jacs.Components
                     // ----- pick the template for this day (round-robin by order) -----
                     var orderItem = orderedTemplates[(int)currentTemplateIdx];
                     var template = courtTemplateCtl.GetCourtTemplate(orderItem.template_id.Value);
-
                     var tmplSlots = courtTemplateCtl.GetTemplateTimeslots(template.id)
                                   .Where(ts => ts.day == (int)day.DayOfWeek)
                                   .ToList();

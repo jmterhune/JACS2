@@ -71,6 +71,16 @@ namespace tjc.Modules.jacs.Components
                     courtId, templateId);
             }
         }
+        public CourtTemplateOrder GetCourtTemplateOrderByCourtTemplate(long courtId, long templateId)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteSingleOrDefault<CourtTemplateOrder>(CommandType.Text,
+                    @"SELECT TOP 1 * FROM [court_template_order] 
+                    WHERE [court_id] = @0 AND [template_id] = @1",
+                    courtId, templateId);
+            }
+        }
         public CourtTemplateOrder GetCourtTemplateOrderToExtend(long courtId, long order)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
