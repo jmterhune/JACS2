@@ -263,8 +263,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\ApiInterfaceController.cs" />
     <Compile Include="Components\CourtController.cs" />
     <Compile Include="Components\CourtExtendController.cs" />
+    <Compile Include="Components\ApiInterface.cs" />
+    <Compile Include="Components\EncryptionHelper.cs" />
     <Compile Include="Handlers\DocketHandler.ashx.cs">
       <DependentUpon>DocketHandler.ashx</DependentUpon>
     </Compile>
@@ -448,17 +451,17 @@
     <Compile Include="CountyView.ascx.designer.cs">
       <DependentUpon>CountyView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="CategoryView.ascx.cs">
-      <DependentUpon>CategoryView.ascx</DependentUpon>
+    <Compile Include="CourtroomView.ascx.cs">
+      <DependentUpon>CourtroomView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CategoryView.ascx.designer.cs">
-      <DependentUpon>CategoryView.ascx</DependentUpon>
+    <Compile Include="CourtroomView.ascx.designer.cs">
+      <DependentUpon>CourtroomView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Components\Attorney.cs" />
     <Compile Include="Components\AttorneyController.cs" />
-    <Compile Include="Components\Category.cs" />
-    <Compile Include="Components\CategoryController.cs" />
+    <Compile Include="Components\Courtroom.cs" />
+    <Compile Include="Components\CourtroomController.cs" />
     <Compile Include="Components\County.cs" />
     <Compile Include="Components\CountyController.cs" />
     <Compile Include="Components\Court.cs" />
@@ -529,7 +532,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CountyAPIController.cs" />
-    <Compile Include="Services\CategoryAPIController.cs" />
+    <Compile Include="Services\CourtroomAPIController.cs" />
     <Compile Include="Services\AttorneyAPIController.cs" />
     <Compile Include="Services\CourtAPIController.cs" />
     <Compile Include="Services\CourtMotionAPIController.cs" />
@@ -545,7 +548,7 @@
     <Compile Include="Services\RouteMapper.cs" />
     <Compile Include="Services\CourtTemplateAPIController.cs" />
     <Compile Include="Services\ViewModels\CountyViewModel.cs" />
-    <Compile Include="Services\ViewModels\CategoryViewModel.cs" />
+    <Compile Include="Services\ViewModels\CourtroomViewModel.cs" />
     <Compile Include="Services\ViewModels\AttorneyViewModel.cs" />
     <Compile Include="Services\ViewModels\CourtMotionViewModel.cs" />
     <Compile Include="Services\ViewModels\CourtPermissionViewModel.cs" />
@@ -622,11 +625,11 @@
     <Content Include="CourtTypeView.ascx" />
     <Content Include="CourtView.ascx" />
     <Content Include="CountyView.ascx" />
-    <Content Include="CategoryView.ascx" />
+    <Content Include="CourtroomView.ascx" />
     <Content Include="Controls\navbar.ascx" />
     <Content Include="Documentation\Documentation.css" />
     <Content Include="Documentation\Documentation.html" />
-    <Content Include="js\category.js" />
+    <Content Include="js\courtroom.js" />
     <Content Include="js\attorney.js" />
     <Content Include="js\county.js" />
     <Content Include="js\court.js" />

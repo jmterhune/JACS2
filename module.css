@@ -285,7 +285,7 @@ td.dt-type-numeric,th.dt-type-numeric {
         }
 /* Process Styles*/
 .modal-progress {
-    position: absolute; /* Position relative to modal-content */
+    position: fixed !important; /* Position relative to modal-content */
     top: 0;
     left: 0;
     right: 0;
@@ -313,17 +313,112 @@ td.dt-type-numeric,th.dt-type-numeric {
 i.fas, i.fa {
     margin-right: 8px; /* Adds space after Font Awesome icons */
 }
+#caseSearchModal .container,
+#caseSearchModal .row,
+#caseSearchModal [id^="dnn_"] {
+    display: none !important;
+}
 
+#caseSearchModal .modal-body > .container,
+#caseSearchModal .modal-body > .row {
+    display: block !important; /* in case you want grid inside modal later */
+}
 @media print {
-    /* CSS rules for printing go here */
-    .personaBarContainer, #header, #footer, .page-top, .main .court-header, .calendar-note, #pnlAdminMenu, .navbar, .no-night {
+    /* ────────────────────────────────────────────────
+     Hide almost everything except the calendar
+  ──────────────────────────────────────────────── */
+    body * {
+        visibility: hidden;
+    }
+
+    #calendar,
+    #calendar * {
+        visibility: visible;
+    }
+        #calendar td, .fc-col-header th {
+            min-width: 200px;
+            max-width: 200px;
+        }
+    /* Position calendar at top-left of page */
+    #calendar {
+        max-width: none !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background: white !important;
+    }
+
+    /* Force month view to take priority and expand properly */
+    .fc-dayGridMonth-view {
+        display: block !important;
+        height: auto !important;
+    }
+
+    /* Make the table-like structure fit better */
+    .fc-scrollgrid {
+        border-collapse: collapse !important;
+    }
+
+    .fc-scrollgrid-sync-table,
+    .fc-daygrid-body,
+    .fc-daygrid-week-number,
+    .fc-daygrid-day {
+        width: auto !important;
+        height: auto !important;
+    }
+
+    /* Reduce padding/margins inside day cells so more content fits */
+    .fc-daygrid-day-frame {
+        padding: 2px 4px !important;
+        min-height: 80px !important; /* ← adjust this value if still cutting off */
+    }
+
+    .fc-daygrid-day-top {
+        margin-bottom: 2px !important;
+    }
+
+    .fc-daygrid-event-harness {
+        margin-bottom: 1px !important;
+    }
+
+    /* Make day numbers and events smaller if needed */
+    .fc-daygrid-day-number {
+        font-size: 0.9em !important;
+        padding: 2px 4px !important;
+    }
+
+    .fc-daygrid-event {
+        font-size: 0.75em !important; /* smaller event text */
+        padding: 1px 3px !important;
+        white-space: normal !important; /* allow wrapping */
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-height: 4.2em !important; /* ≈ 4–5 lines */
+        line-height: 1.2 !important;
+    }
+
+    /* Remove or minimize headers/toolbar for print */
+    .fc-header-toolbar,
+    .fc-toolbar {
         display: none !important;
     }
-    #calendar {
-        visibility: visible;
-        position: relative;
-        max-width: 1000px;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+
+    /* Try to prevent page breaks inside the calendar */
+    .fc-dayGridMonth-view,
+    .fc-scrollgrid {
+        page-break-inside: avoid !important;
     }
+
+    /* Force content to stay on one page if possible (landscape helps a lot) */
+    @page {
+        size: landscape;
+        margin: 8mm 6mm 10mm 6mm; /* smaller margins = more space */
+    }
+
+    /* Optional: hide weekends if not needed */
+    /* .fc-daygrid-day.fc-day-sat,
+     .fc-daygrid-day.fc-day-sun {
+       display: none !important;
+     } */
 }

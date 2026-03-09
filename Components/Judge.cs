@@ -9,6 +9,7 @@ namespace tjc.Modules.jacs.Components
     internal class Judge
     {
         public long id { get; set; }
+        public long user_id { get; set; }
         public string name { get; set; }
         public string old_id { get; set; }
         public string phone { get; set; }

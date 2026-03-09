@@ -11,6 +11,10 @@ namespace tjc.Modules.jacs.Components
         public long id { get; set; }
         public string name { get; set; }
         public string code { get; set; }
+        public string auth_end_point_url { get; set; }
+        public string user_name { get; set; }
+        public string password { get; set; }
+
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
     }

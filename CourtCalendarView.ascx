@@ -53,7 +53,7 @@
             <div class="modal-header">
                 <h4 class="modal-title" id="ExtendCalendarModalLabel">Extend Calendar</h4>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -231,7 +231,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>Courtroom</label>
-                                        <select id="timeslot_category" class="form-control" autocomplete="off">
+                                        <select id="timeslot_courtroom" class="form-control" autocomplete="off">
                                             <option value="">-</option>
                                         </select>
                                     </div>

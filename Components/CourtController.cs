@@ -39,7 +39,7 @@ namespace tjc.Modules.jacs.Components
                     calendar_weeks = t.calendar_weeks,
                     case_format_type = t.case_format_type,
                     case_num_format = t.case_num_format,
-                    category_print = t.category_print,
+                    courtroom_print = t.courtroom_print,
                     custom_email_body = t.custom_email_body,
                     custom_header = t.custom_header,
                     defendant = t.defendant,
@@ -189,7 +189,7 @@ namespace tjc.Modules.jacs.Components
                     court.calendar_weeks = t.calendar_weeks;
                     court.case_format_type = t.case_format_type;
                     court.case_num_format = t.case_num_format;
-                    court.category_print = t.category_print;
+                    court.courtroom_print = t.courtroom_print;
                     court.custom_email_body = t.custom_email_body;
                     court.custom_header = t.custom_header;
                     court.defendant = t.defendant;
@@ -449,7 +449,7 @@ namespace tjc.Modules.jacs.Components
                             blocked = isHoliday ? true : ts.blocked,
                             block_reason = string.IsNullOrEmpty(ts.block_reason) ? null : ts.block_reason,
                             public_block = ts.public_block,
-                            category_id = ts.category_id,
+                            courtroom_id = ts.courtroom_id,
                             template_id = template.id,
                             court_template_order_id = orderItem.id,
                             created_at = DateTime.Now,

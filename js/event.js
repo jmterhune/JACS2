@@ -67,7 +67,7 @@ class EventController {
         };
 
         initializeSelect2("#courtFilter", `${baseUrl}CourtAPI/GetCourtDropDownItems/`, "-");
-        initializeSelect2("#categoryFilter", `${baseUrl}CategoryAPI/GetCategoryDropDownItems/`, "-");
+        initializeSelect2("#courtroomFilter", `${baseUrl}CourtroomAPI/GetCourtroomDropDownItems/`, "-");
         initializeSelect2("#statusFilter", `${baseUrl}EventTypeAPI/GetEventTypeDropDownItems/`, "-");
     }
 
@@ -83,7 +83,7 @@ class EventController {
                 data: data => ({
                     userId: eventControllerInstance.userId,
                     courtId: $("#courtFilter").val(),
-                    categoryId: $("#categoryFilter").val(),
+                    courtroomId: $("#courtroomFilter").val(),
                     statusId: $("#statusFilter").val(),
                     searchText: data.search?.value || '',
                     draw: data.draw,
@@ -113,7 +113,7 @@ class EventController {
                 { data: "opp_attorney_name" },
                 { data: "plaintiff" },
                 { data: "defendant" },
-                { data: "category_name" },
+                { data: "courtroom_name" },
             ],
             order: [[this.sortColumnIndex, this.sortDirection]],
             pageLength: this.pageSize,
@@ -154,19 +154,19 @@ class EventController {
     }
 
     toggleRemoveFilters() {
-        const hasFilter = !!$("#courtFilter").val() || !!$("#categoryFilter").val() || !!$("#statusFilter").val();
+        const hasFilter = !!$("#courtFilter").val() || !!$("#courtroomFilter").val() || !!$("#statusFilter").val();
         $("#removeFilters").toggle(hasFilter);
     }
 
     bindEvents() {
-        $("#courtFilter, #categoryFilter, #statusFilter").on("change", () => {
+        $("#courtFilter, #courtroomFilter, #statusFilter").on("change", () => {
             this.table.ajax.reload();
             this.toggleRemoveFilters();
         });
 
         $("#removeFilters").on("click", () => {
             $("#courtFilter").val("").trigger("change");
-            $("#categoryFilter").val("").trigger("change");
+            $("#courtroomFilter").val("").trigger("change");
             $("#statusFilter").val("").trigger("change");
             this.toggleRemoveFilters();
         });

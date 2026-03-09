@@ -85,11 +85,11 @@ class DocketController {
             }
         });
 
-        initializeSelect2("#categoryFilter", null, "All", false); // No AJAX for categories, but load below
+        initializeSelect2("#courtroomFilter", null, "All", false); // No AJAX for courtrooms, but load below
 
-        // Load all categories statically (mimicking PHP foreach)
+        // Load all courtrooms statically (mimicking PHP foreach)
         $.ajax({
-            url: `${baseUrl}CategoryAPI/GetCategoryDropDownItems/`,
+            url: `${baseUrl}CourtroomAPI/GetCourtroomDropDownItems/`,
             type: "GET",
             data: { q: '' },
             dataType: 'json',
@@ -97,16 +97,16 @@ class DocketController {
             success: (response) => {
                 if (response.data) {
                     response.data.forEach(item => {
-                        $('#categoryFilter').append(`<option value="${item.Key}">${item.Value}</option>`);
+                        $('#courtroomFilter').append(`<option value="${item.Key}">${item.Value}</option>`);
                     });
                 }
             },
             error: () => {
-                ShowNotification("Error", "Failed to load categories.", 'error');
+                ShowNotification("Error", "Failed to load courtrooms.", 'error');
             }
         });
 
-        $('.categories_select').select2();
+        $('.courtrooms_select').select2();
     }
 
     bindEvents() {
@@ -115,7 +115,7 @@ class DocketController {
         });
 
         $('#courtFilter').on('change', () => {
-            this.getCategory();
+            this.getCourtroom();
         });
 
         $('#printDocket').on('click', () => {
@@ -124,7 +124,7 @@ class DocketController {
             const handlerUrl = this.handlerUrl;
             const postData = {
                 court: $("#courtFilter").val() || 0,
-                category: $("#categoryFilter").val() || 0,
+                courtroom: $("#courtroomFilter").val() || 0,
                 from: $("#from").val(),
                 to: $("#to").val(),
             };
@@ -166,10 +166,10 @@ class DocketController {
         });
 
         // Initial call if a court is pre-selected
-        this.getCategory();
+        this.getCourtroom();
     }
 
-    getCategory() {
+    getCourtroom() {
         const courtId = $('#courtFilter').val();
         if (!courtId) return;
 
@@ -180,8 +180,8 @@ class DocketController {
             dataType: 'JSON',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: function (response) {
-                let checkValue = (response.data && response.data.category_print) ? true : false;
-                $('#categoryPrint').prop('checked', checkValue);
+                let checkValue = (response.data && response.data.courtroom_print) ? true : false;
+                $('#courtroomPrint').prop('checked', checkValue);
             },
             error: function () {
                 ShowNotification("Error", "Failed to load court details.", 'error');

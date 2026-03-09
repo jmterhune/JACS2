@@ -93,10 +93,10 @@
                                 <select id="edit_judgeName" class="form-control" required>
                                     <option value="">Select Judge</option>
                                 </select>
-                                <input type="text" id="edit_judgeNameText" class="form-control" style="display: none;" required> 
+                                <input type="text" id="edit_judgeNameText" class="form-control" style="display: none;" required>
                                 <div class="invalid-feedback" id="edit_judgeName_error">Judge is Required.</div>
                                 <div id="judgeHelp" class="form-text mb-0">Judges must have an existing account on this site and must be added to the Judge Role before assignment can be made.</div>
-                               
+
                             </div>
 
                             <div class="col-md-4">
@@ -128,12 +128,82 @@
 
                         </div>
                     </div>
+                    <button type="button" class="btn btn-tertiary" id="xref_cmdAddReference">
+                        <i class="fas fa-plus"></i>&nbsp;Add Judge Reference
+                    </button>
+
+                    <table id="xref_judge_list" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>County</th>
+                                <th>Judge</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-success" id="edit_cmdSave">
                     <i class="fas fa-save" aria-hidden="true"></i>&nbsp;Save
                 </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cross Reference Modal -->
+<div class="modal fade" id="JudgeXrefModal" tabindex="-1" aria-labelledby="JudgeXrefModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="xref_progress_judge" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif">
+                </div>
+            </div>
+            <div class="modal-header">
+                <h4 class="modal-title" id="JudgeXrefModalLabel">Manage Judge Cross References</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label>JACS Judge</label>
+                                <select id="xref_judge" class="form-control" required="" aria-describedby="jacsJudgeHelp">
+                                    <option value="">Select JACS Judge</option>
+                                </select>
+                                <div class="invalid-feedback" id="xref_judge_error">Judge is Required.</div>
+                                <div id="jacsJudgeHelp" class="form-text mb-0">Select the JACS judge from the list to associate with the clerk's record</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>County<em>*</em></label>
+                                <select id="xref_county" class="form-control" aria-describedby="countyHelp">
+                                    <option value="">Select County</option>
+                                </select>
+                                <div class="invalid-feedback" id="xref_county_error">County is Required.</div>
+                                <div id="countyHelp" class="form-text mb-0">Select the county to associate</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Clerk Judge<em>*</em></label>
+                                <select id="xref_clerkJudge" class="form-control" aria-describedby="clerkJudgeHelp">
+                                    <option value="">Select Judge</option>
+                                </select>
+                                <div id="clerkJudgeHelp" class="form-text mb-0">Select the judge from the Clerk's Judge List</div>
+                            </div>
+
+                        </div>
+                        <button type="button" class="btn btn-success" id="xref_cmdSaveReference">
+                            <i class="fas fa-save"></i>&nbsp;Save Reference
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -160,11 +230,11 @@
 
     (function ($, Sys) {
         $(document).ready(function () {
-                const element = document.getElementById('edit_judgePhone');
-                const maskOptions = {
-                    mask: '(000) 000-0000'
-                };
-                const mask = IMask(element, maskOptions);
+            const element = document.getElementById('edit_judgePhone');
+            const maskOptions = {
+                mask: '(000) 000-0000'
+            };
+            const mask = IMask(element, maskOptions);
             try {
                 if (typeof JudgeController === 'undefined') {
                     console.error('JudgeController is not defined. Check if Script(judge.js) loaded correctly.');

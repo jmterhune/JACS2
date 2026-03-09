@@ -32,7 +32,7 @@ class CourtCalendarController {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         const promCourt = this.fetchCourtData();
-        const promCategory = this.populateCategorySelect();
+        const promCourtroom = this.populateCourtroomSelect();
         const promEventType = this.populateEventTypeSelect();
         const promCaseTypes = this.populateCaseTypes();
         const promAttorney = this.populateAttorneySelects();
@@ -82,7 +82,7 @@ class CourtCalendarController {
             });
         }
 
-        $.when(promCourt, promCategory, promEventType, promCaseTypes, promAttorney).then(
+        $.when(promCourt, promCourtroom, promEventType, promCaseTypes, promAttorney).then(
             () => this.populateEventDefaults()).fail(() => console.error('One or more data fetches failed'));
         if (this.calendarItem && this.calendarItem.timeslotId > 0) {
             this.showTimeslotModal(this.calendarItem);
@@ -441,14 +441,14 @@ class CourtCalendarController {
         });
     }
 
-    populateCategorySelect() {
+    populateCourtroomSelect() {
         return $.ajax({
-            url: `${this.service.baseUrl}CategoryAPI/GetCategoryDropDownItems`,
+            url: `${this.service.baseUrl}CourtroomAPI/GetCourtroomDropDownItems`,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
-                const select = document.getElementById('timeslot_category');
+                const select = document.getElementById('timeslot_courtroom');
                 if (select && response.data) {
                     select.innerHTML = '<option value="">-</option>';
                     response.data.forEach(item => {
@@ -460,7 +460,7 @@ class CourtCalendarController {
                 }
             },
             error: () => {
-                ShowNotification('Error', 'Failed to load categories.', 'error');
+                ShowNotification('Error', 'Failed to load courtrooms.', 'error');
             }
         });
     }
@@ -1239,7 +1239,7 @@ class CourtCalendarController {
                     this.currentDuration = response.duration;
                     $('#timeslot_quantity').val(response.quantity);
                     $('#timeslot_description').val(response.description);
-                    $('#timeslot_category').val(response.category);
+                    $('#timeslot_courtroom').val(response.courtroom);
                     $(`#cattlecall_${response.quantity > 1 ? 'yes' : 'no'}`).prop('checked', true);
                     $('.quantity-group').toggle(response.quantity >= 1);
                     const tomSelect = $('#timeslot_restrictedMotions')[0].tomselect;
@@ -1288,8 +1288,8 @@ class CourtCalendarController {
         const cattlecall = $('input[name="timeslot_cattlecall"]:checked').val();
         const quantityVal = $('#timeslot_quantity').val();
         const quantity = quantityVal ? parseInt(quantityVal) : 0;
-        const categoryVal = $('#timeslot_category').val();
-        const category = categoryVal ? parseInt(categoryVal) : null;
+        const courtroomVal = $('#timeslot_courtroom').val();
+        const courtroom = courtroomVal ? parseInt(courtroomVal) : null;
         const restrictedTom = $('#timeslot_restrictedMotions')[0].tomselect;
         const restrictedMotions = restrictedTom ? restrictedTom.getValue().map(id => parseInt(id)).filter(id => !isNaN(id)) : [];
         return {
@@ -1304,7 +1304,7 @@ class CourtCalendarController {
             quantity: quantity,
             cattlecall: cattlecall === '1',
             description: $('#timeslot_description').val(),
-            category_id: category,
+            courtroom_id: courtroom,
             courtId: this.courtId,
             restrictedMotions: restrictedMotions
         };
@@ -1491,7 +1491,7 @@ class CourtCalendarController {
         $('#timeslot_duration').val('15');
         $('#timeslot_quantity').val('1');
         $('#timeslot_description').val('');
-        $('#timeslot_category').val('');
+        $('#timeslot_courtroom').val('');
         const tomSelect = $('#timeslot_restrictedMotions')[0].tomselect;
         if (tomSelect) tomSelect.clear();
     }
@@ -1975,7 +1975,7 @@ class CourtCalendarController {
                 url: `${this.service.baseUrl}EventAPI/SearchCaseNumberDetails`,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ searchTerm: caseNum }),
+                data: JSON.stringify({ caseNum: caseNum, courtId: this.courtId }),
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 success: response => {
                     if (response.data) {

@@ -53,7 +53,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
-                return rep.Find("Where timeslot_id=@0",timeslotId);
+                return rep.Find("Where timeslot_id=@0 AND deleted_at IS NULL", timeslotId);
             }
         }
 
@@ -83,7 +83,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
-                return rep.Find("WHERE timeslot_id = @0", id);
+                return rep.Find("WHERE timeslot_id = @0 AND deleted_at IS NULL", id);
             }
         }
 
@@ -92,7 +92,7 @@ namespace tjc.Modules.jacs.Components
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
                 var rep = ctx.GetRepository<TimeslotEvent>();
-                return rep.Find("WHERE event_id = @0", id);
+                return rep.Find("WHERE event_id = @0 AND deleted_at IS NULL", id);
             }
         }
 
@@ -101,12 +101,12 @@ namespace tjc.Modules.jacs.Components
             if (t == null) throw new ArgumentNullException(nameof(t));
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                if (t.event_id.HasValue && ctx.ExecuteScalar<long>( System.Data.CommandType.Text,"SELECT COUNT(*) FROM events WHERE id = @0", t.event_id.Value) == 0)
+                if (t.event_id.HasValue && ctx.ExecuteScalar<long>( System.Data.CommandType.Text, "SELECT COUNT(*) FROM events WHERE id = @0", t.event_id.Value) == 0)
                     throw new ValidationException("Invalid event ID.");
-                if (t.timeslot_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM timeslots WHERE id = @0", t.timeslot_id.Value) == 0)
+                if (t.timeslot_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM timeslots WHERE id = @0 AND deleted_at IS NULL", t.timeslot_id.Value) == 0)
                     throw new ValidationException("Invalid timeslot ID.");
-                if (ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM timeslot_events WHERE event_id = @0 AND timeslot_id = @1", t.event_id, t.timeslot_id) > 0)
-                    throw new ValidationException("Duplicate timeslot-event association.");
+                if (ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM timeslot_events WHERE event_id = @0 AND timeslot_id = @1 AND deleted_at IS NULL", t.event_id, t.timeslot_id) > 1)
+                    throw new ValidationException($"Duplicate timeslot-event association. id={t.id} event_id={t.event_id}, timeslot_id={t.timeslot_id}");
             }
         }
     }

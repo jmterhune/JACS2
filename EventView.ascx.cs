@@ -43,7 +43,7 @@ namespace tjc.Modules.jacs
             {
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CategoryListUrl = CategoryListUrl;
+                navbar.CourtroomListUrl = CourtroomListUrl;
                 navbar.CountyListUrl = CountyListUrl;
                 navbar.CourtListUrl = CourtListUrl;
                 navbar.CourtTypeListUrl = CourtTypeListUrl;

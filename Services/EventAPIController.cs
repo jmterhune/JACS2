@@ -1,6 +1,8 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DocumentFormat.OpenXml.EMMA;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,7 @@ namespace tjc.Modules.jacs.Services
             long userId = query.ContainsKey("userId") && long.TryParse(query["userId"], out long uid) ? uid : 0;
             string searchTerm = query.ContainsKey("searchText") ? query["searchText"] : "";
             long courtId = query.ContainsKey("courtId") && long.TryParse(query["courtId"], out long cId) ? cId : 0;
-            long categoryId = query.ContainsKey("categoryId") && long.TryParse(query["categoryId"], out long catId) ? catId : 0;
+            long courtroomId = query.ContainsKey("courtroomId") && long.TryParse(query["courtroomId"], out long catId) ? catId : 0;
             long statusId = query.ContainsKey("statusId") && long.TryParse(query["statusId"], out long statId) ? statId : 0;
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             Int32.TryParse(query.ContainsKey("length") ? query["length"] : "50", out int pageSize);
@@ -45,9 +47,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventController();
-                filteredCount = ctl.GetEventListItemCount(userId, searchTerm, courtId, categoryId, statusId);
+                filteredCount = ctl.GetEventListItemCount(userId, searchTerm, courtId, courtroomId, statusId);
                 if (p1 == 0) { recordCount = filteredCount; }
-                events = ctl.GetEventListItems(userId, searchTerm, courtId, categoryId, statusId, recordOffset, pageSize, sortColumn, sortDirection)
+                events = ctl.GetEventListItems(userId, searchTerm, courtId, courtroomId, statusId, recordOffset, pageSize, sortColumn, sortDirection)
                            .Select(evt => new EventViewModel(evt)).ToList();
                 return Request.CreateResponse(new EventListItemResult
                 {
@@ -102,10 +104,9 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage SearchCaseNumber(JObject p1)
+        public HttpResponseMessage SearchCaseNumber([FromBody] JObject p1)
         {
             try
             {
@@ -128,33 +129,109 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventSearchResult { data = null, error = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage SearchCaseNumberDetails(JObject p1)
+        public HttpResponseMessage GetEventsByCaseNumber([FromBody] JObject p1)
         {
             try
             {
-                var caseNumber = p1.ToObject<SearchTerm>();
-                if (string.IsNullOrWhiteSpace(caseNumber.searchTerm))
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Case number is required." });
-                }
+                var model = p1.ToObject<CaseSearchModel>();
+                if (string.IsNullOrWhiteSpace(model.casePattern))
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { message = "Case number is required" });
+
                 var ctl = new EventController();
-                var eventData = ctl.GetEventByCaseNumber(caseNumber.searchTerm);
-                if (eventData == null)
+                var events = ctl.GetEventsByCasePattern(model.casePattern,model.userId,model.isJudge);
+                return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new EventSearchResult { data = null, error = "No Event Found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new EventSearchResult { data = new EventViewModel(eventData), error = null });
+                    data = events.Select(e => new EventViewModel(e)).ToList()
+                });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventSearchResult { data = null, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { error = ex.Message });
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage SearchCaseNumberDetails([FromBody] JObject request)
+        {
+            try
+            {
+                string caseNum = request["caseNum"]?.Value<string>();
+                long courtId = request["courtId"]?.Value<long>() ?? 0;
 
+                if (string.IsNullOrWhiteSpace(caseNum) || courtId <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                    {
+                        message = "caseNum and courtId are required in the request body"
+                    });
+                }
+
+                var courtCtl = new CourtController();
+                var court = courtCtl.GetCourt(courtId);
+                if (court == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { message = "Court not found" });
+                }
+
+                var countyCtl = new CountyController();
+                var county = countyCtl.GetCounty(court.county_id);
+                if (county == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { message = "County not found" });
+                }
+
+                var apiCtl = new ApiInterfaceController();
+                var api = apiCtl.GetApiInterfaceByCountyAndType(county.id, ApiInterfaceType.GetCase);
+                if (api == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        message = "API interface not configured for GetCase in this county"
+                    });
+                }
+
+                string token = apiCtl.GetJwtToken(county).Result;
+                if (string.IsNullOrEmpty(token))
+                {
+                    Exceptions.LogException(new Exception($"Failed to obtain JWT token for county clerk API. CourtID: {courtId}"));
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, new { message = "Failed to authenticate with county clerk API" });
+                }
+
+                // Payload for the clerk's POST endpoint
+                var payload = new
+                {
+                    case_number = caseNum,
+                    case_id = 0
+                };
+
+                var externalResponse = apiCtl.CallExternalApi(api, token, payload, HttpMethod.Post).Result;
+
+                if (!externalResponse.IsSuccessStatusCode)
+                {
+                    string errorContent = externalResponse.Content.ReadAsStringAsync().Result;
+                    Exceptions.LogException(new Exception($"County clerk API returned error. CourtID: {courtId}, StatusCode: {externalResponse.StatusCode}, Response: {errorContent}"));
+                    return Request.CreateResponse(externalResponse.StatusCode, new
+                    {
+                        message = "County clerk API returned an error",
+                        details = errorContent
+                    });
+                }
+
+                var caseDetails = JsonConvert.DeserializeObject<JObject>(externalResponse.Content.ReadAsStringAsync().Result);
+                return Request.CreateResponse(HttpStatusCode.OK, caseDetails);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    message = "Internal server error while searching case details"
+                });
+            }
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage CancelEvent(long p1)
@@ -182,13 +259,13 @@ namespace tjc.Modules.jacs.Services
                 var timeslotEvents = teCtl.GetTimeslotEventsByEvent(p1);
                 foreach (var te in timeslotEvents)
                 {
-                    teCtl.DeleteTimeslotEvent(te.id,false);
+                    teCtl.DeleteTimeslotEvent(te.id, false);
                 }
                 eventToCancel.cancellation_reason = reason;
-                eventToCancel.status_id =  cancelledStatus != null ? cancelledStatus.id : (long?)null;
+                eventToCancel.status_id = cancelledStatus != null ? cancelledStatus.id : (long?)null;
                 eventToCancel.updated_at = DateTime.Now;
                 ctl.UpdateEvent(eventToCancel);
-                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null});
+                return Request.CreateResponse(HttpStatusCode.OK, new EventCancelResult { cancelled = true, error = null });
 
             }
             catch (Exception ex)
@@ -197,7 +274,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventCancelResult { cancelled = false, error = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage CreateEvent(JObject p1)
@@ -267,7 +343,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage UpdateEvent(JObject p1)
@@ -306,7 +381,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
         [HttpGet]
         public HttpResponseMessage GetEvent(long p1)
         {
@@ -326,7 +400,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventSearchResult { data = null, error = ex.Message });
             }
         }
-
         [HttpGet]
         public HttpResponseMessage GetEventsForTimeslot(long p1)
         {
@@ -400,17 +473,17 @@ namespace tjc.Modules.jacs.Services
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Event not found." });
                 }
                 var timeslotEvent = teCtl.GetTimeslotEventsByEvent(p1.event_id).FirstOrDefault();
-                
-                if (timeslotEvent==null)
+
+                if (timeslotEvent == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No timeslots found for event." });
                 }
-                
+
                 var currentTimeslot = tsCtl.GetTimeslot(timeslotEvent.timeslot_id.Value);
                 var selectedtimeslot = tsCtl.GetTimeslot(p1.timeslot_id);
                 var selectedtimeslotEvents = teCtl.GetTimeslotEventsByTimeslot(selectedtimeslot.id);
                 int eventCount = selectedtimeslotEvents.Count();
-                if (eventCount>=selectedtimeslot.quantity)
+                if (eventCount >= selectedtimeslot.quantity)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "The selected timeslot has no space available for event assignment." });
                 }
@@ -439,7 +512,7 @@ namespace tjc.Modules.jacs.Services
                 //}
                 timeslotEvent.timeslot_id = selectedtimeslot.id;
                 teCtl.UpdateTimeslotEvent(timeslotEvent);
-                eventToReschedule.status_id =  rescheduledStatus != null ? rescheduledStatus.id : (long?)null;
+                eventToReschedule.status_id = rescheduledStatus != null ? rescheduledStatus.id : (long?)null;
                 eventToReschedule.updated_at = DateTime.Now;
                 ctl.UpdateEvent(eventToReschedule);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Event rescheduled successfully" });
@@ -450,7 +523,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
         internal class EventListItemResult
         {
             public List<EventViewModel> data { get; set; }
@@ -464,24 +536,26 @@ namespace tjc.Modules.jacs.Services
             public List<EventViewModel> data { get; set; }
             public string error { get; set; }
         }
-
         internal class EventSearchResult
         {
             public EventViewModel data { get; set; }
             public string error { get; set; }
         }
-
         internal class EventCancelResult
         {
             public bool cancelled { get; set; }
             public string error { get; set; }
         }
-
+        internal class CaseSearchModel
+        {
+            public string casePattern { get; set; }
+            public int userId { get; set; }
+            public bool isJudge { get; set; }
+        }
         internal class SearchTerm
         {
             public string searchTerm { get; set; }
         }
-
         private string GetSortColumn(string columnIndex)
         {
             switch (columnIndex)
@@ -496,7 +570,7 @@ namespace tjc.Modules.jacs.Services
                 case "9": return "opposing_attorney";
                 case "10": return "plaintiff";
                 case "11": return "defendant";
-                case "12": return "category";
+                case "12": return "courtroom";
                 default: return "case_num";
             }
         }

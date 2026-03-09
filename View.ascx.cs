@@ -12,6 +12,7 @@
 
 using DotNetNuke.Services.Exceptions;
 using System;
+using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs
 {
@@ -36,7 +37,7 @@ namespace tjc.Modules.jacs
             {
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CategoryListUrl = CategoryListUrl;
+                navbar.CourtroomListUrl = CourtroomListUrl;
                 navbar.CountyListUrl = CountyListUrl;
                 navbar.CourtListUrl = CourtListUrl;
                 navbar.CourtTypeListUrl = CourtTypeListUrl;
@@ -55,6 +56,19 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkMain";
+                if(!IsPostBack)
+                {
+                    var caseTypes =new CourtTypeController();
+                    var counties = new CountyController();
+                    case_num_part1.DataTextField = "Value";
+                    case_num_part1.DataValueField = "Key";
+                    case_num_part1.DataSource=counties.GetCountyCodeDropDownItems();
+                    case_num_part1.DataBind();
+                    case_num_part3.DataTextField = "Value";
+                    case_num_part3.DataValueField = "Value";
+                    case_num_part3.DataSource=caseTypes.GetCourtTypeDropDownItems();
+                    case_num_part3.DataBind();
+                }
             }
             catch (Exception exc) //Module failed to load
             {

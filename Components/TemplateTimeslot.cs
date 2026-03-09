@@ -19,7 +19,7 @@ namespace tjc.Modules.jacs.Components
         public int day { get; set; }
         public long? court_template_id { get; set; }
         public string description { get; set; }
-        public long? category_id { get; set; }
+        public long? courtroom_id { get; set; }
         public bool blocked { get; set; }
         public bool public_block { get; set; }
         public string block_reason { get; set; }
@@ -47,9 +47,9 @@ namespace tjc.Modules.jacs.Components
                 else
                 {
                     title = (description ?? block_reason ?? "") + "<br>";
-                    if (category_id.HasValue)
+                    if (courtroom_id.HasValue)
                     {
-                        title += $"({category.description}) <br>";
+                        title += $"({courtroom.description}) <br>";
                     }
                     title += $"{quantity} Available";
                 }
@@ -97,14 +97,14 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public Category category
+        public Courtroom courtroom
         {
             get
             {
-                if (category_id.HasValue)
+                if (courtroom_id.HasValue)
                 {
-                    var ctl = new CategoryController();
-                    return ctl.GetCategory(category_id.Value);
+                    var ctl = new CourtroomController();
+                    return ctl.GetCourtroom(courtroom_id.Value);
                 }
                 return null;
             }
@@ -121,7 +121,7 @@ namespace tjc.Modules.jacs.Components
                 day = this.day,
                 court_template_id = this.court_template_id,
                 description = this.description,
-                category_id = this.category_id,
+                courtroom_id = this.courtroom_id,
                 blocked = this.blocked,
                 public_block = this.public_block,
                 block_reason = this.block_reason,

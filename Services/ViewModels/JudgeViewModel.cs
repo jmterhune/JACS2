@@ -9,6 +9,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public JudgeViewModel(Judge judge)
         {
             id = judge.id;
+            user_id = judge.user_id;
             name = judge.name;
             phone = judge.phone;
             court_name = judge.court_id.HasValue?GetJudgeCourtName(judge.court_id.Value):"";
@@ -20,6 +21,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
         [JsonProperty("id")]
         public long id { get; set; }
+        [JsonProperty("user_id")]
+        public long user_id { get; set; }
 
         [JsonProperty("name")]
         public string name { get; set; }

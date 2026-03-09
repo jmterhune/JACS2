@@ -9,6 +9,8 @@ namespace tjc.Modules.jacs.Components
     internal class Event
     {
         public long id { get; set; }
+        public long clerk_event_id { get; set; } // from clerk's event_list view
+        public long clerk_case_id { get; set; } // from clerk's case table
         public string case_num { get; set; }
         public string notes { get; set; }
         public string plaintiff { get; set; }
@@ -189,6 +191,8 @@ namespace tjc.Modules.jacs.Components
     internal class EventListItem
     {
         public long id { get; set; }
+        public long clerk_event_id { get; set; } // from clerk's event_list view
+        public long clerk_case_id { get; set; } // from clerk's case table
         public string case_num { get; set; }
         public string notes { get; set; }
         public string plaintiff { get; set; }
@@ -215,7 +219,7 @@ namespace tjc.Modules.jacs.Components
         public string timeslot_desc { get; set; }
         public string court_name { get; set; }
         public long ? court_id { get; set; }
-        public string category_name { get; set; }
+        public string courtroom_name { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
         public DateTime? start { get; set; }

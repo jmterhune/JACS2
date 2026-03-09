@@ -185,6 +185,10 @@ namespace tjc.Modules.jacs.Services
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, valid user ID, and at least one valid email are required." });
                 }
                 var ctl = new AttorneyController();
+                if(!attorney.scheduling.HasValue)
+                {
+                    attorney.scheduling = true;
+                }
                 attorney.created_at = DateTime.Now;
                 attorney.updated_at = DateTime.Now;
                 ctl.CreateAttorney(attorney);

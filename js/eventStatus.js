@@ -110,7 +110,7 @@ class EventStatusController {
             displayStart: this.currentPage * this.pageSize,
         });
 
-        $(".dataTables_length").prepend($("#lnkAdd"));
+        $(".dt-length").prepend($("#lnkAdd"));
         this.eventStatusTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();

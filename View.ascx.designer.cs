@@ -22,5 +22,23 @@ namespace tjc.Modules.jacs
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::tjc.Modules.jacs.Controls.navbar navbar;
+
+        /// <summary>
+        /// case_num_part1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList case_num_part1;
+
+        /// <summary>
+        /// case_num_part3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList case_num_part3;
     }
 }

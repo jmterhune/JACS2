@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Text.Json;
@@ -58,7 +60,7 @@ namespace tjc.Modules.jacs
                 JsonCalendarItem = "null";
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CategoryListUrl = CategoryListUrl;
+                navbar.CourtroomListUrl = CourtroomListUrl;
                 navbar.CountyListUrl = CountyListUrl;
                 navbar.CourtListUrl = CourtListUrl;
                 navbar.CourtTypeListUrl = CourtTypeListUrl;
@@ -77,7 +79,6 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkCourt";
-
                 // Moved the following block outside of the !IsPostBack check to ensure fields are always populated,
                 // as ViewState may not reliably preserve Literal control values in certain DNN scenarios or if modified by JS.
                 var ctl = new CourtController();
@@ -180,18 +181,18 @@ namespace tjc.Modules.jacs
                         var options = $"<option value=\"\" {(split_format[2] == "0" ? "selected=\"selected\"" : "")}>-</option>" +
                             string.Join("", court_types.Select(ct => $"<option value=\"{ct.Value}\" {(ct.Value == split_format[2] ? "selected=\"selected\"" : "")}>{ct.Value}</option>"));
                         string disabled = split_format.Length == 6 ? "disabled=\"\"" : "";
-                        fields = $"<input type=\"text\" class=\"form-control case-num-part\" id=\"case_num_format_multiple1\" style=\"max-width:3rem\" maxlength=\"2\" value=\"{split_format[0]}\" {disabled} />" +
+                        fields = $"<input type=\"text\" class=\"form-control case-num-part\" id=\"case_num_format_multiple1\" style=\"max-width:3rem\" maxlength=\"2\" value=\"{split_format[0]}\" {disabled}  ToolTip=\"County\" />" +
                             "<span> - </span>" +
-                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple2\" style=\"max-width:4rem\" maxlength=\"4\" required=\"\" value=\"{split_format[1]}\" placeholder=\"Year\" />" +
+                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple2\" style=\"max-width: 60px;\" maxlength=\"4\" required=\"\" value=\"{split_format[1]}\" placeholder=\"YYYY\" title=\"Year (4 digits)\" />" +
                             "<span> - </span>" +
-                            $"<select class=\"form-control case-num-part mr-1 court_type_change_label\" style='max-width:4rem' id=\"case_num_format_multiple3\" required=\"\">" +
+                            $"<select class=\"form-control case-num-part mr-1 court_type_change_label\" style=\"max-width: 60px;\" id=\"case_num_format_multiple3\" title=\"Case Type\" required=\"\">" +
                             options +
                             "</select>" +
                             "<span> - </span>" +
-                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple4\" maxlength=\"6\" required=\"\" value=\"{split_format[3]}\" placeholder=\"Case Number\" />" +
+                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple4\" style=\"max-width: 80px;\" maxlength=\"6\" required=\"\" value=\"{split_format[3]}\" placeholder=\"######\" title=\"Sequence (will be padded to 6 digits)\"  />" +
                             "<span> - </span>" +
-                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple5\" maxlength=\"4\" style=\"max-width:6rem\" required=\"\" value=\"{split_format[4]}\" placeholder=\"xxxx\" />" +
-                            (split_format.Length == 6 ? "<span> - </span>" + $"<input type=\"text\" class=\"form-control case-num-part mr-1\" style=\"max-width:4rem\" id=\"case_num_format_multiple6\" maxlength=\"2\" placeholder='xx' value=\"{split_format[5]}\" />" : "");
+                            $"<input type=\"text\" class=\"form-control case-num-part mr-1\" id=\"case_num_format_multiple5\" maxlength=\"4\" style=\"max-width: 60px;\" required=\"\" value=\"{split_format[4]}\" placeholder=\"xxxx\" title=\"Defendant/Party ID (optional)\" />" +
+                            (split_format.Length == 6 ? "<span> - </span>" + $"<input type=\"text\" class=\"form-control case-num-part mr-1\"  id=\"case_num_format_multiple6\" style=\"max-width: 45px;\" maxlength=\"2\" placeholder='xx' value=\"{split_format[5]}\" title=\"Branch/Location (optional)\" />" : "");
                     }
                     else
                     {

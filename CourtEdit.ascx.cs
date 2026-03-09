@@ -11,7 +11,9 @@
 */
 
 using DocumentFormat.OpenXml.Office2013.Excel;
+using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using tjc.Modules.jacs.Components;
 
@@ -38,7 +40,7 @@ namespace tjc.Modules.jacs
             {
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CategoryListUrl = CategoryListUrl;
+                navbar.CourtroomListUrl = CourtroomListUrl;
                 navbar.CountyListUrl = CountyListUrl;
                 navbar.CourtListUrl = CourtListUrl;
                 navbar.CourtTypeListUrl = CourtTypeListUrl;

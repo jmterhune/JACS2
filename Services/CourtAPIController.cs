@@ -446,7 +446,7 @@ namespace tjc.Modules.jacs.Services
                                         blocked = timeslot.blocked,
                                         block_reason = timeslot.block_reason,
                                         public_block = timeslot.public_block,
-                                        category_id = timeslot.category_id,
+                                        courtroom_id = timeslot.courtroom_id,
                                         template_id = courtTemplateOrder.template_id,
                                         court_template_order_id=courtTemplateOrder.id,
 

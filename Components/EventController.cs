@@ -1,9 +1,16 @@
-﻿using DotNetNuke.Data;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Data;
+using iText.StyledXmlParser.Jsoup.Select;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Windows.Forms.VisualStyles;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -109,7 +116,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<EventListItem> GetEventListItems(string court, string category, string status)
+        public IEnumerable<EventListItem> GetEventListItems(string court, string courtroom, string status)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -118,7 +125,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public IEnumerable<EventListItemPaged> GetEventListItems(long userId, string searchTerm, long court_id, long category_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
+        public IEnumerable<EventListItemPaged> GetEventListItems(long userId, string searchTerm, long court_id, long courtroom_id, long status_id, int offset, int pageSize, string sortOrder, string direction)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -128,7 +135,7 @@ namespace tjc.Modules.jacs.Components
                     userId,
                     searchTerm ?? string.Empty,
                     court_id,
-                    category_id,
+                    courtroom_id,
                     status_id,
                     offset,
                     pageSize,
@@ -138,7 +145,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public int GetEventListItemCount(long userId, string searchTerm, long court_id, long category_id, long status_id)
+        public int GetEventListItemCount(long userId, string searchTerm, long court_id, long courtroom_id, long status_id)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -148,7 +155,7 @@ namespace tjc.Modules.jacs.Components
                      userId,
                      searchTerm ?? string.Empty,
                      court_id,
-                     category_id,
+                     courtroom_id,
                      status_id
                 );
             }
@@ -253,6 +260,7 @@ namespace tjc.Modules.jacs.Components
 
         public Event GetEventByCaseNumber(string caseNumber)
         {
+
             string searchTerm = $"%{caseNumber}%";
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
@@ -270,7 +278,67 @@ namespace tjc.Modules.jacs.Components
                 return evt;
             }
         }
+        public IEnumerable<Event> GetEventsByCasePattern(string pattern, int userId,bool isJudge)
+        {
+            var user = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
+            string sql = @"  SELECT * FROM [events] WHERE case_num LIKE @0 AND
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] j
+                                INNER JOIN [court_permissions] cp ON cp.judge_id = j.id
+                                WHERE [courts].[id] = j.[court_id] AND cp.user_id = @1 
+                            ))) 
+                    ORDER BY [created_at] DESC";
+            if (isJudge)
+            {
+                sql = @"
+                    SELECT * FROM [events] WHERE case_num LIKE @0 AND
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] 
+                                WHERE [courts].[id] = [judges].[court_id] AND [judges].[user_id] = @1
+                            ))) 
+                    ORDER BY [created_at] DESC";
+            }
+            if (user.IsAdmin) {
+            sql = @"
+                    SELECT * FROM [events] WHERE case_num LIKE @0 AND
+                    EXISTS (
+                        SELECT * FROM [timeslots] 
+                        INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
+                        WHERE [events].[id] = [timeslot_events].[event_id] AND 
+                        EXISTS (
+                            SELECT * FROM [courts] 
+                            INNER JOIN [court_timeslots] ON [court_timeslots].[court_id] = [courts].[id] 
+                            WHERE [timeslots].[id] = [court_timeslots].[timeslot_id] AND 
+                            EXISTS (
+                                SELECT * FROM [judges] 
+                                WHERE [courts].[id] = [judges].[court_id]
+                            ))) 
+                    ORDER BY [created_at] DESC"; 
+            }
+          
 
+            using (IDataContext ctx = DataContext.Instance("jacs"))
+            {
+                string likePattern = "%" + pattern.Replace("%", "[%]").Replace("_", "[_]") + "%";
+                return ctx.ExecuteQuery<Event>(CommandType.Text, sql, likePattern,user.UserID);
+            }
+        }
         public bool CancelEvent(long eventId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

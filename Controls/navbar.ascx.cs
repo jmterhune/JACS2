@@ -16,7 +16,7 @@ namespace tjc.Modules.jacs.Controls
         public string MainViewUrl { get; set; }
         public string RoleListUrl { get; set; }
         public string PermissionListUrl { get; set; }
-        public string CategoryListUrl { get; set; }
+        public string CourtroomListUrl { get; set; }
         public string UserListUrl { get; set; }
         public string AttorneyListUrl { get; set; }
         public string CountyListUrl { get; set; }

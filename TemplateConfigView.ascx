@@ -124,8 +124,8 @@
                                 <div class="valid-feedback">Looks good!</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="category_id">Courtroom</label>
-                                <select class="form-control" id="category_id" name="category_id">
+                                <label for="courtroom_id">Courtroom</label>
+                                <select class="form-control" id="courtroom_id" name="courtroom_id">
                                     <option value=""> - </option>
                                     <!-- Populated via AJAX -->
                                 </select>

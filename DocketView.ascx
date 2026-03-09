@@ -31,7 +31,7 @@
                             </div>
                             <div class="col-md-12">
                                 <label>Courtroom</label>
-                                <select id="categoryFilter" name="category" class="form-control categories_select" style="width: 100%">
+                                <select id="courtroomFilter" name="courtroom" class="form-control courtrooms_select" style="width: 100%">
                                     <option value="0">All</option>
                                 </select>
                             </div>

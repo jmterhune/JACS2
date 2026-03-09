@@ -153,7 +153,10 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "County not found." });
                 }
-                county.updated_at = DateTime.Now;
+                if (string.IsNullOrWhiteSpace(county.password))
+                {
+                    county.password = existingCounty.password;  // already encrypted
+                }
                 ctl.UpdateCounty(county);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "County updated successfully" });
             }
@@ -181,20 +184,14 @@ namespace tjc.Modules.jacs.Services
 
         private string GetSortColumn(int columnIndex)
         {
-            string fieldName = "name";
             switch (columnIndex)
             {
-                case 2:
-                    fieldName = "name";
-                    break;
-                case 3:
-                    fieldName = "code";
-                    break;
-                default:
-                    fieldName = "name";
-                    break;
+                case 2:return "name";
+                case 3:return "code";
+                case 4: return "user_name";
+                case 5: return "auth_end_point_url";
+                default:return "name";
             }
-            return fieldName;
         }
     }
 }

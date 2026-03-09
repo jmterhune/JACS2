@@ -365,7 +365,7 @@ namespace tjc.Modules.jacs.Components
                         day = timeslot.day,
                         court_template_id = newTemplate.id,
                         description = timeslot.description,
-                        category_id = timeslot.category_id,
+                        courtroom_id = timeslot.courtroom_id,
                         blocked = timeslot.blocked,
                         public_block = timeslot.public_block,
                         block_reason = timeslot.block_reason,

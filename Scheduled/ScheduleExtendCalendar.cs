@@ -116,7 +116,7 @@ namespace tjc.Modules.jacs.Scheduled
                                         blocked = templateTimeslot.blocked,
                                         public_block = templateTimeslot.public_block,
                                         block_reason = string.IsNullOrEmpty(templateTimeslot.block_reason) ? null : templateTimeslot.block_reason,
-                                        category_id = templateTimeslot.category_id,
+                                        courtroom_id = templateTimeslot.courtroom_id,
                                         template_id = templateTimeslot.court_template_id,
                                         court_template_order_id = currentOrderItem.id,
                                         description = templateTimeslot.description,

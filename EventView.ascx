@@ -33,11 +33,11 @@ To add an event, use the Court's Calendar tool. </div>
                             </div>
                         </div>
                     </li>
-                    <li filter-name="category" filter-type="select2" filter-key="categoryId" class="nav-item dropdown">
+                    <li filter-name="courtroom" filter-type="select2" filter-key="courtroomId" class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courtroom <span class="caret"></span></a>
                         <div class="dropdown-menu p-0">
                             <div class="form-group backpack-filter mb-0">
-                                <select id="categoryFilter" name="categoryFilter" class="form-control input-sm select2" placeholder="-" data-filter-key="categoryId" data-filter-type="select2" data-filter-name="category" data-language="en" data-filter-enabled="true">
+                                <select id="courtroomFilter" name="courtroomFilter" class="form-control input-sm select2" placeholder="-" data-filter-key="courtroomId" data-filter-type="select2" data-filter-name="courtroom" data-language="en" data-filter-enabled="true">
                                     <option value="">-</option>
                                 </select>
                             </div>
@@ -63,17 +63,12 @@ To add an event, use the Court's Calendar tool. </div>
             <thead>
                 <tr>
                     <th></th>
-<%--                    <th>Case Number</th>--%>
                     <th>Motion</th>
                     <th>Timeslot</th>
                     <th>Duration</th>
                     <th>Court</th>
                     <th>Status</th>
-<%--                    <th>Attorney</th>
-                    <th>Opposing Attorney</th>
-                    <th>Plaintiff</th>
-                    <th>Defendant</th>--%>
-                    <th>Category</th>
+                    <th>Courtroom</th>
                 </tr>
             </thead>
             <tbody>

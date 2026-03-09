@@ -34,7 +34,7 @@ namespace tjc.Modules.jacs.Components
         public bool defendant_required { get; set; }
         public bool defendant_attorney_required { get; set; }
         public bool plaintiff_attorney_required { get; set; }
-        public bool category_print { get; set; }
+        public bool courtroom_print { get; set; }
         public int? max_lagtime { get; set; }
         public string custom_header { get; set; }
         public string timeslot_header { get; set; }

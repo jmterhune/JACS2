@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.jacs
@@ -30,13 +32,18 @@ namespace tjc.Modules.jacs
     /// -----------------------------------------------------------------------------
     public partial class JudgeView : JACSModuleBase
     {
+        private readonly INavigationManager _navigationManager;
+        public JudgeView()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CategoryListUrl = CategoryListUrl;
+                navbar.CourtroomListUrl = CourtroomListUrl;
                 navbar.CountyListUrl = CountyListUrl;
                 navbar.CourtListUrl = CourtListUrl;
                 navbar.CourtTypeListUrl = CourtTypeListUrl;
@@ -55,33 +62,10 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkJudge";
-                //if (!IsPostBack)
-                //{
-                //    int portalId = PortalSettings.PortalId;
-                //    var roleController = new DotNetNuke.Security.Roles.RoleController();
-                //    RoleInfo judgeRole = roleController.GetRoleByName(portalId, JudgeRole);
-                //    if (judgeRole != null)
-                //    {
-                //        // Get users in the "Judge" role
-                //        var usersInRole = roleController.GetUsersByRole(portalId, JudgeRole);
-
-                //        // Clear existing items in the dropdown
-                //        edit_judgeName.Items.Clear();
-
-                //        // Add a default "Select User" option
-                //        edit_judgeName.Items.Add(new ListItem("Select Judge", ""));
-
-                //        // Populate the dropdown with users
-                //        foreach (UserInfo user in usersInRole)
-                //        {
-                //            edit_judgeName.Items.Add(new ListItem(user.DisplayName, user.UserID.ToString()));
-                //        }
-                //    }
-                //    else
-                //    {
-                //        DotNetNuke.UI.Skins.Skin.AddModuleMessage(this,"The Judge Role has not been defined", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                //    }
-                //}
+                if (UserId <= 0 || !UserInfo.IsAdmin)
+                {
+                    Response.Redirect(_navigationManager.NavigateURL(), true);
+                }
             }
             catch (Exception exc) //Module failed to load
             {

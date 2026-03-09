@@ -19,7 +19,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             blocked = timeslotData.blocked;
             public_block = timeslotData.public_block;
             block_reason = timeslotData.block_reason;
-            category_id = timeslotData.category_id;
+            courtroom_id = timeslotData.courtroom_id;
             template_id = timeslotData.template_id;
             created_at = timeslotData.created_at;
             updated_at = timeslotData.updated_at;
@@ -45,7 +45,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             blocked = timeslotData.blocked;
             public_block = timeslotData.public_block;
             block_reason = timeslotData.block_reason;
-            category_id = timeslotData.category_id;
+            courtroom_id = timeslotData.courtroom_id;
             template_id = timeslotData.template_id;
             created_at = timeslotData.created_at;
             updated_at = timeslotData.updated_at;
@@ -80,8 +80,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public bool public_block { get; set; }
         [JsonProperty("block_reason")]
         public string block_reason { get; set; }
-        [JsonProperty("category_id")]
-        public long? category_id { get; set; }
+        [JsonProperty("courtroom_id")]
+        public long? courtroom_id { get; set; }
         [JsonProperty("template_id")]
         public long? template_id { get; set; }
         [JsonProperty("created_at")]

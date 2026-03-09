@@ -33,7 +33,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             defendant_required = court.defendant_required;
             defendant_attorney_required = court.defendant_attorney_required;
             plaintiff_attorney_required = court.plaintiff_attorney_required;
-            category_print = court.category_print;
+            courtroom_print = court.courtroom_print;
             max_lagtime = court.max_lagtime;
             custom_header = court.custom_header;
             timeslot_header = court.timeslot_header;
@@ -102,8 +102,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public bool defendant_attorney_required { get; set; }
         [JsonProperty("plaintiff_attorney_required")]
         public bool plaintiff_attorney_required { get; set; }
-        [JsonProperty("category_print")]
-        public bool category_print { get; set; }
+        [JsonProperty("courtroom_print")]
+        public bool courtroom_print { get; set; }
         [JsonProperty("max_lagtime")]
         public int? max_lagtime { get; set; }
         [JsonProperty("custom_header")]

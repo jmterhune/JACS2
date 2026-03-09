@@ -151,7 +151,7 @@ namespace tjc.Modules.jacs.Services
                     blocked = t.blocked,
                     public_block = t.public_block,
                     block_reason = t.block_reason,
-                    category_id = t.category_id,
+                    category_id = t.courtroom_id,
                     eventCount = t.eventCount,
                     total_length = t.total_length,
                     template_week_order = t.template_week_order,
@@ -292,9 +292,9 @@ namespace tjc.Modules.jacs.Services
                     }
                     var events = tes.Select(te => eventCtl.GetEvent(te.event_id.Value)).Where(e => e != null).ToList();
                     ts.reschedule_title = $"{remaining} Available";
-                    if (ts.Category != null && !string.IsNullOrEmpty(ts.Category.description))
+                    if (ts.Courtroom != null && !string.IsNullOrEmpty(ts.Courtroom.description))
                     {
-                        ts.reschedule_title += " (" + ts.Category.description + ")";
+                        ts.reschedule_title += " (" + ts.Courtroom.description + ")";
                     }
                     if (ts.description != null && !string.IsNullOrEmpty(ts.description))
                     {
@@ -320,7 +320,7 @@ namespace tjc.Modules.jacs.Services
                         duration = t.duration,
                         quantity = t.quantity,
                         event_count = t.eventCount,
-                        category_id = t.category_id,
+                        category_id = t.courtroom_id,
                         template_id = t.template_id,
                         court_template_order_id = t.court_template_order_id
                     }
@@ -427,7 +427,7 @@ namespace tjc.Modules.jacs.Services
                             duration = timeslot.duration,
                             quantity = 1,
                             description = timeslot.description,
-                            category_id = timeslot.category_id,
+                            courtroom_id = timeslot.courtroom_id,
                             blocked = timeslot.blocked,
                             public_block = timeslot.public_block,
                             block_reason = timeslot.block_reason,
@@ -474,7 +474,7 @@ namespace tjc.Modules.jacs.Services
                             blocked = t.blocked,
                             public_block = t.public_block,
                             block_reason = t.block_reason,
-                            category_id = t.category_id,
+                            category_id = t.courtroom_id,
                             template_id = t.template_id,
                             created_at = t.created_at,
                             updated_at = t.updated_at,
@@ -518,7 +518,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = timeslot.blocked,
                         public_block = timeslot.public_block,
                         block_reason = timeslot.block_reason,
-                        category_id = timeslot.category_id,
+                        category_id = timeslot.courtroom_id,
                         template_id = timeslot.template_id,
                         created_at = timeslot.created_at,
                         updated_at = timeslot.updated_at,
@@ -649,7 +649,7 @@ namespace tjc.Modules.jacs.Services
                     blocked = timeslot.blocked,
                     public_block = timeslot.public_block,
                     block_reason = timeslot.block_reason,
-                    category_id = timeslot.category_id,
+                    category_id = timeslot.courtroom_id,
                     template_id = timeslot.template_id,
                     created_at = timeslot.created_at,
                     updated_at = timeslot.updated_at,
@@ -721,7 +721,7 @@ namespace tjc.Modules.jacs.Services
                     blocked = timeslot.blocked,
                     publicBlock = timeslot.public_block,
                     blockReason = timeslot.block_reason,
-                    category = timeslot.category_id,
+                    category = timeslot.courtroom_id,
                     restrictedMotions
                 });
             }
@@ -930,7 +930,7 @@ namespace tjc.Modules.jacs.Services
                         quantity = original.quantity,
                         allDay = original.allDay,
                         description = original.description + " (Copy)",
-                        category_id = original.category_id,
+                        courtroom_id = original.courtroom_id,
                         blocked = original.blocked,
                         public_block = original.public_block,
                         block_reason = original.block_reason,
@@ -980,7 +980,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = t.blocked,
                         public_block = t.public_block,
                         block_reason = t.block_reason,
-                        category_id = t.category_id,
+                        category_id = t.courtroom_id,
                         template_id = t.template_id,
                         created_at = t.created_at,
                         updated_at = t.updated_at,
@@ -1024,7 +1024,7 @@ namespace tjc.Modules.jacs.Services
                         quantity = original.quantity,
                         allDay = original.allDay,
                         description = original.description + " (Temp Copy)",
-                        category_id = original.category_id,
+                        courtroom_id = original.courtroom_id,
                         blocked = original.blocked,
                         public_block = original.public_block,
                         block_reason = original.block_reason,
@@ -1074,7 +1074,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = t.blocked,
                         public_block = t.public_block,
                         block_reason = t.block_reason,
-                        category_id = t.category_id,
+                        category_id = t.courtroom_id,
                         template_id = t.template_id,
                         created_at = t.created_at,
                         updated_at = t.updated_at,

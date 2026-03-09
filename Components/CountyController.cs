@@ -13,6 +13,10 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<County>();
                 t.created_at = System.DateTime.Now;
                 t.updated_at = System.DateTime.Now;
+                if (!string.IsNullOrWhiteSpace(t.password))
+                {
+                    t.password = EncryptionHelper.Encrypt(t.password);
+                }
                 rep.Insert(t);
             }
         }
@@ -36,6 +40,13 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.Get();
+                foreach (var county in t)
+                {
+                    if (!string.IsNullOrWhiteSpace(county.password))
+                    {
+                        county.password = EncryptionHelper.Decrypt(county.password);
+                    }
+                }
             }
             return t;
         }
@@ -49,6 +60,16 @@ namespace tjc.Modules.jacs.Components
             }
             return t.Select(c=>new KeyValuePair<long, string>(c.id,c.name)).OrderBy(c=>c.Value).ToList();
         }
+        public List<KeyValuePair<string, string>> GetCountyCodeDropDownItems()
+        {
+            IEnumerable<County> t;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<County>();
+                t = rep.Get();
+            }
+            return t.Select(c => new KeyValuePair<string, string>(c.code, c.name)).OrderBy(c => c.Value).ToList();
+        }
         public County GetCounty(long countyId)
         {
             County t;
@@ -56,6 +77,10 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.GetById(countyId);
+                if (t != null && !string.IsNullOrWhiteSpace(t.password))
+                {
+                    t.password = EncryptionHelper.Decrypt(t.password);
+                }
             }
             return t;
         }
@@ -65,6 +90,10 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<County>();
                 t.updated_at = System.DateTime.Now;
+                if (!string.IsNullOrWhiteSpace(t.password))
+                {
+                    t.password = EncryptionHelper.Encrypt(t.password);
+                }
                 rep.Update(t);
             }
         }

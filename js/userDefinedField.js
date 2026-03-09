@@ -158,7 +158,7 @@ class UserDefinedFieldController {
             displayStart: this.currentPage * this.pageSize,
         });
 
-        $(".dataTables_length").prepend($("#lnkAdd"));
+        $(".dt-length").prepend($("#lnkAdd"));
         this.userDefinedFieldTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();

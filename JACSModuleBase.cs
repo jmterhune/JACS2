@@ -86,7 +86,7 @@ namespace tjc.Modules.jacs
         public string UserListUrl { get { return EditUrl("user"); } }
         public string RoleListUrl { get { return EditUrl("role"); } }
         public string PermissionListUrl { get { return EditUrl("permission"); } }
-        public string CategoryListUrl { get { return EditUrl("category"); } }
+        public string CourtroomListUrl { get { return EditUrl("courtroom"); } }
         public string AttorneyListUrl { get { return EditUrl("attorney"); } }
         public string CountyListUrl { get { return EditUrl("county"); } }
         public string CourtListUrl { get { return EditUrl("court"); } }

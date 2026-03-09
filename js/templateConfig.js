@@ -19,7 +19,7 @@ class TemplateConfigController {
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.initCalendar();
         this.bindEventHandlers();
-        this.populateCategorySelect();
+        this.populateCourtroomSelect();
         this.initTomSelect();
         const timeslotModalElement = document.getElementById('TimeslotModal');
         if (timeslotModalElement) {
@@ -149,14 +149,14 @@ class TemplateConfigController {
         });
     }
 
-    populateCategorySelect() {
+    populateCourtroomSelect() {
         $.ajax({
-            url: `${this.service.baseUrl}CategoryAPI/GetCategoryDropDownItems`,
+            url: `${this.service.baseUrl}CourtroomAPI/GetCourtroomDropDownItems`,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
-                const select = $('#category_id');
+                const select = $('#courtroom_id');
                 select.empty().append('<option value=""> - </option>');
                 if (response.data) {
                     response.data.forEach(item => {
@@ -164,7 +164,7 @@ class TemplateConfigController {
                     });
                 }
             },
-            error: error => ShowNotification('Error Loading Categories', error.statusText, 'error')
+            error: error => ShowNotification('Error Loading Courtrooms', error.statusText, 'error')
         });
     }
 
@@ -438,7 +438,7 @@ class TemplateConfigController {
             public_block: $form.find('#public_block').is(':checked'),
             block_reason: $form.find('#block_reason').val(),
             description: $form.find('#description').val(),
-            category_id: parseInt($form.find('#category_id').val()) || null,
+            courtroom_id: parseInt($form.find('#courtroom_id').val()) || null,
             restricted_motions: tomSelect ? tomSelect.getValue().map(id => parseInt(id)) : [],
             cattlecall: $form.find('#cattlecall_yes').is(':checked') ? 1 : 0
         };
@@ -461,7 +461,7 @@ class TemplateConfigController {
                     $('#quantity').val(data.quantity);
                     $('#description').val(data.description);
                     $('#block_reason').val(data.block_reason);
-                    $('#category_id').val(data.category_id);
+                    $('#courtroom_id').val(data.courtroom_id);
                     $('#blocked').prop('checked', data.blocked);
                     $('#public_block').prop('checked', data.public_block);
                     $(`#cattlecall_${data.quantity > 1 ? 'yes' : 'no'}`).prop('checked', true);
@@ -579,7 +579,7 @@ class TemplateConfigController {
         $('#edit_timeslotId').val('');
         $('#description').val('');
         $('#block_reason').val('');
-        $('#category_id').val('');
+        $('#courtroom_id').val('');
         $('#cattlecall_yes').prop('checked', true);
         $('.public_block, .block_reason').hide();
         $('.quantity-group, .cattle-call, .time-selection').show();

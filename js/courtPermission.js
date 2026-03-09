@@ -131,7 +131,7 @@ class CourtPermissionController {
             pageLength: this.pageSize,
             displayStart: this.currentPage * this.pageSize,
         });
-        $(".dataTables_length").prepend($("#lnkAdd"));
+        $(".dt-length").prepend($("#lnkAdd"));
         this.courtPermissionTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();

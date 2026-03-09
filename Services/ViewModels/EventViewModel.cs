@@ -10,6 +10,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public EventViewModel(Event eventData)
         {
             id = eventData.id;
+            clerk_case_id = eventData.clerk_case_id;
+            clerk_event_id  = eventData.clerk_event_id;
             case_num = eventData.case_num;
             notes = eventData.notes;
             plaintiff = eventData.plaintiff;
@@ -45,6 +47,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public EventViewModel(EventListItem eventData)
         {
             id = eventData.id;
+            clerk_case_id = eventData.clerk_case_id; 
+            clerk_event_id = eventData.clerk_event_id;
             case_num = eventData.case_num;
             notes = eventData.notes;
             plaintiff = eventData.plaintiff;
@@ -73,7 +77,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             timeslot_desc = eventData.timeslot_desc;
             court_name = eventData.court_name;
             court_id = eventData.court_id ?? -1;
-            category_name = eventData.category_name;
+            courtroom_name = eventData.courtroom_name;
             start_date = eventData.start.HasValue ? eventData.start.Value.ToShortDateString() : "";
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
             duration = eventData.duration;
@@ -83,6 +87,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public EventViewModel(EventListItemPaged eventData)
         {
             id = eventData.id;
+            clerk_case_id = eventData.clerk_case_id;
+            clerk_event_id = eventData.clerk_event_id;
             case_num = eventData.case_num;
             notes = eventData.notes;
             plaintiff = eventData.plaintiff;
@@ -111,7 +117,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             timeslot_desc = eventData.timeslot_desc;
             court_name = eventData.court_name;
             court_id = eventData.court_id ?? -1;
-            category_name = eventData.category_name;
+            courtroom_name = eventData.courtroom_name;
             start_date = eventData.start.HasValue ? eventData.start.Value.ToShortDateString() : "";
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
             duration = eventData.duration;
@@ -180,8 +186,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string court_name { get; set; }
         [JsonProperty("court_id")]
         public long court_id { get; set; }
-        [JsonProperty("category_name")]
-        public string category_name { get; set; }
+        [JsonProperty("courtroom_name")]
+        public string courtroom_name { get; set; }
         [JsonProperty("duration")]
         public int duration { get; set; }
         [JsonProperty("start_date")]
@@ -192,6 +198,10 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string updated_by_name { get; set; }
         [JsonProperty("editable")]
         public bool editable { get; set; }
+        [JsonProperty("clerk_event_id")]
+        public long clerk_event_id { get; set; }
+        [JsonProperty("clerk_case_id")]
+        public long clerk_case_id { get; set; }
         private string GetUserName(long userId)
         {
             try

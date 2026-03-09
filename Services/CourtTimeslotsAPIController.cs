@@ -62,7 +62,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = t.blocked,
                         public_block = t.public_block,
                         block_reason = t.block_reason,
-                        category_id = t.category_id
+                        courtroom_id = t.courtroom_id
                     })
                 });
             }
@@ -81,7 +81,7 @@ namespace tjc.Modules.jacs.Services
                 var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
                 DateTime.TryParse(query.ContainsKey("end") ? query["end"] : DateTime.Now.AddDays(7).ToString(), out DateTime end);
                 Int32.TryParse(query.ContainsKey("duration") ? query["duration"] : "0", out int duration);
-                Int32.TryParse(query.ContainsKey("category") ? query["category"] : "0", out int category);
+                Int32.TryParse(query.ContainsKey("courtroom") ? query["courtroom"] : "0", out int courtroom);
                 Int32.TryParse(query.ContainsKey("motion") ? query["motion"] : "0", out int motion);
 
                 var courtCtl = new CourtController();
@@ -99,9 +99,9 @@ namespace tjc.Modules.jacs.Services
                 {
                     queryTimeslots = queryTimeslots.Where(ct => ct.Timeslot.duration >= duration);
                 }
-                if (category > 0)
+                if (courtroom > 0)
                 {
-                    queryTimeslots = queryTimeslots.Where(ct => ct.Timeslot.category_id == category);
+                    queryTimeslots = queryTimeslots.Where(ct => ct.Timeslot.courtroom_id == courtroom);
                 }
                 if (motion > 0)
                 {
@@ -137,7 +137,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = t.blocked,
                         public_block = t.public_block,
                         block_reason = t.block_reason,
-                        category_id = t.category_id
+                        courtroom_id = t.courtroom_id
                     })
                 });
             }
@@ -191,7 +191,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = timeslot.blocked,
                         public_block = timeslot.public_block,
                         block_reason = timeslot.block_reason,
-                        category_id = timeslot.category_id,
+                        courtroom_id = timeslot.courtroom_id,
                         events
                     });
                 }
@@ -251,7 +251,7 @@ namespace tjc.Modules.jacs.Services
                     blocked = t.blocked,
                     public_block = t.public_block,
                     block_reason = t.block_reason,
-                    category_id = t.category_id,
+                    courtroom_id = t.courtroom_id,
                     events = t.timeslot_events?.Select(te => new
                     {
                         case_num = te.timeslot_event?.case_num,

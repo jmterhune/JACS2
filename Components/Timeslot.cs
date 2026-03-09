@@ -23,7 +23,7 @@ namespace tjc.Modules.jacs.Components
         public bool blocked { get; set; }
         public bool public_block { get; set; }
         public string block_reason { get; set; }
-        public long? category_id { get; set; }
+        public long? courtroom_id { get; set; }
         public long? template_id { get; set; }
         public long? court_template_order_id { get; set; }
         public DateTime? created_at { get; set; }
@@ -88,19 +88,19 @@ namespace tjc.Modules.jacs.Components
         [IgnoreColumn]
         public ICollection<TimeslotMotion> motions { get; set; } = new List<TimeslotMotion>();
         [IgnoreColumn]
-        public Category Category
+        public Courtroom Courtroom
         {
             get
             {
 
-                if (this.category_id.HasValue)
+                if (this.courtroom_id.HasValue)
                 {
-                    var ctl = new CategoryController();
-                    var et = ctl.GetCategory(category_id.Value);
+                    var ctl = new CourtroomController();
+                    var et = ctl.GetCourtroom(courtroom_id.Value);
                     if (et != null)
                         return et;
                 }
-                return new Category();
+                return new Courtroom();
             }
         }
         [IgnoreColumn]
@@ -184,9 +184,9 @@ namespace tjc.Modules.jacs.Components
                             else
                             {
                                 title = (quantity - eventsCount) + " Available";
-                                if (Category != null && !string.IsNullOrEmpty(Category.description))
+                                if (Courtroom != null && !string.IsNullOrEmpty(Courtroom.description))
                                 {
-                                    title += " (" + Category.description + ")";
+                                    title += " (" + Courtroom.description + ")";
                                 }
                                 if (description != null && !string.IsNullOrEmpty(description))
                                 {
@@ -289,7 +289,7 @@ namespace tjc.Modules.jacs.Components
         //public string TableDisplay => $"{this.start.ToString("MM/dd/yyyy")} @ {this.start.ToString("h:mm tt").ToLower()}";
 
         [IgnoreColumn]
-        public string CategoryTable => Category?.description ?? "-";
+        public string CourtroomTable => Courtroom?.description ?? "-";
 
         // Scope not directly translatable to C# property; approximate as a method
         // Assuming Court relation is has-one, count is 0 or 1; adapt based on context

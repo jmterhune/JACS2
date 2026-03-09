@@ -369,8 +369,8 @@ namespace tjc.Modules.jacs.Components
 
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                if (t.category_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM categories WHERE id = @0", t.category_id.Value) == 0)
-                    throw new ValidationException("Invalid category ID.");
+                if (t.courtroom_id.HasValue && ctx.ExecuteScalar<long>(System.Data.CommandType.Text, "SELECT COUNT(*) FROM courtrooms WHERE id = @0", t.courtroom_id.Value) == 0)
+                    throw new ValidationException("Invalid courtroom ID.");
 
                 //var overlaps = ctx.ExecuteScalar<long>(System.Data.CommandType.Text,
                 //    "SELECT COUNT(*) FROM timeslots ts JOIN court_timeslots ct ON ts.id = ct.timeslot_id " +

@@ -10,15 +10,10 @@
 ' 
 */
 
-using DotNetNuke.Entities.Modules;
-using DotNetNuke.Entities.Modules.Actions;
-using DotNetNuke.Security;
+using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Localization;
-using DotNetNuke.UI.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Web.UI.WebControls;
-using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs
 {
@@ -37,13 +32,18 @@ namespace tjc.Modules.jacs
     /// -----------------------------------------------------------------------------
     public partial class CourtTypeView : JACSModuleBase
     {
+        private readonly INavigationManager _navigationManager;
+        public CourtTypeView()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 navbar.MainViewUrl = MainViewUrl;
                 navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CategoryListUrl = CategoryListUrl;
+                navbar.CourtroomListUrl = CourtroomListUrl;
                 navbar.CountyListUrl = CountyListUrl;
                 navbar.CourtListUrl = CourtListUrl;
                 navbar.CourtTypeListUrl = CourtTypeListUrl;
@@ -62,6 +62,10 @@ namespace tjc.Modules.jacs
                 navbar.RoleListUrl = RoleListUrl;
                 navbar.PermissionListUrl = PermissionListUrl;
                 navbar.ActiveLink = "lnkCourtType";
+                if (UserId <= 0 || !UserInfo.IsAdmin)
+                {
+                    Response.Redirect(_navigationManager.NavigateURL(), true);
+                }
             }
             catch (Exception exc) //Module failed to load
             {
