@@ -13,6 +13,7 @@ namespace tjc.Modules.jacs.Controls
 {
     public partial class navbar : UserControlBase
     {
+        public JACSModuleBase ModuleContext { get; set; }
         public string MainViewUrl { get; set; }
         public string RoleListUrl { get; set; }
         public string PermissionListUrl { get; set; }
@@ -34,6 +35,7 @@ namespace tjc.Modules.jacs.Controls
         public string TimeSlotListUrl { get; set; }
         public string QuickReferenceUrl { get; set; }
         public string ActiveLink { get; set; }
+        public string ApiConfigUrl { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
             if(!IsPostBack)

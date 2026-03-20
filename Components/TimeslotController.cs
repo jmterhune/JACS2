@@ -195,7 +195,7 @@ namespace tjc.Modules.jacs.Components
                     SELECT TOP 1 [timeslots].*
                     FROM [timeslots] 
                     INNER JOIN [timeslot_events] ON [timeslot_events].[timeslot_id] = [timeslots].[id] 
-                    WHERE [timeslot_events].[event_id] = @0 AND [timeslot_events].deleted_at IS NULL";
+                    WHERE [timeslot_events].[event_id] = @0";
                 return ctx.ExecuteSingleOrDefault<Timeslot>(System.Data.CommandType.Text, query, id);
             }
         }

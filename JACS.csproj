@@ -263,11 +263,20 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\ApiInterfaceController.cs" />
+    <Compile Include="ApiConfgView.ascx.cs">
+      <DependentUpon>ApiConfgView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ApiConfgView.ascx.designer.cs">
+      <DependentUpon>ApiConfgView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ApiEndpointController.cs" />
     <Compile Include="Components\CourtController.cs" />
     <Compile Include="Components\CourtExtendController.cs" />
-    <Compile Include="Components\ApiInterface.cs" />
+    <Compile Include="Components\ApiEndpoint.cs" />
+    <Compile Include="Components\DocketDataItem.cs" />
     <Compile Include="Components\EncryptionHelper.cs" />
+    <Compile Include="Components\EnumExtensions.cs" />
     <Compile Include="Handlers\DocketHandler.ashx.cs">
       <DependentUpon>DocketHandler.ashx</DependentUpon>
     </Compile>
@@ -286,8 +295,10 @@
     <Compile Include="Handlers\ExportHandler.ashx.cs">
       <DependentUpon>ExportHandler.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Services\EndPointAPIController.cs" />
     <Compile Include="Services\TemplateTimeslotAPIController.cs" />
     <Compile Include="Services\TimeslotAPIController.cs" />
+    <Compile Include="Services\ViewModels\ApiEndpointViewModel.cs" />
     <Compile Include="Services\ViewModels\CourtTemplateOrderViewModel.cs" />
     <Compile Include="Services\ViewModels\RescheduleModel.cs" />
     <Compile Include="TruncateCalendar.ascx.cs">
@@ -487,7 +498,7 @@
     <Compile Include="Components\EventReminderController.cs" />
     <Compile Include="Components\EventStatus.cs" />
     <Compile Include="Components\EventStatusController.cs" />
-    <Compile Include="Components\event_type.cs" />
+    <Compile Include="Components\EventType.cs" />
     <Compile Include="Components\EventTypeController.cs" />
     <Compile Include="Components\FailedJob.cs" />
     <Compile Include="Components\FailedJobController.cs" />
@@ -585,7 +596,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ApiConfgView.ascx" />
     <Content Include="Handlers\ExportHandler.ashx" />
+    <Content Include="js\api.js" />
     <Content Include="js\court-edit.js" />
     <Content Include="js\courtCalendar.js" />
     <Content Include="js\docket.js" />

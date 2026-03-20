@@ -28,6 +28,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             plaintiff_email = eventData.plaintiff_email;
             defendant_email = eventData.defendant_email;
             cancellation_reason = eventData.cancellation_reason;
+            start_formatted = eventData.start_formatted;
             template = eventData.template;
             telephone = eventData.telephone;
             custom_motion = eventData.custom_motion;
@@ -39,7 +40,6 @@ namespace tjc.Modules.jacs.Services.ViewModels
             status_name = eventData.status_name;
             timeslot_desc = eventData.timeslot_desc;
             court_name = eventData.court_name;
-            
             updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
             duration = GetTimeslotDuration(eventData.id);
             editable = true; // Assume true for Event object
@@ -66,6 +66,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             defendant_email = eventData.defendant_email;
             cancellation_reason = eventData.cancellation_reason;
             template = eventData.template;
+            start_formatted = eventData.start_formatted;
             telephone = eventData.telephone;
             custom_motion = eventData.custom_motion;
             created_at = eventData.created_at ?? DateTime.Now;
@@ -105,6 +106,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             plaintiff_email = eventData.plaintiff_email;
             defendant_email = eventData.defendant_email;
             cancellation_reason = eventData.cancellation_reason;
+            start_formatted = eventData.start_formatted;
             template = eventData.template;
             telephone = eventData.telephone;
             custom_motion = eventData.custom_motion;
@@ -162,6 +164,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string cancellation_reason { get; set; }
         [JsonProperty("template")]
         public string template { get; set; }
+        [JsonProperty("start_formatted")]
+        public string start_formatted { get; set; }
         [JsonProperty("telephone")]
         public string telephone { get; set; }
         [JsonProperty("custom_motion")]

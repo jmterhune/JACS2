@@ -105,7 +105,7 @@ class EventController {
                 },
                 { data: "case_num" },
                 { data: "motion_name" },
-                { data: "timeslot_desc" },
+                { data: "start_formatted" },
                 { data: "duration" },
                 { data: "court_name" },
                 { data: "status_name" },

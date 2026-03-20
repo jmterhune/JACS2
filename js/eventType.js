@@ -1,5 +1,4 @@
-﻿// eventType.js
-let eventTypeControllerInstance = null;
+﻿let eventTypeControllerInstance = null;
 
 class EventTypeController {
     constructor(params = {}) {
@@ -17,6 +16,9 @@ class EventTypeController {
         this.eventTypeTable = null;
         this.service = params.service || null;
         this.deleteUrl = null;
+        this.updateUrl = null;
+        this.createUrl = null;
+        this.viewUrl = null;
         eventTypeControllerInstance = this;
     }
 
@@ -24,128 +26,84 @@ class EventTypeController {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}EventTypeAPI/DeleteEventType/`;
+        this.updateUrl = `${this.service.baseUrl}EventTypeAPI/UpdateEventType`;
+        this.createUrl = `${this.service.baseUrl}EventTypeAPI/CreateEventType`;
+        this.viewUrl = `${this.service.baseUrl}EventTypeAPI/GetEventType/`;
 
         const listUrl = `${this.service.baseUrl}EventTypeAPI/GetEventTypes/${this.recordCount}`;
         const detailModalElement = document.getElementById('EventTypeDetailModal');
-        if (detailModalElement) {
-            detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
-        }
-
         const editModalElement = document.getElementById('EventTypeEditModal');
-        if (editModalElement) {
-            editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
-        }
+        const editModal = new bootstrap.Modal(document.getElementById('EventTypeEditModal'));
+
+        if (detailModalElement) detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+        if (editModalElement) editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+
+        this.eventTypeTable = $('#tblEventType').DataTable({
+            searching: true,
+            autoWidth: true,
+            stateSave: true,
+            paging: true,
+            ajax: {
+                url: listUrl,
+                type: "GET",
+                dataType: 'json',
+                dataSrc: "data",
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                error: function (error) {
+                    $("#tblEventType_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve event types.';
+                    if (error.status === 401) errorMessage = 'Please make sure you are logged in and try again.';
+                    ShowNotification('Error Retrieving Event Types', errorMessage, 'error');
+                }
+            },
+            columns: [
+                { data: "id", render: data => `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="et-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="Edit Event Type" data-toggle="tooltip" data-id="${data}" class="et-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
+                { data: "name", render: data => data || '' },
+                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Type" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
+            ],
+            language: { emptyTable: "No Records Available.", zeroRecords: "No records match the search criteria you entered." },
+            order: [[2, 'asc']],
+            serverSide: false,
+            processing: true,
+            lengthMenu: [[25, 50, 100], [25, 50, 100]],
+            pageLength: 25,
+        });
+
+        this.eventTypeTable.on('draw', function () {
+            $(".delete").on("click", function (e) {
+                e.preventDefault();
+                const eventTypeId = $(this).data("id");
+                Swal.fire({ title: 'Delete Event Type?', text: 'Are you sure?', icon: 'warning', showCancelButton: true }).then((result) => {
+                    if (result.isConfirmed) eventTypeControllerInstance.deleteEventType(eventTypeId);
+                });
+            });
+        });
+
+        $(".dt-length").prepend($("#lnkAdd"));
+
         $(editModalElement).on('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
                 e.preventDefault();
                 $("#edit_cmdSave").trigger('click');
             }
         });
-        this.eventTypeTable = $('#tblEventType').DataTable({
-            searching: true,
-            autoWidth: true,
-            stateSave: true,
-            ajax: {
-                url: listUrl,
-                type: "GET",
-                datatype: 'json',
-                beforeSend: xhr => this.setAjaxHeaders(xhr),
-                data(data) {
-                    data.searchText = data.search?.value || '';
-                    delete data.columns;
-                },
-                error: function (error) {
-                    $("#tblEventType_processing").hide();
-                    if (error.status === 401) {
-                        ShowNotification("Error Retrieving Event Types", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
-                    } else {
-                        ShowNotification("Error Retrieving Event Types", "The following error occurred attempting to retrieve event type information. Error: " + error.statusText, 'error');
-                    }
-                }
-            },
-            columns: [
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="et-detail btn-command"><i class="fas fa-eye"></i></button>`;
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<button type="button" title="Edit Event Type" data-toggle="tooltip" data-id="${data}" class="et-edit btn-command"><i class="fas fa-pencil"></i></button>`;
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-                {
-                    data: "name",
-                    render: function (data) {
-                        return data || '';
-                    }
-                },
-                {
-                    data: "id",
-                    render: function (data, type, row) {
-                        if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Type" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
-                        }
-                        return '';
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-            ],
-            language: {
-                emptyTable: "No Records Available.",
-                zeroRecords: "No records match the search criteria you entered."
-            },
-            order: [[this.sortColumnIndex, this.sortDirection]],
-            serverSide: true,
-            processing: true,
-            lengthMenu: [[25, 50, 100], [25, 50, 100]],
-            pageLength: this.pageSize,
-            displayStart: this.currentPage * this.pageSize,
-        });
-
-        $(".dt-length").prepend($("#lnkAdd"));
-        this.eventTypeTable.on('draw', function () {
-            $(".delete").on("click", function (e) {
-                e.preventDefault();
-                const eventTypeId = $(this).data("id");
-                Swal.fire({
-                    title: 'Delete Event Type?',
-                    text: 'Are you sure you wish to delete this Event Type?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        eventTypeControllerInstance.DeleteEventType(eventTypeId);
-                    }
-                });
-            });
-        });
 
         $(document).on('click', '.et-detail', function (e) {
             e.preventDefault();
             var eventTypeId = $(this).data("id");
-            eventTypeControllerInstance.ViewEventType(eventTypeId, false);
+            eventTypeControllerInstance.viewEventType(eventTypeId, false);
         });
 
-        const editModal = new bootstrap.Modal(document.getElementById('EventTypeEditModal'));
         $(document).on('click', '.et-edit, #editEventTypeBtn', function (e) {
             e.preventDefault();
             var eventTypeId = $(this).data("id") || $("#hdEventTypeId").val();
             eventTypeControllerInstance.eventTypeId = eventTypeId;
             if (eventTypeId) {
-                eventTypeControllerInstance.ViewEventType(eventTypeId, true);
+                eventTypeControllerInstance.viewEventType(eventTypeId, true);
                 $("#EventTypeEditModalLabel").html(`Edit Event Type`);
             } else {
-                eventTypeControllerInstance.ClearEditForm();
+                eventTypeControllerInstance.clearEditForm();
                 $("#EventTypeEditModalLabel").html("Create New Event Type");
             }
             editModal.show();
@@ -153,7 +111,7 @@ class EventTypeController {
 
         $("#lnkAdd").on('click', function (e) {
             e.preventDefault();
-            eventTypeControllerInstance.ClearEditForm();
+            eventTypeControllerInstance.clearEditForm();
             $("#EventTypeEditModalLabel").html("Create New Event Type");
             editModal.show();
         });
@@ -170,7 +128,7 @@ class EventTypeController {
                 cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    eventTypeControllerInstance.DeleteEventType(eventTypeId);
+                    eventTypeControllerInstance.deleteEventType(eventTypeId);
                 }
             });
         });
@@ -178,7 +136,6 @@ class EventTypeController {
         $("#edit_cmdSave").on("click", function (e) {
             e.preventDefault();
             let isValid = true;
-
             const $etName = $("#edit_etName");
             const $etNameError = $etName.next(".invalid-feedback");
             if ($etName.val().trim() === "") {
@@ -189,10 +146,7 @@ class EventTypeController {
                 $etNameError.hide();
                 $etName.removeClass("is-invalid");
             }
-
-            if (isValid) {
-                eventTypeControllerInstance.SaveEventType();
-            }
+            if (isValid) eventTypeControllerInstance.saveEventType();
         });
 
         $("#edit_etName").on("input", function () {
@@ -204,74 +158,7 @@ class EventTypeController {
         });
     }
 
-    ClearState() {
-        if (this.eventTypeTable) {
-            this.eventTypeTable.state.clear();
-            window.location.reload();
-        }
-    }
-
-    DeleteEventType(eventTypeId) {
-        $.ajax({
-            url: this.deleteUrl + eventTypeId,
-            type: 'GET',
-            dataType: 'json',
-            beforeSend: xhr => this.setAjaxHeaders(xhr),
-            success: function (response) {
-                if (response.status === 200) {
-                    if (eventTypeControllerInstance.eventTypeTable) {
-                        eventTypeControllerInstance.eventTypeTable.draw();
-                    }
-                    const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
-                    if (editModal) {
-                        editModal.hide();
-                    }
-                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeDetailModal'));
-                    if (detailModal) {
-                        detailModal.hide();
-                    }
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: response.message || 'Event Type deleted successfully.'
-                    });
-                } else {
-                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
-                }
-            },
-            error: function (error) {
-                ShowNotification("Error Deleting Event Type", error.statusText, 'error');
-            }
-        });
-    }
-
-    onModalClose(event) {
-        const modalId = event.target.id;
-        if (modalId === 'EventTypeDetailModal') {
-            eventTypeControllerInstance.ClearDetailForm();
-        } else if (modalId === 'EventTypeEditModal') {
-            eventTypeControllerInstance.ClearEditForm();
-            eventTypeControllerInstance.ClearEditValidations();
-        }
-    }
-
-    ClearDetailForm() {
-        $("#etName").html("");
-        $("#hdEventTypeId").val("");
-    }
-
-    ClearEditForm() {
-        $("#edit_etName").val("");
-        $("#edit_hdEventTypeId").val("");
-    }
-
-    ClearEditValidations() {
-        $("#edit_etName").removeClass("is-invalid");
-        $("#edit_etName").next(".invalid-feedback").hide();
-    }
-
-    ViewEventType(eventTypeId, isEditMode = false) {
-        const getUrl = `${this.service.baseUrl}EventTypeAPI/GetEventType/${eventTypeId}`;
+    viewEventType(eventTypeId, isEditMode = false) {
         const progressId = isEditMode ? "#edit_progress-eventtype" : "#progress-eventtype";
         $(progressId).show();
 
@@ -284,7 +171,7 @@ class EventTypeController {
 
         if (eventTypeId) {
             $.ajax({
-                url: getUrl,
+                url: this.viewUrl + eventTypeId,
                 method: 'GET',
                 dataType: 'json',
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
@@ -314,26 +201,20 @@ class EventTypeController {
         }
     }
 
-    SaveEventType() {
+    saveEventType() {
         if ($("#edit_hdEventTypeId").val() === "") {
-            this.CreateEventType();
+            this.createEventType();
         } else {
-            this.UpdateEventType();
-        }
-        if (eventTypeControllerInstance.eventTypeTable) {
-            eventTypeControllerInstance.ClearEditForm();
-            eventTypeControllerInstance.eventTypeTable.draw();
+            this.updateEventType();
         }
     }
 
-    CreateEventType() {
+    createEventType() {
         try {
             $("#edit_progress-eventtype").show();
-            const eventTypeData = {
-                name: $("#edit_etName").val().trim()
-            };
+            const eventTypeData = { name: $("#edit_etName").val().trim() };
             $.ajax({
-                url: `${this.service.baseUrl}EventTypeAPI/CreateEventType`,
+                url: this.createUrl,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -348,11 +229,9 @@ class EventTypeController {
                             text: response.message || 'Event Type created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
-                        if (editModal) {
-                            editModal.hide();
-                        }
+                        if (editModal) editModal.hide();
                         if (eventTypeControllerInstance.eventTypeTable) {
-                            eventTypeControllerInstance.eventTypeTable.draw();
+                            eventTypeControllerInstance.eventTypeTable.ajax.reload();
                         }
                     } else {
                         ShowNotification("Error", response.message || "Unexpected error occurred while creating event type.", 'error');
@@ -369,7 +248,7 @@ class EventTypeController {
         }
     }
 
-    UpdateEventType() {
+    updateEventType() {
         try {
             $("#edit_progress-eventtype").show();
             const eventTypeData = {
@@ -377,7 +256,7 @@ class EventTypeController {
                 name: $("#edit_etName").val().trim()
             };
             $.ajax({
-                url: `${this.service.baseUrl}EventTypeAPI/UpdateEventType`,
+                url: this.updateUrl,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -392,11 +271,9 @@ class EventTypeController {
                             text: response.message || 'Event Type updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
-                        if (editModal) {
-                            editModal.hide();
-                        }
+                        if (editModal) editModal.hide();
                         if (eventTypeControllerInstance.eventTypeTable) {
-                            eventTypeControllerInstance.eventTypeTable.draw();
+                            eventTypeControllerInstance.eventTypeTable.ajax.reload();
                         }
                     } else {
                         ShowNotification("Error", response.message || "Unexpected error occurred while updating event type.", 'error');
@@ -411,6 +288,60 @@ class EventTypeController {
             $("#edit_progress-eventtype").hide();
             ShowNotification("Error Updating Event Type", e.message, 'error');
         }
+    }
+
+    deleteEventType(eventTypeId) {
+        $.ajax({
+            url: this.deleteUrl + eventTypeId,
+            type: 'DELETE',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeEditModal'));
+                    if (editModal) editModal.hide();
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventTypeDetailModal'));
+                    if (detailModal) detailModal.hide();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Event Type deleted successfully.'
+                    });
+                    if (eventTypeControllerInstance.eventTypeTable) {
+                        eventTypeControllerInstance.eventTypeTable.ajax.reload();
+                    }
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
+                }
+            },
+            error: function (error) {
+                ShowNotification("Error Deleting Event Type", error.statusText, 'error');
+            }
+        });
+    }
+
+    onModalClose(event) {
+        const modalId = event.target.id;
+        if (modalId === 'EventTypeDetailModal') {
+            eventTypeControllerInstance.clearDetailForm();
+        } else if (modalId === 'EventTypeEditModal') {
+            eventTypeControllerInstance.clearEditForm();
+            eventTypeControllerInstance.clearEditValidations();
+        }
+    }
+
+    clearDetailForm() {
+        $("#etName").html("");
+        $("#hdEventTypeId").val("");
+    }
+
+    clearEditForm() {
+        $("#edit_etName").val("");
+        $("#edit_hdEventTypeId").val("");
+    }
+
+    clearEditValidations() {
+        $("#edit_etName").removeClass("is-invalid");
+        $("#edit_etName").next(".invalid-feedback").hide();
     }
 
     setAjaxHeaders(xhr) {

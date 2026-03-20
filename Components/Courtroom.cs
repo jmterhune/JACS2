@@ -14,4 +14,20 @@ namespace tjc.Modules.jacs.Components
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
     }
+
+    [TableName("courtroom_clerk_xref")]
+    internal class CourtroomClerkXref
+    {
+        public long courtroom_id { get; set; }
+        public long county_id { get; set; }
+        public long clerk_courtroom_id { get; set; }
+        public string clerk_courtroom_name { get; set; }
+        public DateTime? created_at { get; set; }
+        public DateTime? updated_at { get; set; }
+    }
+    internal class CourtroomClerkXrefListItem: CourtroomClerkXref
+    {
+        public string county_name { get; set; } = null;
+        public string courtroom_name { get; set; } = null;
+    }
 }

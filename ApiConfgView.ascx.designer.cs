@@ -11,7 +11,7 @@ namespace tjc.Modules.jacs
 {
 
 
-    public partial class View
+    public partial class ApiConfig
     {
 
         /// <summary>

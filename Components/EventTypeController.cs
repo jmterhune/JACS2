@@ -8,11 +8,11 @@ namespace tjc.Modules.jacs.Components
     internal class EventTypeController
     {
         private const string CONN_JACS = "jacs"; //Connection
-        public void CreateEventType(event_type t)
+        public void CreateEventType(EventType t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<event_type>();
+                var rep = ctx.GetRepository<EventType>();
                 t.created_at = System.DateTime.Now;
                 t.updated_at = System.DateTime.Now;
                 rep.Insert(t);
@@ -23,20 +23,20 @@ namespace tjc.Modules.jacs.Components
             var t = GetEventType(eventtypeId);
             DeleteEventType(t);
         }
-        public void DeleteEventType(event_type t)
+        public void DeleteEventType(EventType t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<event_type>();
+                var rep = ctx.GetRepository<EventType>();
                 rep.Delete(t);
             }
         }
-        public IEnumerable<event_type> GetEventTypes()
+        public IEnumerable<EventType> GetEventTypes()
         {
-            IEnumerable<event_type> t;
+            IEnumerable<EventType> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<event_type>();
+                var rep = ctx.GetRepository<EventType>();
                 t = rep.Get();
             }
             return t;
@@ -50,7 +50,7 @@ namespace tjc.Modules.jacs.Components
 
                 using (IDataContext ctx = DataContext.Instance("jacs"))
                 {
-                    var rep = ctx.GetRepository<event_type>();
+                    var rep = ctx.GetRepository<EventType>();
                     var results = rep.Find("WHERE name LIKE @0", $"%{searchTerm}%")
                         .Select(c => new KeyValuePair<long, string>(c.id, c.name)).OrderBy(c=>c.Value).ToList();
                     return results ?? new List<KeyValuePair<long, string>>();
@@ -62,31 +62,31 @@ namespace tjc.Modules.jacs.Components
                 return new List<KeyValuePair<long, string>>();
             }
         }
-        public event_type GetEventType(long eventtypeId)
+        public EventType GetEventType(long eventtypeId)
         {
-            event_type t;
+            EventType t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<event_type>();
+                var rep = ctx.GetRepository<EventType>();
                 t = rep.GetById(eventtypeId);
             }
             return t;
         }
-        public void UpdateEventType(event_type t)
+        public void UpdateEventType(EventType t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<event_type>();
+                var rep = ctx.GetRepository<EventType>();
                 t.updated_at = System.DateTime.Now;
                 rep.Update(t);
             }
         }
         // Add to EventTypeController.cs
-        public IEnumerable<event_type> GetEventTypesPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
+        public IEnumerable<EventType> GetEventTypesPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                return ctx.ExecuteQuery<event_type>(
+                return ctx.ExecuteQuery<EventType>(
                     System.Data.CommandType.StoredProcedure,
                     "tjc_jacs_get_event_type_paged",
                     searchTerm ?? string.Empty,

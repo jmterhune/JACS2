@@ -238,23 +238,23 @@ namespace tjc.Modules.jacs.Components
 
                 if (available > diff && eventsCount != quantity)
                 {
-                    color = blocked ? "#808080" : "#dc3545";
+                    color = blocked ? "#808080" : "#dc3545" ; //gray - red
                 }
                 else
                 {
                     if (eventsCount == quantity)
                     {
-                        color = "#28a745";
+                        color = "#28a745"; //green
                     }
                     else
                     {
                         if (blocked)
                         {
-                            color = blocked && public_block ? "rgba(0, 0, 255, 0.5)" : "#808080";
+                            color = blocked && public_block ? "rgba(0, 0, 255, 0.5)" : "#808080"; //blue with opacity for public block, gray for regular block
                         }
                         else
                         {
-                            color = (quantity - eventsCount < 1) ? "#dc3545" : "#007bff";
+                            color = (quantity - eventsCount < 1) ? "#dc3545" : "#007bff"; //red - blue
                         }
                     }
                 }
@@ -300,6 +300,8 @@ namespace tjc.Modules.jacs.Components
 
         [IgnoreColumn]
         public bool Clickable => !public_block;
+        [IgnoreColumn]
+        public bool hasEvents { get { return this.events.Count() > 0; } }
     }
 
     internal class CustomTimeslot : Timeslot

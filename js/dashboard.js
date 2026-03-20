@@ -52,7 +52,7 @@ class DashboardController {
                 },
                 { data: "case_num", orderable: false, searchable: false },
                 { data: "motion_name", orderable: false, searchable: false },
-                { data: "timeslot_desc", orderable: false, searchable: false },
+                { data: "start_formatted", orderable: false, searchable: false },
                 { data: "duration", orderable: false, searchable: false },
                 { data: "court_name", orderable: false, searchable: false },
                 { data: "status_name", orderable: false, searchable: false },
@@ -134,7 +134,7 @@ class DashboardController {
             columns: [
                 { data: "case_num", title: "Case Number" },
                 { data: "motion_name", title: "Motion" },
-                { data: "timeslot_desc",title:"Timeslot" },
+                { data: "start_formatted",title:"Timeslot" },
                 { data: "court_name", title: "Court" },
                 { data: "status_name", title: "Status" },
                 { data: "plaintiff", title: "Plaintiff" },

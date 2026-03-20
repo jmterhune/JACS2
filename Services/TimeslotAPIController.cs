@@ -711,18 +711,19 @@ namespace tjc.Modules.jacs.Services
                 var restrictedMotions = ctl.GetRestrictedMotionsForTimeslot(p1);
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    id = timeslot.id,
+                    timeslot.id,
                     start = timeslot.start.ToString("yyyy-MM-ddTHH:mm"),
                     end = timeslot.end.ToString("yyyy-MM-ddTHH:mm"),
-                    allDay = timeslot.allDay,
-                    description = timeslot.description,
-                    quantity = timeslot.quantity,
-                    duration = timeslot.duration,
-                    blocked = timeslot.blocked,
+                    timeslot.allDay,
+                    timeslot.description,
+                    timeslot.quantity,
+                    timeslot.duration,
+                    timeslot.blocked,
                     publicBlock = timeslot.public_block,
                     blockReason = timeslot.block_reason,
                     category = timeslot.courtroom_id,
-                    restrictedMotions
+                    restrictedMotions,
+                    timeslot.hasEvents,
                 });
             }
             catch (Exception ex)

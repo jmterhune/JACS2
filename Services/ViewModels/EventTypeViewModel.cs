@@ -6,7 +6,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
     [JsonObject(MemberSerialization.OptIn)]
     internal class EventTypeViewModel
     {
-        public EventTypeViewModel(event_type eventType)
+        public EventTypeViewModel(EventType eventType)
         {
             id = eventType.id;
             name = eventType.name;

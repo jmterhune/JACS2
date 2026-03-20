@@ -16,6 +16,9 @@ class EventStatusController {
         this.eventStatusTable = null;
         this.service = params.service || null;
         this.deleteUrl = null;
+        this.updateUrl = null;
+        this.createUrl = null;
+        this.viewUrl = null;
         eventStatusControllerInstance = this;
     }
 
@@ -23,17 +26,62 @@ class EventStatusController {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}EventStatusAPI/DeleteEventStatus/`;
+        this.updateUrl = `${this.service.baseUrl}EventStatusAPI/UpdateEventStatus`;
+        this.createUrl = `${this.service.baseUrl}EventStatusAPI/CreateEventStatus`;
+        this.viewUrl = `${this.service.baseUrl}EventStatusAPI/GetEventStatus/`;
 
         const listUrl = `${this.service.baseUrl}EventStatusAPI/GetEventStatuses/${this.recordCount}`;
         const detailModalElement = document.getElementById('EventStatusDetailModal');
-        if (detailModalElement) {
-            detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
-        }
-
         const editModalElement = document.getElementById('EventStatusEditModal');
-        if (editModalElement) {
-            editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
-        }
+        const editModal = new bootstrap.Modal(document.getElementById('EventStatusEditModal'));
+
+        if (detailModalElement) detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+        if (editModalElement) editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+
+        this.eventStatusTable = $('#tblEventStatus').DataTable({
+            searching: true,
+            autoWidth: true,
+            stateSave: true,
+            paging: true,
+            ajax: {
+                url: listUrl,
+                type: "GET",
+                dataType: 'json',
+                dataSrc: "data",
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                error: function (error) {
+                    $("#tblEventStatus_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve event statuses.';
+                    if (error.status === 401) errorMessage = 'Please make sure you are logged in and try again.';
+                    ShowNotification('Error Retrieving Event Statuses', errorMessage, 'error');
+                }
+            },
+            columns: [
+                { data: "id", render: data => `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="es-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="Edit Event Status" data-toggle="tooltip" data-id="${data}" class="es-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
+                { data: "name", render: data => data || '' },
+                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Status" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
+            ],
+            language: { emptyTable: "No Records Available.", zeroRecords: "No records match the search criteria you entered." },
+            order: [[2, 'asc']],
+            serverSide: false,
+            processing: true,
+            lengthMenu: [[25, 50, 100], [25, 50, 100]],
+            pageLength: 25,
+        });
+
+        this.eventStatusTable.on('draw', function () {
+            $(".delete").on("click", function (e) {
+                e.preventDefault();
+                const eventStatusId = $(this).data("id");
+                Swal.fire({ title: 'Delete Event Status?', text: 'Are you sure?', icon: 'warning', showCancelButton: true }).then((result) => {
+                    if (result.isConfirmed) eventStatusControllerInstance.deleteEventStatus(eventStatusId);
+                });
+            });
+        });
+
+        $(".dt-length").prepend($("#lnkAdd"));
+
         $(editModalElement).on('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
                 e.preventDefault();
@@ -41,111 +89,21 @@ class EventStatusController {
             }
         });
 
-        this.eventStatusTable = $('#tblEventStatus').DataTable({
-            searching: true,
-            autoWidth: true,
-            stateSave: true,
-            ajax: {
-                url: listUrl,
-                type: "GET",
-                dataType: 'json',
-                beforeSend: xhr => this.setAjaxHeaders(xhr),
-                data(data) {
-                    data.searchText = data.search?.value || '';
-                    delete data.columns;
-                },
-                error: function (error) {
-                    $("#tblEventStatus_processing").hide();
-                    if (error.status === 401) {
-                        ShowNotification("Error Retrieving Event Statuses", "Please make sure you are logged in and try again. Error: " + error.statusText, 'error');
-                    } else {
-                        ShowNotification("Error Retrieving Event Statuses", "The following error occurred attempting to retrieve event status information. Error: " + error.statusText, 'error');
-                    }
-                }
-            },
-            columns: [
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="es-detail btn-command"><i class="fas fa-eye"></i></button>`;
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<button type="button" title="Edit Event Status" data-toggle="tooltip" data-id="${data}" class="es-edit btn-command"><i class="fas fa-pencil"></i></button>`;
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-                {
-                    data: "name",
-                    render: function (data) {
-                        return data || '';
-                    }
-                },
-                {
-                    data: "id",
-                    render: function (data, type, row) {
-                        if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Status" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
-                        }
-                        return '';
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-            ],
-            language: {
-                emptyTable: "No Records Available.",
-                zeroRecords: "No records match the search criteria you entered."
-            },
-            order: [[this.sortColumnIndex, this.sortDirection]],
-            serverSide: true,
-            processing: true,
-            lengthMenu: [[25, 50, 100], [25, 50, 100]],
-            pageLength: this.pageSize,
-            displayStart: this.currentPage * this.pageSize,
-        });
-
-        $(".dt-length").prepend($("#lnkAdd"));
-        this.eventStatusTable.on('draw', function () {
-            $(".delete").on("click", function (e) {
-                e.preventDefault();
-                const eventStatusId = $(this).data("id");
-                Swal.fire({
-                    title: 'Delete Event Status?',
-                    text: 'Are you sure you wish to delete this Event Status?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        eventStatusControllerInstance.DeleteEventStatus(eventStatusId);
-                    }
-                });
-            });
-        });
-
         $(document).on('click', '.es-detail', function (e) {
             e.preventDefault();
             var eventStatusId = $(this).data("id");
-            eventStatusControllerInstance.ViewEventStatus(eventStatusId, false);
+            eventStatusControllerInstance.viewEventStatus(eventStatusId, false);
         });
 
-        const editModal = new bootstrap.Modal(document.getElementById('EventStatusEditModal'));
         $(document).on('click', '.es-edit, #editEventStatusBtn', function (e) {
             e.preventDefault();
             var eventStatusId = $(this).data("id") || $("#hdEventStatusId").val();
             eventStatusControllerInstance.eventStatusId = eventStatusId;
             if (eventStatusId) {
-                eventStatusControllerInstance.ViewEventStatus(eventStatusId, true);
+                eventStatusControllerInstance.viewEventStatus(eventStatusId, true);
                 $("#EventStatusEditModalLabel").html(`Edit Event Status`);
             } else {
-                eventStatusControllerInstance.ClearEditForm();
+                eventStatusControllerInstance.clearEditForm();
                 $("#EventStatusEditModalLabel").html("Create New Event Status");
             }
             editModal.show();
@@ -153,7 +111,7 @@ class EventStatusController {
 
         $("#lnkAdd").on('click', function (e) {
             e.preventDefault();
-            eventStatusControllerInstance.ClearEditForm();
+            eventStatusControllerInstance.clearEditForm();
             $("#EventStatusEditModalLabel").html("Create New Event Status");
             editModal.show();
         });
@@ -170,7 +128,7 @@ class EventStatusController {
                 cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    eventStatusControllerInstance.DeleteEventStatus(eventStatusId);
+                    eventStatusControllerInstance.deleteEventStatus(eventStatusId);
                 }
             });
         });
@@ -178,7 +136,6 @@ class EventStatusController {
         $("#edit_cmdSave").on("click", function (e) {
             e.preventDefault();
             let isValid = true;
-
             const $esName = $("#edit_esName");
             const $esNameError = $esName.next(".invalid-feedback");
             if ($esName.val().trim() === "") {
@@ -189,10 +146,7 @@ class EventStatusController {
                 $esNameError.hide();
                 $esName.removeClass("is-invalid");
             }
-
-            if (isValid) {
-                eventStatusControllerInstance.SaveEventStatus();
-            }
+            if (isValid) eventStatusControllerInstance.saveEventStatus();
         });
 
         $("#edit_esName").on("input", function () {
@@ -204,74 +158,7 @@ class EventStatusController {
         });
     }
 
-    ClearState() {
-        if (this.eventStatusTable) {
-            this.eventStatusTable.state.clear();
-            window.location.reload();
-        }
-    }
-
-    DeleteEventStatus(eventStatusId) {
-        $.ajax({
-            url: this.deleteUrl + eventStatusId,
-            type: 'GET',
-            dataType: 'json',
-            beforeSend: xhr => this.setAjaxHeaders(xhr),
-            success: function (response) {
-                if (response.status === 200) {
-                    if (eventStatusControllerInstance.eventStatusTable) {
-                        eventStatusControllerInstance.eventStatusTable.draw();
-                    }
-                    const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
-                    if (editModal) {
-                        editModal.hide();
-                    }
-                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusDetailModal'));
-                    if (detailModal) {
-                        detailModal.hide();
-                    }
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: response.message || 'Event Status deleted successfully.'
-                    });
-                } else {
-                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
-                }
-            },
-            error: function (error) {
-                ShowNotification("Error Deleting Event Status", error.statusText, 'error');
-            }
-        });
-    }
-
-    onModalClose(event) {
-        const modalId = event.target.id;
-        if (modalId === 'EventStatusDetailModal') {
-            eventStatusControllerInstance.ClearDetailForm();
-        } else if (modalId === 'EventStatusEditModal') {
-            eventStatusControllerInstance.ClearEditForm();
-            eventStatusControllerInstance.ClearEditValidations();
-        }
-    }
-
-    ClearDetailForm() {
-        $("#esName").html("");
-        $("#hdEventStatusId").val("");
-    }
-
-    ClearEditForm() {
-        $("#edit_esName").val("");
-        $("#edit_hdEventStatusId").val("");
-    }
-
-    ClearEditValidations() {
-        $("#edit_esName").removeClass("is-invalid");
-        $("#edit_esName").next(".invalid-feedback").hide();
-    }
-
-    ViewEventStatus(eventStatusId, isEditMode = false) {
-        const getUrl = `${this.service.baseUrl}EventStatusAPI/GetEventStatus/${eventStatusId}`;
+    viewEventStatus(eventStatusId, isEditMode = false) {
         const progressId = isEditMode ? "#edit_progress-eventstatus" : "#progress-eventstatus";
         $(progressId).show();
 
@@ -284,7 +171,7 @@ class EventStatusController {
 
         if (eventStatusId) {
             $.ajax({
-                url: getUrl,
+                url: this.viewUrl + eventStatusId,
                 method: 'GET',
                 dataType: 'json',
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
@@ -314,26 +201,20 @@ class EventStatusController {
         }
     }
 
-    SaveEventStatus() {
+    saveEventStatus() {
         if ($("#edit_hdEventStatusId").val() === "") {
-            this.CreateEventStatus();
+            this.createEventStatus();
         } else {
-            this.UpdateEventStatus();
-        }
-        if (eventStatusControllerInstance.eventStatusTable) {
-            eventStatusControllerInstance.ClearEditForm();
-            eventStatusControllerInstance.eventStatusTable.draw();
+            this.updateEventStatus();
         }
     }
 
-    CreateEventStatus() {
+    createEventStatus() {
         try {
             $("#edit_progress-eventstatus").show();
-            const eventStatusData = {
-                name: $("#edit_esName").val().trim()
-            };
+            const eventStatusData = { name: $("#edit_esName").val().trim() };
             $.ajax({
-                url: `${this.service.baseUrl}EventStatusAPI/CreateEventStatus`,
+                url: this.createUrl,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -348,11 +229,9 @@ class EventStatusController {
                             text: response.message || 'Event Status created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
-                        if (editModal) {
-                            editModal.hide();
-                        }
+                        if (editModal) editModal.hide();
                         if (eventStatusControllerInstance.eventStatusTable) {
-                            eventStatusControllerInstance.eventStatusTable.draw();
+                            eventStatusControllerInstance.eventStatusTable.ajax.reload();
                         }
                     } else {
                         ShowNotification("Error", response.message || "Unexpected error occurred while creating event status.", 'error');
@@ -369,7 +248,7 @@ class EventStatusController {
         }
     }
 
-    UpdateEventStatus() {
+    updateEventStatus() {
         try {
             $("#edit_progress-eventstatus").show();
             const eventStatusData = {
@@ -377,7 +256,7 @@ class EventStatusController {
                 name: $("#edit_esName").val().trim()
             };
             $.ajax({
-                url: `${this.service.baseUrl}EventStatusAPI/UpdateEventStatus`,
+                url: this.updateUrl,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -392,11 +271,9 @@ class EventStatusController {
                             text: response.message || 'Event Status updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
-                        if (editModal) {
-                            editModal.hide();
-                        }
+                        if (editModal) editModal.hide();
                         if (eventStatusControllerInstance.eventStatusTable) {
-                            eventStatusControllerInstance.eventStatusTable.draw();
+                            eventStatusControllerInstance.eventStatusTable.ajax.reload();
                         }
                     } else {
                         ShowNotification("Error", response.message || "Unexpected error occurred while updating event status.", 'error');
@@ -411,6 +288,60 @@ class EventStatusController {
             $("#edit_progress-eventstatus").hide();
             ShowNotification("Error Updating Event Status", e.message, 'error');
         }
+    }
+
+    deleteEventStatus(eventStatusId) {
+        $.ajax({
+            url: this.deleteUrl + eventStatusId,
+            type: 'DELETE',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusEditModal'));
+                    if (editModal) editModal.hide();
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('EventStatusDetailModal'));
+                    if (detailModal) detailModal.hide();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Event Status deleted successfully.'
+                    });
+                    if (eventStatusControllerInstance.eventStatusTable) {
+                        eventStatusControllerInstance.eventStatusTable.ajax.reload();
+                    }
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
+                }
+            },
+            error: function (error) {
+                ShowNotification("Error Deleting Event Status", error.statusText, 'error');
+            }
+        });
+    }
+
+    onModalClose(event) {
+        const modalId = event.target.id;
+        if (modalId === 'EventStatusDetailModal') {
+            eventStatusControllerInstance.clearDetailForm();
+        } else if (modalId === 'EventStatusEditModal') {
+            eventStatusControllerInstance.clearEditForm();
+            eventStatusControllerInstance.clearEditValidations();
+        }
+    }
+
+    clearDetailForm() {
+        $("#esName").html("");
+        $("#hdEventStatusId").val("");
+    }
+
+    clearEditForm() {
+        $("#edit_esName").val("");
+        $("#edit_hdEventStatusId").val("");
+    }
+
+    clearEditValidations() {
+        $("#edit_esName").removeClass("is-invalid");
+        $("#edit_esName").next(".invalid-feedback").hide();
     }
 
     setAjaxHeaders(xhr) {

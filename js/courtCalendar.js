@@ -1252,7 +1252,14 @@ class CourtCalendarController {
                     $('#TimeslotModalLabel').text(title);
                     this.loadEventsForTimeslot(timeslotId);
                     this.populateMotionSelectExcludingRestricted();
-
+                    const $deleteBtn = $('#deleteTimeslotPaneBtn');
+                    if (response.hasEvents) {
+                        $deleteBtn.hide();
+                        $deleteBtn.attr('title', 'Cannot delete timeslot with scheduled hearings');
+                    } else {
+                        $deleteBtn.show();
+                        $deleteBtn.removeAttr('title');
+                    }
                     const modal = new bootstrap.Modal(document.getElementById('TimeslotModal'));
                     modal.show();
                     $('.nav-tabs li').show();
@@ -1263,7 +1270,6 @@ class CourtCalendarController {
                         $('.block_reason').hide();
                         $('.public_block').hide();
                     }
-                    // $('.nav-tabs a[href="#eventTab"]').tab('show');
                     $('.cattle-call').hide();
                     $('.edited-by').hide();
                 } else {
@@ -1609,8 +1615,16 @@ class CourtCalendarController {
 
                     // Show buttons
                     if (this.editable) {
-                        $('#cancelHearingBtn').show();
-                        $('#rescheduleBtn').show();
+                        if (event.status_name && event.status_name.toLowerCase() === 'cancelled') {
+                            $('#cancelHearingBtn').hide();
+                            $('#rescheduleBtn').hide();
+                        } else {
+                            $('#cancelHearingBtn').show();
+                            $('#rescheduleBtn').show();
+                        }
+                        $("#eventCreateTab").innerText = "Edit Event";
+                    } else {
+                        $("#eventCreateTab").innerText = "Create Event"
                     }
                     $('.cattle-call').hide();
                     $('.nav-tabs a[href="#eventTab"]').tab('show'); //show event tab
@@ -1765,6 +1779,7 @@ class CourtCalendarController {
                                 <td>${e.plaintiff}</td>
                                 <td>${e.opp_attorney_name}</td>
                                 <td>${e.defendant}</td>
+                                <td>${e.status_name}</td>
                             </tr>`;
                         $('#eventsTableBody').append(row);
                     });
@@ -1896,7 +1911,6 @@ class CourtCalendarController {
             ShowNotification('Error', 'Failed to load court data.', 'error');
         }
     }
-
     // Utility Methods
     validateTimes() {
         const start = moment($('#t_start').val());

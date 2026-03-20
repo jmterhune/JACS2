@@ -9,71 +9,71 @@ using System.Text;
 using System.Threading.Tasks;
 namespace tjc.Modules.jacs.Components
 {
-    internal class ApiInterfaceController
+    internal class ApiEndpointController
     {
         private const string CONN_JACS = "jacs"; //Connection
         private const string CONN_JUD12 = "Jud12"; //jud12.flcourts.org
 
-        public void CreateApiInterface(ApiInterface t)
+        public void CreateApiEndpoint(ApiEndpoint t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<ApiInterface>();
+                var rep = ctx.GetRepository<ApiEndpoint>();
                 t.created_at = System.DateTime.Now;
                 t.updated_at = System.DateTime.Now;
                 rep.Insert(t);
             }
         }
-        public void DeleteApiInterface(long ApiInterfaceId)
+        public void DeleteApiEndpoint(long ApiInterfaceId)
         {
-            var t = GetApiInterface(ApiInterfaceId);
-            DeleteApiInterface(t);
+            var t = GetApiEndpoint(ApiInterfaceId);
+            DeleteApiEndpoint(t);
         }
-        public void DeleteApiInterface(ApiInterface t)
+        public void DeleteApiEndpoint   (ApiEndpoint t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<ApiInterface>();
+                var rep = ctx.GetRepository<ApiEndpoint>();
                 rep.Delete(t);
             }
         }
-        public IEnumerable<ApiInterface> GetApiInterfaces()
+        public IEnumerable<ApiEndpoint> GetApiEndpoints()
         {
-            IEnumerable<ApiInterface> t;
+            IEnumerable<ApiEndpoint> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<ApiInterface>();
+                var rep = ctx.GetRepository<ApiEndpoint>();
                 t = rep.Get();
             }
             return t;
         }
-        public ApiInterface GetApiInterface(long apiInterfaceId)
+        public ApiEndpoint GetApiEndpoint(long apiEndpointId)
         {
-            ApiInterface t;
+            ApiEndpoint t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<ApiInterface>();
-                t = rep.GetById(apiInterfaceId);
+                var rep = ctx.GetRepository<ApiEndpoint>();
+                t = rep.GetById(apiEndpointId);
             }
             return t;
         }
 
-        public void UpdateApiInterface(ApiInterface t)
+        public void UpdateApiEndpoint(ApiEndpoint t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<ApiInterface>();
+                var rep = ctx.GetRepository<ApiEndpoint>();
                 t.updated_at = System.DateTime.Now;
                 rep.Update(t);
             }
         }
-        public ApiInterface GetApiInterfaceByCountyAndType(long countyId, ApiInterfaceType type)
+        public ApiEndpoint GetApiEndpointByCountyAndType(long countyId, int type)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<ApiInterface>();
+                var rep = ctx.GetRepository<ApiEndpoint>();
 
-                return rep.Find("WHERE county_id = @0 AND type = @1", countyId, (int)type)
+                return rep.Find("WHERE county_id = @0 AND type = @1", countyId,type)
                           .FirstOrDefault();
             }
         }
@@ -100,7 +100,7 @@ namespace tjc.Modules.jacs.Components
                 return null;
             }
         }
-        internal async Task<HttpResponseMessage> CallExternalApi(ApiInterface api, string token, object payload, HttpMethod method)
+        internal async Task<HttpResponseMessage> CallExternalApi(ApiEndpoint api, string token, object payload, HttpMethod method)
         {
             using (var client = new HttpClient())
             {

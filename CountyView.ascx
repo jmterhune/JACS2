@@ -18,6 +18,7 @@
                     <th></th>
                     <th>Name</th>
                     <th>Code</th>
+                    <th>Auth Endpoint URL</th>
                     <th></th>
                 </tr>
             </thead>
@@ -28,7 +29,7 @@
 <div class="modal fade" id="CountyDetailModal" tabindex="-1" aria-labelledby="CountyDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div id="progress-county" class="modal-progress" style="display: none;">
+            <div id="progress_county" class="modal-progress" style="display: none;">
                 <div class="center-progress">
                     <img alt="" src="/images/loading.gif" />
                 </div>
@@ -40,14 +41,12 @@
             <div class="modal-body">
                 <table class="table table-striped m-0 p-0 w-100">
                     <tbody>
-                        <tr>
-                            <td><strong>Name:</strong></td>
-                            <td><span id="countyName"></span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Code:</strong></td>
-                            <td><span id="countyCode"></span></td>
-                        </tr>
+                        <tr><td><strong>Name:</strong></td><td><span id="countyName"></span></td></tr>
+                        <tr><td><strong>Code:</strong></td><td><span id="countyCode"></span></td></tr>
+                        <tr><td><strong>Auth Endpoint URL:</strong></td><td><span id="countyAuthUrl"></span></td></tr>
+                        <tr><td><strong>User Name:</strong></td><td><span id="countyUserName"></span></td></tr>
+                        <tr><td><strong>Password:</strong></td><td><span id="countyPassword" style="word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; display:block;"></span></td></tr>
+                        <tr><td><strong>Token:</strong></td><td><span id="countyToken" style="word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; display:block;"></span></td></tr>
                     </tbody>
                 </table>
                 <input type="hidden" id="hdCountyId" />
@@ -64,7 +63,7 @@
 <div class="modal fade" id="CountyEditModal" tabindex="-1" aria-labelledby="CountyEditModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div id="edit_progress-county" class="modal-progress" style="display: none;">
+            <div id="edit_progress_county" class="modal-progress" style="display: none;">
                 <div class="center-progress">
                     <img alt="" src="/images/loading.gif" />
                 </div>
@@ -89,6 +88,28 @@
                                 <div class="invalid-feedback">County code is required.</div>
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label>Auth Endpoint URL</label>
+                                <input type="text" id="edit_countyAuthUrl" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label>User Name</label>
+                                <input type="text" id="edit_countyUserName" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Password (leave blank to keep existing)</label>
+                                <input type="password" id="edit_countyPassword" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label>Token (leave blank to keep existing)</label>
+                                <input type="password" id="edit_countyToken" class="form-control">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,6 +122,7 @@
         </div>
     </div>
 </div>
+
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/county.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
@@ -109,7 +131,9 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" /><script>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+
+<script>
     var moduleId = <%=ModuleId%>;
     var service = {
         path: "JACS",

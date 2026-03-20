@@ -6,7 +6,7 @@ namespace tjc.Modules.jacs.Components
     [TableName("event_types")]
     [PrimaryKey("id", AutoIncrement = true)]
     [Cacheable("EventTypes", CacheItemPriority.Default, 20)]
-    internal class event_type
+    internal class EventType
     {
         public long id { get; set; }
         public string name { get; set; }

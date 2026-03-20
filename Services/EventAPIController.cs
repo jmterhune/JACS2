@@ -183,13 +183,13 @@ namespace tjc.Modules.jacs.Services
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { message = "County not found" });
                 }
 
-                var apiCtl = new ApiInterfaceController();
-                var api = apiCtl.GetApiInterfaceByCountyAndType(county.id, ApiInterfaceType.GetCase);
+                var apiCtl = new ApiEndpointController();
+                var api = apiCtl.GetApiEndpointByCountyAndType(county.id, (int)ApiEndpointType.GetCase);
                 if (api == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        message = "API interface not configured for GetCase in this county"
+                        message = "API Endpoint not configured for GetCase in this county"
                     });
                 }
 

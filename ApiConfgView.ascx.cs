@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.jacs
@@ -28,33 +30,23 @@ namespace tjc.Modules.jacs
     /// 
     /// </summary>
     /// -----------------------------------------------------------------------------
-    public partial class View : JACSModuleBase
+    public partial class ApiConfig : JACSModuleBase
     {
+        private readonly INavigationManager _navigationManager;
+        public ApiConfig()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                navbar.MainViewUrl = MainViewUrl;
-                navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CourtroomListUrl = CourtroomListUrl;
-                navbar.CountyListUrl = CountyListUrl;
-                navbar.CourtListUrl = CourtListUrl;
-                navbar.CourtTypeListUrl = CourtTypeListUrl;
-                navbar.CourtPermissionListUrl = CourtPermissionListUrl;
-                navbar.DocketPrintUrl = DocketPrintUrl;
-                navbar.EventListUrl = EventListUrl;
-                navbar.EventStatusListUrl = EventStatusListUrl;
-                navbar.EventTypeListUrl = EventTypeListUrl;
-                navbar.HolidayListUrl = HolidayListUrl;
-                navbar.JudgeListUrl = JudgeListUrl;
-                navbar.MotionListUrl = MotionListUrl;
-                navbar.TemplateListUrl = TemplateListUrl;
-                navbar.TimeSlotListUrl = TimeSlotListUrl;
-                navbar.QuickReferenceUrl = QuickReferenceUrl;
-                navbar.UserListUrl = UserListUrl;
-                navbar.RoleListUrl = RoleListUrl;
-                navbar.PermissionListUrl = PermissionListUrl;
-                navbar.ActiveLink = "lnkMain";
+                navbar.ModuleContext = this;
+                navbar.ActiveLink = "lnkApiConfig";
+                if (UserId <= 0 || !UserInfo.IsAdmin)
+                {
+                    Response.Redirect(_navigationManager.NavigateURL(), true);
+                }
             }
             catch (Exception exc) //Module failed to load
             {

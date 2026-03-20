@@ -94,10 +94,9 @@ namespace tjc.Modules.jacs.Components
         {
             get
             {
-                var ctl = new TimeslotController();
-                var tslot = ctl.GetTimeslotByEventId(id);
+               var tslot = timeslot;
                 if (tslot != null)
-                    return tslot.formatted_start;
+                    return tslot.description;
                 return string.Empty;
             }
         }
@@ -159,7 +158,7 @@ namespace tjc.Modules.jacs.Components
             }
         }
         [IgnoreColumn]
-        public event_type EventType
+        public EventType EventType
         {
             get
             {
@@ -171,7 +170,7 @@ namespace tjc.Modules.jacs.Components
                     if (et != null)
                         return et;
                 }
-                return new event_type();
+                return new EventType();
             }
         }
         [IgnoreColumn]
@@ -181,6 +180,17 @@ namespace tjc.Modules.jacs.Components
             {
                 var ctl = new TimeslotController();
                 return ctl.GetTimeslotByEventId(id);
+            }
+        }
+        [IgnoreColumn]
+        public string start_formatted
+        {
+            get
+            {
+                var tslot = timeslot;
+                if (tslot != null)
+                    return tslot.formatted_start;
+                return string.Empty;
             }
         }
 
@@ -226,6 +236,14 @@ namespace tjc.Modules.jacs.Components
         public int duration { get; set; }
         public long? timeslot_id { get; set; }
         public string event_type { get; set; }
+          [IgnoreColumn]
+        public string start_formatted
+        {
+            get
+            {
+                return start.HasValue ? start.Value.ToString("MM/dd/yyyy @ hh:mm tt") : string.Empty;
+            }
+        }
 
     }
     internal class EventListItemPaged :EventListItem{ 

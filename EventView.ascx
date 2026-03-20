@@ -63,11 +63,16 @@ To add an event, use the Court's Calendar tool. </div>
             <thead>
                 <tr>
                     <th></th>
+                    <th>Case #</th>
                     <th>Motion</th>
                     <th>Timeslot</th>
                     <th>Duration</th>
                     <th>Court</th>
                     <th>Status</th>
+                    <th>Attorney</th>
+                    <th title="Opposing Attorney">Opp. Attorney</th>
+                    <th title="Plaintiff, Petitionor">Party One</th>
+                    <th title="Defendant, Respondent">Party Two</th>
                     <th>Courtroom</th>
                 </tr>
             </thead>

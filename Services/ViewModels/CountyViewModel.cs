@@ -13,6 +13,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
             code = county.code;
             auth_end_point_url = county.auth_end_point_url;
             user_name = county.user_name;
+            password = county.decrypted_password;
+            token = county.decrypted_token;
 
         }
 
@@ -32,6 +34,12 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
         [JsonProperty("user_name")]
         public string user_name { get; set; }
+
+        [JsonProperty("password")]
+        public string password { get; set; }
+
+        [JsonProperty("token")]
+        public string token { get; set; }
 
     }
 }

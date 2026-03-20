@@ -41,26 +41,7 @@ namespace tjc.Modules.jacs
         {
             try
             {
-                navbar.MainViewUrl = MainViewUrl;
-                navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CourtroomListUrl = CourtroomListUrl;
-                navbar.CountyListUrl = CountyListUrl;
-                navbar.CourtListUrl = CourtListUrl;
-                navbar.CourtTypeListUrl = CourtTypeListUrl;
-                navbar.CourtPermissionListUrl = CourtPermissionListUrl;
-                navbar.DocketPrintUrl = DocketPrintUrl;
-                navbar.EventListUrl = EventListUrl;
-                navbar.EventStatusListUrl = EventStatusListUrl;
-                navbar.EventTypeListUrl = EventTypeListUrl;
-                navbar.HolidayListUrl = HolidayListUrl;
-                navbar.JudgeListUrl = JudgeListUrl;
-                navbar.MotionListUrl = MotionListUrl;
-                navbar.TemplateListUrl = TemplateListUrl;
-                navbar.TimeSlotListUrl = TimeSlotListUrl;
-                navbar.QuickReferenceUrl = QuickReferenceUrl;
-                navbar.UserListUrl = UserListUrl;
-                navbar.RoleListUrl = RoleListUrl;
-                navbar.PermissionListUrl = PermissionListUrl;
+                navbar.ModuleContext = this;
                 navbar.ActiveLink = "lnkAttorney";
                 if (UserId <= 0 || !UserInfo.IsAdmin)
                 {

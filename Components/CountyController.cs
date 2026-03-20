@@ -6,6 +6,7 @@ namespace tjc.Modules.jacs.Components
     internal class CountyController
     {
         private const string CONN_JACS = "jacs"; //Connection
+
         public void CreateCounty(County t)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -16,6 +17,10 @@ namespace tjc.Modules.jacs.Components
                 if (!string.IsNullOrWhiteSpace(t.password))
                 {
                     t.password = EncryptionHelper.Encrypt(t.password);
+                }
+                if (!string.IsNullOrWhiteSpace(t.token))
+                {
+                    t.token = EncryptionHelper.Encrypt(t.token);
                 }
                 rep.Insert(t);
             }
@@ -40,13 +45,6 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.Get();
-                foreach (var county in t)
-                {
-                    if (!string.IsNullOrWhiteSpace(county.password))
-                    {
-                        county.password = EncryptionHelper.Decrypt(county.password);
-                    }
-                }
             }
             return t;
         }
@@ -77,9 +75,16 @@ namespace tjc.Modules.jacs.Components
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.GetById(countyId);
-                if (t != null && !string.IsNullOrWhiteSpace(t.password))
+                if (t != null)
                 {
-                    t.password = EncryptionHelper.Decrypt(t.password);
+                    if (!string.IsNullOrWhiteSpace(t.password))
+                    {
+                        t.password = EncryptionHelper.Decrypt(t.password);
+                    }
+                    if (!string.IsNullOrWhiteSpace(t.token))
+                    {
+                        t.token = EncryptionHelper.Decrypt(t.token);
+                    }
                 }
             }
             return t;

@@ -87,7 +87,7 @@ namespace tjc.Modules.jacs.Components
                         FROM court_event_types ce
                         INNER JOIN event_types e ON ce.event_type_id = e.id
                         WHERE ce.court_id = @0";
-                    IEnumerable<event_type> results = ctx.ExecuteQuery<event_type>(System.Data.CommandType.Text, query, courtId);
+                    IEnumerable<EventType> results = ctx.ExecuteQuery<EventType>(System.Data.CommandType.Text, query, courtId);
                     if (results == null || !results.Any())
                         return new List<KeyValuePair<long, string>>();
                     return results.Select(evt=> new KeyValuePair<long, string>(evt.id,evt.name)).ToList();

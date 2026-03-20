@@ -143,7 +143,7 @@
                     <div class="tabs mb-0">
                         <ul class="nav nav-tabs">
                             <li class="nav-item active"><a class="nav-link" data-toggle="tab" href="#timeslotTab">Timeslot(s)</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventTab">Create Event</a></li>
+                            <li class="nav-item"><a class="nav-link" id="eventCreateTab" data-toggle="tab" href="#eventTab">Create Event</a></li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventsTab">Event(s)</a></li>
                         </ul>
                         <div class="tab-content">
@@ -362,6 +362,7 @@
                                             <th>Plaintiff</th>
                                             <th>Opposing Attorney</th>
                                             <th>Defendant</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="eventsTableBody"></tbody>

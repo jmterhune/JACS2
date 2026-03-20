@@ -19,39 +19,27 @@ namespace tjc.Modules.jacs.Services
         public HttpResponseMessage GetEventTypes(int p1)
         {
             List<EventTypeViewModel> eventTypes = new List<EventTypeViewModel>();
-            int recordCount = p1;
-            int filteredCount = 0;
-            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-
-            string searchTerm = !query.ContainsKey("searchText") ? "" : query["searchText"].ToString();
-            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
-            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
-            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
-
-            string sortColumn = "name"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
-
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
-            {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
-                sortColumn = GetSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
-            }
-
             try
             {
                 var ctl = new EventTypeController();
-                filteredCount = ctl.GetEventTypesCount(searchTerm);
-                if (p1 == 0) { recordCount = filteredCount; }
-                eventTypes = ctl.GetEventTypesPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).Select(eventType => new EventTypeViewModel(eventType)).ToList();
-                return Request.CreateResponse(new EventTypeSearchResult { data = eventTypes, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+                var allTypes = ctl.GetEventTypes().Select(t => new EventTypeViewModel(t)).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new EventTypeSearchResult
+                {
+                    data = allTypes,
+                    error = null
+                });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new EventTypeSearchResult { data = eventTypes, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new EventTypeSearchResult
+                {
+                    data = eventTypes,
+                    error = $"Failed to retrieve Event Types: {ex.Message}"
+                });
             }
         }
+
         [HttpGet]
         public HttpResponseMessage GetEventTypeDropDownItems()
         {
@@ -71,7 +59,8 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(new EventTypeListItemResult { data = null, error = ex.Message });
             }
         }
-        [HttpGet]
+        
+        [HttpDelete]
         public HttpResponseMessage DeleteEventType(long p1)
         {
             try
@@ -93,7 +82,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventTypeController();
-                event_type eventType = ctl.GetEventType(p1);
+                EventType eventType = ctl.GetEventType(p1);
                 if (eventType == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new EventTypeResult { data = null, error = "Event Type not found" });
@@ -114,7 +103,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventTypeController();
-                var eventType = p1.ToObject<event_type>();
+                var eventType = p1.ToObject<EventType>();
                 if (string.IsNullOrWhiteSpace(eventType.name))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name is required." });
@@ -138,7 +127,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new EventTypeController();
-                var eventType = p1.ToObject<event_type>();
+                var eventType = p1.ToObject<EventType>();
                 if (eventType.id <= 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Event Type ID is required for update." });
@@ -179,7 +168,7 @@ namespace tjc.Modules.jacs.Services
 
         internal class EventTypeResult
         {
-            public event_type data { get; set; }
+            public EventType data { get; set; }
             public string error { get; set; }
         }
 

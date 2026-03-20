@@ -15,6 +15,7 @@ class JudgeController {
         this.judgeId = -1;
         this.searchTerm = "";
         this.judgeTable = null;
+        this.judgeXrefTable = null;
         this.service = params.service || null;
         this.deleteUrl = null;
         judgeControllerInstance = this;
@@ -31,7 +32,10 @@ class JudgeController {
         if (detailModalElement) {
             detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
         }
-
+        const xrefModalElement = document.getElementById('JudgeXrefModal');
+        if (xrefModalElement) {
+            xrefModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+        }
         const editModalElement = document.getElementById('JudgeEditModal');
         if (editModalElement) {
             editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
@@ -45,7 +49,13 @@ class JudgeController {
 
         this.populateCourts();
         this.populateJudgeUsers();
+        this.populateXrefCounties();
 
+        $("#xref_county").on("change", function () {
+            const selectedCountyId = parseInt($(this).val()) || null;
+            judgeControllerInstance.populateXrefJudges(selectedCountyId);
+            $("#xref_clerkJudge").val("").trigger("change");
+        });
         this.judgeTable = $('#tblJudge').DataTable({
             searching: true,
             autoWidth: true,
@@ -108,6 +118,17 @@ class JudgeController {
                     render: function (data) {
                         return data || '';
                     }
+                },
+                {
+                    data: "id",
+                    render: function (data, type, row) {
+                        if (isAdmin) {
+                            return `<button type="button" class="judge-xref btn-command" data-toggle="tooltip" aria-role="button" title="Manage Clerk References" data-id="${row.id}"><i class="fas fa-exchange-alt"></i></button>`;
+                        }
+                        return '';
+                    },
+                    className: "command-item",
+                    orderable: false
                 },
                 {
                     data: "id",
@@ -233,6 +254,41 @@ class JudgeController {
                 judgeControllerInstance.SaveJudge();
             }
         });
+
+        $(document).on('click', '.judge-xref', function (e) {
+            e.preventDefault();
+
+            // Get the clicked row and extract judgeId + judge name directly from the DataTable
+            const $row = $(this).closest('tr');
+            const rowData = judgeControllerInstance.judgeTable.row($row).data();
+
+            if (!rowData || !rowData.id) {
+                Swal.fire({
+                    title: 'Retrieve Judge Failed?',
+                    text: 'The requested judge record could not be found',
+                    icon: 'warning',
+                    showCancelButton: true,
+                });
+                return;
+            }
+
+            const judgeId = rowData.id;
+            const judgeName = rowData.name?.trim() || "Unknown Judge";
+            $("#hdXrefJudgeId").val(judgeId);
+            judgeControllerInstance.SetXrefJudgeHeader(judgeName);
+            judgeControllerInstance.GetJudgeXrefs(judgeId);
+            const xrefModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('JudgeXrefModal'));
+            if (xrefModal) {
+                xrefModal.show();
+            } else {
+                $('#JudgeXrefModal').modal('show');
+            }
+        });
+
+        $("#xref_cmdSaveReference").on("click", function (e) {
+            e.preventDefault();
+            judgeControllerInstance.SaveJudgeXref();
+        });
     }
 
     populateJudgeUsers() {
@@ -292,6 +348,58 @@ class JudgeController {
         });
     }
 
+    populateXrefCounties() {
+        const url = `${this.service.baseUrl}CountyAPI/GetCountyDropDownItems`;
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: (response) => {
+                const $select = $("#xref_county");
+                $select.empty().append('<option value="">Select County</option>');
+                if (response?.data && Array.isArray(response.data)) {
+                    response.data.forEach(item => {
+                        $select.append(`<option value="${item.Key}">${item.Value}</option>`);
+                    });
+                } else {
+                    ShowNotification("Warning", "No counties available.", 'warning');
+                }
+            },
+            error: (error) => {
+                ShowNotification("Error Loading Counties", error.statusText || "Failed to load county list.", 'error');
+            }
+        });
+    }
+
+    populateXrefJudges(countyId = null) {
+        const $clerkJudge = $("#xref_clerkJudge");
+        $clerkJudge.empty().append('<option value="">Select Clerk Judge</option>').prop('disabled', true);
+        if (!countyId || countyId <= 0) return;
+        const url = `${this.service.baseUrl}JudgeAPI/GetJudgeOptions?countyId=${countyId}`;
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: (response) => {
+                if (response?.data && Array.isArray(response.data)) {
+                    response.data.forEach(item => {
+                        $clerkJudge.append(`<option value="${item.Key}">${item.Value}</option>`);
+                    });
+                    if (response.data.length > 0) $clerkJudge.prop('disabled', false);
+                    
+                } else {
+                    ShowNotification("Info", "No clerk judges found for this county.", 'info');
+                }
+            },
+            error: (error) => {
+                ShowNotification("Error Loading Clerk Judges", error.statusText || "Failed to load clerk judge list.", 'error');
+            }
+        });
+    }
+
     ClearState() {
         if (this.judgeTable) {
             this.judgeTable.state.clear();
@@ -331,6 +439,23 @@ class JudgeController {
                 ShowNotification("Error Deleting Judge", error.statusText, 'error');
             }
         });
+    }
+
+    ClearDetailForm() {
+        $("#judgeName").html("");
+        $("#judgePhone").html("");
+        $("#judgeCourt").html("");
+        $("#judgeTitle").html("");
+        $("#hdJudgeId").val("");
+    }
+
+    ClearEditForm() {
+        $("#edit_judgeName").val("");
+        $("#edit_judgeNameText").val("");
+        $("#edit_judgePhone").val("");
+        $("#edit_judgeCourt").val("");
+        $("#edit_judgeTitle").val("");
+        $("#edit_hdJudgeId").val("");
     }
 
     ClearEditValidations() {
@@ -509,32 +634,265 @@ class JudgeController {
         }
     }
 
+    GetJudgeXrefs(judgeId) {
+        const xrefList = `${this.service.baseUrl}JudgeAPI/GetJudgeXrefs/${judgeId}`;
+        const progressId = "#xref_progress_judge";
+        $(progressId).show();
+        $("#hdXrefJudgeId").val(judgeId);
+
+        if (judgeId) {
+            // Destroy previous instance if exists (prevents DataTable re-init errors)
+            if (this.judgeXrefTable) {
+                this.judgeXrefTable.destroy();
+            }
+            this.judgeXrefTable = $('#tblJudgeXref').DataTable({
+                searching: false,
+                paging: false,
+                info: false,
+                lengthChange: false,
+                ordering: true,
+                autoWidth: true,
+                stateSave: false,
+                destroy: true,
+                ajax: {
+                    url: xrefList,
+                    type: "GET",
+                    dataType: 'json',
+                    beforeSend: xhr => this.setAjaxHeaders(xhr),
+                    //data(data) {
+                    //    data.searchText = data.search?.value || '';
+                    //    delete data.columns;
+                    //},
+                    error: function (error) {
+                        $(progreesId).hide();
+                        ShowNotification('Error Retrieving Judge Cross-References', error.statusText || 'Failed to retrieve xrefs.', 'error');
+                    }
+                },
+                columns: [
+                    {
+                        data: "clerk_judge_id",
+                        render: function (data) { return data || ''; }
+                    },
+                    {
+                        data: "clerk_judge_name",
+                        render: function (data) { return data || ''; }
+                    },
+                    {
+                        data: "county_name",
+                        render: function (data) { return data || ''; }
+                    },
+                    {
+                        data: "judge_id",
+                        render: function (data, type, row) {
+                            return `<button type="button" class="delete-xref btn-command" data-toggle="tooltip" data-county-id="${row.county_id}" data-judge-id="${row.judge_id}"><i class="fas fa-trash"></i></button>`;
+                        },
+                        className: "command-item",
+                        orderable: false
+                    },
+                ],
+                language: {
+                    emptyTable: "No Cross References Available.",
+                    zeroRecords: "No records match the search criteria you entered."
+                },
+                serverSide: true,
+                processing: true,
+                paging: false,
+            });
+
+            // Bind row action events AFTER every draw
+            this.judgeXrefTable.on('draw', function () {
+                $(".delete-xref").off("click").on("click", function (e) {
+                    e.preventDefault();
+                    const judgeId = $(this).data("judge-id");
+                    const countyId = $(this).data("county-id");
+                    Swal.fire({
+                        title: 'Delete Judge Cross Reference?',
+                        text: 'Are you sure you wish to delete this cross-reference?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            judgeControllerInstance.DeleteJudgeXref(judgeId, countyId);
+                        }
+                    });
+                });
+                judgeControllerInstance.DisableUsedCounties();
+            });
+        }
+        $(progressId).hide();
+    }
+
+    DeleteJudgeXref(judgeId, countyId) {
+        $.ajax({
+            url: `${this.service.baseUrl}JudgeAPI/DeleteJudgeXref/${judgeId}/${countyId}`,
+            type: 'DELETE',
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    if (judgeControllerInstance.judgeXrefTable) {
+                        judgeControllerInstance.judgeXrefTable.draw();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Judge cross-reference deleted successfully.'
+                    });
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
+                }
+            },
+            error: function (error) {
+                ShowNotification("Error Deleting Judge Xref", error.statusText, 'error');
+            }
+        });
+    }
+
+    SaveJudgeXref() {
+        let isValid = true;
+        const $county = $("#xref_county");
+        const $clerkJudge = $("#xref_clerkJudge");
+
+        if (!$county.val()) {
+            $("#xref_county_error").show();
+            $county.addClass("is-invalid");
+            isValid = false;
+        } else {
+            $("#xref_county_error").hide();
+            $county.removeClass("is-invalid");
+        }
+
+        if (!$clerkJudge.val()) {
+            $("#xref_clerkJudge_error").show();
+            $clerkJudge.addClass("is-invalid");
+            isValid = false;
+        } else {
+            $("#xref_clerkJudge_error").hide();
+            $clerkJudge.removeClass("is-invalid");
+        }
+
+        if (isValid) {
+            $("#xref_progress_judge").show();
+            this.CreateJudgeXref();
+        }
+    }
+
+    CreateJudgeXref() {
+        try {
+            const xrefData = {
+                judge_id: parseInt($("#hdXrefJudgeId").val()),
+                county_id: parseInt($("#xref_county").val()),
+                clerk_judge_id: $("#xref_clerkJudge").val() ? parseInt($("#xref_clerkJudge").val()) : 0,
+                clerk_judge_name: $("#xref_clerkJudge option:selected").text().trim() || ''
+            };
+
+            $.ajax({
+                url: `${this.service.baseUrl}JudgeAPI/CreateJudgeXref`,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(xrefData),
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                success: function (response) {
+                    $("#xref_progress_judge").hide();
+                    if (response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message || 'Judge Xref created successfully.'
+                        });
+                        judgeControllerInstance.judgeXrefTable.draw();
+                        judgeControllerInstance.ClearXrefEditForm();
+                    } else {
+                        ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
+                    }
+                },
+                error: function (error) {
+                    $("#xref_progress_judge").hide();
+                    ShowNotification("Error Creating Judge Xref", error.statusText, 'error');
+                }
+            });
+        } catch (e) {
+            $("#xref_progress_judge").hide();
+            ShowNotification("Error Creating Judge Xref", e.message, 'error');
+        }
+    }
+
+    ClearXrefEditForm() {
+        $("#xref_county").val("").removeClass("is-invalid").trigger("change");
+        $("#xref_county_error").hide();
+        $("#xref_clerkJudge").val("").removeClass("is-invalid").prop("disabled", true);
+        $("#xref_clerkJudge_error").hide();
+        $("#hdXrefJudgeId").val("");
+    }
+
+    ClearXrefJudgeHeader() {
+        $("#xrefSelectedJudgeName").text("");
+        $("#xrefJudgeHeader").hide(); 
+    }
+
+    SetXrefJudgeHeader(judgeName) {
+        const $nameSpan = $("#xrefSelectedJudgeName");
+        if (judgeName && judgeName.trim()) {
+            $nameSpan.text(judgeName.trim());
+            $("#xrefJudgeHeader").show();  // in case it was hidden
+        } else {
+            this.ClearXrefJudgeHeader();
+        }
+    }
+
+    DisableUsedCounties() {
+        const $countySelect = $("#xref_county");
+        const usedCountyIds = new Set();
+
+        // Collect all county_ids currently in the xref table
+        if (this.judgeXrefTable) {
+            this.judgeXrefTable.rows().every(function () {
+                const data = this.data();
+                if (data && data.county_id) {
+                    usedCountyIds.add(parseInt(data.county_id));
+                }
+            });
+        }
+
+        // Enable/disable options
+        $countySelect.find("option").each(function () {
+            const val = parseInt($(this).val());
+            if (val && val > 0) {
+                if (usedCountyIds.has(val)) {
+                    $(this).prop("disabled", true);
+                } else {
+                    $(this).prop("disabled", false);
+                }
+            }
+        });
+
+        // Force select2 / chosen / bootstrap refresh if you're using any enhancement
+        // $countySelect.trigger("change");   // usually not needed here
+    }
+
     onModalClose(event) {
         const modalId = event.target.id;
         if (modalId === 'JudgeDetailModal') {
             judgeControllerInstance.ClearDetailForm();
-        } else if (modalId === 'JudgeEditModal') {
+        }
+        else if (modalId === 'JudgeXrefModal') {
+            $("#xref_progress_judge").hide();
+            judgeControllerInstance.ClearXrefEditForm();
+            judgeControllerInstance.ClearXrefJudgeHeader();
+            if (judgeControllerInstance.judgeXrefTable) {
+                judgeControllerInstance.judgeXrefTable.clear().draw();
+            }
+        }
+        else if (modalId === 'JudgeEditModal') {
             judgeControllerInstance.ClearEditForm();
             judgeControllerInstance.ClearEditValidations();
         }
     }
 
-    ClearDetailForm() {
-        $("#judgeName").html("");
-        $("#judgePhone").html("");
-        $("#judgeCourt").html("");
-        $("#judgeTitle").html("");
-        $("#hdJudgeId").val("");
-    }
-
-    ClearEditForm() {
-        $("#edit_judgeName").val("");
-        $("#edit_judgeNameText").val("");
-        $("#edit_judgePhone").val("");
-        $("#edit_judgeCourt").val("");
-        $("#edit_judgeTitle").val("");
-        $("#edit_hdJudgeId").val("");
-    }
+  
 
     setAjaxHeaders(xhr) {
         xhr.setRequestHeader('ModuleId', this.moduleId);

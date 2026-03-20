@@ -16,6 +16,7 @@ namespace tjc.Modules.jacs.Services
     [DnnAuthorize]
     public class JudgeAPIController : DnnApiController
     {
+        #region Judge Methods
         [HttpGet]
         public HttpResponseMessage GetJudges(int p1)
         {
@@ -53,6 +54,29 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(new JudgeSearchResult { data = judges, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
+        private string GetSortColumn(int columnIndex)
+        {
+            string fieldName = "name";
+            switch (columnIndex)
+            {
+                case 2:
+                    fieldName = "name";
+                    break;
+                case 3:
+                    fieldName = "phone";
+                    break;
+                case 4:
+                    fieldName = "court_name";
+                    break;
+                case 5:
+                    fieldName = "title";
+                    break;
+                default:
+                    fieldName = "name";
+                    break;
+            }
+            return fieldName;
+        }
 
         [HttpGet]
         public HttpResponseMessage GetJudgeDropDownItems(string p1, int p2)
@@ -66,7 +90,7 @@ namespace tjc.Modules.jacs.Services
                 var users = DotNetNuke.Security.Roles.RoleController.Instance.GetUsersByRole(portalId, judgeRole);
                 var ctl = new JudgeController();
                 var existingJudges = new List<long>();
-                if (p2==1)
+                if (p2 == 1)
                 {
                     var user = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
                     if (user == null || user.UserID <= 0)
@@ -126,7 +150,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
         [HttpGet]
         public HttpResponseMessage GetJudge(long p1)
         {
@@ -146,7 +169,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new JudgeResult { data = null, error = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage CreateJudge(JObject p1)
@@ -170,7 +192,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage UpdateJudge(JObject p1)
@@ -203,6 +224,7 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        #region Judge DTO objects
         internal class JudgeSearchResult
         {
             public List<JudgeViewModel> data { get; set; }
@@ -211,35 +233,118 @@ namespace tjc.Modules.jacs.Services
             public int draw { get; set; }
             public string error { get; set; }
         }
-
         internal class JudgeResult
         {
             public JudgeViewModel data { get; set; }
             public string error { get; set; }
         }
+        #endregion //end Judge DTO objects
 
-        private string GetSortColumn(int columnIndex)
+        #endregion //end Judge Methods
+
+        #region Judges Xref Methods
+        [HttpGet]
+        public HttpResponseMessage GetJudgeOptions(long? countyId = null)
         {
-            string fieldName = "name";
-            switch (columnIndex)
+            try
             {
-                case 2:
-                    fieldName = "name";
-                    break;
-                case 3:
-                    fieldName = "phone";
-                    break;
-                case 4:
-                    fieldName = "court_name";
-                    break;
-                case 5:
-                    fieldName = "title";
-                    break;
-                default:
-                    fieldName = "name";
-                    break;
+                var ctl = new JudgeController();
+                List<KeyValuePair<long, string>> judges;
+
+                if (countyId.HasValue && countyId.Value > 0)
+                {
+                    judges = ctl.GetDummyJudgeDropDownItemsForCounty(countyId.Value);
+                }
+                else
+                    return Request.CreateResponse(new
+                    {
+                        data = new List<KeyValuePair<long, string>>(),
+                        error = "No county selected"
+                    });
+
+                return Request.CreateResponse(new
+                {
+                    data = judges,
+                    error = (string)null
+                });
             }
-            return fieldName;
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new
+                {
+                    data = new List<KeyValuePair<long, string>>(),
+                    error = ex.Message
+                });
+            }
         }
+        [HttpGet]
+        public HttpResponseMessage GetJudgeXrefs(long p1)
+        {
+            try
+            {
+                var ctl = new JudgeController();
+                IEnumerable<JudgeClerkXrefListItem> xrefs = ctl.GetJudgeXrefByJudge(p1);
+                if (xrefs == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new JudgeClerkXrefResult { data = null, error = "Judge Cross-References not found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new JudgeClerkXrefResult { data = xrefs.Select(x => new JudgeClerkXrefViewModel(x)).ToList(), error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new JudgeClerkXrefResult { data = null, error = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage CreateJudgeXref(JObject p1)
+        {
+            try
+            {
+                var ctl = new JudgeController();
+                var judgeXref = p1.ToObject<JudgeClerkXref>();
+                if (judgeXref.judge_id <= 0 || judgeXref.county_id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Judge ID and County ID are required." });
+                }
+                judgeXref.created_at = DateTime.Now;
+                judgeXref.updated_at = DateTime.Now;
+                ctl.CreateJudgeXref(judgeXref);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Judge Xref created successfully" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage DeleteJudgeXref(long p1, long p2)
+        {
+            try
+            {
+                var ctl = new JudgeController();
+                ctl.DeleteJudgeXref(p1, p2);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Judge deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        #region Judge Xref DTO objects
+        internal class JudgeClerkXrefResult
+        {
+            public List<JudgeClerkXrefViewModel> data { get; set; }
+            public string error { get; set; }
+        }
+        #endregion //end Judge Xref DTO objects
+
+        #endregion //end Judges Xref Methods
     }
 }

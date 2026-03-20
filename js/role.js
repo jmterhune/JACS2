@@ -12,10 +12,14 @@ class RoleController {
         this.sortColumnIndex = params.sortColumnIndex || 3;
         this.currentPage = params.currentPage || 0;
         this.userUrl = params.userUrl || '';
+        this.roleId = -1;
         this.searchTerm = "";
         this.roleTable = null;
         this.service = params.service || null;
         this.deleteUrl = null;
+        this.updateUrl = null;
+        this.createUrl = null;
+        this.viewUrl = null;
         roleControllerInstance = this;
     }
 
@@ -23,146 +27,86 @@ class RoleController {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         this.deleteUrl = `${this.service.baseUrl}RoleAPI/DeleteRole/`;
+        this.updateUrl = `${this.service.baseUrl}RoleAPI/UpdateRole`;
+        this.createUrl = `${this.service.baseUrl}RoleAPI/CreateRole`;
+        this.viewUrl = `${this.service.baseUrl}RoleAPI/GetRole/`;
 
         const listUrl = `${this.service.baseUrl}RoleAPI/GetRoles/${this.recordCount}`;
         const detailModalElement = document.getElementById('RoleDetailModal');
-        if (detailModalElement) {
-            detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
-        }
-
         const editModalElement = document.getElementById('RoleEditModal');
-        if (editModalElement) {
-            editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
-        }
+        const editModal = new bootstrap.Modal(document.getElementById('RoleEditModal'));
+
+        if (detailModalElement) detailModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+        if (editModalElement) editModalElement.addEventListener('hidden.bs.modal', this.onModalClose);
+
+        this.roleTable = $('#tblRole').DataTable({
+            searching: true,
+            autoWidth: true,
+            stateSave: true,
+            paging: true,
+            ajax: {
+                url: listUrl,
+                type: "GET",
+                dataType: 'json',
+                dataSrc: "data",
+                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                error: function (error) {
+                    $("#tblRole_processing").hide();
+                    let errorMessage = error.statusText || 'Failed to retrieve roles.';
+                    if (error.status === 401) errorMessage = 'Please make sure you are logged in and try again.';
+                    ShowNotification('Error Retrieving Roles', errorMessage, 'error');
+                }
+            },
+            columns: [
+                { data: "id", render: data => `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="role-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="Edit Role" data-toggle="tooltip" data-id="${data}" class="role-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<a title="View Users in Role" href="${roleControllerInstance.userUrl}/rid/${data}" class="role-users btn-command"><i class="fas fa-users"></i></a>`, className: "command-item", orderable: false },
+                { data: "name", render: data => data || '' },
+                { data: "guard_name", render: data => data || '' },
+                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Role" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
+            ],
+            language: { emptyTable: "No Records Available.", zeroRecords: "No records match the search criteria you entered." },
+            order: [[3, 'asc']],
+            serverSide: false,
+            processing: true,
+            lengthMenu: [[25, 50, 100], [25, 50, 100]],
+            pageLength: 25,
+        });
+
+        this.roleTable.on('draw', function () {
+            $(".delete").on("click", function (e) {
+                e.preventDefault();
+                const roleId = $(this).data("id");
+                Swal.fire({ title: 'Delete Role?', text: 'Are you sure?', icon: 'warning', showCancelButton: true }).then((result) => {
+                    if (result.isConfirmed) roleControllerInstance.deleteRole(roleId);
+                });
+            });
+        });
+
+        $(".dt-length").prepend($("#lnkAdd"));
+
         $(editModalElement).on('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
                 e.preventDefault();
                 $("#edit_cmdSave").trigger('click');
             }
         });
-        this.roleTable = $('#tblRole').DataTable({
-            searching: true,
-            autoWidth: true,
-            stateSave: true,
-            ajax: {
-                url: listUrl,
-                type: "GET",
-                dataType: 'json',
-                beforeSend: xhr => this.setAjaxHeaders(xhr),
-                data(data) {
-                    data.searchText = data.search?.value || '';
-                    delete data.columns;
-                },
-                error: function (error) {
-                    $("#tblRole_processing").hide();
-                    let errorMessage = error.statusText || 'Failed to retrieve roles.';
-                    if (error.status === 401) {
-                        errorMessage = 'Please make sure you are logged in and try again.';
-                    }
-                    ShowNotification('Error Retrieving Roles', errorMessage, 'error');
-                }
-            },
-            columns: [
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="role-detail btn-command"><i class="fas fa-eye"></i></button>`;
-                    },
-                    className: "command-item",
-                    searchable: false,
-                    orderable: false
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<button type="button" title="Edit Role" data-toggle="tooltip" data-id="${data}" class="role-edit btn-command"><i class="fas fa-pencil"></i></button>`;
-                    },
-                    className: "command-item",
-                    searchable: false,
-                    orderable: false
-                },
-                {
-                    data: "id",
-                    render: function (data) {
-                        return `<a title="View Users in Role" href="${roleControllerInstance.userUrl}/rid/${data}" class="role-users btn-command"><i class="fas fa-users"></i></a>`;
-                    },
-                    className: "command-item",
-                    searchable: false,
-                    orderable: false
-                },
-                {
-                    data: "name",
-                    render: function (data) {
-                        return data || '';
-                    }
-                },
-                {
-                    data: "guard_name",
-                    render: function (data) {
-                        return data || '';
-                    }
-                },
-                {
-                    data: "id",
-                    render: function (data, type, row) {
-                        if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Role" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
-                        }
-                        return '';
-                    },
-                    className: "command-item",
-                    searchable: false,
-                    orderable: false
-                },
-            ],
-            language: {
-                emptyTable: "No Records Available.",
-                zeroRecords: "No records match the search criteria you entered."
-            },
-            order: [[this.sortColumnIndex, this.sortDirection]],
-            serverSide: true,
-            processing: true,
-            lengthMenu: [[25, 50, 100], [25, 50, 100]],
-            pageLength: this.pageSize,
-            displayStart: this.currentPage * this.pageSize,
-        });
-
-        $(".dt-length").prepend($("#lnkAdd"));
-        this.roleTable.on('draw', function () {
-            $(".delete").on("click", function (e) {
-                e.preventDefault();
-                const roleId = $(this).data("id");
-                Swal.fire({
-                    title: 'Delete Role?',
-                    text: 'Are you sure you wish to delete this Role?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        roleControllerInstance.DeleteRole(roleId);
-                    }
-                });
-            });
-        });
 
         $(document).on('click', '.role-detail', function (e) {
             e.preventDefault();
             var roleId = $(this).data("id");
-            roleControllerInstance.ViewRole(roleId, false);
+            roleControllerInstance.viewRole(roleId, false);
         });
 
-        const editModal = new bootstrap.Modal(document.getElementById('RoleEditModal'));
         $(document).on('click', '.role-edit, #editRoleBtn', function (e) {
             e.preventDefault();
             var roleId = $(this).data("id") || $("#hdRoleId").val();
             roleControllerInstance.roleId = roleId;
             if (roleId) {
-                roleControllerInstance.ViewRole(roleId, true);
+                roleControllerInstance.viewRole(roleId, true);
                 $("#RoleEditModalLabel").html(`Edit Role`);
             } else {
-                roleControllerInstance.ClearEditForm();
+                roleControllerInstance.clearEditForm();
                 $("#RoleEditModalLabel").html("Create New Role");
             }
             editModal.show();
@@ -170,7 +114,7 @@ class RoleController {
 
         $("#lnkAdd").on('click', function (e) {
             e.preventDefault();
-            roleControllerInstance.ClearEditForm();
+            roleControllerInstance.clearEditForm();
             $("#RoleEditModalLabel").html("Create New Role");
             editModal.show();
         });
@@ -187,7 +131,7 @@ class RoleController {
                 cancelButtonText: 'No'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    roleControllerInstance.DeleteRole(roleId);
+                    roleControllerInstance.deleteRole(roleId);
                 }
             });
         });
@@ -195,7 +139,6 @@ class RoleController {
         $("#edit_cmdSave").on("click", function (e) {
             e.preventDefault();
             let isValid = true;
-
             const $roleName = $("#edit_roleName");
             const $roleNameError = $roleName.next(".invalid-feedback");
             if ($roleName.val().trim() === "") {
@@ -218,9 +161,7 @@ class RoleController {
                 $guardName.removeClass("is-invalid");
             }
 
-            if (isValid) {
-                roleControllerInstance.SaveRole();
-            }
+            if (isValid) roleControllerInstance.saveRole();
         });
 
         $("#edit_roleName, #edit_roleGuardName").on("input", function () {
@@ -232,90 +173,47 @@ class RoleController {
         });
     }
 
-    ClearState() {
-        if (this.roleTable) {
-            this.roleTable.state.clear();
-            window.location.reload();
-        }
-    }
-
-    DeleteRole(roleId) {
-        $.ajax({
-            url: this.deleteUrl + roleId,
-            type: 'GET',
-            beforeSend: xhr => this.setAjaxHeaders(xhr),
-            success: function (response) {
-                if (response.status === 200) {
-                    if (roleControllerInstance.roleTable) {
-                        roleControllerInstance.roleTable.draw();
-                    }
-                    const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
-                    if (editModal) {
-                        editModal.hide();
-                    }
-                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('RoleDetailModal'));
-                    if (detailModal) {
-                        detailModal.hide();
-                    }
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: response.message || 'Role deleted successfully.'
-                    });
-                } else {
-                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
-                }
-            },
-            error: function (error) {
-                ShowNotification("Error Deleting Role", error.statusText || "Failed to delete role.", 'error');
-            }
-        });
-    }
-
     onModalClose(event) {
         const modalId = event.target.id;
         if (modalId === 'RoleDetailModal') {
-            roleControllerInstance.ClearDetailForm();
+            roleControllerInstance.clearDetailForm();
         } else if (modalId === 'RoleEditModal') {
-            roleControllerInstance.ClearEditForm();
-            roleControllerInstance.ClearEditValidations();
+            roleControllerInstance.clearEditForm();
+            roleControllerInstance.clearEditValidations();
         }
     }
 
-    ClearDetailForm() {
+    clearDetailForm() {
         $("#roleName").html("");
         $("#roleGuardName").html("");
         $("#hdRoleId").val("");
     }
 
-    ClearEditForm() {
+    clearEditForm() {
         $("#edit_roleName").val("");
         $("#edit_roleGuardName").val("");
         $("#edit_hdRoleId").val("");
     }
 
-    ClearEditValidations() {
+    clearEditValidations() {
         $("#edit_roleName").removeClass("is-invalid");
         $("#edit_roleName").next(".invalid-feedback").hide();
         $("#edit_roleGuardName").removeClass("is-invalid");
         $("#edit_roleGuardName").next(".invalid-feedback").hide();
     }
 
-    ViewRole(roleId, isEditMode = false) {
-        const getUrl = `${this.service.baseUrl}RoleAPI/GetRole/${roleId}`;
+    viewRole(roleId, isEditMode = false) {
         const progressId = isEditMode ? "#edit_progress-role" : "#progress-role";
         $(progressId).show();
 
         if (!isEditMode) {
             const modal = new bootstrap.Modal(document.getElementById('RoleDetailModal'));
-            if (!modal._element.classList.contains('show')) {
-                modal.show();
-            }
+            if (!modal._element.classList.contains('show')) modal.show();
         }
 
         if (roleId) {
             $.ajax({
-                url: getUrl,
+                url: this.viewUrl + roleId,
                 method: 'GET',
                 dataType: 'json',
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
@@ -333,7 +231,7 @@ class RoleController {
                         }
                         $(progressId).hide();
                     } else {
-                        ShowNotification('Error', response.error || 'Failed to retrieve role details. Please try again later.', 'error');
+                        ShowNotification('Error', response.error || 'Failed to retrieve role details.', 'error');
                         $(progressId).hide();
                     }
                 },
@@ -347,19 +245,15 @@ class RoleController {
         }
     }
 
-    SaveRole() {
+    saveRole() {
         if ($("#edit_hdRoleId").val() === "") {
-            this.CreateRole();
+            this.createRole();
         } else {
-            this.UpdateRole();
-        }
-        if (roleControllerInstance.roleTable) {
-            roleControllerInstance.ClearEditForm();
-            roleControllerInstance.roleTable.draw();
+            this.updateRole();
         }
     }
 
-    CreateRole() {
+    createRole() {
         try {
             $("#edit_progress-role").show();
             const roleData = {
@@ -367,7 +261,7 @@ class RoleController {
                 guard_name: $("#edit_roleGuardName").val().trim()
             };
             $.ajax({
-                url: `${this.service.baseUrl}RoleAPI/CreateRole`,
+                url: this.createUrl,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -382,11 +276,9 @@ class RoleController {
                             text: response.message || 'Role created successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
-                        if (editModal) {
-                            editModal.hide();
-                        }
+                        if (editModal) editModal.hide();
                         if (roleControllerInstance.roleTable) {
-                            roleControllerInstance.roleTable.draw();
+                            roleControllerInstance.roleTable.ajax.reload();
                         }
                     } else {
                         ShowNotification("Error", response.message || "Unexpected error occurred while creating role.", 'error');
@@ -403,7 +295,7 @@ class RoleController {
         }
     }
 
-    UpdateRole() {
+    updateRole() {
         try {
             $("#edit_progress-role").show();
             const roleData = {
@@ -412,7 +304,7 @@ class RoleController {
                 guard_name: $("#edit_roleGuardName").val().trim()
             };
             $.ajax({
-                url: `${this.service.baseUrl}RoleAPI/UpdateRole`,
+                url: this.updateUrl,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -427,11 +319,9 @@ class RoleController {
                             text: response.message || 'Role updated successfully.'
                         });
                         const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
-                        if (editModal) {
-                            editModal.hide();
-                        }
+                        if (editModal) editModal.hide();
                         if (roleControllerInstance.roleTable) {
-                            roleControllerInstance.roleTable.draw();
+                            roleControllerInstance.roleTable.ajax.reload();
                         }
                     } else {
                         ShowNotification("Error", response.message || "Unexpected error occurred while updating role.", 'error');
@@ -446,6 +336,35 @@ class RoleController {
             $("#edit_progress-role").hide();
             ShowNotification("Error Updating Role", e.message, 'error');
         }
+    }
+
+    deleteRole(roleId) {
+        $.ajax({
+            url: this.deleteUrl + roleId,
+            type: 'DELETE',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                if (response.status === 200) {
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('RoleEditModal'));
+                    if (editModal) editModal.hide();
+                    const detailModal = bootstrap.Modal.getInstance(document.getElementById('RoleDetailModal'));
+                    if (detailModal) detailModal.hide();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message || 'Role deleted successfully.'
+                    });
+                    if (roleControllerInstance.roleTable) {
+                        roleControllerInstance.roleTable.ajax.reload();
+                    }
+                } else {
+                    ShowNotification("Error", response.message || "Unexpected error occurred.", 'error');
+                }
+            },
+            error: function (error) {
+                ShowNotification("Error Deleting Role", error.statusText || "Failed to delete role.", 'error');
+            }
+        });
     }
 
     setAjaxHeaders(xhr) {

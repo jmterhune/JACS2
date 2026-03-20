@@ -19,49 +19,13 @@ namespace tjc.Modules.jacs.Services
         public HttpResponseMessage GetRoles(int p1)
         {
             List<RoleViewModel> roles = new List<RoleViewModel>();
-            int recordCount = p1;
-            int filteredCount = 0;
-            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-
-            string searchTerm = query.ContainsKey("searchText") ? query["searchText"].ToString() : "";
-            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
-            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
-            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
-
-            string sortColumn = "name"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
-
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
-            {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
-                sortColumn = GetSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
-            }
-
             try
             {
                 var ctl = new RoleController();
-                filteredCount = ctl.GetRolesCount(searchTerm);
-                if (p1 == 0) { recordCount = filteredCount; }
-                var rolesPaged = ctl.GetRolesPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection);
-                if (rolesPaged == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new RoleSearchResult
-                    {
-                        data = roles,
-                        draw = draw,
-                        recordsFiltered = filteredCount,
-                        recordsTotal = recordCount,
-                        error = "No roles found."
-                    });
-                }
-                roles = rolesPaged.Select(role => new RoleViewModel(role)).ToList();
+                var allRoles = ctl.GetRoles().Select(t => new RoleViewModel(t)).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new RoleSearchResult
                 {
-                    data = roles,
-                    draw = draw,
-                    recordsFiltered = filteredCount,
-                    recordsTotal = recordCount,
+                    data = allRoles,
                     error = null
                 });
             }
@@ -71,15 +35,12 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new RoleSearchResult
                 {
                     data = roles,
-                    draw = draw,
-                    recordsFiltered = filteredCount,
-                    recordsTotal = recordCount,
-                    error = $"Failed to retrieve roles: {ex.Message}"
+                    error = $"Failed to retrieve Roles: {ex.Message}"
                 });
             }
         }
 
-        [HttpGet]
+        [HttpDelete]
         public HttpResponseMessage DeleteRole(long p1)
         {
             try

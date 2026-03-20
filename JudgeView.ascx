@@ -21,6 +21,7 @@
                     <th>Court</th>
                     <th>Title</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
         </table>
@@ -163,45 +164,44 @@
                 </div>
             </div>
             <div class="modal-header">
-                <h4 class="modal-title" id="JudgeXrefModalLabel">Manage Judge Cross References</h4>
+                <h4 class="modal-title" id="xrefJudgeHeader">Managing cross-references for: <span id="xrefSelectedJudgeName" class="fw-bold"></span></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="hdXrefJudgeId" />
                 <div class="container-fluid">
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-md-8">
-                                <label>JACS Judge</label>
-                                <select id="xref_judge" class="form-control" required="" aria-describedby="jacsJudgeHelp">
-                                    <option value="">Select JACS Judge</option>
-                                </select>
-                                <div class="invalid-feedback" id="xref_judge_error">Judge is Required.</div>
-                                <div id="jacsJudgeHelp" class="form-text mb-0">Select the JACS judge from the list to associate with the clerk's record</div>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
-                                <label>County<em>*</em></label>
+                                <label for="xref_county">County<em>*</em></label>
                                 <select id="xref_county" class="form-control" aria-describedby="countyHelp">
-                                    <option value="">Select County</option>
                                 </select>
                                 <div class="invalid-feedback" id="xref_county_error">County is Required.</div>
                                 <div id="countyHelp" class="form-text mb-0">Select the county to associate</div>
                             </div>
                             <div class="col-md-6">
-                                <label>Clerk Judge<em>*</em></label>
+                                <label for="xref_clerkJudge">Clerk Judge<em>*</em></label>
                                 <select id="xref_clerkJudge" class="form-control" aria-describedby="clerkJudgeHelp">
-                                    <option value="">Select Judge</option>
                                 </select>
+                                 <div id="xref_clerkJudge_error" class="invalid-feedback">Clerk Judge is required.</div>
                                 <div id="clerkJudgeHelp" class="form-text mb-0">Select the judge from the Clerk's Judge List</div>
                             </div>
-
                         </div>
                         <button type="button" class="btn btn-success" id="xref_cmdSaveReference">
                             <i class="fas fa-save"></i>&nbsp;Save Reference
                         </button>
                     </div>
                 </div>
+                <table id="tblJudgeXref" class="table table-striped w-100">
+                    <thead>
+                        <tr>
+                            <th>Clerk Judge ID</th>
+                            <th>Clerk Judge</th>
+                            <th>County</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

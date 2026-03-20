@@ -15,8 +15,8 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th></th>
                     <th>Description</th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -91,6 +91,60 @@
         </div>
     </div>
 </div>
+<!-- Cross Reference Modal -->
+<div class="modal fade" id="CourtroomXrefModal" tabindex="-1" aria-labelledby="CourtroomXrefModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="xref_progress_courtroom" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif">
+                </div>
+            </div>
+            <div class="modal-header">
+                <h4 id="xrefCourtroomHeader">Managing cross-references for: <span id="xrefSelectedCourtroomName" class="fw-bold"></span>
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="hdXrefCourtroomId" />  
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="xref_county">County<em>*</em></label>
+                        <select id="xref_county" class="form-select">
+                            <option value="">Select County</option>
+                        </select>
+                        <div id="xref_county_error" class="invalid-feedback">County is required.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="xref_clerkCourtroom">Clerk Courtroom<em>*</em></label>
+                        <select id="xref_clerkCourtroom" class="form-select" disabled>
+                            <option value="">Select Clerk Courtroom</option>
+                        </select>
+                        <div id="xref_clerkCourtroom_error" class="invalid-feedback">Clerk Courtroom is required.</div>
+                        <div id="clerkCourtroomHelp" class="form-text mb-0">Select the Courtroom from the Clerk's Courtroom List</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success" id="xref_cmdSaveReference">
+                    <i class="fas fa-save"></i>Save Reference
+                </button>
+                <table id="tblCourtroomXref" class="table table-striped w-100 mt-4">
+                    <thead>
+                        <tr>
+                            <th>Clerk Courtroom ID</th>
+                            <th>Clerk Courtroom</th>
+                            <th>County</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/courtroom.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />

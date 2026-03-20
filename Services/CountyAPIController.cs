@@ -1,5 +1,4 @@
-﻿// CountyAPIController.cs
-using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
 using Newtonsoft.Json.Linq;
 using System;
@@ -20,37 +19,24 @@ namespace tjc.Modules.jacs.Services
         public HttpResponseMessage GetCounties(int p1)
         {
             List<CountyViewModel> counties = new List<CountyViewModel>();
-            int recordCount = p1;
-            int filteredCount = 0;
-            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-
-            string searchTerm = !query.ContainsKey("searchText") ? "" : query["searchText"].ToString();
-            Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
-            Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
-            Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
-
-            string sortColumn = "name"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
-
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
-            {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
-                sortColumn = GetSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
-            }
-
             try
             {
                 var ctl = new CountyController();
-                filteredCount = ctl.GetCountiesCount(searchTerm);
-                if (p1 == 0) { recordCount = filteredCount; }
-                counties = ctl.GetCountiesPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).Select(county => new CountyViewModel(county)).ToList();
-                return Request.CreateResponse(new CountySearchResult { data = counties, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+                var allCounties = ctl.GetCountys().Select(t => new CountyViewModel(t)).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new CountySearchResult
+                {
+                    data = allCounties,
+                    error = null
+                });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(new CountySearchResult { data = counties, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new CountySearchResult
+                {
+                    data = counties,
+                    error = $"Failed to retrieve Counties: {ex.Message}"
+                });
             }
         }
 
@@ -72,7 +58,7 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        [HttpGet]
+        [HttpDelete]
         public HttpResponseMessage DeleteCounty(long p1)
         {
             try
@@ -180,18 +166,6 @@ namespace tjc.Modules.jacs.Services
         {
             public County data { get; set; }
             public string error { get; set; }
-        }
-
-        private string GetSortColumn(int columnIndex)
-        {
-            switch (columnIndex)
-            {
-                case 2:return "name";
-                case 3:return "code";
-                case 4: return "user_name";
-                case 5: return "auth_end_point_url";
-                default:return "name";
-            }
         }
     }
 }

@@ -20,4 +20,21 @@ namespace tjc.Modules.jacs.Components
         [IgnoreColumn]
         public string court_name { get; set; }
     }
+
+    [TableName("judge_clerk_xref")]
+    internal class JudgeClerkXref
+    {
+        public long judge_id { get; set; }
+        public long county_id { get; set; }
+        public long clerk_judge_id { get; set; }
+        public string clerk_judge_name { get; set; }
+        public DateTime? created_at { get; set; }
+        public DateTime? updated_at { get; set; }
+    }
+    internal class JudgeClerkXrefListItem:JudgeClerkXref
+    {
+        public string county_name { get; set; }
+        public string judge_name { get; set; }
+    }
+
 }

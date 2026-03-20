@@ -58,26 +58,7 @@ namespace tjc.Modules.jacs
             {
                 Editable = false;
                 JsonCalendarItem = "null";
-                navbar.MainViewUrl = MainViewUrl;
-                navbar.AttorneyListUrl = AttorneyListUrl;
-                navbar.CourtroomListUrl = CourtroomListUrl;
-                navbar.CountyListUrl = CountyListUrl;
-                navbar.CourtListUrl = CourtListUrl;
-                navbar.CourtTypeListUrl = CourtTypeListUrl;
-                navbar.CourtPermissionListUrl = CourtPermissionListUrl;
-                navbar.DocketPrintUrl = DocketPrintUrl;
-                navbar.EventListUrl = EventListUrl;
-                navbar.EventStatusListUrl = EventStatusListUrl;
-                navbar.EventTypeListUrl = EventTypeListUrl;
-                navbar.HolidayListUrl = HolidayListUrl;
-                navbar.JudgeListUrl = JudgeListUrl;
-                navbar.MotionListUrl = MotionListUrl;
-                navbar.TemplateListUrl = TemplateListUrl;
-                navbar.TimeSlotListUrl = TimeSlotListUrl;
-                navbar.QuickReferenceUrl = QuickReferenceUrl;
-                navbar.UserListUrl = UserListUrl;
-                navbar.RoleListUrl = RoleListUrl;
-                navbar.PermissionListUrl = PermissionListUrl;
+                navbar.ModuleContext = this;
                 navbar.ActiveLink = "lnkCourt";
                 // Moved the following block outside of the !IsPostBack check to ensure fields are always populated,
                 // as ViewState may not reliably preserve Literal control values in certain DNN scenarios or if modified by JS.
@@ -93,7 +74,7 @@ namespace tjc.Modules.jacs
                     {
                         courtIdParam = ctlTs.GetCourtIdByTimeslotId(TimeSlotId);
                         calendarItem.timeslotId = TimeSlotId;
-                        ts= ctlTs.GetTimeslot(TimeSlotId);
+                        ts = ctlTs.GetTimeslot(TimeSlotId);
                     }
                     else if (EventId >= 0)
                     {
@@ -104,7 +85,13 @@ namespace tjc.Modules.jacs
                         if (evt != null)
                         {
                             ts = ctlTs.GetTimeslotByEventId(evt.id);
-                            calendarItem.timeslotId = ts.id;
+                            if (ts != null)
+                                calendarItem.timeslotId = ts.id;
+                            else
+                            {
+                                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "The event is not currently scheduled in a timeslot.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
+                                return;
+                            }
                         }
                     }
                     var dates = DateTimeExtensions.GetWeekStartEnd(ts.start);
@@ -143,7 +130,7 @@ namespace tjc.Modules.jacs
                         var courtPermissions = permissionsCtl.GetCourtPermissionByCourt(court.id, UserId);
                         if (courtPermissions != null)
                         {
-                                Editable = courtPermissions.editable;
+                            Editable = courtPermissions.editable;
                         }
                     }
 
