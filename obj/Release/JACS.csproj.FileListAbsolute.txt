@@ -56,10 +56,10 @@ C:\Users\jterhune\OneDrive - jud12fl\SourceCode\JACS\bin\System.Security.Cryptog
 C:\Users\jterhune\OneDrive - jud12fl\SourceCode\JACS\bin\System.Threading.Tasks.Extensions.xml
 C:\Users\jterhune\OneDrive - jud12fl\SourceCode\JACS\bin\System.ValueTuple.xml
 C:\Users\jterhune\OneDrive - jud12fl\SourceCode\JACS\obj\Release\JACS.csproj.Up2Date
+D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\JACS.csproj.AssemblyReference.cache
+D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\JACS.csproj.CoreCompileInputs.cache
 D:\OneDrive - jud12fl\SourceCode\JACS\bin\tjc.Modules.JACS.dll.config
 D:\OneDrive - jud12fl\SourceCode\JACS\bin\tjc.Modules.JACS.dll
 D:\OneDrive - jud12fl\SourceCode\JACS\bin\tjc.Modules.JACS.pdb
-D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\JACS.csproj.AssemblyReference.cache
-D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\JACS.csproj.CoreCompileInputs.cache
 D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\tjc.Modules.JACS.dll
 D:\OneDrive - jud12fl\SourceCode\JACS\obj\Release\tjc.Modules.JACS.pdb

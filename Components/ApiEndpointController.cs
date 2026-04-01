@@ -1,6 +1,8 @@
 ﻿using DotNetNuke.Data;
+using DotNetNuke.Services.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -100,20 +102,62 @@ namespace tjc.Modules.jacs.Components
                 return null;
             }
         }
+        private static readonly HttpClient _httpClient = new HttpClient(
+            new HttpClientHandler
+            {
+                // ONLY for internal/dev mock API with self-signed cert (required for your 10.212.72.186:8080)
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            })
+        {
+            Timeout = TimeSpan.FromSeconds(60)
+        };
+        // Replace your existing CallExternalApi method with this version:
         internal async Task<HttpResponseMessage> CallExternalApi(ApiEndpoint api, string token, object payload, HttpMethod method)
         {
-            using (var client = new HttpClient())
+            if (api == null || string.IsNullOrWhiteSpace(api.end_point_url))
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                Exceptions.LogException(new Exception("CallExternalApi called with invalid ApiEndpoint"));
+                throw new ArgumentNullException(nameof(api));
+            }
 
-                var request = new HttpRequestMessage(method, api.end_point_url);
-
-                if (payload != null)
+            try
+            {
+                using (var request = new HttpRequestMessage(method, api.end_point_url))
                 {
-                    request.Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                }
+                    if (!string.IsNullOrWhiteSpace(token))
+                    {
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    }
 
-                return await client.SendAsync(request);
+                    if (payload != null)
+                    {
+                        request.Content = new StringContent(
+                            JsonConvert.SerializeObject(payload),
+                            Encoding.UTF8,
+                            "application/json");
+                    }
+
+                    var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Exceptions.LogException(new Exception(
+                            $"Clerk API call failed. URL: {api.end_point_url} | Status: {(int)response.StatusCode} {response.StatusCode} | Response: {errorContent}"));
+                    }
+
+                    return response;
+                }
+            }
+            catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+            {
+                Exceptions.LogException(new Exception($"Clerk API TIMED OUT (60s) → URL: {api.end_point_url}", ex));
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(new Exception($"Error in CallExternalApi → URL: {api.end_point_url}", ex));
+                throw;
             }
         }
     }

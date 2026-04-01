@@ -37,7 +37,7 @@ class ApiConfigController {
         const editModal = new bootstrap.Modal(document.getElementById('ApiEditModal'));
 
         this.loadCountyDropdown();
-        this.loadTypeDropdown();
+       // this.loadTypeDropdown();
         this.apiTable = $('#tblApi').DataTable({
             searching: true,
             autoWidth: true,
@@ -446,7 +446,8 @@ class ApiConfigController {
             { value: 5, text: "Cancel Hearing" },
             { value: 6, text: "Get Hearing Information" },
             { value: 7, text: "Get Clerk Judges" },
-            { value: 8, text: "Get Clerk Courtrooms" }
+            { value: 8, text: "Get Clerk Courtrooms" },
+            { value: 9, text: "Get Clerk Motions" }
             // Add more as you extend the enum
         ];
 

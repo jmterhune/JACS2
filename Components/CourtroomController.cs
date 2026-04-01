@@ -1,9 +1,11 @@
 ﻿using DotNetNuke.Data;
 using DotNetNuke.Services.Exceptions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Http;
 namespace tjc.Modules.jacs.Components
 {
     internal class CourtroomController
@@ -113,6 +115,67 @@ namespace tjc.Modules.jacs.Components
         #endregion // end Courtroom Methods
 
         #region Courtroom Clerk Xref Methods
+        public List<KeyValuePair<long, string>> GetCourtroomXrefDropDownItemsByCounty(long countyId)
+        {
+            try
+            {
+                var countyCtl = new CountyController();
+                var county = countyCtl.GetCounty(countyId);
+
+                if (county == null || string.IsNullOrWhiteSpace(county.auth_end_point_url))
+                {
+                    Exceptions.LogException(new Exception($"County not found or missing auth endpoint for county ID {countyId}"));
+                    return new List<KeyValuePair<long, string>>();
+                }
+
+                // Use the STATIC token stored in the county table (already decrypted)
+                string token = county.decrypted_token;
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    Exceptions.LogException(new Exception($"Static token is missing/empty for county ID {countyId} ({county.name})"));
+                    return new List<KeyValuePair<long, string>>();
+                }
+
+                var apiCtl = new ApiEndpointController();
+                var api = apiCtl.GetApiEndpointByCountyAndType(county.id, (int)ApiEndpointType.GetClerkCourtrooms);
+
+                if (api == null)
+                {
+                    Exceptions.LogException(new Exception($"No API endpoint configured for GetClerkCourtrooms in county ID {countyId} ({county.name})"));
+                    return new List<KeyValuePair<long, string>>();
+                }
+
+                try
+                {
+                    var response = apiCtl.CallExternalApi(api, token, null, HttpMethod.Get).Result;
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string errorContent = response.Content.ReadAsStringAsync().Result;
+                        Exceptions.LogException(new Exception(
+                            $"External Clerk Courtroom API failed (static token). CountyID: {countyId}, Status: {response.StatusCode}, Response: {errorContent}"));
+                        return new List<KeyValuePair<long, string>>();
+                    }
+
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    var courtrooms = JsonConvert.DeserializeObject<List<CourtroomXrefItem>>(json);
+
+                    return courtrooms?.Select(c => new KeyValuePair<long, string>(c.CourtRoomId, c.CourtroomName))
+                                     .OrderBy(c => c.Value)
+                                     .ToList() ?? new List<KeyValuePair<long, string>>();
+                }
+                catch (Exception ex)
+                {
+                    Exceptions.LogException(new Exception($"Error calling external Courtroom API (static token) for county {countyId} ({county.name})", ex));
+                    return new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(new Exception($"Unexpected error in GetCourtroomXrefDropDownItemsByCounty for county {countyId}", ex));
+                return new List<KeyValuePair<long, string>>();
+            }
+        }
         public List<KeyValuePair<long, string>> GetDummyCourtroomDropDownItemsForCounty(long countyId)
         {
             // Temporary stub – return dummy courtroom records based on countyId

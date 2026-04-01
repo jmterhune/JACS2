@@ -36,5 +36,9 @@ namespace tjc.Modules.jacs.Components
         public string county_name { get; set; }
         public string judge_name { get; set; }
     }
-
+    internal class JudgeXrefItem
+    {
+        public long JudgeId { get; set; }
+        public string JudgeName { get; set; } = string.Empty;
+    }
 }

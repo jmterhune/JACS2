@@ -1644,6 +1644,8 @@ class CourtCalendarController {
 
     getEventFormData() {
         const evtIdVal = $('#edit_eventId').val();
+        const clerkCaseIdVal = parseInt($('#edit_clerkCaseId').val()) || 0;
+        const clerkEventIdVal = parseInt($('#edit_clerkEventId').val()) || 0;
         const evtId = evtIdVal ? parseInt(evtIdVal) : 0;
         const motionId = $('#event_motion').val();
         const typeId = $('#event_type').val();
@@ -1653,6 +1655,8 @@ class CourtCalendarController {
         const caseNum = caseNumParts.join('-');
         return {
             id: evtId,
+            clerk_case_id: clerkCaseIdVal,
+            clerk_event_id: clerkEventIdVal,
             case_num: caseNum,
             motion_id: motionId ? motionId : -1,
             type_id: typeId ? typeId : -1,
@@ -1884,6 +1888,8 @@ class CourtCalendarController {
 
     clearEventForm() {
         $('#edit_eventId').val('');
+        $('#edit_clerkCaseId').val('');
+        $('#edit_clerkEventId').val('');
         const fields = ['motion', 'type', 'attorney', 'opposingAttorney'];
         fields.forEach(field => {
             const tomSelect = $(`#event_${field}`)[0].tomselect;
@@ -1982,53 +1988,93 @@ class CourtCalendarController {
     }
 
     evaluateCaseNumberFields() {
-        const caseNumParts = $('#event_caseNum_container .case-num-part').map(function () { return $(this).val(); }).get();
+        const caseNumParts = $('#event_caseNum_container .case-num-part')
+            .map(function () { return $(this).val(); }).get();
+        if (!caseNumParts.every(p => p.trim() !== '')) return;
+
         const caseNum = caseNumParts.join('-');
-        if (caseNumParts.every(part => part.trim() !== '')) {
-            $.ajax({
-                url: `${this.service.baseUrl}EventAPI/SearchCaseNumberDetails`,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ caseNum: caseNum, courtId: this.courtId }),
-                beforeSend: xhr => this.setAjaxHeaders(xhr),
-                success: response => {
-                    if (response.data) {
-                        const evt = response.data;
-                        $('#event_motion').val(evt.motion_id || '');
-                        $('#event_type').val(evt.type_id || '');
-                        $('#event_customMotion').val(evt.custom_motion || '');
-                        const evtAttorney = $('#event_attorney')[0].tomselect;
-                        if (evtAttorney && evt.attorney_id) evtAttorney.setValue(evt.attorney_id);
-                        const evtOppAttorney = $('#event_opposingAttorney')[0].tomselect;
-                        if (evtOppAttorney && evt.opp_attorney_id) evtOppAttorney.setValue(evt.opp_attorney_id);
-                        $('#event_plaintiff').val(evt.plaintiff || '');
-                        $('#event_defendant').val(evt.defendant || '');
-                        $('#event_plaintiffEmail').val(evt.plaintiff_email || '');
-                        $('#event_defendantEmail').val(evt.defendant_email || '');
-                        $('#event_notes').val(evt.notes || '');
-                        $('#event_addon_check').prop('checked', evt.addon === '1');
-                        $('#event_addon').val(evt.addon || '0');
-                        $('#event_reminder_check').prop('checked', evt.reminder === '1');
-                        $('#event_reminder').val(evt.reminder || '0');
-                        if (evt.template) {
-                            const templateData = JSON.parse(evt.template);
-                            Object.keys(templateData).forEach(key => {
-                                const field = $(`#${key.replace(/[^A-Za-z0-9-]/g, '')}`);
-                                if (field.is(':radio')) {
-                                    $(`input[name="template[${key}]"][value="${templateData[key]}"]`).prop('checked', true);
-                                } else {
-                                    field.val(templateData[key]);
-                                }
-                            });
-                        }
-                        $('#other_motion_row').toggle(evt.motion_id === 221);
-                    }
-                },
-                error: () => {
-                    ShowNotification('Case Events', 'No events for selected case number.', 'alert');
+        $.ajax({
+            url: `${this.service.baseUrl}EventAPI/SearchCaseNumberDetails`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ caseNum, courtId: this.courtId }),
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: response => {
+                if (!response.data || response.data.length === 0) {
+                    ShowNotification('Case Search', response.error || 'No cases found.', 'alert');
+                    return;
                 }
-            });
+                if (response.data.length === 1) {
+                    this.populateEventFromClerkCase(response.data[0]);
+                } else {
+                    this.showCaseSelectionModal(response.data);
+                }
+            },
+            error: jqXHR => {
+                let msg = 'No cases found for the selected case number.';
+                try { msg = JSON.parse(jqXHR.responseText)?.error || msg; } catch { }
+                ShowNotification('Case Search', msg, 'alert');
+            }
+        });
+    }
+
+    populateEventFromClerkCase(c) {
+        // Map clerk field names → event form fields.
+        // Petitioner → plaintiff side, Respondent → defendant side
+        // (labels already reflect court type via changeLabel()).
+        $('#event_plaintiff').val(c.petitioner || '');
+        $('#event_plaintiffEmail').val(c.petitioner_email || '');
+        $('#event_defendant').val(c.respondent || '');
+        $('#event_defendantEmail').val(c.respondent_email || '');
+        $('#event_notes').val(c.notes || '');
+
+        // Store clerk IDs as hidden fields so CreateEvent can send them.
+        $('#edit_clerkCaseId').val(c.clerk_case_id || '');
+
+        // Attorney bar numbers — attempt to match against the loaded TomSelect options.
+        const attyTom = $('#event_attorney')[0]?.tomselect;
+        if (attyTom && c.petitioner_atty_bar) {
+            // Find option by bar number value; fall back silently if not found.
+            const match = Object.values(attyTom.options)
+                .find(o => o.text && o.text.includes(c.petitioner_atty_bar));
+            if (match) attyTom.setValue(match.value);
         }
+        const oppTom = $('#event_opposingAttorney')[0]?.tomselect;
+        if (oppTom && c.respondent_atty_bar) {
+            const match = Object.values(oppTom.options)
+                .find(o => o.text && o.text.includes(c.respondent_atty_bar));
+            if (match) oppTom.setValue(match.value);
+        }
+    }
+
+    showCaseSelectionModal(cases) {
+        // Build a simple Swal table so the user can pick the right case.
+        const rows = cases.map((c, i) => `
+        <tr style="cursor:pointer" data-idx="${i}">
+            <td>${c.case_number || ''}</td>
+            <td>${c.petitioner || ''}</td>
+            <td>${c.respondent || ''}</td>
+        </tr>`).join('');
+
+        Swal.fire({
+            title: 'Multiple Cases Found',
+            html: `<p>Select the case to use:</p>
+               <table class="table table-hover table-sm text-start">
+                 <thead><tr><th>Case #</th><th>Petitioner</th><th>Respondent</th></tr></thead>
+                 <tbody id="caseSelectBody">${rows}</tbody>
+               </table>`,
+            showConfirmButton: false,
+            showCloseButton: true,
+            didOpen: () => {
+                document.querySelectorAll('#caseSelectBody tr').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const idx = parseInt(row.dataset.idx);
+                        Swal.close();
+                        this.populateEventFromClerkCase(cases[idx]);
+                    });
+                });
+            }
+        });
     }
 
     formatLocalDateTime(date) {

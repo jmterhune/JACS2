@@ -25,8 +25,7 @@ namespace tjc.Modules.jacs.Components
     }
     public enum ApiEndpointType
     {
-        [Description("Get Case Information")]
-        GetCase = 1,
+       
         [Description("Add Hearing")]
         AddEvent = 2,
         [Description("Reschedule Hearing")]
@@ -35,12 +34,16 @@ namespace tjc.Modules.jacs.Components
         UpdateEvent = 4,
         [Description("Cancel Hearing")]
         CancelEvent = 5,
+        [Description("Get Case Information")]
+        GetCase = 1,
         [Description("Get Hearing Information")]
         GetEvent = 6,
         [Description("Get Clerk Judges")]
         GetClerkJudges = 7,
         [Description("Get Clerk Courtrooms")]
         GetClerkCourtrooms = 8,
+        [Description("Get Clerk Motions")]
+        GetClerkMotions = 9,
         // others as needed
     }
 }

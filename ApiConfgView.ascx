@@ -47,21 +47,20 @@
                                 <select id="edit_county" class="form-control">
                                     <option value="">Select County</option>
                                 </select>
-                                <div class="invalid-feedback" >Please select a County.</div>
+                                <div class="invalid-feedback">Please select a County.</div>
                             </div>
                             <div class="col-md-4">
                                 <label>Action Performed<span class="text-danger">*</span></label>
-                                <select id="edit_type" class="form-control">
-                                    <option value="">Select Action</option>
-                                </select>
-                                 <div class="invalid-feedback" >Please select an Action Type.</div>
+                                <asp:DropDownList ID="edit_type" ClientIDMode="Static" runat="server" CssClass="form-control">
+                                </asp:DropDownList>
+                                <div class="invalid-feedback">Please select an Action Type.</div>
                             </div>
                             <div class="col-md-12">
                                 <label>Endpoint URL<span class="text-danger">*</span></label>
                                 <input type="text" id="edit_end_point" class="form-control" required>
                                 <div class="invalid-feedback">Endpoint URL is required</div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>

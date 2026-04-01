@@ -28,8 +28,8 @@ namespace tjc.Modules.jacs.Services
             Int32.TryParse(query.ContainsKey("length") ? query["length"] : "25", out int pageSize);
             Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
 
-            string sortColumn = "description"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
+            string sortColumn = "description";
+            string sortDirection = "asc";
 
             if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
             {
@@ -216,20 +216,115 @@ namespace tjc.Modules.jacs.Services
             public string error { get; set; }
         }
 
-
         private string GetSortColumn(int columnIndex)
         {
             switch (columnIndex)
             {
-                case 2:
-                    return "description";
-                case 3:
-                    return "lag";
-                case 4:
-                    return "lead";
-                default:
-                    return "description";
+                case 2: return "description";
+                case 3: return "lag";
+                case 4: return "lead";
+                default: return "description";
             }
         }
+
+        #region Motion Clerk Xref Methods
+        [HttpGet]
+        public HttpResponseMessage GetMotionOptions(long p1)
+        {
+            try
+            {
+                var ctl = new MotionController();
+                List<KeyValuePair<long, string>> motions;
+
+                if (p1 > 0)
+                {
+                    motions = ctl.GetMotionXrefDropDownItemsByCounty(p1);
+                }
+                else
+                    return Request.CreateResponse(new { data = new List<KeyValuePair<long, string>>(), error = "No county selected" });
+
+                return Request.CreateResponse(new { data = motions, error = (string)null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new { data = new List<KeyValuePair<long, string>>(), error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetMotionXrefs(long p1)
+        {
+            try
+            {
+                var ctl = new MotionController();
+                var xrefs = ctl.GetMotionXrefByMotion(p1);
+                return Request.CreateResponse(HttpStatusCode.OK, new MotionClerkXrefResult
+                {
+                    data = xrefs.Select(x => new MotionClerkXrefViewModel(x)).ToList(),
+                    error = null
+                });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new MotionClerkXrefResult { data = null, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage CreateMotionXref(JObject p1)
+        {
+            try
+            {
+                var ctl = new MotionController();
+                var xref = p1.ToObject<MotionClerkXref>();
+                if (xref.motion_id <= 0 || xref.county_id <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Motion ID and County ID are required." });
+                }
+
+                var existing = ctl.GetMotionXref(xref.motion_id, xref.county_id);
+                if (existing.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict, new { status = 409, message = "Cross-reference already exists for this motion and county." });
+                }
+
+                xref.created_at = DateTime.Now;
+                xref.updated_at = DateTime.Now;
+                ctl.CreateMotionXref(xref);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Motion Xref created successfully" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage DeleteMotionXref(long p1, long p2)
+        {
+            try
+            {
+                var ctl = new MotionController();
+                ctl.DeleteMotionXref(p1, p2);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Motion Xref deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        internal class MotionClerkXrefResult
+        {
+            public List<MotionClerkXrefViewModel> data { get; set; }
+            public string error { get; set; }
+        }
+        #endregion
     }
 }

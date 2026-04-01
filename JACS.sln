@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JACS", "JACS.csproj", "{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClerkMockApi", "..\..\..\ClerkMockApi\ClerkMockApi.csproj", "{979D53CE-5ADC-374C-EB18-B40EBE061CED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{979D53CE-5ADC-374C-EB18-B40EBE061CED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{979D53CE-5ADC-374C-EB18-B40EBE061CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{979D53CE-5ADC-374C-EB18-B40EBE061CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{979D53CE-5ADC-374C-EB18-B40EBE061CED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

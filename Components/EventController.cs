@@ -256,8 +256,6 @@ namespace tjc.Modules.jacs.Components
                 rep.Update(t);
             }
         }
-
-
         public Event GetEventByCaseNumber(string caseNumber)
         {
 

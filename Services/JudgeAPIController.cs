@@ -244,16 +244,16 @@ namespace tjc.Modules.jacs.Services
 
         #region Judges Xref Methods
         [HttpGet]
-        public HttpResponseMessage GetJudgeOptions(long? countyId = null)
+        public HttpResponseMessage GetJudgeOptions(long p1)
         {
             try
             {
                 var ctl = new JudgeController();
                 List<KeyValuePair<long, string>> judges;
 
-                if (countyId.HasValue && countyId.Value > 0)
+                if (p1 > 0)
                 {
-                    judges = ctl.GetDummyJudgeDropDownItemsForCounty(countyId.Value);
+                    judges = ctl.GetJudgeXrefDropDownItemsByCounty(p1);
                 }
                 else
                     return Request.CreateResponse(new

@@ -271,6 +271,8 @@
       <DependentUpon>ApiConfgView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Components\ApiEndpointController.cs" />
+    <Compile Include="Components\ApiLog.cs" />
+    <Compile Include="Components\ApiLogController.cs" />
     <Compile Include="Components\CourtController.cs" />
     <Compile Include="Components\CourtExtendController.cs" />
     <Compile Include="Components\ApiEndpoint.cs" />
@@ -299,6 +301,7 @@
     <Compile Include="Services\TemplateTimeslotAPIController.cs" />
     <Compile Include="Services\TimeslotAPIController.cs" />
     <Compile Include="Services\ViewModels\ApiEndpointViewModel.cs" />
+    <Compile Include="Services\ViewModels\ClerkApiViewModels.cs" />
     <Compile Include="Services\ViewModels\CourtTemplateOrderViewModel.cs" />
     <Compile Include="Services\ViewModels\RescheduleModel.cs" />
     <Compile Include="TruncateCalendar.ascx.cs">
@@ -597,6 +600,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApiConfgView.ascx" />
+    <Content Include="Documentation\testtoken.txt" />
     <Content Include="Handlers\ExportHandler.ashx" />
     <Content Include="js\api.js" />
     <Content Include="js\court-edit.js" />

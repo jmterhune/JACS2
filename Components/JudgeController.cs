@@ -189,6 +189,75 @@ namespace tjc.Modules.jacs.Components
             // Sort alphabetically by name (optional but nice for dropdown)
             return dummyJudges.OrderBy(j => j.Value).ToList();
         }
+       
+        public List<KeyValuePair<long, string>> GetJudgeXrefDropDownItemsByCounty(long countyId)
+        {
+            try
+            {
+                var countyCtl = new CountyController();
+                var county = countyCtl.GetCounty(countyId);
+
+                if (county == null || string.IsNullOrWhiteSpace(county.auth_end_point_url))
+                {
+                    Exceptions.LogException(new Exception($"County not found or missing auth endpoint for county ID {countyId}"));
+                    return new List<KeyValuePair<long, string>>();
+                }
+
+                // Use the STATIC token stored in the county table (already decrypted)
+                string token = county.decrypted_token;
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    Exceptions.LogException(new Exception($"Static token is missing/empty for county ID {countyId} ({county.name})"));
+                    return new List<KeyValuePair<long, string>>();
+                }
+
+                var apiCtl = new ApiEndpointController();
+                var api = apiCtl.GetApiEndpointByCountyAndType(county.id, (int)ApiEndpointType.GetClerkJudges);
+
+                if (api == null)
+                {
+                    Exceptions.LogException(new Exception($"No API endpoint configured for GetClerkJudges in county ID {countyId} ({county.name})"));
+                    return new List<KeyValuePair<long, string>>();
+                }
+
+                try
+                {
+                    var response = apiCtl.CallExternalApi(api, token, null, HttpMethod.Get).Result;   // still using .Result for now
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string errorContent = response.Content.ReadAsStringAsync().Result;
+                        Exceptions.LogException(new Exception(
+                            $"External Clerk Judge API failed (static token). CountyID: {countyId}, Status: {response.StatusCode}, Response: {errorContent}"));
+                        return new List<KeyValuePair<long, string>>();
+                    }
+
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    var judges = JsonConvert.DeserializeObject<List<JudgeXrefItem>>(json);
+
+                    return judges?.Select(j => new KeyValuePair<long, string>(j.JudgeId, j.JudgeName))
+                                 .OrderBy(j => j.Value)
+                                 .ToList() ?? new List<KeyValuePair<long, string>>();
+                }
+                catch (Exception ex)
+                {
+                    Exceptions.LogException(new Exception($"Error calling external Judge API (static token) for county {countyId} ({county.name})", ex));
+                    return new List<KeyValuePair<long, string>>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(new Exception($"Unexpected error in GetJudgeDropDownItemsForCounty for county {countyId}", ex));
+                return new List<KeyValuePair<long, string>>();
+            }
+        }
+
+        // Add this small DTO inside JudgeController.cs (or in Components folder)
+        internal class JudgeXrefItem
+        {
+            public long JudgeId { get; set; }
+            public string JudgeName { get; set; }
+        }
         public List<KeyValuePair<long, string>> GetJudgeDropDownItemsForCounty(long countyId)
         {
             var county = new CountyController().GetCounty(countyId);

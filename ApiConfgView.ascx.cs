@@ -14,6 +14,10 @@ using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.ComponentModel;
+using System.Reflection;
+using System.Web.UI.WebControls;
+using tjc.Modules.jacs.Components;
 
 namespace tjc.Modules.jacs
 {
@@ -47,10 +51,29 @@ namespace tjc.Modules.jacs
                 {
                     Response.Redirect(_navigationManager.NavigateURL(), true);
                 }
+                if (!IsPostBack)
+                {
+                    BindActionTypeDropdown();
+                }
             }
             catch (Exception exc) //Module failed to load
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+        private void BindActionTypeDropdown()
+        {
+            edit_type.Items.Clear();
+            edit_type.Items.Add(new ListItem("Select Action", ""));
+
+            foreach (ApiEndpointType type in Enum.GetValues(typeof(ApiEndpointType)))
+            {
+                var field = typeof(ApiEndpointType).GetField(type.ToString());
+                var descriptionAttribute = (DescriptionAttribute)field.GetCustomAttribute(typeof(DescriptionAttribute));
+                string displayText = descriptionAttribute != null
+                    ? descriptionAttribute.Description
+                    : type.ToString();
+                edit_type.Items.Add(new ListItem(displayText, ((int)type).ToString()));
             }
         }
     }

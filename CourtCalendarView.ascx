@@ -15,16 +15,16 @@
             <asp:Literal ID="ltCourtName" runat="server" /></span></h3>
         <div class="court-header d-flex mb-4">
             <div class="court-actions me-auto">
-                <a href="#" class="btn btn-primary" id="editCourtBtn" style="display:none"><i class="fas fa-lg fa-edit"></i>Edit</a>
-                <a href="#" class="btn btn-primary" id="userDefinedFieldsBtn" style="display:none"><i class="fas fa-lg fa-cog"></i>User Defined Fields</a>
-                <a href="#" class="btn btn-primary" id="truncateBtn" style="display:none"><i class="fas fa-lg fa-trash"></i>Truncate</a>
+                <a href="#" class="btn btn-primary" id="editCourtBtn" style="display: none"><i class="fas fa-lg fa-edit"></i>Edit</a>
+                <a href="#" class="btn btn-primary" id="userDefinedFieldsBtn" style="display: none"><i class="fas fa-lg fa-cog"></i>User Defined Fields</a>
+                <a href="#" class="btn btn-primary" id="truncateBtn" style="display: none"><i class="fas fa-lg fa-trash"></i>Truncate</a>
                 <a href="#" class="btn btn-primary" id="icalExportBtn"><i class="fas fa-lg fa-calendar"></i>iCal export</a>
                 <a href="#" class="btn btn-primary" id="monthlyExportBtn"><i class="fas fa-lg fa-file-export"></i>Monthly Export</a>
-                <a href="#" class="btn btn-primary" id="extendBtn" style="display:none"><i class="fas fa-lg fa-fast-forward"></i>Extend Calendar</a>
+                <a href="#" class="btn btn-primary" id="extendBtn" style="display: none"><i class="fas fa-lg fa-fast-forward"></i>Extend Calendar</a>
             </div>
             <div class="calendar-actions d-inline-block">
-                <a href="#" class="btn btn-default" id="deleteTimeslotsBtn" style="display:none"><i class="fas fa-trash"></i>Delete Timeslot(s)</a>
-                <a href="#" class="btn btn-default" id="copyTimeslotsBtn" style="display:none"><i class="fas fa-copy"></i>Copy Timeslot(s)</a>
+                <a href="#" class="btn btn-default" id="deleteTimeslotsBtn" style="display: none"><i class="fas fa-trash"></i>Delete Timeslot(s)</a>
+                <a href="#" class="btn btn-default" id="copyTimeslotsBtn" style="display: none"><i class="fas fa-copy"></i>Copy Timeslot(s)</a>
                 <button type="button" style="display: none;" id="printCalendarBtn" class="btn btn-secondary" onclick="window.print()"><i class="fas fa-print"></i>Print Calendar View</button>
             </div>
         </div>
@@ -251,6 +251,8 @@
                             </div>
                             <div id="eventTab" class="tab-pane fade form-group mb-0">
                                 <input type="hidden" id="edit_eventId">
+                                <input type="hidden" id="edit_clerkCaseId">
+                                <input type="hidden" id="edit_clerkEventId">
                                 <div class="row edited-by" style="display: none;">
                                     <div class="col-md-6">
                                         <label>Edited By</label>

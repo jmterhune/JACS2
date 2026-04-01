@@ -69,7 +69,8 @@ class CourtroomController {
                         ShowNotification('Error Retrieving Courtrooms', 'Please make sure you are logged in and try again. Error: ' + error.statusText, 'error');
                     } else {
                         ShowNotification('Error Retrieving Courtrooms', 'The following error occurred attempting to retrieve courtroom information. Error: ' + error.statusText, 'error');
-                    }                }
+                    }
+                }
             },
             columns: [
                 {
@@ -283,25 +284,37 @@ class CourtroomController {
 
     populateXrefCourtrooms(countyId = null) {
         const $clerkCourtroom = $("#xref_clerkCourtroom");
+        const progressId = "#xref_progress_courtroom";
+
+        $(progressId).show();
         $clerkCourtroom.empty().append('<option value="">Select Clerk Courtroom</option>').prop('disabled', true);
-        if (!countyId || countyId <= 0) return;
-        const url = `${this.service.baseUrl}CourtroomAPI/GetCourtroomOptions?countyId=${countyId}`;
+
+        if (!countyId || countyId <= 0) {
+            $(progressId).hide();
+            return;
+        }
+
+        const url = `${this.service.baseUrl}CourtroomAPI/GetCourtroomOptions/${countyId}`;
         $.ajax({
             url: url,
             type: "GET",
             dataType: "json",
+            timeout: 15000,
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: (response) => {
                 if (response?.data && Array.isArray(response.data)) {
-                    response.data.forEach(item => {
-                        $clerkCourtroom.append(`<option value="${item.Key}">${item.Value}</option>`);
-                    });
+                    response.data.forEach(item => $clerkCourtroom.append(`<option value="${item.Key}">${item.Value}</option>`));
                     if (response.data.length > 0) $clerkCourtroom.prop('disabled', false);
                 }
             },
             error: (error) => {
-                ShowNotification("Error Loading Clerk Courtrooms", error.statusText || "Failed to load list.", 'error');
-            }
+                if (error.statusText === "timeout" || error.status === 0) {
+                    ShowNotification("Timeout", "The request to load Clerk Courtrooms timed out. Please try again later.", 'error');
+                } else {
+                    ShowNotification("Error Loading Clerk Courtrooms", error.statusText || "Failed to load list.", 'error');
+                }
+            },
+            complete: () => $(progressId).hide()
         });
     }
 
@@ -505,8 +518,8 @@ class CourtroomController {
 
     GetCourtroomXrefs(courtroomId) {
         const xrefList = `${this.service.baseUrl}CourtroomAPI/GetCourtroomXrefs/${courtroomId}`;
-        const progreesId = "#xref_progress_courtroom";
-        $(progreesId).show();
+        const progressId = "#xref_progress_courtroom";
+        $(progressId).show();
         $("#hdXrefCourtroomId").val(courtroomId);
 
         if (courtroomId) {
@@ -529,7 +542,7 @@ class CourtroomController {
                     dataType: 'json',
                     beforeSend: xhr => this.setAjaxHeaders(xhr),
                     error: function (error) {
-                        $(progreesId).hide();
+                        $(progressId).hide();
                         ShowNotification('Error Retrieving Courtroom Cross-References', error.statusText || 'Failed to retrieve xrefs.', 'error');
                     }
                 },
@@ -556,6 +569,9 @@ class CourtroomController {
                 serverSide: true,
                 processing: true,
                 paging: false,
+                initComplete: function () {
+                    $(progressId).hide();
+                }
             });
 
             this.courtroomXrefTable.on('draw', function () {
@@ -580,7 +596,7 @@ class CourtroomController {
                 courtroomControllerInstance.DisableUsedCounties();
             });
         }
-        $(progreesId).hide();
+        $(progressId).hide();
     }
 
     DeleteCourtroomXref(courtroomId, countyId) {

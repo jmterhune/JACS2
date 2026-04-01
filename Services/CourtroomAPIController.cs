@@ -239,16 +239,16 @@ namespace tjc.Modules.jacs.Services
 
         #region Courtroom Clerk Xref Methods
         [HttpGet]
-        public HttpResponseMessage GetCourtroomOptions(long? countyId = null)
+        public HttpResponseMessage GetCourtroomOptions(long p1)
         {
             try
             {
                 var ctl = new CourtroomController();
                 List<KeyValuePair<long, string>> courtrooms;
 
-                if (countyId.HasValue && countyId.Value > 0)
+                if (p1 > 0)
                 {
-                    courtrooms = ctl.GetDummyCourtroomDropDownItemsForCounty(countyId.Value);
+                    courtrooms = ctl.GetCourtroomXrefDropDownItemsByCounty(p1);
                 }
                 else
                     return Request.CreateResponse(new

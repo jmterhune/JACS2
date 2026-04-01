@@ -20,12 +20,14 @@
                     <th>Lag</th>
                     <th>Lead</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
         </table>
     </main>
 </div>
-<!-- Detail Modal -->
+
+<!-- Detail Modal (unchanged) -->
 <div class="modal fade" id="MotionDetailModal" tabindex="-1" aria-labelledby="MotionDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -41,18 +43,9 @@
             <div class="modal-body">
                 <table class="table table-striped m-0 p-0 w-100">
                     <tbody>
-                        <tr>
-                            <td><strong>Description:</strong></td>
-                            <td><span id="motionDescription"></span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Lag:</strong></td>
-                            <td><span id="motionLag"></span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Lead:</strong></td>
-                            <td><span id="motionLead"></span></td>
-                        </tr>
+                        <tr><td><strong>Description:</strong></td><td><span id="motionDescription"></span></td></tr>
+                        <tr><td><strong>Lag:</strong></td><td><span id="motionLag"></span></td></tr>
+                        <tr><td><strong>Lead:</strong></td><td><span id="motionLead"></span></td></tr>
                     </tbody>
                 </table>
                 <input type="hidden" id="hdMotionId" />
@@ -65,7 +58,8 @@
         </div>
     </div>
 </div>
-<!-- Edit Modal -->
+
+<!-- Edit Modal (unchanged) -->
 <div class="modal fade" id="MotionEditModal" tabindex="-1" aria-labelledby="MotionEditModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -101,14 +95,62 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-success" id="edit_cmdSave">
-                    <i class="fas fa-save" aria-hidden="true"></i>Save
-                </button>
+                <button type="button" class="btn btn-success" id="edit_cmdSave"><i class="fas fa-save" aria-hidden="true"></i>Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Cross Reference Modal (NEW) -->
+<div class="modal fade" id="MotionXrefModal" tabindex="-1" aria-labelledby="MotionXrefModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="xref_progress_motion" class="modal-progress" style="display: none;">
+                <div class="center-progress"><img alt="" src="/images/loading.gif"></div>
+            </div>
+            <div class="modal-header">
+                <h4 id="xrefMotionHeader">Managing cross-references for: <span id="xrefSelectedMotionName" class="fw-bold"></span></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="hdXrefMotionId" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="xref_county">County<em>*</em></label>
+                        <select id="xref_county" class="form-select">
+                            <option value="">Select County</option>
+                        </select>
+                        <div id="xref_county_error" class="invalid-feedback">County is required.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="xref_clerkMotion">Clerk Motion<em>*</em></label>
+                        <select id="xref_clerkMotion" class="form-select" disabled>
+                            <option value="">Select Clerk Motion</option>
+                        </select>
+                        <div id="xref_clerkMotion_error" class="invalid-feedback">Clerk Motion is required.</div>
+                        <div id="clerkMotionHelp" class="form-text mb-0">Select the Motion from the Clerk's Motion List</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success" id="xref_cmdSaveReference"><i class="fas fa-save"></i>Save Reference</button>
+                <table id="tblMotionXref" class="table table-striped w-100 mt-4">
+                    <thead>
+                        <tr>
+                            <th>Clerk Motion ID</th>
+                            <th>Clerk Motion</th>
+                            <th>County</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/motion.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
@@ -118,12 +160,10 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+
 <script>
     var moduleId = <%=ModuleId%>;
-    var service = {
-        path: "JACS",
-        framework: $.ServicesFramework(moduleId)
-    };
+    var service = { path: "JACS", framework: $.ServicesFramework(moduleId) };
 
     (function ($, Sys) {
         $(document).ready(function () {

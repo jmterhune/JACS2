@@ -30,4 +30,9 @@ namespace tjc.Modules.jacs.Components
         public string county_name { get; set; } = null;
         public string courtroom_name { get; set; } = null;
     }
+    internal class CourtroomXrefItem
+    {
+        public long CourtRoomId { get; set; }
+        public string CourtroomName { get; set; } = string.Empty;
+    }
 }

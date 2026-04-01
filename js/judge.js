@@ -375,28 +375,39 @@ class JudgeController {
 
     populateXrefJudges(countyId = null) {
         const $clerkJudge = $("#xref_clerkJudge");
+        const progressId = "#xref_progress_judge";
+
+        $(progressId).show();
         $clerkJudge.empty().append('<option value="">Select Clerk Judge</option>').prop('disabled', true);
-        if (!countyId || countyId <= 0) return;
-        const url = `${this.service.baseUrl}JudgeAPI/GetJudgeOptions?countyId=${countyId}`;
+
+        if (!countyId || countyId <= 0) {
+            $(progressId).hide();
+            return;
+        }
+
+        const url = `${this.service.baseUrl}JudgeAPI/GetJudgeOptions/${countyId}`;
         $.ajax({
             url: url,
             type: "GET",
             dataType: "json",
+            timeout: 15000,
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: (response) => {
                 if (response?.data && Array.isArray(response.data)) {
-                    response.data.forEach(item => {
-                        $clerkJudge.append(`<option value="${item.Key}">${item.Value}</option>`);
-                    });
+                    response.data.forEach(item => $clerkJudge.append(`<option value="${item.Key}">${item.Value}</option>`));
                     if (response.data.length > 0) $clerkJudge.prop('disabled', false);
-                    
                 } else {
                     ShowNotification("Info", "No clerk judges found for this county.", 'info');
                 }
             },
             error: (error) => {
-                ShowNotification("Error Loading Clerk Judges", error.statusText || "Failed to load clerk judge list.", 'error');
-            }
+                if (error.statusText === "timeout" || error.status === 0) {
+                    ShowNotification("Timeout", "The request to load Clerk Judges timed out. Please try again later.", 'error');
+                } else {
+                    ShowNotification("Error Loading Clerk Judges", error.statusText || "Failed to load clerk judge list.", 'error');
+                }
+            },
+            complete: () => $(progressId).hide()
         });
     }
 
@@ -659,12 +670,8 @@ class JudgeController {
                     type: "GET",
                     dataType: 'json',
                     beforeSend: xhr => this.setAjaxHeaders(xhr),
-                    //data(data) {
-                    //    data.searchText = data.search?.value || '';
-                    //    delete data.columns;
-                    //},
                     error: function (error) {
-                        $(progreesId).hide();
+                        $(progressId).hide();
                         ShowNotification('Error Retrieving Judge Cross-References', error.statusText || 'Failed to retrieve xrefs.', 'error');
                     }
                 },
@@ -697,6 +704,9 @@ class JudgeController {
                 serverSide: true,
                 processing: true,
                 paging: false,
+                initComplete: function () {
+                    $(progressId).hide();
+                }
             });
 
             // Bind row action events AFTER every draw
@@ -830,7 +840,7 @@ class JudgeController {
 
     ClearXrefJudgeHeader() {
         $("#xrefSelectedJudgeName").text("");
-        $("#xrefJudgeHeader").hide(); 
+        $("#xrefJudgeHeader").hide();
     }
 
     SetXrefJudgeHeader(judgeName) {
@@ -868,9 +878,6 @@ class JudgeController {
                 }
             }
         });
-
-        // Force select2 / chosen / bootstrap refresh if you're using any enhancement
-        // $countySelect.trigger("change");   // usually not needed here
     }
 
     onModalClose(event) {
@@ -891,8 +898,6 @@ class JudgeController {
             judgeControllerInstance.ClearEditValidations();
         }
     }
-
-  
 
     setAjaxHeaders(xhr) {
         xhr.setRequestHeader('ModuleId', this.moduleId);
