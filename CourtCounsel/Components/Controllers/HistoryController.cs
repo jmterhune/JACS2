@@ -51,7 +51,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             {
                 t = ctx.ExecuteQuery<HistoryInfo>(
                     System.Data.CommandType.Text,
-                    "SELECT DISTINCT CaseNumber, PartyName, CaseType, Responsible, logId, DateReceived, DateDue, RequestedBy, County, Description, Phase, Action, FollowUp, DateCompleted, TimeSpent, Comments, StatusName, MotionFiled, LastModifiedDate FROM aws_cc_History WHERE PartyName LIKE @0 ORDER BY PartyName",
+                    "SELECT DISTINCT CaseNumber, PartyName, CaseType, Responsible, logId, DateReceived, DateDue, RequestedBy, County, Description, Phase, Action, FollowUp, DateCompleted, TimeSpent, Comments, StatusName, MotionFiled, LastModifiedDate FROM tjc_cc_history WHERE PartyName LIKE @0 ORDER BY PartyName",
                     "%" + partyName + "%");
             }
             return t;
@@ -114,7 +114,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             {
                 t = ctx.ExecuteQuery<HistoryInfo>(
                     System.Data.CommandType.Text,
-                    "SELECT DISTINCT PartyName, logId, DateReceived, CaseNumber, CaseType, DateDue, RequestedBy, Responsible, County, Description, Phase, Action, FollowUp, DateCompleted, TimeSpent, Comments, StatusName, MotionFiled, LastModifiedDate FROM aws_cc_History WHERE CaseNumber = @0",
+                    "SELECT DISTINCT PartyName, logId, DateReceived, CaseNumber, CaseType, DateDue, RequestedBy, Responsible, County, Description, Phase, Action, FollowUp, DateCompleted, TimeSpent, Comments, StatusName, MotionFiled, LastModifiedDate FROM tjc_cc_history WHERE CaseNumber = @0",
                     caseNumber);
             }
             return t.Select(h => h.PartyName).Distinct();
@@ -158,7 +158,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             using (IDataContext ctx = DataContext.Instance())
             {
                 ctx.Execute(System.Data.CommandType.Text,
-                    "UPDATE aws_cc_History SET PartyName = @0, LastModifiedDate = GETDATE() WHERE CaseNumber = @1",
+                    "UPDATE tjc_cc_history SET PartyName = @0, LastModifiedDate = GETDATE() WHERE CaseNumber = @1",
                     newName, caseNumber);
             }
         }
@@ -222,7 +222,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
                     args.Add(requestor);
                 }
 
-                string sql = "SELECT * FROM aws_cc_History";
+                string sql = "SELECT * FROM tjc_cc_history";
                 if (conditions.Any())
                     sql += " WHERE " + string.Join(" AND ", conditions);
                 sql += " ORDER BY CaseType, DateReceived";
