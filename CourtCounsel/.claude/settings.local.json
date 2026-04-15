@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"D:/OneDrive - jud12fl/SourceCode/tjc.modules.local/CourtCounselNew/BuildScripts/ModulePackage.targets\" \"D:/OneDrive - jud12fl/SourceCode/tjc.modules.local/CourtCounsel/BuildScripts/\")",
+      "Bash(cp \"D:/OneDrive - jud12fl/SourceCode/tjc.modules.local/CourtCounselNew/BuildScripts/MSBuild.Community.Tasks.Targets\" \"D:/OneDrive - jud12fl/SourceCode/tjc.modules.local/CourtCounsel/BuildScripts/\")"
+    ]
+  }
+}

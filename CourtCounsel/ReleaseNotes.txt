@@ -1,25 +1,8 @@
-﻿<h3>CourtCounsel</h3>
-<p class="Contributor">
-	Joe Terhune <br />
-	<a href="mailto:jterhune@jud12.flcourts.org">jterhune@jud12.flcourts.org</a><br />
-	<a href=https://www.jud12.flcourts.org>https://www.jud12.flcourts.org</a><br />
-	This extension was created using <a href="https://www.christoc.com">Christoc's</a> Module Development Templates for DNN.
-</p>
-<hr/>
-<div class="License">
-	<h3>About the CourtCounsel</h3>
-	<p class="Owner">
-		<b>Version CHANGEME</b><br /><br />
-	</p>
-	<p>Description about version.</p>
-	
-	<h4>Bug Fixes</h4>
-	<ul>
-			<li>List</li>
-			<li>of</li>
-			<li>bug</li>
-			<li>fixes</li>
-	</ul>
-	
-</div>
-Add file icon if has attachments. Filter dropdown for calendar to active users.
+<h3>Court Counsel Module</h3>
+<p>Version 00.00.01</p>
+<ul>
+  <li>Initial release - C# conversion from VB.NET module</li>
+  <li>DNN 9.11 compatible with DAL2 data access</li>
+  <li>Bootstrap / Porto 8 skin compatible UI</li>
+  <li>DataTables.js for grid display and export</li>
+</ul>

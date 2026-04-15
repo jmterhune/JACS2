@@ -56,16 +56,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblAdminRole.Text" xml:space="preserve">
-    <value>Admin Role:</value>
+  <data name="ModuleTitle.Text" xml:space="preserve">
+    <value>Court Counsel Search</value>
   </data>
-  <data name="lblAdminRole.HelpText" xml:space="preserve">
-    <value>Select the role that will have administrative access to this module.</value>
+  <data name="SearchButton.Text" xml:space="preserve">
+    <value>Search</value>
   </data>
-  <data name="lblTemplate.Text" xml:space="preserve">
-    <value>Template:</value>
-  </data>
-  <data name="lblTemplate.HelpText" xml:space="preserve">
-    <value>Enter the default template text for new entries.</value>
+  <data name="NoResults.Text" xml:space="preserve">
+    <value>No results found.</value>
   </data>
 </root>

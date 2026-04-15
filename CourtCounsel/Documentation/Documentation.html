@@ -1,100 +1,69 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Joe Terhune Template</title>
-    <link rel="stylesheet" type="text/css" href="Documentation.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Court Counsel Module Documentation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        h3 { color: #34495e; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #3498db; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .note { background-color: #ffeeba; border: 1px solid #ffc107; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        code { background-color: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+    </style>
 </head>
 <body>
-    <div>
-        <h1>Joe Terhune CourtCounsel Module</h1>
-        <hr />
-        <h2>Thank You!</h2>
-        <p>
-            Thank you for creating your DNN Extensions with my templates.
-            I maintain these templates because I get great enjoyment out of helping our with the DNN community (it will always be DotNetNuke to me).
-            If you would like to thank me for my efforts you can shoot me some cash on paypal (paypal@christoc.com) or venmo (@christoc)!
-            You can find me online at <a href="https://twitter.com/christoc">https://twitter.com/christoc</a>
-            <br />
-            <br />
-            -Chris Hammond (@christoc)
-        </p>
-        <h2>* Important *</h2>
-        <p>
-            When creating a project using this template, you should have named your project
-            simply "ModuleName", not "Joe TerhuneModuleName". If you didn&#39;t do this, the
-            easiest thing to do is close the solution, delete the folder from your DesktopModules
-            folder, then create a new project.
-        </p>
-        <p>
-            Due to limitations in the templating capabilities of Visual Studio, you will need
-            to make some minor changes, and double check a few things, before you package this module.
-        </p>
-        <ol>
-            <li>
-                <strong>Open up IIS Manager (start>run>INETMGR), go to your dnndev.me website and make sure that DesktopModules is NOT a Virtual Directory/Application, if so, remove that. You can also look at sub directories under that folder that are also virtual directories, right click and remove them as well.</strong>
-            </li>
-            <li>
-                You will need to change the TARGET Framework to 4.7.2 if you're compiling against DNN 9.5+. Right click on the project, choose properties, change the target.                <strong>If you change the TARGET framework for the project, remove the WEB.CONFIG file that Visual Studio will add to your project.</strong>
-            </li>
-            <li>
-                <strong>BEFORE</strong> checking the
-                module into your source control environment check the following.
-            </li>
-            <li>
-                Edit the Project properties by double-clicking on the Properties folder in Solution
-                Explorer
-            </li>
-            <li>
-                On the Web tab:
-                <ol>
-                    <li>Under 'Start Action', make sure to set your Start URL to the correct site (ex: http://dnndev.me/).</li>
-                    <li>
-                        Under 'Servers', make sure to "Use IIS Web Server" with a project url of http://dnndev.me/desktopmodules/CourtCounsel
-                        and an Override application root URL of http://dnndev.me/
-                    </li>
-                </ol>
-            </li>
-        </ol>
+    <h1>Court Counsel Module</h1>
+    <p>Version 2.0 - DNN 9.11 Module for managing court counsel case tracking and reporting.</p>
 
-        <h2>
-            DotNetNuke Module Development Tutorials
-        </h2>
+    <h2>Overview</h2>
+    <p>The Court Counsel module provides case management capabilities including search, data entry, reporting, and administrative functions for court counsel operations.</p>
 
-        <ul>
-            <li>
-                <a href="https://www.christoc.com/tutorials">Check out our free module development tutorials</a>.
-            </li>
-        </ul>
+    <h2>Module Views</h2>
+    <table>
+        <tr><th>View</th><th>Description</th></tr>
+        <tr><td>Search</td><td>Search for cases by case name, case number, or attorney.</td></tr>
+        <tr><td>Data Entry (EditHistory)</td><td>Create and edit case history records.</td></tr>
+        <tr><td>Reports</td><td>Generate statistical reports filtered by date range, status, attorney, county, and requestor.</td></tr>
+        <tr><td>Data Sheet</td><td>Full data sheet view with filtering and export capabilities (Excel, CSV, PDF).</td></tr>
+        <tr><td>Admin</td><td>Administrative CRUD for lookup tables: Case Types, Attorneys, Counties, Phases, Requestors, Actions, and Time Spent.</td></tr>
+        <tr><td>Update Case Name</td><td>Bulk update party names for a given case number.</td></tr>
+        <tr><td>Settings</td><td>Module settings for admin role and template configuration.</td></tr>
+    </table>
 
-        <h2>Steps after your project is setup.</h2>
-        <ol>
-            <li>
-                To Build and Package your Module you need to change to <b>Release</b> mode and then
-                simply choose Build from the Build menu. The MSBuild scripts will do the packaging
-                process for you. The packaging process creates an INSTALL and a SOURCE package in
-                the INSTALL folder within your desktopmodule/modulename folder.
-            </li>
-            <li>
-                Installing your module in your development DotNetNuke instance is easy.Take the
-                <strong>INSTALL</strong> ZIP file that is created in the INSTALL folder, upload that using the Host/Extensions
-                page, Installation Wizard. Using the INSTALL ZIP file will overwrite the files already in this folder,
-                but that shouldn't cause any problems as long as you install a recent build.
-            </li>
-            <li>
-                After you've completed a release for your module (typically deploying to an environment
-                outside of your development environment) you should change the Version number, you
-                need to do this in two places, the assemblyinfo file, and the .DNN manifest file.
-                Next time you build the module in release mode you will get a new package (using
-                the version number) created.
-            </li>
-            <li>For more information visit our <a href="https://christoc.com/DotNetNuke/Consulting">DotNetNuke Consulting page</a>.</li>
-        </ol>
-        <p>
-            After you are finished reading this Documentation you can delete the Documentation directory
-            from your project.
-        </p>
-        <hr />
-        <br />
+    <h2>Settings</h2>
+    <table>
+        <tr><th>Setting</th><th>Description</th></tr>
+        <tr><td>Admin Role</td><td>The DNN role that grants administrative access to the module (Admin tab visibility).</td></tr>
+        <tr><td>Template</td><td>Default template text used when creating new entries.</td></tr>
+    </table>
+
+    <h2>Requirements</h2>
+    <ul>
+        <li>DNN Platform 9.11 or later</li>
+        <li>.NET Framework 4.7.2 or later</li>
+        <li>Bootstrap 4 (included with DNN)</li>
+        <li>jQuery DataTables with Buttons extension</li>
+        <li>Font Awesome 5</li>
+    </ul>
+
+    <h2>Installation</h2>
+    <p>Install the module through the DNN Host Extensions page using the module package (.zip) file.</p>
+
+    <div class="note">
+        <strong>Note:</strong> After installation, configure the Admin Role in the module settings to enable administrative features.
     </div>
+
+    <h2>Release History</h2>
+    <table>
+        <tr><th>Version</th><th>Date</th><th>Description</th></tr>
+        <tr><td>2.0.0</td><td>2026</td><td>Complete rewrite from VB.NET to C#. New UI with Bootstrap 4 and DataTables.</td></tr>
+        <tr><td>1.0.0</td><td>Legacy</td><td>Original VB.NET implementation.</td></tr>
+    </table>
 </body>
 </html>
