@@ -1,7 +1,7 @@
 ﻿<div class="License">
 	<h3>License</h3>
 	<p class="Owner">
-		Joe Terhune  <a href=https://www.jud12.flcourts.org/>https://www.jud12.flcourts.org/</a></br>
+		Joe Terhune  <a href=http://www.dotnetnuke.com>http://www.dotnetnuke.com</a></br>
 		Copyright (c) 2022</br>	
 		by Joe Terhune</br>
 	</p>

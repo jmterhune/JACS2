@@ -1,0 +1,164 @@
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditLogEntry.ascx.cs" Inherits="tjc.Modules.JudicialReferral.Views.EditLogEntry" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+
+<div class="container-fluid mt-3" style="max-width:900px">
+    <h3>Copy to Court Counsel Log</h3>
+    <asp:ValidationSummary ID="valSummary" runat="server" CssClass="alert alert-danger" DisplayMode="BulletList" />
+
+    <div class="card">
+        <div class="card-body">
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="<%=txtReceived.ClientID %>">Action Date <span class="text-danger">*</span></label>
+                    <asp:TextBox ID="txtReceived" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
+                    <asp:RequiredFieldValidator ID="valReceived" runat="server" Display="None" ControlToValidate="txtReceived"
+                        ErrorMessage="Date Received Required"></asp:RequiredFieldValidator>
+                    <small class="text-muted">(future dates will have an inactive status)</small>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="<%=txtCaseNumber.ClientID %>">Case Number <span class="text-danger">*</span></label>
+                    <asp:TextBox ID="txtCaseNumber" runat="server" CssClass="form-control" placeholder="D-2004-DR-012345" />
+                    <asp:RequiredFieldValidator ID="valCaseNumber" runat="server" Display="None" ControlToValidate="txtCaseNumber"
+                        ErrorMessage="Case Number Required"></asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator runat="server" ValidationExpression="^[DMSV]-\d{4}-[A-Z]{2}-\d{6}$"
+                        ErrorMessage="Case Number must be in the format: D-2024-FL-000001" Display="None" ControlToValidate="txtCaseNumber"></asp:RegularExpressionValidator>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="<%=txtCaseName.ClientID %>">Case Name <span class="text-danger">*</span></label>
+                    <asp:TextBox ID="txtCaseName" runat="server" CssClass="form-control" />
+                    <asp:RequiredFieldValidator ID="valCaseName" runat="server" Display="None" ControlToValidate="txtCaseName"
+                        ErrorMessage="Case Name Required"></asp:RequiredFieldValidator>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="<%=drpCaseType.ClientID %>">Case Type <span class="text-danger">*</span></label>
+                    <asp:DropDownList ID="drpCaseType" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select Case Type &gt;" />
+                    </asp:DropDownList>
+                    <asp:RequiredFieldValidator ID="valCaseType" runat="server" Display="None" ControlToValidate="drpCaseType"
+                        InitialValue="" ErrorMessage="Please Select a Case Type"></asp:RequiredFieldValidator>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="<%=txtJudge.ClientID %>">Referred by Judge</label>
+                    <asp:TextBox ID="txtJudge" ReadOnly="true" Enabled="false" runat="server" CssClass="form-control" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="<%=drpRequestor.ClientID %>">Requested By <span class="text-danger">*</span></label>
+                    <asp:DropDownList ID="drpRequestor" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select Requested By &gt;" />
+                    </asp:DropDownList>
+                    <asp:RequiredFieldValidator ID="valRequestedBy" runat="server" Display="None"
+                        ControlToValidate="drpRequestor" InitialValue="" ErrorMessage="Please Select Requested By"></asp:RequiredFieldValidator>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="<%=drpAttorney.ClientID %>">Responsible <span class="text-danger">*</span></label>
+                    <asp:DropDownList ID="drpAttorney" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select Responsible &gt;" />
+                    </asp:DropDownList>
+                    <asp:RequiredFieldValidator ID="valResponsible" runat="server" Display="None"
+                        ControlToValidate="drpAttorney" InitialValue="" ErrorMessage="Please Select Responsible"></asp:RequiredFieldValidator>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="<%=txtMotionFiled.ClientID %>">Motion Filed <span class="text-danger">*</span></label>
+                    <asp:TextBox ID="txtMotionFiled" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
+                    <asp:RequiredFieldValidator ID="valMotionDate" runat="server" Display="None"
+                        ControlToValidate="txtMotionFiled" ErrorMessage="Date Motion Filed Required"></asp:RequiredFieldValidator>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-md-4">
+                    <label for="<%=drpCounty.ClientID %>">County <span class="text-danger">*</span></label>
+                    <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select County &gt;" />
+                    </asp:DropDownList>
+                    <asp:RequiredFieldValidator ID="valCounty" runat="server" Display="None"
+                        ControlToValidate="drpCounty" InitialValue="" ErrorMessage="Please Select County"></asp:RequiredFieldValidator>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="<%=drpAction.ClientID %>">Action Taken</label>
+                    <asp:DropDownList ID="drpAction" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select Action Taken &gt;" />
+                    </asp:DropDownList>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="<%=txtDateCompleted.ClientID %>">Date Completed</label>
+                    <asp:TextBox ID="txtDateCompleted" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="<%=drpTimeSpan.ClientID %>">Time Spent</label>
+                    <asp:DropDownList ID="drpTimeSpan" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select Time Spent &gt;" />
+                    </asp:DropDownList>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="<%=drpStatus.ClientID %>">Status</label>
+                    <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control">
+                        <asp:ListItem Value="" Text="&lt; Select Status &gt;" />
+                        <asp:ListItem Text="Admin Task Completed" />
+                        <asp:ListItem Text="Admin Review Needed" />
+                        <asp:ListItem Text="Amended Filed" />
+                        <asp:ListItem Text="Amended Motion Due" />
+                        <asp:ListItem Text="Assigned" />
+                        <asp:ListItem Text="Completed" />
+                        <asp:ListItem Text="EOT Filed" />
+                        <asp:ListItem Text="EOT Granted" />
+                        <asp:ListItem Text="Evidentiary Hearing Granted" />
+                        <asp:ListItem Text="Evidentiary Hearing Scheduled" />
+                        <asp:ListItem Text="Final Order Due" />
+                        <asp:ListItem Text="Follow up needed" />
+                        <asp:ListItem Text="Motion Under Review" />
+                        <asp:ListItem Text="Non-Final Order Entered" />
+                        <asp:ListItem Text="Order to Show Cause" />
+                        <asp:ListItem Text="Ordered to Respond" />
+                        <asp:ListItem Text="Proposed Order Submitted" />
+                        <asp:ListItem Text="Response Due" />
+                        <asp:ListItem Text="Response Filed" />
+                        <asp:ListItem Text="Other" />
+                    </asp:DropDownList>
+                </div>
+            </div>
+
+            <div class="mt-3 mb-3">
+                <h5>Attachments</h5>
+                <asp:Repeater ID="rptFiles" runat="server">
+                    <HeaderTemplate><ul class="list-group"></HeaderTemplate>
+                    <ItemTemplate>
+                        <li class="list-group-item">
+                            <a href='/portals/0/<%# Eval("Path") %>' target="_blank">
+                                <i class="fas fa-file"></i>&nbsp;<%# Eval("FileName") %>
+                            </a>
+                        </li>
+                    </ItemTemplate>
+                    <FooterTemplate></ul></FooterTemplate>
+                </asp:Repeater>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col-md-12">
+                    <label for="<%=txtComments.ClientID %>">Comments</label>
+                    <asp:TextBox ID="txtComments" runat="server" MaxLength="750" CssClass="form-control"
+                        TextMode="MultiLine" Rows="5" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col">
+                    <asp:LinkButton ID="cmdUpdate" runat="server" Text="Copy" CssClass="btn btn-primary" OnClick="cmdUpdate_Click" />
+                    <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

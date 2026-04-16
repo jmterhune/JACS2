@@ -1,29 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
+    <ProductVersion />
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F8296DD1-CFFF-47A4-84F1-55DFB1158ABE}</ProjectGuid>
+    <ProjectGuid>{C9F4B2E3-5D6A-789B-0CDE-F23456789012}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>tjc.Modules.JudicialReferral</RootNamespace>
-    <AssemblyName>tjc.Modules.JudicialReferral</AssemblyName>
+    <AssemblyName>JudicialReferral</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
-    <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
-    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <Use64BitIISExpress />
-    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,131 +40,127 @@
       <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Abstractions, Version=9.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DotNetNuke.Abstractions, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Web, Version=9.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DotNetNuke.DependencyInjection, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\Attachment.cs" />
-    <Compile Include="Components\JudicialReferral.cs" />
-    <Compile Include="Components\AttachmentController.cs" />
-    <Compile Include="Components\JudicialReferralController.cs" />
-    <Compile Include="FileHandler.ashx.cs">
-      <DependentUpon>FileHandler.ashx</DependentUpon>
-    </Compile>
+    <!-- Base Classes -->
     <Compile Include="JudicialReferralModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="JudicialReferralModuleSettingsBase.cs">
+    <Compile Include="JudicialReferralSettingsBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.ascx.cs">
-      <DependentUpon>Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Settings.ascx.designer.cs">
-      <DependentUpon>Settings.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Referral.ascx.cs">
-      <DependentUpon>Referral.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Referral.ascx.designer.cs">
-      <DependentUpon>Referral.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Review.ascx.cs">
-      <DependentUpon>Review.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Review.ascx.designer.cs">
-      <DependentUpon>Review.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="View.ascx.cs">
+    <!-- Models -->
+    <Compile Include="Components\Models\JudgeReferralInfo.cs" />
+    <Compile Include="Components\Models\AttachmentInfo.cs" />
+    <!-- Controllers -->
+    <Compile Include="Components\Controllers\JudgeReferralController.cs" />
+    <Compile Include="Components\Controllers\AttachmentController.cs" />
+    <Compile Include="Components\FeatureController.cs" />
+    <!-- Views -->
+    <Compile Include="Views\View.ascx.cs">
       <DependentUpon>View.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="View.ascx.designer.cs">
+    <Compile Include="Views\View.ascx.designer.cs">
       <DependentUpon>View.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Referral.ascx.cs">
+      <DependentUpon>Referral.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Referral.ascx.designer.cs">
+      <DependentUpon>Referral.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Review.ascx.cs">
+      <DependentUpon>Review.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Review.ascx.designer.cs">
+      <DependentUpon>Review.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditLogEntry.ascx.cs">
+      <DependentUpon>EditLogEntry.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EditLogEntry.ascx.designer.cs">
+      <DependentUpon>EditLogEntry.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings.ascx.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Settings.ascx.designer.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License.txt" />
-    <Content Include="module.css" />
-    <Content Include="ReleaseNotes.txt" />
-    <Content Include="Settings.ascx" />
-    <Content Include="Referral.ascx" />
-    <Content Include="Review.ascx" />
-    <Content Include="View.ascx" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="Views\View.ascx" />
+    <Content Include="Views\Referral.ascx" />
+    <Content Include="Views\Review.ascx" />
+    <Content Include="Views\EditLogEntry.ascx" />
+    <Content Include="Views\Settings.ascx" />
     <Content Include="JudicialReferral.dnn" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_LocalResources\View.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_LocalResources\Edit.ascx.resx" />
+    <Content Include="Styles\module.css" />
+    <Content Include="Scripts\module.js" />
     <Content Include="App_LocalResources\Settings.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="packages.config" />
     <Content Include="web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="FileHandler.ashx" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CourtCounsel\CourtCounsel.csproj">
-      <Project>{5d523859-e977-4ae1-b7bf-9b580703fde6}</Project>
-      <Name>CourtCounsel</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -187,16 +175,14 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
-          <DevelopmentServerPort>61674</DevelopmentServerPort>
-          <DevelopmentServerVPath>
-          </DevelopmentServerVPath>
+          <DevelopmentServerPort>49986</DevelopmentServerPort>
+          <DevelopmentServerVPath />
           <IISUrl>http://dnndev.me/</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
           <IISAppRootUrl>http://dnndev.me</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>True</UseCustomServer>
-          <CustomServerUrl>http://dnndev.me
-          </CustomServerUrl>
+          <CustomServerUrl>http://dnndev.me</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
