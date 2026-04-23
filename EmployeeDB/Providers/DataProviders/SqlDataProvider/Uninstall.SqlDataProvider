@@ -1,3 +1,8 @@
-﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EmployeeDB_Items]') AND type in (N'U'))
-DROP TABLE {databaseOwner}[{objectQualifier}EmployeeDB_Items]
-GO
+/***********************************************************************
+ * EmployeeDB uninstall
+ *
+ * By policy the tjc_employee_* and tjc_gl_* tables are NOT dropped on
+ * uninstall. They contain user data and are shared across modules.
+ * Only module registration is removed by the DNN installer; the data
+ * persists.
+ ***********************************************************************/

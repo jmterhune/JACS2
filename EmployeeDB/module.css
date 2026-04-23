@@ -1,98 +1,56 @@
-.command-icon {
-    cursor: pointer;
-    width:16px;
-    max-width:16px;
-    
-}
-.phone, .custom-control-label {
-    cursor: pointer;
-}
-.form-check input[type='checkbox']{margin-right:8px}
-.form-check label{margin-bottom:0 !important}
-.form-check {
-    min-height: 0rem !important
-}
-#drpfilter{
-    max-width:150px ;
-}
-.radio-button-list{display:block;}
-.radio-button-list label{
-    padding: 0 8px 0 5px;
-}
-.edit-form fieldset {
-    padding: 10px 5px 5px 5px;
-    display: block;
-    margin-inline-start: 2px;
-    margin-inline-end: 2px;
-    padding-block-start: 0.35em;
-    padding-inline-start: 0.75em;
-    padding-inline-end: 0.75em;
-    padding-block-end: 0.625em;
-    min-inline-size: min-content;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #ced4da;
-border-radius:5px;
-}
-.edit-form legend {
-    width:auto;
-    display:inline-block;
-    padding:0 5px;
-    font-size: 1rem;
-    font-weight:700;
-    float:none;
-}
-.dnnFileUploadScope{float:none !important}
-    .dnnFileUploadScope .dnnFormItem span{min-width:4rem;}
+/* EmployeeDB module styles */
 
-label em{color:red !important}
-.group-list{
-    min-width:13rem; padding:.5rem;
-}
-#groups label{display:block}
-.list-commands i {
-    font-size: 2rem;
-}
-.employee-thumb img{
-    max-height:32px !important;
-}
+/* Porto 8 / Bootstrap 5 helpers */
+.empName .Head { margin: 0; padding: 0; }
+.empName img { margin-right: 10px; }
+.swnMessage { max-width: 663px; }
 
+/* Small command icons in admin grids (Edit, Delete, etc.) */
+.command-item { width: 60px; white-space: nowrap; }
+.command-item a { margin-right: 0.5rem; text-decoration: none; }
+.command-item i { vertical-align: middle; }
+
+/* Modal progress overlay */
 .modal-progress {
-    position: fixed;
-    z-index: 999;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: Black;
-    filter: alpha(opacity=60);
-    opacity: 0.6;
-    -moz-opacity: 0.8;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 9999;
+}
+.center-progress {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
 }
 
-.center-progress {
-    z-index: 1000;
-    margin: 300px auto;
-    padding: 10px;
-    width: 50px;
-    filter: alpha(opacity=100);
-    opacity: 1;
-    -moz-opacity: 1;
-}
-/*.ui-widget-overlay {
-z-index:1051 !important;
-}
-.ui-widget-content {
-    z-index: 1052 !important;
-}
-*/div.dataTables_wrapper div.dataTables_filter select {
-    margin-left: 0.5em;
-    display: inline-block;
-    width: auto;
-}
-.dnnFormPopup .ui-dialog-titlebar{
-    padding: 0.5rem
-}
-.date-filter input {
-    width: 7rem !important;
+/* Collapsible filter card (matches CourtCounsel/JudicialReferral pattern) */
+.collapse-toggle .icon-collapsed { display: none; }
+.collapse-toggle .icon-expanded { display: inline-block; }
+.collapse-toggle[aria-expanded="false"] .icon-expanded { display: none; }
+.collapse-toggle[aria-expanded="false"] .icon-collapsed { display: inline-block; }
+
+/* Access-card input widths */
+.access-code { max-width: 10rem; }
+
+/* Employee photo preview */
+.photo-preview { max-width: 200px; max-height: 250px; border: 1px solid #ddd; padding: 4px; }
+
+/* EEO report styling */
+.eeo-preview-table td, .eeo-preview-table th { padding: 4px 8px; font-size: 12px; }
+
+/* Directory quick-info popup */
+.directory-popup { min-width: 260px; }
+.directory-popup img.photo { float: left; margin-right: 10px; max-width: 80px; }
+
+/* SWN feedback */
+.swn-result { max-height: 300px; overflow-y: auto; }
+
+/* DataTables integration */
+table.dataTable td a { text-decoration: none; }
+table.dataTable td a:hover { text-decoration: underline; }
+
+/* Hide the tab-content border (Porto theme already styles tabs) */
+.nav-tabs + .tab-content { padding-top: 15px; }
+
+/* Print styles */
+@media print {
+    .no-print, .btn, .dataTables_filter, .dataTables_length, .dataTables_paginate, .dataTables_info { display: none !important; }
+    table.dataTable { font-size: 11pt; }
 }
