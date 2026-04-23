@@ -18,11 +18,7 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
     /// into SWN ContactDetailRequest/GrpCreateReq/etc., and forwards to
     /// <see cref="ClientFactory.CreateSWNOnlineProxy"/>.
     ///
-    /// All service-calling methods currently throw NotImplementedException
-    /// because <see cref="UsersClient"/> is a stub. When the real WCF Service
-    /// Reference is wired up in Visual Studio, the stub calls become live
-    /// with no other changes here (apart from deleting UsersClientStub.cs).
-    /// </summary>
+    /// Generated WCF proxy lives at Service References\\swn\\Reference.cs (produced by svcutil from Users.wsdl)./// </summary>
     public class SWNServiceRequests
     {
         private const string PhoneCountryCode = "1";
@@ -50,7 +46,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         {
             try
             {
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 ObjActionResult[] result = null;
                 var count = 0;
                 foreach (var e in employees)
@@ -94,8 +89,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                 var employeeList = GetActiveEmployees();
                 var employeeIds = employeeList.Select(e => e.EmployeeId.ToString()).ToList();
                 var swnList = GetContactIds().Select(g => g.ToString()).Except(employeeIds).ToList();
-
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var deleteResult = ProcessResponse(_service.DeleteContacts(swnList.ToArray()));
                 result.Add(deleteResult);
 
@@ -120,7 +113,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         /// </summary>
         public List<int> GetContactIds()
         {
-            // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
             var contactIds = new List<int>();
             var grpDetails = _service.GetGroupDetail("MASTER");
             if (grpDetails != null && grpDetails.ContactsList != null)
@@ -128,7 +120,7 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                 foreach (var c in grpDetails.ContactsList)
                 {
                     int parsed;
-                    if (int.TryParse(c.id, out parsed))
+                    if (int.TryParse(c.Id, out parsed))
                     {
                         contactIds.Add(parsed);
                     }
@@ -146,7 +138,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         {
             try
             {
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 return _service.IsContactInAccount(employeeid);
             }
             catch (Exception ex)
@@ -166,7 +157,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
             try
             {
                 ObjActionResult[] result = null;
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var exists = _service.IsContactInAccount(objEmployee.EmployeeId.ToString());
                 var grpResponse = new SWNResponse();
                 var active = objEmployee.IsActive ?? false;
@@ -217,7 +207,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
             try
             {
                 var contacts = new[] { employeeid };
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var deleteResult = _service.DeleteContacts(contacts);
                 return ProcessResponse(deleteResult);
             }
@@ -239,7 +228,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         {
             try
             {
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 ObjActionResult[] addResult = null;
                 var requestGrp = _service.GetGroups(false);
                 var swnGrps = new List<int>();
@@ -303,7 +291,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         {
             try
             {
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 if (string.IsNullOrEmpty(oldGroup))
                 {
                     var group = new GrpCreateReq
@@ -360,7 +347,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         {
             try
             {
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var result = _service.DeleteGroup(groupId);
                 return ProcessResponse(result);
             }
@@ -388,7 +374,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                     GroupName = groupId,
                     ContactIdsList = new[] { employeeId }
                 };
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var result = _service.ActionContactsGroup(grpAction);
                 return ProcessResponse(result);
             }
@@ -430,7 +415,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                     new ContactCustomFieldDefinition { Name = "Title" },
                     new ContactCustomFieldDefinition { Name = "County" }
                 };
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var result = _service.SetContactCustomFieldsDefinition(defs.ToArray());
                 return ProcessResponse(result);
             }
@@ -457,7 +441,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         {
             try
             {
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 var request = _service.GetContactGroups(objEmployee.EmployeeId.ToString());
                 var response = new SWNResponse { MessageList = new List<SWNResponseMessage>() };
                 var swnGrps = new List<int>();
@@ -527,7 +510,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
         /// </summary>
         private ObjActionResult[] AddContact(ContactDetailRequest contact, EmployeeInfo newEmployee)
         {
-            // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
             var contactList = new List<ContactDetailRequest> { contact };
             var result = _service.CreateContacts(contactList.ToArray());
 
@@ -561,7 +543,6 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                     GroupName = groupId,
                     ContactIdsList = new[] { employeeId }
                 };
-                // TODO: Wire real SWN UsersClient when Service Reference added in Visual Studio
                 return _service.ActionContactsGroup(grpAction);
             }
             catch (Exception ex)

@@ -151,9 +151,8 @@
     <Compile Include="Components\SWN\SWNServiceRequests.cs" />
     <Compile Include="Components\SWN\SWNResponse.cs" />
     <Compile Include="Components\SWN\SWNResponseMessage.cs" />
-    <!-- SWN: stub for the generated WCF proxy. Delete this line after the
-         real Service Reference is added in Visual Studio. -->
-    <Compile Include="Components\SWN\UsersClientStub.cs" />
+    <!-- SWN: generated WCF proxy (svcutil output from Users.wsdl). -->
+    <Compile Include="Service References\swn\Reference.cs" />
     <!-- Views -->
     <Compile Include="Views\EmployeeList.ascx.cs">
       <DependentUpon>EmployeeList.ascx</DependentUpon>

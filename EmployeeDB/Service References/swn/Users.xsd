@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.sendwordnow.com/contract/users/v3" elementFormDefault="qualified" targetNamespace="http://www.sendwordnow.com/contract/users/v3" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" />
+  <xs:element name="EchoAuthenticated">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EchoAuthenticatedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EchoAuthenticatedResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetOneTimeId">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetOneTimeIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetOneTimeIdResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroups">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="includeDynamicGroups" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="GetGroupsResult" nillable="true" type="q1:ArrayOfGrpSummary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="grpCreateReq" nillable="true" type="q2:GrpCreateReq" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="CreateGroupResult" nillable="true" type="q3:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="DeleteGroupResult" nillable="true" type="q4:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="grpUpdReq" nillable="true" type="q5:GrpUpdReq" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="UpdateGroupResult" nillable="true" type="q6:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupDetail">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupDetailResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="GetGroupDetailResult" nillable="true" type="q7:GrpDetail" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupSummary">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupSummaryResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="GetGroupSummaryResult" nillable="true" type="q8:GrpSummary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsContactInGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="contactId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsContactInGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="IsContactInGroupResult" nillable="true" type="q9:ContactGrpSummary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ActionContactsGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="info" nillable="true" type="q10:GrpActionContactsReq" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ActionContactsGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="ActionContactsGroupResult" nillable="true" type="q11:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupContacts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupContactsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="GetGroupContactsResult" nillable="true" type="q12:ArrayOfContactDetail" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupContactsByModifiedDate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+        <xs:element minOccurs="0" name="modifiedDate" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGroupContactsByModifiedDateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="GetGroupContactsByModifiedDateResult" nillable="true" type="q13:GroupModificationResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDeletedGroupContactsByModifiedDate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="grpName" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+        <xs:element minOccurs="0" name="modifiedDate" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetDeletedGroupContactsByModifiedDateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="GetDeletedGroupContactsByModifiedDateResult" nillable="true" type="q14:GroupModificationResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateDynamicGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="dynamicGroupRequest" nillable="true" type="q15:DynamicGroupRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateDynamicGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="CreateDynamicGroupResult" nillable="true" type="q16:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateDynamicGroup">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="currentGroupName" nillable="true" type="xs:string" />
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="dynamicGroupRequest" nillable="true" type="q17:DynamicGroupRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateDynamicGroupResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="UpdateDynamicGroupResult" nillable="true" type="q18:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateContacts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="contacts" nillable="true" type="q19:ArrayOfContactDetailRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateContactsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="CreateContactsResult" nillable="true" type="q20:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactDetail">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactDetailResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="GetContactDetailResult" nillable="true" type="q21:ContactDetail" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateContact">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q22="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="contactDetail" nillable="true" type="q22:ContactDetailRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateContactResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q23="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="UpdateContactResult" nillable="true" type="q23:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteContacts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q24="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="contacts" nillable="true" type="q24:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteContactsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q25="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="DeleteContactsResult" nillable="true" type="q25:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsContactInAccount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="contact" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsContactInAccountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="IsContactInAccountResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactGroups">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactGroupsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="GetContactGroupsResult" nillable="true" type="q26:ArrayOfGrpSummary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTxtMsgCarriers">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTxtMsgCarriersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="GetTxtMsgCarriersResult" nillable="true" type="q27:ArrayOfTxtMsgCarrier" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTimeZones">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTimeZonesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="GetTimeZonesResult" nillable="true" type="q28:ArrayOfTimeZone" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetContactCustomFieldsDefinition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="definition" nillable="true" type="q29:ArrayOfContactCustomFieldDefinition" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetContactCustomFieldsDefinitionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="SetContactCustomFieldsDefinitionResult" nillable="true" type="q30:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactCustomFieldsDefinition">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactCustomFieldsDefinitionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="GetContactCustomFieldsDefinitionResult" nillable="true" type="q31:ArrayOfContactCustomFieldDefinition" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGlobalVoiceCascadeOrder">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGlobalVoiceCascadeOrderResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q32="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetGlobalVoiceCascadeOrderResult" nillable="true" type="q32:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetGlobalVoiceCascadeOrder">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q33="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="labelsToUpdate" nillable="true" type="q33:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetGlobalVoiceCascadeOrderResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="SetGlobalVoiceCascadeOrderResult" type="q34:SimpleResults" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsGlobalCascadeEnabled">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsGlobalCascadeEnabledResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="IsGlobalCascadeEnabledResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EnableGlobalCascade">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="enable" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EnableGlobalCascadeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q35="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="EnableGlobalCascadeResult" type="q35:SimpleResults" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactLocationLabels">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactLocationLabelsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" minOccurs="0" name="GetContactLocationLabelsResult" nillable="true" type="q36:ArrayOfContactLocationLabel" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateContactLocationLabel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="label" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateContactLocationLabelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q37="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="CreateContactLocationLabelResult" nillable="true" type="q37:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RenameContactLocationLabel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="oldLabel" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="newLabel" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RenameContactLocationLabelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q38="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="RenameContactLocationLabelResult" nillable="true" type="q38:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteContactLocationLabel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="label" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteContactLocationLabelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q39="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="DeleteContactLocationLabelResult" nillable="true" type="q39:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactsLocations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q40="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="contactIdsList" nillable="true" type="q40:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetContactsLocationsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q41="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" minOccurs="0" name="GetContactsLocationsResult" nillable="true" type="q41:ArrayOfContactLocationsList" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetContactsLocations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q42="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="locationsInfo" nillable="true" type="q42:ArrayOfSetContactLocationsRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetContactsLocationsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q43="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="SetContactsLocationsResult" nillable="true" type="q43:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetCascadeProfiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q44="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="profiles" nillable="true" type="q44:ArrayOfCascadeProfileRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetCascadeProfilesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q45="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="SetCascadeProfilesResult" nillable="true" type="q45:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetCascadeProfileSync">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q46="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="profiles" nillable="true" type="q46:ArrayOfCascadeProfileSyncRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetCascadeProfileSyncResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q47="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="SetCascadeProfileSyncResult" nillable="true" type="q47:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeProfiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q48="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="profileNames" nillable="true" type="q48:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeProfilesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q49="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="GetCascadeProfilesResult" nillable="true" type="q49:ArrayOfCascadeProfileRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeProfilesSync">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q50="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="profileNames" nillable="true" type="q50:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeProfilesSyncResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q51="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="GetCascadeProfilesSyncResult" nillable="true" type="q51:ArrayOfCascadeProfileSyncRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteCascadeProfiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q52="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="profileNames" nillable="true" type="q52:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeleteCascadeProfilesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q53="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="DeleteCascadeProfilesResult" nillable="true" type="q53:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetActiveCascadeProfile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="profileName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetActiveCascadeProfileResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q54="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="SetActiveCascadeProfileResult" nillable="true" type="q54:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetActiveCascadeProfile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="asOfDate" type="xs:dateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetActiveCascadeProfileResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetActiveCascadeProfileResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetCascadeSchedule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q55="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="schedule" nillable="true" type="q55:ArrayOfCascadeScheduleRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetCascadeScheduleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q56="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="SetCascadeScheduleResult" nillable="true" type="q56:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddCascadeSchedule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q57="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="schedule" nillable="true" type="q57:ArrayOfCascadeScheduleAddRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddCascadeScheduleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q58="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="AddCascadeScheduleResult" nillable="true" type="q58:ArrayOfObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeSchedule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q59="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="names" nillable="true" type="q59:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeScheduleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q60="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="GetCascadeScheduleResult" nillable="true" type="q60:ArrayOfCascadeScheduleRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RemoveCascadeSchedule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="profileName" nillable="true" type="xs:string" />
+        <xs:element xmlns:q61="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="activationDates" nillable="true" type="q61:ArrayOfdateTime" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RemoveCascadeScheduleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q62="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="RemoveCascadeScheduleResult" nillable="true" type="q62:ObjActionResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeProfileSummary">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCascadeProfileSummaryResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q63="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetCascadeProfileSummaryResult" nillable="true" type="q63:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ClearCredentialsCache">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ClearCredentialsCacheResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRecipientsGroups">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="recipientUniqueId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRecipientsGroupsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q64="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetRecipientsGroupsResult" nillable="true" type="q64:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,1005 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.sendwordnow.com/contract/users/v3" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Users" targetNamespace="http://www.sendwordnow.com/contract/users/v3" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="WSHttpBinding_IUsers_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false" />
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+            <sp:IncludeTimestamp />
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <sp:SignedSupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+              <wsp:Policy>
+                <sp:WssUsernameToken10 />
+              </wsp:Policy>
+            </sp:UsernameToken>
+          </wsp:Policy>
+        </sp:SignedSupportingTokens>
+        <sp:Wss11 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy />
+        </sp:Wss11>
+        <sp:Trust10 xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:MustSupportIssuedTokens />
+            <sp:RequireClientEntropy />
+            <sp:RequireServerEntropy />
+          </wsp:Policy>
+        </sp:Trust10>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.sendwordnow.com/contract/users/v3/Imports">
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd0" namespace="http://www.sendwordnow.com/contract/users/v3" />
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" />
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" />
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" />
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IUsers_EchoAuthenticated_InputMessage">
+    <wsdl:part name="parameters" element="tns:EchoAuthenticated" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_EchoAuthenticated_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EchoAuthenticatedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetOneTimeId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOneTimeId" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetOneTimeId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOneTimeIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroups_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroups" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroups_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_UpdateGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_UpdateGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupDetail" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupSummary_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupSummary" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupSummary_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupSummaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_IsContactInGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsContactInGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_IsContactInGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsContactInGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_ActionContactsGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:ActionContactsGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_ActionContactsGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ActionContactsGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupContacts_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupContacts" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupContacts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupContactsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupContactsByModifiedDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupContactsByModifiedDate" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGroupContactsByModifiedDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGroupContactsByModifiedDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetDeletedGroupContactsByModifiedDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeletedGroupContactsByModifiedDate" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetDeletedGroupContactsByModifiedDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDeletedGroupContactsByModifiedDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateDynamicGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDynamicGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateDynamicGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateDynamicGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_UpdateDynamicGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateDynamicGroup" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_UpdateDynamicGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateDynamicGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateContacts_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateContacts" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateContacts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateContactsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactDetail" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_UpdateContact_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateContact" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_UpdateContact_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateContactResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteContacts_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteContacts" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteContacts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteContactsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_IsContactInAccount_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsContactInAccount" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_IsContactInAccount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsContactInAccountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactGroups_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactGroups" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactGroups_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactGroupsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetTxtMsgCarriers_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTxtMsgCarriers" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetTxtMsgCarriers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTxtMsgCarriersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetTimeZones_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTimeZones" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetTimeZones_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTimeZonesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetContactCustomFieldsDefinition_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetContactCustomFieldsDefinition" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetContactCustomFieldsDefinition_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetContactCustomFieldsDefinitionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactCustomFieldsDefinition_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactCustomFieldsDefinition" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactCustomFieldsDefinition_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactCustomFieldsDefinitionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGlobalVoiceCascadeOrder_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGlobalVoiceCascadeOrder" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetGlobalVoiceCascadeOrder_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGlobalVoiceCascadeOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetGlobalVoiceCascadeOrder_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetGlobalVoiceCascadeOrder" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetGlobalVoiceCascadeOrder_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetGlobalVoiceCascadeOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_IsGlobalCascadeEnabled_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsGlobalCascadeEnabled" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_IsGlobalCascadeEnabled_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsGlobalCascadeEnabledResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_EnableGlobalCascade_InputMessage">
+    <wsdl:part name="parameters" element="tns:EnableGlobalCascade" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_EnableGlobalCascade_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EnableGlobalCascadeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactLocationLabels_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactLocationLabels" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactLocationLabels_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactLocationLabelsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateContactLocationLabel_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateContactLocationLabel" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_CreateContactLocationLabel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateContactLocationLabelResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_RenameContactLocationLabel_InputMessage">
+    <wsdl:part name="parameters" element="tns:RenameContactLocationLabel" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_RenameContactLocationLabel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RenameContactLocationLabelResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteContactLocationLabel_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteContactLocationLabel" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteContactLocationLabel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteContactLocationLabelResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactsLocations_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactsLocations" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetContactsLocations_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetContactsLocationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetContactsLocations_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetContactsLocations" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetContactsLocations_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetContactsLocationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetCascadeProfiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetCascadeProfiles" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetCascadeProfiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetCascadeProfilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetCascadeProfileSync_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetCascadeProfileSync" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetCascadeProfileSync_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetCascadeProfileSyncResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeProfiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeProfiles" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeProfiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeProfilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeProfilesSync_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeProfilesSync" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeProfilesSync_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeProfilesSyncResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteCascadeProfiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteCascadeProfiles" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_DeleteCascadeProfiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteCascadeProfilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetActiveCascadeProfile_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetActiveCascadeProfile" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetActiveCascadeProfile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetActiveCascadeProfileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetActiveCascadeProfile_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetActiveCascadeProfile" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetActiveCascadeProfile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetActiveCascadeProfileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetCascadeSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetCascadeSchedule" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_SetCascadeSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetCascadeScheduleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_AddCascadeSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddCascadeSchedule" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_AddCascadeSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddCascadeScheduleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeSchedule" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeScheduleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_RemoveCascadeSchedule_InputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveCascadeSchedule" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_RemoveCascadeSchedule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveCascadeScheduleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeProfileSummary_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeProfileSummary" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetCascadeProfileSummary_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCascadeProfileSummaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_ClearCredentialsCache_InputMessage">
+    <wsdl:part name="parameters" element="tns:ClearCredentialsCache" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_ClearCredentialsCache_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ClearCredentialsCacheResponse" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetRecipientsGroups_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRecipientsGroups" />
+  </wsdl:message>
+  <wsdl:message name="IUsers_GetRecipientsGroups_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRecipientsGroupsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IUsers">
+    <wsdl:operation name="EchoAuthenticated">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/EchoAuthenticated" message="tns:IUsers_EchoAuthenticated_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/EchoAuthenticatedResponse" message="tns:IUsers_EchoAuthenticated_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOneTimeId">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetOneTimeId" message="tns:IUsers_GetOneTimeId_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetOneTimeIdResponse" message="tns:IUsers_GetOneTimeId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGroups">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroups" message="tns:IUsers_GetGroups_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupsResponse" message="tns:IUsers_GetGroups_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateGroup" message="tns:IUsers_CreateGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateGroupResponse" message="tns:IUsers_CreateGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteGroup" message="tns:IUsers_DeleteGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteGroupResponse" message="tns:IUsers_DeleteGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateGroup" message="tns:IUsers_UpdateGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateGroupResponse" message="tns:IUsers_UpdateGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupDetail">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupDetail" message="tns:IUsers_GetGroupDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupDetailResponse" message="tns:IUsers_GetGroupDetail_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupSummary">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupSummary" message="tns:IUsers_GetGroupSummary_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupSummaryResponse" message="tns:IUsers_GetGroupSummary_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsContactInGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/IsContactInGroup" message="tns:IUsers_IsContactInGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/IsContactInGroupResponse" message="tns:IUsers_IsContactInGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ActionContactsGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/ActionContactsGroup" message="tns:IUsers_ActionContactsGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/ActionContactsGroupResponse" message="tns:IUsers_ActionContactsGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupContacts">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupContacts" message="tns:IUsers_GetGroupContacts_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupContactsResponse" message="tns:IUsers_GetGroupContacts_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupContactsByModifiedDate">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupContactsByModifiedDate" message="tns:IUsers_GetGroupContactsByModifiedDate_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupContactsByModifiedDateResponse" message="tns:IUsers_GetGroupContactsByModifiedDate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDeletedGroupContactsByModifiedDate">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetDeletedGroupContactsByModifiedDate" message="tns:IUsers_GetDeletedGroupContactsByModifiedDate_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetDeletedGroupContactsByModifiedDateResponse" message="tns:IUsers_GetDeletedGroupContactsByModifiedDate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateDynamicGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateDynamicGroup" message="tns:IUsers_CreateDynamicGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateDynamicGroupResponse" message="tns:IUsers_CreateDynamicGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateDynamicGroup">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateDynamicGroup" message="tns:IUsers_UpdateDynamicGroup_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateDynamicGroupResponse" message="tns:IUsers_UpdateDynamicGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateContacts">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateContacts" message="tns:IUsers_CreateContacts_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateContactsResponse" message="tns:IUsers_CreateContacts_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetContactDetail">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactDetail" message="tns:IUsers_GetContactDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactDetailResponse" message="tns:IUsers_GetContactDetail_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateContact">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateContact" message="tns:IUsers_UpdateContact_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateContactResponse" message="tns:IUsers_UpdateContact_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteContacts">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteContacts" message="tns:IUsers_DeleteContacts_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteContactsResponse" message="tns:IUsers_DeleteContacts_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsContactInAccount">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/IsContactInAccount" message="tns:IUsers_IsContactInAccount_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/IsContactInAccountResponse" message="tns:IUsers_IsContactInAccount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetContactGroups">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactGroups" message="tns:IUsers_GetContactGroups_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactGroupsResponse" message="tns:IUsers_GetContactGroups_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTxtMsgCarriers">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetTxtMsgCarriers" message="tns:IUsers_GetTxtMsgCarriers_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetTxtMsgCarriersResponse" message="tns:IUsers_GetTxtMsgCarriers_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeZones">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetTimeZones" message="tns:IUsers_GetTimeZones_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetTimeZonesResponse" message="tns:IUsers_GetTimeZones_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetContactCustomFieldsDefinition">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetContactCustomFieldsDefinition" message="tns:IUsers_SetContactCustomFieldsDefinition_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetContactCustomFieldsDefinitionResponse" message="tns:IUsers_SetContactCustomFieldsDefinition_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetContactCustomFieldsDefinition">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactCustomFieldsDefinition" message="tns:IUsers_GetContactCustomFieldsDefinition_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactCustomFieldsDefinitionResponse" message="tns:IUsers_GetContactCustomFieldsDefinition_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGlobalVoiceCascadeOrder">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGlobalVoiceCascadeOrder" message="tns:IUsers_GetGlobalVoiceCascadeOrder_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGlobalVoiceCascadeOrderResponse" message="tns:IUsers_GetGlobalVoiceCascadeOrder_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetGlobalVoiceCascadeOrder">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetGlobalVoiceCascadeOrder" message="tns:IUsers_SetGlobalVoiceCascadeOrder_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetGlobalVoiceCascadeOrderResponse" message="tns:IUsers_SetGlobalVoiceCascadeOrder_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsGlobalCascadeEnabled">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/IsGlobalCascadeEnabled" message="tns:IUsers_IsGlobalCascadeEnabled_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/IsGlobalCascadeEnabledResponse" message="tns:IUsers_IsGlobalCascadeEnabled_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EnableGlobalCascade">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/EnableGlobalCascade" message="tns:IUsers_EnableGlobalCascade_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/EnableGlobalCascadeResponse" message="tns:IUsers_EnableGlobalCascade_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetContactLocationLabels">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactLocationLabels" message="tns:IUsers_GetContactLocationLabels_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactLocationLabelsResponse" message="tns:IUsers_GetContactLocationLabels_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateContactLocationLabel">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateContactLocationLabel" message="tns:IUsers_CreateContactLocationLabel_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateContactLocationLabelResponse" message="tns:IUsers_CreateContactLocationLabel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RenameContactLocationLabel">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/RenameContactLocationLabel" message="tns:IUsers_RenameContactLocationLabel_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/RenameContactLocationLabelResponse" message="tns:IUsers_RenameContactLocationLabel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteContactLocationLabel">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteContactLocationLabel" message="tns:IUsers_DeleteContactLocationLabel_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteContactLocationLabelResponse" message="tns:IUsers_DeleteContactLocationLabel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetContactsLocations">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactsLocations" message="tns:IUsers_GetContactsLocations_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactsLocationsResponse" message="tns:IUsers_GetContactsLocations_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetContactsLocations">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetContactsLocations" message="tns:IUsers_SetContactsLocations_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetContactsLocationsResponse" message="tns:IUsers_SetContactsLocations_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetCascadeProfiles">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeProfiles" message="tns:IUsers_SetCascadeProfiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeProfilesResponse" message="tns:IUsers_SetCascadeProfiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetCascadeProfileSync">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeProfileSync" message="tns:IUsers_SetCascadeProfileSync_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeProfileSyncResponse" message="tns:IUsers_SetCascadeProfileSync_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeProfiles">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfiles" message="tns:IUsers_GetCascadeProfiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfilesResponse" message="tns:IUsers_GetCascadeProfiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeProfilesSync">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfilesSync" message="tns:IUsers_GetCascadeProfilesSync_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfilesSyncResponse" message="tns:IUsers_GetCascadeProfilesSync_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteCascadeProfiles">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteCascadeProfiles" message="tns:IUsers_DeleteCascadeProfiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteCascadeProfilesResponse" message="tns:IUsers_DeleteCascadeProfiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetActiveCascadeProfile">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetActiveCascadeProfile" message="tns:IUsers_SetActiveCascadeProfile_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetActiveCascadeProfileResponse" message="tns:IUsers_SetActiveCascadeProfile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetActiveCascadeProfile">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetActiveCascadeProfile" message="tns:IUsers_GetActiveCascadeProfile_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetActiveCascadeProfileResponse" message="tns:IUsers_GetActiveCascadeProfile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetCascadeSchedule">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeSchedule" message="tns:IUsers_SetCascadeSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeScheduleResponse" message="tns:IUsers_SetCascadeSchedule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddCascadeSchedule">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/AddCascadeSchedule" message="tns:IUsers_AddCascadeSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/AddCascadeScheduleResponse" message="tns:IUsers_AddCascadeSchedule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeSchedule">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeSchedule" message="tns:IUsers_GetCascadeSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeScheduleResponse" message="tns:IUsers_GetCascadeSchedule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveCascadeSchedule">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/RemoveCascadeSchedule" message="tns:IUsers_RemoveCascadeSchedule_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/RemoveCascadeScheduleResponse" message="tns:IUsers_RemoveCascadeSchedule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeProfileSummary">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfileSummary" message="tns:IUsers_GetCascadeProfileSummary_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfileSummaryResponse" message="tns:IUsers_GetCascadeProfileSummary_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ClearCredentialsCache">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/ClearCredentialsCache" message="tns:IUsers_ClearCredentialsCache_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/ClearCredentialsCacheResponse" message="tns:IUsers_ClearCredentialsCache_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecipientsGroups">
+      <wsdl:input wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetRecipientsGroups" message="tns:IUsers_GetRecipientsGroups_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.sendwordnow.com/contract/users/v3/IUsers/GetRecipientsGroupsResponse" message="tns:IUsers_GetRecipientsGroups_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSHttpBinding_IUsers" type="tns:IUsers">
+    <wsp:PolicyReference URI="#WSHttpBinding_IUsers_policy" />
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EchoAuthenticated">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/EchoAuthenticated" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOneTimeId">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetOneTimeId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroups">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroups" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupDetail">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupSummary">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupSummary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsContactInGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/IsContactInGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ActionContactsGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/ActionContactsGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupContacts">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupContacts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupContactsByModifiedDate">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGroupContactsByModifiedDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDeletedGroupContactsByModifiedDate">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetDeletedGroupContactsByModifiedDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateDynamicGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateDynamicGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateDynamicGroup">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateDynamicGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateContacts">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateContacts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactDetail">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateContact">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/UpdateContact" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteContacts">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteContacts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsContactInAccount">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/IsContactInAccount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactGroups">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactGroups" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTxtMsgCarriers">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetTxtMsgCarriers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeZones">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetTimeZones" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetContactCustomFieldsDefinition">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetContactCustomFieldsDefinition" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactCustomFieldsDefinition">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactCustomFieldsDefinition" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGlobalVoiceCascadeOrder">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetGlobalVoiceCascadeOrder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetGlobalVoiceCascadeOrder">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetGlobalVoiceCascadeOrder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsGlobalCascadeEnabled">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/IsGlobalCascadeEnabled" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnableGlobalCascade">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/EnableGlobalCascade" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactLocationLabels">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactLocationLabels" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateContactLocationLabel">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/CreateContactLocationLabel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RenameContactLocationLabel">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/RenameContactLocationLabel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteContactLocationLabel">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteContactLocationLabel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetContactsLocations">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetContactsLocations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetContactsLocations">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetContactsLocations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetCascadeProfiles">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeProfiles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetCascadeProfileSync">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeProfileSync" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeProfiles">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfiles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeProfilesSync">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfilesSync" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteCascadeProfiles">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/DeleteCascadeProfiles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetActiveCascadeProfile">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetActiveCascadeProfile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetActiveCascadeProfile">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetActiveCascadeProfile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetCascadeSchedule">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/SetCascadeSchedule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddCascadeSchedule">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/AddCascadeSchedule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeSchedule">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeSchedule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveCascadeSchedule">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/RemoveCascadeSchedule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCascadeProfileSummary">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetCascadeProfileSummary" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClearCredentialsCache">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/ClearCredentialsCache" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecipientsGroups">
+      <soap12:operation soapAction="http://www.sendwordnow.com/contract/users/v3/IUsers/GetRecipientsGroups" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Users">
+    <wsdl:port name="WSHttpBinding_IUsers" binding="tns:WSHttpBinding_IUsers">
+      <soap12:address location="https://api.sendwordnow.com/webservices/v3/Users.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>https://phxpweb14.prod.sendwordnow.local/WebServices/v3/Users.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

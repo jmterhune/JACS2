@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ArrayOfGrpSummary">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="GrpSummary" nillable="true" type="tns:GrpSummary" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfGrpSummary" nillable="true" type="tns:ArrayOfGrpSummary" />
+  <xs:complexType name="GrpSummary">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Desc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NbrContacts" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GrpSummary" nillable="true" type="tns:GrpSummary" />
+  <xs:complexType name="ContactSummary">
+    <xs:sequence>
+      <xs:element name="Id" nillable="true" type="xs:string" />
+      <xs:element name="FirstName" nillable="true" type="xs:string" />
+      <xs:element name="LastName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactSummary" nillable="true" type="tns:ContactSummary" />
+  <xs:complexType name="ContactDetailLogin">
+    <xs:sequence>
+      <xs:element name="Username" nillable="true" type="xs:string" />
+      <xs:element name="Password" nillable="true" type="xs:string" />
+      <xs:element name="QuickSendCode" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="AccessGrpsList" nillable="true" type="q1:ArrayOfstring" />
+      <xs:element name="Status" type="tns:ContactDetailLoginStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactDetailLogin" nillable="true" type="tns:ContactDetailLogin" />
+  <xs:simpleType name="ContactDetailLoginStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Enabled" />
+      <xs:enumeration value="Disabled" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ContactDetailLoginStatus" nillable="true" type="tns:ContactDetailLoginStatus" />
+  <xs:complexType name="ContactPntBase">
+    <xs:sequence>
+      <xs:element name="Label" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactPntBase" nillable="true" type="tns:ContactPntBase" />
+  <xs:complexType name="ContactPntTextMsgType">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ContactPntBase">
+        <xs:sequence>
+          <xs:element name="Number" nillable="true" type="xs:string" />
+          <xs:element name="Carrier" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContactPntTextMsgType" nillable="true" type="tns:ContactPntTextMsgType" />
+  <xs:complexType name="ArrayOfContactPntTextMsgType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactPntTextMsgType" nillable="true" type="tns:ContactPntTextMsgType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactPntTextMsgType" nillable="true" type="tns:ArrayOfContactPntTextMsgType" />
+  <xs:complexType name="ArrayOfObjActionResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ObjActionResult" nillable="true" type="tns:ObjActionResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfObjActionResult" nillable="true" type="tns:ArrayOfObjActionResult" />
+  <xs:complexType name="ObjActionResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ObjType" type="tns:ObjActionResultObjType" />
+      <xs:element minOccurs="0" name="ObjId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Details" nillable="true" type="tns:ArrayOfObjActionResultDetailInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ObjActionResult" nillable="true" type="tns:ObjActionResult" />
+  <xs:simpleType name="ObjActionResultObjType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Group" />
+      <xs:enumeration value="Contact" />
+      <xs:enumeration value="ContactPoint" />
+      <xs:enumeration value="CascadeOrder" />
+      <xs:enumeration value="CascadeProfile" />
+      <xs:enumeration value="CascadeSchedule" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ObjActionResultObjType" nillable="true" type="tns:ObjActionResultObjType" />
+  <xs:complexType name="ArrayOfObjActionResultDetailInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ObjActionResultDetailInfo" nillable="true" type="tns:ObjActionResultDetailInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfObjActionResultDetailInfo" nillable="true" type="tns:ArrayOfObjActionResultDetailInfo" />
+  <xs:complexType name="ObjActionResultDetailInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Type" type="tns:ObjActionResultDetailInfoType" />
+      <xs:element minOccurs="0" name="Desc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ObjActionResultDetailInfo" nillable="true" type="tns:ObjActionResultDetailInfo" />
+  <xs:simpleType name="ObjActionResultDetailInfoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Error" />
+      <xs:enumeration value="Information" />
+      <xs:enumeration value="Warning" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ObjActionResultDetailInfoType" nillable="true" type="tns:ObjActionResultDetailInfoType" />
+  <xs:complexType name="GrpUpdReq">
+    <xs:sequence>
+      <xs:element name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NewName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NewDesc" nillable="true" type="tns:GrpUpdReqNewDesc" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GrpUpdReq" nillable="true" type="tns:GrpUpdReq" />
+  <xs:complexType name="GrpUpdReqNewDesc">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Clear" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GrpUpdReqNewDesc" nillable="true" type="tns:GrpUpdReqNewDesc" />
+  <xs:complexType name="GrpDetail">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GrpSummary">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ContactsList" nillable="true" type="tns:ArrayOfContactSummary" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GrpDetail" nillable="true" type="tns:GrpDetail" />
+  <xs:complexType name="ArrayOfContactSummary">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactSummary" nillable="true" type="tns:ContactSummary" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactSummary" nillable="true" type="tns:ArrayOfContactSummary" />
+  <xs:complexType name="ContactGrpSummary">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GrpSummary">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ContactId" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="InGrp" type="xs:boolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContactGrpSummary" nillable="true" type="tns:ContactGrpSummary" />
+  <xs:complexType name="GrpActionContactsReq">
+    <xs:sequence>
+      <xs:element name="ActionType" type="tns:GrpActionContactsReqActionType" />
+      <xs:element name="GroupName" nillable="true" type="xs:string" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ContactIdsList" nillable="true" type="q2:ArrayOfstring" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GrpActionContactsReq" nillable="true" type="tns:GrpActionContactsReq" />
+  <xs:simpleType name="GrpActionContactsReqActionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Add" />
+      <xs:enumeration value="Remove" />
+      <xs:enumeration value="Empty" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="GrpActionContactsReqActionType" nillable="true" type="tns:GrpActionContactsReqActionType" />
+  <xs:complexType name="ArrayOfTxtMsgCarrier">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TxtMsgCarrier" nillable="true" type="tns:TxtMsgCarrier" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTxtMsgCarrier" nillable="true" type="tns:ArrayOfTxtMsgCarrier" />
+  <xs:complexType name="TxtMsgCarrier">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EmailDomain" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TxtMsgCarrier" nillable="true" type="tns:TxtMsgCarrier" />
+</xs:schema>
