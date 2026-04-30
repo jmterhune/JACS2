@@ -152,9 +152,9 @@
     <Content Include="JudicialReferral.dnn" />
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
-    <Content Include="Styles\module.css" />
+    <Content Include="module.css" />
     <Content Include="Scripts\module.js" />
-    <Content Include="App_LocalResources\Settings.ascx.resx" />
+    <Content Include="Views\App_LocalResources\Settings.ascx.resx" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
@@ -193,8 +193,37 @@
     <DNNFileName>JudicialReferral</DNNFileName>
     <PackageName>JudicialReferral</PackageName>
     <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
+    <!-- Site deploy target. Override by setting DeploySitePath, or disable with DeployToSite=false. -->
+    <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
+    <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\JudicialReferral</DeployModuleFolder>
+    <DeployToSite Condition="'$(DeployToSite)' == ''">true</DeployToSite>
+    <!-- Dev site URL to ping after deploy so IIS recycles the app pool and picks up the new DLL -->
+    <DevSiteUrl Condition="'$(DevSiteUrl)' == ''">https://www.dnndev.me/</DevSiteUrl>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="PackageModule;DeployToSite">
+  </Target>
+  <Target Name="DeployToSite" Condition="'$(DeployToSite)' == 'true' And Exists('$(DeploySitePath)\bin')">
+    <Message Text="Deploying JudicialReferral to $(DeploySitePath)" Importance="high" />
+    <!-- Copy assembly to site bin -->
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    <!-- Copy web content to DesktopModules -->
+    <ItemGroup>
+      <DeployContent Include="Views\**\*.ascx" />
+      <DeployContent Include="**\App_LocalResources\**\*.resx" />
+      <DeployContent Include="*.css" />
+      <DeployContent Include="Scripts\**\*.js" />
+      <DeployContent Include="$(DNNFileName).dnn" />
+      <DeployContent Include="License.txt" />
+      <DeployContent Include="ReleaseNotes.txt" />
+      <DeployContent Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeployContent)" DestinationFiles="@(DeployContent->'$(DeployModuleFolder)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <!-- Fire-and-forget ping so IIS picks up the new DLL. Runs in a detached hidden powershell; MSBuild returns immediately. -->
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\BuildScripts\PingDevSite.ps1&quot; -Url &quot;$(DevSiteUrl)&quot;"
+          IgnoreExitCode="true"
+          ContinueOnError="true"
+          Condition="Exists('$(MSBuildProjectDirectory)\BuildScripts\PingDevSite.ps1')" />
   </Target>
 </Project>

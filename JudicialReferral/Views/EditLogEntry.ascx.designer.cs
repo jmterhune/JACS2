@@ -11,8 +11,11 @@ namespace tjc.Modules.JudicialReferral.Views
         protected global::System.Web.UI.WebControls.ValidationSummary valSummary;
         protected global::System.Web.UI.WebControls.TextBox txtReceived;
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valReceived;
-        protected global::System.Web.UI.WebControls.TextBox txtCaseNumber;
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator valCaseNumber;
+        protected global::System.Web.UI.WebControls.DropDownList drpCountyLetter;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseYear;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseType;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseSequence;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantSuffix;
         protected global::System.Web.UI.WebControls.TextBox txtCaseName;
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valCaseName;
         protected global::System.Web.UI.WebControls.DropDownList drpCaseType;

@@ -38,7 +38,7 @@ namespace tjc.Modules.JudicialReferral.Views
                             if (judgeInfo != null)
                                 txtJudge.Text = judgeInfo.DisplayName;
                             txtCaseName.Text = objReferral.CaseParties;
-                            txtCaseNumber.Text = objReferral.CaseNumber;
+                            PopulateCaseNumberFields(objReferral.CaseNumber);
                             if (objReferral.MotionDate.HasValue)
                                 txtMotionFiled.Text = objReferral.MotionDate.Value.ToString("yyyy-MM-dd");
                             if (objReferral.JudgeResponseDate.HasValue)
@@ -60,15 +60,15 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void BindLists()
         {
-            BindSimple(drpCaseType, "SELECT CaseType AS Value FROM tjc_cc_casetype ORDER BY CaseType");
+            BindSimple(drpCaseType, "SELECT CaseType AS Value FROM tjc_cc_case_type ORDER BY CaseType");
             BindSimple(drpCounty, "SELECT County AS Value FROM tjc_cc_county ORDER BY County");
-            BindSimple(drpAction, "SELECT [Action] AS Value FROM tjc_cc_actiontaken ORDER BY [Action]");
+            BindSimple(drpAction, "SELECT [Action] AS Value FROM tjc_cc_action_taken ORDER BY [Action]");
             BindActiveInactive(drpRequestor,
                 "SELECT RequestorName AS Value, IsActive FROM tjc_cc_requestor ORDER BY IsActive DESC, RequestorName");
             BindActiveInactive(drpAttorney,
                 "SELECT AttorneyName AS Value, IsActive FROM tjc_cc_attorney ORDER BY IsActive DESC, AttorneyName");
             BindActiveInactive(drpTimeSpan,
-                "SELECT TimeSpan AS Value, IsActive FROM tjc_cc_timespent ORDER BY IsActive DESC, TimeSpan");
+                "SELECT TimeSpan AS Value, IsActive FROM tjc_cc_time_spent ORDER BY IsActive DESC, TimeSpan");
         }
 
         private void BindSimple(DropDownList ddl, string sql)
@@ -138,7 +138,7 @@ SELECT SCOPE_IDENTITY();";
                     var args = new object[]
                     {
                         dateReceived == DateTime.MinValue ? (object)DBNull.Value : dateReceived,
-                        txtCaseNumber.Text.Trim(),
+                        GetCaseNumber(),
                         txtCaseName.Text.Trim(),
                         drpCaseType.SelectedValue,
                         drpRequestor.SelectedValue,
@@ -184,6 +184,39 @@ SELECT SCOPE_IDENTITY();";
         {
             public string Value { get; set; }
             public bool IsActive { get; set; }
+        }
+
+        private void PopulateCaseNumberFields(string caseNumber)
+        {
+            if (string.IsNullOrEmpty(caseNumber)) return;
+            var parts = caseNumber.Split('-');
+            if (parts.Length >= 1)
+            {
+                var item = drpCountyLetter.Items.FindByValue(parts[0]);
+                if (item != null) drpCountyLetter.SelectedValue = parts[0];
+            }
+            if (parts.Length >= 2) txtCaseYear.Text = parts[1];
+            if (parts.Length >= 3) txtCaseType.Text = parts[2];
+            if (parts.Length >= 4) txtCaseSequence.Text = parts[3];
+            if (parts.Length >= 5) txtDefendantSuffix.Text = string.Join("-", parts.Skip(4));
+        }
+
+        private string GetCaseNumber()
+        {
+            string county = drpCountyLetter.SelectedValue ?? string.Empty;
+            string year = (txtCaseYear.Text ?? string.Empty).Trim();
+            string type = (txtCaseType.Text ?? string.Empty).Trim().ToUpper();
+            string sequence = (txtCaseSequence.Text ?? string.Empty).Trim();
+            string suffix = (txtDefendantSuffix.Text ?? string.Empty).Trim().ToUpper();
+
+            int seqInt;
+            if (int.TryParse(new string(sequence.Where(char.IsDigit).ToArray()), out seqInt))
+                sequence = seqInt.ToString("000000");
+
+            string result = string.Format("{0}-{1}-{2}-{3}", county, year, type, sequence);
+            if (!string.IsNullOrWhiteSpace(suffix))
+                result += "-" + suffix;
+            return result;
         }
     }
 }

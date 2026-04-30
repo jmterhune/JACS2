@@ -10,7 +10,11 @@ namespace tjc.Modules.JudicialReferral.Views
     {
         protected global::System.Web.UI.WebControls.Panel pnlJA;
         protected global::System.Web.UI.WebControls.DropDownList drpJudge;
-        protected global::System.Web.UI.WebControls.TextBox txtCaseNumber;
+        protected global::System.Web.UI.WebControls.DropDownList drpCountyLetter;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseYear;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseType;
+        protected global::System.Web.UI.WebControls.TextBox txtCaseSequence;
+        protected global::System.Web.UI.WebControls.TextBox txtDefendantSuffix;
         protected global::System.Web.UI.WebControls.TextBox txtCaseParties;
         protected global::System.Web.UI.WebControls.TextBox txtMotionTitle;
         protected global::System.Web.UI.WebControls.TextBox txtMotionDate;

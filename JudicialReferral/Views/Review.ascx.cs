@@ -81,7 +81,7 @@ namespace tjc.Modules.JudicialReferral.Views
                 ltAttachments.Text = "No Attachment";
             }
 
-            txtCaseNumber.Text = objReferral.CaseNumber;
+            PopulateCaseNumberFields(objReferral.CaseNumber);
             txtCaseParties.Text = objReferral.CaseParties;
             if (objReferral.MotionDate.HasValue)
                 txtMotionDate.Text = objReferral.MotionDate.Value.ToString("yyyy-MM-dd");
@@ -223,7 +223,7 @@ namespace tjc.Modules.JudicialReferral.Views
             if (objReferral == null) return;
 
             objReferral.CaseParties = txtCaseParties.Text;
-            objReferral.CaseNumber = txtCaseNumber.Text;
+            objReferral.CaseNumber = GetCaseNumber();
 
             DateTime parsed;
             if (DateTime.TryParse(txtMotionDate.Text, out parsed))
@@ -356,6 +356,39 @@ namespace tjc.Modules.JudicialReferral.Views
             }
             ctl.UpdateStatus(objReferral.ReferralId, objReferral.Status);
             Response.Redirect(HomeUrl);
+        }
+
+        private void PopulateCaseNumberFields(string caseNumber)
+        {
+            if (string.IsNullOrEmpty(caseNumber)) return;
+            var parts = caseNumber.Split('-');
+            if (parts.Length >= 1)
+            {
+                var item = drpCountyLetter.Items.FindByValue(parts[0]);
+                if (item != null) drpCountyLetter.SelectedValue = parts[0];
+            }
+            if (parts.Length >= 2) txtCaseYear.Text = parts[1];
+            if (parts.Length >= 3) txtCaseType.Text = parts[2];
+            if (parts.Length >= 4) txtCaseSequence.Text = parts[3];
+            if (parts.Length >= 5) txtDefendantSuffix.Text = string.Join("-", parts.Skip(4));
+        }
+
+        private string GetCaseNumber()
+        {
+            string county = drpCountyLetter.SelectedValue ?? string.Empty;
+            string year = (txtCaseYear.Text ?? string.Empty).Trim();
+            string type = (txtCaseType.Text ?? string.Empty).Trim().ToUpper();
+            string sequence = (txtCaseSequence.Text ?? string.Empty).Trim();
+            string suffix = (txtDefendantSuffix.Text ?? string.Empty).Trim().ToUpper();
+
+            int seqInt;
+            if (int.TryParse(new string(sequence.Where(char.IsDigit).ToArray()), out seqInt))
+                sequence = seqInt.ToString("000000");
+
+            string result = string.Format("{0}-{1}-{2}-{3}", county, year, type, sequence);
+            if (!string.IsNullOrWhiteSpace(suffix))
+                result += "-" + suffix;
+            return result;
         }
     }
 }

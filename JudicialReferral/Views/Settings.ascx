@@ -6,16 +6,16 @@
 </h2>
 <fieldset>
     <div class="dnnFormItem">
-        <dnn:Label ID="lblJudgeRole" runat="server" ControlName="txtJudgeRole" />
-        <asp:TextBox ID="txtJudgeRole" runat="server" />
+        <dnn:Label ID="lblJudgeRole" runat="server" ControlName="drpJudgeRole" />
+        <asp:DropDownList ID="drpJudgeRole" runat="server" CssClass="form-select" />
     </div>
     <div class="dnnFormItem">
-        <dnn:Label ID="lblJaRole" runat="server" ControlName="txtJaRole" />
-        <asp:TextBox ID="txtJaRole" runat="server" />
+        <dnn:Label ID="lblJaRole" runat="server" ControlName="drpJaRole" />
+        <asp:DropDownList ID="drpJaRole" runat="server" CssClass="form-select" />
     </div>
     <div class="dnnFormItem">
-        <dnn:Label ID="lblCounselRole" runat="server" ControlName="txtCounselRole" />
-        <asp:TextBox ID="txtCounselRole" runat="server" />
+        <dnn:Label ID="lblCounselRole" runat="server" ControlName="drpCounselRole" />
+        <asp:DropDownList ID="drpCounselRole" runat="server" CssClass="form-select" />
     </div>
     <div class="dnnFormItem">
         <dnn:Label ID="lblCounselEmail" runat="server" ControlName="txtCounselEmail" />

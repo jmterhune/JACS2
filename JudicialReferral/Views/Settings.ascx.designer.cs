@@ -9,11 +9,11 @@ namespace tjc.Modules.JudicialReferral.Views
     public partial class Settings
     {
         protected global::DotNetNuke.UI.UserControls.LabelControl lblJudgeRole;
-        protected global::System.Web.UI.WebControls.TextBox txtJudgeRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpJudgeRole;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblJaRole;
-        protected global::System.Web.UI.WebControls.TextBox txtJaRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpJaRole;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblCounselRole;
-        protected global::System.Web.UI.WebControls.TextBox txtCounselRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpCounselRole;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblCounselEmail;
         protected global::System.Web.UI.WebControls.TextBox txtCounselEmail;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblFolder;

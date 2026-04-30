@@ -1,41 +1,52 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Review.ascx.cs" Inherits="tjc.Modules.JudicialReferral.Views.Review" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
-<div class="container-fluid mt-3" style="max-width:1000px">
+<div class="container-fluid form-wide">
     <asp:Panel ID="pnlJA" runat="server">
         <h3>Referral Details</h3>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
                         <label for="<%=drpJudge.ClientID %>">Judge</label>
                         <asp:DropDownList ID="drpJudge" runat="server" CssClass="form-control">
                             <asp:ListItem Text="&lt; Select Judge &gt;" Value=""></asp:ListItem>
                         </asp:DropDownList>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="<%=txtCaseNumber.ClientID %>">Case Number</label>
-                        <asp:TextBox ID="txtCaseNumber" runat="server" MaxLength="25" CssClass="form-control"></asp:TextBox>
+                    <div class="col-md-8">
+                        <label for="drpCountyLetter">Case Number</label>
+                        <div class="input-group">
+                            <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control county-letter" ClientIDMode="Static">
+                                <asp:ListItem Text="" Value=""></asp:ListItem>
+                                <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
+                                <asp:ListItem Text="M" Value="M" title="Manatee"></asp:ListItem>
+                                <asp:ListItem Text="S" Value="S" title="Sarasota"></asp:ListItem>
+                                <asp:ListItem Text="V" Value="V" title="Venice"></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control case-year" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                            <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-type" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
+                            <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="25" CssClass="form-control upperCase case-sequence" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                            <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="10" CssClass="form-control upperCase" ClientIDMode="Static"></asp:TextBox>
+                            <small class="input-group-text" title="County-Year-Case Type-Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
+                        </div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
                         <label for="<%=txtCaseParties.ClientID %>">Case Name</label>
                         <asp:TextBox ID="txtCaseParties" runat="server" CssClass="form-control"></asp:TextBox>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-8">
+                <div class="row">
+                    <div class="col-md-8">
                         <label for="<%=txtMotionTitle.ClientID %>">Motion Title</label>
                         <asp:TextBox ID="txtMotionTitle" runat="server" CssClass="form-control"></asp:TextBox>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="col-md-4">
                         <label for="<%=txtMotionDate.ClientID %>">Motion Date</label>
                         <asp:TextBox ID="txtMotionDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
                     </div>
                 </div>
 
-                <div class="mt-3">
+                <div>
                     <h5><asp:Literal ID="ltAttachments" runat="server" Text="Attachments"></asp:Literal></h5>
                     <asp:Repeater ID="rptFiles" runat="server">
                         <HeaderTemplate>
@@ -54,15 +65,11 @@
                     </asp:Repeater>
                 </div>
                 <asp:HiddenField runat="server" ID="hdIsJudge" Value="0" ClientIDMode="Static" />
-            </div>
-        </div>
     </asp:Panel>
 
     <asp:Panel ID="pnlJudge" runat="server" ClientIDMode="Static">
         <h3>Motion Type</h3>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="form-inline mb-3">
+                <div class="form-inline">
                     <asp:RadioButtonList ID="rblDivisions" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal" CssClass="division">
                         <asp:ListItem Text="&nbsp;Criminal&nbsp;" Value="0" />
                         <asp:ListItem Text="&nbsp;Civil&nbsp;" Value="1" />
@@ -76,7 +83,7 @@
                         <li class="mb-2">
                             <asp:RadioButton ID="chkStatusOrder" GroupName="criminal" runat="server" Text="&nbsp;Status Order from 2d DCA/Supreme Court" ClientIDMode="Static" />
                             <label class="ml-3">Date Filed:</label>
-                            <asp:TextBox runat="server" ID="txtStatusOrderFiled" CssClass="form-control-sm d-inline-block" TextMode="SingleLine" type="date" ClientIDMode="Static" Style="width:auto" />
+                            <asp:TextBox runat="server" ID="txtStatusOrderFiled" CssClass="form-control-sm d-inline-block w-auto" TextMode="SingleLine" type="date" ClientIDMode="Static" />
                             <asp:CustomValidator ID="valStatusOrderFiled" CssClass="text-danger" runat="server" ErrorMessage="Date Filed is Required"
                                 ClientValidationFunction="ValidateStatusOrderFiled" Display="Dynamic"></asp:CustomValidator>
                         </li>
@@ -86,7 +93,7 @@
                         <li class="mb-2">
                             <asp:RadioButton ID="chkMotionCorrect" GroupName="criminal" runat="server" Text="&nbsp;<strong>3.800(b) Motion</strong> <small class='text-muted'>(rule in 60 days or deemed denied)</small>" ClientIDMode="Static" />
                             <label class="ml-3">Date Filed:</label>
-                            <asp:TextBox runat="server" ID="txtMotionCorrectFiled" CssClass="form-control-sm d-inline-block" TextMode="SingleLine" type="date" ClientIDMode="Static" Style="width:auto" />
+                            <asp:TextBox runat="server" ID="txtMotionCorrectFiled" CssClass="form-control-sm d-inline-block w-auto" TextMode="SingleLine" type="date" ClientIDMode="Static" />
                             <asp:CustomValidator ID="valMotionCorrectFiled" CssClass="text-danger" runat="server" ErrorMessage="Date Filed is Required"
                                 ClientValidationFunction="ValidateMotionCorrectFiled" Display="Dynamic"></asp:CustomValidator>
                         </li>
@@ -127,7 +134,7 @@
                         ClientValidationFunction="MotionCheckCriminal" Display="Dynamic"></asp:CustomValidator>
                 </div>
 
-                <div id="dvCivil" style="display:none">
+                <div id="dvCivil" class="d-none">
                     <ul class="list-unstyled">
                         <li><asp:RadioButton ID="chkDismissCivil" GroupName="civil" runat="server" Text="&nbsp;Motion to Dismiss" /></li>
                         <li><asp:RadioButton ID="chkSummaryJudgementCivil" GroupName="civil" runat="server" Text="&nbsp;Motion for Summary Judgment" /></li>
@@ -150,7 +157,7 @@
                         ClientValidationFunction="MotionCheckCivil" Display="Dynamic"></asp:CustomValidator>
                 </div>
 
-                <div id="dvFamily" style="display:none">
+                <div id="dvFamily" class="d-none">
                     <ul class="list-unstyled">
                         <li><asp:CheckBox ID="chkModifyTimeshareFamily" runat="server" Text="&nbsp;Supplemental Petition to Modify Timesharing" /></li>
                         <li><asp:CheckBox ID="chkModifySupportFamily" runat="server" Text="&nbsp;Supplemental Petition to Modify Child Support/Alimony" /></li>
@@ -173,20 +180,16 @@
                         ClientValidationFunction="MotionCheckFamily" Display="Dynamic"></asp:CustomValidator>
                 </div>
 
-                <div id="dvAppeals" style="display:none">
-                    <div class="form-group">
+                <div id="dvAppeals" class="d-none">
+                    <div>
                         <label for="txtAppeals">Type of Appeal</label>
                         <asp:TextBox ID="txtAppeals" runat="server" MaxLength="50" CssClass="form-control" ClientIDMode="Static" />
                         <asp:CustomValidator ID="valAppeals" CssClass="text-danger" runat="server" ErrorMessage="Enter a value for Type of Appeal"
                             ClientValidationFunction="ValidateAppeals" Display="Dynamic"></asp:CustomValidator>
                     </div>
                 </div>
-            </div>
-        </div>
 
         <h3>Judicial Response</h3>
-        <div class="card mb-3">
-            <div class="card-body">
                 <ul class="list-unstyled">
                     <li class="mb-2">
                         <asp:RadioButton ID="chkNo" runat="server" Text="&nbsp;I <strong>do not</strong> seek Court Counsel's assistance in the above titled motion." GroupName="response" />
@@ -209,18 +212,16 @@
                     <li class="mb-2">
                         <asp:CustomValidator ID="valResponse" CssClass="text-danger" runat="server" ErrorMessage="You must accept or reject Court Counsel's assistance"
                             ClientValidationFunction="ValidateResponse" Display="Dynamic"></asp:CustomValidator>
-                        <div class="form-group mt-2">
+                        <div>
                             <label for="txtRequestedCompletionDate">Requested Completion Date (other than ASAP)</label>
-                            <asp:TextBox runat="server" ID="txtRequestedCompletionDate" CssClass="form-control" TextMode="SingleLine" type="date" ClientIDMode="Static" Style="width:auto" />
+                            <asp:TextBox runat="server" ID="txtRequestedCompletionDate" CssClass="form-control w-auto" TextMode="SingleLine" type="date" ClientIDMode="Static" />
                             <asp:CustomValidator ID="valRequestedCompletionDate" CssClass="text-danger" runat="server" ErrorMessage="Requested Completion Date Required if seeking Court Counsel Assistance" ClientValidationFunction="ValidateRequestedCompletionDate" Display="Dynamic"></asp:CustomValidator>
                         </div>
                     </li>
                 </ul>
-            </div>
-        </div>
     </asp:Panel>
 
-    <div class="mt-3">
+    <div>
         <asp:LinkButton ID="cmdSave" runat="server" CssClass="btn btn-primary" Text="Save" OnClick="cmdSave_Click" />
         <asp:LinkButton ID="cmdComplete" runat="server" CausesValidation="false" CssClass="btn btn-success" Text="Order Completed?" OnClick="cmdComplete_Click" />
         <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
@@ -274,7 +275,11 @@
     function SwitchDivisions(division) {
         var sections = { "0": "#dvCriminal", "1": "#dvCivil", "2": "#dvFamily", "3": "#dvAppeals" };
         for (var key in sections) {
-            if (key === division) jQuery(sections[key]).show(); else jQuery(sections[key]).hide();
+            if (key === division) {
+                jQuery(sections[key]).removeClass('d-none');
+            } else {
+                jQuery(sections[key]).addClass('d-none');
+            }
         }
     }
 
@@ -426,4 +431,52 @@
             if (!text || text.length === 0) args.IsValid = false;
         }
     }
+
+    (function ($) {
+        $(document).ready(function () {
+            $(".upperCase").on("input", function () {
+                $(this).val($(this).val().toUpperCase());
+            });
+            if ($("#txtCaseSequence").val() === "") {
+                $("#txtCaseSequence").mask("000000");
+            }
+            if ($("#txtCaseType").val() !== "CF") {
+                $("#txtDefendantSuffix").hide();
+            } else {
+                MaskCaseSequence("CF");
+            }
+            $("#txtCaseType").on("input", function () {
+                var ct = $(this).val();
+                if (ct.toUpperCase() === "CF") {
+                    $("#txtDefendantSuffix").show();
+                } else {
+                    $("#txtDefendantSuffix").val("").hide();
+                }
+                MaskCaseSequence(ct);
+            });
+            $("#drpCountyLetter").on("change", function () {
+                MaskCaseSequence($("#txtCaseType").val());
+            });
+        });
+    }(jQuery));
+
+    function MaskCaseSequence(caseType) {
+        var loc = jQuery("#drpCountyLetter").val();
+        jQuery("#txtCaseSequence").mask("000000");
+        jQuery("#txtCaseSequence").attr("placeholder", "000000");
+        if ((caseType || "").toUpperCase() === "CF") {
+            if (loc === "S" || loc === "V") {
+                jQuery("#txtDefendantSuffix").mask("0000");
+                jQuery("#caseFormat").text("000000-0000");
+                if (!jQuery("#txtDefendantSuffix").val()) jQuery("#txtDefendantSuffix").attr("placeholder", "0000");
+            } else {
+                jQuery("#txtDefendantSuffix").mask("AA", { translation: { A: { pattern: /[A-Za-z]/ } } });
+                jQuery("#caseFormat").text("000000-AA");
+                if (!jQuery("#txtDefendantSuffix").val()) jQuery("#txtDefendantSuffix").attr("placeholder", "AA");
+            }
+        } else {
+            jQuery("#caseFormat").text("000000");
+        }
+    }
 </script>
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/jQuery/jquery.mask.js" />

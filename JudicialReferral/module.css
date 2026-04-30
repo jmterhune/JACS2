@@ -1,0 +1,57 @@
+/* Judicial Referral Module Styles */
+.division label {
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.division input[type="radio"] {
+    margin-right: 5px;
+}
+
+#dvCriminal ul li,
+#dvCivil ul li,
+#dvFamily ul li {
+    padding: 5px 0;
+}
+
+#dvCriminal .form-control-sm,
+#dvCivil .form-control-sm,
+#dvFamily .form-control-sm {
+    display: inline-block;
+    width: auto;
+    margin-left: 10px;
+}
+
+.text-danger.custom-validator {
+    font-weight: bold;
+    display: block;
+}
+
+.refer-judge input {
+    background-color: lightpink;
+}
+
+.refer-judge label {
+    color: darkred;
+}
+
+.attachment-container {
+    margin: 10px 0;
+}
+
+/* Collapsible card header expand/collapse indicator */
+.collapse-toggle .icon-collapsed { display: none; }
+.collapse-toggle .icon-expanded { display: inline-block; }
+.collapse-toggle[aria-expanded="false"] .icon-expanded { display: none; }
+.collapse-toggle[aria-expanded="false"] .icon-collapsed { display: inline-block; }
+
+/* Form container width constraints */
+.form-narrow { max-width: 900px; }
+.form-wide { max-width: 1000px; }
+
+/* Shared case-number widget */
+.upperCase { text-transform: uppercase; }
+.county-letter { max-width: 4rem; }
+.case-year { width: 4rem; }
+.case-type { width: 3rem; text-transform: uppercase; }
+.case-sequence { width: 6rem; }

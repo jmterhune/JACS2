@@ -45,7 +45,7 @@ namespace tjc.Modules.JudicialReferral.Views
                     cmdCancel.NavigateUrl = HomeUrl;
                     PopulateJudgeList();
                     EnsureTargetFolder();
-                    txtYear.Attributes.Add("placeholder", DateTime.Now.Year.ToString());
+                    txtCaseYear.Attributes.Add("placeholder", DateTime.Now.Year.ToString());
                 }
             }
             catch (Exception exc)
@@ -128,11 +128,7 @@ namespace tjc.Modules.JudicialReferral.Views
             if (DateTime.TryParse(txtMotionDate.Text, out parsed))
                 motionDate = parsed;
 
-            int caseInt = 0;
-            int.TryParse(txtCaseNumber.Text, out caseInt);
-
-            string caseNumber = string.Format("{0}-{1}-{2}-{3:000000}",
-                drpCounty.SelectedValue, txtYear.Text, txtCaseType.Text.ToUpper(), caseInt);
+            string caseNumber = GetCaseNumber();
 
             var objReferral = new JudgeReferralInfo
             {
@@ -173,6 +169,27 @@ namespace tjc.Modules.JudicialReferral.Views
                 EditUrl("rid", objReferral.ReferralId.ToString(), "review"),
                 objReferral.CaseNumber);
             Mail.SendEmail(emailFrom, toEmail, subject, body);
+        }
+
+        private string GetCaseNumber()
+        {
+            string county = drpCountyLetter.SelectedValue ?? string.Empty;
+            string year = (txtCaseYear.Text ?? string.Empty).Trim();
+            string type = (txtCaseType.Text ?? string.Empty).Trim().ToUpper();
+            string sequence = (txtCaseSequence.Text ?? string.Empty).Trim();
+            string suffix = (txtDefendantSuffix.Text ?? string.Empty).Trim().ToUpper();
+
+            // Zero-pad sequence to 6 digits if it's numeric (safety net if jquery.mask didn't apply)
+            int seqInt;
+            if (int.TryParse(new string(sequence.Where(char.IsDigit).ToArray()), out seqInt))
+            {
+                sequence = seqInt.ToString("000000");
+            }
+
+            string result = string.Format("{0}-{1}-{2}-{3}", county, year, type, sequence);
+            if (!string.IsNullOrWhiteSpace(suffix))
+                result += "-" + suffix;
+            return result;
         }
     }
 }

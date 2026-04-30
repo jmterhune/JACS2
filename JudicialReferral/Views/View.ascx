@@ -8,16 +8,23 @@
         </asp:LinkButton>
     </div>
 
+    <div class="row">
+      <div class="col">
     <div class="card mb-3">
         <div class="card-header">
-            <a data-toggle="collapse" href="#searchCollapse" role="button" aria-expanded="true" aria-controls="searchCollapse" class="text-decoration-none">
+            <a data-bs-toggle="collapse" href="#searchCollapse" role="button" aria-expanded="true" aria-controls="searchCollapse"
+               class="text-decoration-none d-flex justify-content-between align-items-center collapse-toggle">
                 <h5 class="mb-0"><i class="fas fa-search"></i>&nbsp;Search for Referral</h5>
+                <span class="collapse-indicator">
+                    <i class="fas fa-minus icon-expanded"></i>
+                    <i class="fas fa-plus icon-collapsed"></i>
+                </span>
             </a>
         </div>
         <div id="searchCollapse" class="collapse show">
             <div class="card-body p-4">
-                <div class="form-row">
-                    <div class="form-group col-md-4">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
                         <label for="<%=drpStatus.ClientID %>">Status</label>
                         <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control">
                             <asp:ListItem Text="&lt; Select Status &gt;" Value=""></asp:ListItem>
@@ -29,32 +36,32 @@
                             <asp:ListItem Text="Completed" Value="6"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
-                    <div class="form-group col-md-4" id="divJudge" runat="server">
+                    <div class="col-md-4 mb-3" id="divJudge" runat="server">
                         <label for="<%=drpJudge.ClientID %>">Judge</label>
                         <asp:DropDownList ID="drpJudge" runat="server" CssClass="form-control">
                             <asp:ListItem Text="&lt; Select Judge &gt;" Value=""></asp:ListItem>
                         </asp:DropDownList>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="col-md-4 mb-3">
                         <label for="<%=txtCaseNumber.ClientID %>">Case Number</label>
                         <asp:TextBox ID="txtCaseNumber" runat="server" MaxLength="25" CssClass="form-control"></asp:TextBox>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-4">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
                         <label for="<%=txtMotionTitle.ClientID %>">Motion Title</label>
                         <asp:TextBox ID="txtMotionTitle" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="col-md-4 mb-3">
                         <label for="<%=txtStartDate.ClientID %>">Start Date</label>
                         <asp:TextBox ID="txtStartDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="col-md-4 mb-3">
                         <label for="<%=txtEndDate.ClientID %>">End Date</label>
                         <asp:TextBox ID="txtEndDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="row">
                     <div class="col">
                         <asp:LinkButton ID="cmdSearch" runat="server" CssClass="btn btn-primary" Text="Search" OnClick="cmdSearch_Click" />
                         <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
@@ -63,11 +70,13 @@
             </div>
         </div>
     </div>
+      </div>
+    </div>
 
     <div class="table-responsive">
         <asp:Repeater ID="rptReferral" runat="server" OnItemCommand="rptReferral_ItemCommand" OnItemDataBound="rptReferral_ItemDataBound">
             <HeaderTemplate>
-                <table id="table-referrals" class="table table-striped table-bordered table-hover" style="width:100%">
+                <table id="table-referrals" class="table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
                             <th></th>
