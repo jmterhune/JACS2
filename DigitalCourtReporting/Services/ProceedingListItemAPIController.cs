@@ -33,7 +33,7 @@ namespace tjc.Modules.DigitalCourtReporting.Services
             Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
 
-            string sortColumn = "RequestDateFormatted"; // Default sort column
+            string sortColumn = "RequestedDate"; // Default sort column
             string sortDirection = "asc"; // Default sort direction
 
             if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
@@ -93,11 +93,11 @@ namespace tjc.Modules.DigitalCourtReporting.Services
 
         private string GetSortColumn(int columnIndex)
         {
-            string name = "RequestDateFormatted";
+            string name = "RequestedDate"; // Default
             switch (columnIndex)
             {
                 case 1:
-                    name = "RequestDateFormatted";
+                    name = "RequestedDate"; // Map to DateTime for chronological sort
                     break;
                 case 2:
                     name = "Requestor";
@@ -112,7 +112,7 @@ namespace tjc.Modules.DigitalCourtReporting.Services
                     name = "ProceedingDate";
                     break;
                 default:
-                    name = "RequestDateFormatted";
+                    name = "RequestedDate";
                     break;
             }
             return name;

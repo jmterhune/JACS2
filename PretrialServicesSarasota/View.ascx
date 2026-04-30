@@ -369,12 +369,10 @@
 
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Libraries/jQuery-UI/01_13_02/Themes/jquery-ui.css" />
-<dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.js" />
-<dnn:dnncssInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.css" />
-<dnn:DnnCssInclude runat="server" 
-                   FilePath="~/resources/shared/stylesheets/dnndefault/8.0.0/default.css"
-                   Name="dnndefault" 
-                   Version="8.0.0" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="~/resources/shared/stylesheets/dnndefault/8.0.0/default.css" Name="dnndefault" Version="8.0.0" />
 
 <script type="text/javascript">
     /*globals jQuery, window, Sys */
@@ -407,7 +405,7 @@
             },
         });
 
-        $("#tblDefendantsInProgram_length").prepend('<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
+        $(".dt-length").prepend('<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

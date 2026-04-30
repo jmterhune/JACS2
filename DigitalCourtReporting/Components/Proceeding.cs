@@ -1,5 +1,7 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Web.Caching;
 namespace tjc.Modules.DigitalCourtReporting.Components
 {
@@ -37,6 +39,15 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public bool Paid { get; set; }
         public int? ModuleId { get; set; }
         public bool? IsInquiry { get; set; }
+        [IgnoreColumn]
+        internal IEnumerable<Notification> Notifications
+        {
+            get
+            {
+                var ctl = new NotificationController();
+                return ctl.GetNotificationsByProceeding(ProceedingID);
+            }
+        }
     }
     [TableName("tjc_dcr_proceeding_list")]
     [PrimaryKey("ProceedingID", AutoIncrement = true)]

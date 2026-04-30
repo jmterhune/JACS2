@@ -12,12 +12,10 @@
 
 using DotNetNuke.Abstractions;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 using tjc.Modules.DigitalCourtReporting.Components;
 
 namespace tjc.Modules.DigitalCourtReporting
@@ -36,12 +34,18 @@ namespace tjc.Modules.DigitalCourtReporting
     /// -----------------------------------------------------------------------------
     public partial class EditAccounting : DigitalCourtReportingModuleBase
     {
+        #region properties
         private readonly INavigationManager _navigationManager;
+        #endregion
+
+        #region Methods
         public EditAccounting()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
+        #endregion
 
+        #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -147,5 +151,6 @@ namespace tjc.Modules.DigitalCourtReporting
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+      #endregion
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 using tjc.Modules.EmployeeDB.Components.Models;
 
 namespace tjc.Modules.EmployeeDB.Components.Controllers
@@ -18,12 +19,26 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
+        // ------------------------------------------------------------------
+        // Bulk-fetch methods filter to IsEmployee = 1.
+        //
+        // tjc_employee can carry non-employee rows (legacy vendor / contractor
+        // records, terminated user shells, etc.). All employee-facing views,
+        // dropdowns, and SWN sync feeds want actual employees only — this
+        // restriction is enforced in the data layer so every caller benefits
+        // without each having to remember the flag.
+        //
+        // GetEmployee(id) and GetByUserId(id) are intentionally NOT filtered:
+        // they are point lookups by primary / foreign key and the caller
+        // already knows which row it wants.
+        // ------------------------------------------------------------------
+
         public IEnumerable<EmployeeInfo> GetAll()
         {
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
-                return rep.Get();
+                return rep.Find("WHERE IsEmployee = 1");
             }
         }
 
@@ -32,7 +47,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
-                return rep.Find("WHERE IsActive = 1");
+                return rep.Find("WHERE IsActive = 1 AND IsEmployee = 1");
             }
         }
 
@@ -41,7 +56,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             IEnumerable<EmployeeInfo> items;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var conditions = new List<string>();
+                // Search is always scoped to actual employees.
+                var conditions = new List<string> { "IsEmployee = 1" };
                 var args = new List<object>();
                 int paramIndex = 0;
 
@@ -66,10 +82,9 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
                     args.Add(countyId.Value);
                 }
 
-                string sql = "SELECT * FROM tjc_employee";
-                if (conditions.Any())
-                    sql += " WHERE " + string.Join(" AND ", conditions);
-                sql += " ORDER BY LastName, FirstName";
+                string sql = "SELECT * FROM tjc_employee WHERE "
+                             + string.Join(" AND ", conditions)
+                             + " ORDER BY LastName, FirstName";
 
                 items = ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, sql, args.ToArray());
             }
@@ -78,6 +93,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int CreateEmployee(EmployeeInfo item, int userId = -1)
         {
+            ModelNormalizer.Normalize(item);
             item.CreatedDate = DateTime.Now;
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
@@ -92,6 +108,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void UpdateEmployee(EmployeeInfo item, int userId = -1)
         {
+            ModelNormalizer.Normalize(item);
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
             using (IDataContext ctx = DataContext.Instance())
@@ -134,13 +151,27 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
+        /// <summary>Single-column UPDATE used by the Photo tab API endpoint.
+        /// Avoids round-tripping the whole row when all we want to change is
+        /// the FileId pointer (or clear it back to NULL).</summary>
+        public void SetFileId(int employeeId, int? fileId, int actorId = -1)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.Execute(CommandType.Text,
+                    "UPDATE tjc_employee SET FileId = @0, LastModifiedDate = @1, LastModifiedById = @2 WHERE EmployeeId = @3",
+                    (object)fileId ?? DBNull.Value, DateTime.Now, actorId, employeeId);
+            }
+        }
+
         public IEnumerable<EmployeeInfo> GetSupervisors()
         {
             using (IDataContext ctx = DataContext.Instance())
             {
                 string sql = @"SELECT * FROM tjc_employee
-                               WHERE Position LIKE '%Supervisor%'
-                                  OR EmployeeId IN (SELECT DISTINCT SupervisorId FROM tjc_employee WHERE SupervisorId IS NOT NULL)
+                               WHERE IsEmployee = 1
+                                 AND (Position LIKE '%Supervisor%'
+                                      OR EmployeeId IN (SELECT DISTINCT SupervisorId FROM tjc_employee WHERE SupervisorId IS NOT NULL))
                                ORDER BY LastName, FirstName";
                 return ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, sql);
             }

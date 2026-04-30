@@ -134,7 +134,7 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblRegion_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditRegionModal"><i class="fa fa-plus"></i>&nbsp;Add Region</button>');
+        $("#.dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditRegionModal"><i class="fa fa-plus"></i>&nbsp;Add Region</button>');
         table.on('draw', function () {
             $(".confirm").dnnConfirm({
                 text: 'Are you sure you wish to Delete the selected Region?',

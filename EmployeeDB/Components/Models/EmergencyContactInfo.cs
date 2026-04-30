@@ -1,5 +1,6 @@
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 
 namespace tjc.Modules.EmployeeDB.Components.Models
 {
@@ -12,9 +13,9 @@ namespace tjc.Modules.EmployeeDB.Components.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Relationship { get; set; }
-        public string PhoneHome { get; set; }
-        public string PhoneWork { get; set; }
-        public string PhoneMobile { get; set; }
+        [DigitsOnly] public string PhoneHome { get; set; }
+        [DigitsOnly] public string PhoneWork { get; set; }
+        [DigitsOnly] public string PhoneMobile { get; set; }
         public int? CallOrder { get; set; }
         public DateTime CreatedDate { get; set; }
         public int CreatedById { get; set; }

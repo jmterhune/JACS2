@@ -7,6 +7,7 @@ namespace tjc.Modules.DigitalCourtReporting
 {
     public class DigitalCourtReportingModuleBase : PortalModuleBase
     {
+        #region Properties
         private readonly INavigationManager _navigationManager;
         public DigitalCourtReportingModuleBase()
         {
@@ -56,23 +57,6 @@ namespace tjc.Modules.DigitalCourtReporting
             }
 
         }
-        public string AccountingUrl { get { return _navigationManager.NavigateURL(); } }
-        public string NotificationUrl { get { return _navigationManager.NavigateURL("", "listtype=1"); } }
-        public string InquiryUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "inquiry=1"); } }
-        public string InquiryDeSotoUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "cid=1"); } }
-        public string InquiryManateeUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "cid=3"); } }
-        public string InquirySarasotaUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "cid=2"); } }
-        public string DCRUrl { get { return _navigationManager.NavigateURL("", "listtype=2"); } }
-        public string DCRDeSotoUrl { get { return _navigationManager.NavigateURL("", "listtype=2", "cid=1"); } }
-        public string DCRManateeUrl { get { return _navigationManager.NavigateURL("", "listtype=2", "cid=3"); } }
-        public string DCRSarasotaUrl { get { return _navigationManager.NavigateURL("", "listtype=2", "cid=2"); } }
-        public string CompleteUrl { get { return _navigationManager.NavigateURL("", "listtype=3"); } }
-        public string CompleteDeSotoUrl { get { return _navigationManager.NavigateURL("", "listtype=3", "cid=1"); } }
-        public string CompleteManateeUrl { get { return _navigationManager.NavigateURL("", "listtype=3", "cid=3"); } }
-        public string CompleteSarasotaUrl { get { return _navigationManager.NavigateURL("", "listtype=3", "cid=2"); } }
-        public string SearchUrl { get { return EditUrl("search"); } }
-        public string StatsUrl { get { return EditUrl("stats"); } }
-
         public int CountyId
         {
             get
@@ -80,7 +64,7 @@ namespace tjc.Modules.DigitalCourtReporting
                 var qs = Request.QueryString["cid"];
                 if (qs != null)
                     return Convert.ToInt32(qs);
-                return -1;
+                return 0;
             }
         }
         public bool IsInquiry
@@ -93,7 +77,6 @@ namespace tjc.Modules.DigitalCourtReporting
                 return false;
             }
         }
-
         public string SearchText
         {
             get
@@ -154,5 +137,25 @@ namespace tjc.Modules.DigitalCourtReporting
                 return "dcrgrpsar@jud12.flcourts.org";
             }
         }
+        #endregion
+
+        #region NavigationURLs
+        public string AccountingUrl { get { return _navigationManager.NavigateURL(); } }
+        public string NotificationUrl { get { return _navigationManager.NavigateURL("", "listtype=1"); } }
+        public string InquiryUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "inquiry=1"); } }
+        public string InquiryDeSotoUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "cid=1"); } }
+        public string InquiryManateeUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "cid=3"); } }
+        public string InquirySarasotaUrl { get { return _navigationManager.NavigateURL("", "listtype=4", "cid=2"); } }
+        public string DCRUrl { get { return _navigationManager.NavigateURL("", "listtype=2"); } }
+        public string DCRDeSotoUrl { get { return _navigationManager.NavigateURL("", "listtype=2", "cid=1"); } }
+        public string DCRManateeUrl { get { return _navigationManager.NavigateURL("", "listtype=2", "cid=3"); } }
+        public string DCRSarasotaUrl { get { return _navigationManager.NavigateURL("", "listtype=2", "cid=2"); } }
+        public string CompleteUrl { get { return _navigationManager.NavigateURL("", "listtype=3"); } }
+        public string CompleteDeSotoUrl { get { return _navigationManager.NavigateURL("", "listtype=3", "cid=1"); } }
+        public string CompleteManateeUrl { get { return _navigationManager.NavigateURL("", "listtype=3", "cid=3"); } }
+        public string CompleteSarasotaUrl { get { return _navigationManager.NavigateURL("", "listtype=3", "cid=2"); } }
+        public string SearchUrl { get { return EditUrl("search"); } }
+        public string StatsUrl { get { return EditUrl("stats"); } }
+        #endregion
     }
 }

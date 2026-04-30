@@ -1,5 +1,6 @@
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 
 namespace tjc.Modules.EmployeeDB.Components.Models
 {
@@ -8,7 +9,7 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     public class PositionHistoryInfo
     {
         public int PositionId { get; set; }
-        public string SocialSecurityNumber { get; set; }
+        [DigitsOnly] public string SocialSecurityNumber { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string Description { get; set; }

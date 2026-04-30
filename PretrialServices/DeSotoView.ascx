@@ -75,10 +75,11 @@
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
-                                 <th>Intake Date</th>
+                                <th>Intake Date</th>
                                 <th>Defendant</th>
                                 <th>Case Number</th>
                                 <th>Charges</th>
+                                  <th><abbr title="Most Serious Offense" data-toggle="tooltip">MSO</abbr></th>
                                 <th class="text-center">Indigent</th>
                                 <th class="text-center">
                                     <abbr title="Felony Conviction Dangerous">FCD</abbr></th>
@@ -109,10 +110,11 @@
                         <td class="command-icon">
                             <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"ItemId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
                         </td>
-                         <td><%#DataBinder.Eval(Container.DataItem,"FormattedIntakeDate") %></td>
+                        <td><%#DataBinder.Eval(Container.DataItem,"FormattedIntakeDate") %></td>
                         <td><%#DataBinder.Eval(Container.DataItem,"DefendantName") %></td>
                         <td><%#DataBinder.Eval(Container.DataItem,"CaseNumber") %></td>
                         <td><%#DataBinder.Eval(Container.DataItem,"ArrestCharges") %></td>
+                         <td><%#DataBinder.Eval(Container.DataItem,"MostSeriousOffense") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FormattedIndigent") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FcDangerous") %></td>
                         <td class="text-center"><%#DataBinder.Eval(Container.DataItem,"FcNonDangerous") %></td>
@@ -272,6 +274,17 @@
                                             <asp:ListItem Text="Warrant Issued for Non-Compliance with SPR Conditions" Value="6" />
                                         </asp:DropDownList>
                                     </div>
+                                    <div class="col-auto">
+                                        <asp:Label runat="server" AssociatedControlID="drpMostSeriosOffense" Text="Most Serious Offense<em>*</em>" />
+                                        <asp:DropDownList ID="drpMostSeriosOffense" runat="server" CssClass="form-control">
+                                            <asp:ListItem Text="< Select Option >" Value="" />
+                                            <asp:ListItem Text="907.041 (Incl Domestic)" />
+                                            <asp:ListItem Text="Non-Dangerous Felony" />
+                                            <asp:ListItem Text="Misd Only (Not Domestic)" />
+                                        </asp:DropDownList>
+                                        <asp:RequiredFieldValidator runat="server" ValidationGroup="defendant" ControlToValidate="drpMostSeriosOffense"
+                                            Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Please select an option" />
+                                    </div>
                                 </div>
                                 <div class="row p-3 pb-0">
                                     <div class="col-3  form-check">
@@ -337,8 +350,9 @@
 
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Libraries/jQuery-UI/01_13_02/Themes/jquery-ui.css" />
-<dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.js" />
-<dnn:dnncssInclude runat="server" FilePath="/Resources/Libraries/Datatables/datatables.min.css" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 
 <script type="text/javascript">
@@ -378,7 +392,7 @@
             },
         });
 
-        $("#tblDefendantsInProgram_length").prepend('<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
+        $(".dt-length").prepend('<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
         table.draw();
 
         $(".confirm").dnnConfirm({

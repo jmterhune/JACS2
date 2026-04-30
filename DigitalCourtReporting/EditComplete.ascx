@@ -1,53 +1,12 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditComplete.ascx.cs" Inherits="tjc.Modules.DigitalCourtReporting.EditComplete" %>
-<div class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
+<div id="navigationLinks" class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
     <a class="btn btn-primary" id="lnkAccounting" href='<%=AccountingUrl %>'>Accounting</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropInquiry" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Inquiry
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropInquiry">
-            <li>
-                <a class="dropdown-item" id="lnkInquiry" href="<%=InquiryUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqDesoto" href="<%=InquiryDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqManatee" href="<%=InquiryManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqSarasota" href="<%=InquirySarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropDCR" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            DCR
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropDCR">
-            <li>
-                <a class="dropdown-item" id="lnkDCR" href="<%=DCRUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRDesoto" href="<%=DCRDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRManatee" href="<%=DCRManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRSarasota" href="<%=DCRSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+    <a class="btn btn-primary" id="lnkInquiry" href="<%=InquiryUrl %>">Inquiry</a>
+    <a class="btn btn-primary" id="lnkDCR" href="<%=DCRUrl %>">
+        <abbr title="Digital Court Reporting">DCR</abbr></a>
     <a class="btn btn-primary" id="lnkNotification" href="<%=NotificationUrl %>">Notification</a>
     <a class="btn btn-primary" id="lnkStats" href="<%=StatsUrl %>">Stats</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropComplete" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Complete
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropComplete">
-            <li>
-                <a class="dropdown-item" id="lnkComplete" href="<%=CompleteUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompDesoto" href="<%=CompleteDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompManatee" href="<%=CompleteManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompSarasota" href="<%=CompleteSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+    <a class="btn btn-primary active" id="lnkComplete" href="<%=CompleteUrl %>">Complete</a>
 </div>
 <div class="heading heading-border heading-middle-border heading-middle-border-center heading-border-lg mb-1">
     <h2>Audio Request Form (Completed)</h2>

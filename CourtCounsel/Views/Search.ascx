@@ -1,8 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Search.ascx.cs" Inherits="tjc.Modules.CourtCounsel.Views.Search" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md rounded">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -20,36 +20,29 @@
     <div class="row mb-3">
         <div class="col-md-8">
             <div class="input-group">
-                <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="btnSearchType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Case Name
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#" onclick="SetSearchType(1); return false;">Case Name</a>
-                        <a class="dropdown-item" href="#" onclick="SetSearchType(2); return false;">Case Number</a>
-                        <a class="dropdown-item" href="#" onclick="SetSearchType(3); return false;">Attorney</a>
-                    </div>
-                </div>
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="btnSearchType" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Case Name
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="SetSearchType(1); return false;">Case Name</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="SetSearchType(2); return false;">Case Number</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="SetSearchType(3); return false;">Attorney</a></li>
+                </ul>
                 <asp:TextBox ID="swSearchTerm" runat="server" CssClass="form-control" placeholder="Enter search term..." />
                 <asp:DropDownList ID="swAttorney" runat="server" CssClass="form-control" style="display:none;" />
-                <div class="input-group-append">
-                    <asp:Button ID="cmdSearch" runat="server" CssClass="btn btn-primary" Text="Search" OnClick="cmdSearch_Click" />
-                </div>
+                <asp:Button ID="cmdSearch" runat="server" CssClass="btn btn-primary" Text="Search" OnClick="cmdSearch_Click" />
             </div>
         </div>
         <div class="col-md-4">
             <div id="divStatusFilters" style="display:none;">
                 <div class="form-check form-check-inline">
-                    <input type="checkbox" class="form-check-input" id="swActive" checked="checked" />
-                    <label class="form-check-label" for="swActive">Active</label>
+                    <asp:CheckBox ID="chkActive" runat="server" Checked="true" Text="Active" CssClass="form-check" />
                 </div>
                 <div class="form-check form-check-inline">
-                    <input type="checkbox" class="form-check-input" id="swPending" />
-                    <label class="form-check-label" for="swPending">Pending</label>
+                    <asp:CheckBox ID="chkPending" runat="server" Text="Inactive" CssClass="form-check" />
                 </div>
                 <div class="form-check form-check-inline">
-                    <input type="checkbox" class="form-check-input" id="swClosed" />
-                    <label class="form-check-label" for="swClosed">Closed</label>
+                    <asp:CheckBox ID="chkClosed" runat="server" Text="Completed" CssClass="form-check" />
                 </div>
             </div>
         </div>
@@ -173,6 +166,10 @@
 
     function PageInit() {
         jQuery(document).ready(function ($) {
+            // Bootstrap checkbox styling (exact methodology from ManageYears.ascx)
+            $(".form-check input").addClass("form-check-input");
+            $(".form-check label").addClass("form-check-label");
+
             if ($.fn.DataTable) {
                 $('#log-list').DataTable({
                     "order": [[1, "asc"]],

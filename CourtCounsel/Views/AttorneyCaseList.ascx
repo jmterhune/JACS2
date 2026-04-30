@@ -1,8 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AttorneyCaseList.ascx.cs" Inherits="tjc.Modules.CourtCounsel.Views.AttorneyCaseList" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md rounded">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -28,28 +28,29 @@
                 <th>Attorney</th>
                 <th>Action Date</th>
                 <th>Status</th>
-                <th>Completed Date</th>
+                <th id="thCompleted" runat="server">Completed</th>
             </tr>
         </thead>
         <tbody>
-            <asp:Repeater ID="rptAttorneyCaseList" runat="server">
+            <asp:Repeater ID="rptAttorneyCaseList" runat="server" OnItemDataBound="rptAttorneyCaseList_ItemDataBound">
                 <ItemTemplate>
                     <tr>
                         <td>
-                            <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") + "&pn=" + Server.UrlEncode(Eval("PartyName").ToString()) %>'>
-                                <%#Eval("PartyName") %>
+                            <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") + "?pn=" + Server.UrlEncode(Eval("PartyName").ToString()) %>'
+                               title='<%# Eval("PartyName") %>'>
+                                <%# FormatLongName(Eval("PartyName") as string) %>
                             </a>
                         </td>
                         <td>
                             <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") %>'>
-                                <%#Eval("CaseNumber") %>
+                                <%# (Eval("CaseNumber") as string ?? string.Empty).ToUpper() %>
                             </a>
                         </td>
                         <td><%#Eval("CaseType") %></td>
                         <td><%#Eval("Responsible") %></td>
-                        <td><%#FormatDate((DateTime?)Eval("DateDue")) %></td>
+                        <td><%#FormatDate((DateTime?)Eval("DateReceived")) %></td>
                         <td><%#GetStatus((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
-                        <td><%#FormatDate((DateTime?)Eval("DateCompleted")) %></td>
+                        <td runat="server" ID="tdCompleted"><%#FormatDate((DateTime?)Eval("DateCompleted")) %></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>
@@ -62,7 +63,7 @@
         jQuery(document).ready(function ($) {
             if ($.fn.DataTable) {
                 $('#attorney-case-list').DataTable({
-                    "order": [[1, "asc"]],
+                    "order": [[4, "desc"]],
                     "pageLength": 25
                 });
             }

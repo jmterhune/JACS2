@@ -136,6 +136,7 @@
     <Compile Include="Components\ClientController.cs" />
     <Compile Include="Components\Client.cs" />
     <Compile Include="Components\EntityBase.cs" />
+    <Compile Include="Components\LocationReportViewModel.cs" />
     <Compile Include="Components\Log.cs" />
     <Compile Include="Components\LogController.cs" />
     <Compile Include="Components\ModuleSecurity.cs" />

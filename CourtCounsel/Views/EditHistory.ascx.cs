@@ -37,6 +37,7 @@ namespace tjc.Modules.CourtCounsel.Views
                 if (_logId > 0)
                 {
                     // Editing existing record
+                    hdLogId.Value = _logId.ToString();
                     LoadRecord(_logId);
                     pnlFutureAction.Visible = true;
                     cmdDelete.Visible = true;
@@ -44,7 +45,7 @@ namespace tjc.Modules.CourtCounsel.Views
                 else if (!string.IsNullOrEmpty(_caseNumber))
                 {
                     // New record for an existing case
-                    txtCaseNumber.Text = _caseNumber;
+                    PopulateCaseNumberFields(_caseNumber);
 
                     // Try to pre-fill party name from existing records
                     var ctrl = new HistoryController();
@@ -71,7 +72,7 @@ namespace tjc.Modules.CourtCounsel.Views
             // Counties
             var countyCtrl = new CountyController();
             drpCounty.Items.Clear();
-            drpCounty.Items.Add(new ListItem("", ""));
+            drpCounty.Items.Add(new ListItem("< Select County >", ""));
             foreach (var c in countyCtrl.GetCounties().OrderBy(c => c.County))
             {
                 drpCounty.Items.Add(new ListItem(c.County, c.County));
@@ -110,14 +111,15 @@ namespace tjc.Modules.CourtCounsel.Views
                 return (active, inactive);
             });
 
-            // Time Spent (active/inactive groups)
+            // Time Spent (active/inactive groups) — ordered by TimeSpanId so durations
+            // appear in the configured DB sequence (typically shortest → longest).
             BindActiveInactiveDropDown(drpTimeSpan, () =>
             {
                 var ctrl = new TimeSpentController();
                 var all = ctrl.GetTimeSpents().ToList();
-                var active = all.Where(t => t.IsActive).OrderBy(t => t.TimeSpan)
+                var active = all.Where(t => t.IsActive).OrderBy(t => t.TimeSpanId)
                     .Select(t => new ListItem(t.TimeSpan, t.TimeSpan)).ToList();
-                var inactive = all.Where(t => !t.IsActive).OrderBy(t => t.TimeSpan)
+                var inactive = all.Where(t => !t.IsActive).OrderBy(t => t.TimeSpanId)
                     .Select(t => new ListItem(t.TimeSpan, t.TimeSpan)).ToList();
                 return (active, inactive);
             });
@@ -160,7 +162,7 @@ namespace tjc.Modules.CourtCounsel.Views
             }
 
             txtDateReceived.Text = item.DateReceived.ToString("yyyy-MM-dd");
-            txtCaseNumber.Text = item.CaseNumber;
+            PopulateCaseNumberFields(item.CaseNumber);
             txtCaseName.Text = item.PartyName;
 
             SelectItemByText(drpCaseType, item.CaseType);
@@ -201,10 +203,14 @@ namespace tjc.Modules.CourtCounsel.Views
             if (!Page.IsValid) return;
 
             var ctrl = new HistoryController();
+            int existingLogId;
+            int.TryParse(hdLogId.Value, out existingLogId);
+            bool isUpdate = existingLogId > 0;
+
             var item = new HistoryInfo
             {
                 DateReceived = DateTime.Parse(txtDateReceived.Text),
-                CaseNumber = txtCaseNumber.Text.Trim(),
+                CaseNumber = GetCaseNumber(),
                 PartyName = txtCaseName.Text.Trim(),
                 CaseType = drpCaseType.SelectedItem.Text,
                 RequestedBy = drpRequestor.SelectedItem.Text,
@@ -223,17 +229,25 @@ namespace tjc.Modules.CourtCounsel.Views
             if (!string.IsNullOrEmpty(txtDateCompleted.Text))
                 item.DateCompleted = DateTime.Parse(txtDateCompleted.Text);
 
-            if (_logId > 0)
+            if (isUpdate)
             {
-                item.LogId = _logId;
+                item.LogId = existingLogId;
                 ctrl.UpdateHistory(item);
             }
             else
             {
                 ctrl.CreateHistory(item);
+                // After insert, PetaPoco assigns the new auto-increment ID to item.LogId.
+                // Persist it so subsequent saves on this same form update instead of inserting.
+                hdLogId.Value = item.LogId.ToString();
+                pnlFutureAction.Visible = true;
+                cmdDelete.Visible = true;
             }
 
             // Handle future action date - create a second record
+            // Matches VB behavior: clear StatusName, Action, DateCompleted, TimeSpent;
+            // copy MotionFiled and other fields; set DateReceived to the future date.
+            // With a future DateReceived and no DateCompleted, the computed Status is Inactive.
             if (!string.IsNullOrEmpty(txtFutureAction.Text))
             {
                 var futureItem = new HistoryInfo
@@ -242,51 +256,93 @@ namespace tjc.Modules.CourtCounsel.Views
                     CaseNumber = item.CaseNumber,
                     PartyName = item.PartyName,
                     CaseType = item.CaseType,
+                    DateDue = item.DateDue,
                     RequestedBy = item.RequestedBy,
                     Responsible = item.Responsible,
                     County = item.County,
-                    StatusName = item.StatusName,
+                    Description = item.Description,
+                    Phase = item.Phase,
+                    Action = "",
+                    FollowUp = item.FollowUp,
+                    DateCompleted = null,
+                    TimeSpent = "",
                     Comments = item.Comments,
+                    StatusName = "Inactive",
+                    MotionFiled = item.MotionFiled,
                     LastModifiedDate = DateTime.Now
                 };
                 ctrl.CreateHistory(futureItem);
             }
 
-            // Redirect to case history
-            Response.Redirect(EditUrl("cn", item.CaseNumber, "CaseHistory"));
+            // Stay on page; surface success and let the user keep editing or click Return to List.
+            // Clear the future-action input so a subsequent save doesn't duplicate it.
+            txtFutureAction.Text = string.Empty;
+            ltSaveMessage.Text = string.Format(
+                "<div class=\"alert alert-success\">{0}</div>",
+                isUpdate ? "Update saved successfully." : "Record created successfully.");
         }
 
         protected void cmdCancel_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(_caseNumber))
-            {
-                Response.Redirect(EditUrl("cn", _caseNumber, "CaseHistory"));
-            }
-            else
-            {
-                Response.Redirect(SearchUrl);
-            }
+            Response.Redirect(EditUrl("cn", GetCaseNumber(), "CaseHistory"));
         }
 
         protected void cmdDelete_Click(object sender, EventArgs e)
         {
-            if (_logId > 0)
+            string caseNum = GetCaseNumber();
+            int targetId;
+            int.TryParse(hdLogId.Value, out targetId);
+            if (targetId <= 0) targetId = _logId;
+
+            if (targetId > 0)
             {
                 var ctrl = new HistoryController();
-                var item = ctrl.GetHistory(_logId);
-                string caseNum = item != null ? item.CaseNumber : string.Empty;
+                var item = ctrl.GetHistory(targetId);
+                if (item != null && !string.IsNullOrEmpty(item.CaseNumber))
+                    caseNum = item.CaseNumber;
 
-                ctrl.DeleteHistory(_logId);
-
-                if (!string.IsNullOrEmpty(caseNum))
-                {
-                    Response.Redirect(EditUrl("cn", caseNum, "CaseHistory"));
-                }
-                else
-                {
-                    Response.Redirect(SearchUrl);
-                }
+                ctrl.DeleteHistory(targetId);
             }
+            Response.Redirect(EditUrl("cn", caseNum, "CaseHistory"));
+        }
+
+        private void PopulateCaseNumberFields(string caseNumber)
+        {
+            if (string.IsNullOrEmpty(caseNumber)) return;
+            var parts = caseNumber.Split('-');
+            if (parts.Length >= 1)
+            {
+                var item = drpCountyLetter.Items.FindByValue(parts[0]);
+                if (item != null) drpCountyLetter.SelectedValue = parts[0];
+            }
+            if (parts.Length >= 2) txtCaseYear.Text = parts[1];
+            if (parts.Length >= 3) txtCaseType.Text = (parts[2] ?? string.Empty).ToUpper();
+            if (parts.Length >= 4) txtCaseSequence.Text = PadSequence(parts[3]);
+            // 5th+ segments are the defendant suffix (e.g. "0001" or "AA").
+            // Re-join anything past parts[3] with dashes in case the original
+            // suffix itself contained a hyphen (defensive).
+            if (parts.Length >= 5)
+                txtDefendantSuffix.Text = string.Join("-", parts.Skip(4)).ToUpper();
+        }
+
+        private string GetCaseNumber()
+        {
+            string county = drpCountyLetter.SelectedValue ?? string.Empty;
+            string year = (txtCaseYear.Text ?? string.Empty).Trim();
+            string type = (txtCaseType.Text ?? string.Empty).Trim().ToUpper();
+            string sequence = PadSequence(txtCaseSequence.Text);
+            string suffix = (txtDefendantSuffix.Text ?? string.Empty).Trim().ToUpper();
+
+            var result = string.Format("{0}-{1}-{2}-{3}", county, year, type, sequence);
+            if (!string.IsNullOrWhiteSpace(suffix))
+                result += "-" + suffix;
+            return result;
+        }
+
+        private static string PadSequence(string raw)
+        {
+            string digits = new string((raw ?? string.Empty).Where(char.IsDigit).ToArray());
+            return digits.Length == 0 ? string.Empty : digits.PadLeft(6, '0');
         }
     }
 }

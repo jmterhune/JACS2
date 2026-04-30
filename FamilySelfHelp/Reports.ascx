@@ -36,6 +36,8 @@
                     <asp:ListItem Text="Family Division 3" />
                     <asp:ListItem Text="Family Division 4" />
                     <asp:ListItem Text="Family Division H" />
+                    <asp:ListItem Text="South County Family Division 1" />
+                    <asp:ListItem Text="South County Family Division 2" />
                     <asp:ListItem Text="Family DeSoto Division" />
                 </asp:DropDownList>
             </div>
@@ -50,154 +52,140 @@
     </p>
 
     <asp:Panel ID="pnlReport" runat="server" Visible="false">
-        <asp:Repeater ID="rptClientTypes" runat="server">
-            <HeaderTemplate>
-                <h4>Client Types</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Client Type</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            </HeaderTemplate>
+        <asp:Repeater ID="rptLocations" runat="server">
             <ItemTemplate>
-                <tr>
-                    <td><%#Eval("client") %></td>
-                    <td><%#Eval("clientCount") %></td>
-                </tr>
-            </ItemTemplate>
-            <FooterTemplate>
-                </tbody>
-                </table>
-            </FooterTemplate>
-        </asp:Repeater>
-        <asp:Repeater ID="rptContactMethod" runat="server">
-            <HeaderTemplate>
-                <h4>Contact Methods</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Method</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            </HeaderTemplate>
-            <ItemTemplate>
-                <tr>
-                    <td><%#Eval("Method") %></td>
-                    <td><%#Eval("MethodCount") %></td>
-                </tr>
-            </ItemTemplate>
-            <FooterTemplate>
-                </tbody>
-                </table>
-            </FooterTemplate>
-        </asp:Repeater>
+                <div class="location-section">
+                    <h3 class="inverted mb-0 p-3 d-block"><%# Eval("Location") %></h3>
+                    <hr />
 
-        <asp:Repeater ID="rptCaseType" runat="server">
-            <HeaderTemplate>
-                <h4>Case Types</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Case Type</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            </HeaderTemplate>
-            <ItemTemplate>
-                <tr>
-                    <td><%#Eval("casetype") %></td>
-                    <td><%#Eval("CaseTypeCount") %></td>
-                </tr>
-            </ItemTemplate>
-            <FooterTemplate>
-                </tbody>
-                </table>
-            </FooterTemplate>
-        </asp:Repeater>
-        <asp:Repeater ID="rptServiceProvided" runat="server">
-            <HeaderTemplate>
-                <h4>Services Provided</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Service</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            </HeaderTemplate>
-            <ItemTemplate>
-                <tr>
-                    <td><%#Eval("Service") %></td>
-                    <td><%#Eval("ServiceCount") %></td>
-                </tr>
-            </ItemTemplate>
-            <FooterTemplate>
-                </tbody>
-                </table>
-            </FooterTemplate>
-        </asp:Repeater>
-        <asp:Repeater ID="rptDivision" runat="server">
-            <HeaderTemplate>
-                <h4>Division Counts</h4>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Division</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            </HeaderTemplate>
-            <ItemTemplate>
-                <tr>
-                    <td><%#Eval("Division") %></td>
-                    <td><%#Eval("DivisionCount") %></td>
-                </tr>
-            </ItemTemplate>
-            <FooterTemplate>
-                </tbody>
-                </table>
-            </FooterTemplate>
-        </asp:Repeater>
+                    <!-- Client Types -->
+                    <h4>Client Types</h4>
+                    <asp:Repeater ID="rptClientTypes" runat="server" DataSource='<%# Eval("ClientTypes") %>'>
+                        <HeaderTemplate>
+                            <table class="table table-striped table-sm">
+                                <thead><tr><th>Client Type</th><th>Count</th></tr></thead>
+                                <tbody>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Eval("Name") %></td>
+                                <td><%# Eval("Count") %></td>
+                            </tr>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            </tbody>
+                            </table>
+                        </FooterTemplate>
+                    </asp:Repeater>
 
-        <h4>Other Counts</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Interpreter Requested</th>
-                    <th>New Cases</th>
-                    <th>Total Time</th>
-                    <th>Average Time</th>
-                    <th>Customer Count
-                        <br />
-                        (does not include return visits)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <asp:Literal ID="ltInterpreter" runat="server" /></td>
-                    <td>
-                        <asp:Literal ID="ltCase" runat="server" /></td>
-                    <td>
-                        <asp:Literal ID="ltTotal" runat="server" /></td>
-                    <td>
-                        <asp:Literal ID="ltAverage" runat="server" /></td>
-                    <td>
-                        <asp:Literal ID="ltCustomerTotal" runat="server" /></td>
-                </tr>
-            </tbody>
-        </table>
+                    <!-- Contact Methods -->
+                    <h4>Contact Methods</h4>
+                    <asp:Repeater ID="rptContactMethod" runat="server" DataSource='<%# Eval("ContactMethods") %>'>
+                        <HeaderTemplate>
+                            <table class="table table-striped table-sm">
+                                <thead><tr><th>Method</th><th>Count</th></tr></thead>
+                                <tbody>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Eval("Name") %></td>
+                                <td><%# Eval("Count") %></td>
+                            </tr>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            </tbody>
+                            </table>
+                        </FooterTemplate>
+                    </asp:Repeater>
 
+                    <!-- Case Types -->
+                    <h4>Case Types</h4>
+                    <asp:Repeater ID="rptCaseType" runat="server" DataSource='<%# Eval("CaseTypes") %>'>
+                        <HeaderTemplate>
+                            <table class="table table-striped table-sm">
+                                <thead><tr><th>Case Type</th><th>Count</th></tr></thead>
+                                <tbody>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Eval("Name") %></td>
+                                <td><%# Eval("Count") %></td>
+                            </tr>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            </tbody>
+                            </table>
+                        </FooterTemplate>
+                    </asp:Repeater>
+
+                    <!-- Services Provided -->
+                    <h4>Services Provided</h4>
+                    <asp:Repeater ID="rptServiceProvided" runat="server" DataSource='<%# Eval("Services") %>'>
+                        <HeaderTemplate>
+                            <table class="table table-striped table-sm">
+                                <thead><tr><th>Service</th><th>Count</th></tr></thead>
+                                <tbody>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Eval("Name") %></td>
+                                <td><%# Eval("Count") %></td>
+                            </tr>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            </tbody>
+                            </table>
+                        </FooterTemplate>
+                    </asp:Repeater>
+
+                    <!-- Division Counts -->
+                    <h4>Division Counts</h4>
+                    <asp:Repeater ID="rptDivision" runat="server" DataSource='<%# Eval("Divisions") %>'>
+                        <HeaderTemplate>
+                            <table class="table table-striped table-sm">
+                                <thead><tr><th>Division</th><th>Count</th></tr></thead>
+                                <tbody>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Eval("Name") %></td>
+                                <td><%# Eval("Count") %></td>
+                            </tr>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            </tbody>
+                            </table>
+                        </FooterTemplate>
+                    </asp:Repeater>
+
+                    <!-- Other Counts -->
+                    <h4>Other Counts</h4>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Interpreter Requested</th>
+                                <th>New Cases</th>
+                                <th>Total Time</th>
+                                <th>Average Time</th>
+                                <th>Unique Customers<br />(does not include return visits)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><%# Eval("InterpreterRequested") %></td>
+                                <td><%# Eval("NewCases") %></td>
+                                <td><%# Eval("TotalTime", "{0:0.00}") %></td>
+                                <td><%# Eval("AverageTime", "{0:0.00}") %></td>
+                                <td><%# Eval("UniqueCustomers") %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ItemTemplate>
+        </asp:Repeater>
     </asp:Panel>
 </div>
+
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 
 <script>
@@ -206,5 +194,4 @@
     $(function () {
         $(".datepicker").datepicker();
     });
-
 </script>

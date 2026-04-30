@@ -3,7 +3,7 @@ using System.Web.Caching;
 namespace tjc.Modules.CourtCounsel.Components.Models
 {
     [TableName("tjc_cc_phase")]
-    [PrimaryKey("phaseId", AutoIncrement = true)]
+    [PrimaryKey("PhaseId", AutoIncrement = true)]
     [Cacheable("tjc_cc_phase", CacheItemPriority.Default, 20)]
     public class PhaseInfo
     {

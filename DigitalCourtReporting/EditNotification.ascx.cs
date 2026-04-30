@@ -15,12 +15,8 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using tjc.Modules.DigitalCourtReporting.Components;
-using tjc.Modules.Globals;
 
 namespace tjc.Modules.DigitalCourtReporting
 {
@@ -48,6 +44,7 @@ namespace tjc.Modules.DigitalCourtReporting
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
         #endregion
+
         #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -73,12 +70,12 @@ namespace tjc.Modules.DigitalCourtReporting
                                     rblNotification.Items.RemoveAt(4);
                                     rblNotification.Items.RemoveAt(3);
                                     rblNotification.Items.RemoveAt(2);
-                                    txtCalledBy.Enabled = false;
+                                    dvCalledBy.Visible = false;
                                     valCalledMailedBy.Visible = false;
-                                    txtCalledPerson.Enabled = false;
+                                    dvCalledPerson.Visible = false;
                                     valCalledPerson.Visible = false;
-                                    txtDatePickedUp.Enabled = false;
-                                    txtRecipient.Enabled = false;
+                                   dvDatePickedUp.Visible = false;
+                                    dvRecipient.Visible = false;
                                 }
                                 txtAddress.Text = proceeding.Address;
                                 txtCaseName.Text = proceeding.CaseName;
@@ -152,7 +149,6 @@ namespace tjc.Modules.DigitalCourtReporting
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-
         protected void cmdSubmit_Click(object sender, EventArgs e)
         {
             try
@@ -160,10 +156,10 @@ namespace tjc.Modules.DigitalCourtReporting
                 var ctl = new NotificationController();
                 var pCtl = new ProceedingController();
                 Notification notification = ctl.GetNotificationByProceeding(ProceedingId);
-                Proceeding proceeding=pCtl.GetProceeding(ProceedingId);
-                if (notification != null)
+                Proceeding proceeding = pCtl.GetProceeding(ProceedingId);
+                if (proceeding != null)
                 {
-                    if (notification.DeliveryID != Null.NullInteger)
+                    if (notification != null && notification.DeliveryID != Null.NullInteger)
                     {
                         notification.ReceivedBy = txtRecipient.Text;
                         notification.PickupDate = txtDatePickedUp.Text;
@@ -203,20 +199,18 @@ namespace tjc.Modules.DigitalCourtReporting
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-        protected void rblNotification_SelectedIndexChanged(object sender, EventArgs e)
+        protected void valCalledPerson_ServerValidate(object source, System.Web.UI.WebControls.ServerValidateEventArgs args)
         {
-            if (rblNotification.SelectedValue.ToLower() == "called")
+            if (rblNotification.SelectedValue == "Called" && string.IsNullOrEmpty(txtCalledPerson.Text))
             {
-                valCalledPerson.Visible = true;
+                args.IsValid = false;
+                valCalledPerson.ErrorMessage = "Person Called is required when Notification is Called.";
             }
             else
             {
-                valCalledPerson.Visible = false;
+                args.IsValid = true;
             }
         }
-
         #endregion
-
-
     }
 }

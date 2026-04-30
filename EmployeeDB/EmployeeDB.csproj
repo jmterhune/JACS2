@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
@@ -95,6 +95,15 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Net.Http.Formatting.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml.Linq" />
@@ -120,7 +129,6 @@
     <Compile Include="Components\Models\PositionHistoryInfo.cs" />
     <Compile Include="Components\Models\ServiceHistoryInfo.cs" />
     <Compile Include="Components\Models\EeoInfo.cs" />
-    <Compile Include="Components\Models\AssignedItemInfo.cs" />
     <Compile Include="Components\Models\SwnInterfaceLogInfo.cs" />
     <Compile Include="Components\Models\GroupInfo.cs" />
     <Compile Include="Components\Models\CountyInfo.cs" />
@@ -137,12 +145,31 @@
     <Compile Include="Components\Controllers\PositionHistoryController.cs" />
     <Compile Include="Components\Controllers\ServiceHistoryController.cs" />
     <Compile Include="Components\Controllers\EeoController.cs" />
-    <Compile Include="Components\Controllers\AssignedItemController.cs" />
     <Compile Include="Components\Controllers\GroupController.cs" />
     <Compile Include="Components\Controllers\CountyController.cs" />
     <Compile Include="Components\Controllers\EmployeeReportController.cs" />
     <Compile Include="Components\Controllers\SwnInterfaceLogController.cs" />
     <Compile Include="Components\FeatureController.cs" />
+    <!-- Helpers -->
+    <Compile Include="Components\Helpers\ModelNormalizer.cs" />
+    <Compile Include="Components\Helpers\DigitsOnlyAttribute.cs" />
+    <Compile Include="Components\Helpers\DisplayMask.cs" />
+    <Compile Include="Components\Helpers\SwnExportBuilder.cs" />
+    <!-- Web API -->
+    <Compile Include="Components\Api\ServiceRouteMapper.cs" />
+    <Compile Include="Components\Api\PhonesController.cs" />
+    <Compile Include="Components\Api\PositionsController.cs" />
+    <Compile Include="Components\Api\ServicesController.cs" />
+    <Compile Include="Components\Api\ContactsController.cs" />
+    <Compile Include="Components\Api\JobGroupsController.cs" />
+    <Compile Include="Components\Api\JobClassesController.cs" />
+    <Compile Include="Components\Api\RacesController.cs" />
+    <Compile Include="Components\Api\LocationsController.cs" />
+    <Compile Include="Components\Api\MembershipsController.cs" />
+    <Compile Include="Components\Api\PhotosController.cs" />
+    <Compile Include="Components\Api\DepartmentsController.cs" />
+    <Compile Include="Components\Api\EeosController.cs" />
+    <Compile Include="Components\Api\SwnController.cs" />
     <!-- SWN -->
     <Compile Include="Components\SWN\Contact.cs" />
     <Compile Include="Components\SWN\Phone.cs" />
@@ -151,6 +178,7 @@
     <Compile Include="Components\SWN\SWNServiceRequests.cs" />
     <Compile Include="Components\SWN\SWNResponse.cs" />
     <Compile Include="Components\SWN\SWNResponseMessage.cs" />
+    <Compile Include="Components\SWN\SwnSettings.cs" />
     <!-- SWN: generated WCF proxy (svcutil output from Users.wsdl). -->
     <Compile Include="Service References\swn\Reference.cs" />
     <!-- Views -->
@@ -167,13 +195,6 @@
     </Compile>
     <Compile Include="Views\EditEmployee.ascx.designer.cs">
       <DependentUpon>EditEmployee.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Directory.ascx.cs">
-      <DependentUpon>Directory.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Views\Directory.ascx.designer.cs">
-      <DependentUpon>Directory.ascx</DependentUpon>
     </Compile>
     <Compile Include="Views\DetailsList.ascx.cs">
       <DependentUpon>DetailsList.ascx</DependentUpon>
@@ -235,7 +256,6 @@
   <ItemGroup>
     <Content Include="Views\EmployeeList.ascx" />
     <Content Include="Views\EditEmployee.ascx" />
-    <Content Include="Views\Directory.ascx" />
     <Content Include="Views\DetailsList.ascx" />
     <Content Include="Views\DetailPopUp.ascx" />
     <Content Include="Views\EEOSetup.ascx" />
@@ -251,8 +271,10 @@
     <Content Include="Scripts\module.js" />
     <Content Include="Views\App_LocalResources\EmployeeList.ascx.resx" />
     <Content Include="Views\App_LocalResources\EditEmployee.ascx.resx" />
-    <Content Include="Views\App_LocalResources\Directory.ascx.resx" />
     <Content Include="Views\App_LocalResources\Settings.ascx.resx" />
+    <Content Include="Scripts\empdb-edit.js" />
+    <Content Include="Scripts\empdb-list.js" />
+    <Content Include="Scripts\empdb-eeo.js" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>

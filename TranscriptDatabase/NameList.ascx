@@ -167,7 +167,7 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblName_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditNameModal"><i class="fa fa-plus"></i>&nbsp;Add Name</button>');
+        $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditNameModal"><i class="fa fa-plus"></i>&nbsp;Add Name</button>');
         table.on('draw', function () {
             $(".confirm").dnnConfirm({
                 text: 'Are you sure you wish to Delete the selected Name?',

@@ -1,0 +1,48 @@
+{
+  "id": "1032",
+  "employee_id": "1032",
+  "full_name": "teset test",
+  "first_name": "teset",
+  "middle_name": "",
+  "last_name": "test",
+  "time_zone": "US/Eastern",
+  "language": "en-US",
+  "division": "",
+  "company": "12th Judicial Circuit Court of Florida",
+  "custom_fields": [
+    {
+      "custom_field_name": "County",
+      "custom_field_value": "Manatee"
+    },
+    {
+      "custom_field_name": "Title",
+      "custom_field_value": "teset"
+    }
+  ],
+  "contact_points": [
+    {
+      "type": "Email",
+      "name": "Work",
+      "address": "test.user@gmail.com",
+      "country_code": "1",
+      "cascade_order": 0,
+      "extension": "",
+      "carrier": ""
+    }
+  ],
+  "addresses": [
+    {
+      "address_type": "Primary",
+      "facility_location": "",
+      "first_address": "",
+      "second_address": "",
+      "building": "",
+      "floor": "",
+      "city": "",
+      "state": "",
+      "zip_code": "",
+      "province": "",
+      "country": "United States"
+    }
+  ]
+}

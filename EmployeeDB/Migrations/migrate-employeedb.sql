@@ -1,12 +1,34 @@
 /*============================================================================
   EmployeeDB Data Migration
-  Source:  intranet_613.dbo.Emp_*
+  Source:  intranet.dbo.Emp_*               (production copy on local SQL)
   Target:  intranet.jud12.local.dbo.tjc_employee_* / tjc_gl_*
 
-  Purpose: Fill gaps in the already-partially-migrated target DB. Uses
+  Purpose: Refresh the DAL2 target schema from production. Uses
   INSERT ... SELECT WHERE NOT EXISTS patterns so re-running is safe.
 
-  Run this against the intranet.jud12.local database.
+  To refresh from production:
+    1. Restore the latest production backup to local DB named "intranet"
+    2. Run this script against the intranet.jud12.local database.
+
+  Field mapping (Emp_Employees -> tjc_employee), the non-obvious bits:
+    DivisionUnitId    -> DepartmentId        (renamed)
+    JobCategoryId     -> JobGroupId          (renamed)
+    EmailWork         -> Email               (renamed)
+    EmailHome         -> PersonalEmail       (renamed)
+    Address1+Address2 -> Address             (newline-joined)
+    Location          -> OfficeLocationId    (FK lookup by name)
+    County            -> CountyId            (FK lookup by name)
+    FileID            -> FileId              (case-only rename; FK to DNN Files)
+    TerminatedDate    -> TerminationDate     (renamed)
+    DateOfBirth       -> BirthDate           (renamed)
+    Title             -> JobTitle            (consolidated)
+    StateCounty       -> AgencyOfEmployment  (renamed)
+    Active            -> IsActive            (renamed)
+    SWNGroupId        -> (dropped, no DAL2 column)
+    BBPin/BBPinLabel  -> (dropped, BlackBerry-era)
+    PhotoUrl          -> (dropped, replaced by FileID FK)
+    PhoneHome / PhoneCell / Phone+Extension / Pager
+                      -> tjc_employee_phone rows (one per non-empty field)
 ============================================================================*/
 
 USE [intranet.jud12.local];
@@ -20,33 +42,16 @@ DECLARE @SystemUser INT = -1;      -- CreatedById/LastModifiedById for migrated 
 BEGIN TRAN;
 
 -----------------------------------------------------------------------------
--- 0. Create tjc_employee_assigned_item if it doesn't exist, then load data
+-- 0. Drop the rejected tjc_employee_assigned_item table if it still exists
+--    on this database. The Assigned Items feature was removed from the
+--    module; the table no longer has a model / controller. Dropping here
+--    keeps the schema in sync with the deployed module.
 -----------------------------------------------------------------------------
-IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'tjc_employee_assigned_item')
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'tjc_employee_assigned_item')
 BEGIN
-    CREATE TABLE dbo.tjc_employee_assigned_item (
-        ItemId            INT IDENTITY(1,1) NOT NULL,
-        EmployeeId        INT NOT NULL,
-        ItemType          NVARCHAR(25) NULL,
-        ItemName          NVARCHAR(50) NULL,
-        CreatedDate       DATETIME NOT NULL CONSTRAINT DF_tjc_employee_assigned_item_CreatedDate DEFAULT GETDATE(),
-        CreatedById       INT NOT NULL,
-        LastModifiedDate  DATETIME NOT NULL CONSTRAINT DF_tjc_employee_assigned_item_LastModifiedDate DEFAULT GETDATE(),
-        LastModifiedById  INT NOT NULL,
-        CONSTRAINT PK_tjc_employee_assigned_item PRIMARY KEY CLUSTERED (ItemId)
-    );
+    DROP TABLE dbo.tjc_employee_assigned_item;
+    PRINT 'Dropped tjc_employee_assigned_item';
 END
-
--- Insert any rows from old Emp_AssignedItems that aren't in the new table.
--- Match by EmployeeId + ItemName since the new table has its own identity.
-INSERT INTO dbo.tjc_employee_assigned_item (EmployeeId, ItemType, ItemName, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
-SELECT o.EmployeeId, o.ItemType, o.ItemName, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_AssignedItems o
-WHERE NOT EXISTS (
-    SELECT 1 FROM dbo.tjc_employee_assigned_item n
-    WHERE n.EmployeeId = o.EmployeeId AND ISNULL(n.ItemName,'') = ISNULL(o.ItemName,'')
-);
-PRINT CONCAT('tjc_employee_assigned_item: inserted ', @@ROWCOUNT, ' rows');
 
 -----------------------------------------------------------------------------
 -- 1. Lookup tables: tjc_gl_counties, tjc_gl_group, tjc_employee_race,
@@ -58,7 +63,7 @@ PRINT CONCAT('tjc_employee_assigned_item: inserted ', @@ROWCOUNT, ' rows');
 SET IDENTITY_INSERT dbo.tjc_gl_counties ON;
 INSERT INTO dbo.tjc_gl_counties (CountyId, CountyName, CreatedById, LastModifiedById, CreatedDate, LastModifiedDate)
 SELECT o.CountyId, o.County, CONVERT(NVARCHAR(50), @SystemUser), CONVERT(NVARCHAR(50), @SystemUser), GETDATE(), GETDATE()
-FROM intranet_613.dbo.Emp_Counties o
+FROM intranet.dbo.Emp_Counties o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_gl_counties n WHERE n.CountyName = o.County)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_gl_counties n WHERE n.CountyId = o.CountyId);
 SET IDENTITY_INSERT dbo.tjc_gl_counties OFF;
@@ -68,7 +73,7 @@ PRINT CONCAT('tjc_gl_counties: inserted ', @@ROWCOUNT, ' rows');
 SET IDENTITY_INSERT dbo.tjc_gl_group ON;
 INSERT INTO dbo.tjc_gl_group (GroupID, GroupName, GroupType, IsSwnGroup, CreatedDate, CreatedByID, LastModifiedDate, LastModifiedByID)
 SELECT o.GroupId, o.GroupName, o.GroupType, ISNULL(o.IsSWNGroup, 0), GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Groups o
+FROM intranet.dbo.Emp_Groups o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_gl_group n WHERE n.GroupName = o.GroupName)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_gl_group n WHERE n.GroupID = o.GroupId);
 SET IDENTITY_INSERT dbo.tjc_gl_group OFF;
@@ -78,7 +83,7 @@ PRINT CONCAT('tjc_gl_group: inserted ', @@ROWCOUNT, ' rows');
 SET IDENTITY_INSERT dbo.tjc_employee_race ON;
 INSERT INTO dbo.tjc_employee_race (RaceId, RaceCode, Description, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.RaceId, o.RaceCode, o.Race, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Race o
+FROM intranet.dbo.Emp_Race o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_race n WHERE n.RaceCode = o.RaceCode)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_race n WHERE n.RaceId = o.RaceId);
 SET IDENTITY_INSERT dbo.tjc_employee_race OFF;
@@ -88,7 +93,7 @@ PRINT CONCAT('tjc_employee_race: inserted ', @@ROWCOUNT, ' rows');
 SET IDENTITY_INSERT dbo.tjc_employee_job_group ON;
 INSERT INTO dbo.tjc_employee_job_group (JobGroupId, Description, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.JobCategoryId, o.JobCategory, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_JobCategories o
+FROM intranet.dbo.Emp_JobCategories o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_job_group n WHERE n.Description = o.JobCategory)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_job_group n WHERE n.JobGroupId = o.JobCategoryId);
 SET IDENTITY_INSERT dbo.tjc_employee_job_group OFF;
@@ -98,7 +103,7 @@ PRINT CONCAT('tjc_employee_job_group: inserted ', @@ROWCOUNT, ' rows');
 SET IDENTITY_INSERT dbo.tjc_employee_office_location ON;
 INSERT INTO dbo.tjc_employee_office_location (OfficeLocationId, Description, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.LocationID, o.LocationName, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Locations o
+FROM intranet.dbo.Emp_Locations o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_office_location n WHERE n.Description = o.LocationName)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_office_location n WHERE n.OfficeLocationId = o.LocationID);
 SET IDENTITY_INSERT dbo.tjc_employee_office_location OFF;
@@ -116,7 +121,7 @@ SELECT o.ClassId, o.ClassName,
        TRY_CAST(o.EEO AS INT),
        o.MMax, o.MMin, o.AMax, o.AMin,
        GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Classes o
+FROM intranet.dbo.Emp_Classes o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_class n WHERE n.ClassId = o.ClassId);
 SET IDENTITY_INSERT dbo.tjc_employee_class OFF;
 PRINT CONCAT('tjc_employee_class: inserted ', @@ROWCOUNT, ' rows');
@@ -129,10 +134,10 @@ SET IDENTITY_INSERT dbo.tjc_employee ON;
 INSERT INTO dbo.tjc_employee (
     EmployeeId, UserId, SupervisorId, DepartmentId, JobGroupId, ClassId, BadgeNumber,
     Position, EmploymentType, FirstName, LastName, MiddleInitial, Email, PersonalEmail,
-    Address, City, State, Zip, OfficeLocationId, LocationName, CountyId, PhotoFileId,
+    Address, City, State, Zip, OfficeLocationId, CountyId, FileId,
     HireDate, TerminationDate, ServiceDate, BirthDate, Race, Gender, JobTitle, Salary,
     AnnualLeaveBalance, SickLeaveBalance, SocialSecurityNumber, AgencyOfEmployment,
-    IsActive, IsEmployee, ManateeAccess, SarasotaAccess, DesotoAccess, SwnGroupId,
+    IsActive, IsEmployee, ManateeAccess, SarasotaAccess, DesotoAccess,
     CreatedDate, CreatedById, LastModifiedDate, LastModifiedById
 )
 SELECT
@@ -142,7 +147,7 @@ SELECT
     o.DivisionUnitId,                                       -- -> DepartmentId
     o.JobCategoryId,                                        -- -> JobGroupId
     o.ClassId,
-    NULL,                                                   -- BadgeNumber new
+    NULL,                                                   -- BadgeNumber (new column, no source)
     o.Position,
     o.EmploymentType,
     o.FirstName,
@@ -150,19 +155,21 @@ SELECT
     o.MiddleInitial,
     o.EmailWork,                                            -- -> Email
     o.EmailHome,                                            -- -> PersonalEmail
-    LTRIM(RTRIM(COALESCE(o.Address1, '') +
-                CASE WHEN o.Address2 IS NULL OR o.Address2 = '' THEN '' ELSE ', ' + o.Address2 END)),
+    -- Concat Address1 + Address2 with a newline separator. The Edit form's
+    -- SplitAddressLines helper splits on '\n' to repopulate Line 1 / Line 2.
+    NULLIF(LTRIM(RTRIM(COALESCE(NULLIF(LTRIM(RTRIM(o.Address1)), ''), '') +
+                       CASE WHEN o.Address2 IS NULL OR LTRIM(RTRIM(o.Address2)) = '' THEN ''
+                            ELSE CHAR(10) + LTRIM(RTRIM(o.Address2)) END)), ''),
     o.City, o.State, o.Zip,
     (SELECT TOP 1 l.OfficeLocationId FROM dbo.tjc_employee_office_location l WHERE l.Description = o.Location),
-    o.Location,                                             -- keep denormalized copy
     (SELECT TOP 1 c.CountyId FROM dbo.tjc_gl_counties c WHERE c.CountyName = o.County),
-    NULL,                                                   -- PhotoFileId (path doesn't map)
+    o.FileID,                                               -- -> FileId (DNN file FK)
     o.HireDate,
     o.TerminatedDate,                                       -- -> TerminationDate
     o.ServiceDate,
     o.DateOfBirth,                                          -- -> BirthDate
     o.Race, o.Gender,
-    o.Title,                                                -- -> JobTitle
+    o.Title,                                                -- -> JobTitle (DAL2 has no separate Title column)
     o.Salary,
     o.AnnualLeaveBalance, o.SickLeaveBalance,
     o.SocialSecurityNumber,
@@ -171,12 +178,57 @@ SELECT
     o.IsEmployee,
     o.ManateeAccess,
     o.SarasotaAccess, o.DesotoAccess,
-    NULL,                                                   -- SwnGroupId new
     GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Employees o
+FROM intranet.dbo.Emp_Employees o
 WHERE NOT EXISTS (SELECT 1 FROM dbo.tjc_employee n WHERE n.EmployeeId = o.EmployeeId);
 SET IDENTITY_INSERT dbo.tjc_employee OFF;
 PRINT CONCAT('tjc_employee: inserted ', @@ROWCOUNT, ' rows');
+
+-- 2b. Refresh existing rows from production (production is source of truth).
+-- Touches every column the form can edit; LastModifiedDate/By stays as-is so
+-- we don't fight DAL2's own audit fields when the app updates a row.
+UPDATE n
+   SET n.UserId               = o.UserId,
+       n.SupervisorId         = o.SupervisorId,
+       n.DepartmentId         = o.DivisionUnitId,
+       n.JobGroupId           = o.JobCategoryId,
+       n.ClassId              = o.ClassId,
+       n.Position             = o.Position,
+       n.EmploymentType       = o.EmploymentType,
+       n.FirstName            = o.FirstName,
+       n.LastName             = o.LastName,
+       n.MiddleInitial        = o.MiddleInitial,
+       n.Email                = o.EmailWork,
+       n.PersonalEmail        = o.EmailHome,
+       n.Address              = NULLIF(LTRIM(RTRIM(COALESCE(NULLIF(LTRIM(RTRIM(o.Address1)), ''), '') +
+                                                  CASE WHEN o.Address2 IS NULL OR LTRIM(RTRIM(o.Address2)) = '' THEN ''
+                                                       ELSE CHAR(10) + LTRIM(RTRIM(o.Address2)) END)), ''),
+       n.City                 = o.City,
+       n.State                = o.State,
+       n.Zip                  = o.Zip,
+       n.OfficeLocationId     = (SELECT TOP 1 l.OfficeLocationId FROM dbo.tjc_employee_office_location l WHERE l.Description = o.Location),
+       n.CountyId             = (SELECT TOP 1 c.CountyId FROM dbo.tjc_gl_counties c WHERE c.CountyName = o.County),
+       n.FileId               = o.FileID,
+       n.HireDate             = o.HireDate,
+       n.TerminationDate      = o.TerminatedDate,
+       n.ServiceDate          = o.ServiceDate,
+       n.BirthDate            = o.DateOfBirth,
+       n.Race                 = o.Race,
+       n.Gender               = o.Gender,
+       n.JobTitle             = o.Title,
+       n.Salary               = o.Salary,
+       n.AnnualLeaveBalance   = o.AnnualLeaveBalance,
+       n.SickLeaveBalance     = o.SickLeaveBalance,
+       n.SocialSecurityNumber = o.SocialSecurityNumber,
+       n.AgencyOfEmployment   = o.StateCounty,
+       n.IsActive             = o.Active,
+       n.IsEmployee           = o.IsEmployee,
+       n.ManateeAccess        = o.ManateeAccess,
+       n.SarasotaAccess       = o.SarasotaAccess,
+       n.DesotoAccess         = o.DesotoAccess
+  FROM dbo.tjc_employee n
+  INNER JOIN intranet.dbo.Emp_Employees o ON o.EmployeeId = n.EmployeeId;
+PRINT CONCAT('tjc_employee: refreshed ', @@ROWCOUNT, ' existing rows from production');
 
 -----------------------------------------------------------------------------
 -- 3. tjc_employee_phone — normalize phone data from old Emp_Phones + the
@@ -202,7 +254,7 @@ SELECT
     ISNULL(o.SWNCall, 0),
     ISNULL(o.SWNExcludeExtension, 0),
     GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Phones o
+FROM intranet.dbo.Emp_Phones o
 WHERE EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND NOT EXISTS (
     SELECT 1 FROM dbo.tjc_employee_phone n
@@ -217,7 +269,7 @@ PRINT CONCAT('tjc_employee_phone (from Emp_Phones): inserted ', @@ROWCOUNT, ' ro
 INSERT INTO dbo.tjc_employee_phone (EmployeeId, PhoneType, PhoneNumber, IsMain, SwnText, SwnCall, SwnExcludeExtension,
                                      CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.EmployeeId, 'Home', o.PhoneHome, 0, 0, 0, 0, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Employees o
+FROM intranet.dbo.Emp_Employees o
 WHERE o.PhoneHome IS NOT NULL AND LTRIM(RTRIM(o.PhoneHome)) <> ''
   AND EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_phone n WHERE n.EmployeeId = o.EmployeeId AND n.PhoneType = 'Home' AND n.PhoneNumber = o.PhoneHome);
@@ -226,7 +278,7 @@ PRINT CONCAT('tjc_employee_phone (Home from Employees): inserted ', @@ROWCOUNT, 
 INSERT INTO dbo.tjc_employee_phone (EmployeeId, PhoneType, PhoneNumber, IsMain, SwnText, SwnCall, SwnExcludeExtension,
                                      CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.EmployeeId, 'Mobile', o.PhoneCell, 0, 0, 0, 0, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Employees o
+FROM intranet.dbo.Emp_Employees o
 WHERE o.PhoneCell IS NOT NULL AND LTRIM(RTRIM(o.PhoneCell)) <> ''
   AND EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_phone n WHERE n.EmployeeId = o.EmployeeId AND n.PhoneType = 'Mobile' AND n.PhoneNumber = o.PhoneCell);
@@ -235,7 +287,7 @@ PRINT CONCAT('tjc_employee_phone (Mobile from Employees): inserted ', @@ROWCOUNT
 INSERT INTO dbo.tjc_employee_phone (EmployeeId, PhoneType, PhoneNumber, Extension, IsMain, SwnText, SwnCall, SwnExcludeExtension,
                                      CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.EmployeeId, 'Work', o.Phone, o.Extension, 1, 0, 0, 0, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Employees o
+FROM intranet.dbo.Emp_Employees o
 WHERE o.Phone IS NOT NULL AND LTRIM(RTRIM(o.Phone)) <> ''
   AND EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_phone n WHERE n.EmployeeId = o.EmployeeId AND n.PhoneType = 'Work' AND n.PhoneNumber = o.Phone);
@@ -244,7 +296,7 @@ PRINT CONCAT('tjc_employee_phone (Work from Employees): inserted ', @@ROWCOUNT, 
 INSERT INTO dbo.tjc_employee_phone (EmployeeId, PhoneType, PhoneNumber, IsMain, SwnText, SwnCall, SwnExcludeExtension,
                                      CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.EmployeeId, 'Pager', o.Pager, 0, 0, 0, 0, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_Employees o
+FROM intranet.dbo.Emp_Employees o
 WHERE o.Pager IS NOT NULL AND LTRIM(RTRIM(o.Pager)) <> ''
   AND EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_phone n WHERE n.EmployeeId = o.EmployeeId AND n.PhoneType = 'Pager' AND n.PhoneNumber = o.Pager);
@@ -255,7 +307,7 @@ PRINT CONCAT('tjc_employee_phone (Pager from Employees): inserted ', @@ROWCOUNT,
 -----------------------------------------------------------------------------
 INSERT INTO dbo.tjc_employee_group_membership (GroupId, EmployeeId, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
 SELECT o.GroupId, o.EmployeeId, GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_GroupMemberships o
+FROM intranet.dbo.Emp_GroupMemberships o
 WHERE EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND EXISTS (SELECT 1 FROM dbo.tjc_gl_group g WHERE g.GroupID = o.GroupId)
   AND NOT EXISTS (SELECT 1 FROM dbo.tjc_employee_group_membership n WHERE n.GroupId = o.GroupId AND n.EmployeeId = o.EmployeeId);
@@ -270,7 +322,7 @@ INSERT INTO dbo.tjc_employee_emergency_contact (
 SELECT
     o.EmployeeId, o.FirstName, o.LastName, o.Relationship, o.PhoneHome, o.PhoneWork, o.PhoneMobile, o.CallOrder,
     GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_EmergencyContact o
+FROM intranet.dbo.Emp_EmergencyContact o
 WHERE EXISTS (SELECT 1 FROM dbo.tjc_employee e WHERE e.EmployeeId = o.EmployeeId)
   AND NOT EXISTS (
     SELECT 1 FROM dbo.tjc_employee_emergency_contact n
@@ -291,7 +343,7 @@ SELECT
     CASE WHEN UPPER(ISNULL(o.InternalExternal,'')) = 'INTERNAL' THEN 1 ELSE 0 END,
     o.EntryType,
     GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_PositionHistorys o
+FROM intranet.dbo.Emp_PositionHistorys o
 WHERE NOT EXISTS (
     SELECT 1 FROM dbo.tjc_employee_position_history n
     WHERE ISNULL(n.SocialSecurityNumber,'') = ISNULL(o.SocialSecurityNumber,'')
@@ -309,7 +361,7 @@ INSERT INTO dbo.tjc_employee_service_history (
 SELECT
     o.SocialSecurityNumber, o.HireDate, o.TerminationDate, o.LastPayRate, o.Company,
     GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_ServiceHistorys o
+FROM intranet.dbo.Emp_ServiceHistorys o
 WHERE NOT EXISTS (
     SELECT 1 FROM dbo.tjc_employee_service_history n
     WHERE n.SocialSecurityNumber = o.SocialSecurityNumber
@@ -339,7 +391,7 @@ SELECT
     o.TermMale, o.TermFemale, o.TermWhite, o.TermBlack, o.TermIndian, o.TermAsian, o.TermHispanic, o.TermOther,
     o.Year,
     GETDATE(), @SystemUser, GETDATE(), @SystemUser
-FROM intranet_613.dbo.Emp_EEO o
+FROM intranet.dbo.Emp_EEO o
 WHERE NOT EXISTS (
     SELECT 1 FROM dbo.tjc_employee_eeo n
     WHERE n.JobGroupId = o.JobGroup AND n.Year = o.Year
@@ -362,7 +414,6 @@ UNION ALL SELECT 'tjc_employee_phone', COUNT(*) FROM dbo.tjc_employee_phone
 UNION ALL SELECT 'tjc_employee_position_history', COUNT(*) FROM dbo.tjc_employee_position_history
 UNION ALL SELECT 'tjc_employee_race', COUNT(*) FROM dbo.tjc_employee_race
 UNION ALL SELECT 'tjc_employee_service_history', COUNT(*) FROM dbo.tjc_employee_service_history
-UNION ALL SELECT 'tjc_employee_assigned_item', COUNT(*) FROM dbo.tjc_employee_assigned_item
 UNION ALL SELECT 'tjc_gl_group', COUNT(*) FROM dbo.tjc_gl_group
 UNION ALL SELECT 'tjc_gl_counties', COUNT(*) FROM dbo.tjc_gl_counties;
 

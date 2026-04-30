@@ -1,15 +1,3 @@
-﻿/************************************************************/
-/*****              SqlDataProvider                     *****/
-/*****                                                  *****/
-/*****                                                  *****/
-/***** Note: To manually execute this script you must   *****/
-/*****       perform a search and replace operation     *****/
-/*****       for {databaseOwner} and {objectQualifier}  *****/
-/*****                                                  *****/
-/************************************************************/
-
-
-
-/************************************************************/
-/*****              SqlDataProvider                     *****/
-/************************************************************/
+/* JudicialReferral Module - Version 00.00.01 */
+/* Tables tjc_jr_* already exist in the database and are not created by this script. */
+/* This module uses DNN DAL2 (PetaPoco) to access the existing tables directly. */

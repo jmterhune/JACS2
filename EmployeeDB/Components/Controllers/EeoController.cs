@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 using tjc.Modules.EmployeeDB.Components.Models;
 
 namespace tjc.Modules.EmployeeDB.Components.Controllers
@@ -29,6 +30,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public long Create(EeoInfo item, int userId = -1)
         {
+            ModelNormalizer.Normalize(item);
             item.CreatedDate = DateTime.Now;
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
@@ -43,6 +45,20 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void Update(EeoInfo item, int userId = -1)
         {
+            ModelNormalizer.Normalize(item);
+            // Preserve audit columns from the existing row (JSON payloads come
+            // in with DateTime.MinValue / 0 which SQL Server datetime rejects).
+            var existing = GetById(item.EeoId);
+            if (existing != null)
+            {
+                item.CreatedDate = existing.CreatedDate;
+                item.CreatedById = existing.CreatedById;
+            }
+            else
+            {
+                item.CreatedDate = DateTime.Now;
+                item.CreatedById = userId;
+            }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
             using (IDataContext ctx = DataContext.Instance())
@@ -74,6 +90,10 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
+        // EEO counts are scoped to actual employees only — IsEmployee = 1.
+        // Vendors / contractors / terminated user shells in tjc_employee
+        // shouldn't show up in compliance reports.
+
         // Count distinct employees whose position history overlaps the reporting window.
         public int GetGenderCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate)
         {
@@ -82,7 +102,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
                 string sql = @"SELECT COUNT(DISTINCT e.EmployeeId)
                                FROM tjc_employee e
                                JOIN tjc_employee_position_history ph ON ph.SocialSecurityNumber = e.SocialSecurityNumber
-                               WHERE e.JobGroupId = @0
+                               WHERE e.IsEmployee = 1
+                                 AND e.JobGroupId = @0
                                  AND e.Gender = @1
                                  AND ph.StartDate <= @3
                                  AND (ph.EndDate IS NULL OR ph.EndDate >= @2)";
@@ -97,7 +118,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
                 string sql = @"SELECT COUNT(DISTINCT e.EmployeeId)
                                FROM tjc_employee e
                                JOIN tjc_employee_position_history ph ON ph.SocialSecurityNumber = e.SocialSecurityNumber
-                               WHERE e.JobGroupId = @0
+                               WHERE e.IsEmployee = 1
+                                 AND e.JobGroupId = @0
                                  AND e.Race = @1
                                  AND ph.StartDate <= @3
                                  AND (ph.EndDate IS NULL OR ph.EndDate >= @2)";
@@ -110,7 +132,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             using (IDataContext ctx = DataContext.Instance())
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
-                               WHERE JobGroupId = @0 AND Gender = @1 AND HireDate BETWEEN @2 AND @3";
+                               WHERE IsEmployee = 1
+                                 AND JobGroupId = @0 AND Gender = @1 AND HireDate BETWEEN @2 AND @3";
                 return ctx.ExecuteScalar<int>(CommandType.Text, sql, jobGroupId, gender, startDate, endDate);
             }
         }
@@ -120,7 +143,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             using (IDataContext ctx = DataContext.Instance())
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
-                               WHERE JobGroupId = @0 AND Race = @1 AND HireDate BETWEEN @2 AND @3";
+                               WHERE IsEmployee = 1
+                                 AND JobGroupId = @0 AND Race = @1 AND HireDate BETWEEN @2 AND @3";
                 return ctx.ExecuteScalar<int>(CommandType.Text, sql, jobGroupId, race, startDate, endDate);
             }
         }
@@ -131,7 +155,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee_position_history ph
                                JOIN tjc_employee e ON e.SocialSecurityNumber = ph.SocialSecurityNumber
-                               WHERE e.JobGroupId = @0 AND e.Gender = @1 AND ph.EntryType = @2
+                               WHERE e.IsEmployee = 1
+                                 AND e.JobGroupId = @0 AND e.Gender = @1 AND ph.EntryType = @2
                                  AND ph.StartDate BETWEEN @3 AND @4";
                 return ctx.ExecuteScalar<int>(CommandType.Text, sql, jobGroupId, gender, type, startDate, endDate);
             }
@@ -143,7 +168,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee_position_history ph
                                JOIN tjc_employee e ON e.SocialSecurityNumber = ph.SocialSecurityNumber
-                               WHERE e.JobGroupId = @0 AND e.Race = @1 AND ph.EntryType = @2
+                               WHERE e.IsEmployee = 1
+                                 AND e.JobGroupId = @0 AND e.Race = @1 AND ph.EntryType = @2
                                  AND ph.StartDate BETWEEN @3 AND @4";
                 return ctx.ExecuteScalar<int>(CommandType.Text, sql, jobGroupId, race, type, startDate, endDate);
             }
@@ -154,7 +180,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             using (IDataContext ctx = DataContext.Instance())
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
-                               WHERE JobGroupId = @0 AND Gender = @1 AND TerminationDate BETWEEN @2 AND @3";
+                               WHERE IsEmployee = 1
+                                 AND JobGroupId = @0 AND Gender = @1 AND TerminationDate BETWEEN @2 AND @3";
                 return ctx.ExecuteScalar<int>(CommandType.Text, sql, jobGroupId, gender, startDate, endDate);
             }
         }
@@ -164,7 +191,8 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             using (IDataContext ctx = DataContext.Instance())
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
-                               WHERE JobGroupId = @0 AND Race = @1 AND TerminationDate BETWEEN @2 AND @3";
+                               WHERE IsEmployee = 1
+                                 AND JobGroupId = @0 AND Race = @1 AND TerminationDate BETWEEN @2 AND @3";
                 return ctx.ExecuteScalar<int>(CommandType.Text, sql, jobGroupId, race, startDate, endDate);
             }
         }

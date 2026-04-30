@@ -3,7 +3,7 @@ using System.Web.Caching;
 namespace tjc.Modules.CourtCounsel.Components.Models
 {
     [TableName("tjc_cc_time_spent")]
-    [PrimaryKey("timeSpanId", AutoIncrement = true)]
+    [PrimaryKey("TimeSpanId", AutoIncrement = true)]
     [Cacheable("tjc_cc_time_spent", CacheItemPriority.Default, 20)]
     public class TimeSpentInfo
     {

@@ -14,9 +14,7 @@ using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Web.UI.WebControls;
 using tjc.Modules.DigitalCourtReporting.Components;
-using tjc.Modules.Globals;
 
 namespace tjc.Modules.DigitalCourtReporting
 {
@@ -39,6 +37,7 @@ namespace tjc.Modules.DigitalCourtReporting
         #region Properties
         private readonly INavigationManager _navigationManager;
         #endregion
+
         #region Methods
         public View()
         {
@@ -46,51 +45,53 @@ namespace tjc.Modules.DigitalCourtReporting
         }
         public string GetProceedingUrl(string proceedingIdString)
         {
-                string navString = "";
-                switch (ListType)
-                {
-                    case  ListTypes.cdCreation:
-                        {
-                            navString = EditUrl("proceedingId", proceedingIdString, "EditDCR");
-                            break;
-                        }
+            string navString = "";
+            switch (ListType)
+            {
+                case ListTypes.cdCreation:
+                    {
+                        navString = EditUrl("proceedingId", proceedingIdString, "EditDCR");
+                        break;
+                    }
 
-                    case  ListTypes.completed:
-                        {
-                            navString = EditUrl("proceedingId", proceedingIdString, "Complete");
-                            break;
-                        }
+                case ListTypes.completed:
+                    {
+                        navString = EditUrl("proceedingId", proceedingIdString, "Complete");
+                        break;
+                    }
 
-                    case  ListTypes.notification:
-                        {
-                            navString = EditUrl("proceedingId", proceedingIdString, "EditNotification");
-                            break;
-                        }
+                case ListTypes.notification:
+                    {
+                        navString = EditUrl("proceedingId", proceedingIdString, "EditNotification");
+                        break;
+                    }
 
-                    case  ListTypes.payment:
-                        {
-                            navString = EditUrl("proceedingId", proceedingIdString, "EditAccounting");
-                            break;
-                        }
+                case ListTypes.payment:
+                    {
+                        navString = EditUrl("proceedingId", proceedingIdString, "EditAccounting");
+                        break;
+                    }
 
-                    case ListTypes.inquiry:
-                        {
-                            navString = EditUrl("proceedingId", proceedingIdString, "EditInquiry");
-                            break;
-                        }
-                }
-                if (SearchText != "")
-                    navString = EditUrl("proceedingId", proceedingIdString, "Complete");
-                return navString;
+                case ListTypes.inquiry:
+                    {
+                        navString = EditUrl("proceedingId", proceedingIdString, "EditInquiry");
+                        break;
+                    }
             }
+            if (SearchText != "")
+                navString = EditUrl("proceedingId", proceedingIdString, "Complete");
+            return navString;
+        }
         #endregion
+
+        #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack)
                 {
-                   
+
 
 
                 }
@@ -100,11 +101,6 @@ namespace tjc.Modules.DigitalCourtReporting
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
-       
-
-        #region Events
-
         #endregion
-
     }
 }

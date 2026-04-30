@@ -104,7 +104,7 @@
             ],
             pageLength: 50
         });
-        $("#tblLogItem_filter").prepend("<%=DepartmentFilterHtml%>");
+        $(".dt_search").prepend("<%=DepartmentFilterHtml%>");
         table.draw();
 
         $('#drpfilter').change(function () {

@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Logging;
 using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -28,7 +29,8 @@ namespace tjc.Modules.Purchasing
     public partial class SupplyOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        private string currentProtocol;
+        private readonly IEventLogger _eventLogger;
+        private string _currentProtocol;
         public string attachmentHandler = "";
         public int OrderId
         {
@@ -47,7 +49,8 @@ namespace tjc.Modules.Purchasing
         public SupplyOrder()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-        }
+            _eventLogger = DependencyProvider.GetRequiredService<IEventLogger>();
+        }   
 
         #region Event Handlers    
         protected void Page_PreRender(object sender, EventArgs e)
@@ -60,7 +63,7 @@ namespace tjc.Modules.Purchasing
             try
             {
                 attachmentHandler = TemplateSourceDirectory + "/Handlers/AttachmentHandler.ashx";
-                currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
+                _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
                 if (!IsPostBack)
                 {
                     cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
@@ -244,7 +247,7 @@ namespace tjc.Modules.Purchasing
         private void SendEmail(Components.SupplyOrder supplyOrder)
         {
             string subject = "Supply Order Form ";
-            string fromAddress = "webhelp@jud12.flcourts.org";
+            string fromAddress = "purchasing@jud12.flcourts.org";
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
             DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
             StringBuilder sb = new StringBuilder();
@@ -292,7 +295,8 @@ namespace tjc.Modules.Purchasing
                 sb.Append("</ul>");
             }
             subject = string.Format("Supply Order Form for {0}", supplyOrder.RequestedName);
-            DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
+            DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", EmailList, subject, sb.ToString());
+            _eventLogger.AddLog("Supply Order Submitted", "Supply Order ID: " + supplyOrder.OrderID.ToString() + " email sent", PortalSettings, UserId, EventLogType.ADMIN_ALERT);
             subject = "Supply Order Confirmation";
             SendConfirmationEmail(fromAddress, supplyOrder.EmailAddress, subject, sb.ToString());
         }
@@ -304,7 +308,7 @@ namespace tjc.Modules.Purchasing
         private void SendInitialEmail(Components.SupplyOrder supplyOrder)
         {
             string subject = "Supply Order Notification";
-            string fromAddress = "webhelp@jud12.flcourts.org";
+            string fromAddress = "purchasing@jud12.flcourts.org";
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
             DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
             StringBuilder sb = new StringBuilder();
@@ -320,7 +324,7 @@ namespace tjc.Modules.Purchasing
             sb.Append("</li><li><strong>Location: </strong> ");
             sb.Append(supplyOrder.Location);
             sb.Append("</li></ul>");
-            DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
+            DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", EmailList, subject, sb.ToString());
         }
 
         protected void BindSupplysList(int orderId)

@@ -46,14 +46,15 @@ namespace tjc.Modules.PretrialServices.Sarasota
         {
             try
             {
+                JavaScript.RequestRegistration(CommonJs.jQueryUI);
+                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+
                 if (!Page.IsPostBack)
                 {
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();
                     }
-                    JavaScript.RequestRegistration(CommonJs.jQueryUI);
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                     GetCookieIntakeDate();
                     PopulateYears();
                     DateTime? cookieDate = GetCookieIntakeDate();
@@ -372,6 +373,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         }
         private void PopulateYears()
         {
+
             drpYear.DataSource = ctl.GetYears();
             drpYear.DataBind();
         }

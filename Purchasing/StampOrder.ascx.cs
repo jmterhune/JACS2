@@ -18,6 +18,7 @@ using DotNetNuke.Services.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using tjc.Modules.Purchasing.Components;
 
@@ -26,8 +27,9 @@ namespace tjc.Modules.Purchasing
     public partial class StampOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        private string currentProtocol;
+        private string _currentProtocol;
         public string attachmentHandler = "";
+
 
         public StampOrder()
         {
@@ -38,7 +40,7 @@ namespace tjc.Modules.Purchasing
             try
             {
                 attachmentHandler = TemplateSourceDirectory + "/Handlers/AttachmentHandler.ashx";
-                currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
+                _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
                 JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                 if (!IsPostBack)
                 {
@@ -137,7 +139,7 @@ namespace tjc.Modules.Purchasing
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)
-                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' title='{4}'>attachment #{5}</a></li>", currentProtocol, PortalAlias.HTTPAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
+                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' title='{4}'>attachment #{5}</a></li>", _currentProtocol, PortalAlias.HTTPAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
             }
             return attachementList;
 
@@ -152,7 +154,7 @@ namespace tjc.Modules.Purchasing
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            string fromAddress = "webhelp@jud12.flcourts.org";
+            string fromAddress = "purchasing@jud12.flcourts.org";
             var order = new Components.StampOrder { DateCreated = DateTime.Now, RequestedName = txtRequestor.Text, ConsumerName = txtConsumerName.Text, Phone = txtPhone.Text, StampType = drpStampType.SelectedValue, Sample = txtSample.Text, FontStyle = drpFontStyle.SelectedValue, FontSize = txtFontSize.Text, InkColor = drpInkColor.SelectedValue, Instructions = txtInstructions.Text, Quantity = int.Parse(txtQuantity.Text), Location = drpLocation.SelectedValue, EmailAddress = txtEmailAddress.Text };
             var ctl = new StampOrderController();
             var aCtl = new AttachmentController();
@@ -199,13 +201,13 @@ namespace tjc.Modules.Purchasing
                         if (attach.FileID > 0)
                         {
                             var fileInfo = dCtl.GetFile(attach.FileID);
-                            sb.Append(string.Format("<li><a href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", currentProtocol, PortalAlias.HTTPAlias,PortalId, fileInfo.RelativePath, fileInfo.FileName));
+                            sb.Append(string.Format("<li><a href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, PortalAlias.HTTPAlias,PortalId, fileInfo.RelativePath, fileInfo.FileName));
                         }
                     }
                     sb.Append("</ul>");
-                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", EmailList, subject, sb.ToString());
                     subject = "Stamp Order Confirmation";
-                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", txtEmailAddress.Text, subject, sb.ToString());
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", txtEmailAddress.Text, subject, sb.ToString());
 
                     Response.Redirect(EditUrl("form", "stamp", "complete"), true);
                 }

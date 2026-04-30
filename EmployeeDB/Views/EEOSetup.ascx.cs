@@ -7,8 +7,9 @@ using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Web;
 using tjc.Modules.EmployeeDB.Components.Controllers;
-using tjc.Modules.EmployeeDB.Components.Models;
 
 namespace tjc.Modules.EmployeeDB.Views
 {
@@ -28,10 +29,13 @@ namespace tjc.Modules.EmployeeDB.Views
                     return;
                 }
 
+                // Emit the DNN ServicesFramework AntiForgery token so the JS
+                // layer can post to the Web API. Adds a hidden
+                // __RequestVerificationToken input to the form.
+                DotNetNuke.Framework.ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+
                 if (!IsPostBack)
                 {
-                    BindList();
-
                     var jan1 = new DateTime(DateTime.Now.Year, 1, 1);
                     dpStartDate.Text = jan1.ToString("yyyy-MM-dd");
                     dpEndDate.Text = DateTime.Now.ToString("yyyy-MM-dd");
@@ -44,40 +48,21 @@ namespace tjc.Modules.EmployeeDB.Views
             }
         }
 
-        private void BindList()
+        /// <summary>Renders the &lt;option&gt; tags for the EEO modal's
+        /// Job Category &lt;select&gt;. Inlined into the markup so the modal
+        /// never needs an extra round-trip to populate the dropdown.</summary>
+        protected string GetJobGroupOptions()
         {
-            var jobGroupLookup = _jobGroups.GetAll().ToDictionary(jg => jg.JobGroupId, jg => jg.Description);
-
-            var rows = _eeo.GetAll()
-                .OrderByDescending(r => r.Year)
-                .ThenBy(r => r.JobGroupId)
-                .Select(r => new
-                {
-                    r.Year,
-                    JobGroupName = r.JobGroupId.HasValue && jobGroupLookup.ContainsKey(r.JobGroupId.Value)
-                        ? jobGroupLookup[r.JobGroupId.Value]
-                        : "",
-                    r.PopulationMale,
-                    r.PopulationFemale,
-                    r.PopulationWhite,
-                    r.PopulationBlack,
-                    r.PopulationHispanic,
-                    r.PopulationAsian,
-                    r.PopulationIndian,
-                    r.PopulationOther,
-                    r.HireMale,
-                    r.HireFemale,
-                    r.PromoMale,
-                    r.PromoFemale,
-                    r.TransferMale,
-                    r.TransferFemale,
-                    r.TermMale,
-                    r.TermFemale
-                })
-                .ToList();
-
-            rptEeoList.DataSource = rows;
-            rptEeoList.DataBind();
+            var sb = new StringBuilder();
+            foreach (var jg in _jobGroups.GetAll().OrderBy(j => j.Description))
+            {
+                sb.Append("<option value=\"")
+                  .Append(jg.JobGroupId)
+                  .Append("\">")
+                  .Append(HttpUtility.HtmlEncode(jg.Description ?? ""))
+                  .Append("</option>");
+            }
+            return sb.ToString();
         }
 
         protected void btnStart_Click(object sender, EventArgs e)
@@ -142,7 +127,6 @@ namespace tjc.Modules.EmployeeDB.Views
 
                 pnlPreview.Visible = false;
                 btnAccept.Visible = false;
-                BindList();
             }
             catch (Exception exc)
             {

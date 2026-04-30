@@ -10,15 +10,16 @@
 ' 
 */
 using DotNetNuke.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Text;
-using tjc.Modules.Purchasing.Components;
 using System.Collections.Generic;
 using System.Linq;
-using DotNetNuke.Services.FileSystem;
+using System.Text;
+using tjc.Modules.Purchasing.Components;
 
 namespace tjc.Modules.Purchasing
 {
@@ -37,9 +38,11 @@ namespace tjc.Modules.Purchasing
     public partial class StampDetail : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+
         public StampDetail()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+
         }
         protected void Page_Load(object sender, EventArgs e)
         {

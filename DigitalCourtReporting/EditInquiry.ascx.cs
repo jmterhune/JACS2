@@ -12,12 +12,9 @@
 
 using DotNetNuke.Abstractions;
 using DotNetNuke.Common.Utilities;
-using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using tjc.Modules.DigitalCourtReporting.Components;
 using tjc.Modules.Globals;

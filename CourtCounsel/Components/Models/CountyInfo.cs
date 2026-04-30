@@ -3,7 +3,7 @@ using System.Web.Caching;
 namespace tjc.Modules.CourtCounsel.Components.Models
 {
     [TableName("tjc_cc_county")]
-    [PrimaryKey("countyId", AutoIncrement = true)]
+    [PrimaryKey("CountyId", AutoIncrement = true)]
     [Cacheable("tjc_cc_county", CacheItemPriority.Default, 20)]
     public class CountyInfo
     {

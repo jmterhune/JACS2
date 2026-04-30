@@ -4,7 +4,7 @@ using System.Web.Caching;
 namespace tjc.Modules.DigitalCourtReporting.Components
 {
     [TableName("tjc_dcr_notification")]
-    [PrimaryKey("NotificationID", AutoIncrement = true)]
+    [PrimaryKey("DeliveryID", AutoIncrement = true)]
     [Cacheable("Notifications", CacheItemPriority.Default, 20)]
     internal class Notification : EntityBase
     {

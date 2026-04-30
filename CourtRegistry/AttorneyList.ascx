@@ -317,7 +317,7 @@
             pageLength: pageSize,
             displayStart: currentPage * pageSize,
         });
-        $("#tblAttorneys_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#AttorneyModal"><i class="fa fa-plus"></i>&nbsp;Add Attorney</button>');
+        $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#AttorneyModal"><i class="fa fa-plus"></i>&nbsp;Add Attorney</button>');
 
         appTable.on('draw', function () {
             $('[data-toggle="tooltip"]').tooltip();

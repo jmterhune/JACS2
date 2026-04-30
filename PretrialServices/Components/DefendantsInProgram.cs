@@ -114,6 +114,8 @@ namespace tjc.Modules.PretrialServices.Components
         public bool PtrOrdered { get; set; }
         public bool IndigentAssessed { get; set; }
         public bool PtrNotRecommended { get; set; }
+        public string MostSeriousOffense { get; set; }
+
 
 
         [IgnoreColumn]

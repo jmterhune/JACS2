@@ -134,7 +134,7 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblAppearance_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditAppearanceModal"><i class="fa fa-plus"></i>&nbsp;Add Appearance</button>');
+        $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditAppearanceModal"><i class="fa fa-plus"></i>&nbsp;Add Appearance</button>');
         table.on('draw', function () {
             $(".confirm").dnnConfirm({
                 text: 'Are you sure you wish to Delete the selected Appearance Item?',

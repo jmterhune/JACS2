@@ -81,15 +81,17 @@ namespace tjc.Modules.EmployeeDB.Views
                                LEFT JOIN tjc_employee_office_location loc ON loc.OfficeLocationId = e.OfficeLocationId
                                LEFT JOIN tjc_gl_counties c ON c.CountyId = e.CountyId
                                LEFT JOIN tjc_employee sup ON sup.EmployeeId = e.SupervisorId
+                               WHERE e.IsEmployee = 1
                                ORDER BY e.LastName, e.FirstName";
                 rows = ctx.ExecuteQuery<EmployeeListItem>(CommandType.Text, sql).ToList();
             }
 
             // Gather supplemental fields (Position, EmploymentType etc.) from the base table via a second fast lookup.
+            // Same IsEmployee filter as the projection query above.
             var supplemental = new Dictionary<int, EmployeeInfo>();
             using (IDataContext ctx = DataContext.Instance())
             {
-                foreach (var emp in ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, "SELECT * FROM tjc_employee"))
+                foreach (var emp in ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, "SELECT * FROM tjc_employee WHERE IsEmployee = 1"))
                 {
                     supplemental[emp.EmployeeId] = emp;
                 }

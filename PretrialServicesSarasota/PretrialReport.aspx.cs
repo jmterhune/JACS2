@@ -31,6 +31,18 @@ namespace tjc.Modules.PretrialServices.Sarasota
         private string beginningDate = "";
         private string enddingDate = "";
         private Font captionFont = new Font(Font.FontFamily.HELVETICA, 5, Font.ITALIC, new BaseColor(0, 183, 183));
+        private void AddBlankCells(PdfPTable table, int count, int colspan = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                PdfPCell blank = new PdfPCell
+                {
+                    Border = 0,
+                    Colspan = colspan
+                };
+                table.AddCell(blank);
+            }
+        }
 
 
         private bool IsWeekend(DateTime inDate)
@@ -429,12 +441,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             }
 
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            PdfPCell blankCell = new PdfPCell
-            {
-                Border = 0,
-                Colspan = 3
-            };
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.AddCell(new Phrase("YES", boldFont));
             table.AddCell(new Phrase("DANGEROUS", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
@@ -448,11 +455,9 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("NEW ARREST", boldFont));
             table.AddCell(new Phrase("REVOKED", boldFont));
             table.AddCell(new Phrase("SUCCESSFUL", boldFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.AddCell(new Phrase(indigentYes.ToString(), normalFont));
             table.AddCell(new Phrase(FcDangerousTT.ToString(), normalFont));
             table.AddCell(new Phrase(FcNonDangerousTT.ToString(), normalFont));
@@ -466,68 +471,49 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(newArrestTT.ToString(), normalFont));
             table.AddCell(new Phrase(revokedTT.ToString(), normalFont));
             table.AddCell(new Phrase(successfulTT.ToString(), normalFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.AddCell(new Phrase("NO", boldFont));
-            blankCell.Colspan = 6;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 6);
             table.AddCell(new Phrase("NO", boldFont));
             table.AddCell(new Phrase("NO", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
             table.AddCell(new Phrase("VIOL CALLS", boldFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
             table.DefaultCell.NoWrap = true;
             table.AddCell(new Phrase("UNSUCCESSFUL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase(indigentNo.ToString(), normalFont));
-            blankCell.Colspan = 6;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 6);
             table.AddCell(new Phrase(bwOrderedNo.ToString(), normalFont));
             table.AddCell(new Phrase(bondPaidNo.ToString(), normalFont));
             table.AddCell(new Phrase(MsoNdFelonyTT.ToString(), normalFont));
             table.AddCell(new Phrase(violCallsTT.ToString(), normalFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase(unSuccessfulTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
 
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
-
-            // table.AddCell(New Phrase("UNKNOWN", boldFont))
-            blankCell.Colspan = 8;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase("MISD ONLY", boldFont));
             table.AddCell(new Phrase("CONTACT", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             PdfPCell caption = new PdfPCell(new Phrase("Chart below is based on the defendants criminal histories. " + Environment.NewLine + "It categorizes each defendant by their most serious offense.", captionFont))
             {
                 Colspan = 4,
                 Border = 0
             };
             table.AddCell(caption);
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase(MsoMisdTT.ToString(), normalFont));
             table.AddCell(new Phrase(contactTT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             table.DefaultCell.BackgroundColor = new BaseColor(0, 183, 183);
             PdfPCell hdrCell = new PdfPCell(new Phrase("OFFENSE TYPE", boldFont));
             hdrCell.Colspan = 3;
@@ -535,67 +521,48 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(hdrCell);
             table.AddCell(new Phrase("TOTAL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase("MSO TOTALS", boldFont));
             table.AddCell(new Phrase("OTHER", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             PdfPCell ttlCell = new PdfPCell(new Phrase("Dangerous Felony", boldFont));
             ttlCell.Colspan = 3;
             table.AddCell(ttlCell);
             table.AddCell(new Phrase(FcDangerous_h.ToString(), normalFont));
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase(MsoTotal.ToString(), normalFont));
             table.AddCell(new Phrase(otherTT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
-
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             PdfPCell ttlCell2 = new PdfPCell(new Phrase("Non-Dangerous Felony", boldFont));
             ttlCell2.Colspan = 3;
             table.AddCell(ttlCell2);
             table.AddCell(new Phrase(FcNonDangerous_h.ToString(), normalFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 5;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 5);
             table.AddCell(new Phrase("UA", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             PdfPCell ttlCell3 = new PdfPCell(new Phrase("Dangerous Misdemeanor", boldFont));
             ttlCell3.Colspan = 3;
             table.AddCell(ttlCell3);
             table.AddCell(new Phrase(McDangerous_h.ToString(), normalFont));
-            blankCell.Colspan = 5;
-
-            table.AddCell(blankCell);
+            AddBlankCells(table, 5);
             table.AddCell(new Phrase(UATT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             PdfPCell ttlCell4 = new PdfPCell(new Phrase("Non-Dangerous Misdemeanor", boldFont));
             ttlCell4.Colspan = 3;
             table.AddCell(ttlCell4);
             table.AddCell(new Phrase(McNonDangerous_h.ToString(), normalFont));
 
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 5;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 5);
             table.AddCell(new Phrase("VIOL TOTALS", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             PdfPCell ttlCell5 = new PdfPCell(new Phrase("No prior offense", boldFont))
             {
                 Colspan = 3
@@ -603,11 +570,9 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(ttlCell5);
             table.AddCell(new Phrase(noPriors_h.ToString(), normalFont));
 
-            blankCell.Colspan = 5;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 5);
             table.AddCell(new Phrase(ViolationTT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             DayTotal dayTotal = new DayTotal();
             dayTotal.Defendants = defendantCount;
             dayTotal.Day = InDate.Day;
@@ -645,17 +610,14 @@ namespace tjc.Modules.PretrialServices.Sarasota
             return table;
         }
 
-        private PdfPTable GetCombinedTotals(DateTime inDate, bool IsMonthEnd, bool IsYearEnd)
+        private PdfPTable GetCombinedTotalsTop(DateTime inDate, bool IsMonthEnd, bool IsYearEnd)
         {
             List<IntakeLogItem> colIntakeTemp = null;
-            List<DayTotal> colDefendantDayTotalTemp = null;
-            PdfPCell blankCell = new PdfPCell();
-            blankCell.Border = 0;
             PdfPTable table = new PdfPTable(13);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204); // YELLOW
             table.DefaultCell.HorizontalAlignment = 1;
             table.HorizontalAlignment = 0;
-            table.WidthPercentage = 60;
+            table.WidthPercentage = 90;
             table.HeaderRows = 1;
             table.AddCell(new Phrase("Date", boldFont));
             table.AddCell(new Phrase("# Interviewed", boldFont));
@@ -664,9 +626,8 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase("# PTR not" + Environment.NewLine + " Recommended", boldFont));
             table.AddCell(new Phrase("# Accepted" + Environment.NewLine + " into Program", boldFont));
             table.AddCell(new Phrase("# Indigent" + Environment.NewLine + " Int/Assessed", boldFont));
-            blankCell.Colspan = 6;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 11;
+
+            AddBlankCells(table, 6);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
             table.DefaultCell.VerticalAlignment = Element.ALIGN_BOTTOM;
             int startDay = inDate.Day - 6;
@@ -705,24 +666,31 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(notRecommednPtrTT.ToString(), normalFont));
             table.AddCell(new Phrase(acceptedTT.ToString(), normalFont));
             table.AddCell(new Phrase(indigentAssessedTT.ToString(), normalFont));
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 11;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
+            AddBlankCells(table, 11);
             if (IsMonthEnd)
             {
                 colIntakeRunningTotal.AddRange(colIntake);
                 colIntake.Clear();
             }
-            PdfPCell TitleCell = new PdfPCell(new Phrase("Defendants Ordered Into Program", titleFont))
-            {
-                Border = 0,
-                Colspan = 11,
-                HorizontalAlignment = Element.ALIGN_CENTER
-            };
-            table.AddCell(TitleCell);
-            table.AddCell(blankCell);
-            blankCell.Colspan = 1;
+            return table;
+        }
+
+        private PdfPTable GetCombinedTotalsBottom(DateTime inDate, bool IsMonthEnd, bool IsYearEnd)
+        {
+            List<DayTotal> colDefendantDayTotalTemp = null;
+            PdfPTable table = new PdfPTable(13);
+            table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204); // YELLOW
+            table.DefaultCell.HorizontalAlignment = 1;
+            table.HorizontalAlignment = 0;
+            table.WidthPercentage = 90;
+            table.HeaderRows = 1;
+            int startDay = inDate.Day - 6;
+            if (inDate.Day > 28)
+                startDay = 29;
+            int endDay = inDate.Day;
+            if (IsMonthEnd)
+                startDay = 1;
             if (IsYearEnd)
                 colDefendantDayTotalTemp = colDefendantRunningTotal;
             else
@@ -808,153 +776,73 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(successfullTT.ToString(), normalFont));
             table.AddCell(new Phrase(daysSprTT.ToString(), normalFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase("NO", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 2);
             table.AddCell(new Phrase("NO", boldFont));
             table.AddCell(new Phrase("NO", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
             table.AddCell(new Phrase("VIOL CALLS", boldFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase("UNSUCCESSFUL", boldFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase(indigentNoTT.ToString(), normalFont));
             table.AddCell(new Phrase(FcNonDangerousTT.ToString(), normalFont));
             table.AddCell(new Phrase(McNonDangerousTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 2);
             table.AddCell(new Phrase(bwOrderedNoTT.ToString(), normalFont));
             table.AddCell(new Phrase(bondPaidNoTT.ToString(), normalFont));
             table.AddCell(new Phrase(msoNonDangerousTT.ToString(), normalFont));
             table.AddCell(new Phrase(ncViolCallsTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase(unsuccessfulTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            // table.AddCell(New Phrase("UNKNOWN", boldFont))
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 2);
+            AddBlankCells(table, 6);
             table.AddCell(new Phrase("MISD ONLY", boldFont));
             table.AddCell(new Phrase("CONTACT", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            // table.AddCell(New Phrase(indigentUnkTT, myFont))
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             table.AddCell(new Phrase(msoMisdTT.ToString(), normalFont));
             table.AddCell(new Phrase(ncContactTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase("MSO TOTALS", boldFont));
             table.AddCell(new Phrase("OTHER", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase(msoTotal.ToString(), normalFont));
             table.AddCell(new Phrase(ncOtherTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             table.AddCell(new Phrase("UA", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             table.AddCell(new Phrase(ncUATT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             table.AddCell(new Phrase("VIOL TOTALS", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             table.AddCell(new Phrase(ncTotalsTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             PdfPCell caption = new PdfPCell(new Phrase("Chart below is based on the defendants criminal histories. " + Environment.NewLine + "It categorizes each defendant by their most serious offense.", captionFont));
             caption.Colspan = 4;
             caption.Border = 0;
             table.AddCell(caption);
-            blankCell.Colspan = 9;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             table.DefaultCell.BackgroundColor = new BaseColor(0, 183, 183);
             PdfPCell hdrCell = new PdfPCell(new Phrase("OFFENSE TYPE", boldFont));
             hdrCell.Colspan = 3;
@@ -962,32 +850,32 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(hdrCell);
             table.AddCell(new Phrase("TOTAL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             PdfPCell ttlCell = new PdfPCell(new Phrase("Dangerous Felony", boldFont));
             ttlCell.Colspan = 3;
             table.AddCell(ttlCell);
             table.AddCell(new Phrase(FcDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             PdfPCell ttlCell2 = new PdfPCell(new Phrase("Non-Dangerous Felony", boldFont));
             ttlCell2.Colspan = 3;
             table.AddCell(ttlCell2);
             table.AddCell(new Phrase(FcNonDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             PdfPCell ttlCell3 = new PdfPCell(new Phrase("Dangerous Misdemeanor", boldFont));
             ttlCell3.Colspan = 3;
             table.AddCell(ttlCell3);
             table.AddCell(new Phrase(McDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             PdfPCell ttlCell4 = new PdfPCell(new Phrase("Non-Dangerous Misdemeanor", boldFont));
             ttlCell4.Colspan = 3;
             table.AddCell(ttlCell4);
             table.AddCell(new Phrase(McNonDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             PdfPCell ttlCell5 = new PdfPCell(new Phrase("No prior offense", boldFont));
             ttlCell5.Colspan = 3;
             table.AddCell(ttlCell5);
             table.AddCell(new Phrase(NoPriorsTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 9);
             if (IsMonthEnd)
             {
                 colDefendantRunningTotal.AddRange(colDefendantDayTotal);
@@ -1020,7 +908,10 @@ namespace tjc.Modules.PretrialServices.Sarasota
                     Paragraph pTitleW = new Paragraph(reportTitleW + Environment.NewLine + "For " + GetWeekTextValue(Indate).Replace("Week", Indate.Year.ToString() + " Week") + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleW.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleW);
-                    doc.Add(GetCombinedTotals(Indate, false, false));
+                    doc.Add(GetCombinedTotalsTop(Indate, false, false));
+                    doc.Add(pDefendant);
+                    doc.Add(GetCombinedTotalsBottom(Indate, false, false));
+
                 }
             }
             if (reportType == ReportType.monthly | reportType == ReportType.yearly)
@@ -1031,18 +922,23 @@ namespace tjc.Modules.PretrialServices.Sarasota
                     Paragraph pTitleM = new Paragraph(reportTitleM + Environment.NewLine + "For " + Indate.ToString("MMMM") + " " + Indate.Year.ToString() + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleM.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleM);
-                    doc.Add(GetCombinedTotals(Indate, true, false));
+                    doc.Add(GetCombinedTotalsTop(Indate, true, false));
+                    doc.Add(pDefendant);
+                    doc.Add(GetCombinedTotalsBottom(Indate, true, false));
+                    doc.NewPage();
                 }
             }
             if (reportType == ReportType.yearly)
             {
                 if (IsYearEnd(Indate))
                 {
-                    doc.NewPage();
                     Paragraph pTitleM = new Paragraph(reportTitleY + Environment.NewLine + "For " + beginningDate + " to " + enddingDate + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleM.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleM);
-                    doc.Add(GetCombinedTotals(Indate, true, true));
+                    doc.Add(GetCombinedTotalsTop(Indate, true, true));
+                    doc.Add(pDefendant);
+                    doc.Add(GetCombinedTotalsBottom(Indate, true, true));
+
                 }
             }
         }

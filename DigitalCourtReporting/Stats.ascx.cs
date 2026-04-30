@@ -11,7 +11,6 @@
 */
 
 using DotNetNuke.Abstractions;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -19,7 +18,6 @@ using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.DigitalCourtReporting.Components;
 using tjc.Modules.Globals;
-using static DotNetNuke.Common.Lists.CachedCountryList;
 
 namespace tjc.Modules.DigitalCourtReporting
 {
@@ -37,18 +35,21 @@ namespace tjc.Modules.DigitalCourtReporting
     /// -----------------------------------------------------------------------------
     public partial class Stats : DigitalCourtReportingModuleBase
     {
+        #region Properties
         private readonly INavigationManager _navigationManager;
+        #endregion
+
+        #region Methods  
         public Stats()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
-        #region Methods
-        private void CreateStatTable(DateTime startDate,DateTime endDate,int countyId)
+        private void CreateStatTable(DateTime startDate, DateTime endDate, int countyId)
         {
             List<StatsInfo> stats = new List<StatsInfo>();
 
             var ctl = new StatsController();
-            IEnumerable<StatRecord> excludedRecords=ctl.ExcludedSum(startDate, endDate,countyId);
+            IEnumerable<StatRecord> excludedRecords = ctl.ExcludedSum(startDate, endDate, countyId);
             if (excludedRecords.Count() > 0)
             {
                 stats.Add(new StatsInfo { Heading = "Private parties or other gov't entity", MinBurned = excludedRecords.Sum(x => x.CDCount), TotalNumber = excludedRecords.Sum(g => g.TotalMinutes) });
@@ -88,9 +89,9 @@ namespace tjc.Modules.DigitalCourtReporting
             }
 
             IEnumerable<StatRecord> totalRecords = ctl.TotalSum(startDate, endDate, countyId);
-            if(totalRecords.Count() > 0)
+            if (totalRecords.Count() > 0)
             {
-                lblTotal.Text=totalRecords.Sum(x => x.CDCount).ToString();
+                lblTotal.Text = totalRecords.Sum(x => x.CDCount).ToString();
                 lblMinTotal.Text = totalRecords.Sum(x => x.TotalMinutes).ToString();
             }
             else
@@ -102,6 +103,8 @@ namespace tjc.Modules.DigitalCourtReporting
             rptStats.DataBind();
         }
         #endregion
+
+        #region Events
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -116,7 +119,7 @@ namespace tjc.Modules.DigitalCourtReporting
                         drpCriteriaCounty.DataValueField = "CountyID";
                         drpCriteriaCounty.DataSource = ctl.GetCounties();
                         drpCriteriaCounty.DataBind();
-                      
+
                     }
                     catch (Exception exc)
                     {
@@ -135,11 +138,11 @@ namespace tjc.Modules.DigitalCourtReporting
             DateTime startDate = DateTime.Now;
             DateTime endDate = DateTime.Now;
             int countyId = -1;
-            hasSearch=DateTime.TryParse(txtCriteriaStartDate.Text,out startDate);
-            if (hasSearch) 
-            hasSearch = DateTime.TryParse(txtCriteriaEndDate.Text, out endDate);
+            hasSearch = DateTime.TryParse(txtCriteriaStartDate.Text, out startDate);
             if (hasSearch)
-            hasSearch = Int32.TryParse(drpCriteriaCounty.SelectedValue,out countyId);
+                hasSearch = DateTime.TryParse(txtCriteriaEndDate.Text, out endDate);
+            if (hasSearch)
+                hasSearch = Int32.TryParse(drpCriteriaCounty.SelectedValue, out countyId);
             if (hasSearch)
             {
                 CreateStatTable(startDate, endDate, countyId);
@@ -149,5 +152,6 @@ namespace tjc.Modules.DigitalCourtReporting
                 DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "You Request could not be completed. Check your Criteria and try again.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
             }
         }
+        #endregion
     }
 }

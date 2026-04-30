@@ -233,6 +233,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Exceptions.ascx.cs">
       <DependentUpon>Exceptions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

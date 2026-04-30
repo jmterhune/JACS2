@@ -127,7 +127,7 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblHearingType_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditHearingTypeModal"><i class="fa fa-plus"></i>&nbsp;Add Hearing Type</button>');       
+        $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditHearingTypeModal"><i class="fa fa-plus"></i>&nbsp;Add Hearing Type</button>');       
     }
         $(".confirm").dnnConfirm({
             text: 'Are you sure you wish to Delete the Hearing Type?',

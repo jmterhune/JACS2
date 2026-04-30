@@ -23,13 +23,21 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
     {
         private const string PhoneCountryCode = "1";
 
-        private readonly UsersClient _service = ClientFactory.CreateSWNOnlineProxy();
+        private readonly UsersClient _service;
+
+        public SWNServiceRequests() : this(null, null) { }
+
+        public SWNServiceRequests(string username, string password)
+        {
+            _service = ClientFactory.CreateSWNOnlineProxy(username, password);
+        }
 
         private readonly EmployeeController _employees = new EmployeeController();
         private readonly PhoneController _phones = new PhoneController();
         private readonly GroupController _groups = new GroupController();
         private readonly GroupMembershipController _memberships = new GroupMembershipController();
         private readonly CountyController _counties = new CountyController();
+        private readonly OfficeLocationController _locations = new OfficeLocationController();
         private readonly SwnInterfaceLogController _log = new SwnInterfaceLogController();
 
         private const string MatchEmailPattern =
@@ -94,7 +102,9 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
 
                 foreach (var e in employeeList)
                 {
-                    result.Add(AddUpdateContact(e));
+                    var resp = AddUpdateContact(e);
+                    StampEmployeeOnMessages(resp, e);
+                    result.Add(resp);
                 }
                 return ProcessResponse(result);
             }
@@ -104,6 +114,54 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                 var errorMessage = new SWNResponseMessage(SWNResponseMessageType.Failure, ex.Message);
                 var errorList = new List<SWNResponseMessage> { errorMessage };
                 return new SWNResponse(true, errorList);
+            }
+        }
+
+        /// <summary>Add only the active employees who don't already have an
+        /// SWN contact. Mirrors the legacy BlockAddContact() but takes the
+        /// pre-filtered "missing" list from the caller (so the membership
+        /// check happens in one place — the SwnController endpoint).</summary>
+        public SWNResponse BlockAddMissing(IList<EmployeeInfo> missingEmployees)
+        {
+            try
+            {
+                var result = new List<SWNResponse>();
+                AddAllGroups();   // ensure SWN-side groups exist before assigning members
+
+                foreach (var e in missingEmployees ?? new List<EmployeeInfo>())
+                {
+                    var contact = PopulateContact(e);
+                    var addResult = AddContact(contact, e);
+                    var resp = ProcessResponse(addResult);
+                    StampEmployeeOnMessages(resp, e);
+                    result.Add(resp);
+                }
+                return ProcessResponse(result);
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                var errorMessage = new SWNResponseMessage(SWNResponseMessageType.Failure, ex.Message);
+                var errorList = new List<SWNResponseMessage> { errorMessage };
+                return new SWNResponse(true, errorList);
+            }
+        }
+
+        /// <summary>Prefix every message in <paramref name="response"/> with
+        /// the employee's name + ID so the aggregated SWN Sync output makes
+        /// it clear which contact each line refers to. Without this stamp
+        /// the SWN service messages are just "Valid Contact" / "Contact
+        /// updated successfully" / "Maximum length for Address1 is 60" with
+        /// no per-row attribution.</summary>
+        private static void StampEmployeeOnMessages(SWNResponse response, EmployeeInfo emp)
+        {
+            if (response == null || response.MessageList == null || emp == null) return;
+            var label = (emp.DisplayName ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(label)) label = "Employee";
+            label = label + " (#" + emp.EmployeeId + "): ";
+            foreach (var m in response.MessageList)
+            {
+                m.MessageText = label + (m.MessageText ?? string.Empty);
             }
         }
 
@@ -729,10 +787,17 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                 var phones = GetEmployeePhones(objEmployee.EmployeeId);
                 foreach (var p in phones)
                 {
+                    // The VB original used IsNumeric() here, which has no
+                    // size limit. The earlier C# port used int.TryParse,
+                    // which silently rejected any 10-digit number greater
+                    // than ~2.1 billion (e.g. 9415551234 — every Sarasota /
+                    // Tampa area code) — that's why no phones were making
+                    // it through to SWN. long.TryParse handles the full
+                    // 10-digit range and matches IsNumeric semantics.
                     if (p.SwnCall)
                     {
-                        int _;
-                        if (!string.IsNullOrEmpty(p.PhoneNumber) && int.TryParse(p.PhoneNumber, out _))
+                        long _;
+                        if (!string.IsNullOrEmpty(p.PhoneNumber) && long.TryParse(p.PhoneNumber, out _))
                         {
                             var built = GetPhone(p);
                             if (built != null)
@@ -747,10 +812,10 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                         {
                             p.PhoneType = "Other";
                         }
-                        int _;
+                        long _;
                         var type = p.PhoneType.ToLower().Trim();
                         if (!string.IsNullOrEmpty(p.PhoneNumber)
-                            && int.TryParse(p.PhoneNumber, out _)
+                            && long.TryParse(p.PhoneNumber, out _)
                             && (type.Contains("mobile") || type.Contains("cell")))
                         {
                             textlist.Add(GetPhoneSMS(p));
@@ -786,9 +851,13 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
                 {
                     customFieldsList.Add(new ContactCustomField { Name = "County", Value = countyName });
                 }
-                if (!string.IsNullOrEmpty(objEmployee.LocationName))
+                if (objEmployee.OfficeLocationId.HasValue)
                 {
-                    customFieldsList.Add(new ContactCustomField { Name = "Location", Value = objEmployee.LocationName });
+                    var loc = _locations.GetById(objEmployee.OfficeLocationId.Value);
+                    if (loc != null && !string.IsNullOrEmpty(loc.Description))
+                    {
+                        customFieldsList.Add(new ContactCustomField { Name = "Location", Value = loc.Description });
+                    }
                 }
 
                 // Address/identity fields

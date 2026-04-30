@@ -88,17 +88,27 @@ namespace tjc.Modules.PretrialServices.Components
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
-                t = rep.Find("Where CountyId=@0 And IntakeDate=@1" ,countyId,intakeDate);
+                t = rep.Find("Where CountyId=@0 And IntakeDate=@1", countyId,intakeDate);
             }
             return t;
         }
-        
+        public IEnumerable<DefendantInProgram> GetDefendantsInProgramForReport(int countyId, DateTime intakeDate)
+        {
+            IEnumerable<DefendantInProgram> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<DefendantInProgram>();
+                t = rep.Find("Where CountyId=@0 And IntakeDate=@1 AND PlacedInProgram=1", countyId, intakeDate);
+            }
+            return t;
+        }
+
         public IEnumerable<int> GetYears(int countyId)
         {
             IEnumerable<int> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<int>(System.Data.CommandType.Text, "Select Distinct Year(IntakeDate) as Year From tjc_pts_defendants_in_program Where countyid=@0 Order by 1",countyId);
+                t = ctx.ExecuteQuery<int>(System.Data.CommandType.Text, "Select Distinct Year(IntakeDate) as Year From tjc_pts_defendants_in_program Where countyid=@0 and intakeDate is not null Order by 1",countyId);
             }
 
             return t;

@@ -339,6 +339,15 @@ namespace tjc.Modules.DigitalCourtReporting
         protected global::System.Web.UI.WebControls.TextBox txtDateCalled;
 
         /// <summary>
+        /// dvDatePickedUp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvDatePickedUp;
+
+        /// <summary>
         /// txtDatePickedUp control.
         /// </summary>
         /// <remarks>
@@ -346,6 +355,15 @@ namespace tjc.Modules.DigitalCourtReporting
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDatePickedUp;
+
+        /// <summary>
+        /// dvCalledPerson control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvCalledPerson;
 
         /// <summary>
         /// txtCalledPerson control.
@@ -363,7 +381,16 @@ namespace tjc.Modules.DigitalCourtReporting
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator valCalledPerson;
+        protected global::System.Web.UI.WebControls.CustomValidator valCalledPerson;
+
+        /// <summary>
+        /// dvCalledBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvCalledBy;
 
         /// <summary>
         /// txtCalledBy control.
@@ -382,6 +409,15 @@ namespace tjc.Modules.DigitalCourtReporting
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valCalledMailedBy;
+
+        /// <summary>
+        /// dvRecipient control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvRecipient;
 
         /// <summary>
         /// txtRecipient control.

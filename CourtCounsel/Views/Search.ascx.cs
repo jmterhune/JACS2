@@ -90,17 +90,17 @@ namespace tjc.Modules.CourtCounsel.Views
                     var attorneyName = swAttorney.SelectedValue;
                     if (!string.IsNullOrEmpty(attorneyName))
                     {
-                        var statusParts = new List<string>();
-                        if (Request.Form["swActive"] == "on") statusParts.Add("A");
-                        if (Request.Form["swPending"] == "on") statusParts.Add("I");
-                        if (Request.Form["swClosed"] == "on") statusParts.Add("C");
+                        // Build combined status code matching VB sproc convention:
+                        // A=Active, I=Inactive/Pending, C=Complete
+                        // Combined: AI, AC, IC, AIC (same as "all")
+                        string sf = "";
+                        if (chkActive.Checked) sf += "A";
+                        if (chkPending.Checked) sf += "I";
+                        if (chkClosed.Checked) sf += "C";
 
-                        var sf = string.Join(",", statusParts);
-                        var url = EditUrl("att", attorneyName, "AttorneyCaseList");
-                        if (!string.IsNullOrEmpty(sf))
-                        {
-                            url += "&sf=" + Server.UrlEncode(sf);
-                        }
+                        if (string.IsNullOrEmpty(sf)) sf = "all";
+
+                        var url = EditUrl("att", attorneyName, "AttorneyCaseList","sf=" + Server.UrlEncode(sf));
                         Response.Redirect(url);
                     }
                     break;

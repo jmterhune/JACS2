@@ -1,58 +1,16 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditDcr.ascx.cs" Inherits="tjc.Modules.DigitalCourtReporting.EditDcr" %>
-<div class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
+<div id="navigationLinks" class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
     <a class="btn btn-primary" id="lnkAccounting" href='<%=AccountingUrl %>'>Accounting</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropInquiry" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Inquiry
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropInquiry">
-            <li>
-                <a class="dropdown-item" id="lnkInquiry" href="<%=InquiryUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqDesoto" href="<%=InquiryDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqManatee" href="<%=InquiryManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqSarasota" href="<%=InquirySarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropDCR" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            DCR
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropDCR">
-            <li>
-                <a class="dropdown-item" id="lnkDCR" href="<%=DCRUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRDesoto" href="<%=DCRDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRManatee" href="<%=DCRManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRSarasota" href="<%=DCRSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+    <a class="btn btn-primary" id="lnkInquiry" href="<%=InquiryUrl %>">Inquiry</a>
+    <a class="btn btn-primary active" id="lnkDCR" href="<%=DCRUrl %>">
+        <abbr title="Digital Court Reporting">DCR</abbr></a>
     <a class="btn btn-primary" id="lnkNotification" href="<%=NotificationUrl %>">Notification</a>
     <a class="btn btn-primary" id="lnkStats" href="<%=StatsUrl %>">Stats</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropComplete" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Complete
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropComplete">
-            <li>
-                <a class="dropdown-item" id="lnkComplete" href="<%=CompleteUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompDesoto" href="<%=CompleteDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompManatee" href="<%=CompleteManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompSarasota" href="<%=CompleteSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+    <a class="btn btn-primary" id="lnkComplete" href="<%=CompleteUrl %>">Complete</a>
 </div>
 <div class="heading heading-border heading-middle-border heading-middle-border-center heading-border-lg mb-1">
     <h2>Audio Request Form (DCR)</h2>
 </div>
-
 <p class="mb-0 text-end">All fields marked with <em class="text-danger">*</em> are required and must be filled in or this form will not be processed.</p>
 <div>
     <fieldset class="outline-fieldset mt-0" id="requestorInformation">
@@ -222,16 +180,16 @@
     </fieldset>    <fieldset class="outline-fieldset" id="fsDCR" runat="server">
         <legend>DCR Information</legend>
         <div class="row form-group">
-            <div class="col-md-4">
+            <div class="col-md-4" runat="server" id="dvCourOrderAttach">
                 <label for="rblCourOrderAttach">Juv. Court Order Attached<em class="text-danger">*</em></label>
                 <asp:RadioButtonList ID="rblCourOrderAttach" ClientIDMode="Static" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="radio-button-list">
                     <asp:ListItem>Yes</asp:ListItem>
                     <asp:ListItem>N/A</asp:ListItem>
                 </asp:RadioButtonList>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Required" ControlToValidate="rblCourOrderAttach" runat="server" />
+                    ErrorMessage="Court Order Attached is Required" ControlToValidate="rblCourOrderAttach" runat="server" />
             </div>
-            <div class="col-4">
+            <div class="col-4" runat="server" id="dvClerkCertAttach">
                 <label for="rblClerkCertAttach">Indig. - Clerk Cert. Attached<em class="text-danger">*</em></label>
                 <asp:RadioButtonList ID="rblClerkCertAttach" ClientIDMode="Static" runat="server" RepeatDirection="Horizontal"
                     RepeatLayout="Flow" CssClass="radio-button-list">
@@ -239,7 +197,7 @@
                     <asp:ListItem>N/A</asp:ListItem>
                 </asp:RadioButtonList>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Required" ControlToValidate="rblClerkCertAttach" runat="server" />
+                    ErrorMessage="Certificate Attached is Required" ControlToValidate="rblClerkCertAttach" runat="server" />
             </div>
             <div class="col-md-4">
                 <label for="rblCDType">CD Type<em class="text-danger">*</em></label>
@@ -248,7 +206,7 @@
                     <asp:ListItem>Audio Upload</asp:ListItem>
                 </asp:RadioButtonList>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Required" ControlToValidate="rblCDType" runat="server" />
+                    ErrorMessage="CD Type is Required" ControlToValidate="rblCDType" runat="server" />
             </div>
         </div>
         <div class="row form-group">
@@ -256,33 +214,33 @@
                 <label for="txtReceivedBy">Processed By<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtProcessedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Processed By Required" ControlToValidate="txtProcessedBy" runat="server" />
+                    ErrorMessage="Processed By is Required" ControlToValidate="txtProcessedBy" runat="server" />
             </div>
             <div class="col-md-4">
                 <label for="txtTrackingNumber">Tracking Number<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtTrackingNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Tracking Number Required" ControlToValidate="txtTrackingNumber" runat="server" />
+                    ErrorMessage="Tracking Number is Required" ControlToValidate="txtTrackingNumber" runat="server" />
             </div>
             <div class="col-md-4">
                 <label for="txtDateBurned">Date CD Burned<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtDateBurned" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="25"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Date Burned Required" ControlToValidate="txtDateBurned" runat="server" />
+                    ErrorMessage="Date Burned is Required" ControlToValidate="txtDateBurned" runat="server" />
             </div>
         </div>
         <div class="row form-group">
             <div class="col-md-4">
                 <label for="txtTotalMinutes">Total Minutes Burned<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtTotalMinutes" ClientIDMode="Static" TextMode="Number" min="0" step="10" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtTotalMinutes" ClientIDMode="Static" TextMode="Number" min="0" step="1" runat="server" CssClass="form-control"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Total Minutes Required" ControlToValidate="txtTotalMinutes" runat="server" />
+                    ErrorMessage="Total Minutes Burned is Required" ControlToValidate="txtTotalMinutes" runat="server" />
             </div>
             <div class="col-md-4">
-                <label for="txtCdsProvided">Total Minutes Burned<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtCdsProvided" ClientIDMode="Static" TextMode="Number" min="0" step="10" runat="server" CssClass="form-control"></asp:TextBox>
+                <label for="txtCdsProvided">Number of CDs<em class="text-danger">*</em></label>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtCdsProvided" ClientIDMode="Static" TextMode="Number" min="0" step="1" runat="server" CssClass="form-control"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Number of CDs Required" ControlToValidate="txtCdsProvided" runat="server" />
+                    ErrorMessage="Number of CDs is Required" ControlToValidate="txtCdsProvided" runat="server" />
             </div>
         </div>
         <div class="form-group">

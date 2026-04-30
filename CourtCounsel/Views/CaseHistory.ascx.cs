@@ -53,9 +53,11 @@ namespace tjc.Modules.CourtCounsel.Views
             rptNames.DataSource = names;
             rptNames.DataBind();
 
-            // Bind history records
+            // Bind history records — sort by DateCompleted desc, with null/open records at the top.
             var history = ctrl.GetHistoryByCaseNumber(_caseNumber)
-                .OrderByDescending(h => h.DateReceived);
+                .OrderBy(h => h.DateCompleted.HasValue)        // false (null) first
+                .ThenByDescending(h => h.DateCompleted)        // newest completed next
+                .ThenByDescending(h => h.DateReceived);        // tiebreaker
             rptHistory.DataSource = history;
             rptHistory.DataBind();
 

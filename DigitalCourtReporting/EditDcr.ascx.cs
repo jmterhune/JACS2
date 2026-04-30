@@ -34,12 +34,18 @@ namespace tjc.Modules.DigitalCourtReporting
     /// -----------------------------------------------------------------------------
     public partial class EditDcr : DigitalCourtReportingModuleBase
     {
+        #region Properties
         private readonly INavigationManager _navigationManager;
+        #endregion
+
+        #region Methods
         public EditDcr()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
-
+        #endregion
+       
+        #region Events      
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -61,8 +67,10 @@ namespace tjc.Modules.DigitalCourtReporting
                                     txtRequestedDate.Text = proceeding.RequestedDate.ToString("MMMM dd, yyyy");
                                 if (proceeding.Involvement == "State Attorney" | proceeding.Involvement == "Public Defender")
                                 {
-                                    rblCourOrderAttach.Enabled = false;
-                                    rblClerkCertAttach.Enabled = false;
+                                    rblClerkCertAttach.SelectedValue = "N/A";
+                                    rblCourOrderAttach.SelectedValue= "N/A";
+                                    dvCourOrderAttach.Visible = false;
+                                    dvClerkCertAttach.Visible = false;
                                 }
                                 txtAddress.Text = proceeding.Address;
                                 txtCaseName.Text = proceeding.CaseName;
@@ -142,5 +150,6 @@ namespace tjc.Modules.DigitalCourtReporting
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+     #endregion
     }
 }

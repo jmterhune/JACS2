@@ -54,14 +54,36 @@ namespace tjc.Modules.CourtCounsel.Views
                 drpRequestor.Items.Add(new ListItem(r.RequestorName, r.RequestorName));
             }
 
-            // Attorneys
+            // Attorneys — split active vs. inactive. Inactive render disabled at the bottom.
             var attCtrl = new AttorneyController();
-            var attorneys = attCtrl.GetActiveAttorneys().OrderBy(a => a.AttorneyName).ToList();
+            var attorneys = attCtrl.GetAttorneys().ToList();
+            var active = attorneys.Where(a => a.IsActive == true).OrderBy(a => a.AttorneyName).ToList();
+            var inactive = attorneys.Where(a => a.IsActive != true).OrderBy(a => a.AttorneyName).ToList();
+
             cblAttorneys.Items.Clear();
-            foreach (var a in attorneys)
+            foreach (var a in active)
             {
                 cblAttorneys.Items.Add(new ListItem(a.AttorneyName, a.AttorneyName));
             }
+
+            cblAttorneysInactive.Items.Clear();
+            foreach (var a in inactive)
+            {
+                var item = new ListItem(a.AttorneyName, a.AttorneyName);
+                item.Attributes.Add("disabled", "disabled");
+                cblAttorneysInactive.Items.Add(item);
+            }
+            pnlInactiveAttorneys.Visible = inactive.Count > 0;
+        }
+
+        private List<string> GetSelectedAttorneys()
+        {
+            var selected = new List<string>();
+            foreach (ListItem item in cblAttorneys.Items)
+                if (item.Selected) selected.Add(item.Value);
+            foreach (ListItem item in cblAttorneysInactive.Items)
+                if (item.Selected) selected.Add(item.Value);
+            return selected;
         }
 
         protected void cmdSubmit_Click(object sender, EventArgs e)
@@ -79,13 +101,7 @@ namespace tjc.Modules.CourtCounsel.Views
             var county = drpCounty.SelectedValue;
             var requestor = drpRequestor.SelectedValue;
 
-            // Get selected attorneys
-            var selectedAttorneys = new List<string>();
-            foreach (ListItem item in cblAttorneys.Items)
-            {
-                if (item.Selected)
-                    selectedAttorneys.Add(item.Value);
-            }
+            var selectedAttorneys = GetSelectedAttorneys();
 
             var ctrl = new HistoryController();
             var attorney = selectedAttorneys.Count == 1 ? selectedAttorneys.First() : "";
@@ -169,9 +185,9 @@ namespace tjc.Modules.CourtCounsel.Views
             chkShowDetail.Checked = false;
 
             foreach (ListItem item in cblAttorneys.Items)
-            {
                 item.Selected = false;
-            }
+            foreach (ListItem item in cblAttorneysInactive.Items)
+                item.Selected = false;
 
             ltResults.Text = "";
         }

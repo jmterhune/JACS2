@@ -8,6 +8,7 @@ using DotNetNuke.Services.FileSystem;
 using System;
 using System.Linq;
 using tjc.Modules.EmployeeDB.Components.Controllers;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 
 namespace tjc.Modules.EmployeeDB.Views
 {
@@ -66,8 +67,8 @@ namespace tjc.Modules.EmployeeDB.Views
                 if (dept != null) ltDepartment.Text = dept.GroupName;
             }
 
-            var locName = emp.LocationName;
-            if (string.IsNullOrEmpty(locName) && emp.OfficeLocationId.HasValue)
+            string locName = string.Empty;
+            if (emp.OfficeLocationId.HasValue)
             {
                 var loc = _locations.GetById(emp.OfficeLocationId.Value);
                 if (loc != null) locName = loc.Description;
@@ -80,9 +81,9 @@ namespace tjc.Modules.EmployeeDB.Views
             }
 
             // Photo
-            if (emp.PhotoFileId.HasValue && emp.PhotoFileId.Value > 0)
+            if (emp.FileId.HasValue && emp.FileId.Value > 0)
             {
-                var file = FileManager.Instance.GetFile(emp.PhotoFileId.Value);
+                var file = FileManager.Instance.GetFile(emp.FileId.Value);
                 if (file != null)
                 {
                     imgPhoto.ImageUrl = FileManager.Instance.GetUrl(file);
@@ -103,10 +104,10 @@ namespace tjc.Modules.EmployeeDB.Views
                 .Select(p => new
                 {
                     p.PhoneType,
+                    // PhoneNumber is the raw-digits value used for the tel: link;
+                    // DisplayNumber is the masked (999) 999-9999 form for humans.
                     p.PhoneNumber,
-                    DisplayNumber = string.IsNullOrEmpty(p.Extension)
-                        ? p.PhoneNumber
-                        : p.PhoneNumber + " x" + p.Extension
+                    DisplayNumber = DisplayMask.PhoneWithExtension(p.PhoneNumber, p.Extension)
                 })
                 .ToList();
 

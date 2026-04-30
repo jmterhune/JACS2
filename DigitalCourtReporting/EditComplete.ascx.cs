@@ -16,7 +16,6 @@ using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using tjc.Modules.DigitalCourtReporting.Components;
 
 namespace tjc.Modules.DigitalCourtReporting
@@ -45,6 +44,7 @@ namespace tjc.Modules.DigitalCourtReporting
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
         #endregion
+        
         #region Events
         protected void Page_Load(object sender, EventArgs e)
         {

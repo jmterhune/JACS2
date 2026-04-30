@@ -56,7 +56,8 @@
                 <asp:ListItem Text="Family Division 2" />
                 <asp:ListItem Text="Family Division 3" />
                 <asp:ListItem Text="Family Division 4" />
-                <asp:ListItem Text="Family Division H" />
+                <asp:ListItem Text="South County Family Division 1" />
+                 <asp:ListItem Text="South County Family Division 2" />
                 <asp:ListItem Text="Family Division DeSoto" />
             </asp:DropDownList>
         </div>

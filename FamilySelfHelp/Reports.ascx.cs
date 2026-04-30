@@ -11,15 +11,14 @@
 */
 
 using DotNetNuke.Abstractions;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
-using DotNetNuke.Services.Log.EventLog;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.FamilySelfHelp.Components;
+
 namespace tjc.Modules.FamilySelfHelp
 {
     /// -----------------------------------------------------------------------------
@@ -77,65 +76,97 @@ namespace tjc.Modules.FamilySelfHelp
             }
         }
 
-
         protected void cmdReport_Click(object sender, EventArgs e)
         {
             DateTime startdate = DateTime.Now.AddDays(-1);
             DateTime enddate = DateTime.Now;
             string division = drpDivisions.SelectedValue;
-            IEnumerable<Log> lstLog = Enumerable.Empty<Log>();
-            IEnumerable<Report> lstCaseTypeReport = Enumerable.Empty<Report>();
-            IEnumerable<Report> lstServiceReport = Enumerable.Empty<Report>();
-            var ctl = new Components.LogController();
+
             DateTime.TryParse(txtStartDate.Text, out startdate);
-            DateTime.TryParse(txtEndDate.Text, out  enddate);
-            if(drpDivisions.SelectedValue != "all")
+            DateTime.TryParse(txtEndDate.Text, out enddate);
+
+            var ctl = new Components.LogController();
+
+            IEnumerable<Log> lstLog;
+            IEnumerable<Report> lstCaseTypeReport;
+            IEnumerable<Report> lstServiceReport;
+
+            if (string.IsNullOrEmpty(division) || division == "All")
             {
                 lstLog = ctl.GetReport(startdate, enddate);
-                lstCaseTypeReport=ctl.GetCaseTypeReport(startdate, enddate);
-                lstServiceReport=ctl.GetServiceReport(startdate,enddate);
+                lstCaseTypeReport = ctl.GetCaseTypeReport(startdate, enddate);
+                lstServiceReport = ctl.GetServiceReport(startdate, enddate);
             }
             else
             {
-                lstLog = ctl.GetReport(startdate, enddate,division);
-                lstCaseTypeReport= ctl.GetCaseTypeReport(startdate,enddate,division);
-                lstServiceReport= ctl.GetServiceReport(startdate,enddate, division);
+                lstLog = ctl.GetReport(startdate, enddate, division);
+                lstCaseTypeReport = ctl.GetCaseTypeReport(startdate, enddate, division);
+                lstServiceReport = ctl.GetServiceReport(startdate, enddate, division);
             }
-            if (lstLog.Count() > 0)
-            {
-                var clientTypeList = lstLog.GroupBy(x => x.ClientType, (field, itemCount) => new { Client = field, ClientCount = itemCount.Count() });
-                var contactMethodlist = lstLog.GroupBy(x => x.ContactMethod, (field, itemCount) => new { Method = field, MethodCount = itemCount.Count() });
-                var caseTypeList = lstCaseTypeReport.GroupBy(x => x.Name, (field, itemCount) => new { CaseType = field, CaseTypeCount = itemCount.Count() });
-                var serviceProvidedList = lstServiceReport.GroupBy(x => x.Name, (field, itemCount) => new { Service = field, ServiceCount = itemCount.Count() });
-                var divisionlist = lstLog.GroupBy(x => x.Division, (field, itemCount) => new { Division = field, DivisionCount = itemCount.Count() });
-                var totalCustomers = lstLog.GroupBy(x => x.ClientId, (field, itemCount) => new { ClientId = field, ClientCount = itemCount.Count() }).Count();
-                int interpreterCount = lstLog.Where(x => x.InterpreterProvided == true).Count();
-                decimal totalTime = lstLog.Sum(x => x.TimeSpent);
-                decimal averageTime = lstLog.Average(x => x.TimeSpent);
-                int newCase = lstLog.Where(x => x.IsNewCase == true).Count();
-                rptCaseType.DataSource = caseTypeList;
-                rptCaseType.DataBind();
-                rptClientTypes.DataSource = clientTypeList;
-                rptClientTypes.DataBind();
-                rptContactMethod.DataSource=contactMethodlist;
-                rptContactMethod.DataBind();
-                rptServiceProvided.DataSource=serviceProvidedList;
-                rptServiceProvided.DataBind();
-                rptDivision.DataSource=divisionlist;
-                rptDivision.DataBind();
-                ltCustomerTotal.Text=totalCustomers.ToString();
-                ltAverage.Text=averageTime.ToString("0.00");
-                ltInterpreter.Text=interpreterCount.ToString();
-                ltTotal.Text=totalTime.ToString("0.00");
-                ltCase.Text=newCase.ToString();
-                pnlReport.Visible = true;
-            }
-            else
+
+            if (!lstLog.Any())
             {
                 ltMessage.Text = "No Records returned";
                 pnlReport.Visible = false;
-
+                return;
             }
+
+            // Group by Location
+            var locationGroups = lstLog
+                .GroupBy(x => string.IsNullOrWhiteSpace(x.Location) ? "Unknown" : x.Location.Trim())
+                .OrderBy(g => g.Key)
+                .ToList();
+
+            var reportData = new List<LocationReportViewModel>();
+
+            foreach (var group in locationGroups)
+            {
+                var logs = group.ToList();
+                string currentLocation = group.Key;
+
+                var vm = new LocationReportViewModel
+                {
+                    Location = currentLocation,
+
+                    ClientTypes = logs.GroupBy(x => x.ClientType ?? "None")
+                        .Select(g => new CountItem { Name = g.Key, Count = g.Count() })
+                        .OrderBy(x => x.Name),
+
+                    ContactMethods = logs.GroupBy(x => x.ContactMethod ?? "None")
+                        .Select(g => new CountItem { Name = g.Key, Count = g.Count() })
+                        .OrderBy(x => x.Name),
+
+                    CaseTypes = lstCaseTypeReport
+                        .Where(r => logs.Any(l => l.LogId == r.LogId))
+                        .GroupBy(x => x.Name ?? "None")
+                        .Select(g => new CountItem { Name = g.Key, Count = g.Count() })
+                        .OrderBy(x => x.Name),
+
+                    Services = lstServiceReport
+                        .Where(r => logs.Any(l => l.LogId == r.LogId))
+                        .GroupBy(x => x.Name ?? "None")
+                        .Select(g => new CountItem { Name = g.Key, Count = g.Count() })
+                        .OrderBy(x => x.Name),
+
+                    Divisions = logs.GroupBy(x => x.Division ?? "None")
+                        .Select(g => new CountItem { Name = g.Key, Count = g.Count() })
+                        .OrderBy(x => x.Name),
+
+                    InterpreterRequested = logs.Count(x => x.InterpreterProvided == true),
+                    NewCases = logs.Count(x => x.IsNewCase == true),
+                    TotalTime = logs.Sum(x => x.TimeSpent),
+                    AverageTime = logs.Any() ? logs.Average(x => x.TimeSpent) : 0m,
+                    UniqueCustomers = logs.Select(x => x.ClientId).Distinct().Count()
+                };
+
+                reportData.Add(vm);
+            }
+
+            rptLocations.DataSource = reportData;
+            rptLocations.DataBind();
+
+            pnlReport.Visible = true;
+            ltMessage.Text = "";
         }
     }
 }

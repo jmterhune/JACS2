@@ -1,8 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UpdateCaseName.ascx.cs" Inherits="tjc.Modules.CourtCounsel.Views.UpdateCaseName" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md rounded">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -23,9 +23,7 @@
         <div class="col-md-4">
             <div class="input-group">
                 <asp:TextBox ID="txtCaseNumber" runat="server" CssClass="form-control" placeholder="Enter Case Number..." />
-                <div class="input-group-append">
-                    <asp:Button ID="cmdFind" runat="server" CssClass="btn btn-primary" Text="Find" OnClick="cmdFind_Click" />
-                </div>
+                <asp:Button ID="cmdFind" runat="server" CssClass="btn btn-primary" Text="Find" OnClick="cmdFind_Click" />
             </div>
         </div>
     </div>
@@ -54,7 +52,7 @@
 
         <div class="row mb-3">
             <div class="col-md-4">
-                <label class="font-weight-bold">New Case Name:</label>
+                <label class="fw-bold">New Case Name:</label>
                 <asp:TextBox ID="txtNewCaseName" runat="server" CssClass="form-control" MaxLength="200" />
             </div>
             <div class="col-md-2 align-self-end">
@@ -68,4 +66,3 @@
     </asp:Panel>
 </div>
 
-<dnn:DnnCssInclude runat="server" FilePath="~/DesktopModules/CourtCounsel/Styles/module.css" />

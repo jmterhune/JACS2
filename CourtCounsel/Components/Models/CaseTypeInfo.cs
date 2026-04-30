@@ -3,7 +3,7 @@ using System.Web.Caching;
 namespace tjc.Modules.CourtCounsel.Components.Models
 {
     [TableName("tjc_cc_case_type")]
-    [PrimaryKey("caseTypeId", AutoIncrement = true)]
+    [PrimaryKey("CaseTypeId", AutoIncrement = true)]
     [Cacheable("tjc_cc_case_type", CacheItemPriority.Default, 20)]
     public class CaseTypeInfo
     {

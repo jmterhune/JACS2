@@ -65,11 +65,9 @@ namespace tjc.Modules.EmployeeDB.Views
                         DepartmentName = emp.DepartmentId.HasValue && departmentLookup.ContainsKey(emp.DepartmentId.Value)
                             ? departmentLookup[emp.DepartmentId.Value]
                             : "",
-                        LocationName = !string.IsNullOrEmpty(emp.LocationName)
-                            ? emp.LocationName
-                            : (emp.OfficeLocationId.HasValue && locationLookup.ContainsKey(emp.OfficeLocationId.Value)
-                                ? locationLookup[emp.OfficeLocationId.Value]
-                                : "")
+                        LocationName = emp.OfficeLocationId.HasValue && locationLookup.ContainsKey(emp.OfficeLocationId.Value)
+                            ? locationLookup[emp.OfficeLocationId.Value]
+                            : ""
                     })
                     .ToList();
 

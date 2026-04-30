@@ -22,7 +22,6 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="ControlTitle_.Text"><value>Employee Database</value></data>
   <data name="ControlTitle_Edit.Text"><value>Edit Employee</value></data>
-  <data name="ControlTitle_Directory.Text"><value>Employee Directory</value></data>
   <data name="ControlTitle_Details.Text"><value>Employee Details List</value></data>
   <data name="ControlTitle_EEO.Text"><value>EEO Setup</value></data>
   <data name="ControlTitle_Birthdays.Text"><value>Birthdays</value></data>

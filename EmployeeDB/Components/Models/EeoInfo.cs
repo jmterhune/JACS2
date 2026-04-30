@@ -54,5 +54,11 @@ namespace tjc.Modules.EmployeeDB.Components.Models
         public int CreatedById { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public int LastModifiedById { get; set; }
+
+        /// <summary>Resolved JobGroup.Description, populated by the API layer
+        /// on read so the list can render the category name without a second
+        /// lookup. Excluded from PetaPoco INSERT / UPDATE / SELECT.</summary>
+        [IgnoreColumn]
+        public string JobGroupName { get; set; }
     }
 }

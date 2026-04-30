@@ -1,24 +1,16 @@
 /***********************************************************************
  * EmployeeDB 0.0.1 install script
  *
- * All other tjc_employee_* and tjc_gl_* tables already exist in the
- * database. This script creates only the new tjc_employee_assigned_item
- * table (replacement for legacy Emp_AssignedItems) if it does not
- * already exist.
+ * All tjc_employee_* and tjc_gl_* tables already exist in the database
+ * before this module is installed; nothing to create here.
+ *
+ * The legacy tjc_employee_assigned_item table created in earlier dev
+ * builds was rejected and is dropped explicitly so the schema doesn't
+ * carry the abandoned column set forward.
  ***********************************************************************/
 
-IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_employee_assigned_item')
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_employee_assigned_item')
 BEGIN
-    CREATE TABLE {databaseOwner}{objectQualifier}tjc_employee_assigned_item (
-        ItemId            INT IDENTITY(1,1) NOT NULL,
-        EmployeeId        INT NOT NULL,
-        ItemType          NVARCHAR(25) NULL,
-        ItemName          NVARCHAR(50) NULL,
-        CreatedDate       DATETIME NOT NULL CONSTRAINT DF_tjc_employee_assigned_item_CreatedDate DEFAULT GETDATE(),
-        CreatedById       INT NOT NULL,
-        LastModifiedDate  DATETIME NOT NULL CONSTRAINT DF_tjc_employee_assigned_item_LastModifiedDate DEFAULT GETDATE(),
-        LastModifiedById  INT NOT NULL,
-        CONSTRAINT PK_tjc_employee_assigned_item PRIMARY KEY CLUSTERED (ItemId)
-    )
+    DROP TABLE {databaseOwner}{objectQualifier}tjc_employee_assigned_item
 END
 GO

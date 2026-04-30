@@ -112,7 +112,7 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblContact_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditContactModal"><i class="fa fa-plus"></i>&nbsp;Add Contact</button>');
+        $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditContactModal"><i class="fa fa-plus"></i>&nbsp;Add Contact</button>');
         table.on('draw', function () {
             $(".confirm").dnnConfirm({
                 text: 'Are you sure you wish to Delete the selected Contact?',

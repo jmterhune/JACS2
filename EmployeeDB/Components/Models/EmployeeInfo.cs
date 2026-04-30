@@ -1,5 +1,6 @@
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 
 namespace tjc.Modules.EmployeeDB.Components.Models
 {
@@ -26,9 +27,8 @@ namespace tjc.Modules.EmployeeDB.Components.Models
         public string State { get; set; }
         public string Zip { get; set; }
         public int? OfficeLocationId { get; set; }
-        public string LocationName { get; set; }
         public int? CountyId { get; set; }
-        public int? PhotoFileId { get; set; }
+        public int? FileId { get; set; }
         public DateTime? HireDate { get; set; }
         public DateTime? TerminationDate { get; set; }
         public DateTime? ServiceDate { get; set; }
@@ -39,14 +39,13 @@ namespace tjc.Modules.EmployeeDB.Components.Models
         public decimal? Salary { get; set; }
         public decimal? AnnualLeaveBalance { get; set; }
         public decimal? SickLeaveBalance { get; set; }
-        public string SocialSecurityNumber { get; set; }
+        [DigitsOnly] public string SocialSecurityNumber { get; set; }
         public string AgencyOfEmployment { get; set; }
         public bool? IsActive { get; set; }
         public bool IsEmployee { get; set; }
         public bool? ManateeAccess { get; set; }
         public string SarasotaAccess { get; set; }
         public string DesotoAccess { get; set; }
-        public string SwnGroupId { get; set; }
         public DateTime CreatedDate { get; set; }
         public int CreatedById { get; set; }
         public DateTime LastModifiedDate { get; set; }

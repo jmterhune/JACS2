@@ -1,59 +1,16 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditNotification.ascx.cs" Inherits="tjc.Modules.DigitalCourtReporting.EditNotification" %>
-<div class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
+<div id="navigationLinks" class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
     <a class="btn btn-primary" id="lnkAccounting" href='<%=AccountingUrl %>'>Accounting</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropInquiry" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Inquiry
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropInquiry">
-            <li>
-                <a class="dropdown-item" id="lnkInquiry" href="<%=InquiryUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqDesoto" href="<%=InquiryDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqManatee" href="<%=InquiryManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqSarasota" href="<%=InquirySarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropDCR" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            DCR
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropDCR">
-            <li>
-                <a class="dropdown-item" id="lnkDCR" href="<%=DCRUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRDesoto" href="<%=DCRDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRManatee" href="<%=DCRManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRSarasota" href="<%=DCRSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
-    <a class="btn btn-primary" id="lnkNotification" href="<%=NotificationUrl %>">Notification</a>
+    <a class="btn btn-primary" id="lnkInquiry" href="<%=InquiryUrl %>">Inquiry</a>
+    <a class="btn btn-primary" id="lnkDCR" href="<%=DCRUrl %>">
+        <abbr title="Digital Court Reporting">DCR</abbr></a>
+    <a class="btn btn-primary active" id="lnkNotification" href="<%=NotificationUrl %>">Notification</a>
     <a class="btn btn-primary" id="lnkStats" href="<%=StatsUrl %>">Stats</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropComplete" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Complete
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropComplete">
-            <li>
-                <a class="dropdown-item" id="lnkComplete" href="<%=CompleteUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompDesoto" href="<%=CompleteDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompManatee" href="<%=CompleteManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompSarasota" href="<%=CompleteSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+    <a class="btn btn-primary" id="lnkComplete" href="<%=CompleteUrl %>">Complete</a>
 </div>
-
 <div class="heading heading-border heading-middle-border heading-middle-border-center heading-border-lg mb-1">
     <h2>Audio Request Form (Notification)</h2>
 </div>
-
 <p class="mb-0 text-end">All fields marked with <em class="text-danger">*</em> are required and must be filled in or this form will not be processed.</p>
 <div>
     <fieldset class="outline-fieldset mt-0" id="requestorInformation">
@@ -279,7 +236,7 @@
             </div>
             <div class="form-group">
                 <label for="txtNotesDCR">Notes:</label>
-                <asp:TextBox ID="txtNotesDCR" ClientIDMode="Static" TextMode="MultiLine" ReadOnly="true" CssClass="form-control-plaintext rounded border p-1" runat="server" />
+                <asp:TextBox ID="txtNotesDCR" ClientIDMode="Static" TextMode="MultiLine" ReadOnly="true" CssClass="ms-2 form-control-plaintext rounded border p-1" runat="server" />
             </div>
         </div>
     </fieldset>
@@ -288,7 +245,7 @@
         <div class="row form-group">
             <div class="col-md-6">
                 <label for="rblNotification">Notification</label>
-                <asp:RadioButtonList ID="rblNotification" ClientIDMode="Static" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="form-control radio-button-list" AutoPostBack="true" CausesValidation="false" OnSelectedIndexChanged="rblNotification_SelectedIndexChanged">
+                <asp:RadioButtonList ID="rblNotification" ClientIDMode="Static" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="form-control radio-button-list" CausesValidation="false">
                     <asp:ListItem Value="Emailed" />
                     <asp:ListItem Value="Inter-Officed" />
                     <asp:ListItem Value="Called" />
@@ -302,25 +259,31 @@
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Date Called / Mailed / Deliver is Required" ControlToValidate="txtDateCalled" runat="server" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" runat="server" id="dvDatePickedUp">
                 <label for="txtDatePickedUp">Picked Up Date</label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtDatePickedUp" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="25"></asp:TextBox>
             </div>
         </div>
         <div class="row form-group">
-            <div class="col-md-4">
-                <label for="txtCalledPerson">Person Spoke With<em class="text-danger">*</em></label>
+            <div class="col-md-4"   runat="server" id="dvCalledPerson">
+                <label for="txtCalledPerson">Person Spoke With<em class="call-req text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledPerson" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="valCalledPerson" Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
-                    ErrorMessage="Person Spoke With is Required" ControlToValidate="txtCalledPerson" runat="server" />
+                <asp:CustomValidator ID="valCalledPerson" runat="server" OnServerValidate="valCalledPerson_ServerValidate"
+                    ControlToValidate="txtCalledPerson"
+                    Display="Dynamic"
+                    SetFocusOnError="true"
+                    CssClass="label label-danger"
+                    ErrorMessage="Person Spoke With is Required when notification method is 'Called'"
+                    ClientValidationFunction="validateCalledPerson" ValidateEmptyText="true">
+                </asp:CustomValidator>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4"  runat="server" id="dvCalledBy">
                 <label for="txtCalledBy">Called / Mailed By<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
                 <asp:RequiredFieldValidator ID="valCalledMailedBy" Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Called / Mailed By is Required" ControlToValidate="txtCalledBy" runat="server" />
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4"   runat="server" id="dvRecipient">
                 <label for="txtRecipient">Picked Up By/Delivered To</label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtRecipient" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
             </div>
@@ -339,11 +302,37 @@
     (function ($, Sys) {
 
         $(document).ready(function () {
+            // Format dates on blur (existing)
             $(".date-picker").on("blur", function (e) {
                 var date = $(this).val();
                 $(this).val(date.replace(/\.|-/g, "/"));
             });
-        });
 
+            // Asterisk visibility only (removed validator visibility toggling)
+            var $asterisk = $('.call-req');
+
+            function updateAsteriskVisibility() {
+                var isCalled = $('#<%= rblNotification.ClientID %> input:checked').val() === 'Called';
+                $asterisk.toggle(isCalled);
+            }
+
+            // Initial check
+            updateAsteriskVisibility();
+
+            // Update on radio change
+            $('#rblNotification input').change(function () {
+                updateAsteriskVisibility();
+            });
+        });
     }(jQuery, window.Sys));
+
+    function validateCalledPerson(source, args) {
+        var selectedMethod = $('#rblNotification input:checked').val();
+        // Only require the field if "Called" is selected
+        if (selectedMethod === "Called") {
+            args.IsValid = (args.Value.trim() !== "");
+        } else {
+            args.IsValid = true;   // always valid when not "Called"
+        }
+    }
 </script>

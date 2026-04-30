@@ -29,7 +29,7 @@ namespace tjc.Modules.Purchasing
     public partial class SupplyOrderDetail : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        private string currentProtocol;
+        private string _currentProtocol;
         public int OrderId
         {
             get
@@ -59,7 +59,7 @@ namespace tjc.Modules.Purchasing
         {
             try
             {
-                currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
+                _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
                 if (!IsPostBack)
                 {
                     JavaScript.RequestRegistration(CommonJs.DnnPlugins);
@@ -242,7 +242,7 @@ namespace tjc.Modules.Purchasing
         private void SendEmail(Components.SupplyOrder supplyOrder)
         {
             string subject = "Supply Order Form";
-            string fromAddress = "webhelp@jud12.flcourts.org";
+            string fromAddress = "purchasing@jud12.flcourts.org";
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
             StringBuilder sb = new StringBuilder();
             sb.Append("<h2>Supply Order Details</h2>");
@@ -280,7 +280,7 @@ namespace tjc.Modules.Purchasing
                 sb.Append("</ul>");
             }
             subject = "Supply Order Updated by Purchasing";
-            DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", txtEmail.Text, subject, sb.ToString());
+            DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", txtEmail.Text, subject, sb.ToString());
         }
         protected void BindSupplysList(int orderId)
         {

@@ -10,11 +10,13 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web.UI.WebControls;
@@ -25,8 +27,9 @@ namespace tjc.Modules.Purchasing
     public partial class FormOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        private string currentProtocol;
+        private string _currentProtocol;
         public string attachmentHandler = "";
+
         public int OrderId
         {
             get
@@ -44,6 +47,7 @@ namespace tjc.Modules.Purchasing
         public FormOrder()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+
         }
         private void ClearForm()
         {
@@ -68,7 +72,7 @@ namespace tjc.Modules.Purchasing
             try
             {
                 attachmentHandler = TemplateSourceDirectory + "/Handlers/AttachmentHandler.ashx";
-                currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
+                _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
                 if (!IsPostBack)
                 {
                     cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
@@ -129,7 +133,7 @@ namespace tjc.Modules.Purchasing
                 var aCtl = new AttachmentController();
                 DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
                 var order = ctl.GetFormOrder(OrderId);
-                string fromAddress = "webhelp@jud12.flcourts.org";
+                string fromAddress = "purchasing@jud12.flcourts.org";
                 StringBuilder sb = new StringBuilder();
                 string subject = "";
                 order.DateRequested = DateTime.Now;
@@ -175,16 +179,16 @@ namespace tjc.Modules.Purchasing
                             if (attach.FileID > 0)
                             {
                                 var fileInfo = dCtl.GetFile(attach.FileID);
-                                sb.Append(string.Format("<li><a target='_blank' title='Opens in new tab' href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", currentProtocol, PortalAlias.HTTPAlias, PortalId, fileInfo.RelativePath, fileInfo.FileName));
+                                sb.Append(string.Format("<li><a target='_blank' title='Opens in new tab' href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, PortalAlias.HTTPAlias, PortalId, fileInfo.RelativePath, fileInfo.FileName));
                             }
                         sb.Append("</ul></td></tr>");
                     }
                     sb.Append("</tbody></table>");
                     sb.Append("</ul>");
                     subject = string.Format("Court Form Order for {0}", order.RequestedName);
-                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", EmailList, subject, sb.ToString());
                     subject = "Form Order Confirmation";
-                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", order.EmailAddress, subject, sb.ToString());
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", order.EmailAddress, subject, sb.ToString());
                 }
                 catch (Exception exc)
                 {

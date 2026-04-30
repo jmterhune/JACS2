@@ -777,7 +777,7 @@
             archived = $("#chkArchive").is(':checked')
             designationTable.draw();
         });
-        $("#tblDesignations_length").prepend($('#btnAdd'));
+        $(".dt-length").prepend($('#btnAdd'));
     }
     function validateAddDesignation() {
         var isValid = Page_ClientValidate('new');

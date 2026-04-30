@@ -4,7 +4,7 @@ using System;
 namespace tjc.Modules.CourtCounsel.Components.Models
 {
     [TableName("tjc_cc_history")]
-    [PrimaryKey("logId", AutoIncrement = true)]
+    [PrimaryKey("LogId", AutoIncrement = true)]
     public class HistoryInfo
     {
         public int LogId { get; set; }

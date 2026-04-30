@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 using tjc.Modules.EmployeeDB.Components.Models;
 
 namespace tjc.Modules.EmployeeDB.Components.Controllers
@@ -29,6 +30,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public long Create(PhoneInfo item, int userId = -1)
         {
+            ModelNormalizer.Normalize(item);
             item.CreatedDate = DateTime.Now;
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
@@ -43,6 +45,21 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void Update(PhoneInfo item, int userId = -1)
         {
+            ModelNormalizer.Normalize(item);
+            // Preserve the audit columns from the existing row (the JSON-bound
+            // payload from the API layer comes in with DateTime.MinValue / 0
+            // for these, which SQL Server datetime rejects).
+            var existing = GetById(item.PhoneId);
+            if (existing != null)
+            {
+                item.CreatedDate = existing.CreatedDate;
+                item.CreatedById = existing.CreatedById;
+            }
+            else
+            {
+                item.CreatedDate = DateTime.Now;
+                item.CreatedById = userId;
+            }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
             using (IDataContext ctx = DataContext.Instance())

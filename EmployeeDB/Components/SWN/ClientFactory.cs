@@ -19,18 +19,26 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
     {
         public const string Url = "https://api.sendwordnow.com/webservices/v3/Users.svc";
 
-        // NOTE: Test account is TJCCAPI / 12CircuitAPI!
-        public const string Username = "TJCCalert";
-        public const string Password = "SWNpassword123!";
+        // Fallback test credentials. Used only when no credentials come in from
+        // module settings (Swn_TestUsername / Swn_TestPassword).
+        private const string DefaultTestUsername = "TJCCAPI";
+        private const string DefaultTestPassword = "12CircuitAPI!";
 
         /// <summary>
-        /// Creates and returns a configured <see cref="UsersClient"/>.
-        /// Applies TLS 1.0 | 1.2, a CustomBinding with
-        /// TransportSecurityBindingElement (UserNameOverTransport) + SOAP 1.2
-        /// WS-Addressing text encoding + HttpsTransportBindingElement, then
-        /// swaps the default credentials behavior for <see cref="CustomCredentials"/>.
+        /// Creates a proxy using the built-in default test credentials. Kept
+        /// for callers that don't have settings context.
         /// </summary>
         public static UsersClient CreateSWNOnlineProxy()
+        {
+            return CreateSWNOnlineProxy(null, null);
+        }
+
+        /// <summary>
+        /// Creates and returns a configured <see cref="UsersClient"/> using the
+        /// supplied credentials. Empty/null falls back to the default test
+        /// account so existing call sites keep working.
+        /// </summary>
+        public static UsersClient CreateSWNOnlineProxy(string username, string password)
         {
             // 768 = Tls, 3072 = Tls12. OR'd together.
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)(768 | 3072);
@@ -56,8 +64,8 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
 
             client.ChannelFactory.Endpoint.Behaviors.Remove<ClientCredentials>();
             client.ChannelFactory.Endpoint.Behaviors.Add(new CustomCredentials());
-            client.ClientCredentials.UserName.UserName = Username;
-            client.ClientCredentials.UserName.Password = Password;
+            client.ClientCredentials.UserName.UserName = string.IsNullOrEmpty(username) ? DefaultTestUsername : username;
+            client.ClientCredentials.UserName.Password = string.IsNullOrEmpty(password) ? DefaultTestPassword : password;
 
             return client;
         }

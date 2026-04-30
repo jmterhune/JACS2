@@ -58,7 +58,6 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
             get; set;
         }
 
-
         public int FcDangerous
         {
             get; set;

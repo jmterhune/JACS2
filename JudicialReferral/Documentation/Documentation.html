@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title>Judicial Referral Module Documentation</title>
+</head>
+<body>
+    <h1>Judicial Referral Module</h1>
+    <p>This module routes judicial referrals (motions) from Judicial Assistants to Judges and, optionally, to Court Counsel for research/assistance.</p>
+
+    <h2>Roles</h2>
+    <ul>
+        <li><strong>Judge</strong> - reviews a JA-submitted referral, selects motion type, and accepts or declines Court Counsel assistance.</li>
+        <li><strong>Ja (Judicial Assistant)</strong> - creates new referrals with attachments and submits them to the Judge.</li>
+        <li><strong>Court Counsel</strong> - receives referrals accepted by a Judge and copies them into the Court Counsel log.</li>
+    </ul>
+
+    <h2>Workflow</h2>
+    <ol>
+        <li>JA creates a new referral (Referral view) with Judge, case info, motion title, motion date, and attachments.</li>
+        <li>Judge is emailed and opens the referral via the Review view to classify the motion (Criminal/Civil/Family/Appeals) and respond.</li>
+        <li>If the Judge seeks Court Counsel assistance, the referral is emailed to Court Counsel.</li>
+        <li>Court Counsel opens the referral via EditLogEntry to copy the case details into the CourtCounsel history log.</li>
+        <li>At any point, Court Counsel can mark the referral complete from the search list.</li>
+    </ol>
+
+    <h2>Data Storage</h2>
+    <p>Data is stored using DNN DAL2 (PetaPoco) in the following tables:</p>
+    <ul>
+        <li><code>tjc_jr_referrals</code> - one row per judicial referral</li>
+        <li><code>tjc_jr_attachments</code> - one row per uploaded attachment</li>
+    </ul>
+    <p>EditLogEntry also reads dropdown values from and writes new rows to the CourtCounsel tables (<code>tjc_cc_*</code>).</p>
+</body>
+</html>

@@ -1,8 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CaseList.ascx.cs" Inherits="tjc.Modules.CourtCounsel.Views.CaseList" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md rounded">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -33,12 +33,12 @@
                 <ItemTemplate>
                     <tr>
                         <td>
-                            <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") + "&pn=" + Server.UrlEncode(Eval("PartyName").ToString()) %>'>
+                            <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") + "?pn=" + Server.UrlEncode(Eval("PartyName").ToString()) %>'>
                                 <%#FormatLongName(Eval("PartyName").ToString()) %>
                             </a>
                         </td>
                         <td>
-                            <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") + "&pn=" + Server.UrlEncode(Eval("PartyName").ToString()) %>'>
+                            <a href='<%#EditUrl("cn",Eval("CaseNumber").ToString(),"CaseHistory") + "?pn=" + Server.UrlEncode(Eval("PartyName").ToString()) %>'>
                                 <%#Eval("CaseNumber") %>
                             </a>
                         </td>

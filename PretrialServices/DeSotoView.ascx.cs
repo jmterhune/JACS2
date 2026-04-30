@@ -45,15 +45,16 @@ namespace tjc.Modules.PretrialServices
         protected void Page_Load(object sender, EventArgs e)
         {
             try
-            {
+            {                   
+                JavaScript.RequestRegistration(CommonJs.jQueryUI);
+                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+
                 if (!Page.IsPostBack)
                 {
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();
                     }
-                    JavaScript.RequestRegistration(CommonJs.jQueryUI);
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                     GetCookieIntakeDate();
                     PopulateYears();
                     DateTime? cookieDate = GetCookieIntakeDate();
@@ -109,6 +110,7 @@ namespace tjc.Modules.PretrialServices
                 chkInterviewed.Checked = dip.Interviewed;
                 chkAssessed.Checked = dip.Assessed;
                 chkPtrRecommended.Checked = dip.PtrRecommended;
+                drpMostSeriosOffense.SelectedValue = dip.MostSeriousOffense;
                 chkPtrOrdered.Checked = dip.PtrOrdered;
                 chkIndigent.Checked = dip.Indigent;
                 chkPtrNotRecommended.Checked = dip.PtrNotRecommended;
@@ -167,6 +169,7 @@ namespace tjc.Modules.PretrialServices
             dip.Indigent = chkIndigent.Checked;
             dip.FtaArrestHearing = chkFtaArrestHearing.Checked;
             dip.BwOrdered = chkBwOrdered.Checked;
+            dip.MostSeriousOffense = drpMostSeriosOffense.SelectedValue;
             dip.CaseScreened = chkCaseScreened.Checked;
             dip.PlacedInProgram = chkPlaced.Checked;
             dip.IsRevoked = chkRevoked.Checked;

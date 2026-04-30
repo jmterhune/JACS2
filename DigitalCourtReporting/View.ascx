@@ -1,54 +1,13 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.DigitalCourtReporting.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<div class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
-    <a class="btn btn-primary" id="lnkAccounting" href='<%=AccountingUrl %>'>Accounting</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropInquiry" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Inquiry
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropInquiry">
-            <li>
-                <a class="dropdown-item" id="lnkInquiry" href="<%=InquiryUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqDesoto" href="<%=InquiryDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqManatee" href="<%=InquiryManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkInqSarasota" href="<%=InquirySarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropDCR" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            DCR
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropDCR">
-            <li>
-                <a class="dropdown-item" id="lnkDCR" href="<%=DCRUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRDesoto" href="<%=DCRDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRManatee" href="<%=DCRManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkDCRSarasota" href="<%=DCRSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+<div id="navigationLinks" class="btn-group mb-2" role="group" aria-label="Button group with nested dropdown">
+    <a class="btn btn-primary active" id="lnkAccounting" href='<%=AccountingUrl %>'>Accounting</a>
+    <a class="btn btn-primary" id="lnkInquiry" href="<%=InquiryUrl %>">Inquiry</a>
+    <a class="btn btn-primary" id="lnkDCR" href="<%=DCRUrl %>">
+        <abbr title="Digital Court Reporting">DCR</abbr></a>
     <a class="btn btn-primary" id="lnkNotification" href="<%=NotificationUrl %>">Notification</a>
     <a class="btn btn-primary" id="lnkStats" href="<%=StatsUrl %>">Stats</a>
-    <div class="btn-group" role="group">
-        <button id="btnGroupDropComplete" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Complete
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDropComplete">
-            <li>
-                <a class="dropdown-item" id="lnkComplete" href="<%=CompleteUrl %>">All Counties</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompDesoto" href="<%=CompleteDeSotoUrl %>">Desoto</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompManatee" href="<%=CompleteManateeUrl %>">Manatee</a></li>
-            <li>
-                <a class="dropdown-item" id="lnkCompSarasota" href="<%=CompleteSarasotaUrl %>">Sarasota</a></li>
-        </ul>
-    </div>
+    <a class="btn btn-primary" id="lnkComplete" href="<%=CompleteUrl %>">Complete</a>
 </div>
 
 <div class="btn-group float-end" id="SearchForm" role="group" aria-label="Search">
@@ -71,6 +30,16 @@
         Search
     </button>
 </div>
+<label id="filterCounty" class="me-4">
+    Filter
+    <select id="ddlCounty" class="form-select form-select-sm">
+        <option value="0">All Counties</option>
+        <option value="1">DeSoto</option>
+        <option value="3">Manatee</option>
+        <option value="2">Sarasota</option>
+    </select>
+
+</label>
 <div class="heading heading-border heading-middle-border heading-middle-border-center heading-border-lg">
     <h2 id="headerText"></h2>
 </div>
@@ -98,7 +67,7 @@
     var pageSize = 25;
     var recordCount = 0;
     var sortDirection = "desc";
-    var sortColumnIndex = 2;
+    var sortColumnIndex = 0;
     var isAdmin = "<%=IsAdmin%>";
     var adminRole = "<%=AdminRole%>";
     var currentPage = 0;
@@ -159,6 +128,11 @@
                 proceedingTable.draw();
             }
         });
+        $("#ddlCounty").on("change", function () {
+            countyId = parseInt($(this).val(), 10) || 0;
+            proceedingTable.draw();
+            UpdateHeader();
+        });
         $(".search-type").on("click", function (e) {
             e.preventDefault();
             var st = Number($(this).data('st'));
@@ -178,51 +152,9 @@
             proceedingTable.draw();
             UpdateHeader();
         });
-        $("#lnkInqDesoto").on("click", function (e) {
-            e.preventDefault();
-            listType = 4; searchType = -1; searchText = 'null'; countyId = 1;
-            SetSearchType(-1);
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkInqManatee").on("click", function (e) {
-            e.preventDefault();
-            listType = 4; searchType = -1; searchText = 'null'; countyId = 3;
-            SetSearchType(-1);
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkInqSarasota").on("click", function (e) {
-            e.preventDefault();
-            listType = 4; searchType = -1; searchText = 'null'; countyId = 2;
-            SetSearchType(-1);
-            proceedingTable.draw();
-            UpdateHeader();
-        });
         $("#lnkDCR").on("click", function (e) {
             e.preventDefault();
             listType = 2; searchType = -1; searchText = 'null'; countyId = -1;
-            SetSearchType(-1);
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkDCRDesoto").on("click", function (e) {
-            e.preventDefault();
-            listType = 2; searchType = -1; searchText = 'null'; countyId = 1;
-            SetSearchType(-1);
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkDCRManatee").on("click", function (e) {
-            e.preventDefault();
-            listType = 2; searchType = -1; searchText = 'null'; countyId = 3;
-            SetSearchType(-1);
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkDCRSarasota").on("click", function (e) {
-            e.preventDefault();
-            listType = 2; searchType = -1; searchText = 'null'; countyId = 2;
             SetSearchType(-1);
             proceedingTable.draw();
             UpdateHeader();
@@ -240,25 +172,6 @@
             proceedingTable.draw();
             UpdateHeader();
         });
-        $("#lnkCompDesoto").on("click", function (e) {
-            e.preventDefault();
-            listType = 3; searchType = -1; searchText = 'null'; countyId = 1;
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkCompManatee").on("click", function (e) {
-            e.preventDefault();
-            listType = 3; searchType = -1; searchText = 'null'; countyId = 3;
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-        $("#lnkCompSarasota").on("click", function (e) {
-            e.preventDefault();
-            listType = 3; searchType = -1; searchText = 'null'; countyId = 2;
-            proceedingTable.draw();
-            UpdateHeader();
-        });
-
         $(".datepicker").datepicker();
         proceedingTable = $('#tblProceedings').DataTable({
             "searching": false,
@@ -346,6 +259,7 @@
             });
         });
         $.fn.dataTable.ext.errMode = () => ShowAlert("Error Building Record List", "Error while loading the table data. Please refresh");
+        $(".dt-length").prepend($('#filterCounty'));
 
     }
 
@@ -378,21 +292,27 @@
     }
     function UpdateHeader() {
         var headerText = "Awaiting Payment";
+        $("#navigationLinks a.btn").removeClass("active");
         switch (listType) {
             case 0:
                 headerText = "Awaiting Payment";
+                $("#lnkAccounting").addClass("active");
                 break;
             case 1:
                 headerText = "Awaiting Notification";
+                $("#lnkNotification").addClass("active");
                 break;
             case 2:
-                headerText = "Awaiting CD Creation";
+                headerText = "Awaiting CD Creation"
+                $("#lnkDCR").addClass("active");
                 break;
             case 3:
                 headerText = "Completed";
+                $("#lnkComplete").addClass("active");
                 break;
             case 4:
                 headerText = "Awaiting Inquiry Processing";
+                $("#lnkInquiry").addClass("active");
                 break;
             default:
         }

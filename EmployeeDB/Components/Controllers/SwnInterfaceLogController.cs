@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using tjc.Modules.EmployeeDB.Components.Helpers;
 using tjc.Modules.EmployeeDB.Components.Models;
 
 namespace tjc.Modules.EmployeeDB.Components.Controllers
@@ -29,6 +30,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public long Create(SwnInterfaceLogInfo item)
         {
+            ModelNormalizer.Normalize(item);
             if (!item.CreatedDate.HasValue)
                 item.CreatedDate = DateTime.Now;
             using (IDataContext ctx = DataContext.Instance())
@@ -41,6 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void Update(SwnInterfaceLogInfo item)
         {
+            ModelNormalizer.Normalize(item);
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<SwnInterfaceLogInfo>();

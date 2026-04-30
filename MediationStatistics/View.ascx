@@ -122,6 +122,7 @@
     </div>
 
 </div>
+<div class="ms-2 me-3">
 <table id="tblCases" class="table table-striped">
     <thead>
         <tr>
@@ -137,6 +138,8 @@
         </tr>
     </thead>
 </table>
+
+</div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />

@@ -1,8 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CaseHistory.ascx.cs" Inherits="tjc.Modules.CourtCounsel.Views.CaseHistory" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-md rounded">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -16,9 +16,9 @@
     </div>
 </nav>
 
-<div class="container-fluid mt-3">
+<div class="mt-3">
     <div class="card mb-3">
-        <div class="card-body">
+        <div class="card-body p-3">
             <h5 class="card-title">
                 Case Number: <strong><asp:Literal ID="litCaseNumber" runat="server" /></strong>
             </h5>
@@ -26,7 +26,7 @@
                 <strong>Party Names:</strong>
                 <asp:Repeater ID="rptNames" runat="server">
                     <ItemTemplate>
-                        <span class="badge badge-secondary mr-1"><%#Container.DataItem %></span>
+                        <span class="badge bg-secondary me-1"><%#Container.DataItem %></span>
                     </ItemTemplate>
                 </asp:Repeater>
             </div>
@@ -41,6 +41,7 @@
                     <th>Action Taken</th>
                     <th>Responsible</th>
                     <th>Status</th>
+                    <th>Date Completed</th>
                     <th></th>
                 </tr>
             </thead>
@@ -56,6 +57,7 @@
                             <td><%#Eval("Action") %></td>
                             <td><%#Eval("Responsible") %></td>
                             <td><%#Eval("StatusName") %></td>
+                            <td><%#FormatDate(Eval("DateCompleted")) %></td>
                             <td>
                                 <asp:LinkButton runat="server" CommandName="delete" CommandArgument='<%#Eval("LogId") %>'
                                     CausesValidation="false" CssClass="confirm btn btn-sm btn-danger"
@@ -82,10 +84,10 @@
         jQuery(document).ready(function ($) {
             if ($.fn.DataTable) {
                 $('#history-list').DataTable({
-                    "order": [[0, "desc"]],
+                    "order": [],
                     "pageLength": 25,
                     "columnDefs": [
-                        { "orderable": false, "targets": 4 }
+                        { "orderable": false, "targets": -1 }
                     ]
                 });
             }

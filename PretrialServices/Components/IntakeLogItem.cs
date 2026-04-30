@@ -38,7 +38,14 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get; set;
         }
-
+        public int? PtrRecommendedInProgram
+        {
+            get; set;
+        }
+        public int? BondSecuredInProgram
+        {
+            get; set;
+        }
         public int? PtrNotRecommended
         {
             get; set;
