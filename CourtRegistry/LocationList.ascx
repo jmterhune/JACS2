@@ -17,7 +17,7 @@
         </div>
         <div class="col-auto">
             <label for="drpYear">Year</label>
-            <asp:DropDownList ID="drpYear" runat="server" ClientIDMode="Static" CssClass="form-control" AppendDataBoundItems="true"><asp:ListItem Text="2021" /></asp:DropDownList>
+            <asp:DropDownList ID="drpYear" runat="server" ClientIDMode="Static" CssClass="form-control"></asp:DropDownList>
         </div>
     </div>
     <div class="mt-3">
@@ -25,6 +25,11 @@
         <asp:Button ID="cmdPrint" runat="server" Text="Print" CausesValidation="false" CssClass="btn btn-default" OnClick="cmdPrint_Click"/>
     </div>
 </fieldset>
+<div class="row">
+    <div class="col-md-4 ms-auto">
+        <input type="search" id="txtListSearch" class="form-control" placeholder="Search list..." autocomplete="off" />
+    </div>
+</div>
 <asp:Panel ID="pnlList" runat="server" CssClass="printPage">
     <div class="heading heading-border heading-middle-border heading-middle-border-center">
         <h2>
@@ -37,8 +42,8 @@
             <h3><%=LocationName %></h3>
         </HeaderTemplate>
         <ItemTemplate>
-            <hr />
-            <div>
+            <div class="attorney-row">
+                <hr />
                 <strong><%#Eval("LastName") %>, <%#Eval("FirstName") %></strong><br />
                 <%# Eval("Address")%> <%# Eval("City")%>, <%# Eval("State")%> <%# Eval("Zip")%><br />
                 <%# Eval("Phone")%> <%# Eval("Email")%>
@@ -54,4 +59,19 @@
         </ItemTemplate>
     </asp:Repeater>
 </asp:Panel>
-
+<script type="text/javascript">
+    (function () {
+        var input = document.getElementById('txtListSearch');
+        if (!input) return;
+        input.addEventListener('input', function () {
+            var q = input.value.trim().toLowerCase();
+            document.querySelectorAll('.attorney-row').forEach(function (row) {
+                if (q === '' || row.textContent.toLowerCase().indexOf(q) !== -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    })();
+</script>

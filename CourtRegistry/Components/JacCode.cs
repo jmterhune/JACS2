@@ -60,7 +60,6 @@ namespace tjc.Modules.CourtRegistry.Components
         public bool Exclude { get; set; }
         public bool OnlyRenewals { get; set; }
     }
-    [TableName("tjc_car_exceptions")]
     internal class JacException : JacCodeConfig
     {
         public string LocationName { get; set; }
@@ -68,12 +67,24 @@ namespace tjc.Modules.CourtRegistry.Components
         public string Period { get { return string.Format("{0} - {1}", Year - 1, Year); } }
     }
     [TableName("tjc_car_application_by_jac_code")]
+    [PrimaryKey("JacCodeID,LocationID,ApplicationID", AutoIncrement = false)]
     internal class ApplicationJacCode
     {
         public int JacCodeID { get; set; }
         public int LocationID { get; set; }
         public int ApplicationID { get; set; }
         public int Status { get; set; }
+    }
+    internal class ApplicationJacCodeDetail
+    {
+        public int JacCodeID { get; set; }
+        public int LocationID { get; set; }
+        public int ApplicationID { get; set; }
+        public int Status { get; set; }
+        public string Category { get; set; }
+        public int CaseTypeID { get; set; }
+        public string CaseTypeName { get; set; }
+        public string LocationName { get; set; }
     }
     public enum CodeStatus
     {

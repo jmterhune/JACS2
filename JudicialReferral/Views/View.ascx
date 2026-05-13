@@ -27,7 +27,6 @@
                         <asp:DropDownList ID="drpStatus" runat="server" CssClass="form-control">
                             <asp:ListItem Text="&lt; Select Status &gt;" Value=""></asp:ListItem>
                             <asp:ListItem Text="New" Value="1"></asp:ListItem>
-                            <asp:ListItem Text="Pending" Value="2"></asp:ListItem>
                             <asp:ListItem Text="Referred to Court Counsel" Value="3"></asp:ListItem>
                             <asp:ListItem Text="Retained by Judge" Value="4"></asp:ListItem>
                             <asp:ListItem Text="Completed" Value="5"></asp:ListItem>
@@ -81,6 +80,7 @@
                         <th>Judge</th>
                         <th>Created</th>
                         <th>Status</th>
+                        <th>ReferralId</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,6 +98,7 @@
                 <td><%# Eval("JudgeName") %></td>
                 <td data-order='<%# Eval("JaCreatedDate", "{0:yyyyMMdd}") %>'><%# Eval("JaCreatedDate", "{0:MM/dd/yyyy}") %></td>
                 <td><%# Eval("StatusName") %></td>
+                <td><%# Eval("ReferralId") %></td>
             </tr>
         </ItemTemplate>
         <FooterTemplate>
@@ -112,11 +113,12 @@
         jQuery(document).ready(function ($) {
             if ($.fn.DataTable && !$.fn.DataTable.isDataTable('#table-referrals')) {
                 $('#table-referrals').DataTable({
-                    "order": [[5, "desc"]],
+                    "order": [[7, "asc"]],
                     "pageLength": 25,
                     "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                     "columnDefs": [
-                        { "orderable": false, "searchable": false, "targets": 0 }
+                        { "orderable": false, "searchable": false, "targets": 0 },
+                        { "visible": false, "searchable": false, "targets": 7 }
                     ]
                 });
             }

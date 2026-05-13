@@ -288,3 +288,160 @@ div.dataTables_wrapper, div.dataTables_paginate, ul.pages {
     border-top-left-radius: .25rem !important;
     border-bottom-left-radius: .25rem !important;
 }
+
+/* Application detail (Application.ascx) layout */
+table.layout {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+#Application > table.layout:first-of-type {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+}
+
+table.layout td {
+    padding: 8px 6px;
+    vertical-align: top;
+}
+
+/* JAC code rows: vertically center the heading TD next to the col-3 pill row */
+table.jacList td {
+    vertical-align: middle;
+}
+
+table.layout td.lbl {
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 8px;
+    width: 1%;
+}
+
+/* Checkbox / label spacing on the Application detail (outside the JAC pill grid) */
+#Application input[type="checkbox"] {
+    vertical-align: middle;
+}
+
+#Application input[type="checkbox"] + label {
+    margin-left: 6px;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+/* Space between the Renewal and Guardianship checkbox controls */
+#Application table.layout td > span + span {
+    margin-left: 18px;
+}
+
+/* JAC code grid: spacing between checkbox and its label */
+table.jacList input[type="checkbox"] + label {
+    margin-left: 6px;
+    display: inline;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+table.jacList input[type="checkbox"] {
+    vertical-align: middle;
+}
+
+/* JAC code cells: each location renders inside a Porto badge that
+   shows its status. Override the default inline-block on .badge so
+   the checkbox and label flow on one line, and force white text
+   regardless of the per-status colour rules elsewhere. */
+table.jacList td.jac-cells .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    color: #fff;
+}
+
+table.jacList td.jac-cells .badge,
+table.jacList td.jac-cells .badge label {
+    color: #fff !important;
+    font-weight: inherit;
+    text-decoration: none;
+    margin: 0;
+}
+
+/* Legend: small spacing between the inline badges */
+.legend .badge {
+    margin: 0 4px;
+    color: #fff;
+}
+
+/* Highlight the last-clicked application row in the admin grid */
+table#tblApplications tbody tr.last-viewed,
+table#tblApplications tbody tr.last-viewed > td {
+    background-color: #fff3cd !important;
+}
+
+table#tblApplications tbody tr.last-viewed {
+    box-shadow: inset 3px 0 0 #ffc107;
+}
+
+/* Custom checkbox inside the JAC pills: white background, black check.
+   Selector includes #Application to outrank the broader
+   "#Application input[type=checkbox]" rule above. */
+#Application table.jacList td.jac-cells .badge input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    border: 1px solid #888;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+#Application table.jacList td.jac-cells .badge input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 5px;
+    height: 9px;
+    border: solid #000;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Disabled JAC pills (non-approver view): keep them legible.
+   ASP.NET adds aspNetDisabled to the wrapper span when CheckBox.Enabled
+   is false; without these overrides the existing
+   ".aspNetDisabled label { color: #777 !important }" rule and the theme's
+   opacity dim everything to near-invisible against the badge background. */
+#Application table.jacList td.jac-cells .badge.aspNetDisabled,
+#Application table.jacList td.jac-cells .badge.aspNetDisabled label,
+#Application table.jacList td.jac-cells .badge.aspNetDisabled * {
+    color: #fff !important;
+    opacity: 1 !important;
+    cursor: not-allowed;
+}
+
+/* Disabled checkbox: grey background (so it reads as read-only) but
+   label remains white per the rule above. Keep the black check visible. */
+#Application table.jacList td.jac-cells .badge.aspNetDisabled input[type="checkbox"] {
+    background-color: #adb5bd !important;
+    border-color: #6c757d !important;
+    opacity: 1 !important;
+    cursor: not-allowed !important;
+}
+
+#Application table.jacList td.jac-cells .badge.aspNetDisabled label {
+    cursor: not-allowed !important;
+}
+
+#Application table.jacList td.jac-cells .badge.aspNetDisabled input[type="checkbox"]:checked::after {
+    border-color: #000 !important;
+}

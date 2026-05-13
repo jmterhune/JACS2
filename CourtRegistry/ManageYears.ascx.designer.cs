@@ -32,6 +32,8 @@ namespace tjc.Modules.CourtRegistry
         /// </remarks>
         protected global::System.Web.UI.UpdateProgress upProgressEvent;
 
+        protected global::System.Web.UI.WebControls.Literal ltModalScript;
+
         /// <summary>
         /// rptYears control.
         /// </summary>

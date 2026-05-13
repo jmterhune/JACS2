@@ -38,12 +38,18 @@ namespace tjc.Modules.CourtRegistry.Services
             Int32.TryParse(query.ContainsKey("start") ? query["start"] : "0", out int recordOffset);
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             string sortColumn = "ApplicationID"; // Default sort column
-            string sortDirection = "asc"; // Default sort direction
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            string sortDirection = "desc"; // Default sort direction
+            // DataTables sends order params with bracket notation:
+            // order[0][column]=1&order[0][dir]=desc — handle both forms.
+            string colKey = query.ContainsKey("order[0][column]") ? "order[0][column]"
+                          : query.ContainsKey("order[0].column") ? "order[0].column" : null;
+            string dirKey = query.ContainsKey("order[0][dir]") ? "order[0][dir]"
+                          : query.ContainsKey("order[0].dir") ? "order[0].dir" : null;
+            if (colKey != null && dirKey != null)
             {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                Int32.TryParse(query[colKey], out int sortIndex);
                 sortColumn = GetSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
+                sortDirection = query[dirKey];
             }
             try
             {
@@ -59,7 +65,7 @@ namespace tjc.Modules.CourtRegistry.Services
                 return Request.CreateResponse(new ApplicationSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
-        [HttpGet]
+        [HttpDelete]
         [ActionName("Delete")]
         public HttpResponseMessage DeleteApplication(int applicationId)
         {

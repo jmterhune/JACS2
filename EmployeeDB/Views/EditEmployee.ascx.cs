@@ -390,6 +390,11 @@ namespace tjc.Modules.EmployeeDB.Views
                 // doesn't touch FileId. Anything that was already there stays.
 
                 int savedId;
+                // Capture whether this Save was for a brand-new hire BEFORE
+                // we mutate the row — the post-save redirect for new hires
+                // sends the user straight to the New Hire IT Worksheet view
+                // so HR can immediately fill out the IT setup ticket.
+                bool isNewHire = EmployeeId <= 0;
                 if (EmployeeId > 0)
                 {
                     _employeeController.UpdateEmployee(emp, UserId);
@@ -418,11 +423,28 @@ namespace tjc.Modules.EmployeeDB.Views
                     }
                 }
 
-                // Send the user back to the list. ?empSaved=1 tells the list
-                // page to flash a success banner; ?empId=N tells it which row
-                // to highlight; DataTables stateSave restores their previous
-                // page/sort/filter automatically.
-                Response.Redirect(BuildListUrl("empSaved=1&empId=" + savedId), false);
+                if (isNewHire)
+                {
+                    // New hire: send the user straight to the New Hire IT
+                    // Worksheet view (same module, NewHireIT controlKey) with
+                    // the freshly-saved EmployeeId in the query string. The
+                    // worksheet's code-behind reads it and pre-populates the
+                    // form fields from the new employee's record.
+                    var nhitUrl = _navigationManager.NavigateURL(
+                        TabId,
+                        "NewHireIT",
+                        "mid=" + ModuleId,
+                        "EmployeeId=" + savedId);
+                    Response.Redirect(nhitUrl, false);
+                }
+                else
+                {
+                    // Existing employee: back to the list. ?empSaved=1 tells
+                    // the list page to flash a success banner; ?empId=N tells
+                    // it which row to highlight; DataTables stateSave restores
+                    // their previous page/sort/filter automatically.
+                    Response.Redirect(BuildListUrl("empSaved=1&empId=" + savedId), false);
+                }
                 Context.ApplicationInstance.CompleteRequest();
             }
             catch (Exception ex)

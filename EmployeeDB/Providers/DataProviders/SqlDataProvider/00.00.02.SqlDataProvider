@@ -1,0 +1,197 @@
+/***********************************************************************
+ * EmployeeDB 0.0.2 install script
+ *
+ * Adds the New Hire IT Worksheet feature. The worksheet is a form-based
+ * tool that HR fills out for every new hire and emails to the helpdesk
+ * (helpdesk@jud12.flcourts.org). Three of its checkbox sections — Software
+ * Applications, Intranet Application Access, and Judicial Applications —
+ * are admin-managed: rows are added/removed at runtime via tjc_nhit_item.
+ *
+ * Tables created:
+ *   tjc_nhit_item            — catalog of checkbox items per category
+ *   tjc_nhit_profile         — saved form templates (defaults except
+ *                              for employee-unique fields)
+ *   tjc_nhit_profile_item    — checkbox state per profile
+ *   tjc_nhit_request         — submitted form snapshots
+ *   tjc_nhit_request_item    — checkbox state per submitted request
+ ***********************************************************************/
+
+/* -------------------- tjc_nhit_item -------------------- */
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_nhit_item')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_nhit_item (
+        NhitItemId          INT             IDENTITY(1,1) NOT NULL PRIMARY KEY,
+        Category            VARCHAR(20)     NOT NULL,
+        Name                VARCHAR(200)    NOT NULL,
+        Notes               VARCHAR(500)    NULL,
+        SortOrder           INT             NOT NULL DEFAULT(0),
+        IsActive            BIT             NOT NULL DEFAULT(1),
+        CreatedDate         DATETIME        NOT NULL DEFAULT(GETDATE()),
+        CreatedById         INT             NOT NULL DEFAULT(-1),
+        LastModifiedDate    DATETIME        NOT NULL DEFAULT(GETDATE()),
+        LastModifiedById    INT             NOT NULL DEFAULT(-1)
+    )
+END
+GO
+
+/* -------------------- tjc_nhit_profile -------------------- */
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_nhit_profile')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_nhit_profile (
+        NhitProfileId               INT             IDENTITY(1,1) NOT NULL PRIMARY KEY,
+        ProfileName                 VARCHAR(100)    NOT NULL,
+        BuildingLocation            VARCHAR(50)     NULL,
+        EmployeeType                VARCHAR(20)     NULL,
+        EquipmentLaptop             BIT             NOT NULL DEFAULT(0),
+        EquipmentTwoInOne           BIT             NOT NULL DEFAULT(0),
+        EquipmentDesktop            BIT             NOT NULL DEFAULT(0),
+        EquipmentCellPhone          BIT             NOT NULL DEFAULT(0),
+        AccessCardTo                VARCHAR(MAX)    NULL,
+        KeysNeeded                  VARCHAR(MAX)    NULL,
+        ParkingAccess               VARCHAR(MAX)    NULL,
+        EmailDistributionGroups     VARCHAR(MAX)    NULL,
+        CalendarAccess              VARCHAR(MAX)    NULL,
+        ShareDriveAccess            VARCHAR(MAX)    NULL,
+        AdditionalPrinterAccess     VARCHAR(MAX)    NULL,
+        ManagerBlog                 BIT             NOT NULL DEFAULT(0),
+        AddToSupervisorDropdown     BIT             NOT NULL DEFAULT(0),
+        WorkCellphoneSetup          BIT             NOT NULL DEFAULT(0),
+        Notes                       VARCHAR(MAX)    NULL,
+        CreatedDate                 DATETIME        NOT NULL DEFAULT(GETDATE()),
+        CreatedById                 INT             NOT NULL DEFAULT(-1),
+        LastModifiedDate            DATETIME        NOT NULL DEFAULT(GETDATE()),
+        LastModifiedById            INT             NOT NULL DEFAULT(-1)
+    )
+    CREATE UNIQUE INDEX IX_{objectQualifier}tjc_nhit_profile_Name
+        ON {databaseOwner}{objectQualifier}tjc_nhit_profile (ProfileName)
+END
+GO
+
+/* -------------------- tjc_nhit_profile_item -------------------- */
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_nhit_profile_item')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_nhit_profile_item (
+        NhitProfileItemId   INT     IDENTITY(1,1) NOT NULL PRIMARY KEY,
+        NhitProfileId       INT     NOT NULL,
+        NhitItemId          INT     NOT NULL,
+        IsChecked           BIT     NOT NULL DEFAULT(0)
+    )
+    CREATE UNIQUE INDEX IX_{objectQualifier}tjc_nhit_profile_item
+        ON {databaseOwner}{objectQualifier}tjc_nhit_profile_item (NhitProfileId, NhitItemId)
+END
+GO
+
+/* -------------------- tjc_nhit_request -------------------- */
+/* All employee-unique fields live here. References to tjc_employee
+   are intentionally NOT enforced: the worksheet may be filed before
+   the employee row is fully populated (or for non-employee accounts).
+*/
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_nhit_request')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_nhit_request (
+        NhitRequestId               INT             IDENTITY(1,1) NOT NULL PRIMARY KEY,
+        EmployeeId                  INT             NULL,
+        EmployeeName                VARCHAR(200)    NOT NULL,
+        AKA                         VARCHAR(100)    NULL,
+        PositionTitle               VARCHAR(150)    NULL,
+        SupervisorName              VARCHAR(200)    NULL,
+        DepartmentUnitGroup         VARCHAR(150)    NULL,
+        OfficeSuiteNumber           VARCHAR(50)     NULL,
+        DeskPhoneNumber             VARCHAR(50)     NULL,
+        TodaysDate                  DATE            NULL,
+        EffectiveDate               DATE            NULL,
+        TempInternEndDate           DATE            NULL,
+        BuildingLocation            VARCHAR(50)     NULL,
+        EmployeeType                VARCHAR(20)     NULL,
+        EquipmentLaptop             BIT             NOT NULL DEFAULT(0),
+        EquipmentTwoInOne           BIT             NOT NULL DEFAULT(0),
+        EquipmentDesktop            BIT             NOT NULL DEFAULT(0),
+        EquipmentCellPhone          BIT             NOT NULL DEFAULT(0),
+        AccessCardTo                VARCHAR(MAX)    NULL,
+        KeysNeeded                  VARCHAR(MAX)    NULL,
+        ParkingAccess               VARCHAR(MAX)    NULL,
+        EmailDistributionGroups     VARCHAR(MAX)    NULL,
+        CalendarAccess              VARCHAR(MAX)    NULL,
+        ShareDriveAccess            VARCHAR(MAX)    NULL,
+        AdditionalPrinterAccess     VARCHAR(MAX)    NULL,
+        ManagerBlog                 BIT             NOT NULL DEFAULT(0),
+        AddToSupervisorDropdown     BIT             NOT NULL DEFAULT(0),
+        WorkCellphoneSetup          BIT             NOT NULL DEFAULT(0),
+        Notes                       VARCHAR(MAX)    NULL,
+        SubmittedDate               DATETIME        NOT NULL DEFAULT(GETDATE()),
+        SubmittedById               INT             NOT NULL DEFAULT(-1),
+        EmailSentTo                 VARCHAR(500)    NULL,
+        EmailSentDate               DATETIME        NULL,
+        EmailSuccess                BIT             NULL,
+        EmailErrorMessage           VARCHAR(MAX)    NULL
+    )
+    CREATE INDEX IX_{objectQualifier}tjc_nhit_request_Employee
+        ON {databaseOwner}{objectQualifier}tjc_nhit_request (EmployeeId)
+END
+GO
+
+/* -------------------- tjc_nhit_request_item -------------------- */
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_nhit_request_item')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_nhit_request_item (
+        NhitRequestItemId   INT     IDENTITY(1,1) NOT NULL PRIMARY KEY,
+        NhitRequestId       INT     NOT NULL,
+        NhitItemId          INT     NOT NULL,
+        /* ItemSnapshotName / ItemSnapshotCategory capture what the form
+           looked like AT submission time, so a later admin edit (rename
+           or reassignment of an item) doesn't rewrite history. */
+        ItemSnapshotName        VARCHAR(200)    NULL,
+        ItemSnapshotCategory    VARCHAR(20)     NULL,
+        IsChecked               BIT             NOT NULL DEFAULT(0)
+    )
+    CREATE INDEX IX_{objectQualifier}tjc_nhit_request_item_Request
+        ON {databaseOwner}{objectQualifier}tjc_nhit_request_item (NhitRequestId)
+END
+GO
+
+/* -------------------- Seed tjc_nhit_item -------------------- */
+/* Items lifted directly from the legacy New Hire IT worksheet docx.
+   Categories: Software | Intranet | Judicial. Notes column captures
+   the parenthetical guidance that appeared in the worksheet. Only
+   inserted if the table is empty so re-running the script doesn't
+   duplicate seed rows. */
+IF NOT EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}tjc_nhit_item)
+BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}tjc_nhit_item (Category, Name, Notes, SortOrder)
+    VALUES
+        ('Software', '12th Circuit Expert Witness Link', NULL, 10),
+        ('Software', 'Adobe Acrobat Pro', NULL, 20),
+        ('Software', 'Agent Ransack', NULL, 30),
+        ('Software', 'Benchmark', NULL, 40),
+        ('Software', 'Case Catalyst', NULL, 50),
+        ('Software', 'CE Pretrial', 'Check with Mike', 60),
+        ('Software', 'DCCM Access', NULL, 70),
+        ('Software', 'DeleteMe', NULL, 80),
+        ('Software', 'DeSoto SmartBench', NULL, 90),
+        ('Software', 'DocuSign', NULL, 100),
+        ('Software', 'JACS', NULL, 110),
+        ('Software', 'JIS Shortcut', 'Program Coordinator/Case Manager only', 120),
+        ('Software', 'Judicial Case Counts Link', NULL, 130),
+        ('Software', 'Manatee SmartBench', NULL, 140),
+        ('Software', 'Paracelsus', NULL, 150),
+        ('Software', 'PDF Merge', NULL, 160),
+        ('Software', 'VPN', NULL, 170),
+        ('Software', 'Westlaw Link', 'HR to send request to Tiffany Hammill for Westlaw account', 180),
+        ('Software', 'WinGs', NULL, 190),
+        ('Software', 'Workflow scanning to H:\ Drive', NULL, 200),
+        ('Intranet', 'Digital Court Recording', NULL, 10),
+        ('Intranet', 'Family Self Help', NULL, 20),
+        ('Intranet', 'Mediation Statistics', NULL, 30),
+        ('Intranet', 'Pretrial Services Sarasota', NULL, 40),
+        ('Intranet', 'Pretrial Services DeSoto', NULL, 50),
+        ('Intranet', 'Pro Se Log', NULL, 60),
+        ('Intranet', 'Records Destruction Log', NULL, 70),
+        ('Intranet', 'Transcription Database', NULL, 80),
+        ('Judicial', 'Court Counsel Log', NULL, 10),
+        ('Judicial', 'Judicial Referrals', NULL, 20),
+        ('Judicial', 'Matters Under Advisement', NULL, 30),
+        ('Judicial', 'Inmate Appearance Request', NULL, 40),
+        ('Judicial', 'JACS', NULL, 50),
+        ('Judicial', 'Pretrial Services DeSoto', NULL, 60)
+END
+GO

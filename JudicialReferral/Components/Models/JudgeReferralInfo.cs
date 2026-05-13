@@ -5,9 +5,9 @@ namespace tjc.Modules.JudicialReferral.Components.Models
 {
     public enum Statuses
     {
-        // Matches the production DLL's 5-state workflow.
+        // 4-state workflow. Value 2 (legacy "Pending") is retired but reserved so
+        // existing DB rows aren't silently remapped to another state.
         NewReferral = 1,
-        Pending = 2,
         ReferredToCounsel = 3,
         RetainedByJudge = 4,
         Completed = 5
@@ -91,7 +91,6 @@ namespace tjc.Modules.JudicialReferral.Components.Models
                 switch (Status)
                 {
                     case 1: return "New";
-                    case 2: return "Pending";
                     case 3: return "Referred to Court Counsel";
                     case 4: return "Retained by Judge";
                     case 5: return "Completed";

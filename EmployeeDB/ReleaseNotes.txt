@@ -1,3 +1,13 @@
+EmployeeDB 0.0.2 - New Hire IT Worksheet
+- Adds the New Hire IT Worksheet form (Views/NewHireITWorksheet.ascx)
+- Saved profiles for non-employee-unique defaults (tjc_nhit_profile)
+- Admin-managed checkbox catalog with three categories (tjc_nhit_item)
+- PDF generation via iTextSharp; helpdesk email on submit
+- Settings: Nhit_HelpdeskEmail (default helpdesk@jud12.flcourts.org)
+- Per-row SWN sync after Phones add/edit/delete (no full sync needed)
+- Phone form validation: 5 SWN voice / 3 SWN text limits enforced
+  client- and server-side; SWN Text restricted to Mobile/Work Cell
+
 EmployeeDB 0.0.1 - Initial release
 - Ported from legacy VB.NET EmployeeDB module
 - DNN 9.11 with DAL2 (PetaPoco) data access

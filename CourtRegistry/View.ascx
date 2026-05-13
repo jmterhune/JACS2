@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.CourtRegistry.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
 
 <div class="tabs">
     <ul class="nav nav-tabs">
@@ -93,14 +94,16 @@
     var moduleId = <%=ModuleId%>;
     var applicationId = -1;
     var year = -1;
-    var statusId = 0;
+    var statusId = -1;
     var lastName = null;
     var firstName = null;
     var pageSize = 25;
     var recordCount = 0;
     var sortDirection = "desc";
-    var sortColumnIndex = 6;
+    var sortColumnIndex = 1; /* ID column */
     var currentPage = 0;
+    var STATE_KEY = 'tjcAppListState_' + moduleId;
+    var LAST_VIEWED_KEY = 'tjcLastViewedAppId_' + moduleId;
     var applicationUrl = null;
     var deleteUrl = null;
     var service = {
@@ -152,7 +155,7 @@
             columns: [{
                 data: "applicationid", render: function (data, type, row, meta) {
                     var url = "<%=EditUrl("app")%>";
-                    return `<a title="View Application" href="${url}/aid/${row.applicationId}"><i class="fas fa-search"></i></a>`;
+                    return `<a class="view-app text-primary" title="View Application" data-applicationid="${row.applicationid}" href="${url}/aid/${row.applicationid}"><i class="fas fa-search"></i></a>`;
                 }, className: "command-item", orderable: false
             },
                 { data: "applicationid" },
@@ -179,7 +182,7 @@
                 },
                 {
                     data: "applicationid", render: function (data, type, row, meta) {
-                            return `<a class="delete confirm" aria-role="button" title="Delete Record" data-applicationid="${row.applicationId}" href="#""><i class="fas fa-trash"></i></a>`;
+                            return `<a class="delete confirm text-danger" aria-role="button" title="Delete Record" data-applicationid="${row.applicationid}" href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item", orderable: false
                 },
             ],
@@ -193,49 +196,53 @@
             lengthMenu: [[25, 50, 100], [25, 50, 100]],
             pageLength: pageSize,
             displayStart: currentPage * pageSize,
+            stateSave: true,
+            stateDuration: -1, /* sessionStorage */
+            stateSaveCallback: function (settings, data) {
+                try { sessionStorage.setItem(STATE_KEY, JSON.stringify(data)); } catch (e) { }
+            },
+            stateLoadCallback: function (settings) {
+                try { return JSON.parse(sessionStorage.getItem(STATE_KEY)); } catch (e) { return null; }
+            }
         });
         appTable.on('draw', function () {
             $('[data-toggle="tooltip"]').tooltip();
-            $(".confirm").on("click", function (e) {
+            /* Mark "Open in detail view" so we save context before navigation,
+               and highlight the row that the user last opened. */
+            var lastId = sessionStorage.getItem(LAST_VIEWED_KEY);
+            $('#tblApplications tbody tr').removeClass('last-viewed');
+            if (lastId) {
+                $('#tblApplications tbody a.view-app[data-applicationid="' + lastId + '"]')
+                    .closest('tr').addClass('last-viewed');
+            }
+            $('a.view-app').off('click.viewApp').on('click.viewApp', function () {
+                sessionStorage.setItem(LAST_VIEWED_KEY, $(this).data('applicationid'));
+            });
+            $(".confirm").off("click.swalDelete").on("click.swalDelete", function (e) {
                 e.preventDefault();
-                var appId = $(this).data("appId");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Application?',
-                    yesText: 'Yes',
-                    noText: 'No',
+                var applicationId = $(this).data("applicationid");
+                Registry.confirm({
                     title: 'Delete Application?',
-                    callbackTrue: function () {
-                        deleteApplication(appId);
-                    }
-                });
-                function deleteApplication(appId) {
+                    text: 'This action cannot be undone.',
+                    icon: 'warning',
+                    confirmText: 'Yes, delete',
+                    confirmColor: '#d33'
+                }, function () {
                     $.ajax({
-                        url: deleteUrl + appId,
+                        url: deleteUrl + applicationId,
                         type: 'DELETE',
-                        success: function (result) {
-                            appTable.draw();
+                        success: function () {
+                            appTable.draw(false);
+                            Registry.notify('Application deleted.', 'success');
                         },
-                        error: function (error) {
-                            alert(error);
+                        error: function (err) {
+                            Registry.notify('Error attempting delete: ' + (err.statusText || ''), 'error');
                         }
                     });
-                }
-            });
-            function deleteApplication(e, appId) {
-                e.preventDefault();
-                $.ajax({
-                    url: deleteUrl + appId,
-                    type: 'DELETE',
-                    success: function (result) {
-                        appTable.draw();
-                    },
-                    error: function (error) {
-                        ShowAlert("Error Attempting Delete!", error);
-                    }
                 });
-            }
+            });
         });
-        $.fn.dataTable.ext.errMode = () => alert('Error while loading the table data. Please refresh');
+        $.fn.dataTable.ext.errMode = function () { Registry.notify('Error while loading the table data. Please refresh.', 'error'); };
         $("#drpStatus,#drpYear").on("change", function (e) {
             $("#cmdSearch").trigger("click");
         });
@@ -268,10 +275,6 @@
     }
    
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Registry.notify(text || title, 'info');
     }
 </script>

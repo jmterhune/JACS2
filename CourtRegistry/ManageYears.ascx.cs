@@ -129,19 +129,41 @@ namespace tjc.Modules.CourtRegistry
                 Int32.TryParse(e.CommandArgument.ToString(), out int year);
                 var ctl = new ApplicationController();
                 ApplicationPeriod applicationPeriod = ctl.GetApplicationPeriod(year);
-                txtYearPeriodEnds.Text = applicationPeriod.PeriodYear.ToString();
-                txtModificationDeadline.Text = applicationPeriod.ModificationDeadline.ToString();
-                chkAcceptingApplications.Checked = applicationPeriod.AcceptingNewApplications;
-                ScriptManager.RegisterStartupScript(rptYears, rptYears.GetType(), "ToggleForm", "ToggleEditForm(true)", true);
+                if (applicationPeriod != null)
+                {
+                    txtYearPeriodEnds.Text = applicationPeriod.ApplicationYear.ToString();
+                    txtModificationDeadline.Text = applicationPeriod.ModificationDeadline.HasValue
+                        ? applicationPeriod.ModificationDeadline.Value.ToString("MM/dd/yyyy")
+                        : string.Empty;
+                    chkAcceptingApplications.Checked = applicationPeriod.AcceptingNewApplications;
+                    ltModalScript.Text = "<script>(function(){function s(){if(typeof bootstrap!=='undefined'&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('addRecord')).show();}else if(typeof jQuery!=='undefined'){jQuery('#addRecord').modal('show');}}if(document.readyState!=='loading'){s();}else{document.addEventListener('DOMContentLoaded',s);}})();</script>";
+                }
             }
         }
 
         protected void cmdAddRecord_Click(object sender, EventArgs e)
         {
-            ApplicationPeriod applicationPeriod = new ApplicationPeriod { AcceptingNewApplications = chkAcceptingApplications.Checked, ApplicationYear = Int32.Parse(txtYearPeriodEnds.Text), ModificationDeadline = DateTime.Parse(txtModificationDeadline.Text) };
-            ApplicationController ctl = new ApplicationController();
-            ctl.CreateApplicationPeriod(applicationPeriod);
-            Response.Redirect(EditUrl("manage"), true);
+            int year = Int32.Parse(txtYearPeriodEnds.Text);
+            DateTime deadline = DateTime.Parse(txtModificationDeadline.Text);
+            var ctl = new ApplicationController();
+            var existing = ctl.GetApplicationPeriod(year);
+            if (existing != null)
+            {
+                existing.ModificationDeadline = deadline;
+                existing.AcceptingNewApplications = chkAcceptingApplications.Checked;
+                ctl.UpdateApplicationPeriod(existing);
+            }
+            else
+            {
+                ctl.CreateApplicationPeriod(new ApplicationPeriod
+                {
+                    AcceptingNewApplications = chkAcceptingApplications.Checked,
+                    ApplicationYear = year,
+                    ModificationDeadline = deadline
+                });
+            }
+            ClearForm();
+            BindLists();
         }
 
         protected void pnlPeriods_Unload(object sender, EventArgs e)

@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Claude Code agent worktrees / per-project state
+.claude/worktrees/
+**/.claude/worktrees/

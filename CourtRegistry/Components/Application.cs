@@ -30,8 +30,8 @@ namespace tjc.Modules.CourtRegistry.Components
         public int Status { get; set; }
         public int Year { get; set; }
         public int YearsOnRegistry { get; set; }
-        public int CreatedByUserId { get; set; }
-        public int LastModifiedByUserId { get; set; }
+        public int? CreatedByUserId { get; set; }
+        public int? LastModifiedByUserId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateReviewed { get; set; }
         public DateTime? DateOfPeriod { get; set; }

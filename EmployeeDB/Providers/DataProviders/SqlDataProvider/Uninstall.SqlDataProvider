@@ -5,4 +5,8 @@
  * uninstall. They contain user data and are shared across modules.
  * Only module registration is removed by the DNN installer; the data
  * persists.
+ *
+ * The tjc_nhit_* tables (added in 0.0.2 for the New Hire IT Worksheet)
+ * are also retained — submitted requests are an audit record we don't
+ * want destroyed by a casual reinstall.
  ***********************************************************************/

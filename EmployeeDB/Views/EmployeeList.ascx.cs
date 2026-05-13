@@ -14,6 +14,7 @@ namespace tjc.Modules.EmployeeDB.Views
     public partial class EmployeeList : EmployeeDBModuleBase
     {
         private Dictionary<int, string> _locationNameCache;
+        private Dictionary<int, string> _departmentNameCache;
 
         /// <summary>Per-request cache of OfficeLocationId → Description so
         /// the row template doesn't re-hit the controller for each repeater row.</summary>
@@ -31,6 +32,23 @@ namespace tjc.Modules.EmployeeDB.Views
             }
         }
 
+        /// <summary>Per-request cache of DepartmentId → GroupName (departments
+        /// live in tjc_gl_group). Same shape as the location cache so the
+        /// repeater row template stays cheap.</summary>
+        private Dictionary<int, string> DepartmentNameCache
+        {
+            get
+            {
+                if (_departmentNameCache == null)
+                {
+                    _departmentNameCache = new GroupController()
+                        .GetAll()
+                        .ToDictionary(g => g.GroupID, g => g.GroupName);
+                }
+                return _departmentNameCache;
+            }
+        }
+
         /// <summary>Repeater binding helper: maps an office-location id to its description.</summary>
         protected string GetLocationName(object idValue)
         {
@@ -39,6 +57,25 @@ namespace tjc.Modules.EmployeeDB.Views
             if (!int.TryParse(idValue.ToString(), out id) || id <= 0) return string.Empty;
             string name;
             return LocationNameCache.TryGetValue(id, out name) ? name : string.Empty;
+        }
+
+        /// <summary>Repeater binding helper: maps a DepartmentId to its
+        /// human-readable group name. The previous Department column bound
+        /// directly to AgencyOfEmployment ("S" / "C" / "O"), which was
+        /// neither the department nor user-meaningful.
+        ///
+        /// Note: GroupID = 0 is a legitimate department id in this DB (the
+        /// "Technology Services 1" row has GroupID = 0 — a legacy oddity
+        /// that 16 employees still reference). Only NULL / non-numeric
+        /// values produce a blank cell; any int that has a matching cache
+        /// entry — including 0 — resolves to its name.</summary>
+        protected string GetDepartmentName(object idValue)
+        {
+            if (idValue == null || idValue == DBNull.Value) return string.Empty;
+            int id;
+            if (!int.TryParse(idValue.ToString(), out id)) return string.Empty;
+            string name;
+            return DepartmentNameCache.TryGetValue(id, out name) ? name : string.Empty;
         }
 
         protected void Page_Load(object sender, EventArgs e)

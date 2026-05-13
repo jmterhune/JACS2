@@ -159,7 +159,7 @@ namespace tjc.Modules.JudicialReferral.Views
                     pnlJudge.Enabled = true;
                     cmdSave.Visible = true;
                 }
-                else if (IsJa && objReferral.Status <= (int)Statuses.Pending)
+                else if (IsJa && objReferral.Status == (int)Statuses.NewReferral)
                 {
                     cmdSave.Visible = true;
                     cmdComplete.Visible = false;

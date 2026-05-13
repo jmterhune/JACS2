@@ -284,7 +284,16 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void cmdCancel_Click(object sender, EventArgs e)
         {
-            Response.Redirect(EditUrl("cn", GetCaseNumber(), "CaseHistory"));
+            // If the user landed on this page to ADD a new record (no lid in the URL on initial load),
+            // the "list" they came from is the Search page. Editing an existing record came from CaseHistory.
+            if (_logId > 0)
+            {
+                Response.Redirect(EditUrl("cn", GetCaseNumber(), "CaseHistory"));
+            }
+            else
+            {
+                Response.Redirect(SearchUrl);
+            }
         }
 
         protected void cmdDelete_Click(object sender, EventArgs e)

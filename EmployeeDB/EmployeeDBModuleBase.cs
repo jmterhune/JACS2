@@ -156,5 +156,27 @@ namespace tjc.Modules.EmployeeDB
         }
 
         #endregion
+
+        #region New Hire IT Worksheet
+
+        /// <summary>"To" address for the helpdesk notification when a New Hire
+        /// IT Worksheet is submitted. Defaults to the production helpdesk
+        /// distribution list. Override per-environment via the
+        /// <c>Nhit_HelpdeskEmail</c> module setting (so dev/test sites can
+        /// route mail to a sandbox inbox).</summary>
+        public string NhitHelpdeskEmail
+        {
+            get
+            {
+                if (Settings.Contains("Nhit_HelpdeskEmail"))
+                {
+                    var v = Settings["Nhit_HelpdeskEmail"].ToString();
+                    if (!string.IsNullOrWhiteSpace(v)) return v;
+                }
+                return "helpdesk@jud12.flcourts.org";
+            }
+        }
+
+        #endregion
     }
 }

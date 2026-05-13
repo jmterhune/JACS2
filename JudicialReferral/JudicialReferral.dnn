@@ -73,7 +73,7 @@
                     <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/Referral.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>New Referral</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -83,7 +83,7 @@
                     <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/Review.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Review Referral</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -93,7 +93,7 @@
                     <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/EditLogEntry.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Copy to Counsel Log</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>

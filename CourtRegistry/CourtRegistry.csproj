@@ -303,15 +303,80 @@
     <Compile Include="View.ascx.designer.cs">
       <DependentUpon>View.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Application.ascx.cs">
+      <DependentUpon>Application.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Application.ascx.designer.cs">
+      <DependentUpon>Application.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="BasicSettings.ascx.cs">
+      <DependentUpon>BasicSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BasicSettings.ascx.designer.cs">
+      <DependentUpon>BasicSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CaseTypes.ascx.cs">
+      <DependentUpon>CaseTypes.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CaseTypes.ascx.designer.cs">
+      <DependentUpon>CaseTypes.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CodeComparison.ascx.cs">
+      <DependentUpon>CodeComparison.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CodeComparison.ascx.designer.cs">
+      <DependentUpon>CodeComparison.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CodeCounts.ascx.cs">
+      <DependentUpon>CodeCounts.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CodeCounts.ascx.designer.cs">
+      <DependentUpon>CodeCounts.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="JacCodes.ascx.cs">
+      <DependentUpon>JacCodes.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JacCodes.ascx.designer.cs">
+      <DependentUpon>JacCodes.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Locations.ascx.cs">
+      <DependentUpon>Locations.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Locations.ascx.designer.cs">
+      <DependentUpon>Locations.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateJacCodes.ascx.cs">
+      <DependentUpon>UpdateJacCodes.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UpdateJacCodes.ascx.designer.cs">
+      <DependentUpon>UpdateJacCodes.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Application.ascx" />
+    <Content Include="BasicSettings.ascx" />
+    <Content Include="CaseTypes.ascx" />
+    <Content Include="CodeComparison.ascx" />
+    <Content Include="CodeCounts.ascx" />
     <Content Include="Exceptions.ascx" />
+    <Content Include="ExportExcel.ashx" />
+    <Content Include="JacCodes.ascx" />
     <Content Include="License.txt" />
+    <Content Include="Locations.ascx" />
     <Content Include="ManageYears.ascx" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
     <Content Include="LocationList.ascx" />
+    <Content Include="UpdateJacCodes.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CourtRegistry.dnn" />
@@ -322,6 +387,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\Settings.ascx.resx" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
+    <Content Include="Scripts\registry-ui.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -371,8 +438,31 @@
     <DNNFileName>CourtRegistry</DNNFileName>
     <PackageName>CourtRegistry</PackageName>
     <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
+    <!-- Site deploy target. Override by setting DeploySitePath, or disable with DeployToSite=false. -->
+    <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
+    <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\CourtRegistry</DeployModuleFolder>
+    <DeployToSite Condition="'$(DeployToSite)' == ''">true</DeployToSite>
+    <DevSiteUrl Condition="'$(DevSiteUrl)' == ''">https://www.dnndev.me/</DevSiteUrl>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="PackageModule;DeployToSite">
+  </Target>
+  <Target Name="DeployToSite" Condition="'$(DeployToSite)' == 'true' And Exists('$(DeploySitePath)\bin')">
+    <Message Text="Deploying CourtRegistry to $(DeploySitePath)" Importance="high" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    <ItemGroup>
+      <DeployContent Include="*.ascx" />
+      <DeployContent Include="*.ashx" />
+      <DeployContent Include="App_LocalResources\*.resx" />
+      <DeployContent Include="*.css" />
+      <DeployContent Include="Scripts\*.js" />
+      <DeployContent Include="$(DNNFileName).dnn" />
+      <DeployContent Include="License.txt" />
+      <DeployContent Include="ReleaseNotes.txt" />
+      <DeployContent Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeployContent)" DestinationFiles="@(DeployContent->'$(DeployModuleFolder)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\BuildScripts\PingDevSite.ps1&quot; -Url &quot;$(DevSiteUrl)&quot;" IgnoreExitCode="true" ContinueOnError="true" Condition="Exists('$(MSBuildProjectDirectory)\BuildScripts\PingDevSite.ps1')" />
   </Target>
 </Project>

@@ -83,6 +83,14 @@
     <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
     </Reference>
+    <Reference Include="itextsharp">
+      <!-- iTextSharp 5.5 lives in the legacy ASP.NET intranet's bin folder.
+           Sister modules (PretrialServices) reference this same DLL via a
+           relative path. From tjc.modules.local\EmployeeDB this is two
+           levels up — D:\OneDrive - jud12fl\SourceCode\bin. -->
+      <HintPath>..\..\bin\itextsharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -133,6 +141,12 @@
     <Compile Include="Components\Models\GroupInfo.cs" />
     <Compile Include="Components\Models\CountyInfo.cs" />
     <Compile Include="Components\Models\EmployeeListItem.cs" />
+    <!-- New Hire IT Worksheet -->
+    <Compile Include="Components\Models\NhitItemInfo.cs" />
+    <Compile Include="Components\Models\NhitProfileInfo.cs" />
+    <Compile Include="Components\Models\NhitProfileItemInfo.cs" />
+    <Compile Include="Components\Models\NhitRequestInfo.cs" />
+    <Compile Include="Components\Models\NhitRequestItemInfo.cs" />
     <!-- Controllers -->
     <Compile Include="Components\Controllers\EmployeeController.cs" />
     <Compile Include="Components\Controllers\JobClassController.cs" />
@@ -149,12 +163,17 @@
     <Compile Include="Components\Controllers\CountyController.cs" />
     <Compile Include="Components\Controllers\EmployeeReportController.cs" />
     <Compile Include="Components\Controllers\SwnInterfaceLogController.cs" />
+    <Compile Include="Components\Controllers\NhitItemController.cs" />
+    <Compile Include="Components\Controllers\NhitProfileController.cs" />
+    <Compile Include="Components\Controllers\NhitRequestController.cs" />
     <Compile Include="Components\FeatureController.cs" />
     <!-- Helpers -->
     <Compile Include="Components\Helpers\ModelNormalizer.cs" />
     <Compile Include="Components\Helpers\DigitsOnlyAttribute.cs" />
     <Compile Include="Components\Helpers\DisplayMask.cs" />
     <Compile Include="Components\Helpers\SwnExportBuilder.cs" />
+    <Compile Include="Components\Helpers\NhitPdfBuilder.cs" />
+    <Compile Include="Components\Helpers\NhitMailer.cs" />
     <!-- Web API -->
     <Compile Include="Components\Api\ServiceRouteMapper.cs" />
     <Compile Include="Components\Api\PhonesController.cs" />
@@ -170,6 +189,9 @@
     <Compile Include="Components\Api\DepartmentsController.cs" />
     <Compile Include="Components\Api\EeosController.cs" />
     <Compile Include="Components\Api\SwnController.cs" />
+    <Compile Include="Components\Api\NhitItemsController.cs" />
+    <Compile Include="Components\Api\NhitProfilesController.cs" />
+    <Compile Include="Components\Api\NhitRequestsController.cs" />
     <!-- SWN -->
     <Compile Include="Components\SWN\Contact.cs" />
     <Compile Include="Components\SWN\Phone.cs" />
@@ -252,6 +274,13 @@
     <Compile Include="Views\SelectUserId.ascx.designer.cs">
       <DependentUpon>SelectUserId.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Views\NewHireITWorksheet.ascx.cs">
+      <DependentUpon>NewHireITWorksheet.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\NewHireITWorksheet.ascx.designer.cs">
+      <DependentUpon>NewHireITWorksheet.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\EmployeeList.ascx" />
@@ -264,6 +293,7 @@
     <Content Include="Views\TerminatedEmployees.ascx" />
     <Content Include="Views\SwnList.ascx" />
     <Content Include="Views\SelectUserId.ascx" />
+    <Content Include="Views\NewHireITWorksheet.ascx" />
     <Content Include="EmployeeDB.dnn" />
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
@@ -275,7 +305,9 @@
     <Content Include="Scripts\empdb-edit.js" />
     <Content Include="Scripts\empdb-list.js" />
     <Content Include="Scripts\empdb-eeo.js" />
+    <Content Include="Scripts\empdb-nhit.js" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.02.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>

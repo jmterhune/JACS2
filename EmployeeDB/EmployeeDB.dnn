@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="EmployeeDB" type="Module" version="00.00.01">
+    <package name="EmployeeDB" type="Module" version="00.00.02">
       <friendlyName>EmployeeDB</friendlyName>
       <description>Employee Database module</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
@@ -26,10 +26,15 @@
               <name>00.00.01.SqlDataProvider</name>
               <version>00.00.01</version>
             </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.02.SqlDataProvider</name>
+              <version>00.00.02</version>
+            </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>Uninstall.SqlDataProvider</name>
-              <version>00.00.01</version>
+              <version>00.00.02</version>
             </script>
           </scripts>
         </component>
@@ -73,7 +78,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/EditEmployee.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Edit Employee</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -83,7 +88,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/DetailsList.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Details</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -93,7 +98,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/EEOSetup.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>EEO Setup</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -103,7 +108,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/Birthdays.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Birthdays</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -113,7 +118,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/TerminatedEmployees.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Terminated Employees</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -123,7 +128,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/SwnList.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>SWN List</controlTitle>
-                    <controlType>Admin</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -133,7 +138,17 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/SelectUserId.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Select User</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>NewHireIT</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/NewHireITWorksheet.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>New Hire IT Worksheet</controlTitle>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -143,7 +158,7 @@
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/DetailPopUp.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Detail Popup</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -168,7 +183,7 @@
             <attributes>
               <businessControllerClass>tjc.Modules.EmployeeDB.Components.FeatureController, EmployeeDB</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>00.00.01</upgradeVersionsList>
+              <upgradeVersionsList>00.00.01,00.00.02</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>

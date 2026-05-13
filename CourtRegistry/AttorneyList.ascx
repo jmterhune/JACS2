@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AttorneyList.ascx.cs" Inherits="tjc.Modules.CourtRegistry.AttorneyList" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
 
 <div class="tabs">
     <ul class="nav nav-tabs">
@@ -288,7 +289,7 @@
             },
             columns: [{
                 data: "attorneyid", render: function (data, type, row, meta) {
-                    return `<a class="edit-atty" href="#" data-id="${row.attorneyid}"><i class="fas fa-pencil"></i></a>`;
+                    return `<a class="edit-atty text-primary" href="#" data-id="${row.attorneyid}"><i class="fas fa-edit"></i></a>`;
                 }, className: "command-item", orderable: false
             },
                 { data: "attorneyid" },
@@ -302,7 +303,7 @@
                 { data: "lawfirm" },
                 {
                     data: "attorneyid", render: function (data, type, row, meta) {
-                        return `<a class="delete confirm" aria-role="button" title="Delete Attorney" data-attorneyid="${row.attorneyid}" href="#""><i class="fas fa-trash"></i></a>`;
+                        return `<a class="delete confirm text-danger" aria-role="button" title="Delete Attorney" data-attorneyid="${row.attorneyid}" href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item", orderable: false
                 },
             ],
@@ -321,46 +322,31 @@
 
         appTable.on('draw', function () {
             $('[data-toggle="tooltip"]').tooltip();
-            $(".confirm").on("click", function (e) {
+            $(".confirm").off("click.swalDelete").on("click.swalDelete", function (e) {
                 e.preventDefault();
-                var appId = $(this).data("appId");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Attorney?',
-                    yesText: 'Yes',
-                    noText: 'No',
+                var attorneyId = $(this).data("attorneyid");
+                Registry.confirm({
                     title: 'Delete Attorney?',
-                    callbackTrue: function () {
-                        deleteAttorney(appId);
-                    }
-                });
-                function deleteAttorney(appId) {
+                    text: 'This action cannot be undone.',
+                    icon: 'warning',
+                    confirmText: 'Yes, delete',
+                    confirmColor: '#d33'
+                }, function () {
                     $.ajax({
-                        url: deleteUrl + appId,
+                        url: deleteUrl + attorneyId,
                         type: 'DELETE',
-                        success: function (result) {
-                            appTable.draw();
+                        success: function () {
+                            appTable.draw(false);
+                            Registry.notify('Attorney deleted.', 'success');
                         },
-                        error: function (error) {
-                            alert(error);
+                        error: function (err) {
+                            Registry.notify('Error attempting delete: ' + (err.statusText || ''), 'error');
                         }
                     });
-                }
-            });
-            function deleteAttorney(e, appId) {
-                e.preventDefault();
-                $.ajax({
-                    url: deleteUrl + appId,
-                    type: 'DELETE',
-                    success: function (result) {
-                        appTable.draw();
-                    },
-                    error: function (error) {
-                        ShowAlert("Error Attempting Delete!", error);
-                    }
                 });
-            }
+            });
         });
-        $.fn.dataTable.ext.errMode = () => alert('Error while loading the table data. Please refresh');
+        $.fn.dataTable.ext.errMode = function () { Registry.notify('Error while loading the table data. Please refresh.', 'error'); };
         $("#txtBarNumberSearch,#txtLastNameSearch,#txtFirstNameSearch,#txtEmailSearch,#txtFirmSearch").on("blur", function (e) {
             $("#cmdSearch").trigger("click");
         });
@@ -413,10 +399,14 @@
                     $('#txtCell').val(result.attorney.cell);
                     $('#txtFax').val(result.attorney.fax);
                     $('#hdAttorneyId').val(attyId);
+                    ['txtPhone', 'txtCell', 'txtFax'].forEach(function (id) {
+                        var el = document.getElementById(id);
+                        if (el) el.dispatchEvent(new Event('input'));
+                    });
                 }
             },
-            error: function (error) {
-                ShowAlert("Error Attempting to Load Attorney!", error);
+            error: function (err) {
+                Registry.notify('Failed to load attorney: ' + (err.statusText || ''), 'error');
             }
         });
     }
@@ -445,22 +435,16 @@
             data: attorney,
             success: function (result) {
                 if (result) {
-                    if (attorney.AttorneyId > 0) {
-                        ShowAlert("Success", "Attorney Updated Successfully");
-                    } else {
-                        ShowAlert("Success", "Attorney Created Successfully");
-                    }
-                    ClearForm();
                     $("#AttorneyModal").modal("hide");
-                    appTable.draw();
+                    ClearForm();
+                    $('#tblAttorneys').DataTable().draw(false);
+                    Registry.notify(Number(attorney.AttorneyId) > 0
+                        ? 'Attorney updated.' : 'Attorney created.', 'success');
                 }
             },
-            error: function (error) {
-                if (attorney.AttorneyId > 0) {
-                    ShowAlert("Error Attempting to Update Attorney!", error);
-                } else {
-                    ShowAlert("Error Attempting to Create Attorney!", error);
-                }
+            error: function (err) {
+                $("#AttorneyModal").modal("hide");
+                Registry.notify('Save failed: ' + (err.statusText || ''), 'error');
             }
         });
     }
@@ -481,10 +465,34 @@
         $('#hdAttorneyId').val("");
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Registry.notify(text || title, 'info');
     }
+    function applyPhoneMask(input) {
+        function format() {
+            var digits = input.value.replace(/\D/g, '').slice(0, 10);
+            var part = digits.match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+            if (!part) { return; }
+            input.value = !part[2]
+                ? part[1]
+                : '(' + part[1] + ') ' + part[2] + (part[3] ? '-' + part[3] : '');
+        }
+        input.addEventListener('input', format);
+        format();
+    }
+    (function () {
+        function bindMasks() {
+            ['txtPhone', 'txtCell', 'txtFax'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el && !el.dataset.masked) {
+                    el.dataset.masked = '1';
+                    applyPhoneMask(el);
+                }
+            });
+        }
+        if (document.readyState !== 'loading') bindMasks();
+        else document.addEventListener('DOMContentLoaded', bindMasks);
+        if (window.Sys && Sys.WebForms) {
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(bindMasks);
+        }
+    })();
 </script>

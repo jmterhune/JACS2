@@ -133,7 +133,7 @@
                     <controlSrc>DesktopModules/tjc.modules/CourtCounsel/Views/Admin.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Admin</controlTitle>
-                    <controlType>Admin</controlType>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
@@ -153,7 +153,7 @@
                     <controlSrc>DesktopModules/tjc.modules/CourtCounsel/Views/Settings.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>CourtCounsel Settings</controlTitle>
-                    <controlType>View</controlType>
+                    <controlType>Edit</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>

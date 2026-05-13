@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ManageYears.ascx.cs" Inherits="tjc.Modules.CourtRegistry.ManageYears" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register TagPrefix="dnn" TagName="TextEditor" Src="~/controls/TextEditor.ascx" %>
+<dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -50,6 +51,7 @@
                 To stop new applications from being submitted uncheck the Accepting New Applications box.
                     </div>
                     <button class="btn btn-primary" id="cmdNew" data-toggle="modal" data-target="#addRecord"><i class="fas fa-plus"></i>&nbsp;Add New Record</button>
+<asp:Literal ID="ltModalScript" runat="server" EnableViewState="false" />
                     <asp:Repeater runat="server" ID="rptYears" OnItemCommand="rptYears_ItemCommand">
                         <HeaderTemplate>
                             <table class="table table-striped">
@@ -67,7 +69,7 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <a title="Click to Edit Record" href='<%#EditUrl("year",Eval("ApplicationYear").ToString(),"manage") %>'><i class="fas fa-pencil"></i></a>
+                                    <asp:LinkButton ID="lnkEditYear" runat="server" CausesValidation="false" CommandName="edit" CommandArgument='<%#Eval("ApplicationYear") %>' CssClass="text-primary" ToolTip="Edit Record"><i class="fas fa-edit"></i></asp:LinkButton>
                                 </td>
                                 <td>
                                     <%#Eval("ApplicationYear") %>
@@ -79,7 +81,7 @@
                                     <%#Boolean.Parse(Eval("AcceptingNewApplications").ToString())==true? "<i class='fas fa-square-check'></i>":"<i class='fas fa-square'></i>" %>
                                 </td>
                                 <td>
-                                    <asp:LinkButton ID="lnkDelete" runat="server" CausesValidation="false" OnClientClick="return confirm('Are you sure you wish to Delete this Record?')" CommandName="delete" CommandArgument='<%#Eval("ApplicationYear").ToString() %>' CssClass="command-item"><i class="fas fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="lnkDelete" runat="server" CausesValidation="false" OnClientClick="return Registry.confirmDelete(this,'Fiscal Year');" CommandName="delete" CommandArgument='<%#Eval("ApplicationYear").ToString() %>' CssClass="command-item text-danger"><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -222,6 +224,17 @@
         $(document).ready(function () {
             PageInit();
         });
+        if (Sys && Sys.WebForms) {
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                PageInit();
+                if (document.querySelectorAll('.modal.show').length === 0) {
+                    document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+            });
+        }
     }(jQuery, window.Sys));
 
     function PageInit() {

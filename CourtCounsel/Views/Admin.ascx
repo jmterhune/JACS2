@@ -36,15 +36,15 @@
                         <button type="button" class="btn btn-success" onclick="AddNewCaseType(); return false;"><i class="fas fa-plus"></i>&nbsp;Add Case Type</button>
                     </div>
                     <table id="tblCaseTypes" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>Case Type</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>Case Type</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptCaseTypes" runat="server" OnItemCommand="rptCaseTypes_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><%#Eval("CaseType") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditCaseType" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("CaseTypeId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("CaseType") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeleteCaseType" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("CaseTypeId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this case type?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>
@@ -84,16 +84,16 @@
                         <button type="button" class="btn btn-success" onclick="AddNewAttorney(); return false;"><i class="fas fa-plus"></i>&nbsp;Add Attorney</button>
                     </div>
                     <table id="tblAttorneys" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>Attorney Name</th><th>Active</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>Attorney Name</th><th>Active</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptAttorneys" runat="server" OnItemCommand="rptAttorneys_ItemCommand">
                                 <ItemTemplate>
                                     <tr class='<%# (bool?)(Eval("IsActive")) != true ? "inactive" : "" %>'>
-                                        <td><%#Eval("AttorneyName") %></td>
-                                        <td><%# (bool?)(Eval("IsActive")) == true ? "Yes" : "No" %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditAttorney" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("AttorneyId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("AttorneyName") %></td>
+                                        <td><%# (bool?)(Eval("IsActive")) == true ? "Yes" : "No" %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeleteAttorney" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("AttorneyId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this attorney?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>
@@ -135,15 +135,15 @@
                         <button type="button" class="btn btn-success" onclick="AddNewCounty(); return false;"><i class="fas fa-plus"></i>&nbsp;Add County</button>
                     </div>
                     <table id="tblCounties" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>County</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>County</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptCounties" runat="server" OnItemCommand="rptCounties_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><%#Eval("County") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditCounty" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("CountyId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("County") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeleteCounty" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("CountyId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this county?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>
@@ -182,15 +182,15 @@
                         <button type="button" class="btn btn-success" onclick="AddNewPhase(); return false;"><i class="fas fa-plus"></i>&nbsp;Add Phase</button>
                     </div>
                     <table id="tblPhases" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>Phase</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>Phase</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptPhases" runat="server" OnItemCommand="rptPhases_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><%#Eval("Phase") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditPhase" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("PhaseId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("Phase") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeletePhase" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("PhaseId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this phase?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>
@@ -229,16 +229,16 @@
                         <button type="button" class="btn btn-success" onclick="AddNewRequestor(); return false;"><i class="fas fa-plus"></i>&nbsp;Add Requestor</button>
                     </div>
                     <table id="tblRequestors" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>Requestor Name</th><th>Active</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>Requestor Name</th><th>Active</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptRequestors" runat="server" OnItemCommand="rptRequestors_ItemCommand">
                                 <ItemTemplate>
                                     <tr class='<%# (bool?)(Eval("IsActive")) != true ? "inactive" : "" %>'>
-                                        <td><%#Eval("RequestorName") %></td>
-                                        <td><%# (bool?)(Eval("IsActive")) == true ? "Yes" : "No" %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditRequestor" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("RequestorId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("RequestorName") %></td>
+                                        <td><%# (bool?)(Eval("IsActive")) == true ? "Yes" : "No" %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeleteRequestor" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("RequestorId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this requestor?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>
@@ -280,15 +280,15 @@
                         <button type="button" class="btn btn-success" onclick="AddNewAction(); return false;"><i class="fas fa-plus"></i>&nbsp;Add Action</button>
                     </div>
                     <table id="tblActions" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>Action</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>Action</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptActions" runat="server" OnItemCommand="rptActions_ItemCommand">
                                 <ItemTemplate>
                                     <tr>
-                                        <td><%#Eval("Action") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditAction" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("ActionId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("Action") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeleteAction" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("ActionId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this action?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>
@@ -327,17 +327,16 @@
                         <button type="button" class="btn btn-success" onclick="AddNewTimeSpent(); return false;"><i class="fas fa-plus"></i>&nbsp;Add Time Span</button>
                     </div>
                     <table id="tblTimeSpent" class="table table-striped table-bordered table-hover" style="width:100%">
-                        <thead><tr><th>Id</th><th>Time Span</th><th>Active</th><th class="command-item"></th><th class="command-item"></th></tr></thead>
+                        <thead><tr><th class="command-item"></th><th>Id</th><th>Time Span</th><th class="command-item"></th></tr></thead>
                         <tbody>
                             <asp:Repeater ID="rptTimeSpent" runat="server" OnItemCommand="rptTimeSpent_ItemCommand">
                                 <ItemTemplate>
                                     <tr class='<%# !(bool)Eval("IsActive") ? "inactive" : "" %>'>
-                                        <td><%#Eval("TimeSpanId") %></td>
-                                        <td><%#Eval("TimeSpan") %></td>
-                                        <td><%# (bool)Eval("IsActive") ? "Yes" : "No" %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdEditTimeSpent" runat="server" CommandName="EditItem" CommandArgument='<%#Eval("TimeSpanId") %>' CssClass="text-primary"><i class="fas fa-edit"></i></asp:LinkButton>
                                         </td>
+                                        <td><%#Eval("TimeSpanId") %></td>
+                                        <td><%#Eval("TimeSpan") %></td>
                                         <td class="command-icon">
                                             <asp:LinkButton ID="cmdDeleteTimeSpent" runat="server" CommandName="DeleteItem" CommandArgument='<%#Eval("TimeSpanId") %>' CssClass="text-danger" OnClientClick="return confirm('Are you sure you want to delete this time span?');"><i class="fas fa-trash"></i></asp:LinkButton>
                                         </td>

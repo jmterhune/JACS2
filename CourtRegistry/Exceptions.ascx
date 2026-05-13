@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Exceptions.ascx.cs" Inherits="tjc.Modules.CourtRegistry.JacExceptions" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -109,7 +110,7 @@
                             <td class="command-item"><%#Convert.ToBoolean(Eval("Exclude"))?"<i class='fas fa-square-check'></i>":"<i class='fas fa-square'></i>"%></td>
                             <td class="command-item"><%#Convert.ToBoolean(Eval("OnlyRenewals"))?"<i class='fas fa-square-check'></i>":"<i class='fas fa-square'></i>"%></td>
                             <td class="command-item">
-                                <asp:LinkButton ID="cmdDelete" runat="server" CausesValidation="false" CommandArgument='<%#Eval("JacCodeid")+"|"+Eval("LocationID")+"|"+Eval("Year")%>' CommandName="delete" CssClass="delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
+                                <asp:LinkButton ID="cmdDelete" runat="server" CausesValidation="false" OnClientClick="return Registry.confirmDelete(this,'Exception');" CommandArgument='<%#Eval("JacCodeid")+"|"+Eval("LocationID")+"|"+Eval("Year")%>' CommandName="delete" CssClass="delete text-danger"><i class="fas fa-trash"></i></asp:LinkButton></td>
                         </tr>
                     </ItemTemplate>
                     <FooterTemplate>

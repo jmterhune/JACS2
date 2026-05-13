@@ -78,9 +78,10 @@ namespace tjc.Modules.CourtRegistry
             drpJacCode.Items.Insert(0, new ListItem("ALL", ""));
             if (drpYear.Items.Count <= 0)
             {
-                drpYear.Items.Add(new ListItem(DateTime.Now.Year.ToString()));
-                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(1).Year.ToString()));
-                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(-1).Year.ToString()));
+                var pCtl = new ApplicationController();
+                var periods = pCtl.GetApplicationPeriods().OrderByDescending(p => p.ApplicationYear).ToList();
+                foreach (var p in periods)
+                    drpYear.Items.Add(new ListItem(p.PeriodYear, p.ApplicationYear.ToString()));
             }
         }
         private void BindDropdownLists(int casetypeId)
@@ -93,9 +94,10 @@ namespace tjc.Modules.CourtRegistry
             drpJacCode.Items.Insert(0, new ListItem("ALL", ""));
             if (drpYear.Items.Count <= 0)
             {
-                drpYear.Items.Add(new ListItem(DateTime.Now.Year.ToString()));
-                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(1).Year.ToString()));
-                drpYear.Items.Add(new ListItem(DateTime.Now.AddYears(-1).Year.ToString()));
+                var pCtl = new ApplicationController();
+                var periods = pCtl.GetApplicationPeriods().OrderByDescending(p => p.ApplicationYear).ToList();
+                foreach (var p in periods)
+                    drpYear.Items.Add(new ListItem(p.PeriodYear, p.ApplicationYear.ToString()));
             }
         }
 
@@ -112,6 +114,7 @@ namespace tjc.Modules.CourtRegistry
                     IEnumerable<Location> locations = ctl.GetLocations();
                     foreach (Location location in locations)
                         drpLocations.Items.Add(new ListItem(location.LocationName, location.LocationID.ToString()));
+                    drpLocations.Items.Insert(0, new ListItem("All Locations", "0"));
                     BindDropdownLists();
                     drpYear.SelectedValue = _year.ToString();
                 }

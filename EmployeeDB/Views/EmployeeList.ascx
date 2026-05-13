@@ -87,21 +87,23 @@
                             <th>Title</th>
                             <th>Department</th>
                             <th>Location</th>
-                            <th>Active</th>
                         </tr>
                     </thead>
                     <tbody>
                         <asp:Repeater ID="rptEmployees" runat="server">
                             <ItemTemplate>
+                                <%-- IsActive still rides on the row via data-active so the
+                                     active/inactive toggle below the table can filter on it
+                                     without an explicit "Active" column. The visible Active
+                                     column was removed to avoid duplicating that state. --%>
                                 <tr data-id='<%# Eval("EmployeeId") %>' data-active='<%# (bool?)(Eval("IsActive")) == true ? "1" : "0" %>' class='<%# (bool?)(Eval("IsActive")) != true ? "inactive" : "" %>'>
                                     <td class="command-icon">
                                         <a class="text-primary" title="Edit" href='<%# EditEmployeeUrl((int)Eval("EmployeeId")) %>'><i class="fas fa-edit"></i></a>
                                     </td>
                                     <td><%#Eval("LastName") %>, <%#Eval("FirstName") %></td>
                                     <td><%#Eval("JobTitle") %></td>
-                                    <td><%#Eval("AgencyOfEmployment") %></td>
+                                    <td><%# GetDepartmentName(Eval("DepartmentId")) %></td>
                                     <td><%# GetLocationName(Eval("OfficeLocationId")) %></td>
-                                    <td><%# (bool?)(Eval("IsActive")) == true ? "Y" : "N" %></td>
                                 </tr>
                             </ItemTemplate>
                         </asp:Repeater>
@@ -395,7 +397,10 @@
             // The DesignationList view in transcriptDatabase uses the same
             // .dt-length prepend pattern.
             var tableConfigs = [
-                { id: '#tblEmployees',    key: 'empdb-tblEmployees-v1',    addBtnId: '#empdbEmployeeAdd' }
+                // Bumped to v2 when the Active column was removed — older
+                // saved state would still reference column index 5 and
+                // throw "Requested unknown parameter" warnings.
+                { id: '#tblEmployees',    key: 'empdb-tblEmployees-v2',    addBtnId: '#empdbEmployeeAdd' }
             ];
             $.each(tableConfigs, function (i, cfg) {
                 if ($(cfg.id).length && !$.fn.DataTable.isDataTable(cfg.id)) {
@@ -620,5 +625,12 @@
 </script>
 
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<%-- module.css must load on this view too — the anchor-button :visited
+     fix lives there and the Add Employee / Directory / Details List /
+     EEO Setup / Reports buttons all turned blue after first click
+     because module.css wasn't being pulled in. Priority="100" puts it
+     after the skin's stylesheet so its !important rules win the
+     cascade reliably. --%>
+<dnn:DnnCssInclude runat="server" FilePath="~/DesktopModules/tjc.modules/EmployeeDB/module.css" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />

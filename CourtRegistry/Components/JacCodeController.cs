@@ -165,13 +165,16 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public IEnumerable<JacException> GetJacExceptions(int year)
         {
-            IEnumerable<JacException> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
-                var rep = ctx.GetRepository<JacException>();
-                t = rep.Find("Where Year=@0", year);
+                return ctx.ExecuteQuery<JacException>(System.Data.CommandType.Text,
+                    @"SELECT cfg.JacCodeId AS JacCodeID, cfg.LocationId AS LocationID, cfg.[Year],
+                             cfg.Exclude, cfg.OnlyRenewals, l.LocationName
+                      FROM tjc_car_jac_code_config cfg
+                      JOIN tjc_car_locations l ON cfg.LocationId = l.LocationId
+                      WHERE cfg.[Year] = @0
+                      ORDER BY cfg.JacCodeId, l.LocationName", year);
             }
-            return t;
         }
 
         public JacCodeConfig GetJacCodeConfig(int jacCodeId, int locationId, int year)
@@ -188,14 +191,21 @@ namespace tjc.Modules.CourtRegistry.Components
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
-                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_car_add_exclusion", config.JacCodeID, config.LocationID, config.Year, config.Exclude, config.OnlyRenewals);
+                ctx.Execute(System.Data.CommandType.Text,
+                    @"INSERT INTO tjc_car_jac_code_config (JacCodeId, LocationId, [Year], Exclude, OnlyRenewals)
+                      VALUES (@0, @1, @2, @3, @4)",
+                    config.JacCodeID, config.LocationID, config.Year, config.Exclude, config.OnlyRenewals);
             }
         }
         internal void UpdateJacCode(JacCodeConfig config)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
             {
-                ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_car_update_exclusion", config.JacCodeID, config.LocationID, config.Year, config.Exclude, config.OnlyRenewals);
+                ctx.Execute(System.Data.CommandType.Text,
+                    @"UPDATE tjc_car_jac_code_config
+                      SET Exclude = @3, OnlyRenewals = @4
+                      WHERE JacCodeId = @0 AND LocationId = @1 AND [Year] = @2",
+                    config.JacCodeID, config.LocationID, config.Year, config.Exclude, config.OnlyRenewals);
             }
         }
 

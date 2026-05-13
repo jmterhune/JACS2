@@ -40,11 +40,15 @@ namespace tjc.Modules.CourtRegistry.Services
             Int32.TryParse(query.ContainsKey("draw") ? query["draw"] : "0", out int draw);
             string sortColumn = "AttorneyID"; // Default sort column
             string sortDirection = "asc"; // Default sort direction
-            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            string colKey = query.ContainsKey("order[0][column]") ? "order[0][column]"
+                          : query.ContainsKey("order[0].column") ? "order[0].column" : null;
+            string dirKey = query.ContainsKey("order[0][dir]") ? "order[0][dir]"
+                          : query.ContainsKey("order[0].dir") ? "order[0].dir" : null;
+            if (colKey != null && dirKey != null)
             {
-                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                Int32.TryParse(query[colKey], out int sortIndex);
                 sortColumn = GetSortColumn(sortIndex);
-                sortDirection = query["order[0].dir"];
+                sortDirection = query[dirKey];
             }
             try
             {
@@ -60,7 +64,7 @@ namespace tjc.Modules.CourtRegistry.Services
                 return Request.CreateResponse(new AttorneySearchResult { data = attorneyListItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
             }
         }
-        [HttpGet]
+        [HttpDelete]
         [ActionName("Delete")]
         public HttpResponseMessage DeleteAttorney(int attorneyId)
         {
@@ -93,18 +97,21 @@ namespace tjc.Modules.CourtRegistry.Services
             }
         }
         [HttpPost]
-        internal HttpResponseMessage SaveAttorney(AttorneyViewModel attorney)
+        public HttpResponseMessage SaveAttorney(AttorneyViewModel attorney)
         {
             try
             {
                 var ctl = new AttorneyController();
                 if (attorney.AttorneyID == 0)
                 {
-                    ctl.CreateAttorney(new Attorney { BarNumber = attorney.BarNumber, LastName = attorney.LastName, FirstName = attorney.FirstName, Email = attorney.Email, Phone = attorney.Phone, Cell = attorney.Cell, Fax = attorney.Fax, LawFirm = attorney.LawFirm });
+                    ctl.CreateAttorney(MapToEntity(attorney, new Attorney()));
                 }
                 else
                 {
-                    ctl.UpdateAttorney(new Attorney { AttorneyID = attorney.AttorneyID, BarNumber = attorney.BarNumber, LastName = attorney.LastName, FirstName = attorney.FirstName, Email = attorney.Email, Phone = attorney.Phone, Cell = attorney.Cell, Fax = attorney.Fax, LawFirm = attorney.LawFirm });
+                    var existing = ctl.GetAttorney(attorney.AttorneyID);
+                    if (existing == null)
+                        return Request.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                    ctl.UpdateAttorney(MapToEntity(attorney, existing));
                 }
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -113,6 +120,25 @@ namespace tjc.Modules.CourtRegistry.Services
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
+        }
+
+        private static Attorney MapToEntity(AttorneyViewModel vm, Attorney target)
+        {
+            target.AttorneyID = vm.AttorneyID;
+            target.BarNumber = vm.BarNumber;
+            target.LastName = vm.LastName;
+            target.FirstName = vm.FirstName;
+            target.Email = vm.Email;
+            target.Phone = vm.Phone;
+            target.Cell = vm.Cell;
+            target.Fax = vm.Fax;
+            target.LawFirm = vm.LawFirm;
+            target.Address = vm.Street;
+            target.City = vm.City;
+            target.State = vm.State;
+            target.Zip = vm.ZipCode;
+            target.Language = vm.Languages;
+            return target;
         }
         internal class AttorneySearchResult
         {

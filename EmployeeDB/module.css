@@ -344,6 +344,73 @@ table.dataTable td a:hover { text-decoration: underline; }
 .empdb-dual-list-buttons .btn {
     width: 3rem;
 }
+/* Anchor-as-button :visited color fix.
+ *
+ * The browser default (and the Porto skin's global rules) style :visited
+ * <a> links with a blue/purple color, which leaks through Bootstrap's
+ * btn-* text color once the user has clicked the link — e.g. the green
+ * "Add Employee" button reads as blue text after one visit. These rules
+ * pin the text color to white in every link state for the solid-color
+ * variants we actually render as anchors (Add Employee = btn-success;
+ * Directory / Details / EEO / Reports = btn-primary; Back to List /
+ * Cancel = btn-secondary; plus btn-danger / btn-info for completeness).
+ * !important is needed to outweigh the :visited rule, which lands at
+ * higher specificity than .btn's own color declaration. */
+a.btn-primary,
+a.btn-primary:link,
+a.btn-primary:visited,
+a.btn-primary:hover,
+a.btn-primary:focus,
+a.btn-primary:active,
+a.btn-success,
+a.btn-success:link,
+a.btn-success:visited,
+a.btn-success:hover,
+a.btn-success:focus,
+a.btn-success:active,
+a.btn-secondary,
+a.btn-secondary:link,
+a.btn-secondary:visited,
+a.btn-secondary:hover,
+a.btn-secondary:focus,
+a.btn-secondary:active,
+a.btn-danger,
+a.btn-danger:link,
+a.btn-danger:visited,
+a.btn-danger:hover,
+a.btn-danger:focus,
+a.btn-danger:active,
+a.btn-info,
+a.btn-info:link,
+a.btn-info:visited,
+a.btn-info:hover,
+a.btn-info:focus,
+a.btn-info:active {
+    color: #fff !important;
+}
+
+/* New Hire IT Worksheet — flow the long checkbox catalogs (Software /
+   Intranet / Judicial) into 3 columns so the lists fit the page without
+   a 20-row scroll. break-inside: avoid keeps each checkbox + label
+   together rather than splitting across a column boundary.
+   Drops to 2 columns on tablet, 1 on mobile so the layout doesn't
+   pile up at narrow widths. */
+.empdb-nhit-checklist {
+    column-count: 1;
+    column-gap: 1.5rem;
+}
+@media (min-width: 576px) {
+    .empdb-nhit-checklist { column-count: 2; }
+}
+@media (min-width: 768px) {
+    .empdb-nhit-checklist { column-count: 3; }
+}
+.empdb-nhit-checklist .form-check {
+    break-inside: avoid;
+    page-break-inside: avoid; /* legacy fallback */
+    -webkit-column-break-inside: avoid;
+}
+
 .empdb-dual-list-actions {
     margin-top: 1.25rem;
 }

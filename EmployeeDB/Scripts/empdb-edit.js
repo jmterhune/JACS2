@@ -68,6 +68,13 @@
     function getCtx() {
         var meta = function (name) { var m = document.querySelector('meta[name="' + name + '"]'); return m ? m.content : ""; };
         var ctx = window.__empdbCtx || {};
+        // For employeeId we have to use a null-check rather than `||` —
+        // ASP.NET emits 0 for the Add Employee flow (?EmployeeId=0), and
+        // `0 || ""` evaluates to "", which sends an empty `?employeeId=`
+        // and trips Web API model binding ("The request is invalid"). We
+        // want the digit 0 to flow through so the API returns an empty
+        // result set instead of a 400.
+        var asString = function (v) { return v == null ? "" : String(v); };
         return {
             tabId: ctx.tabId || meta("dnn-tab-id") || "",
             moduleId: ctx.moduleId || meta("dnn-module-id") || "",
@@ -75,11 +82,11 @@
                 var i = document.querySelector('input[name="__RequestVerificationToken"]');
                 return i ? i.value : "";
             })(),
-            employeeId: ctx.employeeId || "",
+            employeeId: asString(ctx.employeeId),
             // Position / Service History rows are server-keyed by SSN, so the
             // markup ships the loaded employee's SSN through __empdbCtx for the
             // modal Save handlers to read.
-            ssn: ctx.ssn || ""
+            ssn: asString(ctx.ssn)
         };
     }
     empdb.getContext = getCtx;
