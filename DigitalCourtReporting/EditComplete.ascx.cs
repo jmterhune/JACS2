@@ -155,7 +155,8 @@ namespace tjc.Modules.DigitalCourtReporting
                 }
                 else
                 {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Proceeding Not Found", "Could not retrieve procedding record", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "Swal.fire({ title: '" + System.Web.HttpUtility.JavaScriptStringEncode("Proceeding Not Found") + "', html: '" + System.Web.HttpUtility.JavaScriptStringEncode("Could not retrieve procedding record") + "', icon: 'error', confirmButtonText: 'OK' });", true);
                 }
             }
             catch (Exception exc)

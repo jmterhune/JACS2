@@ -122,7 +122,8 @@ namespace tjc.Modules.ThreatReport
                         }
                         catch
                         {
-                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Unable to create directory. Please create manually insuring that the app pool for this site has read/write priveledges.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                            System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                                "Swal.fire({ title: 'Error', html: '" + System.Web.HttpUtility.JavaScriptStringEncode("Unable to create directory. Please create manually insuring that the app pool for this site has read/write priveledges.") + "', icon: 'error', confirmButtonText: 'OK' });", true);
                             return;
                         }
                     }

@@ -78,7 +78,8 @@ namespace tjc.Modules.CourtRegistry
                     }
                     else
                     {
-                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No Application Selected. Please click Cancel to Return to the Application List.", ModuleMessage.ModuleMessageType.RedError);
+                        ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                            "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("No Application Selected. Please click Cancel to Return to the Application List.") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                     }
                 }
             }
@@ -236,7 +237,8 @@ namespace tjc.Modules.CourtRegistry
         {
             if (!IsApprover)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "You do not have approval rights", ModuleMessage.ModuleMessageType.RedError);
+                ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You do not have approval rights") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
             var appCtl = new ApplicationController();

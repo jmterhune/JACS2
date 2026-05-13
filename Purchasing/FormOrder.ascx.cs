@@ -198,7 +198,8 @@ namespace tjc.Modules.Purchasing
             }
             else
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(Page, "Please add Line Forms to Order before submitting", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Please add Line Forms to Order before submitting") + "', type: 'warning', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
             }
         }
         protected void cmdAddForm_Click(object sender, EventArgs e)

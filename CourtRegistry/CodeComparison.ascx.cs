@@ -73,12 +73,14 @@ namespace tjc.Modules.CourtRegistry
 
             if (!int.TryParse(drpYear.SelectedValue, out int year1) || year1 <= 0)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Please select a Year.", ModuleMessage.ModuleMessageType.YellowWarning);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Please select a Year.") + "', type: 'warning', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
             if (!int.TryParse(drpYear2.SelectedValue, out int year2) || year2 <= 0)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Please select a Year to Compare.", ModuleMessage.ModuleMessageType.YellowWarning);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Please select a Year to Compare.") + "', type: 'warning', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
             int.TryParse(drpAttorney.SelectedValue, out int attorneyId);
@@ -89,12 +91,14 @@ namespace tjc.Modules.CourtRegistry
 
             if (year1Codes.Count == 0)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Sorry no data available for Year " + year1, ModuleMessage.ModuleMessageType.YellowWarning);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Sorry no data available for Year " + year1) + "', type: 'warning', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
             if (year2Codes.Count == 0)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Sorry no data available for Year " + year2, ModuleMessage.ModuleMessageType.YellowWarning);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Sorry no data available for Year " + year2) + "', type: 'warning', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
 

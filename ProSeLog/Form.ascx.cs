@@ -160,7 +160,8 @@ namespace tjc.Modules.ProSeLog
                         }
                         else
                         {
-                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this,"Unable to Retrieve the Requested Record. Please contact the Help Desk.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                            System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                                "Swal.fire({ title: 'Error', html: '" + System.Web.HttpUtility.JavaScriptStringEncode("Unable to Retrieve the Requested Record. Please contact the Help Desk.") + "', icon: 'error', confirmButtonText: 'OK' });", true);
                         }
                     }
                 }

@@ -149,7 +149,8 @@ namespace tjc.Modules.DigitalCourtReporting
             }
             else
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "You Request could not be completed. Check your Criteria and try again.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You Request could not be completed. Check your Criteria and try again.") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
             }
         }
         #endregion

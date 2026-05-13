@@ -173,7 +173,8 @@ namespace tjc.Modules.ThreatReport
             }
             catch (Exception exc)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "An error occurred subitting your requrest.  Please report this error to the <a href='/Contact-Us?eid=d2ViaGVscA%3d%3d-E%2fjiw0ctjEE%3d'>Help Desk</a>", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "Swal.fire({ title: 'Error', html: '" + HttpUtility.JavaScriptStringEncode("An error occurred subitting your requrest.  Please report this error to the <a href='/Contact-Us?eid=d2ViaGVscA%3d%3d-E%2fjiw0ctjEE%3d'>Help Desk</a>") + "', icon: 'error', confirmButtonText: 'OK' });", true);
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }

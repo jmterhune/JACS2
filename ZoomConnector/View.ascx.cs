@@ -103,7 +103,8 @@ namespace tjc.Modules.ZoomConnector
             count = 0;
             if (!client.IsConnected)
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "Could Not Connect to Polycom", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Could Not Connect to Polycom") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
             while (readOut.ToLower().Contains("password") == false)
@@ -122,7 +123,8 @@ namespace tjc.Modules.ZoomConnector
             }
             else
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "Could Not Send Password", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Could Not Send Password") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
             readOut = "";
@@ -216,7 +218,8 @@ namespace tjc.Modules.ZoomConnector
                 }
                 else
                 {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "No PolyCom units specified for Manatee", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("No PolyCom units specified for Manatee") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                     return;
                 }
             }
@@ -228,7 +231,8 @@ namespace tjc.Modules.ZoomConnector
                 }
                 else
                 {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "No PolyCom units specified for Sarasota", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("No PolyCom units specified for Sarasota") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                     return;
                 }
 
@@ -241,7 +245,8 @@ namespace tjc.Modules.ZoomConnector
                 }
                 else
                 {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "No PolyCom units specified for DeSoto", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("No PolyCom units specified for DeSoto") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                     return;
                 }
             }
@@ -272,7 +277,8 @@ namespace tjc.Modules.ZoomConnector
                 string polyPassword = drpLocation.SelectedValue.Split('|')[1];
                 if (txtMeetingInfo.Text.Trim().Length == 0)
                 {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "Please Paste in the Meeting Information", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Please Paste in the Meeting Information") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                     return;
 
                 }
@@ -296,7 +302,8 @@ namespace tjc.Modules.ZoomConnector
             }
             else
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this.Page, "Please Select a County", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Please Select a County") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
 

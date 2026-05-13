@@ -180,7 +180,8 @@ namespace tjc.Modules.JudgeVacation
             }
             else
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Please Check the Start and End Dates", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Please Check the Start and End Dates") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
             }
         }
 

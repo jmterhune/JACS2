@@ -67,8 +67,8 @@ namespace tjc.Modules.JudicialReferral.Views
             {
                 pnlJudge.Enabled = false;
                 pnlJA.Enabled = false;
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Unable to find requested record",
-                    DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Unable to find requested record") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
 
