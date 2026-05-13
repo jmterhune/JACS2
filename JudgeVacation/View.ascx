@@ -47,13 +47,13 @@
             <ItemTemplate>
                 <tr>
                     <td class="command-item">
-                        <asp:HyperLink data-toggle="tooltip" ID="lnkEdit" ToolTip="Edit Record" runat="server"><i title="Edit Record" class="fa fa-pencil" aria-hidden="true"></i></asp:HyperLink>
+                        <asp:HyperLink data-toggle="tooltip" ID="lnkEdit" CssClass="text-primary" ToolTip="Edit Record" runat="server"><i title="Edit Record" class="fas fa-edit" aria-hidden="true"></i></asp:HyperLink>
                     </td>
                     <td><%# Eval("StartDate", "{0: MM/dd/yyyy}") %></td>
                     <td><%# Eval("EndDate", "{0: MM/dd/yyyy}") %></td>
                     <td><%# Eval("VacationDays") %></td>
                     <td class="command-item">
-                        <asp:LinkButton data-toggle="tooltip" ToolTip="Delete Record" CausesValidation="false" runat="server" CommandArgument='<%# Eval("CalendarId") %>' CommandName="delete" OnClientClick="return confirm('Are you sure you wish to delete this record?');"><i title="Delete Record" class="fa fa-trash" aria-hidden="true"></i></asp:LinkButton></td>
+                        <asp:LinkButton data-toggle="tooltip" CssClass="text-danger" ToolTip="Delete Record" CausesValidation="false" runat="server" CommandArgument='<%# Eval("CalendarId") %>' CommandName="delete" OnClientClick="return confirm('Are you sure you wish to delete this record?');"><i title="Delete Record" class="fas fa-trash" aria-hidden="true"></i></asp:LinkButton></td>
                 </tr>
             </ItemTemplate>
             <FooterTemplate>

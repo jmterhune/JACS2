@@ -318,7 +318,7 @@
                 } else {
                     $("#hdAttachmentIds").val(fileIdList + "," + fileId);
                 }
-                $("#attachmentList").append("<li data-fileId='" + fileId + "'><span>" + filename + "</span>&nbsp;<a class='float-end' onclick=\"DeleteAttachment('" + fileId + "')\"><em class='fa fa-trash'></em></></li>");
+                $("#attachmentList").append("<li data-fileId='" + fileId + "'><span>" + filename + "</span>&nbsp;<a class='float-end text-danger' onclick=\"DeleteAttachment('" + fileId + "')\"><i class='fas fa-trash'></i></a></li>");
                 WriteAttachmentMessage(filename);
             };
             options.error = function (err) {

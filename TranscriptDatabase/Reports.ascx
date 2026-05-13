@@ -121,7 +121,7 @@
                 {
                     data: "designationid", render: function (data, type, row, meta) {
                         var url = "<%=EditUrl()%>";
-                        return `<a title="Edit Designation" onclick="SetdesignationId(${data})" href="${url}/did/${data}"><i class="fas fa-pencil"></i></a>`;
+                        return `<a class="text-primary" title="Edit Designation" onclick="SetdesignationId(${data})" href="${url}/did/${data}"><i class="fas fa-edit"></i></a>`;
                     }, className: "command-item", orderable: false
                 },
                 { data: "designationid" },

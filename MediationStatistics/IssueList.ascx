@@ -61,11 +61,11 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"IssueId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"IssueId").ToString() %>'><i class="fas fa-edit"></i></asp:LinkButton>
                                 <td><%#Eval("Description")%></td>
                                 <td><%#DataBinder.Eval(Container.DataItem,"Active").ToString()=="True"?"<i class=\"fas fa-check-square\"></i>":"<i class=\"fas fa-square\"></i>" %></td>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"IssueId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"IssueId").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>

@@ -56,7 +56,7 @@
                 <td class="centered">
                     <asp:LinkButton runat="server" ID="cmdComplete" CommandName="toggle" CommandArgument='<%#Eval("OrderID") %>'><%#"<i class='fa fa-"  + (Eval("CompletedDate")==null ? "square": "check-square") + "'><i/>"  %></asp:LinkButton></td>
                 <td class="command-icon">
-                    <asp:LinkButton runat="server" ID="cmdDelted" CssClass="confirm " CommandName="delete" CommandArgument='<%#Eval("OrderID") %>'><i class="fa fa-trash"></i></asp:LinkButton></td>
+                    <asp:LinkButton runat="server" ID="cmdDelted" CssClass="text-danger confirm " CommandName="delete" CommandArgument='<%#Eval("OrderID") %>'><i class="fas fa-trash"></i></asp:LinkButton></td>
                 </td>
             </tr>
         </ItemTemplate>

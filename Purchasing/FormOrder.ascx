@@ -78,7 +78,7 @@
                         <td><%#Eval("Recipient") %></td>
                         <td><%#Eval("Comments") %></td>
                         <td>
-                            <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDeleted" CssClass="confirm" CommandName="delete" CommandArgument='<%#Eval("FormId") %>'><i class="fa fa-trash" aria-hidden="true"></i></asp:LinkButton>
+                            <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDeleted" CssClass="text-danger confirm" CommandName="delete" CommandArgument='<%#Eval("FormId") %>'><i class="fas fa-trash" aria-hidden="true"></i></asp:LinkButton>
                         </td>
                     </tr>
                 </ItemTemplate>
@@ -280,7 +280,7 @@
                 } else {
                     $("#hdAttachmentIds").val(fileIdList + "," + fileId);
                 }
-                $("#attachmentList").append("<li data-fileId='" + fileId + "'><span>" + filename + "</span>&nbsp;<a class='float-end' onclick=\"DeleteAttachment('" + fileId + "')\"><em class='fa fa-trash'></em></></li>");
+                $("#attachmentList").append("<li data-fileId='" + fileId + "'><span>" + filename + "</span>&nbsp;<a class='float-end text-danger' onclick=\"DeleteAttachment('" + fileId + "')\"><i class='fas fa-trash'></i></a></li>");
                 WriteAttachmentMessage(filename);
             };
             options.error = function (err) {

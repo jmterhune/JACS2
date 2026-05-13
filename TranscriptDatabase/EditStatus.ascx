@@ -223,7 +223,7 @@
                                                     <asp:LinkButton ID="cmdApprove" runat="server" Visible='<%#!bool.Parse(Eval("Approved").ToString())%>' ToolTip="Approve Extension" CommandName="approve" CommandArgument='<%# Eval("ExtensionID")%>'><i class="fas fa-circle-check"></i> </asp:LinkButton>
                                                 </td>
                                                 <td class="command-item">
-                                                    <asp:LinkButton ID="cmdDelete" CssClass="delete-extension" runat="server" Visible='<%#!bool.Parse(Eval("Approved").ToString())%>' ToolTip="Delete Extension" CommandName="delete" CommandArgument='<%# Eval("ExtensionID")%>'><i class="fa fa-trash"></i> </asp:LinkButton>
+                                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger delete-extension" runat="server" Visible='<%#!bool.Parse(Eval("Approved").ToString())%>' ToolTip="Delete Extension" CommandName="delete" CommandArgument='<%# Eval("ExtensionID")%>'><i class="fas fa-trash"></i> </asp:LinkButton>
                                                 </td>
                                             </tr>
                                         </ItemTemplate>
@@ -257,12 +257,12 @@
                                         <ItemTemplate>
                                             <tr>
                                                 <td class="command-item">
-                                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CommandArgument='<%# Eval("AttachmentID")%>'><i class="fa fa-pencil"></i> </asp:LinkButton>
+                                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CommandArgument='<%# Eval("AttachmentID")%>'><i class="fas fa-edit"></i> </asp:LinkButton>
                                                 </td>
                                                 <td>
                                                     <asp:HyperLink ID="lnkFile" runat="server" Target="_blank" NavigateUrl='<%# DataBinder.Eval(Container.DataItem, "RelativePath")%>'><%# DataBinder.Eval(Container.DataItem, "FileDescription")%></asp:HyperLink></td>
                                                 <td class="command-item">
-                                                    <asp:LinkButton ID="cmdDelete" CssClass="delete-file" runat="server" ToolTip="Delete File" CommandName="delete" CommandArgument='<%# Eval("AttachmentID")%>'><i class="fa fa-trash"></i> </asp:LinkButton>
+                                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger delete-file" runat="server" ToolTip="Delete File" CommandName="delete" CommandArgument='<%# Eval("AttachmentID")%>'><i class="fas fa-trash"></i> </asp:LinkButton>
                                                 </td>
                                             </tr>
                                         </ItemTemplate>

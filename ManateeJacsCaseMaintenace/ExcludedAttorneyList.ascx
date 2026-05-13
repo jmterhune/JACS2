@@ -27,7 +27,7 @@
             <td><%#Eval("EMAIL") %></td>
             <td><%#Eval("ACTIVE") %></td>
             <td class="command-icon-container">
-                <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDelete" ToolTip="Delete Record" CssClass="command-icon" OnClientClick="return confirm('Delete Bar Number?');" CommandArgument='<%#Eval("RecordId") %>' CommandName="delete"><i class="fa fa-trash"></i></asp:LinkButton>
+                <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDelete" ToolTip="Delete Record" CssClass="command-icon text-danger" OnClientClick="return confirm('Delete Bar Number?');" CommandArgument='<%#Eval("RecordId") %>' CommandName="delete"><i class="fas fa-trash"></i></asp:LinkButton>
             </td>
         </tr>
     </ItemTemplate>

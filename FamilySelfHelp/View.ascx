@@ -71,7 +71,7 @@
                 <ItemTemplate>
                     <tr>
                         <td class="command-icon">
-                            <asp:HyperLink ID="lnkDetail" ToolTip="Edit This Record" CssClass="cmdlink" runat="server" NavigateUrl='<%#EditUrl("lid", Eval("LogId").ToString(), "log")%>'><i class="fas fa-pencil"></i></asp:HyperLink></td>
+                            <asp:HyperLink ID="lnkDetail" ToolTip="Edit This Record" CssClass="cmdlink text-primary" runat="server" NavigateUrl='<%#EditUrl("lid", Eval("LogId").ToString(), "log")%>'><i class="fas fa-edit"></i></asp:HyperLink></td>
                         <td>
                             <%#Eval("ServiceDate", "{0:d}")%>
                         </td>
@@ -87,8 +87,8 @@
                         <td class="text-center"><%#HasInterpreter(Eval("HasAppointment").ToString())%></td>
                         <td><%#Eval("TimeSpent")%> Hours</td>
                         <td class="command-icon">
-                            <asp:LinkButton ID="cmdDelete" CssClass="confirm" CommandName="delete" ToolTip="Delete this Record" CommandArgument='<%# Eval("LogId").ToString()%>' runat="server">
-                                            <i title="Delete File" class="fa fa-trash"></i>
+                            <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" CommandName="delete" ToolTip="Delete this Record" CommandArgument='<%# Eval("LogId").ToString()%>' runat="server">
+                                            <i title="Delete File" class="fas fa-trash"></i>
                             </asp:LinkButton></td>
 
                     </tr>

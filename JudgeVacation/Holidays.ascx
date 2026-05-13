@@ -37,7 +37,7 @@
                     <td><%# Eval("HolidayDate", "{0: MM/dd/yyyy}") %></td>
                     <td><%# Eval("Description") %></td>
                     <td class="command-item">
-                        <asp:LinkButton ToolTip="Delete Holiday" runat="server" CommandArgument='<%# Eval("HolidayID") %>' CommandName="delete" OnClientClick="return confirm('Are you sure you wish to delete this record?');"><i class="fa fa-trash" aria-hidden="true" title="Delete Holiday"></i></asp:LinkButton></td>
+                        <asp:LinkButton CssClass="text-danger" ToolTip="Delete Holiday" runat="server" CommandArgument='<%# Eval("HolidayID") %>' CommandName="delete" OnClientClick="return confirm('Are you sure you wish to delete this record?');"><i class="fas fa-trash" aria-hidden="true" title="Delete Holiday"></i></asp:LinkButton></td>
                 </tr>
             </ItemTemplate>
             <FooterTemplate>

@@ -253,7 +253,7 @@
                 { data: "office" },
                 {
                     data: "id", render: function (data, type, row, meta) {
-                        return `<a title="Remove Attorney" data-id="${row.id}" class="remove-attorney"  href="#"><i class="fas fa-trash"></i></a>`;
+                        return `<a title="Remove Attorney" data-id="${row.id}" class="remove-attorney text-danger"  href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item"
                 },
             ],

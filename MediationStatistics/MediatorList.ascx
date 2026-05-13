@@ -62,12 +62,12 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"MediatorId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"MediatorId").ToString() %>'><i class="fas fa-edit"></i></asp:LinkButton>
                                 <td><%#Eval("MediatorName")%></td>
                                 <td><%#Eval("Email") %></td>
                                 <td><%#Eval("Phone") %></td>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"MediatorId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"MediatorId").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>

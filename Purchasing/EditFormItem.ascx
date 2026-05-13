@@ -73,7 +73,7 @@
                             </ul>
                         </td>
                         <td>
-                            <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDeleted" CssClass="confirm" CommandName="delete" CommandArgument='<%#Eval("FormId") %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                            <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDeleted" CssClass="text-danger confirm" CommandName="delete" CommandArgument='<%#Eval("FormId") %>'><i class="fas fa-trash"></i></asp:LinkButton>
                         </td>
                     </tr>
                 </ItemTemplate>

@@ -78,7 +78,7 @@
                 <ItemTemplate>
                     <tr>
                         <td class="command-item">
-                            <asp:HyperLink ID="lnkEdit" ToolTip="Edit this Record" runat="server"><i class="fa fa-pencil"></i></asp:HyperLink>
+                            <asp:HyperLink ID="lnkEdit" CssClass="text-primary" ToolTip="Edit this Record" runat="server"><i class="fas fa-edit"></i></asp:HyperLink>
                         </td>
                         <td class="command-item">
                             <asp:HyperLink ID="lnkView" ToolTip='<%#"View All Records for " + Eval("CaseNumber")%>' runat="server"><i class="fa fa-search"></i></asp:HyperLink>

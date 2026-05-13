@@ -212,7 +212,7 @@
                 {
                     data: "proceedingid", render: function (data, type, row, meta) {
                         if (isAdmin == "True")
-                            return `<a class="delete" aria-role="button" title="Delete Record" data-id="${row.proceedingid}" href="#"><i class="fas fa-trash"></i></a>`;
+                            return `<a class="delete text-danger" aria-role="button" title="Delete Record" data-id="${row.proceedingid}" href="#"><i class="fas fa-trash"></i></a>`;
                         return '';
                     }, className: "command-item", orderable: false
                 },

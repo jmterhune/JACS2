@@ -74,7 +74,7 @@
                 <ItemTemplate>
                     <tr>
                         <td class="command-item">
-                            <asp:HyperLink ID="lnkView" runat="server" NavigateUrl='<%#EditUrl("hid",Eval("HistoryID").ToString(),"form") %>'><i class="fa fa-pencil"></i></asp:HyperLink>
+                            <asp:HyperLink ID="lnkView" CssClass="text-primary" runat="server" NavigateUrl='<%#EditUrl("hid",Eval("HistoryID").ToString(),"form") %>'><i class="fas fa-edit"></i></asp:HyperLink>
                         </td>
                         <td><%#DataBinder.Eval(Container.DataItem,"ReceivedDate","{0:MM/dd/yyyy}") %></td>
                         <td>

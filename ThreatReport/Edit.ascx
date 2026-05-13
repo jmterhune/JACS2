@@ -154,7 +154,7 @@
                             <div class="card-header">
                                 <h4 class="card-title">
                                     <a class="accordion-toggle collapsed d-inline-block" data-toggle="collapse" data-parent="#accordion" aria-expanded="false" href="<%#"#Suspect-" + Container.ItemIndex + 1 %>"><%#DataBinder.Eval(Container.DataItem, "FirstName")%> <%#DataBinder.Eval(Container.DataItem, "LastName")%>&nbsp;<small>(click to expand)</small> </a>
-                                    <asp:LinkButton ID="cmdDelete" runat="server" CssClass="float-end" CommandName="delete" OnClientClick="return confirm('Delete this Person?')" CommandArgument='<%#Container.ItemIndex.ToString() %>'><em class="fa fa-trash"></em></asp:LinkButton></td>
+                                    <asp:LinkButton ID="cmdDelete" runat="server" CssClass="float-end text-danger" CommandName="delete" OnClientClick="return confirm('Delete this Person?')" CommandArgument='<%#Container.ItemIndex.ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton></td>
 
                                 </h4>
                             </div>
@@ -503,7 +503,7 @@
                         } else {
                             $("#<%=hdFileIds.ClientID%>").val(fileIdList + "," + result.fileId);
                         }
-                        $("#fileList").append("<li data-incidentId='" + incidentId + "' data-fileId='" + result.fileId + "'><span class='file-name'>" + filename + "</span>&nbsp;<a onclick=\"ConfirmDelete('" + result.fileId + "')\"><em class='fa fa-trash'></em></></li>");
+                        $("#fileList").append("<li data-incidentId='" + incidentId + "' data-fileId='" + result.fileId + "'><span class='file-name'>" + filename + "</span>&nbsp;<a class='text-danger' onclick=\"ConfirmDelete('" + result.fileId + "')\"><i class='fas fa-trash'></i></a></li>");
                         WriteMessage(false, "File Captured");
                     } else {
                         WriteMessage(true, result.error);

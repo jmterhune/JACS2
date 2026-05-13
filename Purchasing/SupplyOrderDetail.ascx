@@ -58,7 +58,7 @@
                         <td><%#Eval("Recipient") %></td>
                         <td><%#Eval("Comments") %></td>
                         <td>
-                            <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDeleted" CssClass="confirm item-link" CommandName="delete" CommandArgument='<%#Eval("SupplyId") %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                            <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDeleted" CssClass="text-danger confirm item-link" CommandName="delete" CommandArgument='<%#Eval("SupplyId") %>'><i class="fas fa-trash"></i></asp:LinkButton>
                         </td>
                     </tr>
                 </ItemTemplate>

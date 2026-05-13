@@ -103,7 +103,7 @@
                             <td><%#Eval("CASEID") %></td>
                             <td><%#Eval("LUPDDATE") %></td>
                             <td>
-                                <asp:LinkButton runat="server" OnClientClick="return confirm('Delete this Case?');" CommandArgument='<%#Eval("CASENUM") %>' CommandName="Delete"><i class="fa fa-trash"></i></asp:LinkButton></td>
+                                <asp:LinkButton runat="server" CssClass="text-danger" OnClientClick="return confirm('Delete this Case?');" CommandArgument='<%#Eval("CASENUM") %>' CommandName="Delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
 
                         </tr>
                     </ItemTemplate>
@@ -141,7 +141,7 @@
                             <td><%#Eval("FLRC_Id") %></td>
                             <td><%#Eval("LUPDDATE") %></td>
                             <td>
-                                <asp:LinkButton runat="server" OnClientClick="return confirm('Delete this Case Cyle Record?');" CommandArgument='<%#Eval("CaseCycle_Id") %>' CommandName="Delete"><i class="fa fa-trash"></i></asp:LinkButton></td>
+                                <asp:LinkButton runat="server" CssClass="text-danger" OnClientClick="return confirm('Delete this Case Cyle Record?');" CommandArgument='<%#Eval("CaseCycle_Id") %>' CommandName="Delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
 
                         </tr>
                     </ItemTemplate>

@@ -226,7 +226,7 @@
                 {
                     data: "caseid", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
-                            return '<a class="delete confirm" aria-role="button" title="Delete Record" data-caseid="' + data + '" href="#""><i class="fas fa-trash"></i></a>';
+                            return '<a class="delete confirm text-danger" aria-role="button" title="Delete Record" data-caseid="' + data + '" href="#""><i class="fas fa-trash"></i></a>';
                         return '';
                     }, className: "command-item", orderable: false
                 },
