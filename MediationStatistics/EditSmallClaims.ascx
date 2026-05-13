@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditSmallClaims.ascx.cs" Inherits="tjc.Modules.MediationStatistics.EditSmallClaims" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <asp:Literal ID="ltHeading" runat="server"><h4>{0}:&nbsp{1}</h4></asp:Literal>
 <div id="county-form">
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Case Toolbar">
@@ -859,7 +865,7 @@
             pageLength: pageSizeMed,
         });
         $.fn.dataTable.ext.errMode = () => function (settings, helpPage, message) {
-            alert("The Following Error Occurred Loading Attorney List:" + message);
+            Swal.fire({ title: 'Error', text: 'The Following Error Occurred Loading Attorney List:' + message, icon: 'error', confirmButtonText: 'OK' });
         };
         $(document).on('show.bs.modal', '.modal', function (event) {
             var zIndex = 1040 + (10 * $('.modal:visible').length);
@@ -1062,11 +1068,11 @@
                 },
                 error: function (xhr, status, error) {
                     // alert(xhr.responseText);
-                    alert("Unable to add attorney.\n\nMake sure you are logged in and try again. \n\nError:" + error);
+                    Swal.fire({ title: 'Error', text: 'Unable to add attorney.\n\nMake sure you are logged in and try again. \n\nError:' + error, icon: 'error', confirmButtonText: 'OK' });
                 }
             });
         } catch (e) {
-            alert("Unable to add attorney.\n\nMake sure you are logged in and try again.");
+            Swal.fire({ title: 'Error', text: 'Unable to add attorney.\n\nMake sure you are logged in and try again.', icon: 'error', confirmButtonText: 'OK' });
         }
         return false;
     }
@@ -1155,11 +1161,11 @@
                 },
                 error: function (xhr, status, error) {
                     // alert(xhr.responseText);
-                    alert("Unable to add mediator.\n\nMake sure you are logged in and try again.");
+                    Swal.fire({ title: 'Error', text: 'Unable to add mediator.\n\nMake sure you are logged in and try again.', icon: 'error', confirmButtonText: 'OK' });
                 }
             });
         } catch (e) {
-            alert("Unable to add mediator.\n\nMake sure you are logged in and try again.");
+            Swal.fire({ title: 'Error', text: 'Unable to add mediator.\n\nMake sure you are logged in and try again.', icon: 'error', confirmButtonText: 'OK' });
         }
         return false;
     }

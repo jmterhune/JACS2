@@ -1,4 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="MergeClients.ascx.cs" Inherits="tjc.Modules.FamilySelfHelp.MergeClients" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div id="LogForm">
     <div class="container">
         <div class="btn-group mb-2">
@@ -29,7 +36,7 @@
                             <tr>
                                 <td>
                                     <asp:LinkButton ID="cmdMerge" ClientIDMode="Static" runat="server" CssClass="btn btn-default" CommandArgument='<%#Eval("ClientId").ToString()%>'
-                                        CommandName="merge" OnClientClick="return confirm('Merge all clients in this list to this client record?');"><i class="fas fa-user-friends"></i> Merge into this Client</asp:LinkButton>
+                                        CommandName="merge" OnClientClick="return Jud12ConfirmPostback(this, 'Merge all clients in this list to this client record?', 'Confirm');"><i class="fas fa-user-friends"></i> Merge into this Client</asp:LinkButton>
                                 </td>
                                 <td>
                                     <%#Eval("LastName")%></td>
@@ -37,7 +44,7 @@
                                     <%#Eval("FirstName")%></td>
                                 <td>
                                     <asp:LinkButton ID="cmdRemove" ToolTip="Remove Client from Merge" ClientIDMode="Static" runat="server" CssClass="text-danger" CommandArgument='<%#Eval("ClientId").ToString()%>'
-                                        CommandName="remove" OnClientClick="return confirm('Remove this Client from the Merge?');"><i class="fas fa-trash"></i></asp:LinkButton>
+                                        CommandName="remove" OnClientClick="return Jud12ConfirmPostback(this, 'Remove this Client from the Merge?', 'Confirm');"><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                             <tr class="cases">
@@ -102,11 +109,23 @@
                 $('#hdClientId').val($(this).find("option:selected").val());
             }
         });
-        $("#cmdMerge").dnnConfirm({
-            text: 'Merge all clients in this list to this client record?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Merge Clients?'
+        $("#cmdMerge").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Merge Clients?',
+                text: 'Merge all clients in this list to this client record?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
     });
     function FindTextInClientList(textValue) {
@@ -158,11 +177,33 @@
         return false;
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
+    }
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
         });
+        return false;
     }
 
 </script>

@@ -1,5 +1,11 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Application.ascx.cs" Inherits="tjc.Modules.CourtRegistry.Application" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div id="Application">
     <asp:Literal ID="ltHeading" runat="server"></asp:Literal>
     <table role="presentation" class="layout p-2 mb-2">
@@ -44,7 +50,7 @@
                     <asp:CheckBox Text="Signed for Guardianship Cases?" ID="chkGuardian" runat="server" Enabled="false" />
                 </td>
                 <td colspan="3" class="text-end">
-                    <asp:LinkButton runat="server" OnClientClick="return confirm('This will Reject the entire application.\n\nAre You Sure?');" ID="cmdReject" CssClass="btn btn-danger" Text="Reject All" OnClick="cmdReject_Click" />
+                    <asp:LinkButton runat="server" OnClientClick="return Jud12ConfirmPostback(this, 'This will Reject the entire application.\n\nAre You Sure?', 'Confirm');" ID="cmdReject" CssClass="btn btn-danger" Text="Reject All" OnClick="cmdReject_Click" />
                 </td>
             </tr>
         </tbody>
@@ -86,5 +92,31 @@
         btn.classList.add("isDisabled");
         btn.innerText = 'Processing ...';
         return true;
+    }
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
+        });
+        return false;
     }
 </script>

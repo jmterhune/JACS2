@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.MediationStatistics.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
@@ -264,13 +270,13 @@
                             caseTable.draw();
                         },
                         error: function (error) {
-                            alert(error);
+                            new Noty({ text: error, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
                         }
                     });
                 }
             });
         });
-        $.fn.dataTable.ext.errMode = () => alert('Error while loading the table data. Please refresh');
+        $.fn.dataTable.ext.errMode = () => Swal.fire({ title: 'Error', text: 'Error while loading the table data. Please refresh', icon: 'error', confirmButtonText: 'OK' });
         caseTable.on('order.dt', function () {
             // This will show: "Ordering on column 1 (asc)", for example
             var order = caseTable.order();
@@ -326,7 +332,7 @@
                 caseTable.draw();
             },
             error: function (error) {
-                alert(error);
+                new Noty({ text: error, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
             }
         });
     }

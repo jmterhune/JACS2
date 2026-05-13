@@ -1,5 +1,11 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UpdateJacCodes.ascx.cs" Inherits="tjc.Modules.CourtRegistry.UpdateJacCodes" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
 <div class="tabs">
     <ul class="nav nav-tabs">
@@ -73,7 +79,7 @@
                         </FooterTemplate>
                     </asp:Repeater>
                     <p>
-                        <asp:Button ID="cmdApply" runat="server" Text="Apply Updates" CssClass="btn btn-success" OnClientClick="return confirm('Are you sure you wish to apply these JAC code updates?');" OnClick="cmdApply_Click" />
+                        <asp:Button ID="cmdApply" runat="server" Text="Apply Updates" CssClass="btn btn-success" OnClientClick="return Jud12ConfirmPostback(this, 'Are you sure you wish to apply these JAC code updates?', 'Confirm');" OnClick="cmdApply_Click" />
                     </p>
                     <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -148,4 +154,30 @@
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(cleanupOrphanModals);
         }
     })();
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
+        });
+        return false;
+    }
 </script>

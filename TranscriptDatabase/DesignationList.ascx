@@ -315,6 +315,12 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
     var userId = <%=UserId%>;
@@ -484,15 +490,11 @@
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 designationId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Designation?',
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: 'Delete Designation?',
-                    callbackTrue: function () {
-                        DeleteDesignation(designationId);
-                    }
-                });
+                Swal.fire({
+                    title: 'Delete Designation?', text: 'Are you sure you wish to delete this Designation?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (r.isConfirmed) DeleteDesignation(designationId); });
                 function DeleteDesignation(designationId) {
                     e.preventDefault();
                     $.ajax({
@@ -510,15 +512,11 @@
             $(".archive").on("click", function (e) {
                 e.preventDefault();
                 designationId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to change the Archive status?',
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: 'Change Archive Status?',
-                    callbackTrue: function () {
-                        ToggleArchiveStatus(designationId);
-                    }
-                });
+                Swal.fire({
+                    title: 'Change Archive Status?', text: 'Are you sure you wish to change the Archive status?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (r.isConfirmed) ToggleArchiveStatus(designationId); });
                 function ToggleArchiveStatus(designationId) {
                     $.ajax({
                         url: archiveUrl + designationId,
@@ -535,15 +533,11 @@
             $(".acknowledge").on("click", function (e) {
                 e.preventDefault();
                 designationId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to change the Acknowledgement status?',
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: 'Change Acknowledgement Status?',
-                    callbackTrue: function () {
-                        ToggleAcknowledgmentStatus(designationId);
-                    }
-                });
+                Swal.fire({
+                    title: 'Change Acknowledgement Status?', text: 'Are you sure you wish to change the Acknowledgement status?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (r.isConfirmed) ToggleAcknowledgmentStatus(designationId); });
                 function ToggleAcknowledgmentStatus(designationId) {
                     $.ajax({
                         url: acknowledgeUrl + designationId,
@@ -623,15 +617,11 @@
         $(document).on('click', '.delete-event', function (e) {
             e.preventDefault();
             var eventId = $(this).data("id");
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this Event?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Event?',
-                callbackTrue: function () {
-                    DeleteEvent(eventId);
-                }
-            });
+            Swal.fire({
+                title: 'Delete Event?', text: 'Are you sure you wish to delete this Event?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) { if (r.isConfirmed) DeleteEvent(eventId); });
         });
         matchingModal = new bootstrap.Modal(document.getElementById('NameSearchModal'), {
             keyboard: false
@@ -639,15 +629,11 @@
         $(document).on('click', '.remove-attorney', function (e) {
             e.preventDefault();
             var attorneyId = $(this).data("id");
-            $.dnnConfirm({
-                text: 'Are you sure you wish to remove this Attorney from the list?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Remove Attorney?',
-                callbackTrue: function () {
-                    RemoveAttorney(attorneyId);
-                }
-            });
+            Swal.fire({
+                title: 'Remove Attorney?', text: 'Are you sure you wish to remove this Attorney from the list?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) { if (r.isConfirmed) RemoveAttorney(attorneyId); });
         });
         $(document).on('show.bs.modal', '.modal', function (event) {
             var zIndex = 50 + (10 * $('.modal:visible').length);
@@ -1067,10 +1053,6 @@
         $('#judgeSearch').val("");
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
 </script>

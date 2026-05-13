@@ -1,4 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.JacsCaseMaint.View" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div class="alert alert-info"><i class="fa fa-info-circle"></i>&nbsp;Search for case numbers in the Clericus - jacsManatee Interface by filling out the fields below.</div>
 <div class="row g-3">
     <div class="col-auto">
@@ -103,7 +110,7 @@
                             <td><%#Eval("CASEID") %></td>
                             <td><%#Eval("LUPDDATE") %></td>
                             <td>
-                                <asp:LinkButton runat="server" CssClass="text-danger" OnClientClick="return confirm('Delete this Case?');" CommandArgument='<%#Eval("CASENUM") %>' CommandName="Delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
+                                <asp:LinkButton runat="server" CssClass="text-danger" OnClientClick="return Jud12ConfirmPostback(this, 'Delete this Case?', 'Delete?');" CommandArgument='<%#Eval("CASENUM") %>' CommandName="Delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
 
                         </tr>
                     </ItemTemplate>
@@ -141,7 +148,7 @@
                             <td><%#Eval("FLRC_Id") %></td>
                             <td><%#Eval("LUPDDATE") %></td>
                             <td>
-                                <asp:LinkButton runat="server" CssClass="text-danger" OnClientClick="return confirm('Delete this Case Cyle Record?');" CommandArgument='<%#Eval("CaseCycle_Id") %>' CommandName="Delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
+                                <asp:LinkButton runat="server" CssClass="text-danger" OnClientClick="return Jud12ConfirmPostback(this, 'Delete this Case Cyle Record?', 'Delete?');" CommandArgument='<%#Eval("CaseCycle_Id") %>' CommandName="Delete"><i class="fas fa-trash"></i></asp:LinkButton></td>
 
                         </tr>
                     </ItemTemplate>
@@ -153,3 +160,31 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
+        });
+        return false;
+    }
+</script>

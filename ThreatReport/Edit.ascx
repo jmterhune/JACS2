@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Edit.ascx.cs" Inherits="tjc.Modules.ThreatReport.Edit" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <div type="post" id="ThreatReport">
     <div class="alert alert-warning">
@@ -154,7 +160,7 @@
                             <div class="card-header">
                                 <h4 class="card-title">
                                     <a class="accordion-toggle collapsed d-inline-block" data-toggle="collapse" data-parent="#accordion" aria-expanded="false" href="<%#"#Suspect-" + Container.ItemIndex + 1 %>"><%#DataBinder.Eval(Container.DataItem, "FirstName")%> <%#DataBinder.Eval(Container.DataItem, "LastName")%>&nbsp;<small>(click to expand)</small> </a>
-                                    <asp:LinkButton ID="cmdDelete" runat="server" CssClass="float-end text-danger" CommandName="delete" OnClientClick="return confirm('Delete this Person?')" CommandArgument='<%#Container.ItemIndex.ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton></td>
+                                    <asp:LinkButton ID="cmdDelete" runat="server" CssClass="float-end text-danger" CommandName="delete" OnClientClick="return Jud12ConfirmPostback(this, 'Delete this Person?', 'Delete?');" CommandArgument='<%#Container.ItemIndex.ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton></td>
 
                                 </h4>
                             </div>
@@ -510,7 +516,7 @@
                     }
                 };
                 options.error = function (err) {
-                    alert("Unexpected Error Occurred. Please Try Again");
+                    new Noty({ text: 'Unexpected Error Occurred. Please Try Again', type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
                     setTimeout(function () {
                         $("#files-overlay").hide();
                         $(".info").html('');
@@ -602,7 +608,7 @@
                 WriteMessage(true, result.error);
             }
         };
-        options.error = function (err) { alert("Unexpected Error Occurred. Please Try Again"); };
+        options.error = function (err) { new Noty({ text: 'Unexpected Error Occurred. Please Try Again', type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show(); };
         $.ajax(options);
 
         return false;
@@ -614,5 +620,31 @@
             $("#fileAttachmentWarning").fadeOut();
             $(".info").html("<span class='text-success'>" + message + "</span>");
         }
+    }
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
+        });
+        return false;
     }
 </script>

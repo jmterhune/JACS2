@@ -1,6 +1,12 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SupplyOrder.ascx.cs" Inherits="tjc.Modules.Purchasing.SupplyOrder" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" TagPrefix="dnn" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <asp:HyperLink ID="lnkAdmin" Visible="false" Text="<i class='fas fa-list-alt'></i> Manage Orders" CssClass="btn btn-danger btn-large mb-4" runat="server" />
 
 <div class="supply-order-container purchasing">
@@ -267,7 +273,7 @@
                 WriteAttachmentMessage(filename);
             };
             options.error = function (err) {
-                alert(err.statusText);
+                new Noty({ text: err.statusText, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
                 setTimeout(function () {
                     $("#attach-overlay").hide();
                     $("#attachmentInfo").html('');
@@ -318,7 +324,7 @@
             });
             $("#hdAttachmentIds").val(fileList);
         };
-        options.error = function (err) { alert(err.statusText); };
+        options.error = function (err) { new Noty({ text: err.statusText, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show(); };
         $.ajax(options);
         return false;
     }

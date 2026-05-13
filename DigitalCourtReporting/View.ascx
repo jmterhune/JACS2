@@ -61,6 +61,12 @@
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
     var userId = <%=UserId%>;
@@ -234,15 +240,11 @@
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 proceedingId = $(this).data("id");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Record?',
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: 'Delete Record?',
-                    callbackTrue: function () {
-                        DeleteProceeding(proceedingId);
-                    }
-                });
+                Swal.fire({
+                    title: 'Delete Record?', text: 'Are you sure you wish to delete this Record?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (r.isConfirmed) DeleteProceeding(proceedingId); });
                 function DeleteProceeding(proceedingId) {
                     e.preventDefault();
                     $.ajax({
@@ -264,11 +266,7 @@
     }
 
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
     function GetEditUrl() {
         switch (listType) {
