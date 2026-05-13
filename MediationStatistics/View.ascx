@@ -253,15 +253,11 @@
             $(".confirm").on("click", function (e) {
                 e.preventDefault();
                 var caseid = $(this).data("caseid");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Case?',
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: 'Delete Case?',
-                    callbackTrue: function () {
-                        deleteCase(caseid);
-                    }
-                });
+                Swal.fire({
+                    title: 'Delete Case?', text: 'Are you sure you wish to delete this Case?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (r.isConfirmed) deleteCase(caseid); });
                 function deleteCase(caseId) {
                     $.ajax({
                         url: "/DesktopModules/tjc.Modules/Mediation/Services/api/CaseListItem/DeleteCase/" + caseId,
@@ -477,11 +473,7 @@
             sortColumnIndex = storageSortColumnIndex;
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
 </script>
 

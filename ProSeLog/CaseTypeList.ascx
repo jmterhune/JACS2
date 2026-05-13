@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CaseTypeList.ascx.cs" Inherits="tjc.Modules.ProSeLog.CaseTypeList" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <div class="tabs">
     <ul class="nav nav-tabs">
@@ -114,11 +120,19 @@
         });
         $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditCaseTypeModal"><i class="fa fa-plus"></i>&nbsp;Add Case Type</button>');
         table.on('draw', function () {
-            $(".confirm").dnnConfirm({
-                text: 'Are you sure you wish to Delete the selected Case Type?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Case Type?'
+            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+                e.preventDefault();
+                var href = this.href || '';
+                Swal.fire({
+                    title: 'Delete Case Type?', text: 'Are you sure you wish to Delete the selected Case Type?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) {
+                    if (r.isConfirmed) {
+                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    }
+                });
             });
         });
         table.draw();

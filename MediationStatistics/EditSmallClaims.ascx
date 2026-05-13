@@ -917,27 +917,43 @@
         $(".confirm-delete-event").on("click", function (e) {
             var item = $(this);
             e.preventDefault();
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this Event?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Event?',
-                callbackTrue: function () {
-                    location.href = item[0].href;
+            Swal.fire({
+                title: 'Delete Event?', text: 'Are you sure you wish to delete this Event?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) { if (r.isConfirmed) { location.href = item[0].href; } });
+        });
+        $(".confirm-delete-session").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            Swal.fire({
+                title: 'Delete Session?', text: 'Are you sure you wish to delete this Session?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var href = $btn[0].href || '';
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    else if (href) location.href = href;
                 }
             });
         });
-        $(".confirm-delete-session").dnnConfirm({
-            text: 'Are you sure you wish to delete this Session?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Session?',
-        });
-        $(".confirm-delete-case").dnnConfirm({
-            text: 'Are you sure you wish to delete this Case?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Case?',
+        $(".confirm-delete-case").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            Swal.fire({
+                title: 'Delete Case?', text: 'Are you sure you wish to delete this Case?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var href = $btn[0].href || '';
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    else if (href) location.href = href;
+                }
+            });
         });
         //attorney search
         $(".attorney-search").on("click", function (e) {
@@ -1104,15 +1120,11 @@
         $("#txtZip").val("");
     }
     function ValidateAttorneyRemoval(attyRole) {
-        $.dnnConfirm({
-            text: 'Are you sure you wish to remove this Attorney?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Remove Attorney?',
-            callbackTrue: function () {
-                ClearAttorney(attyRole);
-            }
-        });
+        Swal.fire({
+            title: 'Remove Attorney?', text: 'Are you sure you wish to remove this Attorney?', icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) { if (r.isConfirmed) ClearAttorney(attyRole); });
     }
     //* Mediator Functions*/
     function SetMediator(e, item) {
@@ -1181,15 +1193,11 @@
     }
     function ValidateMediatorRemoval(e) {
         e.preventDefault();
-        $.dnnConfirm({
-            text: 'Are you sure you wish to remove this Mediator?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Remove Mediator?',
-            callbackTrue: function () {
-                ClearMediator();
-            }
-        });
+        Swal.fire({
+            title: 'Remove Mediator?', text: 'Are you sure you wish to remove this Mediator?', icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) { if (r.isConfirmed) ClearMediator(); });
     }
     function CloseMediatorModal(e) {
         e.preventDefault();

@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeSotoView.ascx.cs" Inherits="tjc.Modules.PretrialServices.DeSotoView" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div class="fullScreenContainer">
     <div class="float-end fw-bold lead">
         <span id="current-intake-date" class="badge rounded-pill bg-danger fs-5"></span>
@@ -395,11 +401,19 @@
         $(".dt-length").prepend('<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#EditDefendantsInProgramModal"><i class="fa fa-plus"></i>&nbsp;Add New Record</button>');
         table.draw();
 
-        $(".confirm").dnnConfirm({
-            text: 'Are you sure you wish to delete this Record?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Record?'
+        $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Delete Record?', text: 'Are you sure you wish to delete this Record?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
     }
     function ConfirmDelete(e) {

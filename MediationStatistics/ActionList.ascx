@@ -136,11 +136,19 @@
         });
         $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditStageActionModal"><i class="fa fa-plus"></i>&nbsp;Add Stage of Action</button>');
         table.on('draw', function () {
-            $(".confirm").dnnConfirm({
-                text: 'Are you sure you wish to Delete the selected Stage of Action?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Stage of Action?'
+            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+                e.preventDefault();
+                var href = this.href || '';
+                Swal.fire({
+                    title: 'Delete Stage of Action?', text: 'Are you sure you wish to Delete the selected Stage of Action?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) {
+                    if (r.isConfirmed) {
+                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    }
+                });
             });
         });
         table.draw();

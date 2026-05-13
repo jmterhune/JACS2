@@ -207,9 +207,19 @@
         $("#supply-order-form").on("change", "#uplAttachments", function (e) {
             check_extension($(this).val());
         });
-        $('.confirm').dnnConfirm({
-            text: 'Are you Sure you wish to delete this item?',
-            title: 'Delete line item?'
+        $('.confirm').not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Delete line item?', text: 'Are you Sure you wish to delete this item?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
         $("#cmdSave").on("click", function (e) {
             if ($('#cmdSave').val() == "Please Wait") {
