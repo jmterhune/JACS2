@@ -104,7 +104,7 @@
             ],
             pageLength: 50
         });
-        $(".dt_search").prepend("<%=DepartmentFilterHtml%>");
+        $(".dt-search").prepend("<%=DepartmentFilterHtml%>");
         table.draw();
 
         $('#drpfilter').change(function () {
