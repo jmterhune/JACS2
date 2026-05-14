@@ -469,7 +469,7 @@
                 {
                     data: "designationId", render: function (data, type, row, meta) {
                         if (isAdmin == "True")
-                            return `<a class="delete" aria-role="button" title="Delete Record" data-id="${row.designationid}" href="#"><i class="fas fa-trash"></i></a>`;
+                            return `<a class="delete text-danger" aria-role="button" title="Delete Record" data-id="${row.designationid}" href="#"><i class="fas fa-trash"></i></a>`;
                         return '';
                     }, className: "command-item", orderable: false
                 },
@@ -561,7 +561,7 @@
                 { data: "type" },
                 {
                     data: "eventid", render: function (data, type, row, meta) {
-                        return `<a title="Delete Event" data-id="${row.eventid}" class="delete-event" href="#"><i class="fas fa-trash"></i></a>`;
+                        return `<a title="Delete Event" data-id="${row.eventid}" class="delete-event text-danger" href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item", orderable: false
                 },
             ],
@@ -582,7 +582,7 @@
                 { data: "office" },
                 {
                     data: "id", render: function (data, type, row, meta) {
-                        return `<a title="Remove Attorney" data-id="${row.id}" class="remove-attorney"  href="#"><i class="fas fa-trash"></i></a>`;
+                        return `<a title="Remove Attorney" data-id="${row.id}" class="remove-attorney text-danger"  href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item"
                 },
             ],
