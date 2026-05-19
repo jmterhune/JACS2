@@ -149,6 +149,23 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
+        public Dictionary<long, int> GetJudgeXrefCounts()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rows = ctx.ExecuteQuery<JudgeXrefCountRow>(
+                    CommandType.Text,
+                    "SELECT judge_id, COUNT(*) AS cnt FROM judge_clerk_xref GROUP BY judge_id");
+                return rows.ToDictionary(r => r.judge_id, r => r.cnt);
+            }
+        }
+
+        internal class JudgeXrefCountRow
+        {
+            public long judge_id { get; set; }
+            public int cnt { get; set; }
+        }
+
         #region Judge Clerk Xref
         public List<KeyValuePair<long, string>> GetDummyJudgeDropDownItemsForCounty(long countyId)
         {

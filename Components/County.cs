@@ -1,7 +1,9 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using Microsoft.SqlServer.Server;
 using System;
+using System.Collections.Generic;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("counties")]
@@ -53,4 +55,19 @@ namespace tjc.Modules.jacs.Components
             }
         }
     }
+    internal class CountySearchResult
+    {
+        public List<CountyViewModel> data { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class CountyResult
+    {
+        public County data { get; set; }
+        public string error { get; set; }
+    }
+
 }

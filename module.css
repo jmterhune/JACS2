@@ -235,6 +235,40 @@ div.form-check {
     white-space:nowrap;
 }
 
+tr.has-xref td {
+    color: #198754;
+    font-weight: 500;
+}
+
+/* Collapsible card-header pattern (matches JudicialReferral).
+   The toggle <a> has aria-expanded toggled by Bootstrap's collapse plugin;
+   we swap which Font Awesome icon is visible based on that attribute. */
+.collapse-toggle .icon-collapsed { display: none; }
+.collapse-toggle .icon-expanded { display: inline-block; }
+.collapse-toggle[aria-expanded="false"] .icon-expanded { display: none; }
+.collapse-toggle[aria-expanded="false"] .icon-collapsed { display: inline-block; }
+
+/* DataTables Buttons "copy to clipboard" feedback overlay.
+   Bootstrap and the DNN theme were leaving the background transparent so
+   the message rendered unreadable on top of the table. Restore an opaque
+   panel and a soft drop shadow to match the default DataTables look. */
+div.dt-button-info {
+    background-color: #ffffff !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    color: #212529;
+    z-index: 1080;
+    padding: 1rem 1.25rem;
+}
+div.dt-button-info h2 {
+    background-color: #f6f6f6;
+    border-bottom: 1px solid #ddd;
+    margin: -1rem -1.25rem 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+}
+
 .btn-command {
     border: none;
     background-color: transparent;

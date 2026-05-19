@@ -57,7 +57,11 @@ namespace tjc.Modules.jacs.Services
                         error = "No courtrooms found."
                     });
                 }
-                courtrooms = courtroomsPaged.Select(courtroom => new CourtroomViewModel(courtroom)).ToList();
+                var xrefCounts = ctl.GetCourtroomXrefCounts();
+                courtrooms = courtroomsPaged.Select(courtroom => new CourtroomViewModel(courtroom)
+                {
+                    xref_count = xrefCounts.TryGetValue(courtroom.id, out int cnt) ? cnt : 0
+                }).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new CourtroomSearchResult
                 {
                     data = courtrooms,
@@ -84,7 +88,7 @@ namespace tjc.Modules.jacs.Services
         {
             switch (columnIndex)
             {
-                case 2:
+                case 3:
                     return "description";
                 default:
                     return "description";
@@ -108,6 +112,28 @@ namespace tjc.Modules.jacs.Services
             {
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new CourtroomListItemResult { data = courtrooms, error = $"Failed to retrieve courtroom dropdown items: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetCourtroomDropDownItemsByCounty(long p1)
+        {
+            List<KeyValuePair<long, string>> courtrooms = new List<KeyValuePair<long, string>>();
+            try
+            {
+                if (p1 <= 0)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest,
+                        new CourtroomListItemResult { data = courtrooms, error = "County ID is required." });
+
+                var ctl = new CourtroomController();
+                courtrooms = ctl.GetCourtroomDropDownItemsByCounty(p1);
+                return Request.CreateResponse(HttpStatusCode.OK, new CourtroomListItemResult { data = courtrooms, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    new CourtroomListItemResult { data = courtrooms, error = $"Failed to retrieve courtroom dropdown items: {ex.Message}" });
             }
         }
         [HttpGet]
@@ -214,26 +240,6 @@ namespace tjc.Modules.jacs.Services
             }
         }
         
-        #region Courtroom DTO objects   
-        internal class CourtroomSearchResult
-        {
-            public List<CourtroomViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-        internal class CourtroomResult
-        {
-            public Courtroom data { get; set; }
-            public string error { get; set; }
-        }
-        internal class CourtroomListItemResult
-        {
-            public List<KeyValuePair<long, string>> data { get; set; }
-            public string error { get; set; }
-        }
-        #endregion // end Courtroom DTO objects
 
         #endregion // end Courtroom Methods
 
@@ -345,15 +351,7 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-        
-        #region Judge Xref DTO objects
-        internal class CourtroomClerkXrefResult
-        {
-            public List<CourtroomClerkXrefViewModel> data { get; set; }
-            public string error { get; set; }
-        }
-        #endregion //end Judge Xref DTO objects
-
+      
         #endregion //end Clerk Xref Methods
     }
 }

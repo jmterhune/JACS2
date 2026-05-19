@@ -24,6 +24,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             opp_attorney_id = eventData.opp_attorney_id ?? -1;
             owner_id = eventData.owner_id ?? -1;
             owner_type = eventData.owner_type;
+            owner_username = eventData.owner_username;
             addon = eventData.addon ?? false;
             plaintiff_email = eventData.plaintiff_email;
             defendant_email = eventData.defendant_email;
@@ -43,6 +44,10 @@ namespace tjc.Modules.jacs.Services.ViewModels
             updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
             duration = GetTimeslotDuration(eventData.id);
             editable = true; // Assume true for Event object
+            if (eventData.attorney_id.HasValue && eventData.attorney_id.Value > 0)
+                attorney_bar_num = GetAttorneyBarNum(eventData.attorney_id.Value);
+            if (eventData.opp_attorney_id.HasValue && eventData.opp_attorney_id.Value > 0)
+                opp_attorney_bar_num = GetAttorneyBarNum(eventData.opp_attorney_id.Value);
         }
         public EventViewModel(EventListItem eventData)
         {
@@ -61,6 +66,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             opp_attorney_id = eventData.opp_attorney_id ?? -1;
             owner_id = eventData.owner_id ?? -1;
             owner_type = eventData.owner_type;
+            owner_username = eventData.owner_username;
             addon = eventData.addon ?? false;
             plaintiff_email = eventData.plaintiff_email;
             defendant_email = eventData.defendant_email;
@@ -82,7 +88,11 @@ namespace tjc.Modules.jacs.Services.ViewModels
             start_date = eventData.start.HasValue ? eventData.start.Value.ToShortDateString() : "";
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
             duration = eventData.duration;
-            updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
+            // List rows: skip the per-row DNN UserController and Attorney lookups
+            // — the list grid never displays these fields, and the lookups were
+            // making the page do ~150 extra DB round-trips for a 50-row page.
+            // updated_by_name now reads owner_username straight off the row.
+            updated_by_name = eventData.owner_username ?? "";
             editable = true; // Assume true for EventListItem
         }
         public EventViewModel(EventListItemPaged eventData)
@@ -102,6 +112,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             opp_attorney_id = eventData.opp_attorney_id ?? -1;
             owner_id = eventData.owner_id ?? -1;
             owner_type = eventData.owner_type;
+            owner_username = eventData.owner_username;
             addon = eventData.addon ?? false;
             plaintiff_email = eventData.plaintiff_email;
             defendant_email = eventData.defendant_email;
@@ -123,7 +134,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
             start_date = eventData.start.HasValue ? eventData.start.Value.ToShortDateString() : "";
             start_time = eventData.start.HasValue ? eventData.start.Value.ToShortTimeString() : "";
             duration = eventData.duration;
-            updated_by_name = eventData.owner_id.HasValue ? GetUserName(eventData.owner_id.Value) : "";
+            // Same N+1 cleanup as the EventListItem constructor — see comment there.
+            updated_by_name = eventData.owner_username ?? "";
             editable = eventData.editable;
         }
         public EventViewModel() { }
@@ -154,6 +166,8 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public long owner_id { get; set; }
         [JsonProperty("owner_type")]
         public string owner_type { get; set; }
+        [JsonProperty("owner_username")]
+        public string owner_username { get; set; }
         [JsonProperty("addon")]
         public bool addon { get; set; }
         [JsonProperty("plaintiff_email")]
@@ -178,8 +192,12 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public string motion_name { get; set; }
         [JsonProperty("attorney_name")]
         public string attorney_name { get; set; }
+        [JsonProperty("attorney_bar_num")]
+        public string attorney_bar_num { get; set; }
         [JsonProperty("opp_attorney_name")]
         public string opp_attorney_name { get; set; }
+        [JsonProperty("opp_attorney_bar_num")]
+        public string opp_attorney_bar_num { get; set; }
         [JsonProperty("status_name")]
         public string status_name { get; set; }
         [JsonProperty("timeslot_desc")]
@@ -221,6 +239,15 @@ namespace tjc.Modules.jacs.Services.ViewModels
                 // Log exception if necessary
             }
             return "";
+        }
+        private string GetAttorneyBarNum(long attorneyId)
+        {
+            try
+            {
+                var attorney = new AttorneyController().GetAttorney(attorneyId);
+                return attorney?.bar_num;
+            }
+            catch { return null; }
         }
         private int GetTimeslotDuration(long eventId)
         {

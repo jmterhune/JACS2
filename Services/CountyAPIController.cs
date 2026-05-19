@@ -153,19 +153,5 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        internal class CountySearchResult
-        {
-            public List<CountyViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class CountyResult
-        {
-            public County data { get; set; }
-            public string error { get; set; }
-        }
     }
 }

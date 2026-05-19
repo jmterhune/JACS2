@@ -270,6 +270,13 @@
     <Compile Include="ApiConfgView.ascx.designer.cs">
       <DependentUpon>ApiConfgView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ApiLogView.ascx.cs">
+      <DependentUpon>ApiLogView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ApiLogView.ascx.designer.cs">
+      <DependentUpon>ApiLogView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Components\ApiEndpointController.cs" />
     <Compile Include="Components\ApiLog.cs" />
     <Compile Include="Components\ApiLogController.cs" />
@@ -291,6 +298,9 @@
     <Compile Include="DocketView.ascx.designer.cs">
       <DependentUpon>DocketView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\ClerkApiLog.ashx.cs">
+      <DependentUpon>ClerkApiLog.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\ExportCalendar.ashx.cs">
       <DependentUpon>ExportCalendar.ashx</DependentUpon>
     </Compile>
@@ -301,6 +311,7 @@
     <Compile Include="Services\TemplateTimeslotAPIController.cs" />
     <Compile Include="Services\TimeslotAPIController.cs" />
     <Compile Include="Services\ViewModels\ApiEndpointViewModel.cs" />
+    <Compile Include="Services\ViewModels\ApiLogViewModel.cs" />
     <Compile Include="Services\ViewModels\ClerkApiViewModels.cs" />
     <Compile Include="Services\ViewModels\CourtTemplateOrderViewModel.cs" />
     <Compile Include="Services\ViewModels\RescheduleModel.cs" />
@@ -474,6 +485,7 @@
     </Compile>
     <Compile Include="Components\Attorney.cs" />
     <Compile Include="Components\AttorneyController.cs" />
+    <Compile Include="Components\FloridaBarApiClient.cs" />
     <Compile Include="Components\Courtroom.cs" />
     <Compile Include="Components\CourtroomController.cs" />
     <Compile Include="Components\County.cs" />
@@ -547,6 +559,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CountyAPIController.cs" />
     <Compile Include="Services\CourtroomAPIController.cs" />
+    <Compile Include="Services\ApiLogAPIController.cs" />
     <Compile Include="Services\AttorneyAPIController.cs" />
     <Compile Include="Services\CourtAPIController.cs" />
     <Compile Include="Services\CourtMotionAPIController.cs" />
@@ -600,6 +613,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApiConfgView.ascx" />
+    <Content Include="ApiLogView.ascx" />
+    <Content Include="js\apiLog.js" />
     <Content Include="Documentation\testtoken.txt" />
     <Content Include="Handlers\ExportHandler.ashx" />
     <Content Include="js\api.js" />
@@ -682,6 +697,7 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Handlers\ClerkApiLog.ashx" />
     <Content Include="Handlers\ExportCalendar.ashx" />
   </ItemGroup>
   <ItemGroup>
@@ -722,5 +738,18 @@
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
+  </Target>
+  <PropertyGroup>
+    <DeploySite>D:\websites\apps.jud12.flcourts.org</DeploySite>
+  </PropertyGroup>
+  <Target Name="DeployToSite" AfterTargets="Build" Condition="Exists('$(DeploySite)')">
+    <ItemGroup>
+      <_DeployBin Include="$(TargetPath)" />
+      <_DeployBin Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+      <_DeployContent Include="**\*.ascx;**\*.dnn;**\*.css;**\*.js;**\*.html;**\*.htm;**\*.png;**\*.jpg;**\*.jpeg;**\*.gif;**\*.svg;**\*.ico;App_LocalResources\**\*.resx;ReleaseNotes.txt;License.txt"
+                      Exclude=".claude\**;.git\**;.vs\**;packages\**;obj\**;bin\**;BuildScripts\**;backups\**" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_DeployBin)" DestinationFolder="$(DeploySite)\bin" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_DeployContent)" DestinationFiles="@(_DeployContent->'$(DeploySite)\DesktopModules\tjc.modules\JACS\%(Identity)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>

@@ -1,11 +1,10 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
-using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("emails")]
     [PrimaryKey("id", AutoIncrement = true)]
-    [Cacheable("Emails", CacheItemPriority.Default, 20)]
+    // No [Cacheable] — emails are written from multiple applications; see Attorney.cs.
     internal class Email
     {
         public long id { get; set; }

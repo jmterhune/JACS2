@@ -115,37 +115,29 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public List<KeyValuePair<long, string>> GetCourtMotionDropDownItems(long courtId, bool allowed)
+        public List<KeyValuePair<long, string>> GetCourtMotionDropDownItems(long courtId, bool allowed, long countyId = 0)
         {
             try
             {
-                // Validate input
                 if (courtId <= 0)
-                {
                     throw new ArgumentException("Court ID must be greater than zero.", nameof(courtId));
-                }
 
                 using (IDataContext ctx = DataContext.Instance("jacs"))
                 {
-                    var query = @"
-                SELECT m.*
-                FROM court_motions cm
-                INNER JOIN motions m ON cm.motion_id = m.id
-                WHERE cm.court_id = @0 AND cm.allowed = @1";
-
-                    IEnumerable<Motion> results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, courtId, allowed);
-                    if (results.Count() > 0)
-                    {
-                        return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(m => m.Value).ToList();
-                    }
-                    return new List<KeyValuePair<long, string>>();
+                    string query = @"
+                        SELECT m.*
+                        FROM court_motions cm
+                        INNER JOIN motions m ON cm.motion_id = m.id
+                        WHERE cm.court_id = @0 AND cm.allowed = @1";
+                    var results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, courtId, allowed);
+                    return results.Any()
+                        ? results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(m => m.Value).ToList()
+                        : new List<KeyValuePair<long, string>>();
                 }
             }
             catch (Exception ex)
             {
-                // Log the exception using DNN's exception logging
                 Exceptions.LogException(ex);
-                // Return an empty list to prevent downstream errors
                 return new List<KeyValuePair<long, string>>();
             }
         }
@@ -163,35 +155,32 @@ namespace tjc.Modules.jacs.Components
             }
         }
 
-        public List<KeyValuePair<long, string>> GetAvailableMotionDropDownItems(long courtId, List<long> excludedIds)
+        public List<KeyValuePair<long, string>> GetAvailableMotionDropDownItems(long courtId, List<long> excludedIds, long countyId = 0)
         {
             try
             {
-                // Validate input  
                 if (courtId <= 0)
-                {
                     throw new ArgumentException("Court ID must be greater than zero.", nameof(courtId));
-                }
 
                 using (IDataContext ctx = DataContext.Instance("jacs"))
                 {
-                    var query = @"  
+                    var parameters = new List<object> { courtId };
+                    string query = @"
                         SELECT m.*
-                        FROM court_motions cm  
-                        INNER JOIN motions m ON cm.motion_id = m.id  
+                        FROM court_motions cm
+                        INNER JOIN motions m ON cm.motion_id = m.id
                         WHERE cm.court_id = @0 AND cm.allowed = 1";
 
-                    // Use parameterized query to prevent SQL injection  
-                    var parameters = new List<object> { courtId };
                     if (excludedIds != null && excludedIds.Any())
                     {
                         query += " AND m.id NOT IN (" + string.Join(",", Enumerable.Range(0, excludedIds.Count).Select(i => "@" + (i + 1))) + ")";
-                        parameters.AddRange(excludedIds.Cast<object>()); // Fix: Cast excludedIds to IEnumerable<object>  
+                        parameters.AddRange(excludedIds.Cast<object>());
                     }
-                    IEnumerable<Motion> results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, parameters.ToArray());
-                    if (results == null || !results.Any())
-                        return new List<KeyValuePair<long, string>>();
-                    return results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(m => m.Value).ToList();
+
+                    var results = ctx.ExecuteQuery<Motion>(System.Data.CommandType.Text, query, parameters.ToArray());
+                    return results == null || !results.Any()
+                        ? new List<KeyValuePair<long, string>>()
+                        : results.Select(m => new KeyValuePair<long, string>(m.id, m.description)).OrderBy(m => m.Value).ToList();
                 }
             }
             catch (Exception ex)

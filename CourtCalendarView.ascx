@@ -181,18 +181,18 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-2 mb-0">
-                                        <label>Start Time</label>
+                                        <label>Start Time<em>*</em></label>
                                         <input type="text" id="timeslot_startTime" class="form-control" autocomplete="off">
                                         <input type="hidden" name="t_start" id="t_start" />
                                     </div>
                                     <div class="col-md-2 mb-0">
-                                        <label>End Time</label>
+                                        <label>End Time<em>*</em></label>
                                         <input type="text" id="timeslot_endTime" class="form-control" autocomplete="off">
 
                                         <input type="hidden" name="t_end" id="t_end" />
                                     </div>
                                     <div class="col-md-3 mb-0">
-                                        <label>Duration</label>
+                                        <label>Duration<em>*</em></label>
                                         <select id="timeslot_duration" class="form-control" autocomplete="off" required>
                                             <option value="5">5 mins</option>
                                             <option value="10">10 mins</option>
@@ -215,7 +215,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3  quantity-group mb-0">
-                                        <label>Quantity</label>
+                                        <label>Quantity<em>*</em></label>
                                         <input type="number" id="timeslot_quantity" class="form-control" min="1" autocomplete="off" required>
                                     </div>
                                     <div class="invalid-feedback startTime-feedback">Start Time is Required</div>
@@ -264,40 +264,54 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         <label>Addon</label>
                                         <input type="checkbox" id="event_addon_check" class="form-check-input" autocomplete="off">
                                         <input type="hidden" id="event_addon" value="0">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         <label>Reminder</label>
                                         <input type="checkbox" id="event_reminder_check" class="form-check-input" autocomplete="off">
                                         <input type="hidden" id="event_reminder" value="0">
                                     </div>
+                                    <div class="col-md-6">
+                                        <label>Courtroom<em>*</em></label>
+                                        <select id="event_courtroom" class="form-control" autocomplete="off">
+                                            <option value="">-</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label>Motion</label>
+                                        <label>Motion<em>*</em></label>
                                         <select id="event_motion" class="form-control" autocomplete="off"></select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Type</label>
+                                        <label>Type<em>*</em></label>
                                         <select id="event_type" class="form-control" autocomplete="off"></select>
                                     </div>
                                 </div>
                                 <div class="row" id="other_motion_row" style="display: none;">
                                     <div class="col-md-12">
-                                        <label>Other Motion</label>
+                                        <label>Other Motion<em>*</em></label>
                                         <input type="text" id="event_customMotion" class="form-control" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <label>Case Number</label>
+                                        <label>Case Number<em>*</em></label>
                                         <div id="event_caseNum_container" class="d-flex">
                                             <asp:Literal ID="ltCaseNumber" runat="server" />
+                                            <button type="button" id="searchClerkBtn" class="btn btn-primary ms-3" style="display: none;">
+                                                <i class="fas fa-search"></i>Case Search
+                                       
+                                            </button>
                                         </div>
+
                                     </div>
+                                </div>
+                                <div id="clerk-fields-notice" class="alert alert-info py-1 px-2 mt-1 mb-3" style="display: none;">
+                                    <i class="fa fa-info-circle"></i>Enter a case number above and select <strong>Case Search </strong>to retrieve case information.
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">

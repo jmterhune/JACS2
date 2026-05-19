@@ -53,6 +53,7 @@ class JudgeController {
 
         $("#xref_county").on("change", function () {
             const selectedCountyId = parseInt($(this).val()) || null;
+            if (selectedCountyId) localStorage.setItem('jacs_lastXrefCountyId', selectedCountyId);
             judgeControllerInstance.populateXrefJudges(selectedCountyId);
             $("#xref_clerkJudge").val("").trigger("change");
         });
@@ -96,6 +97,17 @@ class JudgeController {
                     orderable: false
                 },
                 {
+                    data: "id",
+                    render: function (data, type, row) {
+                        if (isAdmin) {
+                            return `<button type="button" class="judge-xref btn-command" data-toggle="tooltip" aria-role="button" title="Manage Clerk References" data-id="${row.id}"><i class="fas fa-exchange-alt"></i></button>`;
+                        }
+                        return '';
+                    },
+                    className: "command-item",
+                    orderable: false
+                },
+                {
                     data: "name",
                     render: function (data) {
                         return data || '';
@@ -123,17 +135,6 @@ class JudgeController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="judge-xref btn-command" data-toggle="tooltip" aria-role="button" title="Manage Clerk References" data-id="${row.id}"><i class="fas fa-exchange-alt"></i></button>`;
-                        }
-                        return '';
-                    },
-                    className: "command-item",
-                    orderable: false
-                },
-                {
-                    data: "id",
-                    render: function (data, type, row) {
-                        if (isAdmin) {
                             return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Judge" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
@@ -152,6 +153,9 @@ class JudgeController {
             lengthMenu: [[25, 50, 100], [25, 50, 100]],
             pageLength: this.pageSize,
             displayStart: this.currentPage * this.pageSize,
+            createdRow: function (row, data) {
+                if (data && data.xref_count > 0) $(row).addClass('has-xref');
+            },
         });
 
         $(".dt-length").prepend($("#lnkAdd"));
@@ -363,6 +367,12 @@ class JudgeController {
                     response.data.forEach(item => {
                         $select.append(`<option value="${item.Key}">${item.Value}</option>`);
                     });
+                    const lastCountyId = localStorage.getItem('jacs_lastXrefCountyId');
+                    if (lastCountyId && $select.find(`option[value="${lastCountyId}"]`).length) {
+                        // Fire change so the dependent clerk-judge dropdown loads;
+                        // setting .val() alone does not trigger it.
+                        $select.val(lastCountyId).trigger('change');
+                    }
                 } else {
                     ShowNotification("Warning", "No counties available.", 'warning');
                 }
@@ -831,11 +841,13 @@ class JudgeController {
     }
 
     ClearXrefEditForm() {
-        $("#xref_county").val("").removeClass("is-invalid").trigger("change");
+        const lastCountyId = localStorage.getItem('jacs_lastXrefCountyId') || "";
+        $("#xref_county").val(lastCountyId).removeClass("is-invalid");
         $("#xref_county_error").hide();
         $("#xref_clerkJudge").val("").removeClass("is-invalid").prop("disabled", true);
         $("#xref_clerkJudge_error").hide();
         $("#hdXrefJudgeId").val("");
+        if (lastCountyId) $("#xref_county").trigger("change");
     }
 
     ClearXrefJudgeHeader() {

@@ -25,14 +25,17 @@ class CourtCalendarController {
         this.initialView = 'timeGridWeek';
         this.pendingTab = null;
         this.editable = params.editable == "True" ? true : false || false;
+        // Incremented on every populateMotionSelectExcludingRestricted call so
+        // older responses can be discarded when a newer call supersedes them.
+        this._motionFetchVersion = 0;
         courtCalendarControllerInstance = this;
     }
+
     // Initialization Methods
     init() {
         const isAdmin = this.isAdmin;
         this.service.baseUrl = this.service.framework.getServiceRoot(this.service.path);
         const promCourt = this.fetchCourtData();
-        const promCourtroom = this.populateCourtroomSelect();
         const promEventType = this.populateEventTypeSelect();
         const promCaseTypes = this.populateCaseTypes();
         const promAttorney = this.populateAttorneySelects();
@@ -82,11 +85,19 @@ class CourtCalendarController {
             });
         }
 
-        $.when(promCourt, promCourtroom, promEventType, promCaseTypes, promAttorney).then(
-            () => this.populateEventDefaults()).fail(() => console.error('One or more data fetches failed'));
-        if (this.calendarItem && this.calendarItem.timeslotId > 0) {
-            this.showTimeslotModal(this.calendarItem);
-        }
+        $.when(promCourt, promEventType, promCaseTypes, promAttorney).then(() => {
+            // Populate courtroom select after court data is loaded so we have county_id.
+            // Return the populate promise so the next .then() waits for the courtroom
+            // options to exist BEFORE viewTimeslot tries to select a value on the
+            // #timeslot_courtroom / #event_courtroom dropdowns.
+            const courtroomPromise = this.populateCourtroomSelect();
+            this.populateEventDefaults();
+            return courtroomPromise;
+        }).then(() => {
+            if (this.calendarItem && this.calendarItem.timeslotId > 0) {
+                this.showTimeslotModal(this.calendarItem);
+            }
+        }).fail(() => console.error('One or more data fetches failed'));
     }
 
     initCalendar() {
@@ -139,7 +150,6 @@ class CourtCalendarController {
                     const harness = arg.el.closest('.fc-timegrid-event-harness');
                     const mirrorEl = arg.el;
                     const slotHeight = document.querySelector('.fc-timegrid-slot').getBoundingClientRect().height;
-                    //const minutesPerPixel = 15 / slotHeight;
                     const totalDayMinutes = 9 * 60;
 
                     const observer = new MutationObserver((mutations) => {
@@ -198,10 +208,7 @@ class CourtCalendarController {
                 return { html: timeText + titleSpan };
             },
             datesSet: (dateInfo) => {
-                // Remove all current event sources to prevent duplication
                 this.calendar.getEventSources().forEach(source => source.remove());
-
-                // Add the event source specific to the current view
                 switch (dateInfo.view.type) {
                     case 'dayGridMonth':
                         $("#printCalendarBtn").show();
@@ -218,7 +225,7 @@ class CourtCalendarController {
                         $("#printCalendarBtn").hide();
                     case 'timeGridDay':
                         $("#printCalendarBtn").hide();
-                    case 'listWeek': // List view uses the same event source
+                    case 'listWeek':
                         $("#printCalendarBtn").hide();
                         this.calendar.addEventSource({
                             events: (fetchInfo, successCallback, failureCallback) => {
@@ -235,11 +242,19 @@ class CourtCalendarController {
 
         this.calendar.render();
     }
+
     showTimeslotModal(calItem) {
-        this.viewTimeslot(calItem.timeslotId);
-        if (calItem.eventId > 0)
-            this.viewEvent(calItem.eventId);
+        // Chain: load the timeslot (including motion-dropdown population) to
+        // completion BEFORE firing viewEvent. Otherwise viewEvent races ahead,
+        // sets #event_motion.val() against an empty dropdown, reads an empty
+        // #timeslot_courtroom for #event_courtroom, and has its .edited-by
+        // show() undone when viewTimeslot finally resolves and calls hide().
+        const p = this.viewTimeslot(calItem.timeslotId);
+        if (calItem.eventId > 0) {
+            $.when(p).always(() => this.viewEvent(calItem.eventId));
+        }
     }
+
     initRescheduleCalendar() {
         const resCalendarEl = document.getElementById('reschedule-calendar');
         const startDate = this.formatLocalDateTime(this.currentTimeslot.start);
@@ -295,38 +310,103 @@ class CourtCalendarController {
 
     // Populate Control Methods
     populateAttorneySelects() {
-        return $.ajax({
+        const self = this;
+        const selects = ['event_attorney', 'event_opposingAttorney'];
+        selects.forEach(id => {
+            const select = document.getElementById(id);
+            if (!select) return;
+            const ts = new TomSelect(select, {
+                // Value = bar_num (matches what the clerk returns).
+                // attorney_id is a custom field carrying the internal DB id.
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['text'],
+                maxItems: 1,
+                placeholder: 'Type name or bar number',
+                persist: false,
+                create: false,
+                // Remote search — fires on every keystroke after 2 chars
+                load: (query, callback) => {
+                    if (!query.length) return callback();
+                    $.ajax({
+                        url: `${self.service.baseUrl}AttorneyAPI/GetAttorneyDropDownItems`,
+                        type: 'GET',
+                        data: { q: query },
+                        dataType: 'json',
+                        beforeSend: xhr => self.setAjaxHeaders(xhr),
+                        success: response => {
+                            const options = (response.data || []).map(a => ({
+                                value: a.bar_num,
+                                text: a.label,
+                                attorney_id: String(a.id)
+                            }));
+                            callback(options);
+                        },
+                        error: () => callback()
+                    });
+                },
+                plugins: {
+                    clear_button: { title: 'Clear' }
+                },
+                onItemAdd: (value) => {
+                    // Stamp the internal DB id onto the underlying <option> so
+                    // getEventFormData() can read it without another lookup.
+                    const opt = select.querySelector(`option[value="${CSS.escape(value)}"]`);
+                    if (opt) {
+                        const chosen = ts.options[value];
+                        if (chosen) opt.dataset.attorneyId = chosen.attorney_id;
+                    }
+                }
+            });
+            select.setAttribute('tabindex', '-1');
+            select.setAttribute('autocomplete', 'off');
+        });
+        // Return a resolved deferred so the existing $.when() chain in init() still works
+        return $.Deferred().resolve().promise();
+    }
+
+    /**
+     * Ensures an attorney option identified by bar number exists in the given
+     * TomSelect instance, fetching it from the server if necessary, then
+     * selects it.  Used when populating from a clerk case search result.
+     *
+     * @param {TomSelect} tomInstance  The TomSelect instance to update.
+     * @param {string}    barNum       The bar number returned by the clerk.
+     */
+    loadAndSetAttorney(tomInstance, barNum) {
+        if (!tomInstance || !barNum) {
+            if (tomInstance) tomInstance.clear();
+            return;
+        }
+        // If the option is already loaded just select it
+        if (tomInstance.options[barNum]) {
+            tomInstance.setValue(barNum);
+            return;
+        }
+        // Otherwise fetch by bar number, add the option, then select it
+        $.ajax({
             url: `${this.service.baseUrl}AttorneyAPI/GetAttorneyDropDownItems`,
             type: 'GET',
+            data: { q: barNum },
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
-                const selects = ['event_attorney', 'event_opposingAttorney'];
-                selects.forEach(id => {
-                    const select = document.getElementById(id);
-                    if (select && response.data) {
-                        const ts = new TomSelect(select, {
-                            options: response.data.map(a => ({ value: a.Key, text: a.Value })),
-                            valueField: 'value',
-                            labelField: 'text',
-                            searchField: ['text'],
-                            maxItems: 1,
-                            placeholder: 'Type Bar Number',
-                            persist: false,
-                            create: false,
-                            plugins: {
-                                clear_button: {
-                                    title: 'Clear'
-                                }
-                            }
-                        });
-                        select.setAttribute('tabindex', '-1');
-                        select.setAttribute('autocomplete', 'off');
-                    }
-                });
+                const match = (response.data || []).find(a => a.bar_num === barNum);
+                if (match) {
+                    tomInstance.addOption({
+                        value: match.bar_num,
+                        text: match.label,
+                        attorney_id: String(match.id)
+                    });
+                    tomInstance.setValue(match.bar_num);
+                } else {
+                    tomInstance.clear();
+                    ShowNotification('Warning', `Attorney with bar number ${barNum} was not found in the system.`, 'warning');
+                }
             },
             error: () => {
-                ShowNotification('Error', 'Failed to load attorneys.', 'error');
+                tomInstance.clear();
+                ShowNotification('Error', 'Failed to look up attorney by bar number.', 'error');
             }
         });
     }
@@ -371,13 +451,10 @@ class CourtCalendarController {
     populateEventDefaults() {
         if (!this.courtData) return;
         const attorneyTom = $('#event_attorney')[0]?.tomselect;
-        if (attorneyTom && this.courtData.def_attorney_id) {
-            attorneyTom.setValue(String(this.courtData.def_attorney_id));
-        }
+        // Use bar_num from courtData — loadAndSetAttorney fetches the option if not yet loaded
+        this.loadAndSetAttorney(attorneyTom, this.courtData.def_attorney_bar_num || null);
         const oppTom = $('#event_opposingAttorney')[0]?.tomselect;
-        if (oppTom && this.courtData.opp_attorney_id) {
-            oppTom.setValue(String(this.courtData.opp_attorney_id));
-        }
+        this.loadAndSetAttorney(oppTom, this.courtData.opp_attorney_bar_num || null);
 
         $('#event_plaintiff').val(this.courtData.plaintiff || '');
         $('#event_defendant').val(this.courtData.defendant || '');
@@ -442,20 +519,32 @@ class CourtCalendarController {
     }
 
     populateCourtroomSelect() {
+        // county_id is available once courtData is loaded; if not yet available fall back
+        // to loading after fetchCourtData resolves (handled in init via $.when).
+        const countyId = this.courtData?.county_id ?? 0;
+        const url = countyId > 0
+            ? `${this.service.baseUrl}CourtroomAPI/GetCourtroomDropDownItemsByCounty/${countyId}`
+            : `${this.service.baseUrl}CourtroomAPI/GetCourtroomDropDownItems`;
+
         return $.ajax({
-            url: `${this.service.baseUrl}CourtroomAPI/GetCourtroomDropDownItems`,
+            url,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
-                const select = document.getElementById('timeslot_courtroom');
-                if (select && response.data) {
-                    select.innerHTML = '<option value="">-</option>';
-                    response.data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.Key;
-                        option.text = item.Value;
-                        select.appendChild(option);
+                const selects = [
+                    document.getElementById('timeslot_courtroom'),
+                    document.getElementById('event_courtroom')
+                ].filter(el => el);
+                if (selects.length && response.data) {
+                    selects.forEach(sel => {
+                        sel.innerHTML = '<option value="">-</option>';
+                        response.data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.Key;
+                            option.text = item.Value;
+                            sel.appendChild(option);
+                        });
                     });
                 }
             },
@@ -474,7 +563,7 @@ class CourtCalendarController {
             success: response => {
                 const select = document.getElementById('event_type');
                 if (select && response.data) {
-                    select.innerHTML = '';
+                    select.innerHTML = '<option value="">- Select Type -</option>';
                     response.data.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item.Key;
@@ -490,18 +579,31 @@ class CourtCalendarController {
     }
 
     populateMotionSelectExcludingRestricted() {
-        const restrictedTom = $('#timeslot_restrictedMotions')[0].tomselect;
+        // Guard against the TomSelect not being ready yet — this function can
+        // fire during timeslot load before populateCourtMotions finishes.
+        // In that case we load all motions without the restricted-motions filter.
+        const restrictedEl = $('#timeslot_restrictedMotions')[0];
+        const restrictedTom = restrictedEl ? restrictedEl.tomselect : null;
         const restrictedIds = restrictedTom ? restrictedTom.getValue() : [];
+
+        // Generation token: multiple callers can fire this in parallel
+        // (tomSelect.addItem → onChange fires once per restricted motion, plus
+        // our explicit calls). Whichever response lands last would otherwise
+        // wipe the options via innerHTML, destroying any value we just set.
+        // Only the most recent request is allowed to mutate the DOM.
+        const myVersion = ++this._motionFetchVersion;
+
         return $.ajax({
             url: `${this.service.baseUrl}CourtMotionAPI/GetAvailableMotionDropDownItems/${this.courtId}?excludedIds=${restrictedIds.join(',')}`,
             type: 'GET',
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
+                if (myVersion !== this._motionFetchVersion) return; // stale response, newer one in flight
                 const select = document.getElementById('event_motion');
                 if (select && response.data) {
                     response.data.push({ Key: 221, Value: 'Other' });
-                    select.innerHTML = '';
+                    select.innerHTML = '<option value="">- Select Motion -</option>';
                     response.data.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item.Key;
@@ -527,12 +629,22 @@ class CourtCalendarController {
                 let requiredAttr = '';
                 let requiredLabel = '';
                 if (field.field_type === 'yes_no') {
-                    if (field.yes_answer_required == 1) {
+                    // The UDF admin enforces mutual exclusion between Required
+                    // and "Yes Answer Required" — only one of them is set on a
+                    // given field. Either flag means the user must pick *something*
+                    // (asterisk + required attribute); the second flag additionally
+                    // narrows the valid choice to "Yes".
+                    const yesRequired = field.yes_answer_required == 1;
+                    const anyRequired = yesRequired || field.required == 1;
+                    if (anyRequired) {
                         requiredAttr = 'required';
                         requiredLabel = "<em>*</em>";
                     }
+                    const errMsg = yesRequired
+                        ? 'A Yes response is required for this field.'
+                        : 'Please select Yes or No.';
                     fieldHtml = `
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4 mb-3" data-udf-yes-required="${yesRequired}">
                             <label>${field.field_name}${requiredLabel}</label>
                             <div>
                                 <label>
@@ -542,6 +654,7 @@ class CourtCalendarController {
                                     <input type="radio" id="${sanitizedId}_no" name="template[${key}]" value="no" class="form-check-input" ${requiredAttr}>No
                                 </label>
                             </div>
+                            <small class="udf-required-msg text-danger" style="display:none;">${errMsg}</small>
                         </div>`;
                 } else {
                     if (field.required == 1) {
@@ -560,7 +673,7 @@ class CourtCalendarController {
         }
     }
 
-    //Event Handlers
+    // Event Handlers
     bindEventHandlers() {
         $('#txtStartDate').datepicker({ autoclose: true, format: 'mm/dd/yyyy' });
         $('#btnExtend').on('click', this.handleAutoExtendCalendar.bind(this));
@@ -574,6 +687,21 @@ class CourtCalendarController {
         $('#saveTimeslotPaneBtn').on('click', this.handleSaveTimeslot.bind(this));
         $('#deleteTimeslotPaneBtn').on('click', this.handleDeleteTimeslot.bind(this));
         $('#saveEventPaneBtn').on('click', this.handleSaveEvent.bind(this));
+        // Two-way sync between the Timeslot and Event tabs' courtroom selects.
+        // Guard with _syncingCourtroom to avoid change-event ping-pong.
+        this._syncingCourtroom = false;
+        $('#timeslot_courtroom').on('change', () => {
+            if (this._syncingCourtroom) return;
+            this._syncingCourtroom = true;
+            $('#event_courtroom').val($('#timeslot_courtroom').val());
+            this._syncingCourtroom = false;
+        });
+        $('#event_courtroom').on('change', () => {
+            if (this._syncingCourtroom) return;
+            this._syncingCourtroom = true;
+            $('#timeslot_courtroom').val($('#event_courtroom').val());
+            this._syncingCourtroom = false;
+        });
         $('#cancelHearingBtn').on('click', this.handleCancelHearing.bind(this));
         $('#rescheduleBtn').on('click', this.handleReschedule.bind(this));
         $('#cattlecall_yes').on('change', () => $('.quantity-group').show());
@@ -599,9 +727,51 @@ class CourtCalendarController {
             $('#other_motion_row').toggle($('#event_motion').val() === '221');
         });
         $('#timeslot_duration').on('change', this.handleChangeTimeslotDuration.bind(this));
+        // Tab change: update save button text and trigger motion load
+        $('.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', (e) => {
+            this.updateSaveButtonText();
+        });
+        $(document).on('shown.bs.tab', '#TimeslotModal .nav-tabs a', () => {
+            this.updateSaveButtonText();
+        });
         $('#timeslot_startTime').on('change', this.handleStartTimeChange.bind(this));
         $('#timeslot_endTime').on('change', this.handleEndTimeChange.bind(this));
+        // NEW: Search Clerk button — only shown when adding a new event
+        $('#searchClerkBtn').on('click', this.handleSearchClerk.bind(this));
+        // Sequence field (multiple4): zero-pad to 6 digits on blur
+        $(document).on('blur', '#case_num_format_multiple4', function () {
+            const val = $(this).val().trim();
+            if (val) $(this).val(val.padStart(6, '0'));
+        });
+        // Party/branch fields (multiple5, multiple6): uppercase as typed
+        $(document).on('input', '#case_num_format_multiple5, #case_num_format_multiple6', function () {
+            const el = this;
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            el.value = el.value.toUpperCase();
+            el.setSelectionRange(start, end);
+        });
     }
+
+    /**
+     * Updates the text of #saveEventPaneBtn to reflect the current context:
+     * - On the Event tab: "Create Event" (new) or "Update Event" (existing)
+     * - On any other tab: "Save Changes"
+     */
+    updateSaveButtonText() {
+        const onEventTab = $('#eventTab').hasClass('active');
+        if (onEventTab) {
+            const isNew = !$('#edit_eventId').val();
+            $('#saveEventPaneBtn').html(
+                isNew
+                    ? '<i class="fas fa-save"></i>Create Event'
+                    : '<i class="fas fa-save"></i>Update Event'
+            );
+        } else {
+            $('#saveEventPaneBtn').html('<i class="fas fa-save"></i>Save Changes');
+        }
+    }
+
     handleStartTimeChange() {
         const timeStr = $('#timeslot_startTime').val().trim();
         const dateStr = $('#t_start').val().trim();
@@ -631,12 +801,12 @@ class CourtCalendarController {
             }
         }
     }
+
     handleEventResize(info) {
         let start_time = moment(info.event.start);
         let end_time = moment(info.event.end);
         let courtId = this.courtId;
         let timeslotId = info.event.id;
-
         const timeslotData = {
             id: timeslotId,
             start: start_time.format('YYYY-MM-DD HH:mm:ss'),
@@ -653,7 +823,15 @@ class CourtCalendarController {
         $('.block_reason').hide();
         $('.nav-tabs a').on('shown.bs.tab', (e) => {
             if (e.target.hash === '#eventTab') {
-                this.populateMotionSelectExcludingRestricted();
+                // Only repopulate when the dropdown is empty — otherwise this
+                // re-fires every time viewEvent programmatically activates the
+                // tab and wipes the value viewEvent just set. Restricted-motion
+                // changes already trigger populateMotion via the TomSelect
+                // onChange, so we don't lose that refresh path.
+                const sel = document.getElementById('event_motion');
+                if (sel && sel.options.length <= 1) {
+                    this.populateMotionSelectExcludingRestricted();
+                }
                 $('#other_motion_row').toggle($('#event_motion').val() === '221');
             }
         });
@@ -675,6 +853,18 @@ class CourtCalendarController {
             $('#timeslotTabs a[href="' + this.pendingTab + '"]').tab('show');
             this.pendingTab = null;
         }
+
+        // Show Search Clerk button and lock clerk-populated fields only for new events.
+        // For existing events (edit mode) all fields remain open and the button is hidden.
+        const isNewEvent = !$('#edit_eventId').val();
+        if (isNewEvent) {
+            $('#searchClerkBtn').show();
+            this._disableClerkFields(true);
+        } else {
+            $('#searchClerkBtn').hide();
+            this._disableClerkFields(false);
+        }
+        this.updateSaveButtonText();
     }
 
     handleModalClose(event) {
@@ -683,7 +873,7 @@ class CourtCalendarController {
             courtCalendarControllerInstance.clearTimeslotForm();
             courtCalendarControllerInstance.clearEventForm();
             $('#eventsTableBody').empty();
-            $('.nav-tabs a[href="#timeslotTab"]').tab('show'); //show event tab
+            $('.nav-tabs a[href="#timeslotTab"]').tab('show');
         }
     }
 
@@ -698,7 +888,6 @@ class CourtCalendarController {
         const selectedDuration = clickInfo.event.extendedProps.duration ? clickInfo.event.extendedProps.duration : 0;
         if (selectedDuration !== this.currentEvent.duration) {
             Swal.fire('Invalid Selection', 'The selected duration must match the original hearing duration.', 'error');
-
             return;
         }
         Swal.fire({
@@ -710,7 +899,6 @@ class CourtCalendarController {
         }).then((result) => {
             if (result.isConfirmed) {
                 this.performReschedule(this.currentEvent.id, timeslotId);
-
             }
         });
     }
@@ -718,7 +906,6 @@ class CourtCalendarController {
     handleCancelHearing(e) {
         e.preventDefault();
         const eventId = parseInt($('#edit_eventId').val());
-
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -726,23 +913,17 @@ class CourtCalendarController {
             input: 'textarea',
             inputLabel: 'Cancellation Reason',
             inputPlaceholder: 'Type your message here...',
-            inputAttributes: {
-                'aria-label': 'Type your message here'
-            },
+            inputAttributes: { 'aria-label': 'Type your message here' },
             showCancelButton: true,
             confirmButtonText: 'Yes, cancel it!',
             cancelButtonText: 'Cancel',
             allowOutsideClick: false,
             allowEscapeKey: false,
             keydownListenerCapture: true,
-
             inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to provide a cancellation reason!'
-                }
+                if (!value) { return 'You need to provide a cancellation reason!' }
             }
         }).then((result) => {
-
             if (result.isConfirmed) {
                 $.ajax({
                     url: `${this.service.baseUrl}EventAPI/CancelEvent/${eventId}`,
@@ -751,31 +932,17 @@ class CourtCalendarController {
                     data: JSON.stringify({ cancellation_reason: result.value }),
                     beforeSend: xhr => this.setAjaxHeaders(xhr),
                     success: () => {
-                        Swal.fire(
-                            'Cancelled!',
-                            'Your hearing has now been cancelled.',
-                            'success'
-                        ).then(() => {
+                        Swal.fire('Cancelled!', 'Your hearing has now been cancelled.', 'success').then(() => {
                             const modal = bootstrap.Modal.getInstance(document.getElementById('TimeslotModal'));
                             if (modal) modal.hide();
                         })
                     },
                     error: jqXHR => {
                         let response = {};
-                        try {
-                            response = JSON.parse(jqXHR.responseText);
-                        } catch (e) {
-                            response.message = jqXHR.responseText || 'An unknown error occurred.';
-                        }
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: response.message,
-                        })
+                        try { response = JSON.parse(jqXHR.responseText); } catch (e) { response.message = jqXHR.responseText || 'An unknown error occurred.'; }
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: response.message })
                     },
-                    complete: () => {
-                        this.calendar.refetchEvents();
-                    }
+                    complete: () => { this.calendar.refetchEvents(); }
                 });
             }
         })
@@ -794,7 +961,6 @@ class CourtCalendarController {
     }
 
     handleDateSelect(info) {
-
         const startTime = this.formatLocalTime(info.start);
         const endTime = this.formatLocalTime(info.end);
         const startDateTime = moment(info.start);
@@ -831,7 +997,6 @@ class CourtCalendarController {
         if (info.jsEvent.ctrlKey) {
             if (checkbox != null) {
                 checkbox.checked = !checkbox.checked;
-
                 if (checkbox.checked) {
                     multi_timeslots.push(info.event.id)
                 } else {
@@ -866,21 +1031,10 @@ class CourtCalendarController {
                     let newStart = moment(event.start).add(difference);
                     let newEnd = moment(event.end).add(difference);
                     timeslotId = parseInt(event.id);
-                    // Validation to make sure timeslot doesn't fall off calendar
-                    if (newStart.day() > 5 || newEnd.day() > 5) {
-                        newStart = newStart.day(5);
-                        newEnd = newEnd.day(5);
-                    }
-                    if (newStart.day() < 1 || newEnd.day() < 1) {
-                        newStart = newStart.day(1);
-                        newEnd = newEnd.day(1);
-                    }
-                    if (newStart.hour() < 8) {
-                        newStart = newStart.hour(8).minute(0);
-                    }
-                    if (newEnd.hour() > 17) {
-                        newEnd = newEnd.hour(17).minute(0);
-                    }
+                    if (newStart.day() > 5 || newEnd.day() > 5) { newStart = newStart.day(5); newEnd = newEnd.day(5); }
+                    if (newStart.day() < 1 || newEnd.day() < 1) { newStart = newStart.day(1); newEnd = newEnd.day(1); }
+                    if (newStart.hour() < 8) { newStart = newStart.hour(8).minute(0); }
+                    if (newEnd.hour() > 17) { newEnd = newEnd.hour(17).minute(0); }
                     timeslotData = {
                         id: timeslotId,
                         start: newStart.format('YYYY-MM-DD HH:mm:ss'),
@@ -973,9 +1127,7 @@ class CourtCalendarController {
                             error: (error) => {
                                 ShowNotification('Error', `Failed to extend the calendar manually. (${error.responseJSON.message})`, 'error');
                             },
-                            complete: () => {
-                                this.calendar.refetchEvents();
-                            }
+                            complete: () => { this.calendar.refetchEvents(); }
                         });
                     }
                 }
@@ -1011,9 +1163,7 @@ class CourtCalendarController {
                     error: function (error) {
                         ShowNotification('Error', `Failed to Delete Timeslots. (${error.responseJSON.message})`, 'error');
                     },
-                    complete: () => {
-                        this.calendar.refetchEvents();
-                    }
+                    complete: () => { this.calendar.refetchEvents(); }
                 });
             }
         });
@@ -1044,16 +1194,10 @@ class CourtCalendarController {
                         },
                         error: jqXHR => {
                             let response = {};
-                            try {
-                                response = JSON.parse(jqXHR.responseText);
-                            } catch (e) {
-                                response.message = jqXHR.responseText || 'An unknown error occurred.';
-                            }
+                            try { response = JSON.parse(jqXHR.responseText); } catch (e) { response.message = jqXHR.responseText || 'An unknown error occurred.'; }
                             ShowNotification('Error Deleting Timeslot', response.message || 'An unknown error occurred.', 'error');
                         },
-                        complete: () => {
-                            this.calendar.refetchEvents();
-                        }
+                        complete: () => { this.calendar.refetchEvents(); }
                     });
                 }
             });
@@ -1077,9 +1221,7 @@ class CourtCalendarController {
             error: function (error) {
                 ShowNotification('Error', `Failed to Copy Timeslots. (${error.responseJSON.message})`, 'error');
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
@@ -1101,6 +1243,8 @@ class CourtCalendarController {
             const eventData = this.getEventFormData();
             const tsId = parseInt($('#edit_timeslotId').val());
             if (isNaN(tsId) || tsId <= 0) {
+                // New timeslot + new event — createTimeslot picks up timeslot_courtroom
+                // which is kept in sync with event_courtroom via the change handlers.
                 const timeslotData = this.getTimeslotFormData();
                 timeslotData.description = eventData.motion_id || 'Hearing';
                 timeslotData.quantity = 1;
@@ -1108,13 +1252,32 @@ class CourtCalendarController {
                 this.createTimeslot(timeslotData, true);
             } else {
                 eventData.timeslot_id = tsId;
-                if (eventData.id <= 0) {
-                    this.createEvent(eventData);
-                } else {
-                    this.updateEvent(eventData);
-                }
+                // Event_courtroom can differ from the timeslot's saved courtroom (the
+                // selects are synced in-session but the timeslot hasn't been persisted
+                // since the user touched event_courtroom).  Persist the timeslot first
+                // so the courtroom update sticks, then save the event.
+                this.saveTimeslotCourtroomThenEvent(tsId, eventData);
             }
         }
+    }
+
+    saveTimeslotCourtroomThenEvent(tsId, eventData) {
+        const courtroomVal = $('#event_courtroom').val();
+        const courtroomId = courtroomVal ? parseInt(courtroomVal) : null;
+        const payload = { id: tsId, courtroom_id: courtroomId };
+        $.ajax({
+            url: `${this.service.baseUrl}TimeslotAPI/UpdateTimeslotCourtroom`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+        }).always(() => {
+            if (eventData.id <= 0) {
+                this.createEvent(eventData);
+            } else {
+                this.updateEvent(eventData);
+            }
+        });
     }
 
     handleAutoExtendCalendar(e) {
@@ -1124,25 +1287,15 @@ class CourtCalendarController {
         var weeks = $('#txtWeeks').val();
         var startDate = $('#txtStartDate').val();
         if (!startTemplate || !weeks || !startDate) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'All fields are required.'
-            });
+            Swal.fire({ icon: 'error', title: 'Validation Error', text: 'All fields are required.' });
             $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
             return false;
         }
-
         if (weeks <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'Weeks to extend must be greater than 0.'
-            });
+            Swal.fire({ icon: 'error', title: 'Validation Error', text: 'Weeks to extend must be greater than 0.' });
             $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
             return false;
         }
-
         const getUrl = `${this.service.baseUrl}CourtAPI/AutoExtend`;
         var formData = {
             CourtId: this.courtId,
@@ -1170,53 +1323,97 @@ class CourtCalendarController {
                 Swal.fire('Error', error.responseJSON.message, 'error');
                 $('#btnExtend').prop('disabled', false).find('i').removeClass('fas fa-spinner fa-spin').addClass('fas save');
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
-        return false; // Prevent default form submission
+        return false;
     }
 
     handleIcalExport(e) {
         e.preventDefault();
-        // Get the current view's start and end dates from the calendar
         const startDate = this.calendar.view.currentStart;
         const endDate = this.calendar.view.currentEnd;
-
-        // Format dates as yyyy-MM-dd
         const fromDate = startDate.toISOString().split('T')[0];
         const toDate = endDate.toISOString().split('T')[0];
-
-        // Construct the handler URL with parameters
         const url = `/DesktopModules/tjc.Modules/JACS/Handlers/ExportCalendar.ashx?courtId=${this.courtId}&fromDate=${fromDate}&toDate=${toDate}`;
-
-        // Trigger the download by setting window location
         window.location.href = url;
     }
 
     handleMonthlyExport(e) {
         e.preventDefault();
-        // Get the current view's start and end dates from the calendar
         const startDate = this.calendar.view.currentStart;
         const endDate = this.calendar.view.currentEnd;
-
-        // Format dates as yyyy-MM-dd
         const fromDate = startDate.toISOString().split('T')[0];
         const toDate = endDate.toISOString().split('T')[0];
-
-        // Construct the handler URL with parameters
         const url = `/DesktopModules/tjc.Modules/JACS/Handlers/ExportHandler.ashx?courtId=${this.courtId}&fromDate=${fromDate}&toDate=${toDate}`;
-
-        // Trigger the download by setting window location
         window.location.href = url;
-
     }
 
-    //Timeslot Methods
+    // NEW: Clerk Search handler — delegates to searchCaseNumber()
+    handleSearchClerk(e) {
+        e.preventDefault();
+        this.searchCaseNumber();
+    }
+
+    /**
+     * Enable or disable the fields that should only be populated via a clerk
+     * case lookup when adding a new event.
+     * Disabled = user must click "Search Clerk" first.
+     * Enabled  = clerk case selected, or editing an existing event.
+     */
+    _disableClerkFields(disabled) {
+        $('#event_plaintiff').prop('disabled', disabled);
+        $('#event_defendant').prop('disabled', disabled);
+        $('#event_plaintiffEmail').prop('disabled', disabled);
+        $('#event_defendantEmail').prop('disabled', disabled);
+
+        const attyTom = $('#event_attorney')[0]?.tomselect;
+        if (attyTom) { disabled ? attyTom.disable() : attyTom.enable(); }
+        const oppTom = $('#event_opposingAttorney')[0]?.tomselect;
+        if (oppTom) { disabled ? oppTom.disable() : oppTom.enable(); }
+
+        // Show/hide the "search first" notice
+        if (disabled) {
+            $('#clerk-fields-notice').show();
+        } else {
+            $('#clerk-fields-notice').hide();
+        }
+    }
+
+    /**
+     * Formats a raw case number into the canonical clerk format before sending
+     * the search request. All spaces and hyphens are stripped first, then the
+     * result is parsed into canonical segments:
+     *
+     *   Positions 0-1  : County code   (2 digits, zero-padded)
+     *   Positions 2-5  : Year          (4 digits)
+     *   Positions 6-7  : Case type     (2 alpha chars, uppercased)
+     *   Positions 8-13 : Sequence      (6 digits, zero-padded)
+     *   Positions 14+  : Optional tail (kept verbatim)
+     *
+     * Minimum output: 14 chars — "CCYYYYTTssssss"
+     * Returns the stripped value unchanged when it is shorter than 14 chars
+     * and cannot be reliably parsed.
+     */
+    formatCaseNumberForClerk(raw) {
+        if (!raw) return '';
+        // Strip all spaces and hyphens
+        const stripped = raw.replace(/[\s\-]/g, '');
+        if (stripped.length < 14) return stripped;
+
+        const county = stripped.substring(0, 2).padStart(2, '0');
+        const year = stripped.substring(2, 6).padStart(4, '0');
+        const caseType = stripped.substring(6, 8).toUpperCase();
+        const seq = stripped.substring(8, 14).padStart(6, '0');
+        const tail = stripped.length > 14 ? stripped.substring(14) : '';
+
+        return county + year + caseType + seq + tail;
+    }
+
+    // Timeslot Methods
     viewTimeslot(timeslotId) {
         const getUrl = `${this.service.baseUrl}TimeslotAPI/GetTimeslot/${timeslotId}`;
         $('#progress-timeslot').show();
-        return $.ajax({
+        const mainReq = $.ajax({
             url: getUrl,
             method: 'GET',
             dataType: 'json',
@@ -1240,18 +1437,23 @@ class CourtCalendarController {
                     $('#timeslot_quantity').val(response.quantity);
                     $('#timeslot_description').val(response.description);
                     $('#timeslot_courtroom').val(response.courtroom);
+                    $('#event_courtroom').val(response.courtroom);
                     $(`#cattlecall_${response.quantity > 1 ? 'yes' : 'no'}`).prop('checked', true);
                     $('.quantity-group').toggle(response.quantity >= 1);
-                    const tomSelect = $('#timeslot_restrictedMotions')[0].tomselect;
-                    tomSelect.clear();
-                    if (response.restrictedMotions && response.restrictedMotions.length > 0) {
-                        response.restrictedMotions.forEach(id => tomSelect.addItem(id));
+                    // The restricted-motions TomSelect may not be initialised yet
+                    // if populateCourtMotions hasn't resolved. Skip silently —
+                    // the onInitComplete path will re-apply restrictedMotions
+                    // once the TomSelect exists.
+                    const tomSelect = $('#timeslot_restrictedMotions')[0]?.tomselect;
+                    if (tomSelect) {
+                        tomSelect.clear();
+                        if (response.restrictedMotions && response.restrictedMotions.length > 0) {
+                            response.restrictedMotions.forEach(id => tomSelect.addItem(id));
+                        }
                     }
-
                     const title = this.getDateRangeTitle(new Date(response.start), new Date(response.end));
                     $('#TimeslotModalLabel').text(title);
                     this.loadEventsForTimeslot(timeslotId);
-                    this.populateMotionSelectExcludingRestricted();
                     const $deleteBtn = $('#deleteTimeslotPaneBtn');
                     if (response.hasEvents) {
                         $deleteBtn.hide();
@@ -1280,10 +1482,12 @@ class CourtCalendarController {
                 ShowNotification('Error', 'Failed to retrieve timeslot details.', 'error');
                 $('#progress-timeslot').hide();
             },
-            complete: () => {
-                $('#progress-timeslot').hide();
-            }
+            complete: () => { $('#progress-timeslot').hide(); }
         });
+        // Chain the motion-dropdown populate onto the returned promise so
+        // callers (showTimeslotModal) can reliably wait for the #event_motion
+        // options to exist before firing viewEvent.
+        return mainReq.then(() => this.populateMotionSelectExcludingRestricted());
     }
 
     getTimeslotFormData() {
@@ -1340,16 +1544,10 @@ class CourtCalendarController {
             },
             error: jqXHR => {
                 let response = {};
-                try {
-                    response = JSON.parse(jqXHR.responseText);
-                } catch (e) {
-                    response.message = jqXHR.responseText || 'An unknown error occurred.';
-                }
+                try { response = JSON.parse(jqXHR.responseText); } catch (e) { response.message = jqXHR.responseText || 'An unknown error occurred.'; }
                 ShowNotification('Error Creating Timeslot', response.message || 'An unknown error occurred.', 'error');
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
@@ -1360,22 +1558,13 @@ class CourtCalendarController {
             contentType: 'application/json',
             data: JSON.stringify(timeslotData),
             beforeSend: xhr => this.setAjaxHeaders(xhr),
-            success: result => {
-                ShowNotification('Success', `Timeslots Moved Successfully.`, 'success');
-
-            },
+            success: result => { ShowNotification('Success', `Timeslots Moved Successfully.`, 'success'); },
             error: jqXHR => {
                 let response = {};
-                try {
-                    response = JSON.parse(jqXHR.responseText);
-                } catch (e) {
-                    response.message = jqXHR.responseText || 'An unknown error occurred.';
-                }
+                try { response = JSON.parse(jqXHR.responseText); } catch (e) { response.message = jqXHR.responseText || 'An unknown error occurred.'; }
                 ShowNotification('Error Updating Timeslots', response.message || 'An unknown error occurred.', 'error');
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
@@ -1397,84 +1586,59 @@ class CourtCalendarController {
             },
             error: jqXHR => {
                 let response = {};
-                try {
-                    response = JSON.parse(jqXHR.responseText);
-                } catch (e) {
-                    response.message = jqXHR.responseText || 'An unknown error occurred.';
-                }
+                try { response = JSON.parse(jqXHR.responseText); } catch (e) { response.message = jqXHR.responseText || 'An unknown error occurred.'; }
                 ShowNotification('Error Updating Timeslots', response.message || 'An unknown error occurred.', 'error');
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
     validateTimeslotForm() {
         const start = moment($('#t_start').val());
         const end = moment($('#t_end').val());
-        const dayStart = start.clone().hour(8).minute(0); // After 6:59 AM
-        const dayEnd = end.clone().hour(17).minute(30); // Before 5:30 PM
+        const dayStart = start.clone().hour(8).minute(0);
+        const dayEnd = end.clone().hour(17).minute(30);
         let isValid = true;
         const $startTime = $('#timeslot_startTime');
         const $startTimeError = $('.startTime-feedback');
         if (!$startTime.val()) {
-            $startTime.addClass('is-invalid');
-            $startTimeError.show();
-            isValid = false;
+            $startTime.addClass('is-invalid'); $startTimeError.show(); isValid = false;
         } else {
             if (!start.isSameOrAfter(dayStart) || !start.isSameOrBefore(dayEnd)) {
-                $startTime.addClass('is-invalid');
-                $startTimeError.show();
-                $startTimeError.html('Start time must be between 8:00 AM and 5:30 PM');
-                isValid = false;
+                $startTime.addClass('is-invalid'); $startTimeError.show();
+                $startTimeError.html('Start time must be between 8:00 AM and 5:30 PM'); isValid = false;
             } else if (start.isSameOrAfter(end)) {
-                $startTime.addClass('is-invalid');
-                $startTimeError.show();
-                $startTimeError.html('Start time must be before the End time and must not be the same time as the end time');
-                isValid = false;
+                $startTime.addClass('is-invalid'); $startTimeError.show();
+                $startTimeError.html('Start time must be before the End time and must not be the same time as the end time'); isValid = false;
             } else {
-                $startTime.removeClass('is-invalid');
-                $startTimeError.hide();
+                $startTime.removeClass('is-invalid'); $startTimeError.hide();
             }
         }
         const $endTime = $('#timeslot_endTime');
         const $endTimeError = $('.endTime-feedback');
         if (!$endTime.val()) {
-            $endTime.addClass('is-invalid');
-            $endTimeError.show();
-            isValid = false;
+            $endTime.addClass('is-invalid'); $endTimeError.show(); isValid = false;
         } else {
             if (!end.isSameOrAfter(start.clone().hour(8).minute(0)) || !end.isSameOrBefore(dayEnd)) {
-                $endTime.addClass('is-invalid');
-                $endTimeError.show();
-                $endTimeError.html('End time must be between 8:00 AM and 5:30 PM');
-                isValid = false;
+                $endTime.addClass('is-invalid'); $endTimeError.show();
+                $endTimeError.html('End time must be between 8:00 AM and 5:30 PM'); isValid = false;
             } else {
-                $endTime.removeClass('is-invalid');
-                $endTimeError.hide();
+                $endTime.removeClass('is-invalid'); $endTimeError.hide();
             }
         }
-
         const $duration = $('#timeslot_duration');
         const $durationError = $('.duration-feedback');
         if ($duration.val() <= 0) {
-            $duration.addClass('is-invalid');
-            $durationError.show();
-            isValid = false;
+            $duration.addClass('is-invalid'); $durationError.show(); isValid = false;
         } else {
-            $duration.removeClass('is-invalid');
-            $durationError.hide();
+            $duration.removeClass('is-invalid'); $durationError.hide();
         }
         const $quantity = $('#timeslot_quantity');
         const $quantityError = $('.quantity-feedback');
         if ($quantity.val() < 1 && $('.quantity-group').is(':visible')) {
-            $quantity.addClass('is-invalid');
-            $quantityError.show();
-            isValid = false;
+            $quantity.addClass('is-invalid'); $quantityError.show(); isValid = false;
         } else {
-            $quantity.removeClass('is-invalid');
-            $quantityError.hide();
+            $quantity.removeClass('is-invalid'); $quantityError.hide();
         }
         return isValid;
     }
@@ -1498,6 +1662,7 @@ class CourtCalendarController {
         $('#timeslot_quantity').val('1');
         $('#timeslot_description').val('');
         $('#timeslot_courtroom').val('');
+        $('#event_courtroom').val('');
         const tomSelect = $('#timeslot_restrictedMotions')[0].tomselect;
         if (tomSelect) tomSelect.clear();
     }
@@ -1506,10 +1671,8 @@ class CourtCalendarController {
         const start = moment($('#t_start').val());
         const end = moment($('#t_end').val());
         if (!start.isValid() || !end.isValid() || start >= end) return;
-
         const diffMinutes = end.diff(start, 'minutes');
         const isConcurrent = $('#timeslot_cattlecall').val() === '1';
-
         if (isConcurrent) {
             $('#timeslot_duration').val(diffMinutes);
         } else {
@@ -1537,7 +1700,7 @@ class CourtCalendarController {
         }
     }
 
-    //Event Methods
+    // Event Methods
     viewEvent(eventId) {
         $("#progress-timeslot").show();
         $.ajax({
@@ -1549,51 +1712,45 @@ class CourtCalendarController {
                 if (response.data) {
                     const event = response.data;
                     this.currentEvent = event;
-                    this.clearEventForm(); // Clear form first to reset defaults
+                    this.clearEventForm();
 
                     $('#edit_eventId').val(event.id);
-                    $('#event_motion').val(event.motion_id);
-                    $('#event_type').val(event.type_id);
-                    if (event.motion_id === 221) {
-                        $('#event_customMotion').val(event.custom_motion || '');
-                        $('#other_motion_row').show();
-                    } else {
-                        $('#other_motion_row').hide();
-                    }
+                    // Motion options are populated from a court-scoped AJAX. Fire
+                    // it here and defer the select-value assignment until it
+                    // resolves — otherwise val() runs against an empty dropdown
+                    // on first load and silently no-ops.
+                    $.when(this.populateMotionSelectExcludingRestricted()).always(() => {
+                        $('#event_motion').val(event.motion_id);
+                        $('#event_type').val(event.type_id);
+                        if (event.motion_id === 221) {
+                            $('#event_customMotion').val(event.custom_motion || '');
+                            $('#other_motion_row').show();
+                        } else {
+                            $('#other_motion_row').hide();
+                        }
+                    });
 
-                    // Attorney
                     const attorneyTom = $('#event_attorney')[0].tomselect;
-                    attorneyTom.setValue(event.attorney_id ? event.attorney_id.toString() : '');
+                    this.loadAndSetAttorney(attorneyTom, event.attorney_bar_num || null);
 
-                    // Opposing Attorney
                     const oppTom = $('#event_opposingAttorney')[0].tomselect;
-                    oppTom.setValue(event.opp_attorney_id ? event.opp_attorney_id.toString() : '');
+                    this.loadAndSetAttorney(oppTom, event.opp_attorney_bar_num || null);
 
-                    // Plaintiff and Defendant
                     $('#event_plaintiff').val(event.plaintiff || '');
                     $('#event_defendant').val(event.defendant || '');
                     $('#event_plaintiffEmail').val(event.plaintiff_email || '');
                     $('#event_defendantEmail').val(event.defendant_email || '');
-
-                    // Notes
                     $('#event_notes').val(event.notes || '');
 
-                    // Addon
                     $('#event_addon_check').prop('checked', !!event.addon);
                     $('#event_addon').val(event.addon || '0');
-
-                    // Reminder
                     $('#event_reminder_check').prop('checked', !!event.reminder);
                     $('#event_reminder').val(event.reminder || '0');
 
-                    // Case Number Parts
                     const caseNum = event.case_num || '';
                     const parts = caseNum.split('-');
-                    $('.case-num-part').each((index, el) => {
-                        $(el).val(parts[index] || '');
-                    });
+                    $('.case-num-part').each((index, el) => { $(el).val(parts[index] || ''); });
 
-                    // Template Fields
                     const template = event.template ? JSON.parse(event.template) : {};
                     $('#court_template_fields [name^="template["]').each(function () {
                         const el = $(this);
@@ -1606,14 +1763,15 @@ class CourtCalendarController {
                         }
                     });
 
-                    // Edited By
                     if (event.updated_at) {
-                        $('#event_editedBy').text(event.updated_by_name);
+                        // Prefer owner_username (DNN username, portable across the
+                        // public + internal portals). Fall back to updated_by_name
+                        // for legacy rows that pre-date the column.
+                        $('#event_editedBy').text(event.owner_username || event.updated_by_name || '');
                         $('#event_updatedAt').text(event.updated_at ? moment(event.updated_at).format('MM/DD/YYYY h:mm A') : '');
                         $('.edited-by').show();
                     }
 
-                    // Show buttons
                     if (this.editable) {
                         if (event.status_name && event.status_name.toLowerCase() === 'cancelled') {
                             $('#cancelHearingBtn').hide();
@@ -1622,12 +1780,19 @@ class CourtCalendarController {
                             $('#cancelHearingBtn').show();
                             $('#rescheduleBtn').show();
                         }
-                        $("#eventCreateTab").innerText = "Edit Event";
-                    } else {
-                        $("#eventCreateTab").innerText = "Create Event"
                     }
+                    // Flip the tab label to "Manage Event" now that we have an
+                    // existing event loaded. clearEventForm resets it to
+                    // "Create Event" when opening a fresh event. Use .text()
+                    // because the jQuery object has no .innerText property.
+                    $('#eventCreateTab').text('Manage Event');
+
+                    // Editing an existing event — all fields enabled, search button hidden
+                    this._disableClerkFields(false);
+                    $('#searchClerkBtn').hide();
                     $('.cattle-call').hide();
-                    $('.nav-tabs a[href="#eventTab"]').tab('show'); //show event tab
+                    $('.nav-tabs a[href="#eventTab"]').tab('show');
+                    this.updateSaveButtonText();
                 } else {
                     ShowNotification('Error', 'Failed to retrieve event details.', 'error');
                 }
@@ -1636,9 +1801,7 @@ class CourtCalendarController {
                 $("#progress-timeslot").hide();
                 ShowNotification('Error', 'Failed to load event details.', 'error');
             },
-            complete: () => {
-                $("#progress-timeslot").hide();
-            }
+            complete: () => { $("#progress-timeslot").hide(); }
         });
     }
 
@@ -1649,20 +1812,52 @@ class CourtCalendarController {
         const evtId = evtIdVal ? parseInt(evtIdVal) : 0;
         const motionId = $('#event_motion').val();
         const typeId = $('#event_type').val();
+        const courtIdVal = this.courtId;
+
         const attorneyTom = $('#event_attorney')[0].tomselect;
         const opposingAttorneyTom = $('#event_opposingAttorney')[0].tomselect;
+
+        // Value is bar_num; read the internal DB id from the selected option's data attribute.
+        // The onItemAdd handler stamps data-attorney-id on the <option> when an item is chosen.
+        const getAttorneyId = (tomInstance, selectEl) => {
+            const barNum = tomInstance ? tomInstance.getValue() : '';
+            if (!barNum) return '';
+            // Prefer the data attribute stamped by onItemAdd; fall back to scanning options map.
+            const opt = selectEl.querySelector(`option[value="${CSS.escape(barNum)}"]`);
+            if (opt && opt.dataset.attorneyId) return opt.dataset.attorneyId;
+            const option = tomInstance.options[barNum];
+            return option ? option.attorney_id : '';
+        };
+
+        const attorneySelectEl = document.getElementById('event_attorney');
+        const oppSelectEl = document.getElementById('event_opposingAttorney');
+        const attorney_id = getAttorneyId(attorneyTom, attorneySelectEl);
+        const opp_attorney_id = getAttorneyId(opposingAttorneyTom, oppSelectEl);
+
+        // Bar numbers for sending to the clerk (the TomSelect value field)
+        const attorney_bar_num = attorneyTom ? attorneyTom.getValue() : '';
+        const opp_attorney_bar_num = opposingAttorneyTom ? opposingAttorneyTom.getValue() : '';
+
         const caseNumParts = $('#event_caseNum_container .case-num-part').map(function () { return $(this).val(); }).get();
+        // Remove trailing empty segments before joining so optional fields (multiple5/6)
+        // don't produce trailing hyphens when left blank.
+        while (caseNumParts.length && !caseNumParts[caseNumParts.length - 1].trim()) {
+            caseNumParts.pop();
+        }
         const caseNum = caseNumParts.join('-');
         return {
             id: evtId,
+            court_id: courtIdVal,
             clerk_case_id: clerkCaseIdVal,
             clerk_event_id: clerkEventIdVal,
             case_num: caseNum,
             motion_id: motionId ? motionId : -1,
             type_id: typeId ? typeId : -1,
             custom_motion: $('#event_customMotion').val(),
-            attorney_id: attorneyTom ? attorneyTom.getValue() : '',
-            opp_attorney_id: opposingAttorneyTom ? opposingAttorneyTom.getValue() : '',
+            attorney_id: attorney_id,           // internal DB id — used when saving to our DB
+            opp_attorney_id: opp_attorney_id,   // internal DB id — used when saving to our DB
+            attorney_bar_num: attorney_bar_num,         // bar number — used when sending to clerk
+            opp_attorney_bar_num: opp_attorney_bar_num, // bar number — used when sending to clerk
             plaintiff: $('#event_plaintiff').val(),
             defendant: $('#event_defendant').val(),
             plaintiff_email: $('#event_plaintiffEmail').val().replace(';', ','),
@@ -1689,21 +1884,26 @@ class CourtCalendarController {
                     if (modal) modal.hide();
                     ShowNotification('Success', 'Event created successfully.', 'success');
                 } else {
-                    ShowNotification('Error', `Unexpected Error: Status=${result}`, 'error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error Creating Event',
+                        text: result.message || `Unexpected error (status ${result.status}).`
+                    });
                 }
             },
             error: jqXHR => {
-                let response = {};
+                let message = 'An unknown error occurred.';
                 try {
-                    response = JSON.parse(jqXHR.responseText);
-                } catch (e) {
-                    response.message = jqXHR.responseText || 'An unknown error occurred.';
-                }
-                ShowNotification('Error Creating Event', response.message || 'An unknown error occurred.', 'error');
+                    const response = JSON.parse(jqXHR.responseText);
+                    message = response.message || response.error || message;
+                } catch { }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Creating Event',
+                    text: message
+                });
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
@@ -1725,16 +1925,10 @@ class CourtCalendarController {
             },
             error: jqXHR => {
                 let response = {};
-                try {
-                    response = JSON.parse(jqXHR.responseText);
-                } catch (e) {
-                    response.message = jqXHR.responseText || 'An unknown error occurred.';
-                }
+                try { response = JSON.parse(jqXHR.responseText); } catch (e) { response.message = jqXHR.responseText || 'An unknown error occurred.'; }
                 ShowNotification('Error Updating Event', response.message || 'An unknown error occurred.', 'error');
             },
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
@@ -1755,15 +1949,12 @@ class CourtCalendarController {
                 }
             },
             error: () => ShowNotification('Error', 'Failed to reschedule hearing.', 'error'),
-            complete: () => {
-                this.calendar.refetchEvents();
-            }
+            complete: () => { this.calendar.refetchEvents(); }
         });
     }
 
     loadEventsForTimeslot(timeslotId) {
         const getUrl = `${this.service.baseUrl}EventAPI/GetEventListItemsForTimeslot/${timeslotId}`;
-
         return $.ajax({
             url: getUrl,
             method: 'GET',
@@ -1794,69 +1985,40 @@ class CourtCalendarController {
                     });
                 }
             },
-            error: () => {
-                ShowNotification('Error', 'Failed to load events for timeslot.', 'error');
-            }
+            error: () => { ShowNotification('Error', 'Failed to load events for timeslot.', 'error'); }
         });
     }
 
     validateEventForm() {
         let isValid = true;
+        // Required fields per business rule: case number, event type, motion, courtroom.
+        // Attorney, plaintiff, and defendant are no longer required.
         const $motion = $('#event_motion');
-        if (!$motion.val()) {
-            $motion.addClass('is-invalid');
-            isValid = false;
-        } else {
-            $motion.removeClass('is-invalid');
-        }
+        if (!$motion.val()) { $motion.addClass('is-invalid'); isValid = false; } else { $motion.removeClass('is-invalid'); }
         const $type = $('#event_type');
-        if (!$type.val()) {
-            $type.addClass('is-invalid');
-            isValid = false;
-        } else {
-            $type.removeClass('is-invalid');
-        }
-        const attorneyTom = $('#event_attorney')[0].tomselect;
-        if (!attorneyTom.getValue()) {
-            $('#event_attorney').addClass('is-invalid');
-            isValid = false;
-        } else {
-            $('#event_attorney').removeClass('is-invalid');
-        }
-        const $plaintiff = $('#event_plaintiff');
-        if (!$plaintiff.val().trim()) {
-            $plaintiff.addClass('is-invalid');
-            isValid = false;
-        } else {
-            $plaintiff.removeClass('is-invalid');
-        }
-        const $defendant = $('#event_defendant');
-        if (!$defendant.val().trim()) {
-            $defendant.addClass('is-invalid');
-            isValid = false;
-        } else {
-            $defendant.removeClass('is-invalid');
-        }
-        const $plaintiffEmail = $('#event_plaintiffEmail');
+        if (!$type.val()) { $type.addClass('is-invalid'); isValid = false; } else { $type.removeClass('is-invalid'); }
+        const $courtroom = $('#event_courtroom');
+        if (!$courtroom.val()) { $courtroom.addClass('is-invalid'); isValid = false; } else { $courtroom.removeClass('is-invalid'); }
+        // Email format check is still enforced when a value is present.
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if ($plaintiffEmail.val() && !emailRegex.test($plaintiffEmail.val())) {
-            $plaintiffEmail.addClass('is-invalid');
-            isValid = false;
-        } else {
-            $plaintiffEmail.removeClass('is-invalid');
-        }
+        const $plaintiffEmail = $('#event_plaintiffEmail');
+        if ($plaintiffEmail.val() && !emailRegex.test($plaintiffEmail.val())) { $plaintiffEmail.addClass('is-invalid'); isValid = false; } else { $plaintiffEmail.removeClass('is-invalid'); }
         const $defendantEmail = $('#event_defendantEmail');
-        if ($defendantEmail.val() && !emailRegex.test($defendantEmail.val())) {
-            $defendantEmail.addClass('is-invalid');
-            isValid = false;
-        } else {
-            $defendantEmail.removeClass('is-invalid');
-        }
-        // Validate case number parts
+        if ($defendantEmail.val() && !emailRegex.test($defendantEmail.val())) { $defendantEmail.addClass('is-invalid'); isValid = false; } else { $defendantEmail.removeClass('is-invalid'); }
+        // Validate case number parts — only county, year, case type, and sequence are required;
+        // party/defendant ID (multiple5) and branch/location (multiple6) are optional.
         let caseNumValid = true;
+        const requiredCaseNumIds = [
+            'case_num_format_multiple1',
+            'case_num_format_multiple2',
+            'case_num_format_multiple3',
+            'case_num_format_multiple4'
+        ];
         $('#event_caseNum_container .case-num-part').each(function () {
+            const id = $(this).attr('id');
             const val = $(this).val().trim();
-            if (!val) {
+            const isRequired = !id || requiredCaseNumIds.includes(id);
+            if (isRequired && !val) {
                 $(this).addClass('is-invalid');
                 caseNumValid = false;
             } else {
@@ -1864,22 +2026,34 @@ class CourtCalendarController {
             }
         });
         if (!caseNumValid) isValid = false;
-        // Validate other motion
-        if ($('#event_motion').val() === '221' && !$('#event_customMotion').val().trim()) {
-            $('#event_customMotion').addClass('is-invalid');
-            isValid = false;
-        } else {
-            $('#event_customMotion').removeClass('is-invalid');
-        }
-        // Validate court template fields
+        if ($('#event_motion').val() === '221' && !$('#event_customMotion').val().trim()) { $('#event_customMotion').addClass('is-invalid'); isValid = false; } else { $('#event_customMotion').removeClass('is-invalid'); }
         let templateValid = true;
+        const seenRadioGroups = new Set();
         $('#court_template_fields [required]').each(function () {
-            const val = $(this).val().trim();
-            if (!val) {
-                $(this).addClass('is-invalid');
-                templateValid = false;
+            const $el = $(this);
+            if ($el.is(':radio')) {
+                // Yes/No UDF: validate the group ONCE (each radio is marked
+                // required, but they share a name). $el.val() always returns the
+                // input's value attribute regardless of :checked state, so the
+                // old check accidentally passed every time.
+                const name = $el.attr('name');
+                if (seenRadioGroups.has(name)) return;
+                seenRadioGroups.add(name);
+                const $group = $(`[name="${name.replace(/"/g, '\\"')}"]`);
+                const $wrapper = $group.closest('.col-md-4');
+                // When the UDF is configured as "Yes Answer Required" we only
+                // accept a Yes; otherwise any choice (Yes or No) is fine.
+                const yesAnswerRequired = $wrapper.attr('data-udf-yes-required') === 'true';
+                const passes = yesAnswerRequired
+                    ? $group.filter('[value="yes"]').is(':checked')
+                    : $group.is(':checked');
+                $wrapper.toggleClass('udf-invalid', !passes);
+                $wrapper.find('.udf-required-msg').toggle(!passes);
+                if (!passes) templateValid = false;
             } else {
-                $(this).removeClass('is-invalid');
+                const val = ($el.val() || '').trim();
+                if (!val) { $el.addClass('is-invalid'); templateValid = false; }
+                else { $el.removeClass('is-invalid'); }
             }
         });
         if (!templateValid) isValid = false;
@@ -1895,6 +2069,8 @@ class CourtCalendarController {
             const tomSelect = $(`#event_${field}`)[0].tomselect;
             if (tomSelect) tomSelect.clear();
         });
+        // Keep event_courtroom in sync with whatever is chosen on the Timeslot tab
+        $('#event_courtroom').val($('#timeslot_courtroom').val() || '');
         $('#event_customMotion').val('');
         $('#event_plaintiff').val('');
         $('#event_defendant').val('');
@@ -1910,13 +2086,17 @@ class CourtCalendarController {
         $('.edited-by').hide();
         $('#cancelHearingBtn').hide();
         $('#rescheduleBtn').hide();
-        // Repopulate case number fields with initial values from courtData
+        $('#eventCreateTab').text('Create Event');
+        // For a new event: lock the clerk-populated fields until Search Clerk is used
+        this._disableClerkFields(true);
+        $('#searchClerkBtn').show();
         if (this.courtData) {
             this.populateEventDefaults();
         } else {
             ShowNotification('Error', 'Failed to load court data.', 'error');
         }
     }
+
     // Utility Methods
     validateTimes() {
         const start = moment($('#t_start').val());
@@ -1954,8 +2134,7 @@ class CourtCalendarController {
             document.getElementsByClassName("defendant-feedback")[0].innerHTML = "Petitioner is Required";
             document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Petitioner Email";
             document.getElementsByClassName("defendant-email-feedback")[0].innerHTML = "Petitioner Email is Required";
-        }
-        else if (courtType == "DR") {
+        } else if (courtType == "DR") {
             document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Petitioner";
             document.getElementsByClassName("plaintiff-feedback")[0].innerHTML = "Petitioner is Required";
             document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Petitioner Email";
@@ -1964,8 +2143,7 @@ class CourtCalendarController {
             document.getElementsByClassName("defendant-feedback")[0].innerHTML = "Respondent is Required";
             document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Respondent Email";
             document.getElementsByClassName("defendant-email-feedback")[0].innerHTML = "Respondent Email is Required";
-        }
-        else if (courtType == "MH") {
+        } else if (courtType == "MH") {
             document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Petitioner";
             document.getElementsByClassName("plaintiff-feedback")[0].innerHTML = "Petitioner is Required";
             document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Petitioner Email";
@@ -1974,8 +2152,7 @@ class CourtCalendarController {
             document.getElementsByClassName("defendant-feedback")[0].innerHTML = "Patient is Required";
             document.getElementsByClassName("defendant-email-label")[0].innerHTML = "Patient Email";
             document.getElementsByClassName("defendant-email-feedback")[0].innerHTML = "Patient Email is Required";
-        }
-        else {
+        } else {
             document.getElementsByClassName("plaintiff-label")[0].innerHTML = "Plaintiff";
             document.getElementsByClassName("plaintiff-feedback")[0].innerHTML = "Plaintiff is Required";
             document.getElementsByClassName("plaintiff-email-label")[0].innerHTML = "Plaintiff Email";
@@ -1987,21 +2164,50 @@ class CourtCalendarController {
         }
     }
 
-    evaluateCaseNumberFields() {
-        const caseNumParts = $('#event_caseNum_container .case-num-part')
-            .map(function () { return $(this).val(); }).get();
-        if (!caseNumParts.every(p => p.trim() !== '')) return;
+    // Clerk case search — strips/formats the case number then calls the API
+    searchCaseNumber() {
+        // Only the four core parts (county, year, case type, sequence) must be filled.
+        const requiredCaseNumIds = [
+            'case_num_format_multiple1',
+            'case_num_format_multiple2',
+            'case_num_format_multiple3',
+            'case_num_format_multiple4'
+        ];
+        const allRequiredFilled = requiredCaseNumIds.every(id => {
+            const el = document.getElementById(id);
+            return !el || el.value.trim() !== '';
+        });
+        if (!allRequiredFilled) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Case Number Incomplete',
+                text: 'Please enter the county, year, case type, and sequence before searching.'
+            });
+            return;
+        }
 
-        const caseNum = caseNumParts.join('-');
+        const rawCaseNum = $('#event_caseNum_container .case-num-part')
+            .map(function () { return $(this).val(); }).get().join('-');
+        const formattedCaseNum = this.formatCaseNumberForClerk(rawCaseNum);
+
+        // Show progress indicator on the search button while the request is in flight
+        const $btn = $('#searchClerkBtn');
+        const originalHtml = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Searching...');
+
         $.ajax({
             url: `${this.service.baseUrl}EventAPI/SearchCaseNumberDetails`,
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ caseNum, courtId: this.courtId }),
+            data: JSON.stringify({ caseNum: formattedCaseNum, courtId: this.courtId }),
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
                 if (!response.data || response.data.length === 0) {
-                    ShowNotification('Case Search', response.error || 'No cases found.', 'alert');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No Case Found',
+                        text: `No matching case record was found for case number "${formattedCaseNum}". Please verify the case number and try again.`
+                    });
                     return;
                 }
                 if (response.data.length === 1) {
@@ -2011,44 +2217,61 @@ class CourtCalendarController {
                 }
             },
             error: jqXHR => {
-                let msg = 'No cases found for the selected case number.';
+                let msg = `No matching case record was found for case number "${formattedCaseNum}".`;
                 try { msg = JSON.parse(jqXHR.responseText)?.error || msg; } catch { }
-                ShowNotification('Case Search', msg, 'alert');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Case Found',
+                    text: msg
+                });
+            },
+            complete: () => {
+                // Restore button regardless of success or failure
+                $btn.prop('disabled', false).html(originalHtml);
             }
         });
     }
-
     populateEventFromClerkCase(c) {
-        // Map clerk field names → event form fields.
-        // Petitioner → plaintiff side, Respondent → defendant side
-        // (labels already reflect court type via changeLabel()).
+        // Enable all clerk-populated fields now that a case has been chosen
+        this._disableClerkFields(false);
+
+        // Populate the case number input fields from the clerk's case_number.
+        // The clerk returns it as a raw string without hyphens (e.g. "412025CA000002AX").
+        // We split it into segments matching the rendered inputs in order.
+        if (c.case_number) {
+            const parts = c.case_number.replace(/[-\s]/g, '');
+            const segments = [
+                parts.substring(0, 2),   // multiple1: county (2)
+                parts.substring(2, 6),   // multiple2: year (4)
+                parts.substring(6, 8),   // multiple3: case type (2)
+                parts.substring(8, 14),  // multiple4: sequence (6)
+                parts.substring(14, 18), // multiple5: party/defendant ID (optional, up to 4)
+                parts.substring(18)      // multiple6: branch/location (optional)
+            ];
+            const inputs = $('#event_caseNum_container .case-num-part').toArray();
+            inputs.forEach((el, i) => {
+                if (segments[i] !== undefined) {
+                    $(el).val(segments[i]);
+                }
+            });
+        }
+
         $('#event_plaintiff').val(c.petitioner || '');
         $('#event_plaintiffEmail').val(c.petitioner_email || '');
         $('#event_defendant').val(c.respondent || '');
         $('#event_defendantEmail').val(c.respondent_email || '');
         $('#event_notes').val(c.notes || '');
-
-        // Store clerk IDs as hidden fields so CreateEvent can send them.
         $('#edit_clerkCaseId').val(c.clerk_case_id || '');
 
-        // Attorney bar numbers — attempt to match against the loaded TomSelect options.
+        // Value field is bar_num, so we can set directly from the clerk's bar number.
+        // loadAndSetAttorney handles the case where the option isn't loaded yet.
         const attyTom = $('#event_attorney')[0]?.tomselect;
-        if (attyTom && c.petitioner_atty_bar) {
-            // Find option by bar number value; fall back silently if not found.
-            const match = Object.values(attyTom.options)
-                .find(o => o.text && o.text.includes(c.petitioner_atty_bar));
-            if (match) attyTom.setValue(match.value);
-        }
+        this.loadAndSetAttorney(attyTom, c.petitioner_atty_bar || null);
         const oppTom = $('#event_opposingAttorney')[0]?.tomselect;
-        if (oppTom && c.respondent_atty_bar) {
-            const match = Object.values(oppTom.options)
-                .find(o => o.text && o.text.includes(c.respondent_atty_bar));
-            if (match) oppTom.setValue(match.value);
-        }
+        this.loadAndSetAttorney(oppTom, c.respondent_atty_bar || null);
     }
 
     showCaseSelectionModal(cases) {
-        // Build a simple Swal table so the user can pick the right case.
         const rows = cases.map((c, i) => `
         <tr style="cursor:pointer" data-idx="${i}">
             <td>${c.case_number || ''}</td>
@@ -2077,13 +2300,8 @@ class CourtCalendarController {
         });
     }
 
-    formatLocalDateTime(date) {
-        return moment(date).format('YYYY-MM-DD HH:mm:ss');
-    }
-
-    formatLocalTime(date) {
-        return moment(date).format('h:mm A');
-    }
+    formatLocalDateTime(date) { return moment(date).format('YYYY-MM-DD HH:mm:ss'); }
+    formatLocalTime(date) { return moment(date).format('h:mm A'); }
 
     setAjaxHeaders(xhr) {
         xhr.setRequestHeader('ModuleId', this.moduleId);
@@ -2091,9 +2309,7 @@ class CourtCalendarController {
         xhr.setRequestHeader('RequestVerificationToken', this.service.framework.getAntiForgeryValue());
     }
 
-    getCourtIdFromUrl() {
-        return parseInt(getValueFromUrl('cid')) || -1;
-    }
+    getCourtIdFromUrl() { return parseInt(getValueFromUrl('cid')) || -1; }
 
     getDateRangeTitle(startDate, endDate) {
         const day = startDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });

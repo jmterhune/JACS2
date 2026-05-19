@@ -152,26 +152,6 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        internal class EventTypeSearchResult
-        {
-            public List<EventTypeViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-        internal class EventTypeListItemResult
-        {
-            public List<KeyValuePair<long, string>> data { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class EventTypeResult
-        {
-            public EventType data { get; set; }
-            public string error { get; set; }
-        }
-
         private string GetSortColumn(int columnIndex)
         {
             string fieldName = "name";

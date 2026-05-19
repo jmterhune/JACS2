@@ -40,7 +40,7 @@ namespace tjc.Modules.jacs.Services
         [HttpGet]
         public HttpResponseMessage GetTypeDropDownItems()
         {
-            List<KeyValuePair<long, string>> attorneys = new List<KeyValuePair<long, string>>();
+            List<AttorneyDropDownItem> attorneys = new List<AttorneyDropDownItem>();
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
             string searchTerm = query.ContainsKey("q") ? query["q"].ToString() : "";
 
@@ -48,12 +48,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new AttorneyController();
                 attorneys = ctl.GetAttorneyDropDownItems(searchTerm);
-                return Request.CreateResponse(HttpStatusCode.OK, new ListItemOptionResult { data = attorneys, error = null });
+                return Request.CreateResponse(HttpStatusCode.OK, new AttorneyDropDownResult { data = attorneys, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ListItemOptionResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new AttorneyDropDownResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
             }
         }
 
@@ -163,23 +163,8 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        internal class ApiEndpointSearchResult
-        {
-            public List<ApiEndpointViewModel> data { get; set; }
-            public string error { get; set; }
-        }
 
-        internal class ApiEndpointResult
-        {
-            public ApiEndpoint data { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class ListItemOptionResult
-        {
-            public List<KeyValuePair<long, string>> data { get; set; }
-            public string error { get; set; }
-        }
+       
 
         private string GetSortColumn(int columnIndex)
         {

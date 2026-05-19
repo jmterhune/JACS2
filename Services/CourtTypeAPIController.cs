@@ -170,20 +170,6 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        internal class CourtTypeSearchResult
-        {
-            public List<CourtTypeViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class CourtTypeResult
-        {
-            public CourtType data { get; set; }
-            public string error { get; set; }
-        }
 
         private string GetSortColumn(int columnIndex)
         {

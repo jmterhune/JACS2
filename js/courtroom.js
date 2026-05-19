@@ -46,6 +46,7 @@ class CourtroomController {
 
         $("#xref_county").on("change", () => {
             const selectedCountyId = parseInt($("#xref_county").val()) || null;
+            if (selectedCountyId) localStorage.setItem('jacs_lastXrefCountyId', selectedCountyId);
             courtroomControllerInstance.populateXrefCourtrooms(selectedCountyId);
             $("#xref_clerkCourtroom").val("").trigger("change");
         });
@@ -90,12 +91,6 @@ class CourtroomController {
                     orderable: false
                 },
                 {
-                    data: "description",
-                    render: function (data) {
-                        return data || '';
-                    }
-                },
-                {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
@@ -105,6 +100,12 @@ class CourtroomController {
                     },
                     className: "command-item",
                     orderable: false
+                },
+                {
+                    data: "description",
+                    render: function (data) {
+                        return data || '';
+                    }
                 },
                 {
                     data: "id",
@@ -128,6 +129,9 @@ class CourtroomController {
             lengthMenu: [[25, 50, 100], [25, 50, 100]],
             pageLength: this.pageSize,
             displayStart: this.currentPage * this.pageSize,
+            createdRow: function (row, data) {
+                if (data && data.xref_count > 0) $(row).addClass('has-xref');
+            },
         });
 
         $(".dt-length").prepend($("#lnkAdd"));
@@ -272,6 +276,12 @@ class CourtroomController {
                     response.data.forEach(item => {
                         $select.append(`<option value="${item.Key}">${item.Value}</option>`);
                     });
+                    const lastCountyId = localStorage.getItem('jacs_lastXrefCountyId');
+                    if (lastCountyId && $select.find(`option[value="${lastCountyId}"]`).length) {
+                        // Fire change so the dependent clerk-courtroom dropdown loads;
+                        // setting .val() alone does not trigger it.
+                        $select.val(lastCountyId).trigger('change');
+                    }
                 } else {
                     ShowNotification("Warning", "No counties available.", 'warning');
                 }
@@ -696,11 +706,13 @@ class CourtroomController {
     }
 
     ClearXrefEditForm() {
-        $("#xref_county").val("").removeClass("is-invalid").trigger("change");
+        const lastCountyId = localStorage.getItem('jacs_lastXrefCountyId') || "";
+        $("#xref_county").val(lastCountyId).removeClass("is-invalid");
         $("#xref_county_error").hide();
         $("#xref_clerkCourtroom").val("").removeClass("is-invalid").prop("disabled", true);
         $("#xref_clerkCourtroom_error").hide();
         $("#hdXrefCourtroomId").val("");
+        if (lastCountyId) $("#xref_county").trigger("change");
     }
 
     ClearXrefCourtroomHeader() {
@@ -744,7 +756,6 @@ class CourtroomController {
         if (modalId === 'CourtroomDetailModal') {
             courtroomControllerInstance.ClearXrefEditForm();
             courtroomControllerInstance.ClearXrefCourtroomHeader();
-            $("#xref_county").val("").trigger("change");
             $("#hdXrefCourtroomId").val("");
             $("#xref_progress_courtroom").hide();
             if (courtroomControllerInstance.courtroomXrefTable) {

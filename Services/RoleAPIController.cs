@@ -144,22 +144,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to update role: {ex.Message}" });
             }
         }
-
-        internal class RoleSearchResult
-        {
-            public List<RoleViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class RoleResult
-        {
-            public Role data { get; set; }
-            public string error { get; set; }
-        }
-
         private string GetSortColumn(int columnIndex)
         {
             switch (columnIndex)

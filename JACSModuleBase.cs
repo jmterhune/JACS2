@@ -97,6 +97,7 @@ namespace tjc.Modules.jacs
         public string DocketPrintUrl { get { return EditUrl("docket-print"); } }
         public string EventListUrl { get { return EditUrl("event"); } }
         public string ApiConfigUrl { get { return EditUrl("api-config"); } }
+        public string ApiLogUrl { get { return EditUrl("api-log"); } }
         public string EventStatusListUrl { get { return EditUrl("event-status"); } }
         public string EventTypeListUrl { get { return EditUrl("event-type"); } }
         public string HolidayListUrl { get { return EditUrl("holiday"); } }

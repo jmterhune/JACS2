@@ -1,6 +1,7 @@
 ﻿using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 namespace tjc.Modules.jacs.Components
 {
     internal class AttorneyController
@@ -53,7 +54,7 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public List<KeyValuePair<long,string>> GetAttorneyDropDownItems(string term)
+        public List<AttorneyDropDownItem> GetAttorneyDropDownItems(string term)
         {
             IEnumerable<Attorney> t;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
@@ -61,8 +62,15 @@ namespace tjc.Modules.jacs.Components
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.Find("Where name like @0 OR bar_num like @1", string.Format("%{0}%",term), string.Format("{0}%", term));
             }
-            return t.Select(a=>new KeyValuePair<long,string>(a.id,string.Format("{0} - {1}",a.name,a.bar_num))).OrderBy(a=>a.Value).ToList();
+            return t.Select(a => new AttorneyDropDownItem
+            {
+                id = a.id,
+                bar_num = a.bar_num,
+                name = a.name,
+                label = string.Format("{0} - {1}", a.name, a.bar_num)
+            }).OrderBy(a => a.label).ToList();
         }
+
         public Attorney GetAttorney(long attorneyId)
         {
             Attorney t;
@@ -73,6 +81,51 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+
+        public Attorney GetAttorneyByBarNumber(string barNumber)
+        {
+            if (string.IsNullOrWhiteSpace(barNumber)) return null;
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rep = ctx.GetRepository<Attorney>();
+                return rep.Find("Where bar_num=@0", barNumber.Trim()).FirstOrDefault();
+            }
+        }
+
+        // Returns the existing JACS attorney row for the bar number if present;
+        // otherwise fetches from the Florida Bar API, inserts a row, and returns it.
+        // Returns null if the bar number is empty, the API rejects it, or the API
+        // is unreachable — the caller treats those cases as "no local row created."
+        public async Task<Attorney> EnsureAttorneyByBarNumberAsync(string barNumber)
+        {
+            if (string.IsNullOrWhiteSpace(barNumber)) return null;
+
+            string normalized = barNumber.Trim().TrimStart('0');
+            if (string.IsNullOrEmpty(normalized)) normalized = barNumber.Trim();
+
+            Attorney existing = GetAttorneyByBarNumber(normalized);
+            if (existing != null) return existing;
+
+            FloridaBarMember member = await FloridaBarApiClient.FetchAsync(normalized).ConfigureAwait(false);
+            if (member == null) return null;
+
+            var attorney = new Attorney
+            {
+                UserId = 0,
+                name = string.IsNullOrWhiteSpace(member.DisplayName) ? normalized : member.DisplayName,
+                bar_num = normalized,
+                phone = member.Phone,
+                scheduling = false,
+                enabled = member.Eligible && member.IsInGoodStanding,
+                emails = !string.IsNullOrEmpty(member.Email)
+                    ? new List<string> { member.Email }
+                    : null
+            };
+
+            CreateAttorney(attorney);
+            return attorney;
+        }
+
         public KeyValuePair<long, string> GetAttorneyListItem(long attorneyId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

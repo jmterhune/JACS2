@@ -19,6 +19,9 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
         [JsonProperty("description")]
         public string description { get; set; }
+
+        [JsonProperty("xref_count")]
+        public int xref_count { get; set; }
     }
     [JsonObject(MemberSerialization.OptIn)]
     internal class CourtroomClerkXrefViewModel

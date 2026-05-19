@@ -15,8 +15,9 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th>Description</th>
                     <th></th>
+                    <th></th>
+                    <th>Description</th>
                     <th></th>
                 </tr>
             </thead>
@@ -178,7 +179,7 @@
                     currentPage: 0,
                     pageSize: 25,
                     recordCount: 0,
-                    sortColumnIndex: 2,
+                    sortColumnIndex: 3,
                     sortDirection: "asc"
                 });
                 courtroomController.init();

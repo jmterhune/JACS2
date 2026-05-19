@@ -41,6 +41,10 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
         [JsonProperty("title")]
         public string title { get; set; }
+
+        [JsonProperty("xref_count")]
+        public int xref_count { get; set; }
+
         public string GetJudgeCourtName(long id)
         {
             var ctl = new CourtController();

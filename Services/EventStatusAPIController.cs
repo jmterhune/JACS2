@@ -40,6 +40,28 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        /// <summary>
+        /// Key/value list for the Status filter on the Event list page.
+        /// Mirrors the shape returned by EventTypeAPI/GetEventTypeDropDownItems
+        /// so the Select2 wiring works without changes on the JS side.
+        /// </summary>
+        [HttpGet]
+        public HttpResponseMessage GetEventStatusDropDownItems()
+        {
+            List<KeyValuePair<long, string>> eventStatuses = new List<KeyValuePair<long, string>>();
+            try
+            {
+                var ctl = new EventStatusController();
+                eventStatuses = ctl.GetEventStatusDropDownItems();
+                return Request.CreateResponse(new { data = eventStatuses, error = (string)null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new { data = eventStatuses, error = ex.Message });
+            }
+        }
+
         [HttpGet]
         public HttpResponseMessage DeleteEventStatus(long p1)
         {
@@ -130,21 +152,6 @@ namespace tjc.Modules.jacs.Services
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
-        }
-
-        internal class EventStatusSearchResult
-        {
-            public List<EventStatusViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class EventStatusResult
-        {
-            public EventStatus data { get; set; }
-            public string error { get; set; }
         }
 
         private string GetSortColumn(int columnIndex)

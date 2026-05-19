@@ -67,6 +67,40 @@ namespace tjc.Modules.jacs.Components
                 return new List<KeyValuePair<long, string>>();
             }
         }
+
+        /// <summary>
+        /// Returns only courtrooms that have an xref entry for the given county,
+        /// ensuring the timeslot courtroom dropdown is scoped to the correct county.
+        /// </summary>
+        public List<KeyValuePair<long, string>> GetCourtroomDropDownItemsByCounty(long countyId)
+        {
+            try
+            {
+                using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+                {
+                    return ctx.ExecuteQuery<CourtroomDropDownItem>(
+                        System.Data.CommandType.Text,
+                        "SELECT c.id AS Id, c.description AS Description " +
+                        "FROM courtrooms c " +
+                        "INNER JOIN courtroom_clerk_xref x ON x.courtroom_id = c.id " +
+                        "WHERE x.county_id = @0 " +
+                        "ORDER BY c.description", countyId)
+                        .Select(r => new KeyValuePair<long, string>(r.Id, r.Description))
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return new List<KeyValuePair<long, string>>();
+            }
+        }
+
+        private class CourtroomDropDownItem
+        {
+            public long Id { get; set; }
+            public string Description { get; set; }
+        }
         public Courtroom GetCourtroom(long courtroomId)
         {
             Courtroom t;
@@ -111,6 +145,22 @@ namespace tjc.Modules.jacs.Components
                     searchTerm ?? string.Empty
                 );
             }
+        }
+        public Dictionary<long, int> GetCourtroomXrefCounts()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var rows = ctx.ExecuteQuery<CourtroomXrefCountRow>(
+                    CommandType.Text,
+                    "SELECT courtroom_id, COUNT(*) AS cnt FROM courtroom_clerk_xref GROUP BY courtroom_id");
+                return rows.ToDictionary(r => r.courtroom_id, r => r.cnt);
+            }
+        }
+
+        internal class CourtroomXrefCountRow
+        {
+            public long courtroom_id { get; set; }
+            public int cnt { get; set; }
         }
         #endregion // end Courtroom Methods
 

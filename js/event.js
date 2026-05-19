@@ -68,7 +68,9 @@ class EventController {
 
         initializeSelect2("#courtFilter", `${baseUrl}CourtAPI/GetCourtDropDownItems/`, "-");
         initializeSelect2("#courtroomFilter", `${baseUrl}CourtroomAPI/GetCourtroomDropDownItems/`, "-");
-        initializeSelect2("#statusFilter", `${baseUrl}EventTypeAPI/GetEventTypeDropDownItems/`, "-");
+        // Status filter populates from event_statuses (Cancelled/Rescheduled/
+        // Scheduled/Past), NOT event_types — those are separate concerns.
+        initializeSelect2("#statusFilter", `${baseUrl}EventStatusAPI/GetEventStatusDropDownItems/`, "-");
     }
 
     initTable(baseUrl) {
@@ -80,16 +82,20 @@ class EventController {
                 url: listUrl,
                 type: "GET",
                 dataType: 'json',
-                data: data => ({
-                    userId: eventControllerInstance.userId,
-                    courtId: $("#courtFilter").val(),
-                    courtroomId: $("#courtroomFilter").val(),
-                    statusId: $("#statusFilter").val(),
-                    searchText: data.search?.value || '',
-                    draw: data.draw,
-                    start: data.start,
-                    length: data.length
-                }),
+                // Mutate the DataTables-supplied request object so the
+                // serialised `order[0].column` / `order[0].dir` fields survive
+                // — returning a brand-new object dropped them, which is why
+                // the server fell back to case_num on every header click.
+                data: data => {
+                    data.userId = eventControllerInstance.userId;
+                    data.courtId = $("#courtFilter").val();
+                    data.courtroomId = $("#courtroomFilter").val();
+                    data.statusId = $("#statusFilter").val();
+                    data.searchText = data.search?.value || '';
+                    delete data.columns;
+                    delete data.search;
+                    return data;
+                },
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 error: (xhr, status, error) => {
                     ShowNotification("Error Retrieving Events", error || "Failed to load events.", 'error');
@@ -147,6 +153,13 @@ class EventController {
                 $buttonsContainer.addClass('dt-buttons d-xs-block d-sm-inline-block d-md-inline-block d-lg-inline-block');
                 const $target = $('#tblEvent_wrapper .row:last .col-sm-4.text-center');
                 $buttonsContainer.appendTo($target);
+                // Notice that the export buttons only act on the rows currently
+                // rendered (server-side paging hides everything else from the
+                // browser). Tell the user to bump the page size if they need more.
+                $('<small class="d-block text-muted mt-1 export-note">'
+                    + 'Only the rows currently shown will be exported. '
+                    + 'Increase the page size to export more rows.'
+                    + '</small>').appendTo($target);
                 const $pagination = $('#tblEvent_wrapper ul.pagination');
                 $pagination.addClass('float-end');
             }

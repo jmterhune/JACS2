@@ -83,7 +83,7 @@ namespace tjc.Modules.jacs.Services
         [HttpGet]
         public HttpResponseMessage GetAttorneyDropDownItems()
         {
-            List<KeyValuePair<long, string>> attorneys = new List<KeyValuePair<long, string>>();
+            List<AttorneyDropDownItem> attorneys = new List<AttorneyDropDownItem>();
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
             string searchTerm = query.ContainsKey("q") ? query["q"].ToString() : "";
 
@@ -91,12 +91,12 @@ namespace tjc.Modules.jacs.Services
             {
                 var ctl = new AttorneyController();
                 attorneys = ctl.GetAttorneyDropDownItems(searchTerm);
-                return Request.CreateResponse(HttpStatusCode.OK, new ListItemOptionResult { data = attorneys, error = null });
+                return Request.CreateResponse(HttpStatusCode.OK, new AttorneyDropDownResult { data = attorneys, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ListItemOptionResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new AttorneyDropDownResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
             }
         }
 
@@ -180,10 +180,14 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var attorney = p1.ToObject<Attorney>();
-                if (string.IsNullOrWhiteSpace(attorney.name) || string.IsNullOrWhiteSpace(attorney.bar_num) || attorney.UserId < 0 || (attorney.emails != null && attorney.emails.Any(e => string.IsNullOrWhiteSpace(e))))
+                if (string.IsNullOrWhiteSpace(attorney.name) || string.IsNullOrWhiteSpace(attorney.bar_num) || (attorney.emails != null && attorney.emails.Any(e => string.IsNullOrWhiteSpace(e))))
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, valid user ID, and at least one valid email are required." });
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, and at least one valid email are required." });
                 }
+                // Attorney rows created by the internal JACS app always have UserId = 0.
+                // It is only populated later when the attorney themselves registers a DNN
+                // account via SubscriberForms and claims the row.
+                attorney.UserId = 0;
                 var ctl = new AttorneyController();
                 if(!attorney.scheduling.HasValue)
                 {
@@ -212,9 +216,9 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Attorney ID is required for update." });
                 }
-                if (string.IsNullOrWhiteSpace(attorney.name) || string.IsNullOrWhiteSpace(attorney.bar_num) || attorney.UserId < 0 || (attorney.emails != null && attorney.emails.Any(e => string.IsNullOrWhiteSpace(e))))
+                if (string.IsNullOrWhiteSpace(attorney.name) || string.IsNullOrWhiteSpace(attorney.bar_num) || (attorney.emails != null && attorney.emails.Any(e => string.IsNullOrWhiteSpace(e))))
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, valid user ID, and at least one valid email are required." });
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Name, bar number, and at least one valid email are required." });
                 }
                 var ctl = new AttorneyController();
                 var existingAttorney = ctl.GetAttorney(attorney.id);
@@ -222,6 +226,10 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Attorney not found." });
                 }
+                // UserId is owned by the SubscriberForms registration flow — it is set
+                // when the attorney claims their row by registering a DNN account.
+                // The JACS UI cannot change it; preserve whatever's in the database.
+                attorney.UserId = existingAttorney.UserId;
                 attorney.updated_at = DateTime.Now;
                 ctl.UpdateAttorney(attorney);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Attorney updated successfully." });
@@ -231,39 +239,6 @@ namespace tjc.Modules.jacs.Services
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to update attorney: {ex.Message}" });
             }
-        }
-
-        internal class AttorneySearchResult
-        {
-            public List<AttorneyViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class MatchingNameResult
-        {
-            public IEnumerable<AttorneyViewModel> data { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class AttorneyResult
-        {
-            public Attorney data { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class SiteUserResult
-        {
-            public SiteUserViewModel data { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class ListItemOptionResult
-        {
-            public List<KeyValuePair<long, string>> data { get; set; }
-            public string error { get; set; }
         }
 
         private string GetSortColumn(int columnIndex)

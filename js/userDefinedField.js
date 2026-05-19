@@ -253,19 +253,46 @@ class UserDefinedFieldController {
 
         $("#edit_fieldType").on("change", function () {
             const val = $(this).val();
-            if (val === "yes_no") {
-                $("#edit_defaultValue").prop('disabled', true);
-            } else {
-                $("#edit_defaultValue").prop('disabled', false);
-            }
-            if (val === "yes_no") {
-                $("#edit_yesAnswerRequired").prop('disabled', false);
-                $("#edit_required").prop('disabled', true);
-            } else {
-                $("#edit_yesAnswerRequired").prop('disabled', true);
-                $("#edit_required").prop('disabled', false);
-            }
+            $("#edit_defaultValue").prop('disabled', val === "yes_no");
+            userDefinedFieldControllerInstance.syncRequiredFlags();
         });
+        // For yes_no fields, "Required" and "Yes Answer Required" are mutually
+        // exclusive: checking either one disables the other. Bind a sync helper
+        // to both checkboxes so toggling one immediately updates the other.
+        $("#edit_required, #edit_yesAnswerRequired").on("change", function () {
+            userDefinedFieldControllerInstance.syncRequiredFlags();
+        });
+    }
+
+    /**
+     * Recomputes the enabled/checked state of #edit_required and
+     * #edit_yesAnswerRequired given the current field type. For non-yes_no
+     * field types, "Yes Answer Required" is meaningless and is forced off.
+     * For yes_no fields the two flags are mutually exclusive — checking
+     * either one disables and clears the other; with neither checked, both
+     * are enabled.
+     */
+    syncRequiredFlags() {
+        const $required = $("#edit_required");
+        const $yes = $("#edit_yesAnswerRequired");
+        const isYesNo = $("#edit_fieldType").val() === "yes_no";
+        if (!isYesNo) {
+            $yes.prop("checked", false).prop("disabled", true);
+            $required.prop("disabled", false);
+            return;
+        }
+        const requiredChecked = $required.is(":checked");
+        const yesChecked = $yes.is(":checked");
+        if (requiredChecked) {
+            $yes.prop("checked", false).prop("disabled", true);
+            $required.prop("disabled", false);
+        } else if (yesChecked) {
+            $required.prop("checked", false).prop("disabled", true);
+            $yes.prop("disabled", false);
+        } else {
+            $required.prop("disabled", false);
+            $yes.prop("disabled", false);
+        }
     }
 
     ClearState() {
@@ -338,6 +365,8 @@ class UserDefinedFieldController {
         $("#edit_defaultValue").val("");
         $("#edit_required").prop("checked", false);
         $("#edit_yesAnswerRequired").prop("checked", false);
+        // Reset enable/disable state so the next open starts clean
+        this.syncRequiredFlags();
         $("#edit_displayOnDocket").prop("checked", false);
         $("#edit_displayOnSchedule").prop("checked", false);
         $("#edit_useInAttorneyScheduling").prop("checked", false);
@@ -378,6 +407,10 @@ class UserDefinedFieldController {
                             $("#edit_defaultValue").val(response.data.default_value);
                             $("#edit_required").prop("checked", response.data.required == 1);
                             $("#edit_yesAnswerRequired").prop("checked", response.data.yes_answer_required == 1);
+                            // Apply the mutual-exclusion / disable rules to the
+                            // freshly-loaded values so the form reflects the
+                            // current state on open.
+                            userDefinedFieldControllerInstance.syncRequiredFlags();
                             $("#edit_displayOnDocket").prop("checked", response.data.display_on_docket == 1);
                             $("#edit_displayOnSchedule").prop("checked", response.data.display_on_schedule == 1);
                             $("#edit_useInAttorneyScheduling").prop("checked", response.data.use_in_attorany_scheduling == 1);

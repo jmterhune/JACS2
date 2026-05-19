@@ -1,6 +1,8 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("court_motions")]
@@ -19,4 +21,20 @@ namespace tjc.Modules.jacs.Components
         [IgnoreColumn]
         public string court_description { get; set; }
     }
+    internal class CourtMotionSearchResult
+    {
+        public List<CourtMotionViewModel> data { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class CourtMotionResult
+    {
+        public CourtMotionViewModel data { get; set; }
+        public string error { get; set; }
+    }
+
+
 }

@@ -1,5 +1,6 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 using System.Web.Caching;
 namespace tjc.Modules.jacs.Components
 {
@@ -22,5 +23,18 @@ namespace tjc.Modules.jacs.Components
         public string old_id { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
+    }
+    internal class UserDefinedFieldSearchResult
+    {
+        public List<UserDefinedField> data { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
+    }
+    internal class UserDefinedFieldResult
+    {
+        public UserDefinedField data { get; set; }
+        public string error { get; set; }
     }
 }

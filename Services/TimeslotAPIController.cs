@@ -151,7 +151,7 @@ namespace tjc.Modules.jacs.Services
                     blocked = t.blocked,
                     public_block = t.public_block,
                     block_reason = t.block_reason,
-                    category_id = t.courtroom_id,
+                    courtroom_id = t.courtroom_id,
                     eventCount = t.eventCount,
                     total_length = t.total_length,
                     template_week_order = t.template_week_order,
@@ -320,7 +320,7 @@ namespace tjc.Modules.jacs.Services
                         duration = t.duration,
                         quantity = t.quantity,
                         event_count = t.eventCount,
-                        category_id = t.courtroom_id,
+                        courtroom_id = t.courtroom_id,
                         template_id = t.template_id,
                         court_template_order_id = t.court_template_order_id
                     }
@@ -344,7 +344,7 @@ namespace tjc.Modules.jacs.Services
                         duration = 0,
                         quantity = 0,
                         event_count = 0,
-                        category_id = (long?)null,
+                        courtroom_id = (long?)null,
                         template_id = (long?)null,
                         court_template_order_id = (long?)null,
                     }
@@ -474,7 +474,7 @@ namespace tjc.Modules.jacs.Services
                             blocked = t.blocked,
                             public_block = t.public_block,
                             block_reason = t.block_reason,
-                            category_id = t.courtroom_id,
+                            courtroom_id = t.courtroom_id,
                             template_id = t.template_id,
                             created_at = t.created_at,
                             updated_at = t.updated_at,
@@ -518,7 +518,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = timeslot.blocked,
                         public_block = timeslot.public_block,
                         block_reason = timeslot.block_reason,
-                        category_id = timeslot.courtroom_id,
+                        courtroom_id = timeslot.courtroom_id,
                         template_id = timeslot.template_id,
                         created_at = timeslot.created_at,
                         updated_at = timeslot.updated_at,
@@ -649,13 +649,49 @@ namespace tjc.Modules.jacs.Services
                     blocked = timeslot.blocked,
                     public_block = timeslot.public_block,
                     block_reason = timeslot.block_reason,
-                    category_id = timeslot.courtroom_id,
+                    courtroom_id = timeslot.courtroom_id,
                     template_id = timeslot.template_id,
                     created_at = timeslot.created_at,
                     updated_at = timeslot.updated_at,
                     deleted_at = timeslot.deleted_at,
                     restrictedMotions
                 });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Narrow update endpoint used from the Event tab to persist just the courtroom
+        /// change on the existing timeslot without requiring all the other timeslot
+        /// fields that the full UpdateTimeslot endpoint expects.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage UpdateTimeslotCourtroom(JObject p1)
+        {
+            try
+            {
+                long id = p1["id"]?.ToObject<long>() ?? 0;
+                if (id <= 0)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Timeslot ID is required." });
+
+                long? courtroomId = p1["courtroom_id"]?.Type == JTokenType.Null
+                    ? (long?)null
+                    : p1["courtroom_id"]?.ToObject<long?>();
+
+                var ctl = new TimeslotController();
+                var timeslot = ctl.GetTimeslot(id);
+                if (timeslot == null)
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "Timeslot not found." });
+
+                timeslot.courtroom_id = courtroomId;
+                timeslot.updated_at = DateTime.Now;
+                ctl.UpdateTimeslot(timeslot);
+                return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "Timeslot courtroom updated." });
             }
             catch (Exception ex)
             {
@@ -721,7 +757,7 @@ namespace tjc.Modules.jacs.Services
                     timeslot.blocked,
                     publicBlock = timeslot.public_block,
                     blockReason = timeslot.block_reason,
-                    category = timeslot.courtroom_id,
+                    courtroom = timeslot.courtroom_id,
                     restrictedMotions,
                     timeslot.hasEvents,
                 });
@@ -981,7 +1017,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = t.blocked,
                         public_block = t.public_block,
                         block_reason = t.block_reason,
-                        category_id = t.courtroom_id,
+                        courtroom_id = t.courtroom_id,
                         template_id = t.template_id,
                         created_at = t.created_at,
                         updated_at = t.updated_at,
@@ -1075,7 +1111,7 @@ namespace tjc.Modules.jacs.Services
                         blocked = t.blocked,
                         public_block = t.public_block,
                         block_reason = t.block_reason,
-                        category_id = t.courtroom_id,
+                        courtroom_id = t.courtroom_id,
                         template_id = t.template_id,
                         created_at = t.created_at,
                         updated_at = t.updated_at,
@@ -1089,16 +1125,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-        internal class TimeslotListItemResult
-        {
-            public List<TimeslotViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-
         private string GetSortColumn(string columnIndex)
         {
             switch (columnIndex)

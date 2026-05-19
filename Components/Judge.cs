@@ -1,10 +1,12 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("judges")]
-    [PrimaryKey("id", AutoIncrement = false)]
+    [PrimaryKey("id", AutoIncrement = true)]
     [Cacheable("Judges", CacheItemPriority.Default, 20)]
     internal class Judge
     {
@@ -40,5 +42,10 @@ namespace tjc.Modules.jacs.Components
     {
         public long JudgeId { get; set; }
         public string JudgeName { get; set; } = string.Empty;
+    }
+    internal class JudgeClerkXrefResult
+    {
+        public List<JudgeClerkXrefViewModel> data { get; set; }
+        public string error { get; set; }
     }
 }

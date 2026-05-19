@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JACS", "JACS.csproj", "{EADA6770-BB24-4DAD-9C7E-8BFDD9FF2144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClerkMockApi", "..\..\..\ClerkMockApi\ClerkMockApi.csproj", "{979D53CE-5ADC-374C-EB18-B40EBE061CED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CkerkMockApi", "..\..\..\ClerkMockApi\CkerkMockApi.csproj", "{979D53CE-5ADC-374C-EB18-B40EBE061CED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

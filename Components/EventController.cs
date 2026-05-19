@@ -256,6 +256,25 @@ namespace tjc.Modules.jacs.Components
                 rep.Update(t);
             }
         }
+        /// <summary>
+        /// Returns the distinct clerk_case_id values that JACS has seen for a given
+        /// human-readable case number. Used by the API Log search UI: the user
+        /// types a case number, we resolve it to the clerk-side ids so the log
+        /// filter (which stores clerk_case_id) can find rows across every event
+        /// that shares that case number.
+        /// </summary>
+        public IEnumerable<long> GetClerkCaseIdsByCaseNumber(string caseNumber)
+        {
+            if (string.IsNullOrWhiteSpace(caseNumber)) return Enumerable.Empty<long>();
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteQuery<long>(
+                    System.Data.CommandType.Text,
+                    "SELECT DISTINCT clerk_case_id FROM [events] WHERE case_num = @0 AND clerk_case_id IS NOT NULL AND clerk_case_id > 0",
+                    caseNumber.Trim()).ToList();
+            }
+        }
+
         public Event GetEventByCaseNumber(string caseNumber)
         {
 

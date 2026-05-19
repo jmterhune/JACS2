@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -44,4 +45,19 @@ namespace tjc.Modules.jacs.Components
             };
         }
     }
+    internal class CourtTemplateSearchResult
+    {
+        public List<CourtTemplateViewModel> data { get; set; }
+        public int records_total { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class CourtTemplateResult
+    {
+        public CourtTemplate data { get; set; }
+        public string error { get; set; }
+    }
+
 }

@@ -1,7 +1,9 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("api_endpoints")]
@@ -26,24 +28,34 @@ namespace tjc.Modules.jacs.Components
     public enum ApiEndpointType
     {
        
-        [Description("Add Hearing")]
+        [Description("Create Event")]
         AddEvent = 2,
-        [Description("Reschedule Hearing")]
+        [Description("Reschedule Event")]
         RescheduleEvent = 3,
-        [Description("Update Hearing")]
+        [Description("Update Event")]
         UpdateEvent = 4,
-        [Description("Cancel Hearing")]
+        [Description("Cancel Event")]
         CancelEvent = 5,
         [Description("Get Case Information")]
         GetCase = 1,
-        [Description("Get Hearing Information")]
+        [Description("Get Event Information")]
         GetEvent = 6,
         [Description("Get Clerk Judges")]
         GetClerkJudges = 7,
         [Description("Get Clerk Courtrooms")]
         GetClerkCourtrooms = 8,
-        [Description("Get Clerk Motions")]
-        GetClerkMotions = 9,
         // others as needed
     }
+    internal class ApiEndpointSearchResult
+    {
+        public List<ApiEndpointViewModel> data { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class ApiEndpointResult
+    {
+        public ApiEndpoint data { get; set; }
+        public string error { get; set; }
+    }
+
 }

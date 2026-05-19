@@ -171,7 +171,18 @@ namespace tjc.Modules.jacs.Services.ViewModels
             Status = Status
         };
     }
+    /// <summary>
+    /// Request body for SearchCaseNumberDetails — typed model required so DNN's
+    /// Web API model binder can deserialize [FromBody] on an async action method.
+    /// </summary>
+    public class CaseNumberSearchRequest
+    {
+        [JsonProperty("caseNum")]
+        public string CaseNum { get; set; }
 
+        [JsonProperty("courtId")]
+        public long CourtId { get; set; }
+    }
     /// <summary>
     /// Raw deserialization target for the clerk's GetEvent response.
     /// {
@@ -214,15 +225,23 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
     /// <summary>
     /// Raw deserialization target for the clerk's AddEvent response.
-    /// { "EventId": 123456, "error": "" }
+    /// Spec: { "data": { "EventId": 123456 }, "error": "" }
     /// </summary>
     internal class ClerkAddEventRaw
     {
-        [JsonProperty("EventId")]
-        public long EventId { get; set; }
+        [JsonProperty("data")]
+        public ClerkAddEventData Data { get; set; }
 
         [JsonProperty("error")]
         public string Error { get; set; }
+
+        public long EventId => Data?.EventId ?? 0;
+    }
+
+    internal class ClerkAddEventData
+    {
+        [JsonProperty("EventId")]
+        public long EventId { get; set; }
     }
 
     /// <summary>

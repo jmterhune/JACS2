@@ -112,13 +112,29 @@ namespace tjc.Modules.jacs.Components
             Timeout = TimeSpan.FromSeconds(60)
         };
         // Replace your existing CallExternalApi method with this version:
-        internal async Task<HttpResponseMessage> CallExternalApi(ApiEndpoint api, string token, object payload, HttpMethod method)
+        //
+        // When `logContext` is supplied the request, response, and any error are
+        // persisted to the api_log table automatically — callers don't need to
+        // write any logging code themselves. Passing null keeps the old behaviour
+        // (no logging) for backward compatibility with unrelated lookup calls
+        // we don't care to log.
+        internal async Task<HttpResponseMessage> CallExternalApi(
+            ApiEndpoint api,
+            string token,
+            object payload,
+            HttpMethod method,
+            ApiLogContext logContext = null)
         {
             if (api == null || string.IsNullOrWhiteSpace(api.end_point_url))
             {
                 Exceptions.LogException(new Exception("CallExternalApi called with invalid ApiEndpoint"));
                 throw new ArgumentNullException(nameof(api));
             }
+
+            string requestJson = payload != null ? JsonConvert.SerializeObject(payload) : null;
+            string responseBody = null;
+            string errorText = null;
+            HttpResponseMessage response = null;
 
             try
             {
@@ -129,35 +145,82 @@ namespace tjc.Modules.jacs.Components
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     }
 
-                    if (payload != null)
+                    if (requestJson != null)
                     {
-                        request.Content = new StringContent(
-                            JsonConvert.SerializeObject(payload),
-                            Encoding.UTF8,
-                            "application/json");
+                        request.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
                     }
 
-                    var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
+                    response = await _httpClient.SendAsync(request).ConfigureAwait(false);
+                    responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        string errorContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        errorText = $"HTTP {(int)response.StatusCode} {response.StatusCode}";
                         Exceptions.LogException(new Exception(
-                            $"Clerk API call failed. URL: {api.end_point_url} | Status: {(int)response.StatusCode} {response.StatusCode} | Response: {errorContent}"));
+                            $"Clerk API call failed. URL: {api.end_point_url} | Status: {errorText} | Response: {responseBody}"));
                     }
+
+                    // Re-hydrate the response body so callers that read Content
+                    // still get the bytes we already consumed.
+                    response.Content = new StringContent(responseBody ?? string.Empty, Encoding.UTF8,
+                        response.Content?.Headers?.ContentType?.MediaType ?? "application/json");
 
                     return response;
                 }
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
             {
+                errorText = $"Timeout after 60s: {ex.Message}";
                 Exceptions.LogException(new Exception($"Clerk API TIMED OUT (60s) → URL: {api.end_point_url}", ex));
                 throw;
             }
             catch (Exception ex)
             {
+                errorText = ex.Message;
                 Exceptions.LogException(new Exception($"Error in CallExternalApi → URL: {api.end_point_url}", ex));
                 throw;
+            }
+            finally
+            {
+                // Only the event lifecycle and case/event read endpoints are
+                // logged. Cross-reference sync calls (GetClerkJudges,
+                // GetClerkCourtrooms) are operational plumbing and not worth
+                // persisting to api_log.
+                if (ShouldLog(api.type))
+                {
+                    new ApiLogController().Log(
+                        apiEndpointUrl: api.end_point_url,
+                        requestPayload: requestJson,
+                        responsePayload: responseBody,
+                        error: errorText,
+                        countyId: api.county_id,
+                        eventId: logContext?.EventId,
+                        caseId: logContext?.CaseId,
+                        userId: logContext?.UserId,
+                        action: logContext?.Action ?? api.type.ToString(),
+                        application: logContext?.Application ?? ApiLogApplication.JACS);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allow-list of <see cref="ApiEndpointType"/> values that get written to
+        /// the api_log table. Keep this list in sync with what the support team
+        /// actually needs to audit.
+        /// </summary>
+        private static bool ShouldLog(ApiEndpointType type)
+        {
+            switch (type)
+            {
+                case ApiEndpointType.AddEvent:
+                case ApiEndpointType.CancelEvent:
+                case ApiEndpointType.GetCase:
+                case ApiEndpointType.GetEvent:
+                case ApiEndpointType.RescheduleEvent:
+                case ApiEndpointType.UpdateEvent:
+                    return true;
+                default:
+                    return false;
             }
         }
     }

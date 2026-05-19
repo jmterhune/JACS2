@@ -42,6 +42,7 @@
                             <li class="nav-item"><a class="nav-link" id="lnkTemplate" href="<%=ModuleContext.TemplateListUrl %>"><i class="fas fa-object-ungroup"></i>Templates</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkTimeSlot" href="<%=ModuleContext.TimeSlotListUrl %>"><i class="fas fa-clock"></i>Timeslots</a></li>
                             <li class="nav-item"><a class="nav-link" id="lnkApiConfig" href="<%=ModuleContext.ApiConfigUrl %>"><i class="fas fa-arrow-right-arrow-left"></i>API Config</a></li>
+                            <li class="nav-item"><a class="nav-link" id="lnkApiLog" href="<%=ModuleContext.ApiLogUrl %>"><i class="fas fa-file-lines"></i>API Log</a></li>
                         </ul>
                     </div>
                 </li>

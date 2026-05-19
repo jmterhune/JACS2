@@ -41,9 +41,15 @@ namespace tjc.Modules.jacs.Services.ViewModels
             county_name = court.county_name;
             judge_name = GetJudgeName(court.id);
             if (court.def_attorney_id.HasValue)
+            {
                 def_attorney_item = GetAttorneyItem(court.def_attorney_id.Value);
+                def_attorney_bar_num = GetAttorneyBarNum(court.def_attorney_id.Value);
+            }
             if (court.opp_attorney_id.HasValue)
+            {
                 opp_attorney_item = GetAttorneyItem(court.opp_attorney_id.Value);
+                opp_attorney_bar_num = GetAttorneyBarNum(court.opp_attorney_id.Value);
+            }
             available_motions = court.GetCourtMotionValues(true);
             restricted_motions = court.GetCourtMotionValues(false);
             available_hearing_types = court.GetCourtEventTypeValues();
@@ -120,8 +126,12 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public long? judge_id { get; set; }
         [JsonProperty("def_attorney_item")]
         public KeyValuePair<long, string> def_attorney_item { get; set; }
+        [JsonProperty("def_attorney_bar_num")]
+        public string def_attorney_bar_num { get; set; }
         [JsonProperty("opp_attorney_item")]
         public KeyValuePair<long, string> opp_attorney_item { get; set; }
+        [JsonProperty("opp_attorney_bar_num")]
+        public string opp_attorney_bar_num { get; set; }
         [JsonProperty("available_motions")]
         public List<long> available_motions { get; set; }
         [JsonProperty("restricted_motions")]
@@ -145,6 +155,12 @@ namespace tjc.Modules.jacs.Services.ViewModels
         {
             var controller = new AttorneyController();
             return controller.GetAttorneyListItem(attorneyId);
+        }
+        private string GetAttorneyBarNum(long attorneyId)
+        {
+            var controller = new AttorneyController();
+            var attorney = controller.GetAttorney(attorneyId);
+            return attorney?.bar_num;
         }
         private string GetJudgeName(long courtId)
         {

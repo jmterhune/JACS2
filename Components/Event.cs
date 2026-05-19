@@ -1,6 +1,8 @@
 ﻿using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 namespace tjc.Modules.jacs.Components
 {
     [TableName("events")]
@@ -23,6 +25,11 @@ namespace tjc.Modules.jacs.Components
         public long? opp_attorney_id { get; set; }
         public long? owner_id { get; set; }
         public string owner_type { get; set; }
+        // DNN username of the user who created/last-saved this event. Populated
+        // by EventAPIController on Create and Update. Used to surface "Edited By"
+        // on the event form across the public (attorney) and internal (judge/JA)
+        // DNN sites, where DNN UserIDs aren't shared but usernames are.
+        public string owner_username { get; set; }
         public bool? addon { get; set; }
         public string plaintiff_email { get; set; }
         public string defendant_email { get; set; }
@@ -215,6 +222,7 @@ namespace tjc.Modules.jacs.Components
         public long? opp_attorney_id { get; set; }
         public long? owner_id { get; set; }
         public string owner_type { get; set; }
+        public string owner_username { get; set; }
         public bool? addon { get; set; }
         public string plaintiff_email { get; set; }
         public string defendant_email { get; set; }
@@ -258,4 +266,43 @@ namespace tjc.Modules.jacs.Components
         public DateTime start { get; set; }
         public DateTime end { get; set; }
     }
+    internal class EventListItemResult
+    {
+        public List<EventViewModel> data { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class EventsResult
+    {
+        public List<EventViewModel> data { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class EventSearchResult
+    {
+        public EventViewModel data { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class EventCancelResult
+    {
+        public bool cancelled { get; set; }
+        public string error { get; set; }
+    }
+
+    internal class CaseSearchModel
+    {
+        public string casePattern { get; set; }
+        public int userId { get; set; }
+        public bool isJudge { get; set; }
+    }
+
+    internal class SearchTerm
+    {
+        public string searchTerm { get; set; }
+    }
+
 }

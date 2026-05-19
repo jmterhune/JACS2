@@ -176,22 +176,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-
-        internal class CourtPermissionSearchResult
-        {
-            public List<CourtPermissionViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class CourtPermissionResult
-        {
-            public CourtPermission data { get; set; }
-            public string error { get; set; }
-        }
-
         private string GetSortColumn(int columnIndex)
         {
             string fieldName = "user_display_name";

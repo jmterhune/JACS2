@@ -221,28 +221,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
             }
         }
-
-        internal class UserSearchResult
-        {
-            public List<UserViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class UserResult
-        {
-            public User data { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class UserListResult
-        {
-            public List<UserViewModel> data { get; set; }
-            public string error { get; set; }
-        }
-
         private string GetSortColumn(int columnIndex)
         {
             string fieldName = "name";

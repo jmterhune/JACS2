@@ -46,6 +46,11 @@ namespace tjc.Modules.jacs.Services
                 filteredCount = ctl.GetJudgesCount(searchTerm);
                 if (p1 == 0) { recordCount = filteredCount; }
                 judges = ctl.GetJudgesPaged(searchTerm, recordOffset, pageSize, sortColumn, sortDirection).ToList();
+                var xrefCounts = ctl.GetJudgeXrefCounts();
+                foreach (var j in judges)
+                {
+                    j.xref_count = xrefCounts.TryGetValue(j.id, out int cnt) ? cnt : 0;
+                }
                 return Request.CreateResponse(new JudgeSearchResult { data = judges, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
             }
             catch (Exception ex)
@@ -59,16 +64,16 @@ namespace tjc.Modules.jacs.Services
             string fieldName = "name";
             switch (columnIndex)
             {
-                case 2:
+                case 3:
                     fieldName = "name";
                     break;
-                case 3:
+                case 4:
                     fieldName = "phone";
                     break;
-                case 4:
+                case 5:
                     fieldName = "court_name";
                     break;
-                case 5:
+                case 6:
                     fieldName = "title";
                     break;
                 default:
@@ -338,11 +343,6 @@ namespace tjc.Modules.jacs.Services
         }
 
         #region Judge Xref DTO objects
-        internal class JudgeClerkXrefResult
-        {
-            public List<JudgeClerkXrefViewModel> data { get; set; }
-            public string error { get; set; }
-        }
         #endregion //end Judge Xref DTO objects
 
         #endregion //end Judges Xref Methods

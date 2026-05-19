@@ -16,11 +16,11 @@
                 <tr>
                     <th></th>
                     <th></th>
+                    <th></th>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Court</th>
                     <th>Title</th>
-                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -129,20 +129,6 @@
 
                         </div>
                     </div>
-                    <button type="button" class="btn btn-tertiary" id="xref_cmdAddReference">
-                        <i class="fas fa-plus"></i>&nbsp;Add Judge Reference
-                    </button>
-
-                    <table id="xref_judge_list" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>County</th>
-                                <th>Judge</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -251,7 +237,7 @@
                     currentPage: 0,
                     pageSize: 25,
                     recordCount: 0,
-                    sortColumnIndex: 2,
+                    sortColumnIndex: 3,
                     sortDirection: "asc"
                 });
                 judgeController.init();

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting;
 using System.Web.Caching;
+using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Components
 {
@@ -333,5 +334,13 @@ namespace tjc.Modules.jacs.Components
         public string color { get; set; }
         public int order { get; set; }
         public string timeslotDescription { get; set; }
+    }
+    internal class TimeslotListItemResult
+    {
+        public List<TimeslotViewModel> data { get; set; }
+        public int recordsTotal { get; set; }
+        public int recordsFiltered { get; set; }
+        public int draw { get; set; }
+        public string error { get; set; }
     }
 }

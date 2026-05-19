@@ -96,7 +96,8 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new CourtMotionController();
-                List<KeyValuePair<long, string>> courtMotions = ctl.GetCourtMotionDropDownItems(p1, p2);
+                long countyId = ResolveCountyId(p1);
+                List<KeyValuePair<long, string>> courtMotions = ctl.GetCourtMotionDropDownItems(p1, p2, countyId);
                 return Request.CreateResponse(new ListItemOptionResult { data = courtMotions, error = null });
             }
             catch (Exception ex)
@@ -168,8 +169,9 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new CourtMotionController();
+                long countyId = ResolveCountyId(p1);
                 List<long> excluded = string.IsNullOrEmpty(p2) ? new List<long>() : p2.Split(',').Select(long.Parse).ToList();
-                var motions = ctl.GetAvailableMotionDropDownItems(p1, excluded);
+                var motions = ctl.GetAvailableMotionDropDownItems(p1, excluded, countyId);
                 return Request.CreateResponse(new ListItemOptionResult { data = motions, error = null });
             }
             catch (Exception ex)
@@ -179,19 +181,19 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        internal class CourtMotionSearchResult
+        /// <summary>Resolves the county ID for a court. Returns 0 if not found.</summary>
+        private long ResolveCountyId(long courtId)
         {
-            public List<CourtMotionViewModel> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class CourtMotionResult
-        {
-            public CourtMotionViewModel data { get; set; }
-            public string error { get; set; }
+            if (courtId <= 0) return 0;
+            try
+            {
+                var court = new CourtController().GetCourt(courtId);
+                return court?.county_id ?? 0;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         private string GetSortColumn(int columnIndex)

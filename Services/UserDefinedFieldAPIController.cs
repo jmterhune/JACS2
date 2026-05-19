@@ -81,7 +81,7 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
-        [HttpGet]
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public HttpResponseMessage DeleteUserDefinedField(long p1)
         {
@@ -187,22 +187,6 @@ namespace tjc.Modules.jacs.Services
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = $"Failed to update user defined field: {ex.Message}" });
             }
         }
-
-        internal class UserDefinedFieldSearchResult
-        {
-            public List<UserDefinedField> data { get; set; }
-            public int recordsTotal { get; set; }
-            public int recordsFiltered { get; set; }
-            public int draw { get; set; }
-            public string error { get; set; }
-        }
-
-        internal class UserDefinedFieldResult
-        {
-            public UserDefinedField data { get; set; }
-            public string error { get; set; }
-        }
-
         private string GetSortColumn(int columnIndex)
         {
             switch (columnIndex)
