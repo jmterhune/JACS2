@@ -10,7 +10,7 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
     /// Cross-cutting model fix-ups applied right before a row is INSERTed / UPDATEd.
     /// </summary>
     /// <remarks>
-    /// Two passes are run by <see cref="Normalize"/>:
+    /// Three passes are run by <see cref="Normalize"/>:
     ///   1. Any nullable numeric property with the value <c>0</c> is rewritten to
     ///      <c>null</c> — empty form fields and unselected dropdowns shouldn't
     ///      be persisted as a hard zero. Examples: PhoneCascade, CallOrder.
@@ -18,6 +18,11 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
     ///      has every non-digit character stripped — UI masks like
     ///      <c>(999) 999-9999</c> stay client-side; the DB sees raw digits.
     ///      Examples: SocialSecurityNumber, PhoneNumber, PhoneHome / Work / Mobile.
+    ///   3. Every read/write string property is trimmed of leading/trailing
+    ///      whitespace. Catches "Lee " in LastName, " Joseph" in FirstName,
+    ///      etc. that would otherwise leak in from form posts or imports.
+    ///      Empty-after-trim strings become null so blank text-boxes don't
+    ///      persist as zero-length-but-not-null sentinels.
     /// </remarks>
     internal static class ModelNormalizer
     {
@@ -27,13 +32,37 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
             new ConcurrentDictionary<Type, PropertyInfo[]>();
         private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _digitsCache =
             new ConcurrentDictionary<Type, PropertyInfo[]>();
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _stringCache =
+            new ConcurrentDictionary<Type, PropertyInfo[]>();
         private static readonly Regex _nonDigit = new Regex(@"\D", RegexOptions.Compiled);
 
         /// <summary>Run all normalization passes on the given entity.</summary>
         public static void Normalize(object item)
         {
+            // Trim first so DigitsOnly and ZeroToNull see clean inputs.
+            TrimStrings(item);
             ZeroToNull(item);
             StripDigitsOnly(item);
+        }
+
+        /// <summary>Trim leading/trailing whitespace from every public
+        /// read/write string property on the entity. Empty-after-trim
+        /// values are set to null so a blank input doesn't persist as
+        /// an empty string (which would later compare differently from
+        /// a true NULL).</summary>
+        public static void TrimStrings(object item)
+        {
+            if (item == null) return;
+
+            var props = _stringCache.GetOrAdd(item.GetType(), GetStringProperties);
+            foreach (var prop in props)
+            {
+                var value = prop.GetValue(item, null) as string;
+                if (value == null) continue;
+                var trimmed = value.Trim();
+                if (ReferenceEquals(trimmed, value)) continue;
+                prop.SetValue(item, trimmed.Length == 0 ? null : trimmed, null);
+            }
         }
 
         /// <summary>Convert nullable numeric properties whose value is 0 to null.</summary>
@@ -97,6 +126,15 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
                 .Where(p => p.CanRead && p.CanWrite)
                 .Where(p => p.PropertyType == typeof(string))
                 .Where(p => p.GetCustomAttributes(typeof(DigitsOnlyAttribute), true).Any())
+                .ToArray();
+        }
+
+        private static PropertyInfo[] GetStringProperties(Type type)
+        {
+            return type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && p.CanWrite)
+                .Where(p => p.PropertyType == typeof(string))
                 .ToArray();
         }
     }

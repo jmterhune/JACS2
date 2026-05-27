@@ -4,9 +4,11 @@
 */
 
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Services.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using tjc.Modules.EmployeeDB.Components.Controllers;
 
 namespace tjc.Modules.EmployeeDB.Views
@@ -15,6 +17,7 @@ namespace tjc.Modules.EmployeeDB.Views
     {
         private Dictionary<int, string> _locationNameCache;
         private Dictionary<int, string> _departmentNameCache;
+        private readonly Dictionary<int, string> _photoUrlCache = new Dictionary<int, string>();
 
         /// <summary>Per-request cache of OfficeLocationId → Description so
         /// the row template doesn't re-hit the controller for each repeater row.</summary>
@@ -76,6 +79,50 @@ namespace tjc.Modules.EmployeeDB.Views
             if (!int.TryParse(idValue.ToString(), out id)) return string.Empty;
             string name;
             return DepartmentNameCache.TryGetValue(id, out name) ? name : string.Empty;
+        }
+
+        /// <summary>Repeater binding helper: render a 16x16 thumbnail <img>
+        /// for the employee's photo, or an empty string if they don't have one.
+        ///
+        /// The FileId → URL lookup goes through DNN's FileManager, which
+        /// internally caches Files-table rows, but we ALSO maintain a
+        /// per-request cache here so a 900-row repeater doesn't re-call the
+        /// FileManager for every iteration (alt-text on the img stays
+        /// per-row so screen readers report the actual employee name).</summary>
+        protected string RenderEmployeePhoto(object fileIdValue, object firstName, object lastName)
+        {
+            if (fileIdValue == null || fileIdValue == DBNull.Value) return string.Empty;
+            int id;
+            if (!int.TryParse(fileIdValue.ToString(), out id) || id <= 0) return string.Empty;
+
+            string url;
+            if (!_photoUrlCache.TryGetValue(id, out url))
+            {
+                url = string.Empty;
+                try
+                {
+                    var fi = FileManager.Instance.GetFile(id);
+                    if (fi != null) url = FileManager.Instance.GetUrl(fi);
+                }
+                catch
+                {
+                    // Missing or inaccessible file — render no image rather
+                    // than letting the exception bubble up and 500 the page.
+                }
+                _photoUrlCache[id] = url;
+            }
+            if (string.IsNullOrEmpty(url)) return string.Empty;
+
+            var altText = HttpUtility.HtmlAttributeEncode(
+                (firstName == null ? "" : firstName.ToString().Trim()) + " " +
+                (lastName == null ? "" : lastName.ToString().Trim())).Trim();
+            // The <span> wrapper is fixed at 16x16 so the table layout
+            // doesn't shift when the inner <img> grows on :hover (the img
+            // is position:absolute inside the wrapper — see module.css).
+            return "<span class=\"empdb-list-photo-wrap\">" +
+                   "<img src=\"" + HttpUtility.HtmlAttributeEncode(url) +
+                   "\" alt=\"" + altText + "\" class=\"empdb-list-photo\" />" +
+                   "</span>";
         }
 
         protected void Page_Load(object sender, EventArgs e)

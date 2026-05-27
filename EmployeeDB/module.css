@@ -344,6 +344,52 @@ table.dataTable td a:hover { text-decoration: underline; }
 .empdb-dual-list-buttons .btn {
     width: 3rem;
 }
+/* 16x16 employee thumbnail in the EmployeeList table. The cell is
+   width-constrained so the column doesn't claim more than the photo
+   needs, even when DataTables auto-sizes the surrounding columns.
+   object-fit: cover crops non-square uploads to a clean square thumb.
+
+   On :hover the <img> grows to 240x320 (a portrait headshot preview).
+   To keep the row layout stable while the img grows, the img is
+   position:absolute inside a fixed-size 16x16 <span> wrapper — so
+   only the absolutely-positioned child changes size; the cell stays
+   at 24px wide and the table doesn't reflow.  The zoomed image
+   anchors at the wrapper's top-left and overflows down-and-right
+   with z-index:1000 so it lays on top of adjacent rows / cells. */
+.empdb-list-photo-col,
+.empdb-list-photo-cell {
+    width: 24px;
+    text-align: center;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+.empdb-list-photo-wrap {
+    display: inline-block;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+.empdb-list-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    object-fit: cover;
+    border-radius: 2px;
+    cursor: zoom-in;
+    transition: width 0.15s ease-out, height 0.15s ease-out,
+                box-shadow 0.15s ease-out, border-radius 0.15s ease-out;
+}
+.empdb-list-photo-wrap:hover .empdb-list-photo {
+    width: 240px;
+    height: 320px;
+    z-index: 1000;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
 /* Anchor-as-button :visited color fix.
  *
  * The browser default (and the Porto skin's global rules) style :visited

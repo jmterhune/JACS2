@@ -1,0 +1,52 @@
+/***********************************************************************
+ * EmployeeDB 0.0.3 install script
+ *
+ * Adds four optional columns to tjc_employee to support the HR reports
+ * that previously lived in Excel sheets under EmployeeDB\Documentation
+ * (DROP Participants.xlsx, JA seniority.xlsx → "Certified Interpreters"
+ * sheet). All four columns are NULL for every employee until HR fills
+ * them in via the new fields on the Edit Employee → Employment tab.
+ *
+ *   DropEntryDate     - first day the employee entered the DROP
+ *                       (Deferred Retirement Option Program)
+ *   DropExitDate      - planned/actual DROP termination date (usually
+ *                       DropEntryDate + 5 years, but stored explicitly
+ *                       so HR can correct exceptions)
+ *   DropLeavePayout   - hours of annual leave paid out at DROP entry
+ *   CertificationDate - for certified court interpreters: the date the
+ *                       state certification was issued (anchors the
+ *                       2-year / 5-year salary-incentive milestones)
+ *
+ * All four columns are independent — populating one doesn't require
+ * the others. The Reports module's new Employee Reports filter by
+ * presence of the relevant column (e.g. DROP Participants = anyone
+ * with DropEntryDate set).
+ ***********************************************************************/
+
+IF COL_LENGTH('{databaseOwner}{objectQualifier}tjc_employee', 'DropEntryDate') IS NULL
+BEGIN
+    ALTER TABLE {databaseOwner}{objectQualifier}tjc_employee
+        ADD DropEntryDate DATETIME NULL;
+END
+GO
+
+IF COL_LENGTH('{databaseOwner}{objectQualifier}tjc_employee', 'DropExitDate') IS NULL
+BEGIN
+    ALTER TABLE {databaseOwner}{objectQualifier}tjc_employee
+        ADD DropExitDate DATETIME NULL;
+END
+GO
+
+IF COL_LENGTH('{databaseOwner}{objectQualifier}tjc_employee', 'DropLeavePayout') IS NULL
+BEGIN
+    ALTER TABLE {databaseOwner}{objectQualifier}tjc_employee
+        ADD DropLeavePayout DECIMAL(8, 2) NULL;
+END
+GO
+
+IF COL_LENGTH('{databaseOwner}{objectQualifier}tjc_employee', 'CertificationDate') IS NULL
+BEGIN
+    ALTER TABLE {databaseOwner}{objectQualifier}tjc_employee
+        ADD CertificationDate DATETIME NULL;
+END
+GO

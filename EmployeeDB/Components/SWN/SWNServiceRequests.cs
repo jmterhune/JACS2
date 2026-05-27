@@ -574,7 +574,7 @@ namespace tjc.Modules.EmployeeDB.Components.SWN
             foreach (var grpId in GetEmployeeGroupIds(newEmployee.EmployeeId))
             {
                 var grp = GetGroup(grpId);
-                if (grp != null && (grp.IsSwnGroup ?? false))
+                if (grp != null && grp.IsSwnGroup)
                 {
                     // VB: result.Concat(AddContactGroups(...)) — return discarded.
                     result = result == null

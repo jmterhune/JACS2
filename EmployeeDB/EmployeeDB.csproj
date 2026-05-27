@@ -308,6 +308,7 @@
     <Content Include="Scripts\empdb-nhit.js" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.02.SqlDataProvider" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.03.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>

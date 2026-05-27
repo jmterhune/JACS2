@@ -83,6 +83,7 @@
                     <thead>
                         <tr>
                             <th class="command-item no-sort"></th>
+                            <th class="empdb-list-photo-col no-sort"></th>
                             <th>Name</th>
                             <th>Title</th>
                             <th>Department</th>
@@ -100,6 +101,7 @@
                                     <td class="command-icon">
                                         <a class="text-primary" title="Edit" href='<%# EditEmployeeUrl((int)Eval("EmployeeId")) %>'><i class="fas fa-edit"></i></a>
                                     </td>
+                                    <td class="empdb-list-photo-cell"><%# RenderEmployeePhoto(Eval("FileId"), Eval("FirstName"), Eval("LastName")) %></td>
                                     <td><%#Eval("LastName") %>, <%#Eval("FirstName") %></td>
                                     <td><%#Eval("JobTitle") %></td>
                                     <td><%# GetDepartmentName(Eval("DepartmentId")) %></td>
@@ -397,10 +399,10 @@
             // The DesignationList view in transcriptDatabase uses the same
             // .dt-length prepend pattern.
             var tableConfigs = [
-                // Bumped to v2 when the Active column was removed — older
-                // saved state would still reference column index 5 and
-                // throw "Requested unknown parameter" warnings.
-                { id: '#tblEmployees',    key: 'empdb-tblEmployees-v2',    addBtnId: '#empdbEmployeeAdd' }
+                // Bumped to v3 when the 16x16 photo column was added — the
+                // column count changed, so existing v2 state with 5 columns
+                // would otherwise produce "Requested unknown parameter" warnings.
+                { id: '#tblEmployees',    key: 'empdb-tblEmployees-v3',    addBtnId: '#empdbEmployeeAdd' }
             ];
             $.each(tableConfigs, function (i, cfg) {
                 if ($(cfg.id).length && !$.fn.DataTable.isDataTable(cfg.id)) {
