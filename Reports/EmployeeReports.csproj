@@ -111,6 +111,7 @@
     <Compile Include="Components\JacsReportObjects.cs" />
     <Compile Include="Components\PhotoIDController.cs" />
     <Compile Include="Components\ReportController.cs" />
+    <Compile Include="Components\ReportExportHelper.cs" />
     <Compile Include="Components\Employee.cs" />
     <Compile Include="ReportsModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -147,6 +148,37 @@
     <Compile Include="View.ascx.designer.cs">
       <DependentUpon>View.ascx</DependentUpon>
     </Compile>
+    <!-- Employee Reports (replaces HR Excel sheets that used to live in
+         EmployeeDB\Documentation\). Each report has its own controlKey
+         registered in Reports.dnn. -->
+    <Compile Include="EmployeeReports\DropParticipantsReport.ascx.cs">
+      <DependentUpon>EmployeeReports\DropParticipantsReport.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeReports\DropParticipantsReport.ascx.designer.cs">
+      <DependentUpon>EmployeeReports\DropParticipantsReport.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeReports\JaSeniorityReport.ascx.cs">
+      <DependentUpon>EmployeeReports\JaSeniorityReport.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeReports\JaSeniorityReport.ascx.designer.cs">
+      <DependentUpon>EmployeeReports\JaSeniorityReport.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeReports\StaffAttorneySeniorityReport.ascx.cs">
+      <DependentUpon>EmployeeReports\StaffAttorneySeniorityReport.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeReports\StaffAttorneySeniorityReport.ascx.designer.cs">
+      <DependentUpon>EmployeeReports\StaffAttorneySeniorityReport.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeReports\CertifiedInterpreterReport.ascx.cs">
+      <DependentUpon>EmployeeReports\CertifiedInterpreterReport.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeReports\CertifiedInterpreterReport.ascx.designer.cs">
+      <DependentUpon>EmployeeReports\CertifiedInterpreterReport.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Documentation\Documentation.css" />
@@ -158,6 +190,10 @@
     <Content Include="DataCardView.ascx" />
     <Content Include="WeekDayHearings.ascx" />
     <Content Include="View.ascx" />
+    <Content Include="EmployeeReports\DropParticipantsReport.ascx" />
+    <Content Include="EmployeeReports\JaSeniorityReport.ascx" />
+    <Content Include="EmployeeReports\StaffAttorneySeniorityReport.ascx" />
+    <Content Include="EmployeeReports\CertifiedInterpreterReport.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Reports.dnn" />
@@ -172,10 +208,6 @@
   <ItemGroup>
     <Content Include="App_LocalResources\Edit.ascx.resx" />
     <Content Include="App_LocalResources\Settings.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
-    <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -212,8 +244,29 @@
     <DNNFileName>Reports</DNNFileName>
     <PackageName>Reports</PackageName>
     <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
+    <!-- Site deploy target. Mirrors the EmployeeDB csproj pattern: copies
+         the DLL + web content to the dev site on every build. Override by
+         setting DeploySitePath, or disable with DeployToSite=false. -->
+    <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
+    <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\EmployeeReports</DeployModuleFolder>
+    <DeployToSite Condition="'$(DeployToSite)' == ''">true</DeployToSite>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="PackageModule;DeployToSite">
+  </Target>
+  <Target Name="DeployToSite" Condition="'$(DeployToSite)' == 'true' And Exists('$(DeploySitePath)\bin')">
+    <Message Text="Deploying Reports to $(DeploySitePath)" Importance="high" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    <ItemGroup>
+      <DeployContent Include="*.ascx" />
+      <DeployContent Include="EmployeeReports\**\*.ascx" />
+      <DeployContent Include="**\App_LocalResources\**\*.resx" />
+      <DeployContent Include="*.css" />
+      <DeployContent Include="$(DNNFileName).dnn" />
+      <DeployContent Include="License.txt" />
+      <DeployContent Include="ReleaseNotes.txt" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeployContent)" DestinationFiles="@(DeployContent->'$(DeployModuleFolder)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>

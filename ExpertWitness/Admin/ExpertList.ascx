@@ -53,7 +53,7 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"ExpertId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"ExpertId").ToString() %>'><i class="fas fa-edit"></i></asp:LinkButton>
                                 <td><%#Eval("ExpertID")%></td>
                                 <td><%#Eval("Description")%></td>
                                 <td><%#Eval("TypeDisplay")%></td>
@@ -61,7 +61,7 @@
                                 <td><%#Eval("ContractEnds","{0:MM/dd/yyyy}")%></td>
                                 <td><%#Eval("CommentDisplay")%></td>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"ExpertId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"ExpertId").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -129,6 +129,12 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <script type="text/javascript">
     (function ($, Sys) {
@@ -161,11 +167,23 @@
         });
         $("#.dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditExpertModal"><i class="fa fa-plus"></i>&nbsp;Add Expert</button>');
         table.on('draw', function () {
-            $(".confirm").dnnConfirm({
-                text: 'Are you sure you wish to Delete the selected Expert?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Expert?'
+            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+                e.preventDefault();
+                var href = this.href || '';
+                Swal.fire({
+                    title: 'Delete Expert?',
+                    text: 'Are you sure you wish to Delete the selected Expert?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) {
+                    if (r.isConfirmed) {
+                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    }
+                });
             });
         });
         table.draw();

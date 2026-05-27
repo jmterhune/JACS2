@@ -2,6 +2,7 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Services.Mail;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.UI;
@@ -22,6 +23,24 @@ namespace tjc.Modules.EmployeeDB.Views
         // _groupController stays — used for the Department dropdown bind +
         // the change-notification email body's Department lookup.
         private readonly GroupController _groupController = new GroupController();
+        // _phoneController is only used by the helpdesk-notification path to
+        // snapshot + diff phones around a Save. The Phones tab itself is
+        // driven by the Web API (Components/Api/PhonesController.cs).
+        private readonly PhoneController _phoneController = new PhoneController();
+
+        /// <summary>Phone types HR is willing to share with the helpdesk in the
+        /// employee-add / employee-update notification email. Anything outside
+        /// this set (Personal, Mobile, Home, etc.) is considered PII and is
+        /// excluded from the email body.</summary>
+        private static readonly HashSet<string> HelpdeskPhoneTypes =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            { "Work", "Work Cell", "Judicial Office" };
+
+        /// <summary>ViewState key for the phones-at-page-load snapshot. Phones
+        /// are persisted by their own Web API mid-edit (out-of-band from this
+        /// page's postbacks), so we capture the pre-edit state when the page
+        /// first loads and diff against the current DB state at Save time.</summary>
+        private const string PhonesSnapshotKey = "EditEmp_PhonesSnapshot";
 
         // The Phones / Positions / Services / Contacts / Groups membership /
         // Photo tabs are now driven entirely by the Web API + JS
@@ -299,6 +318,16 @@ namespace tjc.Modules.EmployeeDB.Views
                 ? emp.SickLeaveBalance.Value.ToString("0.##") : string.Empty;
             txtBadgeNumber.Text = emp.BadgeNumber ?? string.Empty;
 
+            // DROP / Certification dates (Employee Reports module reads these).
+            txtDropEntryDate.Text = emp.DropEntryDate.HasValue
+                ? emp.DropEntryDate.Value.ToString("yyyy-MM-dd") : string.Empty;
+            txtDropExitDate.Text = emp.DropExitDate.HasValue
+                ? emp.DropExitDate.Value.ToString("yyyy-MM-dd") : string.Empty;
+            txtDropLeavePayout.Text = emp.DropLeavePayout.HasValue
+                ? emp.DropLeavePayout.Value.ToString("0.##") : string.Empty;
+            txtCertificationDate.Text = emp.CertificationDate.HasValue
+                ? emp.CertificationDate.Value.ToString("yyyy-MM-dd") : string.Empty;
+
             chkIsActive.Checked = emp.IsActive.GetValueOrDefault();
             
             chkManateeAccess.Checked = emp.ManateeAccess.GetValueOrDefault();
@@ -317,6 +346,11 @@ namespace tjc.Modules.EmployeeDB.Views
             // Groups membership, Phones, Position / Service History, and
             // Emergency Contacts are all fetched client-side via the Web API
             // on tab load — see Scripts/empdb-edit.js.
+
+            // Snapshot the helpdesk-visible phones so the change-notification
+            // email at Save time can diff phones that were added / removed /
+            // modified through the Phones tab during this edit session.
+            ViewState[PhonesSnapshotKey] = SnapshotHelpdeskPhones(EmployeeId);
         }
 
         #endregion
@@ -379,6 +413,11 @@ namespace tjc.Modules.EmployeeDB.Views
                 emp.SickLeaveBalance = ParseDecimalOrNull(txtSickLeave.Text);
                 emp.BadgeNumber = txtBadgeNumber.Text.Trim();
 
+                emp.DropEntryDate = ParseDate(txtDropEntryDate.Text);
+                emp.DropExitDate = ParseDate(txtDropExitDate.Text);
+                emp.DropLeavePayout = ParseDecimalOrNull(txtDropLeavePayout.Text);
+                emp.CertificationDate = ParseDate(txtCertificationDate.Text);
+
                 emp.IsActive = chkIsActive.Checked;
                 emp.IsEmployee = true;
                 emp.ManateeAccess = chkManateeAccess.Checked;
@@ -413,7 +452,20 @@ namespace tjc.Modules.EmployeeDB.Views
                 {
                     try
                     {
-                        SendChangeNotification(before, emp, isNew: before == null);
+                        // Phones are stored via a separate Web API and may have
+                        // been added/edited/deleted mid-session. Diff against the
+                        // snapshot taken at page load (LoadEmployee) to surface
+                        // those out-of-band changes in the helpdesk email.
+                        var beforePhones = (ViewState[PhonesSnapshotKey] as List<string>)
+                                           ?? new List<string>();
+                        var afterPhones  = SnapshotHelpdeskPhones(savedId);
+
+                        SendChangeNotification(before, emp, isNew: before == null,
+                                               beforePhones, afterPhones);
+
+                        // Refresh the snapshot so a follow-up Save in the same
+                        // page lifecycle doesn't re-report the same phone diff.
+                        ViewState[PhonesSnapshotKey] = afterPhones;
                     }
                     catch (Exception mailEx)
                     {
@@ -524,9 +576,10 @@ namespace tjc.Modules.EmployeeDB.Views
             };
         }
 
-        private void SendChangeNotification(EmployeeInfo before, EmployeeInfo after, bool isNew)
+        private void SendChangeNotification(EmployeeInfo before, EmployeeInfo after, bool isNew,
+                                            List<string> beforePhones, List<string> afterPhones)
         {
-            var body = BuildChangeBody(before, after, isNew);
+            var body = BuildChangeBody(before, after, isNew, beforePhones, afterPhones);
             if (string.IsNullOrEmpty(body)) return; // nothing actually changed
 
             var subject = isNew
@@ -541,8 +594,27 @@ namespace tjc.Modules.EmployeeDB.Views
 
         /// <summary>Builds the plaintext email body listing changes between
         /// <paramref name="before"/> (null on Add) and <paramref name="after"/>.
-        /// Returns empty string when nothing changed (so the caller can skip the send).</summary>
-        private string BuildChangeBody(EmployeeInfo before, EmployeeInfo after, bool isNew)
+        ///
+        /// Only the fields HR has approved for the helpdesk are emitted —
+        /// First/Last Name, Job Title, Agency of Employment, County, Work
+        /// Email, Office Location, Supervisor, Department, Position,
+        /// Employment Type, Hire Date, Active, the three Access fields,
+        /// plus phones of the helpdesk-visible types (Work, Work Cell,
+        /// Judicial Office). Everything else (SSN, BirthDate, home Address,
+        /// Salary, leave balances, badge number, etc.) is intentionally
+        /// excluded so this email stays free of PII.
+        ///
+        /// Special-case rules:
+        ///   - Manatee Access (bool): on a new hire, emitted only when
+        ///     explicitly granted (true) — a default-false grant is noise.
+        ///     On update, emitted on any change.
+        ///   - Sarasota / DeSoto Access (strings): standard non-empty-on-new,
+        ///     changed-on-update rule via the Diff helper.
+        ///
+        /// Returns empty string when nothing actually changed (so the caller
+        /// can skip the send).</summary>
+        private string BuildChangeBody(EmployeeInfo before, EmployeeInfo after, bool isNew,
+                                       List<string> beforePhones, List<string> afterPhones)
         {
             var sb = new StringBuilder();
             sb.AppendLine(isNew ? "**** New Employee ****" : "**** Employee Updated: " + after.DisplayName + " ****");
@@ -554,8 +626,6 @@ namespace tjc.Modules.EmployeeDB.Views
             string locName(int? id) => id.HasValue ? _locationController.GetById(id.Value)?.Description : null;
             string countyName(int? id) => id.HasValue ? _countyController.GetById(id.Value)?.CountyName : null;
             string supervisorName(int? id) => id.HasValue ? _employeeController.GetEmployee(id.Value)?.DisplayName : null;
-            string jobGroupName(int? id) => id.HasValue ? _jobGroupController.GetById(id.Value)?.Description : null;
-            string classNameOf(int? id) => id.HasValue ? _jobClassController.GetById(id.Value)?.ClassName : null;
 
             int changes = 0;
             void Diff(string label, object oldValue, object newValue)
@@ -566,47 +636,155 @@ namespace tjc.Modules.EmployeeDB.Views
                 changes++;
             }
 
-            Diff("First Name", before?.FirstName, after.FirstName);
-            Diff("Last Name", before?.LastName, after.LastName);
-            Diff("Middle Initial", before?.MiddleInitial, after.MiddleInitial);
-            Diff("Job Title", before?.JobTitle, after.JobTitle);
-            Diff("SSN", before?.SocialSecurityNumber, after.SocialSecurityNumber);
-            Diff("Birth Date", FormatDate(before?.BirthDate), FormatDate(after.BirthDate));
-            Diff("Race", before?.Race, after.Race);
-            Diff("Gender", before?.Gender, after.Gender);
-            Diff("Agency of Employment", before?.AgencyOfEmployment, after.AgencyOfEmployment);
-            Diff("Address", before?.Address, after.Address);
-            Diff("City", before?.City, after.City);
-            Diff("State", before?.State, after.State);
-            Diff("Zip", before?.Zip, after.Zip);
-            Diff("County", countyName(before?.CountyId), countyName(after.CountyId));
-            Diff("Work Email", before?.Email, after.Email);
-            Diff("Personal Email", before?.PersonalEmail, after.PersonalEmail);
-            Diff("Office Location", locName(before?.OfficeLocationId), locName(after.OfficeLocationId));
-            Diff("Supervisor", supervisorName(before?.SupervisorId), supervisorName(after.SupervisorId));
-            Diff("Department", deptName(before?.DepartmentId), deptName(after.DepartmentId));
-            Diff("Job Category", jobGroupName(before?.JobGroupId), jobGroupName(after.JobGroupId));
-            Diff("Job Class", classNameOf(before?.ClassId), classNameOf(after.ClassId));
-            Diff("Position", before?.Position, after.Position);
-            Diff("Employment Type", before?.EmploymentType, after.EmploymentType);
-            Diff("Salary", before?.Salary, after.Salary);
-            Diff("Hire Date", FormatDate(before?.HireDate), FormatDate(after.HireDate));
-            Diff("Service Date", FormatDate(before?.ServiceDate), FormatDate(after.ServiceDate));
-            Diff("Termination Date", FormatDate(before?.TerminationDate), FormatDate(after.TerminationDate));
-            Diff("Annual Leave", before?.AnnualLeaveBalance, after.AnnualLeaveBalance);
-            Diff("Sick Leave", before?.SickLeaveBalance, after.SickLeaveBalance);
-            Diff("Badge Number", before?.BadgeNumber, after.BadgeNumber);
-            Diff("Active", before?.IsActive, after.IsActive);
-            Diff("Manatee Access", before?.ManateeAccess, after.ManateeAccess);
-            Diff("Sarasota Access", before?.SarasotaAccess, after.SarasotaAccess);
-            Diff("DeSoto Access", before?.DesotoAccess, after.DesotoAccess);
+            // HR-approved fields. Anything not on this list is PII (SSN,
+            // birth date, salary, home address, leave balances, etc.) and
+            // stays out of the helpdesk inbox.
+            Diff("First Name",           before?.FirstName,                          after.FirstName);
+            Diff("Last Name",            before?.LastName,                           after.LastName);
+            Diff("Job Title",            before?.JobTitle,                           after.JobTitle);
+            Diff("Agency of Employment", before?.AgencyOfEmployment,                 after.AgencyOfEmployment);
+            Diff("County",               countyName(before?.CountyId),               countyName(after.CountyId));
+            Diff("Work Email",           before?.Email,                              after.Email);
+            Diff("Office Location",      locName(before?.OfficeLocationId),          locName(after.OfficeLocationId));
+            Diff("Supervisor",           supervisorName(before?.SupervisorId),       supervisorName(after.SupervisorId));
+            Diff("Department",           deptName(before?.DepartmentId),             deptName(after.DepartmentId));
+            Diff("Position",             before?.Position,                           after.Position);
+            Diff("Employment Type",      before?.EmploymentType,                     after.EmploymentType);
+            Diff("Hire Date",            FormatDate(before?.HireDate),               FormatDate(after.HireDate));
+            Diff("Active",               before?.IsActive,                           after.IsActive);
 
-            if (changes == 0) return string.Empty;
+            // Manatee Access is a checkbox (nullable bool). For a brand-new
+            // hire we only emit it when explicitly granted (true) — emitting
+            // "Manatee Access: False" by default would be helpdesk noise.
+            // On update we emit on any change (true->false flips matter).
+            var manateeNew = after.ManateeAccess.GetValueOrDefault();
+            var manateeOld = before?.ManateeAccess.GetValueOrDefault() ?? false;
+            if (isNew)
+            {
+                if (manateeNew) { sb.AppendLine("Manatee Access: True"); changes++; }
+            }
+            else if (manateeNew != manateeOld)
+            {
+                sb.AppendLine("Manatee Access: " + manateeNew);
+                changes++;
+            }
+
+            // Sarasota / DeSoto Access are free-form strings (card #s,
+            // notes); standard Diff handles "non-blank for new, changed for
+            // update" exactly as the user requested.
+            Diff("Sarasota Access", before?.SarasotaAccess, after.SarasotaAccess);
+            Diff("DeSoto Access",   before?.DesotoAccess,   after.DesotoAccess);
+
+            // Phones (Work / Work Cell / Judicial Office only). For a new
+            // hire this is the full list; for an update it's a +/-/Δ diff
+            // against the snapshot captured at page load.
+            var phoneLines = BuildPhoneSection(beforePhones ?? new List<string>(),
+                                               afterPhones  ?? new List<string>(),
+                                               isNew);
+            if (phoneLines.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine(isNew ? "Phones:" : "Phone changes:");
+                foreach (var line in phoneLines) sb.AppendLine("  " + line);
+            }
+
+            // No scalar field changed AND no phone changed -> skip the email.
+            if (changes == 0 && phoneLines.Count == 0) return string.Empty;
 
             sb.AppendLine();
             sb.AppendLine("---");
             sb.AppendLine("Saved by: " + (UserInfo?.DisplayName ?? "(unknown)") + " (UserId " + UserId + ")");
             return sb.ToString();
+        }
+
+        // ---------- Phone snapshot / diff helpers ----------------------------
+
+        /// <summary>Returns a serializable snapshot of the helpdesk-visible
+        /// phones for the given employee. Each entry is encoded as
+        /// "PhoneId|PhoneType|PhoneNumber|Extension" so it survives ViewState
+        /// round-trips. Returns an empty list for new (unsaved) employees.</summary>
+        private List<string> SnapshotHelpdeskPhones(int employeeId)
+        {
+            if (employeeId <= 0) return new List<string>();
+            return _phoneController.GetForEmployee(employeeId)
+                .Where(p => HelpdeskPhoneTypes.Contains(p.PhoneType ?? string.Empty))
+                .OrderBy(p => p.PhoneId)
+                .Select(EncodePhone)
+                .ToList();
+        }
+
+        private static string EncodePhone(PhoneInfo p) =>
+            string.Join("|", new[] {
+                p.PhoneId.ToString(),
+                p.PhoneType  ?? string.Empty,
+                p.PhoneNumber ?? string.Empty,
+                p.Extension  ?? string.Empty,
+            });
+
+        /// <summary>For a new hire, returns each current phone as a plain
+        /// list entry. For an update, returns a +/-/Δ diff keyed by PhoneId:
+        ///   + Type: number ext (added)
+        ///   - Type: number ext (removed)
+        ///   Δ Type: oldNumber -> newNumber (modified)
+        /// </summary>
+        private static List<string> BuildPhoneSection(
+            List<string> beforePhones, List<string> afterPhones, bool isNew)
+        {
+            if (isNew)
+            {
+                return afterPhones.Select(FormatPhone).ToList();
+            }
+
+            var beforeById = ToById(beforePhones);
+            var afterById  = ToById(afterPhones);
+            var lines = new List<string>();
+
+            // Added: in after but not before.
+            foreach (var kv in afterById)
+                if (!beforeById.ContainsKey(kv.Key))
+                    lines.Add("+ " + FormatPhone(kv.Value));
+
+            // Removed: in before but not after.
+            foreach (var kv in beforeById)
+                if (!afterById.ContainsKey(kv.Key))
+                    lines.Add("- " + FormatPhone(kv.Value));
+
+            // Modified: same PhoneId, different encoded value.
+            foreach (var kv in afterById)
+                if (beforeById.TryGetValue(kv.Key, out var oldEncoded)
+                    && !string.Equals(oldEncoded, kv.Value, StringComparison.Ordinal))
+                {
+                    lines.Add("Δ " + FormatPhone(oldEncoded) + " -> " + FormatPhone(kv.Value));
+                }
+
+            return lines;
+        }
+
+        private static Dictionary<long, string> ToById(List<string> encoded)
+        {
+            var d = new Dictionary<long, string>();
+            foreach (var s in encoded)
+            {
+                var pipe = s.IndexOf('|');
+                if (pipe <= 0) continue;
+                if (long.TryParse(s.Substring(0, pipe), out var id)) d[id] = s;
+            }
+            return d;
+        }
+
+        /// <summary>Renders "Type: number" or "Type: number ext NNN" from the
+        /// pipe-encoded form stored in ViewState.</summary>
+        private static string FormatPhone(string encoded)
+        {
+            // "PhoneId|Type|Number|Extension"
+            var parts = encoded.Split('|');
+            if (parts.Length < 4) return encoded;
+            var type = parts[1];
+            var num  = parts[2];
+            var ext  = parts[3];
+            return string.IsNullOrWhiteSpace(ext)
+                ? type + ": " + num
+                : type + ": " + num + " ext " + ext;
         }
 
         private static string FormatDate(DateTime? d)

@@ -290,8 +290,12 @@
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap5-toggle.jquery.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <script type="text/javascript">
     var moduleId = <%=this.ModuleId%>;
     var jaRole = '<%=this.JaRole%>';
@@ -536,15 +540,11 @@
                 prompt = 'Are you sure you wish to Include selected Log Item(s)?';
                 title = 'Include Selected Log Item(s)'
             }
-            $.dnnConfirm({
-                text: prompt,
-                yesText: 'Yes',
-                noText: 'No',
-                title: title,
-                callbackTrue: function () {
-                    ExcludeHearings();
-                }
-            });
+            Swal.fire({
+                title: title, text: prompt, icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) { if (r.isConfirmed) ExcludeHearings(); });
         });
         $(".dt-length").prepend($('#btnAdd'));
         $(".dt-length").parent().siblings('div').first().prepend($('#statusOptionContainer'));
@@ -814,11 +814,7 @@
     }
     function ShowAlert(title, text) {
         $('#process-overlay').hide();
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
     function CompareDates() {
         var tempStartDate = $("#txtStartDate").val();

@@ -32,6 +32,12 @@ namespace tjc.Modules.Reports
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkDataCard;
 
+        /// <summary>Employee Reports menu links.</summary>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDropParticipants;
+        protected global::System.Web.UI.WebControls.HyperLink lnkJaSeniority;
+        protected global::System.Web.UI.WebControls.HyperLink lnkStaffAttorneySeniority;
+        protected global::System.Web.UI.WebControls.HyperLink lnkCertifiedInterpreter;
+
         /// <summary>
         /// pnlBirthdays control.
         /// </summary>

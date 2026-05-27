@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Holidays.ascx.cs" Inherits="tjc.Modules.JudgeVacation.Holidays" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <div class="form-container">
     <div class="row g-3" id="vacation-form">
@@ -37,7 +43,7 @@
                     <td><%# Eval("HolidayDate", "{0: MM/dd/yyyy}") %></td>
                     <td><%# Eval("Description") %></td>
                     <td class="command-item">
-                        <asp:LinkButton ToolTip="Delete Holiday" runat="server" CommandArgument='<%# Eval("HolidayID") %>' CommandName="delete" OnClientClick="return confirm('Are you sure you wish to delete this record?');"><i class="fa fa-trash" aria-hidden="true" title="Delete Holiday"></i></asp:LinkButton></td>
+                        <asp:LinkButton CssClass="text-danger" ToolTip="Delete Holiday" runat="server" CommandArgument='<%# Eval("HolidayID") %>' CommandName="delete" OnClientClick="return Jud12ConfirmPostback(this, 'Are you sure you wish to delete this record?', 'Delete?');"><i class="fas fa-trash" aria-hidden="true" title="Delete Holiday"></i></asp:LinkButton></td>
                 </tr>
             </ItemTemplate>
             <FooterTemplate>
@@ -50,4 +56,30 @@
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <script type="text/javascript">
     $(".date-picker").datepicker();
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
+        });
+        return false;
+    }
 </script>

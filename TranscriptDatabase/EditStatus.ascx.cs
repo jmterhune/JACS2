@@ -158,7 +158,8 @@ namespace tjc.Modules.TranscriptDatabase
             }
             else
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Unable to retrieve the Designation information", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Unable to retrieve the Designation information") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
             }
         }
         private void ClearEventForm()
@@ -585,7 +586,8 @@ namespace tjc.Modules.TranscriptDatabase
                 }
                 else
                 {
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "No File was selected or an error occurred uploading the file.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("No File was selected or an error occurred uploading the file.") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                     return;
                 }
                 ClearUploadForm();

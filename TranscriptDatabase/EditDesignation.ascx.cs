@@ -192,7 +192,8 @@ namespace tjc.Modules.TranscriptDatabase
             if (isDueDate && designation.DueDate.HasValue)
                 if (designation.DueDate.Value != newDueDate)
                     UpdateDueDate(designation);
-            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Update successful", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess);
+            System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("Update successful") + "', type: 'success', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
         }
         protected void cmdDelete_Click(object sender, EventArgs e)
         {

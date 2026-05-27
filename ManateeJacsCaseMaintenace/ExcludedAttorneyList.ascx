@@ -1,4 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ExcludedAttorneyList.ascx.cs" Inherits="tjc.Modules.JacsCaseMaint.ExcludedAttorneyList" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div class="alert alert-info"><i class="fa fa-info-circle"></i>&nbsp;The list below displays the barnumbers that have been excluded from the Florida Bar Import routine.</div>
 
 <button class="btn btn-primary" data-toggle="modal" data-target="#formModal">Add Attorney to Exclude </button>
@@ -27,7 +34,7 @@
             <td><%#Eval("EMAIL") %></td>
             <td><%#Eval("ACTIVE") %></td>
             <td class="command-icon-container">
-                <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDelete" ToolTip="Delete Record" CssClass="command-icon" OnClientClick="return confirm('Delete Bar Number?');" CommandArgument='<%#Eval("RecordId") %>' CommandName="delete"><i class="fa fa-trash"></i></asp:LinkButton>
+                <asp:LinkButton runat="server" CausesValidation="false" ID="cmdDelete" ToolTip="Delete Record" CssClass="command-icon text-danger" OnClientClick="return Jud12ConfirmPostback(this, 'Delete Bar Number?', 'Delete?');" CommandArgument='<%#Eval("RecordId") %>' CommandName="delete"><i class="fas fa-trash"></i></asp:LinkButton>
             </td>
         </tr>
     </ItemTemplate>
@@ -60,4 +67,32 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
+        });
+        return false;
+    }
+</script>
 

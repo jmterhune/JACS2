@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StampOrder.ascx.cs" Inherits="tjc.Modules.Purchasing.StampOrder" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <asp:HyperLink ID="lnkAdmin" Visible="false" Text="<i class='fas fa-list-alt'></i> Manage Orders" CssClass="btn btn-danger btn-large mb-4" runat="server" />
 <div class="stamp-form-container purchasing">
     <asp:Literal runat="server" ID="ltTopMessages">
@@ -188,9 +194,19 @@
         $("#stamp-form").on("change", "#uplAttachments", function (e) {
             check_extension($(this).val());
         });
-        $('.confirm').dnnConfirm({
-            text: 'Are you Sure you wish to delete this record?',
-            title: 'Delete Record?'
+        $('.confirm').not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Delete Record?', text: 'Are you Sure you wish to delete this record?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
         $('#drpAlignment').change(function () {
             UpdateSampleStyle();
@@ -318,11 +334,11 @@
                 } else {
                     $("#hdAttachmentIds").val(fileIdList + "," + fileId);
                 }
-                $("#attachmentList").append("<li data-fileId='" + fileId + "'><span>" + filename + "</span>&nbsp;<a class='float-end' onclick=\"DeleteAttachment('" + fileId + "')\"><em class='fa fa-trash'></em></></li>");
+                $("#attachmentList").append("<li data-fileId='" + fileId + "'><span>" + filename + "</span>&nbsp;<a class='float-end text-danger' onclick=\"DeleteAttachment('" + fileId + "')\"><i class='fas fa-trash'></i></a></li>");
                 WriteAttachmentMessage(filename);
             };
             options.error = function (err) {
-                alert(err.statusText);
+                new Noty({ text: err.statusText, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
                 setTimeout(function () {
                     $("#attach-overlay").hide();
                     $("#attachmentInfo").html('');
@@ -373,7 +389,7 @@
             });
             $("#hdAttachmentIds").val(fileList);
         };
-        options.error = function (err) { alert(err.statusText); };
+        options.error = function (err) { new Noty({ text: err.statusText, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show(); };
         $.ajax(options);
         return false;
     }

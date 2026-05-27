@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditFamily.ascx.cs" Inherits="tjc.Modules.MediationStatistics.EditFamily" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <asp:Literal ID="ltHeading" runat="server"><h4>{0}:&nbsp{1}</h4></asp:Literal>
 <div id="family-form">
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Case Toolbar">
@@ -992,7 +998,7 @@
             pageLength: pageSizeMed,
         });
         $.fn.dataTable.ext.errMode = () => function (settings, helpPage, message) {
-            alert("The Following Error Occurred Loading Attorney List:" + message);
+            Swal.fire({ title: 'Error', text: 'The Following Error Occurred Loading Attorney List:' + message, icon: 'error', confirmButtonText: 'OK' });
         };
         $(document).on('show.bs.modal', '.modal', function (event) {
             var zIndex = 1040 + (10 * $('.modal:visible').length);
@@ -1091,27 +1097,43 @@
         $(".confirm-delete-event").on("click", function (e) {
             var item = $(this);
             e.preventDefault();
-            $.dnnConfirm({
-                text: 'Are you sure you wish to delete this Event?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Event?',
-                callbackTrue: function () {
-                    location.href = item[0].href;
+            Swal.fire({
+                title: 'Delete Event?', text: 'Are you sure you wish to delete this Event?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) { if (r.isConfirmed) { location.href = item[0].href; } });
+        });
+        $(".confirm-delete-session").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            Swal.fire({
+                title: 'Delete Session?', text: 'Are you sure you wish to delete this Session?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var href = $btn[0].href || '';
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    else if (href) location.href = href;
                 }
             });
         });
-        $(".confirm-delete-session").dnnConfirm({
-            text: 'Are you sure you wish to delete this Session?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Session?',
-        });
-        $(".confirm-delete-case").dnnConfirm({
-            text: 'Are you sure you wish to delete this Case?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Case?',
+        $(".confirm-delete-case").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            Swal.fire({
+                title: 'Delete Case?', text: 'Are you sure you wish to delete this Case?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var href = $btn[0].href || '';
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    else if (href) location.href = href;
+                }
+            });
         });
         //Event events
         $("#cmdAddNewEvent").on("click", function (e) {
@@ -1198,11 +1220,11 @@
                 },
                 error: function (xhr, status, error) {
                     // alert(xhr.responseText);
-                    alert("Unable to add attorney.\n\nMake sure you are logged in and try again. \n\nError:" + error);
+                    Swal.fire({ title: 'Error', text: 'Unable to add attorney.\n\nMake sure you are logged in and try again. \n\nError:' + error, icon: 'error', confirmButtonText: 'OK' });
                 }
             });
         } catch (e) {
-            alert("Unable to add attorney.\n\nMake sure you are logged in and try again.");
+            Swal.fire({ title: 'Error', text: 'Unable to add attorney.\n\nMake sure you are logged in and try again.', icon: 'error', confirmButtonText: 'OK' });
         }
         return false;
     }
@@ -1234,15 +1256,11 @@
         $("#txtZip").val("");
     }
     function ValidateAttorneyRemoval(attyRole) {
-        $.dnnConfirm({
-            text: 'Are you sure you wish to remove this Attorney?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Remove Attorney?',
-            callbackTrue: function () {
-                ClearAttorney(attyRole);
-            }
-        });
+        Swal.fire({
+            title: 'Remove Attorney?', text: 'Are you sure you wish to remove this Attorney?', icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) { if (r.isConfirmed) ClearAttorney(attyRole); });
     }
     //* Mediator Functions*/
     function SetMediator(e, item) {
@@ -1291,11 +1309,11 @@
                 },
                 error: function (xhr, status, error) {
                     // alert(xhr.responseText);
-                    alert("Unable to add mediator.\n\nMake sure you are logged in and try again.");
+                    Swal.fire({ title: 'Error', text: 'Unable to add mediator.\n\nMake sure you are logged in and try again.', icon: 'error', confirmButtonText: 'OK' });
                 }
             });
         } catch (e) {
-            alert("Unable to add mediator.\n\nMake sure you are logged in and try again.");
+            Swal.fire({ title: 'Error', text: 'Unable to add mediator.\n\nMake sure you are logged in and try again.', icon: 'error', confirmButtonText: 'OK' });
         }
         return false;
     }
@@ -1311,15 +1329,11 @@
     }
     function ValidateMediatorRemoval(e) {
         e.preventDefault();
-        $.dnnConfirm({
-            text: 'Are you sure you wish to remove this Mediator?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Remove Mediator?',
-            callbackTrue: function () {
-                ClearMediator();
-            }
-        });
+        Swal.fire({
+            title: 'Remove Mediator?', text: 'Are you sure you wish to remove this Mediator?', icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) { if (r.isConfirmed) ClearMediator(); });
     }
     function CloseMediatorModal(e) {
         e.preventDefault();

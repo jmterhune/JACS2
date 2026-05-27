@@ -129,7 +129,8 @@ namespace tjc.Modules.AudioRequest
             }
 
             errors += "</ul></div>";
-            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, errors, DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+            System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + System.Guid.NewGuid().ToString("N"),
+                "Swal.fire({ title: 'Error', html: '" + System.Web.HttpUtility.JavaScriptStringEncode(errors) + "', icon: 'error', confirmButtonText: 'OK' });", true);
         }
 
         private void AddRecord()
@@ -183,7 +184,8 @@ namespace tjc.Modules.AudioRequest
             catch (Exception exc)
             {
                 string errors = "<p><em>Sorry... There was an Error Adding the Audio Request Record.  Please try again.</em><p>If Errors persist please contact <a href=\"mailto:courtweb@jud12.flcourts.org\" title=\"support\">support</a></p>";
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, errors, DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + System.Guid.NewGuid().ToString("N"),
+                    "Swal.fire({ title: 'Error', html: '" + System.Web.HttpUtility.JavaScriptStringEncode(errors) + "', icon: 'error', confirmButtonText: 'OK' });", true);
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }

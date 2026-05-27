@@ -217,7 +217,8 @@ namespace tjc.Modules.MediationStatistics
                             rptConpendium.DataBind();
                         }
                         else
-                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "You must select a start and end date", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                            ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                                "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You must select a start and end date") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                         break;
                     }
 
@@ -231,7 +232,8 @@ namespace tjc.Modules.MediationStatistics
                             rptFeesOwed.DataBind();
                         }
                         else
-                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "You must select a start and end date", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                            ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                                "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You must select a start and end date") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                         break;
                     }
 

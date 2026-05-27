@@ -128,7 +128,8 @@ namespace tjc.Modules.AudioRequest
                 errors += "<li>" + valPickup.ErrorMessage + "</li>";
             }
             errors += "</ul></div>";
-            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, errors, DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+            System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + System.Guid.NewGuid().ToString("N"),
+                "Swal.fire({ title: 'Error', html: '" + System.Web.HttpUtility.JavaScriptStringEncode(errors) + "', icon: 'error', confirmButtonText: 'OK' });", true);
         }
 
         private ProceedingInfo AddRecord()

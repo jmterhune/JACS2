@@ -375,6 +375,42 @@ namespace tjc.Modules.EmployeeDB.Views
         protected global::System.Web.UI.WebControls.TextBox txtSickLeave;
 
         /// <summary>
+        /// txtDropEntryDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDropEntryDate;
+
+        /// <summary>
+        /// txtDropExitDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDropExitDate;
+
+        /// <summary>
+        /// txtDropLeavePayout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDropLeavePayout;
+
+        /// <summary>
+        /// txtCertificationDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCertificationDate;
+
+        /// <summary>
         /// chkManateeAccess control.
         /// </summary>
         /// <remarks>

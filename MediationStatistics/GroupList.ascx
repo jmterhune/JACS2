@@ -61,14 +61,14 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupId").ToString() %>'><i class="fa fa-pencil" title="Edit Case Type Group"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupId").ToString() %>'><i class="fas fa-edit" title="Edit Case Type Group"></i></asp:LinkButton>
                                 </td>
                                 <td class="command-item">
                                     <asp:HyperLink ID="lnkRelation" runat="server" NavigateUrl='<%#EditUrl("gid",DataBinder.Eval(Container.DataItem,"GroupId").ToString(),"GroupRelation") %>'><i class="fa fa-list ms-2" title="Set Case Type Group Associations"></i></asp:HyperLink>
                                 <td><%#Eval("Description")%></td>
                                 <td><%#DataBinder.Eval(Container.DataItem,"CourtOrdered").ToString()=="True"?"<i class=\"fas fa-check-square\"></i>":"<i class=\"fas fa-square\"></i>" %></td>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"GroupId").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -137,11 +137,19 @@
         });
         $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditGroupModal"><i class="fa fa-plus"></i>&nbsp;Add Case Type Group</button>');
         table.on('draw', function () {
-            $(".confirm").dnnConfirm({
-                text: 'Are you sure you wish to Delete the selected Case Type Group?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Case Type Group?'
+            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+                e.preventDefault();
+                var href = this.href || '';
+                Swal.fire({
+                    title: 'Delete Case Type Group?', text: 'Are you sure you wish to Delete the selected Case Type Group?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) {
+                    if (r.isConfirmed) {
+                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    }
+                });
             });
         });
         table.draw();

@@ -271,10 +271,13 @@
                         <label for="<%=drpEmploymentType.ClientID %>">Employment Type</label>
                         <asp:DropDownList ID="drpEmploymentType" runat="server" CssClass="form-control">
                             <asp:ListItem Text="" Value="" />
-                            <asp:ListItem Text="Full Time" Value="Full Time" />
-                            <asp:ListItem Text="Part Time" Value="Part Time" />
-                            <asp:ListItem Text="Temporary" Value="Temporary" />
+                            <asp:ListItem Text="Full-Time" Value="Full-Time" />
+                            <asp:ListItem Text="Part-Time" Value="Part-Time" />
+                            <asp:ListItem Text="OPS" Value="OPS" />
+                            <asp:ListItem Text="Intern" Value="Intern" />
                             <asp:ListItem Text="Contract" Value="Contract" />
+                            <asp:ListItem Text="Non-Employee" Value="Non-Employee" />
+                            <asp:ListItem Text="Other" Value="Other" />
                         </asp:DropDownList>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
@@ -300,6 +303,32 @@
 
 
 
+            </fieldset>
+            <fieldset class="mt-3">
+                <%-- DROP (Deferred Retirement Option Program) + Certified
+                     Interpreter dates. All four fields are optional — most
+                     employees have none of them. Feeds the new Employee
+                     Reports module's DROP Participants and Certified
+                     Interpreter Seniority reports. --%>
+                <legend class="h5">DROP / Certification</legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="<%=txtDropEntryDate.ClientID %>">DROP Entry Date</label>
+                        <asp:TextBox ID="txtDropEntryDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="<%=txtDropExitDate.ClientID %>">DROP Exit Date</label>
+                        <asp:TextBox ID="txtDropExitDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="<%=txtDropLeavePayout.ClientID %>">Leave Payout (hrs at DROP entry)</label>
+                        <asp:TextBox ID="txtDropLeavePayout" runat="server" CssClass="form-control" />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="<%=txtCertificationDate.ClientID %>">Certification Date</label>
+                        <asp:TextBox ID="txtCertificationDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
+                    </div>
+                </div>
             </fieldset>
             <fieldset class="mt-3">
                 <legend class="h5">Access Cards</legend>
@@ -370,11 +399,11 @@
                 <thead>
                     <tr>
                         <th class="command-item"></th>
+                        <th>Entry Type</th>
+                        <th>Description</th>
+                        <th>Internal/External</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th>Description</th>
-                        <th>Entry Type</th>
-                        <th>Internal</th>
                         <th class="command-item"></th>
                     </tr>
                 </thead>

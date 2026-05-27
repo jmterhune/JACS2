@@ -129,7 +129,8 @@ namespace tjc.Modules.FamilySelfHelp
             {
                 pnlDetails.Visible = false;
                 fsDetails.Visible = false;
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "The Name entered does not exist.  Click the New Client Button to create a new record for this Client.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
+                System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                    "Swal.fire({ title: 'Warning', html: '" + System.Web.HttpUtility.JavaScriptStringEncode("The Name entered does not exist.  Click the New Client Button to create a new record for this Client.") + "', icon: 'warning', confirmButtonText: 'OK' });", true);
                 cmdNewClient.Visible = true;
             }
         }

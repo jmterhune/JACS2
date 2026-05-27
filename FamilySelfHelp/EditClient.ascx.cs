@@ -83,7 +83,8 @@ namespace tjc.Modules.FamilySelfHelp
                         }
                         else
                         {
-                            DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Unable to Load Client Information. Please contact HelpDesk for support.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
+                            ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                                "Swal.fire({ title: 'Warning', html: '" + System.Web.HttpUtility.JavaScriptStringEncode("Unable to Load Client Information. Please contact HelpDesk for support.") + "', icon: 'warning', confirmButtonText: 'OK' });", true);
                         }
                     }
                 }

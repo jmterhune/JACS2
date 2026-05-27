@@ -50,12 +50,12 @@
                         <ItemTemplate>
                             <tr>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"TemplateId").ToString() %>'><i class="fa fa-pencil"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"TemplateId").ToString() %>'><i class="fas fa-edit"></i></asp:LinkButton>
                                 <td><%#Eval("TemplateID")%></td>
                                 <td><%#Eval("TemplateName")%></td>
                                 <td><%#Eval("TypesRequired")%></td>
                                 <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"TemplateId").ToString() %>'><i class="fa fa-trash"></i></asp:LinkButton>
+                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"TemplateId").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
                                 </td>
                             </tr>
                         </ItemTemplate>
@@ -113,7 +113,7 @@
                                                 <td><%#Eval("TypeNames")%></td>
                                                 <td><%#Eval("NumberRequired")%></td>
                                                 <td class="command-item">
-                                                    <a class="deleteRow" data-index="<%#Container.ItemIndex %>" tabindex="0" role="button" aria-pressed="false"><i class="fa fa-trash"></i></a>
+                                                    <a class="deleteRow text-danger" data-index="<%#Container.ItemIndex %>" tabindex="0" role="button" aria-pressed="false"><i class="fas fa-trash"></i></a>
                                                 </td>
                                             </tr>
                                         </ItemTemplate>
@@ -142,6 +142,12 @@
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <script type="text/javascript">
     let templateRequirements = [];
@@ -170,11 +176,23 @@
         });
         $("#.dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditTemplateModal"><i class="fa fa-plus"></i>&nbsp;Add Template</button>');
         table.on('draw', function () {
-            $(".confirm").dnnConfirm({
-                text: 'Are you sure you wish to Delete the selected Template?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Delete Template?'
+            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+                e.preventDefault();
+                var href = this.href || '';
+                Swal.fire({
+                    title: 'Delete Template?',
+                    text: 'Are you sure you wish to Delete the selected Template?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) {
+                    if (r.isConfirmed) {
+                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                    }
+                });
             });
         });
         table.draw();
@@ -268,7 +286,7 @@
                     <td>${index + 1}</td>
                     <td>${obj.types.map(type => type.typeName).join(';')}</td>
                     <td>${obj.numberRequired}</td>
-                    <td><a class="deleteRow" data-index="${index}" tabindex="0" role="button" aria-pressed="false"><i class="fa fa-trash"></i></a></td>
+                    <td><a class="deleteRow text-danger" data-index="${index}" tabindex="0" role="button" aria-pressed="false"><i class="fas fa-trash"></i></a></td>
                 </tr>`;
             tableBody.append(row);
         });

@@ -51,6 +51,14 @@ namespace tjc.Modules.EmployeeDB.Components.Models
         public DateTime LastModifiedDate { get; set; }
         public int LastModifiedById { get; set; }
 
+        // Added in EmployeeDB 0.0.3 to support the HR reports that used to
+        // live in Documentation\DROP Participants.xlsx and
+        // Documentation\JA seniority.xlsx → Certified Interpreters sheet.
+        public DateTime? DropEntryDate { get; set; }
+        public DateTime? DropExitDate { get; set; }
+        public decimal? DropLeavePayout { get; set; }
+        public DateTime? CertificationDate { get; set; }
+
         [IgnoreColumn]
         public string DisplayName
         {

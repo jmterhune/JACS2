@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ViewForm.ascx.cs" Inherits="tjc.Modules.Purchasing.ViewForm" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div id="form-container" class="purchasing">
     <div class="row">
         <div class="col-4">
@@ -46,7 +52,7 @@
                 <td class="text-center">
                     <asp:LinkButton runat="server" ID="cmdComplete" CommandName="toggle" CommandArgument='<%#Eval("OrderID") %>'><%#"<i title='Click to set complete or incomplete status!' class='text-danger fa fa-"  + (Eval("CompletedDate")==null ? "square": "check-square") + "'><i/>"  %></asp:LinkButton></td>
                 <td class="command-icon">
-                    <asp:LinkButton runat="server" ID="cmdDelted" CssClass="confirm " CommandName="delete" CommandArgument='<%#Eval("OrderID") %>'><i title="Click to Delete this Order" class="fa fa-trash"></i></asp:LinkButton></td>
+                    <asp:LinkButton runat="server" ID="cmdDelted" CssClass="text-danger confirm " CommandName="delete" CommandArgument='<%#Eval("OrderID") %>'><i title="Click to Delete this Order" class="fas fa-trash"></i></asp:LinkButton></td>
                 </td>
             </tr>
             <asp:Literal ID="ltFormItems" runat="server" />
@@ -63,9 +69,19 @@
 
 <script type="text/javascript">
     jQuery(function ($) {
-        $('#form-orders .confirm').dnnConfirm({
-            text: 'Are you Sure you wish to delete this record?',
-            title: 'Delete Record?'
+        $('#form-orders .confirm').not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Delete Record?', text: 'Are you Sure you wish to delete this record?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
         $(".datepicker").datepicker();
 

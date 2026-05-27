@@ -82,7 +82,8 @@ namespace tjc.Modules.Purchasing
                     }
                     else
                     {
-                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Unable to Retrieve Record. Please contact the <a href='mailto:helpdesk@jud12.flcourts.org'>help desk</a>.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                        System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                            "Swal.fire({ title: 'Error', html: '" + System.Web.HttpUtility.JavaScriptStringEncode("Unable to Retrieve Record. Please contact the <a href='mailto:helpdesk@jud12.flcourts.org'>help desk</a>.") + "', icon: 'error', confirmButtonText: 'OK' });", true);
                     }
                 }
             }

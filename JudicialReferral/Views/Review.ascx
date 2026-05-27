@@ -1,5 +1,11 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Review.ascx.cs" Inherits="tjc.Modules.JudicialReferral.Views.Review" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <div class="container-fluid form-wide">
     <asp:Panel ID="pnlJA" runat="server">
@@ -278,18 +284,16 @@
 
             // Confirm dialog when Judge seeks Court Counsel assistance on motions
             // typically handled by the presiding judge.
-            if ($.fn.dnnConfirm) {
-                $("#confirm").dnnConfirm({
-                    text: "<p>These motions are typically handled by the presiding judge.</p><p>Are you sure you want to seek Court Counsel's assistance?</p>",
-                    title: "Confirm Court Counsel Assistance",
-                    yesText: 'Yes',
-                    noText: 'No',
-                    isButton: true,
-                    callbackFalse: function () {
-                        CheckNo(true);
-                    }
-                });
-            }
+            $("#confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Confirm Court Counsel Assistance',
+                    html: "<p>These motions are typically handled by the presiding judge.</p><p>Are you sure you want to seek Court Counsel's assistance?</p>",
+                    icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (!r.isConfirmed) { CheckNo(true); } });
+            });
             function CheckNo(checked) {
                 if (checked) {
                     $('.motion-list').find('input:checkbox').prop('checked', false);

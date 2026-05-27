@@ -593,13 +593,15 @@
         savedUpdated: "Position updated.",
         deletedText: "Position deleted.",
         rowHtml: function (p) {
+            // Column order is kept in sync with EditEmployee.ascx's <thead>:
+            //   [edit] Entry Type | Description | Internal/External | Start Date | End Date [delete]
             return '<tr data-id="' + p.PositionId + '">' +
                 '<td class="command-icon"><a href="#" class="text-primary empdb-position-edit" title="Edit"><i class="fas fa-edit"></i></a></td>' +
+                '<td>' + esc(entryTypeLabels[p.EntryType] || p.EntryType || "") + '</td>' +
+                '<td>' + esc(p.Description) + '</td>' +
+                '<td>' + (p.IsInternal ? "Internal" : "External") + '</td>' +
                 '<td>' + fmtDate(p.StartDate) + '</td>' +
                 '<td>' + fmtDate(p.EndDate) + '</td>' +
-                '<td>' + esc(p.Description) + '</td>' +
-                '<td>' + esc(entryTypeLabels[p.EntryType] || p.EntryType || "") + '</td>' +
-                '<td>' + (p.IsInternal ? "Internal" : "External") + '</td>' +
                 '<td class="command-icon"><a href="#" class="text-danger empdb-position-delete" title="Delete"><i class="fas fa-trash"></i></a></td>' +
             '</tr>';
         },
@@ -997,11 +999,23 @@
             if (!$drop.length) return;
 
             // Click drop zone -> open file picker.
-            $drop.on("click", function () { $file.trigger("click"); });
+            //
+            // The <input type="file"> lives INSIDE $drop, so any click we
+            // synthesize on $file bubbles back up to $drop. Without the
+            // e.target === $file[0] guard, $drop's click handler re-fires
+            // for every bubbled click, producing infinite recursion
+            // ("Maximum call stack size exceeded"). Native .click() on the
+            // raw DOM element also avoids jQuery's event-trigger pipeline
+            // and is what reliably pops the OS file dialog.
+            $drop.on("click", function (e) {
+                if (e.target === $file[0]) return; // ignore the synthetic click bubble
+                e.preventDefault();
+                $file[0].click();
+            });
             $drop.on("keydown", function (e) {
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    $file.trigger("click");
+                    $file[0].click();
                 }
             });
             $file.on("change", function () {

@@ -1,1 +1,34 @@
 .form-control{min-width:8rem !important;}
+
+/* Color-coded status legend + matching row-tint styles used by the
+   seniority reports (currently Trial Court Staff Attorney; can be
+   shared by JA / Interpreter reports later by adding their .row-* rules).
+   The four status buckets:
+     completed    — fully matured (e.g. reached the senior-promo milestone)
+     eligible     — within an active incentive window
+     not-eligible — hasn't reached the first milestone yet
+     terminated   — IsActive = false (regardless of years of service)         */
+.empdb-status-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 0.75rem 0;
+    font-size: 0.875rem;
+}
+.empdb-status-legend .legend-item {
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.empdb-status-legend .legend-completed    { background-color: #d4edda; }
+.empdb-status-legend .legend-eligible     { background-color: #fff3cd; }
+.empdb-status-legend .legend-not-eligible { background-color: #f6f8fa; }
+.empdb-status-legend .legend-terminated   { background-color: #f8d7da; color: #842029; }
+
+/* Row tints. !important is needed because .table-striped's nth-child
+   alternation otherwise wins over our row-specific class. The colors
+   match the legend swatches so the visual association is obvious. */
+table.table tr.row-completed    > td { background-color: #d4edda !important; }
+table.table tr.row-eligible     > td { background-color: #fff3cd !important; }
+table.table tr.row-not-eligible > td { background-color: #f6f8fa !important; }
+table.table tr.row-terminated   > td { background-color: #f8d7da !important; color: #842029; }

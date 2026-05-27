@@ -218,6 +218,12 @@
     </div>
 </div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <script type="text/javascript">
     (function ($, Sys) {
@@ -243,11 +249,7 @@
         $(".date-picker").datepicker();
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
     function ValidateEmailBody(source, arguments) {
 

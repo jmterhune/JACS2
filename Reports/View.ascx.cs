@@ -48,6 +48,11 @@ namespace tjc.Modules.Reports
             try
             {
                 lnkDataCard.NavigateUrl = EditUrl("DataCard");
+                // Employee Reports — see Reports.dnn for controlKey registration.
+                lnkDropParticipants.NavigateUrl       = EditUrl("DropParticipants");
+                lnkJaSeniority.NavigateUrl            = EditUrl("JaSeniority");
+                lnkStaffAttorneySeniority.NavigateUrl = EditUrl("StaffAttorneySeniority");
+                lnkCertifiedInterpreter.NavigateUrl   = EditUrl("CertifiedInterpreter");
                 if (ReportId > 0)
                 {
                     pnlReportList.Visible = false;
@@ -61,6 +66,11 @@ namespace tjc.Modules.Reports
                         pnlBirthdays.Visible = true;
                         hdTitle.Value = "Birthday Report";
                         myPage.Title = "Birthday Report";
+                        // Populate counties on first load only — on postback
+                        // the ListItems round-trip via ViewState and rebinding
+                        // would clobber the user's selection before
+                        // cmdSubmitBirthReport_Click reads SelectedValue.
+                        if (!IsPostBack) BindCounties();
                     }
                     else if (ReportId == 2)
                     {
@@ -89,25 +99,44 @@ namespace tjc.Modules.Reports
 
         protected void cmdSubmitBirthReport_Click(object sender, EventArgs e)
         {
+            // SelectedValue is now a CountyId int ("0" for All Counties, real
+            // CountyId for a specific county). int.TryParse is defensive — a
+            // stale ViewState entry from an older deploy might still carry
+            // a county-name string; we silently treat that as "all".
+            int countyId;
+            if (!int.TryParse(drpCounty.SelectedValue, out countyId)) countyId = 0;
 
-            string county = drpCounty.SelectedValue;
-            string countyTitle = "";
             int month = Convert.ToInt32(drpBirthMonth.SelectedValue);
+            var countyText = drpCounty.SelectedItem != null ? drpCounty.SelectedItem.Text : "All Counties";
+            var countyTitle = countyId <= 0
+                ? " for All Counties"
+                : string.Format(" for {0} County", countyText);
+
+            ltReportTitle.Text = string.Format("{0} Birthday Report {1}",
+                drpBirthMonth.SelectedItem.Text, countyTitle);
+
             var ctl = new ReportController();
-            if (county == "")
-            {
-                countyTitle = " for All Counties";
-            }
-            else
-            {
-                countyTitle = string.Format(" for {0} County", county);
-            }
-            ltReportTitle.Text = string.Format("{0} Birthday Report {1}", drpBirthMonth.SelectedItem.Text, countyTitle);
-            grdReport.DataSource = ctl.GetBirthDates(month, county);
+            grdReport.DataSource = ctl.GetBirthDates(month, countyId);
             grdReport.DataBind();
-            grdReport.HeaderRow.TableSection = TableRowSection.TableHeader;
+            // HeaderRow is null when the bound source had zero rows (no
+            // matching employees). The TableSection assignment was the
+            // NRE source in the prior version — gate it.
+            if (grdReport.HeaderRow != null)
+            {
+                grdReport.HeaderRow.TableSection = TableRowSection.TableHeader;
+            }
+        }
 
-
+        /// <summary>Populate drpCounty from tjc_gl_counties. The "All Counties"
+        /// placeholder (Value="0") is declared statically in the .ascx so
+        /// the dropdown is never completely empty on bind failure.</summary>
+        private void BindCounties()
+        {
+            var ctl = new ReportController();
+            foreach (var c in ctl.GetCounties())
+            {
+                drpCounty.Items.Add(new ListItem(c.CountyName, c.CountyId.ToString()));
+            }
         }
         protected void OnRowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -150,6 +179,7 @@ namespace tjc.Modules.Reports
                         if (i == 0)
                         {
                             headerCell.HorizontalAlign = HorizontalAlign.Center;
+                            headerCell.CssClass = "text-center";
                             headerCell.Text = "State<br />or<br />County";
                         }
                         if (i == 1)
@@ -166,7 +196,7 @@ namespace tjc.Modules.Reports
                         }
                         if (i == 4)
                         {
-
+                            headerCell.CssClass = "text-center";
                             headerCell.Text = string.Format("Years<br />of<br />{0}", drpReportType.SelectedValue == "1" ? "Service" : "Employment");
                         }
                     }
@@ -239,6 +269,15 @@ namespace tjc.Modules.Reports
 
         protected void cmdTerminationReport_Click(object sender, EventArgs e)
         {
+            // The .ascx-side validators (RequiredFieldValidator x2 +
+            // CompareValidator, all in the "TerminationReport" group)
+            // enforce: both dates supplied, start <= end. If the user
+            // bypassed client-side JS, the server-side Page.IsValid check
+            // re-runs the same rules — bail out so we don't query with a
+            // bogus date range.
+            Page.Validate("TerminationReport");
+            if (!Page.IsValid) return;
+
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
             string reportTitle = "Termination Report";
@@ -247,8 +286,14 @@ namespace tjc.Modules.Reports
             ltReportTitle.Text = reportTitle;
             grdReport.DataSource = ctl.GetTerminationDates(startDate, endDate);
             grdReport.DataBind();
-            grdReport.HeaderRow.TableSection = TableRowSection.TableHeader;
-
+            // HeaderRow is null when the bound source had zero rows (no
+            // terminations in the chosen range). Gate the TableSection
+            // assignment — that NRE was the original crash this method
+            // surfaced when no matches were returned.
+            if (grdReport.HeaderRow != null)
+            {
+                grdReport.HeaderRow.TableSection = TableRowSection.TableHeader;
+            }
         }
     }
 }

@@ -1,4 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.FamilySelfHelp.View" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div id="LogForm">
     <div class="container">
         <div class="btn-group">
@@ -71,7 +78,7 @@
                 <ItemTemplate>
                     <tr>
                         <td class="command-icon">
-                            <asp:HyperLink ID="lnkDetail" ToolTip="Edit This Record" CssClass="cmdlink" runat="server" NavigateUrl='<%#EditUrl("lid", Eval("LogId").ToString(), "log")%>'><i class="fas fa-pencil"></i></asp:HyperLink></td>
+                            <asp:HyperLink ID="lnkDetail" ToolTip="Edit This Record" CssClass="cmdlink text-primary" runat="server" NavigateUrl='<%#EditUrl("lid", Eval("LogId").ToString(), "log")%>'><i class="fas fa-edit"></i></asp:HyperLink></td>
                         <td>
                             <%#Eval("ServiceDate", "{0:d}")%>
                         </td>
@@ -87,8 +94,8 @@
                         <td class="text-center"><%#HasInterpreter(Eval("HasAppointment").ToString())%></td>
                         <td><%#Eval("TimeSpent")%> Hours</td>
                         <td class="command-icon">
-                            <asp:LinkButton ID="cmdDelete" CssClass="confirm" CommandName="delete" ToolTip="Delete this Record" CommandArgument='<%# Eval("LogId").ToString()%>' runat="server">
-                                            <i title="Delete File" class="fa fa-trash"></i>
+                            <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" CommandName="delete" ToolTip="Delete this Record" CommandArgument='<%# Eval("LogId").ToString()%>' runat="server">
+                                            <i title="Delete File" class="fas fa-trash"></i>
                             </asp:LinkButton></td>
 
                     </tr>
@@ -126,11 +133,23 @@
                 $('#hdClientId').val($(this).find("option:selected").val());
             }
         });
-        $(".confirm").dnnConfirm({
-            text: 'Are you sure you wish to delete this Record?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Record?'
+        $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Delete Record?',
+                text: 'Are you sure you wish to delete this Record?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
     });
     function FindTextInClientList(textValue) {
@@ -184,11 +203,7 @@
         return false;
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
 
 </script>

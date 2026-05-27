@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="EmployeeDB" type="Module" version="00.00.02">
+    <package name="EmployeeDB" type="Module" version="00.00.03">
       <friendlyName>EmployeeDB</friendlyName>
       <description>Employee Database module</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
@@ -31,10 +31,15 @@
               <name>00.00.02.SqlDataProvider</name>
               <version>00.00.02</version>
             </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.03.SqlDataProvider</name>
+              <version>00.00.03</version>
+            </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>Uninstall.SqlDataProvider</name>
-              <version>00.00.02</version>
+              <version>00.00.03</version>
             </script>
           </scripts>
         </component>
@@ -181,9 +186,9 @@
             <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
             <processorCommand>UpgradeModule</processorCommand>
             <attributes>
-              <businessControllerClass>tjc.Modules.EmployeeDB.Components.FeatureController, EmployeeDB</businessControllerClass>
+              <businessControllerClass>tjc.Modules.EmployeeDB.Components.FeatureController, tjc.Modules.EmployeeDB</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>00.00.01,00.00.02</upgradeVersionsList>
+              <upgradeVersionsList>00.00.01,00.00.02,00.00.03</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>

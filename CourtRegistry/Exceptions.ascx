@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Exceptions.ascx.cs" Inherits="tjc.Modules.CourtRegistry.JacExceptions" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
 <div class="tabs">
     <ul class="nav nav-tabs">
@@ -83,7 +89,7 @@
                         <p class="m-0">
                             <asp:Button ID="cmdAddCodes" ClientIDMode="Static" Text="Add Codes to Exclude" CssClass="btn btn-primary me-2" runat="server" OnClick="cmdAddCodes_Click" />
                             <asp:HyperLink ID="lnkReturn" CssClass="btn btn-default" runat="server" Text="Return to Main Menu" />
-                            <asp:Button ID="cmdClearExtensions" OnClientClick="return confirm('This will clear all exclusions below.<br /> Are you sure?');" CausesValidation="false" ClientIDMode="Static" Text="Clear all Extensions" CssClass="btn btn-danger float-end confirm-clear" runat="server" OnClick="cmdClearExtensions_Click" />
+                            <asp:Button ID="cmdClearExtensions" OnClientClick="return Jud12ConfirmPostback(this, 'This will clear all exclusions below. Are you sure?', 'Confirm');" CausesValidation="false" ClientIDMode="Static" Text="Clear all Extensions" CssClass="btn btn-danger float-end confirm-clear" runat="server" OnClick="cmdClearExtensions_Click" />
                         </p>
                     </div>
                 </div>
@@ -127,6 +133,12 @@
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <script type="text/javascript">
 
@@ -162,10 +174,32 @@
     }
 
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
+    }
+    function Jud12ConfirmPostback(btn, msg, title) {
+        if (!window.Swal) { return window.confirm(msg); }
+        if (btn && btn.dataset && btn.dataset.jud12Confirmed === '1') {
+            btn.dataset.jud12Confirmed = '';
+            return true;
+        }
+        Swal.fire({
+            title: title || 'Confirm', text: msg, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+            confirmButtonColor: '#d33'
+        }).then(function (r) {
+            if (!r.isConfirmed) return;
+            var href = btn.href || '';
+            var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+            if (m && typeof __doPostBack === 'function') {
+                __doPostBack(m[1], m[2]);
+            } else if (btn && btn.tagName === 'INPUT' && (btn.type === 'submit' || btn.type === 'button')) {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            } else if (btn && typeof btn.click === 'function') {
+                btn.dataset.jud12Confirmed = '1';
+                btn.click();
+            }
         });
+        return false;
     }
 </script>

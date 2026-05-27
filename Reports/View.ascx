@@ -6,7 +6,17 @@
         <li><a href="/12th-Circuit-Services/Human-Resources/Employee-Reports/rid/3"><i class="fas fa-user-minus"></i> Termination Report</a></li>
         <li>
             <asp:HyperLink ID="lnkDataCard" runat="server"><i class="fas fa-id-badge"></i> Data Card</asp:HyperLink></li>
-
+        <%-- Employee Reports (replaces HR Excel sheets that used to live
+             in EmployeeDB\Documentation\). Each report is its own module
+             control under EmployeeReports/ — see Reports.dnn. --%>
+        <li>
+            <asp:HyperLink ID="lnkDropParticipants" runat="server"><i class="fas fa-hourglass-half"></i> DROP Participants</asp:HyperLink></li>
+        <li>
+            <asp:HyperLink ID="lnkJaSeniority" runat="server"><i class="fas fa-balance-scale"></i> JA Seniority</asp:HyperLink></li>
+        <li>
+            <asp:HyperLink ID="lnkStaffAttorneySeniority" runat="server"><i class="fas fa-gavel"></i> Staff Attorney Seniority</asp:HyperLink></li>
+        <li>
+            <asp:HyperLink ID="lnkCertifiedInterpreter" runat="server"><i class="fas fa-language"></i> Certified Interpreter Seniority</asp:HyperLink></li>
     </ul>
 </asp:Panel>
 <asp:Panel runat="server" ID="pnlBirthdays" Visible="false">
@@ -29,11 +39,12 @@
                 </asp:DropDownList>
             </div>
             <div id="swCounty" class="input-group" runat="server">
+                <%-- County items past "All Counties" are appended in
+                     View.ascx.cs → BindCounties() from tjc_gl_counties so
+                     the dropdown carries CountyId values (the SP now needs
+                     an int @countyId, not a county-name string). --%>
                 <asp:DropDownList ID="drpCounty" runat="server" CssClass="form-control" aria-label="Select County" ClientIDMode="Static">
-                    <asp:ListItem Text="All Counties" Value="" />
-                    <asp:ListItem Text="DeSoto"/>
-                    <asp:ListItem Text="Manatee"/>
-                    <asp:ListItem Text="Sarasota"/>
+                    <asp:ListItem Text="All Counties" Value="0" />
                 </asp:DropDownList>
             </div>
 
@@ -72,16 +83,42 @@
     </div>
 </asp:Panel>
 <asp:Panel runat="server" ID="pnlTerminationReport" Visible="false">
+    <%-- All validators + the submit button are in the "TerminationReport"
+         ValidationGroup so they only fire on this panel's button click (and
+         never on the Birthday / Service buttons in the sibling panels). --%>
     <div class="mb-md">
         <div class="btn-group" role="group" aria-label="Search">
             <div id="swStartDate" class="input-group">
                 <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtStartDate" ClientIDMode="Static" />
+                <asp:RequiredFieldValidator runat="server" ID="rfvStartDate"
+                    ControlToValidate="txtStartDate"
+                    ValidationGroup="TerminationReport"
+                    Display="Dynamic" CssClass="text-danger ms-2"
+                    ErrorMessage="Start date is required." />
             </div>
             <div id="swEndDate" class="input-group">
                 <asp:TextBox runat="server" CssClass="form-control" TextMode="date" ID="txtEndDate" ClientIDMode="Static" />
+                <asp:RequiredFieldValidator runat="server" ID="rfvEndDate"
+                    ControlToValidate="txtEndDate"
+                    ValidationGroup="TerminationReport"
+                    Display="Dynamic" CssClass="text-danger ms-2"
+                    ErrorMessage="End date is required." />
+                <%-- Operator=LessThanEqual + ControlToValidate=txtStartDate +
+                     ControlToCompare=txtEndDate enforces start <= end. The
+                     validator no-ops while either field is empty so it
+                     doesn't double-fire with the RequiredFieldValidators. --%>
+                <asp:CompareValidator runat="server" ID="cvDateRange"
+                    ControlToValidate="txtStartDate"
+                    ControlToCompare="txtEndDate"
+                    Type="Date" Operator="LessThanEqual"
+                    ValidationGroup="TerminationReport"
+                    Display="Dynamic" CssClass="text-danger ms-2"
+                    ErrorMessage="Start date must be on or before end date." />
             </div>
         </div>
-        <asp:Button ID="cmdTerminationReport" OnClick="cmdTerminationReport_Click" ClientIDMode="Static" runat="server" Text="View Report" ToolTip="View Report" CssClass="btn btn-primary" />
+        <asp:Button ID="cmdTerminationReport" OnClick="cmdTerminationReport_Click" ClientIDMode="Static"
+                    ValidationGroup="TerminationReport"
+                    runat="server" Text="View Report" ToolTip="View Report" CssClass="btn btn-primary" />
     </div>
 </asp:Panel>
 <h2>

@@ -88,7 +88,8 @@ namespace tjc.Modules.RecordDestruction
                 else
                 {
                     cmdSave.Enabled = false;
-                    DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "You must be logged in to use this form", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                    System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                        "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You must be logged in to use this form") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
 
                 }
             }

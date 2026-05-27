@@ -1,5 +1,11 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.MediationStatistics.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
@@ -226,7 +232,7 @@
                 {
                     data: "caseid", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
-                            return '<a class="delete confirm" aria-role="button" title="Delete Record" data-caseid="' + data + '" href="#""><i class="fas fa-trash"></i></a>';
+                            return '<a class="delete confirm text-danger" aria-role="button" title="Delete Record" data-caseid="' + data + '" href="#""><i class="fas fa-trash"></i></a>';
                         return '';
                     }, className: "command-item", orderable: false
                 },
@@ -247,15 +253,11 @@
             $(".confirm").on("click", function (e) {
                 e.preventDefault();
                 var caseid = $(this).data("caseid");
-                $.dnnConfirm({
-                    text: 'Are you sure you wish to delete this Case?',
-                    yesText: 'Yes',
-                    noText: 'No',
-                    title: 'Delete Case?',
-                    callbackTrue: function () {
-                        deleteCase(caseid);
-                    }
-                });
+                Swal.fire({
+                    title: 'Delete Case?', text: 'Are you sure you wish to delete this Case?', icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                    confirmButtonColor: '#d33'
+                }).then(function (r) { if (r.isConfirmed) deleteCase(caseid); });
                 function deleteCase(caseId) {
                     $.ajax({
                         url: "/DesktopModules/tjc.Modules/Mediation/Services/api/CaseListItem/DeleteCase/" + caseId,
@@ -264,13 +266,13 @@
                             caseTable.draw();
                         },
                         error: function (error) {
-                            alert(error);
+                            new Noty({ text: error, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
                         }
                     });
                 }
             });
         });
-        $.fn.dataTable.ext.errMode = () => alert('Error while loading the table data. Please refresh');
+        $.fn.dataTable.ext.errMode = () => Swal.fire({ title: 'Error', text: 'Error while loading the table data. Please refresh', icon: 'error', confirmButtonText: 'OK' });
         caseTable.on('order.dt', function () {
             // This will show: "Ordering on column 1 (asc)", for example
             var order = caseTable.order();
@@ -326,7 +328,7 @@
                 caseTable.draw();
             },
             error: function (error) {
-                alert(error);
+                new Noty({ text: error, type: 'error', timeout: 5000, layout: 'topRight', theme: 'mint' }).show();
             }
         });
     }
@@ -471,11 +473,7 @@
             sortColumnIndex = storageSortColumnIndex;
     }
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
 </script>
 

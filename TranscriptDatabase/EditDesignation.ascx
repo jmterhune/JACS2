@@ -214,6 +214,12 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
@@ -253,7 +259,7 @@
                 { data: "office" },
                 {
                     data: "id", render: function (data, type, row, meta) {
-                        return `<a title="Remove Attorney" data-id="${row.id}" class="remove-attorney"  href="#"><i class="fas fa-trash"></i></a>`;
+                        return `<a title="Remove Attorney" data-id="${row.id}" class="remove-attorney text-danger"  href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item"
                 },
             ],
@@ -271,15 +277,11 @@
         $(document).on('click', '.remove-attorney', function (e) {
             e.preventDefault();
             var attorneyId = $(this).data("id");
-            $.dnnConfirm({
-                text: 'Are you sure you wish to remove this Attorney from the list?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Remove Attorney?',
-                callbackTrue: function () {
-                    RemoveAttorney(attorneyId);
-                }
-            });
+            Swal.fire({
+                title: 'Remove Attorney?', text: 'Are you sure you wish to remove this Attorney from the list?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) { if (r.isConfirmed) RemoveAttorney(attorneyId); });
         });
         $(document).on('show.bs.modal', '.modal', function (event) {
             var zIndex = 50 + (10 * $('.modal:visible').length);
@@ -331,20 +333,28 @@
                 $('#attyDropDown').hide();
             }
         });
-        $("#cmdDelete").dnnConfirm({
-            text: 'Are you sure you wish to Delete this Designation?',
-            yesText: 'Yes',
-            noText: 'No',
-            title: 'Delete Designation?'
+        $("#cmdDelete").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
+            e.preventDefault();
+            var href = this.href || '';
+            Swal.fire({
+                title: 'Delete Designation?', text: 'Are you sure you wish to Delete this Designation?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
+                    if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
+                }
+            });
         });
         $("#cmdChangeDueDate").on("click", function (e) {
             e.preventDefault();
-            $.dnnConfirm({
-                text: 'Are you sure you want to change the due date?',
-                yesText: 'Yes',
-                noText: 'No',
-                title: 'Change Due Date?',
-                callbackTrue: function () {
+            Swal.fire({
+                title: 'Change Due Date?', text: 'Are you sure you want to change the due date?', icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'No',
+                confirmButtonColor: '#d33'
+            }).then(function (r) {
+                if (r.isConfirmed) {
                     $("#txtDueDate").show();
                     $("#txtDueDateReadonly").hide();
                     $("#cmdChangeDueDate").hide();
@@ -472,10 +482,6 @@
     }
 
     function ShowAlert(title, text) {
-        $.dnnAlert({
-            okText: 'OK',
-            title: title,
-            text: text
-        });
+        Swal.fire({ title: title, html: text, icon: 'info', confirmButtonText: 'OK' });
     }
 </script>
