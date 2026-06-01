@@ -1,0 +1,24 @@
+﻿<h3>ExpertWitness</h3>
+<p class="Contributor">
+	Joe Terhune <br />
+	<a href="mailto:jterhune@jud12.flcourts.org">jterhune@jud12.flcourts.org</a><br />
+	<a href=https://www.jud12.flcourts.org/>https://www.jud12.flcourts.org/</a><br />
+	This extension was created using <a href="https://www.christoc.com">Christoc's</a> Module Development Templates for DNN.
+</p>
+<hr/>
+<div class="License">
+	<h3>About the ExpertWitness</h3>
+	<p class="Owner">
+		<b>Version 00.00.02</b><br /><br />
+	</p>
+	<p>Fairer, randomized expert selection; duplicate-expert prevention; and a new public Contracted Experts list.</p>
+
+	<h4>Changes</h4>
+	<ul>
+			<li>Fixed the rotation so a used expert is moved to the back of the line (the new position is now persisted), and added a recency-weighted shuffle so the same expert no longer keeps surfacing.</li>
+			<li>An expert can no longer be added to the same request more than once.</li>
+			<li>Added a public, read-only "Contracted Experts" view (experts whose contract end date is today or later), grouped by category with county coverage and a last-updated date.</li>
+			<li>Replaced server-side module messages with SweetAlert2 / Noty notifications.</li>
+	</ul>
+
+</div>

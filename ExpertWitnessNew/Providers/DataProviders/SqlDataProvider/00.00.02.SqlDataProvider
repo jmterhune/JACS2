@@ -1,0 +1,35 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/***** Adds the stored procedure used to persist the    *****/
+/***** least-recently-used rotation position for an     *****/
+/***** expert/template pairing.                         *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_update_expert_template_position]') AND type IN (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_update_expert_template_position]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_update_expert_template_position]
+	@ExpertID	INT,
+	@TemplateID	INT,
+	@Position	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE {databaseOwner}[{objectQualifier}tjc_expert_expert_by_template]
+	SET    [Position] = @Position
+	WHERE  [ExpertID] = @ExpertID
+	  AND  [TemplateID] = @TemplateID
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
