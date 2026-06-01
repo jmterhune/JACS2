@@ -9,13 +9,14 @@
 <div class="License">
 	<h3>About the ExpertWitness</h3>
 	<p class="Owner">
-		<b>Version 00.00.02</b><br /><br />
+		<b>Version 00.00.03</b><br /><br />
 	</p>
-	<p>Fairer, randomized expert selection; duplicate-expert prevention; and a new public Contracted Experts list.</p>
+	<p>Admin lists converted to AJAX + a module Web API (no postbacks), with confirm-before-delete; plus the 00.00.02 selection and contracted-list changes.</p>
 
 	<h4>Changes</h4>
 	<ul>
-			<li>Fixed the rotation so a used expert is moved to the back of the line (the new position is now persisted), and added a recency-weighted shuffle so the same expert no longer keeps surfacing.</li>
+			<li>All admin lists (Experts, Evaluation Types, Expert Types, Locations, Requests) now load and save via AJAX against a module Web API &ndash; no page postbacks. Deletes prompt for confirmation.</li>
+				<li>Fixed the rotation so a used expert is moved to the back of the line (the new position is now persisted), and added a recency-weighted shuffle so the same expert no longer keeps surfacing.</li>
 			<li>An expert can no longer be added to the same request more than once.</li>
 			<li>Added a public, read-only "Contracted Experts" view (experts whose contract end date is today or later), grouped by category with county coverage and a last-updated date.</li>
 			<li>Replaced server-side module messages with SweetAlert2 / Noty notifications.</li>
