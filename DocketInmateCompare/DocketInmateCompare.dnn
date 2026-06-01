@@ -1,0 +1,19 @@
+<dotnetnuke type="Module" version="01.00.00">
+	<modules>
+		<module>
+			<friendlyName>Excel Defendant Comparer</friendlyName>
+			<description>Compares defendant columns in two Excel sheets and lists matches.</description>
+			<version>01.00.00</version>
+			<supportedFeatures />
+			<businessControllerClass>YourCompany.Modules.ExcelDefendantComparer.ExcelDefendantComparer</businessControllerClass>
+			<codeSubDirectories />
+			<controls>
+				<control>
+					<key>View</key>
+					<src>ExcelDefendantComparer.ascx</src>
+					<type>View</type>
+				</control>
+			</controls>
+		</module>
+	</modules>
+</dotnetnuke>

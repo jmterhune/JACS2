@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
-using iTextSharp.text.pdf;
+﻿using DotNetNuke.Services.Exceptions;
 using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System;
+using System.IO;
 using Font = iTextSharp.text.Font;
-using System.Management.Instrumentation;
-using DotNetNuke.Services.Exceptions;
 
 namespace tjc.Modules.PretrialServices.Components
 {

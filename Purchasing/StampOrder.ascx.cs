@@ -12,11 +12,13 @@
 using DotNetNuke.Abstractions;
 using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Entities.Host;
+using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using tjc.Modules.Purchasing.Components;
 
@@ -25,8 +27,9 @@ namespace tjc.Modules.Purchasing
     public partial class StampOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        private string currentProtocol;
+        private string _currentProtocol;
         public string attachmentHandler = "";
+
 
         public StampOrder()
         {
@@ -37,8 +40,8 @@ namespace tjc.Modules.Purchasing
             try
             {
                 attachmentHandler = TemplateSourceDirectory + "/Handlers/AttachmentHandler.ashx";
-                currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
-
+                _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
+                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
                 if (!IsPostBack)
                 {
                     cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
@@ -47,6 +50,13 @@ namespace tjc.Modules.Purchasing
                     {
                         lnkAdmin.NavigateUrl = EditUrl("list");
                         lnkAdmin.Visible = true;
+
+                    }
+                    if (UserId > 0)
+                    {
+                        txtRequestor.Text=UserInfo.DisplayName;
+                        txtEmailAddress.Text=UserInfo.Email;
+                        
                     }
                     if (CurrentOrderId > 0)
                     {
@@ -70,8 +80,8 @@ namespace tjc.Modules.Purchasing
                 foreach (string fileId in fileIds)
                 {
                     Int32.TryParse(fileId, out int FileID);
-                    Attachment attachment = new Attachment { ModuleID = ModuleId, FileID = FileID, OrderID = orderId };
-                    ctl.CreateAttachment(attachment);
+                    StampOrderAttachment attachment = new StampOrderAttachment {  FileID = FileID, OrderID = orderId };
+                    ctl.CreateStampAttachment(attachment);
                 }
             }
             hdAttachmentIds.Value = string.Empty;
@@ -122,14 +132,14 @@ namespace tjc.Modules.Purchasing
         {
             string attachementList = string.Empty;
             var aCtl = new AttachmentController();
-            IEnumerable<Attachment> attachments = aCtl.GetAttachmentsByOrderId(ModuleId, orderId);
+            IEnumerable<StampOrderAttachment> attachments = aCtl.GetStampAttachmentsByOrderId( orderId);
             FileManager objFile = new FileManager();
             int attachmentCount = 0;
-            foreach (Attachment f in attachments)
+            foreach (StampOrderAttachment f in attachments)
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)
-                    attachementList += string.Format("<li><a href='/portals/0/{0}' title='{1}'>attachment #{2}</a></li>", file.RelativePath, file.FileName, ++attachmentCount);
+                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' title='{4}'>attachment #{5}</a></li>", _currentProtocol, PortalAlias.HTTPAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
             }
             return attachementList;
 
@@ -144,8 +154,7 @@ namespace tjc.Modules.Purchasing
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            string subject = "Custom Stamp Order Form";
-            string fromAddress = "noreply.intranet@jud12.flcourts.org";
+            string fromAddress = "purchasing@jud12.flcourts.org";
             var order = new Components.StampOrder { DateCreated = DateTime.Now, RequestedName = txtRequestor.Text, ConsumerName = txtConsumerName.Text, Phone = txtPhone.Text, StampType = drpStampType.SelectedValue, Sample = txtSample.Text, FontStyle = drpFontStyle.SelectedValue, FontSize = txtFontSize.Text, InkColor = drpInkColor.SelectedValue, Instructions = txtInstructions.Text, Quantity = int.Parse(txtQuantity.Text), Location = drpLocation.SelectedValue, EmailAddress = txtEmailAddress.Text };
             var ctl = new StampOrderController();
             var aCtl = new AttachmentController();
@@ -157,6 +166,7 @@ namespace tjc.Modules.Purchasing
                 AddAttachments(orderId);
                 if (orderId > 0)
                 {
+                    string subject = string.Format("Custom Stamp Order Form for {0}", order.RequestedName); 
                     sb.Append("<h2>Stamp Order Details</h2>");
                     sb.Append("<ul style='list-style:none;margin:0;padding:0'><li><strong>Requested By: </strong>");
                     sb.Append(order.RequestedName);
@@ -164,16 +174,14 @@ namespace tjc.Modules.Purchasing
                     sb.Append(orderId);
                     sb.Append("</li><li><strong>Phone: </strong>");
                     sb.Append(order.Phone);
-                    sb.Append("</li><li><strong>Email: </strong>");
+                    sb.Append(string.Format("</li><li><strong>Email: </strong><a href='mailto:{0}'>",order.EmailAddress));
                     sb.Append(order.EmailAddress);
-                    sb.Append("</li><li><strong>Delivery Location: </strong>");
+                    sb.Append("</a></li><li><strong>Delivery Location: </strong>");
                     sb.Append(order.Location);
                     sb.Append("</li><li><strong>Stamp is For: </strong>");
                     sb.Append(order.ConsumerName);
                     sb.Append("</li><li><strong>Type of Stamp: </strong>");
                     sb.Append(order.StampType);
-                    sb.Append("</li><li><strong>Sample: </strong>");
-                    sb.Append(GetSample());
                     sb.Append("</li><li><strong>Font Style: </strong>");
                     sb.Append(order.FontStyle);
                     sb.Append("</li><li><strong>Font Size: </strong>");
@@ -184,19 +192,23 @@ namespace tjc.Modules.Purchasing
                     sb.Append(order.Quantity);
                     sb.Append("</li><li><strong>Additional Information:</strong> ");
                     sb.Append(order.Instructions);
-                    sb.Append("</li></ul>");
+                    sb.Append("</li></ul><h3>Stamp Sample</h3>");
+                    sb.Append(GetSample());
                     sb.Append("<h3>Attachments</h3><ul>");
                     DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
-                    foreach (var attach in aCtl.GetAttachmentsByOrderId(ModuleId, orderId))
+                    foreach (var attach in aCtl.GetStampAttachmentsByOrderId(orderId))
                     {
                         if (attach.FileID > 0)
                         {
                             var fileInfo = dCtl.GetFile(attach.FileID);
-                            sb.Append(string.Format("<li><a href='https://intranet.new.jud12.local/{1}'>{1}</a></li>", fileInfo.RelativePath, fileInfo.FileName));
+                            sb.Append(string.Format("<li><a href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, PortalAlias.HTTPAlias,PortalId, fileInfo.RelativePath, fileInfo.FileName));
                         }
                     }
                     sb.Append("</ul>");
-                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "webhelp@jud12.flcourts.org", EmailList, subject, sb.ToString());
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", EmailList, subject, sb.ToString());
+                    subject = "Stamp Order Confirmation";
+                    DotNetNuke.Services.Mail.Mail.SendEmail(fromAddress, "purchasing@jud12.flcourts.org", txtEmailAddress.Text, subject, sb.ToString());
+
                     Response.Redirect(EditUrl("form", "stamp", "complete"), true);
                 }
                 else
@@ -214,7 +226,7 @@ namespace tjc.Modules.Purchasing
             string color = drpInkColor.SelectedValue;
             string fontsize = txtFontSize.Text + "pt";
             string fontStyle = drpFontStyle.SelectedValue;
-            string output = string.Format("<div style='color:{0};font-size:{1};font-family:{2}'>", color, fontsize, fontStyle);
+            string output = string.Format("<div style='text-align:center;color:{0};font-size:{1};font-family:{2}'>", color, fontsize, fontStyle);
             string[] lines = txtSample.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             int samplelength = lines.Length;
             foreach (string line in lines)

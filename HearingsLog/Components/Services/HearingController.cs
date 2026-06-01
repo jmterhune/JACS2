@@ -393,28 +393,28 @@ namespace tjc.Modules.HearingLog.Components.Services
                 var ctl = new Components.CourtCounselController();
                 if (selectedJudge >= 0)
                 {
-                    filteredCount = ctl.GetCourtCounselLogCount(  startDate, endDate, searchText, selectedJudge);
+                    filteredCount = ctl.GetCourtCounselLogCount(startDate, endDate, searchText, selectedJudge);
                     if (count == 0) { recordCount = filteredCount; }
-                    loglistItems = ctl.GetCourtCounselLogPaged(  startDate, endDate, searchText, selectedJudge, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
+                    loglistItems = ctl.GetCourtCounselLogPaged(startDate, endDate, searchText, selectedJudge, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(searchText))
                     {
-                        filteredCount = ctl.GetCourtCounselLogCount(userId,  startDate, endDate);
+                        filteredCount = ctl.GetCourtCounselLogCount(userId, startDate, endDate);
                     }
                     else
                     {
-                        filteredCount = ctl.GetCourtCounselLogCount(userId,  startDate, endDate, searchText);
+                        filteredCount = ctl.GetCourtCounselLogCount(userId, startDate, endDate, searchText);
                     }
                     if (count == 0) { recordCount = filteredCount; }
                     if (string.IsNullOrEmpty(searchText))
                     {
-                        loglistItems = ctl.GetCourtCounselLogPaged(userId,  startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
+                        loglistItems = ctl.GetCourtCounselLogPaged(userId, startDate, endDate, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
                     }
                     else
                     {
-                        loglistItems = ctl.GetCourtCounselLogPaged(userId,  startDate, endDate, searchText, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
+                        loglistItems = ctl.GetCourtCounselLogPaged(userId, startDate, endDate, searchText, recordOffset, pageSize, sortColumn, sortDirection).Select(loglistItem => new CourtCounselViewModel(loglistItem)).ToList();
                     }
                 }
                 return Request.CreateResponse(new CourtCounselSearchResult { data = loglistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });

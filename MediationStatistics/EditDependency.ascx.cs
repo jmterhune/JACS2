@@ -198,6 +198,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void PopulateSessionInformation()
         {
+            ClearSession();
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
                 hdSessionId.Value = session.SessionId.ToString();
@@ -268,6 +269,12 @@ namespace tjc.Modules.MediationStatistics
         }
         private void ClearSession()
         {
+            txtReferralSource.Text = string.Empty;
+            txtOrderReferralDate.Text = string.Empty;
+            txtChildrenInvolved.Text = string.Empty;
+            txtParentsInvolved.Text = string.Empty;
+            txtMediationDate.Text = string.Empty;
+            drpActionStage.SelectedIndex = 0;
             chkInterpreterRequested.Checked = false;
             chkTelephoneSession.Checked = false;
             chkInmate.Checked = false;
@@ -352,14 +359,17 @@ namespace tjc.Modules.MediationStatistics
             {
                 ctlSession.CreateSession(session);
             }
+            hdSessionId.Value = session.SessionId.ToString();
         }
         private void DeleteSession()
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             var ctl = new SessionController();
             ctl.DeleteSession(_currentCase.GetCurrentSession(CurrentSessionIndex));
             CurrentSessionIndex = 0;
             if (_currentCase.CaseSessions.Count() <= 1)
                 _currentCase.CaseSessions.Append(new Session());
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
         }
         private void CheckExistingCase()
         {
@@ -481,6 +491,12 @@ namespace tjc.Modules.MediationStatistics
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+        protected void cmdDelete_Click(object sender, EventArgs e)
+        {
+            var ctl = new CaseController();
+            ctl.DeleteCase(CaseID);
+            Response.Redirect(_navigationManager.NavigateURL());
+        }
         protected void pnlSession_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -513,7 +529,6 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
-            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -532,6 +547,8 @@ namespace tjc.Modules.MediationStatistics
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+                var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {
@@ -596,6 +613,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSaveEvent_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             FillCase();
             var ctl = new EventController();
             if (string.IsNullOrEmpty(hdEventId.Value))
@@ -627,9 +645,9 @@ namespace tjc.Modules.MediationStatistics
                 if (Int32.TryParse(txtSignedMediationCount.Text, out int signedCount1))
                     newEvent.SignedCount1 = signedCount1;
                 if (Int32.TryParse(txtSignedAfterMediationCount.Text, out int signedCount2))
-                    newEvent.SignedCount1 = signedCount2;
+                    newEvent.SignedCount2 = signedCount2;
                 if (Int32.TryParse(txtSignedTrialCount.Text, out int signedCount3))
-                    newEvent.SignedCount1 = signedCount3;
+                    newEvent.SignedCount3 = signedCount3;
                 ctl.CreateEvent(newEvent);
                 foreach (ListItem item in cblAppearanceRecord.Items)
                 {
@@ -639,6 +657,7 @@ namespace tjc.Modules.MediationStatistics
                         ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = newEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "New Event Record Saved", "fas fa-thumbs-up");
             }
             else
             {
@@ -677,10 +696,12 @@ namespace tjc.Modules.MediationStatistics
                         ctl.CreateEventAppearance(new EventAppearance { AppearanceId = appearanceId, EventId = oldEvent.EventId, CreatedById = UserId, LastModifiedById = UserId, CreatedDate = DateTime.Now, LastModifiedDate = DateTime.Now });
                     }
                 }
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "Event Record Saved", "fas fa-thumbs-up");
             }
             ClearEventForm();
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
+           
         }
         #endregion //Event Events
 

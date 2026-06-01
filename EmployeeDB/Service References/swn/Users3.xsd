@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" />
+  <xs:complexType name="GrpCreateReq">
+    <xs:sequence>
+      <xs:element name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Desc" nillable="true" type="xs:string" />
+      <xs:element name="ContactsList" nillable="true" type="tns:GrpCreateReqContactsList" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GrpCreateReq" nillable="true" type="tns:GrpCreateReq" />
+  <xs:complexType name="GrpCreateReqContactsList">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" minOccurs="0" name="NewContacts" nillable="true" type="q1:ArrayOfContactDetailRequest" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ExistingContacts" nillable="true" type="q2:ArrayOfstring" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GrpCreateReqContactsList" nillable="true" type="tns:GrpCreateReqContactsList" />
+  <xs:complexType name="ArrayOfContactCustomField">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactCustomField" nillable="true" type="tns:ContactCustomField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactCustomField" nillable="true" type="tns:ArrayOfContactCustomField" />
+  <xs:complexType name="ContactCustomField">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactCustomField" nillable="true" type="tns:ContactCustomField" />
+  <xs:complexType name="ArrayOfContactPntEmailType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactPntEmailType" nillable="true" type="tns:ContactPntEmailType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactPntEmailType" nillable="true" type="tns:ArrayOfContactPntEmailType" />
+  <xs:complexType name="ContactPntEmailType">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q3="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" base="q3:ContactPntBase">
+        <xs:sequence>
+          <xs:element name="Address" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContactPntEmailType" nillable="true" type="tns:ContactPntEmailType" />
+  <xs:complexType name="ContactPntVoiceType">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q4="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" base="q4:ContactPntBase">
+        <xs:sequence>
+          <xs:element name="CountryCode" nillable="true" type="xs:string" />
+          <xs:element name="Number" nillable="true" type="xs:string" />
+          <xs:element name="CascadeOrder" type="xs:int" />
+          <xs:element minOccurs="0" name="Extension" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CountryId" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContactPntVoiceType" nillable="true" type="tns:ContactPntVoiceType" />
+  <xs:complexType name="ArrayOfContactPntVoiceType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactPntVoiceType" nillable="true" type="tns:ContactPntVoiceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactPntVoiceType" nillable="true" type="tns:ArrayOfContactPntVoiceType" />
+  <xs:complexType name="ArrayOfContactDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactDetail" nillable="true" type="tns:ContactDetail" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactDetail" nillable="true" type="tns:ArrayOfContactDetail" />
+  <xs:complexType name="ContactDetail">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q5="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" base="q5:ContactSummary">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MiddleName" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ZipCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Pin" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TimeZoneId" type="xs:int" />
+          <xs:element minOccurs="0" name="Login" nillable="true" type="q5:ContactDetailLogin" />
+          <xs:element minOccurs="0" name="CustomFields" nillable="true" type="tns:ArrayOfContactCustomField" />
+          <xs:element name="ContactPointsList" nillable="true" type="tns:ContactDetailContactPointsList" />
+          <xs:element minOccurs="0" name="PreferredLanguage" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContactDetail" nillable="true" type="tns:ContactDetail" />
+  <xs:complexType name="ContactDetailContactPointsList">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EmailTextMsgContactPnt" nillable="true" type="tns:ArrayOfContactDetailContactPointsListEmailTextMsgContactPnt" />
+      <xs:element minOccurs="0" name="VoiceContactPnt" nillable="true" type="tns:ArrayOfContactPntVoiceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactDetailContactPointsList" nillable="true" type="tns:ContactDetailContactPointsList" />
+  <xs:complexType name="ArrayOfContactDetailContactPointsListEmailTextMsgContactPnt">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactDetailContactPointsListEmailTextMsgContactPnt" nillable="true" type="tns:ContactDetailContactPointsListEmailTextMsgContactPnt" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactDetailContactPointsListEmailTextMsgContactPnt" nillable="true" type="tns:ArrayOfContactDetailContactPointsListEmailTextMsgContactPnt" />
+  <xs:complexType name="ContactDetailContactPointsListEmailTextMsgContactPnt">
+    <xs:sequence>
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="Item" nillable="true" type="q6:ContactPntBase" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactDetailContactPointsListEmailTextMsgContactPnt" nillable="true" type="tns:ContactDetailContactPointsListEmailTextMsgContactPnt" />
+  <xs:complexType name="ArrayOfTimeZone">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TimeZone" nillable="true" type="tns:TimeZone" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTimeZone" nillable="true" type="tns:ArrayOfTimeZone" />
+  <xs:complexType name="TimeZone">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Sequence" type="xs:short" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TimeZone" nillable="true" type="tns:TimeZone" />
+  <xs:complexType name="ArrayOfContactCustomFieldDefinition">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactCustomFieldDefinition" nillable="true" type="tns:ContactCustomFieldDefinition" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactCustomFieldDefinition" nillable="true" type="tns:ArrayOfContactCustomFieldDefinition" />
+  <xs:complexType name="ContactCustomFieldDefinition">
+    <xs:sequence>
+      <xs:element name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MinInstancesCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="MaxInstancesCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ValidationRegExPattern" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactCustomFieldDefinition" nillable="true" type="tns:ContactCustomFieldDefinition" />
+  <xs:complexType name="ArrayOfObjActionResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ObjActionResult" nillable="true" type="tns:ObjActionResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfObjActionResult" nillable="true" type="tns:ArrayOfObjActionResult" />
+  <xs:complexType name="ObjActionResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ObjType" type="tns:ObjActionResultObjType" />
+      <xs:element minOccurs="0" name="ObjId" nillable="true" type="xs:string" />
+      <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="Details" nillable="true" type="q7:ArrayOfObjActionResultDetailInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ObjActionResult" nillable="true" type="tns:ObjActionResult" />
+  <xs:simpleType name="ObjActionResultObjType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Group" />
+      <xs:enumeration value="Contact" />
+      <xs:enumeration value="ContactCustomField" />
+      <xs:enumeration value="ContactCustomFieldsDefinition" />
+      <xs:enumeration value="ContactPoint" />
+      <xs:enumeration value="ContactLocationLabel" />
+      <xs:enumeration value="ContactLocation" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ObjActionResultObjType" nillable="true" type="tns:ObjActionResultObjType" />
+  <xs:simpleType name="SimpleResults">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Succeeded" />
+      <xs:enumeration value="Failed" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="SimpleResults" nillable="true" type="tns:SimpleResults" />
+</xs:schema>

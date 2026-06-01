@@ -16,31 +16,28 @@ namespace tjc.Intranet.API.Services
         public void RegisterRoutes(IMapRoute mapRouteManager)
         {
             mapRouteManager.MapHttpRoute(
-                moduleFolderName: "tjc.Modules/CourtCounsel",
-                routeName: "actionMultiparam",
-                url: "{controller}/{action}/{sectionId}/{itemIndex}/{direction}",
-                defaults: new { sectionId = RouteParameter.Optional, itemIndex = RouteParameter.Optional, direction = RouteParameter.Optional },
-                namespaces: new[] { "tjc.Modules.DocumentSubscription.Services" });
-
-            mapRouteManager.MapHttpRoute(
-                 moduleFolderName: "tjc.Modules/CourtCounsel",
-                 routeName: "actionParam",
-                 url: "{controller}/{action}/{caseNumber}",
-                 defaults: new { caseNumber = RouteParameter.Optional },
-                 namespaces: new[] { "tjc.Intranet.API.Services" });
-
-            mapRouteManager.MapHttpRoute(
-                moduleFolderName: "tjc.Modules/CourtCounsel",
+                moduleFolderName: "CourtCounsel",
                 routeName: "action",
                 url: "{controller}/{action}",
                 namespaces: new[] { "tjc.Intranet.API.Services" });
-
             mapRouteManager.MapHttpRoute(
-                moduleFolderName: "tjc.Modules/CourtCounsel",
-                routeName: "default",
-                url: "{controller}/{caseNumber}",
+                moduleFolderName: "CourtCounsel",
+                routeName: "actionParam",
+                url: "{controller}/{action}/{caseNumber}",
                 defaults: new { caseNumber = RouteParameter.Optional },
                 namespaces: new[] { "tjc.Intranet.API.Services" });
+            mapRouteManager.MapHttpRoute(
+                moduleFolderName: "CourtCounsel",
+                routeName: "actionMultiparam",
+                url: "{controller}/{action}/{sectionId}/{itemIndex}/{direction}",
+                defaults: new { sectionId = RouteParameter.Optional, itemIndex = RouteParameter.Optional, direction = RouteParameter.Optional },
+                namespaces: new[] { "tjc.Intranet.API.Services" });
+            //mapRouteManager.MapHttpRoute(
+            //    moduleFolderName: "CourtCounsel",
+            //    routeName: "default",
+            //    url: "{controller}/{caseNumber}",
+            //    defaults: new { caseNumber = RouteParameter.Optional },
+            //    namespaces: new[] { "tjc.Intranet.API.Services" });
             mapRouteManager.MapHttpRoute(
                 moduleFolderName: "directory/data",
                 routeName: "EmployeePersonalData",

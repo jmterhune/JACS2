@@ -1,0 +1,110 @@
+﻿<dotnetnuke type="Package" version="5.0">
+	<packages>
+		<package name="ThreatReport" type="Module" version="1.0.0">
+			<friendlyName>Threat Report</friendlyName>
+			<description>12th Judicial Circuit Court Threat module</description>
+			<iconFile>/Images/icon_extensions_32px.png</iconFile>
+			<owner>
+				<name>12th Judicial Circuit Court</name>
+				<organization>12th Judicial Circuit Court</organization>
+				<url>http://www.jud12.flcourts.org/</url>
+				<email>jterhune@flcourts.org</email>
+			</owner>
+			<license src="License.txt"></license>
+
+			<releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+			<components>
+				
+				<component type="Module">
+					<desktopModule>
+						<moduleName>Threat Report</moduleName>
+						<foldername>tjc.Modules/ThreatReport</foldername>
+						<businessControllerClass />
+						<supportedFeatures />
+						<moduleDefinitions>
+							<moduleDefinition>
+								<friendlyName>Report Incident</friendlyName>
+								<definitionName>Threat Report</definitionName>
+								<defaultCacheTime>0</defaultCacheTime>
+								<moduleControls>
+									<moduleControl>
+										<controlKey>complete</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/CompletedRequest.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Thanks for your Incident Report</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>incident</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/ViewThreat.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident Report Detail</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>Settings</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Settings.ascx</controlSrc>
+										<supportsPartialRendering>True</supportsPartialRendering>
+										<controlTitle>Threat Reporting Settings</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>True</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+								</moduleControls>
+							</moduleDefinition>
+							<moduleDefinition>
+								<friendlyName>Incident Viewer</friendlyName>
+								<definitionName>Threat View</definitionName>
+								<defaultCacheTime>0</defaultCacheTime>
+								<moduleControls>
+									<moduleControl>
+										<controlKey />
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/View.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident List</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>incident</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/ViewThreat.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident Report</controlTitle>
+										<controlType>Anonymous</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>Settings</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Settings.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Report Settings</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+								</moduleControls>
+							</moduleDefinition>
+						</moduleDefinitions>
+					</desktopModule>
+				</component>
+			</components>
+		</package>
+	</packages>
+</dotnetnuke>

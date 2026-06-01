@@ -1,36 +1,16 @@
-﻿/************************************************************/
-/*****              SqlDataProvider                     *****/
-/*****                                                  *****/
-/*****                                                  *****/
-/***** Note: To manually execute this script you must   *****/
-/*****       perform a search and replace operation     *****/
-/*****       for {databaseOwner} and {objectQualifier}  *****/
-/*****                                                  *****/
-/************************************************************/
+/***********************************************************************
+ * EmployeeDB 0.0.1 install script
+ *
+ * All tjc_employee_* and tjc_gl_* tables already exist in the database
+ * before this module is installed; nothing to create here.
+ *
+ * The legacy tjc_employee_assigned_item table created in earlier dev
+ * builds was rejected and is dropped explicitly so the schema doesn't
+ * carry the abandoned column set forward.
+ ***********************************************************************/
 
-IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EmployeeDB_Items]') AND type in (N'U'))
-	DROP TABLE {databaseOwner}[{objectQualifier}EmployeeDB_Items]
+IF EXISTS (SELECT 1 FROM sys.tables WHERE name = '{objectQualifier}tjc_employee_assigned_item')
+BEGIN
+    DROP TABLE {databaseOwner}{objectQualifier}tjc_employee_assigned_item
+END
 GO
-
-CREATE TABLE {databaseOwner}{objectQualifier}EmployeeDB_Items
-(
-	[ItemId] INT NOT NULL IDENTITY (1, 1),
-	[ItemName] NVARCHAR(MAX) NOT NULL,
-	[ItemDescription] NVARCHAR(MAX) NOT NULL,
-	[AssignedUserId] INT NULL,
-	[ModuleId] INT NOT NULL,
-	[CreatedOnDate] DATETIME NOT NULL,
-	[CreatedByUserId] INT NOT NULL,
-	[LastModifiedOnDate] DATETIME NOT NULL,
-	[LastModifiedByUserId] INT NOT NULL
-)
-GO
-
-
-ALTER TABLE {databaseOwner}[{objectQualifier}EmployeeDB_Items] ADD CONSTRAINT [PK_{objectQualifier}EmployeeDB_Items] PRIMARY KEY CLUSTERED ([ItemId])
-GO
-
-
-/************************************************************/
-/*****              SqlDataProvider                     *****/
-/************************************************************/

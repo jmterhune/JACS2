@@ -16,7 +16,6 @@ namespace tjc.Intranet.API.Services.Mediation
     public class MediatorListItemController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetMediatorListItems(int count)
         {
             List<MediatorListItemViewModel> mediatorlistItems = new List<MediatorListItemViewModel>();
@@ -25,12 +24,17 @@ namespace tjc.Intranet.API.Services.Mediation
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
             string firstName = query["firstName"].ToString();
             string lastName = query["lastName"].ToString();
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            string sortColumn = "LastName"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
             try
             {
                 var ctl = new Components.Mediation.MediatorListItemController();
@@ -46,7 +50,6 @@ namespace tjc.Intranet.API.Services.Mediation
             }
         }
         [HttpPost]
-        [AllowAnonymous]
         [ActionName("add-mediator")]
         public HttpResponseMessage CreateMediator(MediatorListItemViewModel mediatorViewItem)
         {

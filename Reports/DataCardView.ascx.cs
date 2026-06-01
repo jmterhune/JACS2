@@ -44,9 +44,7 @@ namespace tjc.Modules.Reports
             {
                 if (!IsPostBack)
                 {
-                    var ctl = new PhotoIDController();
-                    rptDataCard.DataSource=ctl.GetPhotoIDs();
-                    rptDataCard.DataBind();
+
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -55,6 +53,11 @@ namespace tjc.Modules.Reports
             }
         }
 
-       
+        protected void cmdSearch_Click(object sender, EventArgs e)
+        {
+            var ctl = new PhotoIDController();
+            rptDataCard.DataSource = ctl.GetPhotoIDs(txtLastName.Text);
+            rptDataCard.DataBind();
+        }
     }
 }

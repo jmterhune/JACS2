@@ -13,21 +13,8 @@ namespace tjc.Modules.Purchasing.Components
         public string RequestedName { get; set; }
         public DateTime DateRequested { get; set; }
         public DateTime? CompletedDate { get; set; }
-
-
-        //public List<Components.FormOrderItem> OrderLines
-        //{
-        //    get
-        //    {
-        //        return GetLines();
-        //    }
-        //}
-
-        //public List<Components.FormOrderItem> GetLines()
-        //{
-        //    var ctl = new Components.Controller();
-        //    return ctl.GetFormOrderItems(_orderId).ToList();
-        //}
+        public string EmailAddress { get; set; }
+       
     }
 
 }

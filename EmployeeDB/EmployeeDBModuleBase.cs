@@ -1,15 +1,3 @@
-﻿/*
-' Copyright (c) 2023  Joe Terhune
-'  All rights reserved.
-' 
-' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-' DEALINGS IN THE SOFTWARE.
-' 
-*/
-
 using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
@@ -20,97 +8,175 @@ namespace tjc.Modules.EmployeeDB
 {
     public class EmployeeDBModuleBase : PortalModuleBase
     {
-        private readonly INavigationManager _navigationManager;
+        protected readonly INavigationManager _navigationManager;
+
         public EmployeeDBModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
             JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            JavaScript.RequestRegistration(CommonJs.jQuery);
+        }
+
+        public string ReportUrl
+        {
+            get
+            {
+                if (Settings.Contains("Employee_ReportUrl"))
+                    return Settings["Employee_ReportUrl"].ToString();
+                return "";
+            }
         }
 
         public int EmployeeId
         {
             get
             {
-                var qs = Request.QueryString["eid"];
-                if (qs != null)
-                    return Convert.ToInt32(qs);
+                var qs = Request.QueryString["EmployeeId"];
+                if (qs != null && int.TryParse(qs, out int id))
+                    return id;
                 return -1;
             }
         }
-        public string EmployeeUrl { get { return _navigationManager.NavigateURL(); } }
-        public string ContactUrl { get { return EditUrl("Contact"); } }
-        public string DepartmentUrl { get { return EditUrl("Department"); } }
-        public string JobGroupUrl { get { return EditUrl("JobGroup"); } }
-        public string JobClassUrl { get { return EditUrl("JobClass"); } }
-        public string RaceUrl { get { return EditUrl("Race"); } }
-        public string EEOUrl { get { return EditUrl("eeo"); } }
-        public string CountyUrl { get { return EditUrl("County"); } }
-        public string LocationUrl { get { return EditUrl("Location"); } }
-        public string SwnLogUrl { get { return EditUrl("Log"); } }
-        public string PhoneUrl { get { return EditUrl("eid",EmployeeId.ToString(),"Phone"); } }
-        public string EmploymentUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Employment"); } }
-        public string EmergencyContactUrl { get { return EditUrl("eid", EmployeeId.ToString(),"EmergencyContact"); } }
-        public string DetailUrl { get { return EditUrl("eid", EmployeeId.ToString(),"Employee"); } }
-        public string ContactDetailUrl { get { return EditUrl("eid", EmployeeId.ToString(), "EditContact"); } }
-        public string SupervisorRole
+
+        public string HrAdminRole
         {
             get
             {
-                if (Settings.Contains("SupervisorRole"))
-                    return Settings["SupervisorRole"].ToString();
-
-                return "Supervisor";
+                if (Settings.Contains("HrAdminRole"))
+                    return Settings["HrAdminRole"].ToString();
+                return "HR Admin";
             }
         }
-        public string SwnUsername
+
+        public bool IsHrAdmin
         {
             get
             {
-                if (Settings.Contains("SwnUsername"))
-                    return Settings["SwnUsername"].ToString();
-
-                return "TJCCAPI";
+                if (UserId <= 0) return false;
+                return UserInfo.IsInRole(HrAdminRole) || UserInfo.IsSuperUser;
             }
         }
-        public string SwnPassword
+
+        /// <summary>True for portal Administrators role members and super users.
+        /// Used to gate the Departments admin tab on the Employees list — the
+        /// tjc_gl_group table is shared site-wide, so only DNN site admins can
+        /// modify it from this module.</summary>
+        public bool IsSiteAdmin
         {
             get
             {
-                if (Settings.Contains("SwnPassword"))
-                    return Settings["SwnPassword"].ToString();
-
-                return "12CircuitAPI!";
+                if (UserId <= 0) return false;
+                if (UserInfo.IsSuperUser) return true;
+                var adminRole = PortalSettings?.AdministratorRoleName;
+                return !string.IsNullOrEmpty(adminRole) && UserInfo.IsInRole(adminRole);
             }
         }
-        public string SwnServiceIdentifier
+
+        public string HomeUrl { get { return _navigationManager.NavigateURL(); } }
+
+        #region SWN credentials
+
+        public string SwnTestUsername
+        {
+            get { return Settings.Contains("Swn_TestUsername") ? Settings["Swn_TestUsername"].ToString() : ""; }
+        }
+
+        public string SwnTestPassword
+        {
+            get { return Settings.Contains("Swn_TestPassword") ? Settings["Swn_TestPassword"].ToString() : ""; }
+        }
+
+        public string SwnLiveUsername
+        {
+            get { return Settings.Contains("Swn_LiveUsername") ? Settings["Swn_LiveUsername"].ToString() : ""; }
+        }
+
+        public string SwnLivePassword
+        {
+            get { return Settings.Contains("Swn_LivePassword") ? Settings["Swn_LivePassword"].ToString() : ""; }
+        }
+
+        public bool SwnUseLive
         {
             get
             {
-                if (Settings.Contains("SwnServiceIdentifier"))
-                    return Settings["SwnServiceIdentifier"].ToString();
-
-                return "SWN";
+                if (!Settings.Contains("Swn_UseLive")) return false;
+                bool result;
+                return bool.TryParse(Settings["Swn_UseLive"].ToString(), out result) && result;
             }
         }
-        public string SwnSubscriptionKey
+
+        public string SwnUsername { get { return SwnUseLive ? SwnLiveUsername : SwnTestUsername; } }
+        public string SwnPassword { get { return SwnUseLive ? SwnLivePassword : SwnTestPassword; } }
+
+        #endregion
+
+        #region Helpdesk-notify email
+
+        /// <summary>"From" address used when the Edit page sends a change-summary
+        /// email after Save. Default mirrors the legacy aspx behaviour.</summary>
+        public string NotifyFromEmail
         {
             get
             {
-                if (Settings.Contains("SwnSubscriptionKey"))
-                    return Settings["SwnSubscriptionKey"].ToString();
-
-                return "57951d5a16604e97a764a9d84df7628c";
+                if (Settings.Contains("Notify_FromEmail"))
+                {
+                    var v = Settings["Notify_FromEmail"].ToString();
+                    if (!string.IsNullOrWhiteSpace(v)) return v;
+                }
+                return "hr@jud12.flcourts.org";
             }
         }
-        public string SwnBaseUrl
+
+        /// <summary>"To" address (or comma-separated list) used when the Edit page
+        /// sends a change-summary email after Save.</summary>
+        public string NotifyToEmail
         {
             get
             {
-                if (Settings.Contains("SwnBaseUrl"))
-                    return Settings["SwnBaseUrl"].ToString();
-
-                return "https://api.onsolve.com/v1/";
+                if (Settings.Contains("Notify_ToEmail"))
+                {
+                    var v = Settings["Notify_ToEmail"].ToString();
+                    if (!string.IsNullOrWhiteSpace(v)) return v;
+                }
+                return "helpdesk@jud12.flcourts.org";
             }
         }
+
+        /// <summary>Whether to send the change-summary email at all. Defaults to
+        /// false so existing test sites don't accidentally start emailing on save.</summary>
+        public bool NotifyOnSave
+        {
+            get
+            {
+                if (!Settings.Contains("Notify_OnSave")) return false;
+                bool result;
+                return bool.TryParse(Settings["Notify_OnSave"].ToString(), out result) && result;
+            }
+        }
+
+        #endregion
+
+        #region New Hire IT Worksheet
+
+        /// <summary>"To" address for the helpdesk notification when a New Hire
+        /// IT Worksheet is submitted. Defaults to the production helpdesk
+        /// distribution list. Override per-environment via the
+        /// <c>Nhit_HelpdeskEmail</c> module setting (so dev/test sites can
+        /// route mail to a sandbox inbox).</summary>
+        public string NhitHelpdeskEmail
+        {
+            get
+            {
+                if (Settings.Contains("Nhit_HelpdeskEmail"))
+                {
+                    var v = Settings["Nhit_HelpdeskEmail"].ToString();
+                    if (!string.IsNullOrWhiteSpace(v)) return v;
+                }
+                return "helpdesk@jud12.flcourts.org";
+            }
+        }
+
+        #endregion
     }
 }

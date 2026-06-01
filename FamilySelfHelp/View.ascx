@@ -24,29 +24,27 @@
                 </fieldset>
             </div>
             <div class="col-6">
-                <section class="call-to-action call-to-action-default">
-                    <div class="call-to-action-content w-100">
-                        <p class="text-left">Begin typing the clients last name below to check for previous log</p>
-                        <div class="form-group text-left w-75 position-relative">
+                <section class="call-to-action call-to-action-default pt-3 pb-2">
+                    <p class="text-start">Begin typing the clients last name below to check for previous log</p>
+                    <div class="row form-group">
+                        <div class="col text-start">
                             <asp:Label runat="server" AssociatedControlID="txtName" CssClass="fw-bold" Text="Client" ToolTip="Begin typing the clients last name below to check for previous log" />
                             <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtName" />
                             <select id="drpClients" class="form-control client-list position-absolute top-20" style="z-index: 1000"></select>
                             <asp:HiddenField ID="hdClientId" ClientIDMode="Static" runat="server" />
                         </div>
-                    </div>
-                    <div class="call-to-action-btn  mt-4">
-                        <asp:Button ID="cmdSearch" runat="server" CausesValidation="false" CssClass="btn btn-lg btn-default" Text="Search" OnClick="cmdSearch_Click" />
+                        <div class="col-auto  mt-4">
+                            <asp:Button ID="cmdSearch" runat="server" CausesValidation="false" CssClass="btn btn-lg btn-default" Text="Search" OnClick="cmdSearch_Click" />
+                        </div>
                     </div>
                 </section>
             </div>
         </div>
-<hr />
-    </div> 
+        <hr />
+    </div>
     <asp:Panel ID="pnlDetails" CssClass="ms-2 me-2" runat="server" Visible="false">
-       
         <div id="Details">
-
-            <asp:Repeater ID="rptEvents" runat="server">
+            <asp:Repeater ID="rptEvents" runat="server" OnItemCommand="rptEvents_ItemCommand">
                 <HeaderTemplate>
                     <h4 class="mb-1">Case Log Events</h4>
                     <table class="table table-striped">
@@ -58,7 +56,7 @@
                                 <th>Division</th>
                                 <th>Contact Method</th>
                                 <th>Location</th>
-                                <th>Case Type</th>
+                                <th>Case Type(s)</th>
                                 <th>Client Type</th>
                                 <th>Service(s) Provided</th>
                                 <th>Interpreter</th>
@@ -73,7 +71,7 @@
                 <ItemTemplate>
                     <tr>
                         <td class="command-icon">
-                            <asp:HyperLink ID="lnkDetail" ToolTip="Edit This Record" CssClass="cmdlink" runat="server" NavigateUrl='<%#EditUrl("LogId", Eval("LogId").ToString(), "EditLog")%>'><i class="fas fa-pencil"></i></asp:HyperLink></td>
+                            <asp:HyperLink ID="lnkDetail" ToolTip="Edit This Record" CssClass="cmdlink" runat="server" NavigateUrl='<%#EditUrl("lid", Eval("LogId").ToString(), "log")%>'><i class="fas fa-pencil"></i></asp:HyperLink></td>
                         <td>
                             <%#Eval("ServiceDate", "{0:d}")%>
                         </td>
@@ -82,14 +80,14 @@
                         <td><%#Eval("Division")%></td>
                         <td><%#Eval("ContactMethod")%></td>
                         <td><%#Eval("Location")%></td>
-                        <td><%#Eval("CaseType")%></td>
+                        <td><%#Eval("FormattedCaseType")%></td>
                         <td><%#Eval("ClientType")%></td>
                         <td><%#Eval("FormattedServiceProvided")%></td>
                         <td class="text-center"><%#HasInterpreter(Eval("InterpreterProvided").ToString())%></td>
                         <td class="text-center"><%#HasInterpreter(Eval("HasAppointment").ToString())%></td>
                         <td><%#Eval("TimeSpent")%> Hours</td>
                         <td class="command-icon">
-                            <asp:LinkButton ID="cmdDelete" CssClass="confirm" CommandName="Delete" ToolTip="Delete this Record" CommandArgument='<%# Eval("LogId").ToString()%>' runat="server">
+                            <asp:LinkButton ID="cmdDelete" CssClass="confirm" CommandName="delete" ToolTip="Delete this Record" CommandArgument='<%# Eval("LogId").ToString()%>' runat="server">
                                             <i title="Delete File" class="fa fa-trash"></i>
                             </asp:LinkButton></td>
 
@@ -136,7 +134,7 @@
         });
     });
     function FindTextInClientList(textValue) {
-        $('#drpClients option:contains(')
+        $('#drpClients option:contains("")');
     }
     function FillClients(name) {
         var service = {
@@ -181,6 +179,8 @@
         } catch (e) {
             ShowAlert("Error!", "Error retrieving client names.<br />Please refresh the page and try again.");
         }
+        if ($("#hdClientId").val() != "")
+            $('#drpClients').val($("#hdClientId").val());
         return false;
     }
     function ShowAlert(title, text) {

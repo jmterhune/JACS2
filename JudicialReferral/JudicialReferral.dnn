@@ -1,26 +1,26 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
     <package name="JudicialReferral" type="Module" version="00.00.01">
-      <friendlyName>JudicialReferral</friendlyName>
-      <description>Joe Terhune JudicialReferral module</description>
+      <friendlyName>Judicial Referral</friendlyName>
+      <description>Judicial Referral module for routing motions from JAs/Judges to Court Counsel</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
       <owner>
         <name>Joe Terhune</name>
         <organization>Joe Terhune</organization>
-        <url>https://www.jud12.flcourts.org/</url>
+        <url>https://www.jud12.flcourts.org</url>
         <email>jterhune@jud12.flcourts.org</email>
       </owner>
       <license src="License.txt"></license>
       <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
       <azureCompatible>true</azureCompatible>
       <dependencies>
-        <dependency type="CoreVersion">09.08.00</dependency>
+        <dependency type="CoreVersion">09.11.00</dependency>
       </dependencies>
-      
+
       <components>
         <component type="Script">
           <scripts>
-            <basePath>DesktopModules\JudicialReferral</basePath>
+            <basePath>DesktopModules\tjc.modules\JudicialReferral</basePath>
             <script type="Install">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>00.00.01.SqlDataProvider</name>
@@ -36,7 +36,7 @@
 
         <component type="ResourceFile">
           <resourceFiles>
-            <basePath>DesktopModules/JudicialReferral</basePath>
+            <basePath>DesktopModules/tjc.modules/JudicialReferral</basePath>
             <resourceFile>
               <name>Resources.zip</name>
             </resourceFile>
@@ -46,8 +46,8 @@
         <component type="Module">
           <desktopModule>
             <moduleName>JudicialReferral</moduleName>
-            <foldername>JudicialReferral</foldername>
-            <businessControllerClass>tjc.Modules.JudicialReferral.Components.FeatureController, JudicialReferral</businessControllerClass>
+            <foldername>tjc.modules/JudicialReferral</foldername>
+            <businessControllerClass>tjc.Modules.JudicialReferral.Components.FeatureController, tjc.Modules.JudicialReferral</businessControllerClass>
             <supportedFeatures>
               <supportedFeature>IPortable</supportedFeature>
               <supportedFeature>ISearchable</supportedFeature>
@@ -55,12 +55,12 @@
             </supportedFeatures>
             <moduleDefinitions>
               <moduleDefinition>
-                <friendlyName>JudicialReferral</friendlyName>
+                <friendlyName>Judicial Referral</friendlyName>
                 <defaultCacheTime>0</defaultCacheTime>
                 <moduleControls>
                   <moduleControl>
                     <controlKey />
-                    <controlSrc>DesktopModules/JudicialReferral/View.ascx</controlSrc>
+                    <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/View.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle />
                     <controlType>View</controlType>
@@ -69,21 +69,40 @@
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
-                    <controlKey>Edit</controlKey>
-                    <controlSrc>DesktopModules/JudicialReferral/Edit.ascx</controlSrc>
+                    <controlKey>referral</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/Referral.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Edit Content</controlTitle>
-                    <controlType>Edit</controlType>
+                    <controlTitle>New Referral</controlTitle>
+                    <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />
                     <viewOrder>0</viewOrder>
-                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>review</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/Review.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Review Referral</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>editlog</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/EditLogEntry.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Copy to Counsel Log</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
                     <controlKey>Settings</controlKey>
-                    <controlSrc>DesktopModules/JudicialReferral/Settings.ascx</controlSrc>
+                    <controlSrc>DesktopModules/tjc.modules/JudicialReferral/Views/Settings.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>JudicialReferral Settings</controlTitle>
+                    <controlTitle>Judicial Referral Settings</controlTitle>
                     <controlType>Edit</controlType>
                     <iconFile />
                     <helpUrl />
@@ -106,7 +125,7 @@
         <component type="Assembly">
           <assemblies>
             <assembly>
-              <name>JudicialReferral.dll</name>
+              <name>tjc.Modules.JudicialReferral.dll</name>
               <path>bin</path>
             </assembly>
           </assemblies>

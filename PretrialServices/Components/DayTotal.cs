@@ -43,6 +43,8 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get; set;
         }
+        public string MostSeriousOffense { get; set; }
+
         public int McDangerous_h
         {
             get; set;
@@ -62,6 +64,25 @@ namespace tjc.Modules.PretrialServices.Components
         public int BwOrderedYes
         {
             get; set;
+        }
+        public int Mso907
+        {
+            get; set;
+        }
+        public int MsoNonDangerous
+        {
+            get; set;
+        }
+        public int MsoMisd
+        {
+            get; set;
+        }
+        public int MsoTotals
+        {
+            get
+            {
+                return Mso907 + MsoNonDangerous + MsoMisd;
+            }
         }
         public int NonCompNewArrest
         {

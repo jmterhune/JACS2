@@ -12,6 +12,7 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane active">
+            <asp:HiddenField ID="hfSessionTimeout" ClientIDMode="Static" runat="server" />
             <div class="ms-2 me-2">
                 <asp:HyperLink ID="lnkAdmin" runat="server" Visible="false" CssClass="btn btn-primary"><i class="fas fa-cog"></i> Admin</asp:HyperLink>
                 <div class="p-2 bg-light mb-3 border rounded border-secondary d-inline-block">
@@ -283,16 +284,14 @@
         </div>
     </div>
 </div>
-
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap5-toggle.min.css" />
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.1.1/js/bootstrap5-toggle.jquery.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.1.1/css/bootstrap5-toggle.min.css" />
-
-
-
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/Bootstrap/bootstrap5-toggle.jquery.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <script type="text/javascript">
     var moduleId = <%=this.ModuleId%>;
     var jaRole = '<%=this.JaRole%>';
@@ -323,11 +322,13 @@
 
         $(document).ready(function () {
             PageInit();
+           
         });
 
     }(jQuery, window.Sys));
 
     function PageInit() {
+        startSessionTimer();
         GetLocalStorage();
         $(".date-picker").datepicker();
         $("#dvExclude").hide();
@@ -545,8 +546,8 @@
                 }
             });
         });
-        $("#tblHearing_length").prepend($('#btnAdd'));
-        $("#tblHearing_length").parent().siblings('div').first().prepend($('#statusOptionContainer'));
+        $(".dt-length").prepend($('#btnAdd'));
+        $(".dt-length").parent().siblings('div').first().prepend($('#statusOptionContainer'));
         $('input[data-bs-toggle="toggle"]').bootstrapToggle();
     }
     function ExcludeHearings() {
@@ -555,7 +556,6 @@
             ExcludeHearing($(this).val());
             $(this).prop('checked', false);
         });
-        hearingTable.draw();
         if (excludeErrors.length > 0) {
             ShowAlert('Error Processing Records', 'The following Record IDs were not processed due to an Error' + excludeErrors.toString());
         }
@@ -572,6 +572,9 @@
             },
             error: function (error) {
                 excludeErrors.push(logid);
+            },
+            complete: function (com) {
+                hearingTable.draw();
             }
         });
     }
@@ -844,4 +847,50 @@
         // Check if the resulting date is valid
         return !isNaN(date.getTime());
     }
-</script>
+    function startSessionTimer() {
+        // Get session timeout in minutes (from server)
+        var sessionTimeoutMinutes = parseInt($('#hfSessionTimeout').val()) || 20;
+        var timeoutMs = sessionTimeoutMinutes * 60 * 1000;
+        var warningBeforeMs = 60 * 1000; // Show warning 1 minute before expiration
+
+        var timeoutTimer;
+
+        function resetTimer() {
+            clearTimeout(timeoutTimer);
+            timeoutTimer = setTimeout(showSessionWarning, timeoutMs - warningBeforeMs);
+        }
+
+        function showSessionWarning() {
+            Swal.fire({
+                title: 'Session About to Expire',
+                html: 'Your session will expire in <b>approximately 1 minute</b>.<br>' +
+                    'Please interact with the page to stay logged in.',
+                icon: 'warning',
+                timer: 60000, // 60 seconds - will auto-close after this
+                timerProgressBar: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Stay Logged In',
+                confirmButtonColor: '#3085d6',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    // Optional: Pulse effect on timer
+                    Swal.showLoading();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // User clicked "Stay Logged In" - could make an AJAX ping here if desired
+                    resetTimer(); // Restart the countdown
+                }
+            });
+        }
+
+        // Reset timer on user activity
+        const events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'];
+        events.forEach(event => {
+            document.addEventListener(event, resetTimer, { passive: true });
+        });
+
+        // Start the timer
+        resetTimer();
+    }</script>

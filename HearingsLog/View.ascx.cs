@@ -37,6 +37,7 @@ namespace tjc.Modules.HearingLog
                     }
                     drpJudges.Visible = true;
                 }
+                hfSessionTimeout.Value = Session.Timeout.ToString();
             }
             catch (Exception exc) //Module failed to load
             {

@@ -87,21 +87,21 @@
                                     <div class="row g-3">
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstName" />
                                         </div>
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
                                         </div>
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="50" ID="txtPhone" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="50" ID="txtPhone" />
                                         </div>
                                     </div>
                                     <div class="row g-3">
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Email Address" />
-                                            <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmail" />
                                             <asp:RegularExpressionValidator ID="valEmail" runat="server"
                                                 ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" Display="Dynamic" ControlToValidate="txtEmail"
                                                 ErrorMessage="Invalid Email Address Format" SetFocusOnError="true" CssClass="label label-danger" />
@@ -143,10 +143,10 @@
         </div>
     </div>
 </div>
-<dnn:dnnjsinclude runat="server" filepath="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jquery/jquery.mask.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     (function ($, Sys) {
@@ -173,7 +173,7 @@
                 { "bSortable": false },],
             autoWidth: true,
         });
-        $("#tblMediator_length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditMediatorModal"><i class="fa fa-plus"></i>&nbsp;Add Mediator</button>');
+        $("#.dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditMediatorModal"><i class="fa fa-plus"></i>&nbsp;Add Mediator</button>');
         table.on('draw', function () {
             $(".confirm").dnnConfirm({
                 text: 'Are you sure you wish to Delete the selected Mediator?',

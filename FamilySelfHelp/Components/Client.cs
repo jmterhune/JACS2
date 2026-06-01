@@ -21,7 +21,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
     //configure caching using PetaPoco
     [Cacheable("Clients", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
-    internal class Client : EntityBase
+    public class Client : EntityBase
     {
 
         public long ClientId

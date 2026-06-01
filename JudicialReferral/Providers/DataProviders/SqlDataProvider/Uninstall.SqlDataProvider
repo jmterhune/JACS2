@@ -1,15 +1,2 @@
-﻿/************************************************************/
-/*****              SqlDataProvider                     *****/
-/*****                                                  *****/
-/*****                                                  *****/
-/***** Note: To manually execute this script you must   *****/
-/*****       perform a search and replace operation     *****/
-/*****       for {databaseOwner} and {objectQualifier}  *****/
-/*****                                                  *****/
-/************************************************************/
-
-
-
-/************************************************************/
-/*****              SqlDataProvider                     *****/
-/************************************************************/
+/* JudicialReferral Module Uninstall - Version 00.00.01 */
+/* Tables tjc_jr_* are preserved on uninstall. */

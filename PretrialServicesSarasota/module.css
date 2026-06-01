@@ -1,0 +1,84 @@
+.command-icon {
+    cursor: pointer;
+    width: 16px;
+    max-width: 16px;
+}
+label em {
+    color: red
+}
+.modal .label {
+    white-space: normal !important;
+}
+.radio-button-list {
+    display: inline;
+}
+
+    .radio-button-list label {
+        padding: 0 8px 0 5px
+    }
+
+.fullScreenContainer
+{
+    padding:0 2rem 0 2rem
+}
+    .fullScreenContainer .form-control {
+        min-width: 3rem !important;
+    }
+    .fullScreenContainer .input-item-lg {
+        min-width: 6.5rem !important;
+    }
+.modal-progress {
+    position: fixed;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: Black;
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+    -moz-opacity: 0.8;
+}
+
+.center-progress {
+    z-index: 1000;
+    margin: 300px auto;
+    padding: 10px;
+    width: 50px;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -moz-opacity: 1;
+}
+.ui-widget-overlay {
+    z-index: 1061 !important;
+}
+
+.ui-widget-content {
+    z-index: 2062 !important;
+}
+
+.form-fieldset {
+    padding: 10px 5px 5px 5px;
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ced4da;
+    border-radius: 5px;
+}
+
+    .form-fieldset legend {
+        width: auto;
+        display: inline-block;
+        padding: 0 5px;
+        font-size: .8rem;
+        font-weight: 700;
+        float:none !important;
+    }
+.intake-form{max-width:600px;}

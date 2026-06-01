@@ -1,98 +1,416 @@
-.command-icon {
-    cursor: pointer;
-    width:16px;
-    max-width:16px;
-    
-}
-.phone, .custom-control-label {
-    cursor: pointer;
-}
-.form-check input[type='checkbox']{margin-right:8px}
-.form-check label{margin-bottom:0 !important}
-.form-check {
-    min-height: 0rem !important
-}
-#drpfilter{
-    max-width:150px ;
-}
-.radio-button-list{display:block;}
-.radio-button-list label{
-    padding: 0 8px 0 5px;
-}
-.edit-form fieldset {
-    padding: 10px 5px 5px 5px;
-    display: block;
-    margin-inline-start: 2px;
-    margin-inline-end: 2px;
-    padding-block-start: 0.35em;
-    padding-inline-start: 0.75em;
-    padding-inline-end: 0.75em;
-    padding-block-end: 0.625em;
-    min-inline-size: min-content;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #ced4da;
-border-radius:5px;
-}
-.edit-form legend {
-    width:auto;
-    display:inline-block;
-    padding:0 5px;
-    font-size: 1rem;
-    font-weight:700;
-    float:none;
-}
-.dnnFileUploadScope{float:none !important}
-    .dnnFileUploadScope .dnnFormItem span{min-width:4rem;}
+﻿/* EmployeeDB module styles */
 
-label em{color:red !important}
-.group-list{
-    min-width:13rem; padding:.5rem;
-}
-#groups label{display:block}
-.list-commands i {
-    font-size: 2rem;
-}
-.employee-thumb img{
-    max-height:32px !important;
-}
+/* Porto 8 / Bootstrap 5 helpers */
+.empName .Head { margin: 0; padding: 0; }
+.empName img { margin-right: 10px; }
+.swnMessage { max-width: 663px; }
 
+/* Small command icons in admin grids (Edit, Delete, etc.) */
+.command-item { width: 60px; white-space: nowrap; }
+.command-item a { margin-right: 0.5rem; text-decoration: none; }
+.command-item i { vertical-align: middle; }
+
+/* Modal progress overlay */
 .modal-progress {
-    position: fixed;
-    z-index: 999;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: Black;
-    filter: alpha(opacity=60);
-    opacity: 0.6;
-    -moz-opacity: 0.8;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 9999;
+}
+.center-progress {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
 }
 
-.center-progress {
-    z-index: 1000;
-    margin: 300px auto;
-    padding: 10px;
-    width: 50px;
-    filter: alpha(opacity=100);
-    opacity: 1;
-    -moz-opacity: 1;
+/* Collapsible filter card (matches CourtCounsel/JudicialReferral pattern) */
+.collapse-toggle .icon-collapsed { display: none; }
+.collapse-toggle .icon-expanded { display: inline-block; }
+.collapse-toggle[aria-expanded="false"] .icon-expanded { display: none; }
+.collapse-toggle[aria-expanded="false"] .icon-collapsed { display: inline-block; }
+
+/* Access-card input widths */
+.access-code { max-width: 10rem; }
+
+/* Employee photo preview */
+.photo-preview { max-width: 200px; max-height: 250px; border: 1px solid #ddd; padding: 4px; }
+
+/* EEO report styling */
+.eeo-preview-table td, .eeo-preview-table th { padding: 4px 8px; font-size: 12px; }
+
+/* ------------------------------------------------------------------
+   EEO List — compact column layout + hover tooltips on header codes
+   ------------------------------------------------------------------ */
+table.empdb-eeo-table thead th {
+    text-align: center;
+    white-space: nowrap;
+    cursor: help;            /* hint that there's a tooltip */
+    padding: 4px 2px;
+    line-height: 1.1;
+    font-size: 0.8rem;
+    vertical-align: middle;
 }
-/*.ui-widget-overlay {
-z-index:1051 !important;
+/* DataTables 2.x wraps the <th> content in <div class="dt-scroll-sizing">
+   <div class="dt-column-header">…</div></div>, and the inner div uses
+   flex with default justify-content: flex-start which left-aligns the
+   column title regardless of the th's text-align. Center those inner
+   wrappers so the stacked single-letter codes line up under each other. */
+table.empdb-eeo-table thead th .dt-column-header,
+table.empdb-eeo-table thead th .dt-column-title,
+table.empdb-eeo-table thead th .dt-scroll-sizing {
+    justify-content: center;
+    text-align: center;
 }
-.ui-widget-content {
-    z-index: 1052 !important;
+/* Two-line single-letter codes — the <br /> stacks the category code over
+   the slot code; both lines should render at the natural width of one
+   character so each numeric column is no wider than its data demands. */
+table.empdb-eeo-table thead th:nth-child(n + 4):nth-last-child(n + 2) {
+    width: 1.5em;
+    min-width: 1.5em;
 }
-*/div.dataTables_wrapper div.dataTables_filter select {
-    margin-left: 0.5em;
-    display: inline-block;
+table.empdb-eeo-table tbody td {
+    text-align: right;
+    padding: 3px 4px;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.85rem;
+}
+table.empdb-eeo-table tbody td:nth-child(2) {  /* Job Category column */
+    text-align: left;
+    white-space: nowrap;
+}
+fieldset.empdb-eeo-fieldset {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: .5rem .75rem;
+    margin-bottom: 1rem;
+}
+
+/* Reporting Window collapse panel on the Review tab.
+   Header acts as the toggle (clickable). Caret flips between up / down
+   via the existing .collapse-toggle CSS at the top of this file
+   (icon-expanded / icon-collapsed). */
+.empdb-reporting-window-header {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.empdb-reporting-window-caret {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+legend.empdb-eeo-legend {
     width: auto;
+    padding: 0 .5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: .25rem;
+    color: #495057;
 }
-.dnnFormPopup .ui-dialog-titlebar{
-    padding: 0.5rem
+
+/* ------------------------------------------------------------------
+   Full-screen busy overlay used during long-running SWN AJAX calls
+   (Sync / Add All Groups / Show Missing Contacts). Hidden by default;
+   the JS toggles display:block when an SWN endpoint is in flight.
+   ------------------------------------------------------------------ */
+.empdb-busy-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 10500;             /* above Bootstrap modal backdrop (1040) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.date-filter input {
-    width: 7rem !important;
+.empdb-busy-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    max-width: 420px;
+}
+.empdb-busy-spinner {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+}
+.empdb-busy-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+.empdb-busy-detail {
+    font-size: 0.9rem;
+}
+
+/* SWN feedback */
+.swn-result { max-height: 300px; overflow-y: auto; }
+
+/* DataTables integration */
+table.dataTable td a { text-decoration: none; }
+table.dataTable td a:hover { text-decoration: underline; }
+
+/* Hide the tab-content border (Porto theme already styles tabs) */
+.nav-tabs + .tab-content { padding-top: 15px; }
+
+/* Print styles */
+@media print {
+    .no-print, .btn, .dataTables_filter, .dataTables_length, .dataTables_paginate, .dataTables_info { display: none !important; }
+    table.dataTable { font-size: 11pt; }
+}
+/* Normalize field heights to Bootstrap 4 standard. The DNN/Porto base-1 skin
+       sets box-sizing: content-box on inputs which combines with padding+border
+       to render ~52px tall fields. Force border-box so the height is exactly
+       the BS4 default of calc(1.5em + 0.75rem + 2px) ≈ 38px. */
+#EmployeeEditForm .form-control,
+#EmployeeEditForm .form-select,
+#EmployeeEditForm select {
+    box-sizing: border-box;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: .375rem .75rem;
+    line-height: 1.5;
+}
+
+#EmployeeEditForm textarea.form-control {
+    box-sizing: border-box;
+    height: auto;
+    min-height: 100px;
+}
+
+#EmployeeEditForm .nav-tabs .nav-link {
+    cursor: pointer;
+}
+
+#EmployeeEditForm .employee-grouplist {
+    height: 300px;
+    min-height: 300px;
+}
+#EmployeeEditForm .row{margin-bottom:8px}
+
+/* Inline horizontal radio buttons (Gender / Employee of). With
+   RepeatLayout="Flow" the ListItems render as adjacent spans; we space
+   them out so they don't crowd. Modelled on JudicialReferral's `.division`. */
+#EmployeeEditForm .form-radio-row label {
+    margin-right: 1.25rem;
+    margin-left: 0.25rem;
+    font-weight: normal;
+}
+#EmployeeEditForm .form-radio-row input[type="radio"] {
+    margin-left: 0;
+    vertical-align: middle;
+}
+
+/* Bootstrap form-check spacing for our checkboxes. Forces a single visible
+   box+label even when the DNN skin tries to add its own checkbox CSS. */
+#EmployeeEditForm .form-check {
+    padding-left: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+#EmployeeEditForm .form-check-input {
+    margin-left: -1.5rem;
+}
+#EmployeeEditForm .form-check-label {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* Fieldset / legend tightening — the .h5 class on the legend already sets
+   typography, so we just give it a divider + breathing room. */
+#EmployeeEditForm fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+#EmployeeEditForm fieldset > legend {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ------------------------------------------------------------------
+   Last-edited employee row highlight on EmployeeList
+   ------------------------------------------------------------------ */
+#tblEmployees tbody tr.empdb-row-highlight > td {
+    background-color: #fff3cd !important;
+    transition: background-color 1.6s ease-out;
+}
+
+/* ------------------------------------------------------------------
+   Photo tab — drag/drop dropzone + preview
+   ------------------------------------------------------------------ */
+.empdb-photo-img {
+    max-width: 300px;
+    height: auto;
+    display: block;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px;
+    background: #fff;
+}
+.empdb-photo-empty {
+    width: 300px;
+    padding: 60px 12px;
+    border: 1px dashed #ced4da;
+    border-radius: 4px;
+    text-align: center;
+}
+.empdb-photo-actions {
+    margin-top: 0.5rem;
+}
+.empdb-photo-drop {
+    border: 2px dashed #adb5bd;
+    border-radius: 6px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s;
+    background: #f8f9fa;
+}
+.empdb-photo-drop:hover,
+.empdb-photo-drop:focus {
+    background: #eef4fb;
+    border-color: #6c757d;
+    outline: none;
+}
+.empdb-photo-drop.is-drag-over {
+    background: #e3efff;
+    border-color: #0d6efd;
+    border-style: solid;
+}
+.empdb-photo-drop.is-uploading {
+    opacity: 0.6;
+    cursor: progress;
+}
+.empdb-photo-drop-icon {
+    font-size: 2.25rem;
+    color: #6c757d;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* ------------------------------------------------------------------
+   Groups tab — dual-list with move buttons + drag/drop
+   ------------------------------------------------------------------ */
+.empdb-dual-list-label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+.empdb-dual-list-box {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 320px;
+    overflow-y: auto;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #fff;
+}
+.empdb-dual-list-box.is-drag-over {
+    background: #eef4fb;
+    border-color: #0d6efd;
+}
+.empdb-dual-list-item {
+    padding: 6px 10px;
+    border-bottom: 1px solid #f1f3f5;
+    cursor: grab;
+    user-select: none;
+}
+.empdb-dual-list-item:last-child {
+    border-bottom: none;
+}
+.empdb-dual-list-item:hover {
+    background: #f8f9fa;
+}
+.empdb-dual-list-item.is-selected {
+    background: #cfe2ff;
+    color: #052c65;
+}
+.empdb-dual-list-item.is-dragging {
+    opacity: 0.5;
+}
+.empdb-dual-list-empty {
+    padding: 12px;
+    text-align: center;
+    list-style: none;
+}
+.empdb-dual-list-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+.empdb-dual-list-buttons .btn {
+    width: 3rem;
+}
+/* Anchor-as-button :visited color fix.
+ *
+ * The browser default (and the Porto skin's global rules) style :visited
+ * <a> links with a blue/purple color, which leaks through Bootstrap's
+ * btn-* text color once the user has clicked the link — e.g. the green
+ * "Add Employee" button reads as blue text after one visit. These rules
+ * pin the text color to white in every link state for the solid-color
+ * variants we actually render as anchors (Add Employee = btn-success;
+ * Directory / Details / EEO / Reports = btn-primary; Back to List /
+ * Cancel = btn-secondary; plus btn-danger / btn-info for completeness).
+ * !important is needed to outweigh the :visited rule, which lands at
+ * higher specificity than .btn's own color declaration. */
+a.btn-primary,
+a.btn-primary:link,
+a.btn-primary:visited,
+a.btn-primary:hover,
+a.btn-primary:focus,
+a.btn-primary:active,
+a.btn-success,
+a.btn-success:link,
+a.btn-success:visited,
+a.btn-success:hover,
+a.btn-success:focus,
+a.btn-success:active,
+a.btn-secondary,
+a.btn-secondary:link,
+a.btn-secondary:visited,
+a.btn-secondary:hover,
+a.btn-secondary:focus,
+a.btn-secondary:active,
+a.btn-danger,
+a.btn-danger:link,
+a.btn-danger:visited,
+a.btn-danger:hover,
+a.btn-danger:focus,
+a.btn-danger:active,
+a.btn-info,
+a.btn-info:link,
+a.btn-info:visited,
+a.btn-info:hover,
+a.btn-info:focus,
+a.btn-info:active {
+    color: #fff !important;
+}
+
+/* New Hire IT Worksheet — flow the long checkbox catalogs (Software /
+   Intranet / Judicial) into 3 columns so the lists fit the page without
+   a 20-row scroll. break-inside: avoid keeps each checkbox + label
+   together rather than splitting across a column boundary.
+   Drops to 2 columns on tablet, 1 on mobile so the layout doesn't
+   pile up at narrow widths. */
+.empdb-nhit-checklist {
+    column-count: 1;
+    column-gap: 1.5rem;
+}
+@media (min-width: 576px) {
+    .empdb-nhit-checklist { column-count: 2; }
+}
+@media (min-width: 768px) {
+    .empdb-nhit-checklist { column-count: 3; }
+}
+.empdb-nhit-checklist .form-check {
+    break-inside: avoid;
+    page-break-inside: avoid; /* legacy fallback */
+    -webkit-column-break-inside: avoid;
+}
+
+.empdb-dual-list-actions {
+    margin-top: 1.25rem;
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DotNetNuke.ComponentModel.DataAnnotations;
 
 namespace tjc.Modules.Purchasing.Components
@@ -12,21 +13,26 @@ namespace tjc.Modules.Purchasing.Components
         public int OrderID { get; set; }
         public string Location { get; set; }
         public string RequestedName { get; set; }
+        public string EmailAddress { get; set; }
         public DateTime DateRequested { get; set; }
         public DateTime? CompletedDate { get; set; }
-
-        //public List<Components.SupplyOrderItem> OrderLines
-        //{
-        //    get
-        //    {
-        //        return GetLines();
-        //    }
-        //}
-
-        //public List<Components.SupplyOrderItem> GetLines()
-        //{
-        //    var ctl = new Components.Controller();
-        //    return ctl.GetSupplyOrderItems(_orderId).ToList();
-        //}
+        [IgnoreColumn]
+        public IEnumerable<SupplyOrderItem> SupplyOrderItems
+        {
+            get
+            {
+                var ctl = new SupplyOrderController();
+                return ctl.GetSupplyOrderItemsByOrder(OrderID);
+            }
+        }
+        [IgnoreColumn]
+        public IEnumerable<SupplyOrderAttachment> SupplyOrderAttachments
+        {
+            get
+            {
+                var ctl = new AttachmentController();
+                return ctl.GetSupplyAttachmentsByOrderId(OrderID);
+            }
+        }
     }
 }

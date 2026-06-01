@@ -1,0 +1,83 @@
+/*
+ * Court Registry — cleanup script
+ *
+ * The C# controllers have been switched to inline SQL (T-SQL passed via
+ * IDataContext.Execute / ExecuteQuery / ExecuteScalar) so the application no
+ * longer depends on these database objects. Drop them so the side database
+ * (jud12.flcourts.org) matches the live environment, where these objects
+ * never existed.
+ *
+ * Idempotent — uses IF EXISTS so it can be re-run.
+ */
+
+------------------------------------------------------------------------------
+-- View created during the conversion (replaced by inline JOIN in C#)
+------------------------------------------------------------------------------
+IF OBJECT_ID('dbo.tjc_car_exceptions', 'V') IS NOT NULL
+    DROP VIEW dbo.tjc_car_exceptions;
+GO
+
+------------------------------------------------------------------------------
+-- Stored procedures added in the conversion that are now done in C# inline
+------------------------------------------------------------------------------
+IF OBJECT_ID('dbo.tjc_car_get_application_list_count', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_application_list_count;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_get_application_list_paged', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_application_list_paged;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_get_attorney_list_count', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_attorney_list_count;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_get_attorney_list_paged', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_attorney_list_paged;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_get_attorneys_by_application_year', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_attorneys_by_application_year;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_add_exclusion', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_add_exclusion;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_update_exclusion', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_update_exclusion;
+GO
+
+------------------------------------------------------------------------------
+-- Pre-existing stored procedures whose work the C# now performs inline.
+-- (These exist on live too; safe to drop there once the new build is
+--  deployed and verified — the application no longer calls them.)
+------------------------------------------------------------------------------
+IF OBJECT_ID('dbo.tjc_car_get_attorney_jac_codes', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_attorney_jac_codes;
+GO
+
+IF OBJECT_ID('dbo.tjc_car_get_registry_list', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.tjc_car_get_registry_list;
+GO
+
+------------------------------------------------------------------------------
+-- Audit columns on tjc_car_applications.
+-- CreatedByUserId is populated by the public-facing application module.
+-- LastModifiedByUserId is populated by the admin module on every edit.
+------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT 1 FROM sys.columns
+               WHERE object_id = OBJECT_ID('dbo.tjc_car_applications')
+                 AND name = 'CreatedByUserId')
+BEGIN
+    ALTER TABLE dbo.tjc_car_applications ADD CreatedByUserId INT NULL;
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns
+               WHERE object_id = OBJECT_ID('dbo.tjc_car_applications')
+                 AND name = 'LastModifiedByUserId')
+BEGIN
+    ALTER TABLE dbo.tjc_car_applications ADD LastModifiedByUserId INT NULL;
+END
+GO

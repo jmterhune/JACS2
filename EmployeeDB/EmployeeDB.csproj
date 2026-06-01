@@ -1,14 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props" Condition="Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props')" />
-  <Import Project="..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props" Condition="Exists('..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props')" />
-  <Import Project="..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props" Condition="Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
+    <ProductVersion />
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{03F91FA2-3625-43B0-9F2F-563C65A82C89}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -18,17 +14,14 @@
     <AssemblyName>tjc.Modules.EmployeeDB</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <Use64BitIISExpress />
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,286 +48,271 @@
     </Reference>
     <Reference Include="DotNetNuke.Abstractions, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Abstractions.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.DependencyInjection, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\DotNetNuke.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.DependencyInjection.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.WebUtility">
-      <HintPath>..\..\Intranet-new\bin\DotNetNuke.WebUtility.dll</HintPath>
+    <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.OpenApi, Version=1.6.4.0, Culture=neutral, PublicKeyToken=3f5743946376f042, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.OpenApi.1.6.4\lib\netstandard2.0\Microsoft.OpenApi.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
+    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="itextsharp">
+      <!-- iTextSharp 5.5 lives in the legacy ASP.NET intranet's bin folder.
+           Sister modules (PretrialServices) reference this same DLL via a
+           relative path. From tjc.modules.local\EmployeeDB this is two
+           levels up — D:\OneDrive - jud12fl\SourceCode\bin. -->
+      <HintPath>..\..\bin\itextsharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Net.Http.Formatting.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\DropDownItem.cs" />
-    <Compile Include="Components\EmergencyContactController.cs" />
-    <Compile Include="Components\EmployeeListItem.cs" />
-    <Compile Include="Components\SwnContact.cs" />
-    <Compile Include="Components\SwnLogController.cs" />
-    <Compile Include="Components\SwnLog.cs" />
-    <Compile Include="Components\Helper.cs" />
-    <Compile Include="Components\ModuleSecurity.cs" />
-    <Compile Include="Components\RaceController.cs" />
-    <Compile Include="Components\ServiceHistoryController.cs" />
-    <Compile Include="Components\PositionHistoryController.cs" />
-    <Compile Include="Components\PhoneController.cs" />
-    <Compile Include="Components\OfficeLocationController.cs" />
-    <Compile Include="Components\JobClassController.cs" />
-    <Compile Include="Components\JobGroupController.cs" />
-    <Compile Include="Components\GroupController.cs" />
-    <Compile Include="Components\EmployeeBase.cs" />
-    <Compile Include="Components\EEOController.cs" />
-    <Compile Include="Components\ServiceHistory.cs" />
-    <Compile Include="Components\Race.cs" />
-    <Compile Include="Components\PositionHistory.cs" />
-    <Compile Include="Components\Phone.cs" />
-    <Compile Include="Components\OfficeLocation.cs" />
-    <Compile Include="Components\JobGroup.cs" />
-    <Compile Include="Components\GroupMembership.cs" />
-    <Compile Include="Components\Group.cs" />
-    <Compile Include="Components\EmergencyContact.cs" />
-    <Compile Include="Components\EEO.cs" />
-    <Compile Include="Components\JobClass.cs" />
-    <Compile Include="Components\EmployeeController.cs" />
-    <Compile Include="Components\Employee.cs" />
-    <Compile Include="Components\SwnInterface.cs" />
-    <Compile Include="Components\SwnPhone.cs" />
-    <Compile Include="EditContact.ascx.cs">
-      <DependentUpon>EditContact.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="EditContact.ascx.designer.cs">
-      <DependentUpon>EditContact.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="EeoSetup.ascx.cs">
-      <DependentUpon>EeoSetup.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="EeoSetup.ascx.designer.cs">
-      <DependentUpon>EeoSetup.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="CountyView.ascx.cs">
-      <DependentUpon>CountyView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CountyView.ascx.designer.cs">
-      <DependentUpon>CountyView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="EmergencyContacts.ascx.cs">
-      <DependentUpon>EmergencyContacts.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="EmergencyContacts.ascx.designer.cs">
-      <DependentUpon>EmergencyContacts.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Employment.ascx.cs">
-      <DependentUpon>Employment.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Employment.ascx.designer.cs">
-      <DependentUpon>Employment.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SwnClient.cs" />
-    <Compile Include="Phones.ascx.cs">
-      <DependentUpon>Phones.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Phones.ascx.designer.cs">
-      <DependentUpon>Phones.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="JobClassView.ascx.cs">
-      <DependentUpon>JobClassView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="JobClassView.ascx.designer.cs">
-      <DependentUpon>JobClassView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="RaceView.ascx.cs">
-      <DependentUpon>RaceView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="RaceView.ascx.designer.cs">
-      <DependentUpon>RaceView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="LocationView.ascx.cs">
-      <DependentUpon>LocationView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="LocationView.ascx.designer.cs">
-      <DependentUpon>LocationView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="JobGroupView.ascx.cs">
-      <DependentUpon>JobGroupView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="JobGroupView.ascx.designer.cs">
-      <DependentUpon>JobGroupView.ascx</DependentUpon>
-    </Compile>
+    <!-- Base Classes -->
     <Compile Include="EmployeeDBModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="EmployeeDBModuleSettingsBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Edit.ascx.cs">
-      <DependentUpon>Edit.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Edit.ascx.designer.cs">
-      <DependentUpon>Edit.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.ascx.cs">
+    <!-- Models -->
+    <Compile Include="Components\Models\EmployeeInfo.cs" />
+    <Compile Include="Components\Models\JobClassInfo.cs" />
+    <Compile Include="Components\Models\JobGroupInfo.cs" />
+    <Compile Include="Components\Models\RaceInfo.cs" />
+    <Compile Include="Components\Models\OfficeLocationInfo.cs" />
+    <Compile Include="Components\Models\PhoneInfo.cs" />
+    <Compile Include="Components\Models\EmergencyContactInfo.cs" />
+    <Compile Include="Components\Models\GroupMembershipInfo.cs" />
+    <Compile Include="Components\Models\PositionHistoryInfo.cs" />
+    <Compile Include="Components\Models\ServiceHistoryInfo.cs" />
+    <Compile Include="Components\Models\EeoInfo.cs" />
+    <Compile Include="Components\Models\SwnInterfaceLogInfo.cs" />
+    <Compile Include="Components\Models\GroupInfo.cs" />
+    <Compile Include="Components\Models\CountyInfo.cs" />
+    <Compile Include="Components\Models\EmployeeListItem.cs" />
+    <!-- New Hire IT Worksheet -->
+    <Compile Include="Components\Models\NhitItemInfo.cs" />
+    <Compile Include="Components\Models\NhitProfileInfo.cs" />
+    <Compile Include="Components\Models\NhitProfileItemInfo.cs" />
+    <Compile Include="Components\Models\NhitRequestInfo.cs" />
+    <Compile Include="Components\Models\NhitRequestItemInfo.cs" />
+    <!-- Controllers -->
+    <Compile Include="Components\Controllers\EmployeeController.cs" />
+    <Compile Include="Components\Controllers\JobClassController.cs" />
+    <Compile Include="Components\Controllers\JobGroupController.cs" />
+    <Compile Include="Components\Controllers\RaceController.cs" />
+    <Compile Include="Components\Controllers\OfficeLocationController.cs" />
+    <Compile Include="Components\Controllers\PhoneController.cs" />
+    <Compile Include="Components\Controllers\EmergencyContactController.cs" />
+    <Compile Include="Components\Controllers\GroupMembershipController.cs" />
+    <Compile Include="Components\Controllers\PositionHistoryController.cs" />
+    <Compile Include="Components\Controllers\ServiceHistoryController.cs" />
+    <Compile Include="Components\Controllers\EeoController.cs" />
+    <Compile Include="Components\Controllers\GroupController.cs" />
+    <Compile Include="Components\Controllers\CountyController.cs" />
+    <Compile Include="Components\Controllers\EmployeeReportController.cs" />
+    <Compile Include="Components\Controllers\SwnInterfaceLogController.cs" />
+    <Compile Include="Components\Controllers\NhitItemController.cs" />
+    <Compile Include="Components\Controllers\NhitProfileController.cs" />
+    <Compile Include="Components\Controllers\NhitRequestController.cs" />
+    <Compile Include="Components\FeatureController.cs" />
+    <!-- Helpers -->
+    <Compile Include="Components\Helpers\ModelNormalizer.cs" />
+    <Compile Include="Components\Helpers\DigitsOnlyAttribute.cs" />
+    <Compile Include="Components\Helpers\DisplayMask.cs" />
+    <Compile Include="Components\Helpers\SwnExportBuilder.cs" />
+    <Compile Include="Components\Helpers\NhitPdfBuilder.cs" />
+    <Compile Include="Components\Helpers\NhitMailer.cs" />
+    <!-- Web API -->
+    <Compile Include="Components\Api\ServiceRouteMapper.cs" />
+    <Compile Include="Components\Api\PhonesController.cs" />
+    <Compile Include="Components\Api\PositionsController.cs" />
+    <Compile Include="Components\Api\ServicesController.cs" />
+    <Compile Include="Components\Api\ContactsController.cs" />
+    <Compile Include="Components\Api\JobGroupsController.cs" />
+    <Compile Include="Components\Api\JobClassesController.cs" />
+    <Compile Include="Components\Api\RacesController.cs" />
+    <Compile Include="Components\Api\LocationsController.cs" />
+    <Compile Include="Components\Api\MembershipsController.cs" />
+    <Compile Include="Components\Api\PhotosController.cs" />
+    <Compile Include="Components\Api\DepartmentsController.cs" />
+    <Compile Include="Components\Api\EeosController.cs" />
+    <Compile Include="Components\Api\SwnController.cs" />
+    <Compile Include="Components\Api\NhitItemsController.cs" />
+    <Compile Include="Components\Api\NhitProfilesController.cs" />
+    <Compile Include="Components\Api\NhitRequestsController.cs" />
+    <!-- SWN -->
+    <Compile Include="Components\SWN\Contact.cs" />
+    <Compile Include="Components\SWN\Phone.cs" />
+    <Compile Include="Components\SWN\CustomAuthorization.cs" />
+    <Compile Include="Components\SWN\ClientFactory.cs" />
+    <Compile Include="Components\SWN\SWNServiceRequests.cs" />
+    <Compile Include="Components\SWN\SWNResponse.cs" />
+    <Compile Include="Components\SWN\SWNResponseMessage.cs" />
+    <Compile Include="Components\SWN\SwnSettings.cs" />
+    <!-- SWN: generated WCF proxy (svcutil output from Users.wsdl). -->
+    <Compile Include="Service References\swn\Reference.cs" />
+    <!-- Views -->
+    <Compile Include="Views\EmployeeList.ascx.cs">
+      <DependentUpon>EmployeeList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EmployeeList.ascx.designer.cs">
+      <DependentUpon>EmployeeList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditEmployee.ascx.cs">
+      <DependentUpon>EditEmployee.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EditEmployee.ascx.designer.cs">
+      <DependentUpon>EditEmployee.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetailsList.ascx.cs">
+      <DependentUpon>DetailsList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\DetailsList.ascx.designer.cs">
+      <DependentUpon>DetailsList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetailPopUp.ascx.cs">
+      <DependentUpon>DetailPopUp.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\DetailPopUp.ascx.designer.cs">
+      <DependentUpon>DetailPopUp.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EEOSetup.ascx.cs">
+      <DependentUpon>EEOSetup.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EEOSetup.ascx.designer.cs">
+      <DependentUpon>EEOSetup.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings.ascx.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Settings.ascx.designer.cs">
+    <Compile Include="Views\Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="DepartmentView.ascx.cs">
-      <DependentUpon>DepartmentView.ascx</DependentUpon>
+    <Compile Include="Views\Birthdays.ascx.cs">
+      <DependentUpon>Birthdays.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="DepartmentView.ascx.designer.cs">
-      <DependentUpon>DepartmentView.ascx</DependentUpon>
+    <Compile Include="Views\Birthdays.ascx.designer.cs">
+      <DependentUpon>Birthdays.ascx</DependentUpon>
     </Compile>
-    <Compile Include="SwnList.aspx.cs">
-      <DependentUpon>SwnList.aspx</DependentUpon>
+    <Compile Include="Views\TerminatedEmployees.ascx.cs">
+      <DependentUpon>TerminatedEmployees.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="SwnList.aspx.designer.cs">
-      <DependentUpon>SwnList.aspx</DependentUpon>
+    <Compile Include="Views\TerminatedEmployees.ascx.designer.cs">
+      <DependentUpon>TerminatedEmployees.ascx</DependentUpon>
     </Compile>
-    <Compile Include="ViewContacts.ascx.cs">
-      <DependentUpon>ViewContacts.ascx</DependentUpon>
+    <Compile Include="Views\SwnList.ascx.cs">
+      <DependentUpon>SwnList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ViewContacts.ascx.designer.cs">
-      <DependentUpon>ViewContacts.ascx</DependentUpon>
+    <Compile Include="Views\SwnList.ascx.designer.cs">
+      <DependentUpon>SwnList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="ViewLog.ascx.cs">
-      <DependentUpon>ViewLog.ascx</DependentUpon>
+    <Compile Include="Views\SelectUserId.ascx.cs">
+      <DependentUpon>SelectUserId.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ViewLog.ascx.designer.cs">
-      <DependentUpon>ViewLog.ascx</DependentUpon>
+    <Compile Include="Views\SelectUserId.ascx.designer.cs">
+      <DependentUpon>SelectUserId.ascx</DependentUpon>
     </Compile>
-    <Compile Include="View.ascx.cs">
-      <DependentUpon>View.ascx</DependentUpon>
+    <Compile Include="Views\NewHireITWorksheet.ascx.cs">
+      <DependentUpon>NewHireITWorksheet.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="View.ascx.designer.cs">
-      <DependentUpon>View.ascx</DependentUpon>
+    <Compile Include="Views\NewHireITWorksheet.ascx.designer.cs">
+      <DependentUpon>NewHireITWorksheet.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="EditContact.ascx" />
-    <Content Include="EeoSetup.ascx" />
-    <Content Include="CountyView.ascx" />
-    <Content Include="EmergencyContacts.ascx" />
-    <Content Include="Employment.ascx" />
-    <Content Include="Phones.ascx" />
-    <Content Include="JobClassView.ascx" />
-    <Content Include="RaceView.ascx" />
-    <Content Include="LocationView.ascx" />
-    <Content Include="JobGroupView.ascx" />
-    <Content Include="Edit.ascx" />
-    <Content Include="License.txt" />
-    <Content Include="module.css" />
-    <Content Include="ReleaseNotes.txt" />
-    <Content Include="Settings.ascx" />
-    <Content Include="DepartmentView.ascx" />
-    <Content Include="SwnList.aspx" />
-    <Content Include="ViewContacts.ascx" />
-    <Content Include="ViewLog.ascx" />
-    <Content Include="View.ascx" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="Views\EmployeeList.ascx" />
+    <Content Include="Views\EditEmployee.ascx" />
+    <Content Include="Views\DetailsList.ascx" />
+    <Content Include="Views\DetailPopUp.ascx" />
+    <Content Include="Views\EEOSetup.ascx" />
+    <Content Include="Views\Settings.ascx" />
+    <Content Include="Views\Birthdays.ascx" />
+    <Content Include="Views\TerminatedEmployees.ascx" />
+    <Content Include="Views\SwnList.ascx" />
+    <Content Include="Views\SelectUserId.ascx" />
+    <Content Include="Views\NewHireITWorksheet.ascx" />
     <Content Include="EmployeeDB.dnn" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_LocalResources\View.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_LocalResources\Edit.ascx.resx" />
-    <Content Include="App_LocalResources\Settings.ascx.resx" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="module.css" />
+    <Content Include="Scripts\module.js" />
+    <Content Include="Views\App_LocalResources\EmployeeList.ascx.resx" />
+    <Content Include="Views\App_LocalResources\EditEmployee.ascx.resx" />
+    <Content Include="Views\App_LocalResources\Settings.ascx.resx" />
+    <Content Include="Scripts\empdb-edit.js" />
+    <Content Include="Scripts\empdb-list.js" />
+    <Content Include="Scripts\empdb-eeo.js" />
+    <Content Include="Scripts\empdb-nhit.js" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.02.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="packages.config" />
     <Content Include="web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\..\Workspace\OnSolve Public API.openapi.json">
-      <Link>OpenAPIs\OnSolve Public API.openapi.json</Link>
-      <CodeGenerator>NSwagCSharp</CodeGenerator>
-    </Content>
-    <Content Include="AddContactRequest.json" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Globals\Globals.csproj">
-      <Project>{7066eacb-e672-4110-b73d-c1a230b16eab}</Project>
-      <Name>Globals</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -349,15 +327,15 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
-          <DevelopmentServerPort>59753</DevelopmentServerPort>
+          <DevelopmentServerPort>49987</DevelopmentServerPort>
           <DevelopmentServerVPath>
           </DevelopmentServerVPath>
-          <IISUrl>http://localhost/desktopmodules/EmployeeDB</IISUrl>
+          <IISUrl>http://dnndev.me/</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost</IISAppRootUrl>
+          <IISAppRootUrl>http://dnndev.me</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>True</UseCustomServer>
-          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <CustomServerUrl>http://dnndev.me</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
@@ -368,20 +346,30 @@
     <DNNFileName>EmployeeDB</DNNFileName>
     <PackageName>EmployeeDB</PackageName>
     <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
+    <!-- Site deploy target. Override by setting DeploySitePath, or disable with DeployToSite=false. -->
+    <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
+    <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\EmployeeDB</DeployModuleFolder>
+    <DeployToSite Condition="'$(DeployToSite)' == ''">true</DeployToSite>
+    <DevSiteUrl Condition="'$(DevSiteUrl)' == ''">https://www.dnndev.me/</DevSiteUrl>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
-  <Target Name="AfterBuild" DependsOnTargets="PackageModule">
+  <Target Name="AfterBuild" DependsOnTargets="PackageModule;DeployToSite">
   </Target>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets'))" />
-    <Error Condition="!Exists('..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NSwag.MSBuild.13.19.0\build\NSwag.MSBuild.props'))" />
-    <Error Condition="!Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.props'))" />
-    <Error Condition="!Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets'))" />
+  <Target Name="DeployToSite" Condition="'$(DeployToSite)' == 'true' And Exists('$(DeploySitePath)\bin')">
+    <Message Text="Deploying EmployeeDB to $(DeploySitePath)" Importance="high" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    <ItemGroup>
+      <DeployContent Include="Views\**\*.ascx" />
+      <DeployContent Include="**\App_LocalResources\**\*.resx" />
+      <DeployContent Include="*.css" />
+      <DeployContent Include="Scripts\**\*.js" />
+      <DeployContent Include="$(DNNFileName).dnn" />
+      <DeployContent Include="License.txt" />
+      <DeployContent Include="ReleaseNotes.txt" />
+      <DeployContent Include="Providers\DataProviders\SqlDataProvider\*.SqlDataProvider" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeployContent)" DestinationFiles="@(DeployContent->'$(DeployModuleFolder)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\BuildScripts\PingDevSite.ps1&quot; -Url &quot;$(DevSiteUrl)&quot;" IgnoreExitCode="true" ContinueOnError="true" Condition="Exists('$(MSBuildProjectDirectory)\BuildScripts\PingDevSite.ps1')" />
   </Target>
-  <Import Project="..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets" Condition="Exists('..\packages\Microsoft.Extensions.ApiDescription.Client.6.0.3\build\Microsoft.Extensions.ApiDescription.Client.targets')" />
-  <Import Project="..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets" Condition="Exists('..\packages\NSwag.ApiDescription.Client.13.19.0\build\NSwag.ApiDescription.Client.targets')" />
 </Project>

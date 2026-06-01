@@ -187,41 +187,41 @@ namespace tjc.Modules.MediationStatistics
                     }
                 }
             }
-            if (_currentCase.CDSPNumber.Contains("-")) { delimiter = "-"; } else { delimiter = " "; }
-            string[] cdspNumber = _currentCase.CDSPNumber.Split(char.Parse(delimiter));
-            if (cdspNumber.Length > 0)
-            {
-                int count = cdspNumber.Length - 1;
-                for (var i = 0; i <= count; i++)
-                {
-                    switch (i)
-                    {
-                        case 0:
-                            {
-                                drpCDSPType.SelectedValue = cdspNumber[i];
-                                break;
-                            }
+            //if (_currentCase.CDSPNumber.Contains("-")) { delimiter = "-"; } else { delimiter = " "; }
+            //string[] cdspNumber = _currentCase.CDSPNumber.Split(char.Parse(delimiter));
+            //if (cdspNumber.Length > 0)
+            //{
+            //    int count = cdspNumber.Length - 1;
+            //    for (var i = 0; i <= count; i++)
+            //    {
+            //        switch (i)
+            //        {
+            //            case 0:
+            //                {
+            //                    drpCDSPType.SelectedValue = cdspNumber[i];
+            //                    break;
+            //                }
 
-                        case 1:
-                            {
-                                txtCDSPYear.Text = cdspNumber[i];
-                                break;
-                            }
+            //            case 1:
+            //                {
+            //                    txtCDSPYear.Text = cdspNumber[i];
+            //                    break;
+            //                }
 
-                        case 2:
-                            {
-                                txtCDSPNumber.Text = cdspNumber[i];
-                                break;
-                            }
+            //            case 2:
+            //                {
+            //                    txtCDSPNumber.Text = cdspNumber[i];
+            //                    break;
+            //                }
 
-                        case 3:
-                            {
-                                drpCountyLetter.SelectedValue = cdspNumber[i];
-                                break;
-                            }
-                    }
-                }
-            }
+            //            case 3:
+            //                {
+            //                    drpCountyLetter.SelectedValue = cdspNumber[i];
+            //                    break;
+            //                }
+            //        }
+            //    }
+            //}
             if (_currentCase.CaseSessions.Count() > 0)
             {
                 if (CurrentSessionIndex == Null.NullInteger)
@@ -233,6 +233,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void PopulateSessionInformation()
         {
+            ClearSession();
             var ctl = new AttorneyController();
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
@@ -303,6 +304,20 @@ namespace tjc.Modules.MediationStatistics
         }
         private void ClearSession()
         {
+            hdPlaintiffAttorneyId.Value=string.Empty;
+            hdDefendantAttorneyId.Value = string.Empty;
+            txtPlaintiffName.Text = string.Empty;
+            txtPlaintiffEmail.Text = string.Empty;
+            txtPlaintiffPhone.Text = string.Empty;
+            txtPlaintiffExtension.Text = string.Empty;
+            txtDefendantName.Text = string.Empty;
+            txtDefendantEmail.Text = string.Empty;
+            txtDefendantPhone.Text = string.Empty;
+            txtDefendantExtension.Text = string.Empty;
+            txtOrderReferral.Text=string.Empty;
+            txtMediationDate.Text=string.Empty;
+            drpCaseType.SelectedIndex = 0;
+            rblPtcOrdered.SelectedIndex = -1;
             chkInterpreterRequested.Checked = false;
             chkTelephoneSession.Checked = false;
             chkArbitrationReferral.Checked = false;
@@ -386,7 +401,6 @@ namespace tjc.Modules.MediationStatistics
             else
                 ltSessionInfo.Text = " Session " + (CurrentSessionIndex + 1) + " of " + sessionCount;
         }
-        
         private void FillCase()
         {
             var ctl = new CaseController();
@@ -400,7 +414,7 @@ namespace tjc.Modules.MediationStatistics
             _currentCase.RegionId = _regionId;
             _currentCase.GroupId = (int)_caseTypeGroup;
             _currentCase.CaseNumber = Helper.GetCaseFormatted(txtCaseYear.Text.Trim(), txtCaseType.Text.Trim(), txtCaseSequence.Text.Trim(), txtSuffix.Text.Trim());
-            _currentCase.CDSPNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
+          //  _currentCase.CDSPNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
             _currentCase.LastModifiedById = UserId;
             _currentCase.LastModifiedDate = DateTime.Now;
             if (CaseID <= 0)
@@ -458,6 +472,7 @@ namespace tjc.Modules.MediationStatistics
             {
                 ctlSession.CreateSession(session);
             }
+            hdSessionId.Value = session.SessionId.ToString();
             if (session.SessionId > 0)
             {
                 ctlSession.DeleteAllSessionIssues(session.SessionId);
@@ -491,11 +506,11 @@ namespace tjc.Modules.MediationStatistics
         private void CheckExistingCase()
         {
             string caseNumber = Helper.GetCaseFormatted(txtCaseYear.Text.Trim(), txtCaseType.Text.Trim(), txtCaseSequence.Text.Trim(), txtSuffix.Text.Trim());
-            string cdspNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
+           // string cdspNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
             var ctl = new CaseController();
-            if (string.IsNullOrEmpty(caseNumber) & string.IsNullOrEmpty(cdspNumber))
+            if (string.IsNullOrEmpty(caseNumber) )
                 return;
-            var result = ctl.GetExistingCase(caseNumber, cdspNumber);
+            var result = ctl.GetExistingCase(caseNumber,"");
             if (result != null && result.Count() > 0)
             {
                 int caseid = result.FirstOrDefault().CaseId;
@@ -611,6 +626,12 @@ namespace tjc.Modules.MediationStatistics
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
+        protected void cmdDelete_Click(object sender, EventArgs e)
+        {
+            var ctl = new CaseController();
+            ctl.DeleteCase(CaseID);
+            Response.Redirect(_navigationManager.NavigateURL());
+        }
         protected void pnlSession_Unload(object sender, EventArgs e)
         {
             MethodInfo methodInfo = typeof(ScriptManager).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(i => i.Name.Equals("System.Web.UI.IScriptManagerInternal.RegisterUpdatePanel")).First();
@@ -637,13 +658,14 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdDeleteSession_Click(object sender, EventArgs e)
         {
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             DeleteSession();
             PopulateSessionInformation();
             UpdateNavigation();
+            ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Session Deleted", "fas fa-trash");
         }
         protected void cmdNewSession_Click(object sender, EventArgs e)
         {
-            ClearSession();
             AddNewSession();
             PopulateSessionInformation();
             UpdateNavigation();
@@ -662,6 +684,8 @@ namespace tjc.Modules.MediationStatistics
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
+                var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
+                ltMessage.Text = string.Format(stringValue, "warning", "Deletion!", "Event Deleted", "fas fa-trash");
             }
             if (e.CommandName == "edit")
             {
@@ -728,6 +752,7 @@ namespace tjc.Modules.MediationStatistics
         {
             FillCase();
             var ctl = new EventController();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             if (string.IsNullOrEmpty(hdEventId.Value))
             {
                 Event newEvent = new Event
@@ -755,7 +780,7 @@ namespace tjc.Modules.MediationStatistics
                 if (timeRemaining > 0)
                     newEvent.TimeRemaining = timeRemaining;
                 ctl.CreateEvent(newEvent);
-
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "New Event Record Saved", "fas fa-thumbs-up");
                 foreach (ListItem item in cblAppearanceRecord.Items)
                 {
                     if (item.Selected)
@@ -797,6 +822,7 @@ namespace tjc.Modules.MediationStatistics
                     }
                 }
                 ClearEventForm();
+                ltMessage.Text = string.Format(stringValue, "success", "Success!", "Event Record Saved", "fas fa-thumbs-up");
             }
             PopulateEventInformation();
             ScriptManager.RegisterStartupScript(rptEvent, rptEvent.GetType(), "ToggleForm", "ToggleEventForm(false)", true);
@@ -804,5 +830,7 @@ namespace tjc.Modules.MediationStatistics
         #endregion //Event Events
 
         #endregion //Events
+
+       
     }
 }

@@ -1,0 +1,14 @@
+**default sort by action date desc
+On second case history the status is different add new column date completed.
+Sort asc date completed. null at top of list.
+
+**On edit form,Save stay on page update message Cancel should return to previous view case page.No double submit
+
+Case Name Search: add status column
+
+
+**The case list order by date completed. incomplete at top.
+
+**Time spent sort ascending
+
+Comments scroll to bottom.

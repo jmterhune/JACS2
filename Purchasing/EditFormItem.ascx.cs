@@ -101,10 +101,10 @@ namespace tjc.Modules.Purchasing
         {
             string attachementList = string.Empty;
             var aCtl = new AttachmentController();
-            IEnumerable<Attachment> attachments = aCtl.GetAttachmentsByFormId(ModuleId, formId);
+            IEnumerable<FormOrderAttachment> attachments = aCtl.GetFormAttachmentsByFormId(formId);
             FileManager objFile = new FileManager();
             int attachmentCount = 0;
-            foreach (Attachment f in attachments)
+            foreach (FormOrderAttachment f in attachments)
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)

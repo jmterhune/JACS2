@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v3.DataContracts" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="https://api.sendwordnow.com/webservices/v3/Users.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" />
+  <xs:complexType name="ArrayOfContactDetailRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactDetailRequest" nillable="true" type="tns:ContactDetailRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactDetailRequest" nillable="true" type="tns:ArrayOfContactDetailRequest" />
+  <xs:complexType name="ContactDetailRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" base="q1:ContactSummary">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MiddleName" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ZipCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Pin" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TimeZoneId" type="xs:int" />
+          <xs:element minOccurs="0" name="Login" nillable="true" type="q1:ContactDetailLogin" />
+          <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="CustomFields" nillable="true" type="q2:ArrayOfContactCustomField" />
+          <xs:element name="ContactPointsListRequest" nillable="true" type="tns:ContactDetailContactPointsRequest" />
+          <xs:element minOccurs="0" name="PreferredLanguage" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ContactDetailRequest" nillable="true" type="tns:ContactDetailRequest" />
+  <xs:complexType name="ContactDetailContactPointsRequest">
+    <xs:sequence>
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="EmailContactPoints" nillable="true" type="q3:ArrayOfContactPntEmailType" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v1.DataContracts" minOccurs="0" name="TextMessageContactPoints" nillable="true" type="q4:ArrayOfContactPntTextMsgType" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="VoiceContactPoints" nillable="true" type="q5:ArrayOfContactPntVoiceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactDetailContactPointsRequest" nillable="true" type="tns:ContactDetailContactPointsRequest" />
+  <xs:complexType name="GroupModificationResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ModifiedContacts" type="xs:int" />
+      <xs:element minOccurs="0" name="LastModifiedTime" type="xs:dateTime" />
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts" minOccurs="0" name="Contacts" nillable="true" type="q6:ArrayOfContactDetail" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GroupModificationResponse" nillable="true" type="tns:GroupModificationResponse" />
+  <xs:complexType name="DynamicGroupRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GroupCriteria" nillable="true" type="tns:DynamicGroupCriteria" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Number" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DynamicGroupRequest" nillable="true" type="tns:DynamicGroupRequest" />
+  <xs:complexType name="DynamicGroupCriteria">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FilterSets" nillable="true" type="tns:ArrayOfFilterSet" />
+      <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GroupNames" nillable="true" type="q7:ArrayOfstring" />
+      <xs:element minOccurs="0" name="MatchFilterSets" type="tns:Match" />
+      <xs:element minOccurs="0" name="SelectRecipientsIn" type="tns:SelectRecipientsCriteria" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DynamicGroupCriteria" nillable="true" type="tns:DynamicGroupCriteria" />
+  <xs:complexType name="ArrayOfFilterSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="FilterSet" nillable="true" type="tns:FilterSet" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFilterSet" nillable="true" type="tns:ArrayOfFilterSet" />
+  <xs:complexType name="FilterSet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Conditions" nillable="true" type="tns:ArrayOfCondition" />
+      <xs:element minOccurs="0" name="MatchConditions" type="tns:Match" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FilterSet" nillable="true" type="tns:FilterSet" />
+  <xs:complexType name="ArrayOfCondition">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Condition" nillable="true" type="tns:Condition" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCondition" nillable="true" type="tns:ArrayOfCondition" />
+  <xs:complexType name="Condition">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CustomField" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FieldType" type="tns:FieldTypeEnum" />
+      <xs:element minOccurs="0" name="FixedField" type="tns:FixedFieldEnum" />
+      <xs:element minOccurs="0" name="Operator" type="tns:OperatorEnum" />
+      <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Condition" nillable="true" type="tns:Condition" />
+  <xs:simpleType name="FieldTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Fixed" />
+      <xs:enumeration value="Custom" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FieldTypeEnum" nillable="true" type="tns:FieldTypeEnum" />
+  <xs:simpleType name="FixedFieldEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NotSet" />
+      <xs:enumeration value="LastName" />
+      <xs:enumeration value="FirstName" />
+      <xs:enumeration value="UniqueID" />
+      <xs:enumeration value="TimeZone" />
+      <xs:enumeration value="Address1" />
+      <xs:enumeration value="Address2" />
+      <xs:enumeration value="City" />
+      <xs:enumeration value="StateOrProvince" />
+      <xs:enumeration value="ZipOrPostalCode" />
+      <xs:enumeration value="Country" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FixedFieldEnum" nillable="true" type="tns:FixedFieldEnum" />
+  <xs:simpleType name="OperatorEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Contains" />
+      <xs:enumeration value="DoesNotContain" />
+      <xs:enumeration value="Is" />
+      <xs:enumeration value="IsNot" />
+      <xs:enumeration value="StartsWith" />
+      <xs:enumeration value="EndsWith" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="OperatorEnum" nillable="true" type="tns:OperatorEnum" />
+  <xs:simpleType name="Match">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="All" />
+      <xs:enumeration value="Any" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Match" nillable="true" type="tns:Match" />
+  <xs:simpleType name="SelectRecipientsCriteria">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="AnyGroup" />
+      <xs:enumeration value="AllGroups" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="SelectRecipientsCriteria" nillable="true" type="tns:SelectRecipientsCriteria" />
+  <xs:complexType name="IntersectionLocationRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q8="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" base="q8:ContactLocation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CrossStreet1" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CrossStreet2" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ZipCode" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="IntersectionLocationRequest" nillable="true" type="tns:IntersectionLocationRequest" />
+  <xs:complexType name="StreetAddressLocationRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q9="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" base="q9:ContactLocation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ZipCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="StreetAddressLocationRequest" nillable="true" type="tns:StreetAddressLocationRequest" />
+  <xs:complexType name="ArrayOfSetContactLocationsRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SetContactLocationsRequest" nillable="true" type="tns:SetContactLocationsRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSetContactLocationsRequest" nillable="true" type="tns:ArrayOfSetContactLocationsRequest" />
+  <xs:complexType name="SetContactLocationsRequest">
+    <xs:sequence>
+      <xs:element name="ContactId" nillable="true" type="xs:string" />
+      <xs:element xmlns:q10="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LocationsToRemove" nillable="true" type="q10:ArrayOfstring" />
+      <xs:element minOccurs="0" name="StreetLocationsToAddOrUpdate" nillable="true" type="tns:ArrayOfStreetAddressLocationRequest" />
+      <xs:element minOccurs="0" name="IntersectionLocationsToAddOrUpdate" nillable="true" type="tns:ArrayOfIntersectionLocationRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SetContactLocationsRequest" nillable="true" type="tns:SetContactLocationsRequest" />
+  <xs:complexType name="ArrayOfStreetAddressLocationRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StreetAddressLocationRequest" nillable="true" type="tns:StreetAddressLocationRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStreetAddressLocationRequest" nillable="true" type="tns:ArrayOfStreetAddressLocationRequest" />
+  <xs:complexType name="ArrayOfIntersectionLocationRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="IntersectionLocationRequest" nillable="true" type="tns:IntersectionLocationRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfIntersectionLocationRequest" nillable="true" type="tns:ArrayOfIntersectionLocationRequest" />
+  <xs:complexType name="ArrayOfCascadeProfileRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeProfileRequest" nillable="true" type="tns:CascadeProfileRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeProfileRequest" nillable="true" type="tns:ArrayOfCascadeProfileRequest" />
+  <xs:complexType name="CascadeProfileRequest">
+    <xs:sequence>
+      <xs:element name="profileName" nillable="true" type="xs:string" />
+      <xs:element name="CascadeDetails" nillable="true" type="tns:ArrayOfCascadeDetailRequest" />
+      <xs:element xmlns:q11="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="ActivationDates" nillable="true" type="q11:ArrayOfdateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeProfileRequest" nillable="true" type="tns:CascadeProfileRequest" />
+  <xs:complexType name="ArrayOfCascadeDetailRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeDetailRequest" nillable="true" type="tns:CascadeDetailRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeDetailRequest" nillable="true" type="tns:ArrayOfCascadeDetailRequest" />
+  <xs:complexType name="CascadeDetailRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element name="CascadeOrder" nillable="true" type="tns:CascadeOrderRequest" />
+      <xs:element name="TimeUsage" nillable="true" type="tns:CascadeTimeSpanRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeDetailRequest" nillable="true" type="tns:CascadeDetailRequest" />
+  <xs:complexType name="CascadeOrderRequest">
+    <xs:sequence>
+      <xs:element name="ContactPoints" nillable="true" type="tns:ArrayOfCascadeContactPointRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeOrderRequest" nillable="true" type="tns:CascadeOrderRequest" />
+  <xs:complexType name="ArrayOfCascadeContactPointRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeContactPointRequest" nillable="true" type="tns:CascadeContactPointRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeContactPointRequest" nillable="true" type="tns:ArrayOfCascadeContactPointRequest" />
+  <xs:complexType name="CascadeContactPointRequest">
+    <xs:sequence>
+      <xs:element name="Label" nillable="true" type="xs:string" />
+      <xs:element name="Rank" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeContactPointRequest" nillable="true" type="tns:CascadeContactPointRequest" />
+  <xs:complexType name="CascadeTimeSpanRequest">
+    <xs:sequence>
+      <xs:element xmlns:q12="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="DaysOfTheWeek" nillable="true" type="q12:ArrayOfint" />
+      <xs:element minOccurs="0" name="StartTime" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EndTime" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeTimeSpanRequest" nillable="true" type="tns:CascadeTimeSpanRequest" />
+  <xs:complexType name="ArrayOfCascadeProfileSyncRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeProfileSyncRequest" nillable="true" type="tns:CascadeProfileSyncRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeProfileSyncRequest" nillable="true" type="tns:ArrayOfCascadeProfileSyncRequest" />
+  <xs:complexType name="CascadeProfileSyncRequest">
+    <xs:sequence>
+      <xs:element name="profileName" nillable="true" type="xs:string" />
+      <xs:element name="CascadeDetailsSync" nillable="true" type="tns:ArrayOfCascadeDetailSyncRequest" />
+      <xs:element xmlns:q13="http://schemas.microsoft.com/2003/10/Serialization/Arrays" name="ActivationDates" nillable="true" type="q13:ArrayOfdateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeProfileSyncRequest" nillable="true" type="tns:CascadeProfileSyncRequest" />
+  <xs:complexType name="ArrayOfCascadeDetailSyncRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeDetailSyncRequest" nillable="true" type="tns:CascadeDetailSyncRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeDetailSyncRequest" nillable="true" type="tns:ArrayOfCascadeDetailSyncRequest" />
+  <xs:complexType name="CascadeDetailSyncRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element name="CascadeOrderSync" nillable="true" type="tns:CascadeOrderSyncRequest" />
+      <xs:element name="TimeUsage" nillable="true" type="tns:CascadeTimeSpanRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeDetailSyncRequest" nillable="true" type="tns:CascadeDetailSyncRequest" />
+  <xs:complexType name="CascadeOrderSyncRequest">
+    <xs:sequence>
+      <xs:element name="ContactPointsSync" nillable="true" type="tns:ArrayOfCascadeContactPointSyncRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeOrderSyncRequest" nillable="true" type="tns:CascadeOrderSyncRequest" />
+  <xs:complexType name="ArrayOfCascadeContactPointSyncRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeContactPointSyncRequest" nillable="true" type="tns:CascadeContactPointSyncRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeContactPointSyncRequest" nillable="true" type="tns:ArrayOfCascadeContactPointSyncRequest" />
+  <xs:complexType name="CascadeContactPointSyncRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:CascadeContactPointRequest">
+        <xs:sequence>
+          <xs:element name="ContactPointTypeId" nillable="true" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CascadeContactPointSyncRequest" nillable="true" type="tns:CascadeContactPointSyncRequest" />
+  <xs:complexType name="ArrayOfCascadeScheduleRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeScheduleRequest" nillable="true" type="tns:CascadeScheduleRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeScheduleRequest" nillable="true" type="tns:ArrayOfCascadeScheduleRequest" />
+  <xs:complexType name="CascadeScheduleRequest">
+    <xs:sequence>
+      <xs:element name="ActivationDate" type="xs:dateTime" />
+      <xs:element name="ProfileName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeScheduleRequest" nillable="true" type="tns:CascadeScheduleRequest" />
+  <xs:complexType name="ArrayOfCascadeScheduleAddRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CascadeScheduleAddRequest" nillable="true" type="tns:CascadeScheduleAddRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCascadeScheduleAddRequest" nillable="true" type="tns:ArrayOfCascadeScheduleAddRequest" />
+  <xs:complexType name="CascadeScheduleAddRequest">
+    <xs:sequence>
+      <xs:element name="ProfileName" nillable="true" type="xs:string" />
+      <xs:element name="ActivationDate" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CascadeScheduleAddRequest" nillable="true" type="tns:CascadeScheduleAddRequest" />
+</xs:schema>

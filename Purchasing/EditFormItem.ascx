@@ -2,7 +2,7 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register Assembly="DotNetNuke.Web" Namespace="DotNetNuke.Web.UI.WebControls" TagPrefix="dnn" %>
 <asp:HyperLink ID="lnkAdmin" Visible="false" Text="Manage Orders" CssClass="SubHead" runat="server" />
-<div class="form-order-container">
+<div class="form-order-container purchasing">
     <div id="form-order-form">
         <fieldset class="row g-3">
             <asp:HiddenField ID="hdOrderId" ClientIDMode="Static" runat="server" />
@@ -38,8 +38,10 @@
                         <thead>
                             <tr>
                                 <th>Form #</th>
+                                <th># Sets</th>
+                                <th># Parts</th>
+                                <th>Page Size</th>
                                 <th>Description</th>
-                                <th>Qty</th>
                                 <th>End User</th>
                                 <th>Comments</th>
                                 <th>Attachments</th>
@@ -53,8 +55,16 @@
                         <td>
                             <%#Eval("FormNumber") %>
                         </td>
+                        <td>
+                            <%#Eval("Quantity") %>
+                        </td>
+                        <td>
+                            <%#Eval("NumberParts") %>
+                        </td>
+                        <td>
+                            <%#Eval("PageType") %>
+                        </td>
                         <td><%#Eval("Description") %></td>
-                        <td><%#Eval("Quantity") %></td>
                         <td><%#Eval("Recipient") %></td>
                         <td><%#Eval("Comments") %></td>
                         <td>
@@ -77,8 +87,9 @@
         </p>
     </div>
 </div>
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     (function ($, Sys) {

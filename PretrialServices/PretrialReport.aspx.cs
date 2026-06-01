@@ -1,13 +1,13 @@
-﻿using System;
+﻿using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using DotNetNuke.Common.Utilities;
 using tjc.Modules.PretrialServices.Components;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
-using tjc.Modules.Globals;
-using DotNetNuke.Entities.Modules;
 
 namespace tjc.Modules.PretrialServices
 {
@@ -34,8 +34,18 @@ namespace tjc.Modules.PretrialServices
         private string beginningDate = "";
         private string enddingDate = "";
         private Font captionFont = new Font(Font.FontFamily.HELVETICA, 5, Font.ITALIC, new BaseColor(0, 183, 183));
-
-
+        private void AddBlankCells(PdfPTable table, int count, int colspan = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                PdfPCell blank = new PdfPCell
+                {
+                    Border = 0,
+                    Colspan = colspan
+                };
+                table.AddCell(blank);
+            }
+        }
         private bool IsWeekend(DateTime inDate)
         {
             int weekDay = inDate.Day;
@@ -45,7 +55,6 @@ namespace tjc.Modules.PretrialServices
                 return true;
             return false;
         }
-
         private int GetWeekStartDay(DateTime inDate)
         {
             int weekDay = inDate.Day;
@@ -59,7 +68,6 @@ namespace tjc.Modules.PretrialServices
                 return 22;
             return 29;
         }
-
         private bool IsMonthEnd(DateTime inDate)
         {
             DateTime tempDate = GetLastDayOfMonth(inDate);
@@ -67,21 +75,20 @@ namespace tjc.Modules.PretrialServices
                 return true;
             return false;
         }
-
         private bool IsYearEnd(DateTime inDate)
         {
             if (inDate == reportDate)
                 return true;
             return false;
         }
-
         private DateTime GetLastDayOfMonth(DateTime inDate)
         {
             return new DateTime(inDate.Year, inDate.Month, DateTime.DaysInMonth(inDate.Year, inDate.Month));
         }
-
-        private string GetWeekTextValue(DateTime inDate)
+        private string GetWeekTextValue(DateTime inDate, bool isTotal)
         {
+            if (!isTotal)
+                return inDate.ToShortDateString();
             string weekEndValue = inDate.ToString("MMM");
             int weekStartDay = inDate.Day;
             if (weekStartDay == 7)
@@ -96,10 +103,9 @@ namespace tjc.Modules.PretrialServices
                 return "Week 5";
             return weekEndValue;
         }
-
-        private PdfPTable getIntakelog(DateTime inDate)
+        private PdfPTable getIntakelog(DateTime inDate, IEnumerable<DefendantInProgram> defendantsInProgram)
         {
-            PdfPTable table = new PdfPTable(7);
+            PdfPTable table = new PdfPTable(9);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204);
             table.DefaultCell.HorizontalAlignment = 1;
             table.HorizontalAlignment = 0;
@@ -113,12 +119,23 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase(string.Format("# PTR not {0} Recommended ", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Ordered {0} to PTR ", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Indigent {0} Int / Assessed ", Environment.NewLine), boldFont));
+            table.AddCell(new Phrase(string.Format("# Recommended {0} for PTR {0} In Program ", Environment.NewLine), boldFont));
+            table.AddCell(new Phrase(string.Format("# Bond Secured {0} In Program ", Environment.NewLine), boldFont));
+
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            var ctl = new IntakeLogItemController();
-            IntakeLogItem intakeLogItem = ctl.GetIntakeLogItemByCountyAndDate(CountyId, inDate);
-            if (intakeLogItem != null)
+            IntakeLogItem intakeLogItem = new IntakeLogItem();
+            if (defendantsInProgram != null)
             {
-                table.AddCell(new Phrase(GetWeekTextValue(inDate), normalFont));
+                intakeLogItem.IntakeDate = inDate;
+                intakeLogItem.Assessed = defendantsInProgram.Where(x => x.Assessed).Count();
+                intakeLogItem.Interviewed = defendantsInProgram.Where(x => x.Interviewed).Count();
+                intakeLogItem.IndigentAssessed = defendantsInProgram.Where(x => x.IndigentAssessed).Count();
+                intakeLogItem.PtrRecommended = defendantsInProgram.Where(x => x.PtrRecommended).Count();
+                intakeLogItem.PtrRecommendedInProgram = defendantsInProgram.Where(x => x.PtrRecommended && x.PlacedInProgram).Count();
+                intakeLogItem.BondSecuredInProgram = defendantsInProgram.Where(x => x.BondType == 1 && x.PlacedInProgram).Count();
+                intakeLogItem.PtrNotRecommended = defendantsInProgram.Where(x => x.PtrNotRecommended).Count();
+                intakeLogItem.PtrOrdered = defendantsInProgram.Where(x => x.PtrOrdered).Count();
+                table.AddCell(new Phrase(GetWeekTextValue(inDate, false), normalFont));
                 if (intakeLogItem.Interviewed.HasValue)
                     table.AddCell(new Phrase(intakeLogItem.Interviewed.ToString(), normalFont));
                 if (intakeLogItem.Assessed.HasValue)
@@ -131,14 +148,17 @@ namespace tjc.Modules.PretrialServices
                     table.AddCell(new Phrase(intakeLogItem.PtrOrdered.ToString(), normalFont));
                 if (intakeLogItem.IndigentAssessed.HasValue)
                     table.AddCell(new Phrase(intakeLogItem.IndigentAssessed.ToString(), normalFont));
+                if (intakeLogItem.PtrRecommendedInProgram.HasValue)
+                    table.AddCell(new Phrase(intakeLogItem.PtrRecommendedInProgram.ToString(), normalFont));
+                if (intakeLogItem.BondSecuredInProgram.HasValue)
+                    table.AddCell(new Phrase(intakeLogItem.BondSecuredInProgram.ToString(), normalFont));
                 colIntake.Add(intakeLogItem);
             }
             return table;
         }
-
-        private PdfPTable GetDefendantLog(DateTime InDate)
+        private PdfPTable GetDefendantLog(DateTime InDate, IEnumerable<DefendantInProgram> defendantsInProgram)
         {
-            PdfPTable table = new PdfPTable(15);
+            PdfPTable table = new PdfPTable(16);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 204, 153); // ORANGE
             table.DefaultCell.HorizontalAlignment = 1;
             table.HorizontalAlignment = 0;
@@ -149,14 +169,15 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase("Case Number(s)", boldFont));
             table.AddCell(new Phrase(string.Format("Arrest{0}Charges", Environment.NewLine), boldFont));
             table.AddCell(new Phrase("Indigent", boldFont));
+
             table.AddCell(new Phrase(string.Format("# Fel Conv{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Fel Conv Non-{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Misd Conv{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Misd Conv Non-{0}Dangerous", Environment.NewLine), boldFont));
-            table.AddCell(new Phrase(string.Format("# Misd Conv Non-{0}Dangerous", Environment.NewLine), boldFont));
             table.AddCell(new Phrase("FTA Date", boldFont));
             table.AddCell(new Phrase(string.Format("# Court{0}Appearances", Environment.NewLine), boldFont));
             table.AddCell(new Phrase("BW Ordered", boldFont));
+            table.AddCell(new Phrase(string.Format("Most{0}Serious{0}Offense", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("Non-Compliance{0}New Arrest/Tech", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("Recommendation{0}Revoked", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("Successful/Non-{0}Successful{0}Completion", Environment.NewLine), boldFont));
@@ -175,6 +196,7 @@ namespace tjc.Modules.PretrialServices
             string courtAppearance = "";
             string bwOrdered = "";
             string nonCompViolation = "";
+            string mostSeriosOffense = "";
             string revoked = "";
             string successfull = "";
             string daysSPR = "";
@@ -193,6 +215,10 @@ namespace tjc.Modules.PretrialServices
             int noPriors_h = 0;
             int bwOrderedYes = 0;
             int bwOrderedNo = 0;
+            int Mso907TT = 0;
+            int MsoNdFelonyTT = 0;
+            int MsoMisdTT = 0;
+            int MsoTotal = 0;
             int revokedTT = 0;
             int successfulTT = 0;
             int unSuccessfulTT = 0;
@@ -209,12 +235,15 @@ namespace tjc.Modules.PretrialServices
             bool isFcNonDangerous = false;
             bool isMcDangerous = false;
             bool isMcNonDangerous = false;
-            var ctl = new DefendantInProgramController();
-            IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramByCounty(CountyId, InDate);
+
 
             defendantCount = defendantsInProgram.Count();
             foreach (DefendantInProgram defendantInProgram in defendantsInProgram)
             {
+                isFcDangerous = false;
+                isFcNonDangerous = false;
+                isMcDangerous = false;
+                isMcNonDangerous = false;
                 defendantName = "";
                 caseNumber = "";
                 arrestCharges = "";
@@ -259,78 +288,62 @@ namespace tjc.Modules.PretrialServices
                 }
                 if (isFcDangerous)
                 {
-                    FcDangerous_h += 1;
-                    isFcDangerous = false;
-                    isFcNonDangerous = false;
-                    isMcDangerous = false;
-                    isMcNonDangerous = false;
+                    FcDangerous_h++;
                 }
                 else if (isFcNonDangerous)
                 {
-                    FcNonDangerous_h += 1;
-                    isFcNonDangerous = false;
-                    isMcDangerous = false;
-                    isMcNonDangerous = false;
+                    FcNonDangerous_h++;
                 }
                 else if (isMcDangerous)
                 {
-                    McDangerous_h += 1;
-                    isMcDangerous = false;
-                    isMcNonDangerous = false;
+                    McDangerous_h++;
                 }
                 else if (isMcNonDangerous)
                 {
-                    McNonDangerous_h += 1;
-                    isMcNonDangerous = false;
+                    McNonDangerous_h++;
                 }
                 else
-                    noPriors_h += 1;
+                    noPriors_h++;
                 if (defendantInProgram.CourtAppearances > 0)
                     courtAppearanceTT += defendantInProgram.CourtAppearances;
-                if (defendantInProgram.Indigent.HasValue)
+                if (defendantInProgram.Indigent == true)
                 {
-                    if (defendantInProgram.Indigent == 1)
-                    {
-                        indigent = "Yes";
-                        indigentYes += 1;
-                    }
-                    else if (defendantInProgram.Indigent == 0)
-                    {
-                        indigent = "No";
-                        indigentNo += 1;
-                    }
+                    indigent = "Yes";
+                    indigentYes++;
                 }
-                if (defendantInProgram.BwOrdered.HasValue)
+                else if (defendantInProgram.Indigent == false)
                 {
-                    if (defendantInProgram.BwOrdered == 1)
-                    {
-                        bwOrdered = "Yes";
-                        bwOrderedYes += 1;
-                    }
-                    else if (defendantInProgram.BwOrdered == 0)
-                    {
-                        bwOrdered = "No";
-                        bwOrderedNo += 1;
-                    }
+                    indigent = "No";
+                    indigentNo++;
+                }
+                if (defendantInProgram.BwOrdered == true)
+                {
+                    bwOrdered = "Yes";
+                    bwOrderedYes++;
+                }
+                else if (defendantInProgram.BwOrdered == false)
+                {
+                    bwOrdered = "No";
+                    bwOrderedNo++;
                 }
                 if (defendantInProgram.Completion.HasValue)
                 {
                     if (defendantInProgram.Completion == 1)
                     {
                         successfull = "Successful";
-                        successfulTT += 1;
+                        successfulTT++;
                     }
                     else if (defendantInProgram.Completion == 0)
                     {
                         successfull = "Unsuccessful";
-                        successfulTT += 1;
+                        unSuccessfulTT++;
                     }
                 }
 
                 if (defendantInProgram.FtaDate.HasValue)
                 {
                     ftaDate = defendantInProgram.FtaDate.Value.ToShortDateString();
-                    FTACountTT += 1;
+                    FTACountTT++;
                 }
                 courtAppearance = defendantInProgram.CourtAppearances.ToString();
                 nonCompViolation = defendantInProgram.NonCompArrestViolation;
@@ -338,43 +351,65 @@ namespace tjc.Modules.PretrialServices
                 {
                     case "New Arrest":
                         {
-                            newArrestTT += 1;
-                            ViolationTT += 1;
+                            newArrestTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "Viol Calls":
                         {
-                            violCallsTT += 1;
-                            ViolationTT += 1;
+                            violCallsTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "Contact":
                         {
-                            contactTT += 1;
-                            ViolationTT += 1;
+                            contactTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "Other":
                         {
-                            otherTT += 1;
-                            ViolationTT += 1;
+                            otherTT++;
+                            ViolationTT++;
                             break;
                         }
 
                     case "UA":
                         {
-                            UATT += 1;
-                            ViolationTT += 1;
+                            UATT++;
+                            ViolationTT++;
+                            break;
+                        }
+                }
+                mostSeriosOffense = defendantInProgram.MostSeriousOffense;
+                switch (mostSeriosOffense)
+                {
+                    case "907.041 (Incl Domestic)":
+                        {
+                            Mso907TT++;
+                            MsoTotal++;
+                            break;
+                        }
+                    case "Non-Dangerous Felony":
+                        {
+                            MsoNdFelonyTT++;
+                            MsoTotal++;
+                            break;
+                        }
+                    case "Misd Only (Not Domestic)":
+                        {
+                            MsoMisdTT++;
+                            MsoTotal++;
                             break;
                         }
                 }
                 if (defendantInProgram.IsRevoked)
                 {
                     revoked = "Yes";
-                    revokedTT += 1;
+                    revokedTT++;
                 }
                 if (defendantInProgram.DaysSpr > 0)
                 {
@@ -392,6 +427,7 @@ namespace tjc.Modules.PretrialServices
                 table.AddCell(new Phrase(ftaDate, normalFont));
                 table.AddCell(new Phrase(courtAppearance, normalFont));
                 table.AddCell(new Phrase(bwOrdered, normalFont));
+                table.AddCell(new Phrase(mostSeriosOffense, normalFont));
                 table.AddCell(new Phrase(nonCompViolation, normalFont));
                 table.AddCell(new Phrase(revoked, normalFont));
                 table.AddCell(new Phrase(successfull, normalFont));
@@ -400,9 +436,7 @@ namespace tjc.Modules.PretrialServices
 
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
             PdfPCell blankCell = new PdfPCell();
-            blankCell.Border = 0;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.AddCell(new Phrase("YES", boldFont));
             table.AddCell(new Phrase("DANGEROUS", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
@@ -411,14 +445,13 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase("FTA COUNT", boldFont));
             table.AddCell(new Phrase("APPEARANCES", boldFont));
             table.AddCell(new Phrase("YES", boldFont));
+            table.AddCell(new Phrase("907.041", boldFont)); // Most Serious Offense - Non-Dangerous Felony
             table.AddCell(new Phrase("NEW ARREST", boldFont));
             table.AddCell(new Phrase("REVOKED", boldFont));
             table.AddCell(new Phrase("SUCCESSFUL", boldFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.AddCell(new Phrase(indigentYes.ToString(), normalFont));
             table.AddCell(new Phrase(FcDangerousTT.ToString(), normalFont));
             table.AddCell(new Phrase(FcNonDangerousTT.ToString(), normalFont));
@@ -427,62 +460,46 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase(FTACountTT.ToString(), normalFont)); // FTA Date Count
             table.AddCell(new Phrase(courtAppearanceTT.ToString(), normalFont)); // Court Appearances
             table.AddCell(new Phrase(bwOrderedYes.ToString(), normalFont));
+            table.AddCell(new Phrase(Mso907TT.ToString(), normalFont));
             table.AddCell(new Phrase(newArrestTT.ToString(), normalFont));
             table.AddCell(new Phrase(revokedTT.ToString(), normalFont));
             table.AddCell(new Phrase(successfulTT.ToString(), normalFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.AddCell(new Phrase("NO", boldFont));
-            blankCell.Colspan = 6;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 6);
             table.AddCell(new Phrase("NO", boldFont));
+            table.AddCell(new Phrase("NON-DANGEROUS", boldFont)); // Most Serious Offense - Non Dangerous Misdemeanor
             table.AddCell(new Phrase("VIOL CALLS", boldFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
             table.AddCell(new Phrase("UNSUCCESSFUL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase(indigentNo.ToString(), normalFont));
-            blankCell.Colspan = 6;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 6);
             table.AddCell(new Phrase(bwOrderedNo.ToString(), normalFont));
+            table.AddCell(new Phrase(MsoNdFelonyTT.ToString(), normalFont));
             table.AddCell(new Phrase(violCallsTT.ToString(), normalFont));
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase(unSuccessfulTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
-
-            // table.AddCell(New Phrase("UNKNOWN", boldFont))
-            blankCell.Colspan = 7;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 11);
+            table.AddCell(new Phrase("MISD ONLY", boldFont)); // Most Serious Offense - Misdemeanor Only
             table.AddCell(new Phrase("CONTACT", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 1;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             PdfPCell caption = new PdfPCell(new Phrase("Chart below is based on the defendants criminal histories. " + Environment.NewLine + "It categorizes each defendant by their most serious offense.", captionFont));
             caption.Colspan = 4;
             caption.Border = 0;
             table.AddCell(caption);
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
+            table.AddCell(new Phrase(MsoMisdTT.ToString(), normalFont)); // Most Serious Offense - Misdemeanor Only
             table.AddCell(new Phrase(contactTT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             table.DefaultCell.BackgroundColor = new BaseColor(0, 183, 183);
             PdfPCell hdrCell = new PdfPCell(new Phrase("OFFENSE TYPE", boldFont));
             hdrCell.Colspan = 3;
@@ -490,80 +507,60 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(hdrCell);
             table.AddCell(new Phrase("TOTAL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
+            table.AddCell(new Phrase("MSO TOTALS", boldFont)); // Most Serious Offense Totals
             table.AddCell(new Phrase("OTHER", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             PdfPCell ttlCell = new PdfPCell(new Phrase("Dangerous Felony", boldFont));
             ttlCell.Colspan = 3;
             table.AddCell(ttlCell);
             table.AddCell(new Phrase(FcDangerous_h.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
+            table.AddCell(new Phrase(MsoTotal.ToString(), normalFont));
             table.AddCell(new Phrase(otherTT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
-
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             PdfPCell ttlCell2 = new PdfPCell(new Phrase("Non-Dangerous Felony", boldFont));
             ttlCell2.Colspan = 3;
             table.AddCell(ttlCell2);
             table.AddCell(new Phrase(FcNonDangerous_h.ToString(), normalFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase("UA", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             PdfPCell ttlCell3 = new PdfPCell(new Phrase("Dangerous Misdemeanor", boldFont));
             ttlCell3.Colspan = 3;
             table.AddCell(ttlCell3);
             table.AddCell(new Phrase(McDangerous_h.ToString(), normalFont));
-            blankCell.Colspan = 3;
-
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase(UATT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             PdfPCell ttlCell4 = new PdfPCell(new Phrase("Non-Dangerous Misdemeanor", boldFont));
             ttlCell4.Colspan = 3;
             table.AddCell(ttlCell4);
             table.AddCell(new Phrase(McNonDangerous_h.ToString(), normalFont));
-
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase("VIOL TOTALS", boldFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
             PdfPCell ttlCell5 = new PdfPCell(new Phrase("No prior offense", boldFont));
             ttlCell5.Colspan = 3;
             table.AddCell(ttlCell5);
             table.AddCell(new Phrase(noPriors_h.ToString(), normalFont));
-
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.AddCell(new Phrase(ViolationTT.ToString(), normalFont));
-            blankCell.Colspan = 3;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             DayTotal dayTotal = new DayTotal();
             dayTotal.Defendants = defendantCount;
             dayTotal.Day = InDate.Day;
             dayTotal.BwOrderedNo = bwOrderedNo;
             dayTotal.BwOrderedYes = bwOrderedYes;
+            dayTotal.Mso907 = Mso907TT; // Most Serious Offense - 907.041 (Incl Domestic)
+            dayTotal.MsoMisd = MsoMisdTT;
+            dayTotal.MsoNonDangerous = MsoNdFelonyTT;
             dayTotal.FcDangerous = FcDangerousTT;
             dayTotal.FcNonDangerous = FcNonDangerousTT;
             dayTotal.IndigentNo = indigentNo;
@@ -590,29 +587,28 @@ namespace tjc.Modules.PretrialServices
             colDefendantDayTotal.Add(dayTotal);
             return table;
         }
-
-        private PdfPTable GetCombinedTotals(DateTime inDate, bool IsMonthEnd, bool IsYearEnd)
+        private PdfPTable GetCombinedTotalsTop(DateTime inDate, bool IsMonthEnd, bool IsYearEnd)
         {
             List<IntakeLogItem> colIntakeTemp = null;
-            List<DayTotal> colDefendantDayTotalTemp = null;
             PdfPCell blankCell = new PdfPCell();
             blankCell.Border = 0;
-            PdfPTable table = new PdfPTable(11);
+            PdfPTable table = new PdfPTable(12);
             table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204); // YELLOW
             table.DefaultCell.HorizontalAlignment = 1;
             table.HorizontalAlignment = 0;
-            table.WidthPercentage = 60;
+            table.WidthPercentage = 90;
             table.HeaderRows = 1;
             table.AddCell(new Phrase("Date", boldFont));
             table.AddCell(new Phrase("# Interviewed", boldFont));
             table.AddCell(new Phrase("# Assessed", boldFont));
             table.AddCell(new Phrase("# Recommended" + Environment.NewLine + " for PTR", boldFont));
             table.AddCell(new Phrase("# PTR not" + Environment.NewLine + " Recommended", boldFont));
-            table.AddCell(new Phrase("# Accepted" + Environment.NewLine + " into Program", boldFont));
+            table.AddCell(new Phrase("# PTR Ordered" + Environment.NewLine, boldFont));
             table.AddCell(new Phrase("# Indigent" + Environment.NewLine + " Int/Assessed", boldFont));
-            blankCell.Colspan = 4;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 11;
+            table.AddCell(new Phrase(string.Format("# Recommended {0} for PTR {0} In Program ", Environment.NewLine), boldFont));
+            table.AddCell(new Phrase(string.Format("# Bond Secured {0} In Program ", Environment.NewLine), boldFont));
+
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
             table.DefaultCell.VerticalAlignment = Element.ALIGN_BOTTOM;
             int startDay = inDate.Day - 6;
@@ -622,7 +618,7 @@ namespace tjc.Modules.PretrialServices
             if (IsMonthEnd)
                 startDay = 1;
 
-            string dateText = GetWeekTextValue(inDate);
+            string dateText = GetWeekTextValue(inDate, true);
             if (IsMonthEnd)
                 dateText = "Month End";
 
@@ -633,9 +629,8 @@ namespace tjc.Modules.PretrialServices
             }
             else
                 colIntakeTemp = colIntake;
-            var query = from i in colIntakeTemp
-                        where i.IntakeDay >= startDay & i.IntakeDay <= endDay & i.CountyId == CountyId
-                        select i;
+            var query = colIntakeTemp.Where(i => i.IntakeDay >= startDay & i.IntakeDay <= endDay);
+
             int interviewTT = query.Sum(i => i.Interviewed.Value);
 
             int assessedTT = query.Sum(i => i.Assessed.Value);
@@ -643,6 +638,8 @@ namespace tjc.Modules.PretrialServices
             int notRecommednPtrTT = query.Sum(i => i.PtrNotRecommended.Value);
             int acceptedTT = query.Sum(i => i.PtrOrdered.Value);
             int indigentAssessedTT = query.Sum(i => i.IndigentAssessed.Value);
+            int ptrRecommendedInProgramTT = query.Sum(i => i.PtrRecommendedInProgram.Value);
+            int bondSecuredInProgramTT = query.Sum(i => i.BondSecuredInProgram.Value);
 
             table.AddCell(new Phrase(dateText, boldFont));
             table.AddCell(new Phrase(interviewTT.ToString(), normalFont));
@@ -651,22 +648,33 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase(notRecommednPtrTT.ToString(), normalFont));
             table.AddCell(new Phrase(acceptedTT.ToString(), normalFont));
             table.AddCell(new Phrase(indigentAssessedTT.ToString(), normalFont));
-            blankCell.Colspan = 2;
-            table.AddCell(blankCell);
-            blankCell.Colspan = 11;
-            table.AddCell(blankCell);
+            table.AddCell(new Phrase(ptrRecommendedInProgramTT.ToString(), normalFont));
+            table.AddCell(new Phrase(bondSecuredInProgramTT.ToString(), normalFont));
+            AddBlankCells(table, 3);
             if (IsMonthEnd)
             {
                 colIntakeRunningTotal.AddRange(colIntake);
                 colIntake.Clear();
             }
-            PdfPCell TitleCell = new PdfPCell(new Phrase("Defendants Ordered Into Program", titleFont));
-            TitleCell.Border = 0;
-            TitleCell.Colspan = 11;
-            TitleCell.HorizontalAlignment = Element.ALIGN_CENTER;
-            table.AddCell(TitleCell);
-            table.AddCell(blankCell);
-            blankCell.Colspan = 1;
+            return table;
+        }
+        private PdfPTable GetCombinedTotalsBottom(DateTime inDate, bool IsMonthEnd, bool IsYearEnd)
+        {
+            List<DayTotal> colDefendantDayTotalTemp = null;
+            PdfPCell blankCell = new PdfPCell();
+            blankCell.Border = 0;
+            PdfPTable table = new PdfPTable(12);
+            table.DefaultCell.BackgroundColor = new BaseColor(255, 255, 204); // YELLOW
+            table.DefaultCell.HorizontalAlignment = 1;
+            table.HorizontalAlignment = 0;
+            table.WidthPercentage = 90;
+            table.HeaderRows = 1;
+            int startDay = inDate.Day - 6;
+            if (inDate.Day > 28)
+                startDay = 29;
+            int endDay = inDate.Day;
+            if (IsMonthEnd)
+                startDay = 1;
             if (IsYearEnd)
                 colDefendantDayTotalTemp = colDefendantRunningTotal;
             else
@@ -689,6 +697,10 @@ namespace tjc.Modules.PretrialServices
             int NoPriorsTT = query2.Sum(c => c.NoPriors);
             int bworderedYesTT = query2.Sum(c => c.BwOrderedYes);
             int bwOrderedNoTT = query2.Sum(c => c.BwOrderedNo);
+            int mso907TT = query2.Sum(c => c.Mso907);
+            int msoMisdTT = query2.Sum(c => c.MsoMisd);
+            int msoTotal = query2.Sum(c => c.MsoTotals);
+            int msoNonDangerousTT = query2.Sum(c => c.MsoNonDangerous);
             int ncArrestTT = query2.Sum(c => c.NonCompNewArrest);
             int ncViolCallsTT = query2.Sum(c => c.NonCompViolCalls);
             int ncContactTT = query2.Sum(c => c.NonCompContact);
@@ -711,6 +723,7 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase("FTA Dates", boldFont));
             table.AddCell(new Phrase("Court Appearances", boldFont));
             table.AddCell(new Phrase("BW Ordered", boldFont));
+            table.AddCell(new Phrase("Most Serious Offense", boldFont));
             table.AddCell(new Phrase("Non-Compliance", boldFont));
             table.AddCell(new Phrase("Recommendation", boldFont));
             table.AddCell(new Phrase("Completion", boldFont));
@@ -723,6 +736,7 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase("COUNT", boldFont));
             table.AddCell(new Phrase("COUNT", boldFont));
             table.AddCell(new Phrase("YES", boldFont));
+            table.AddCell(new Phrase("907.041", boldFont)); // Most Serious Offense - 907.041 (Incl Domestic)
             table.AddCell(new Phrase("NEW ARREST", boldFont));
             table.AddCell(new Phrase("REVOKED", boldFont));
             table.AddCell(new Phrase("SUCCESSFUL", boldFont));
@@ -735,138 +749,76 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(new Phrase(ftaCountTT.ToString(), normalFont));
             table.AddCell(new Phrase(courtAppearanceTT.ToString(), normalFont));
             table.AddCell(new Phrase(bworderedYesTT.ToString(), normalFont));
+            table.AddCell(new Phrase(mso907TT.ToString(), normalFont));
             table.AddCell(new Phrase(ncArrestTT.ToString(), normalFont));
             table.AddCell(new Phrase(revokedTT.ToString(), normalFont));
             table.AddCell(new Phrase(successfullTT.ToString(), normalFont));
             table.AddCell(new Phrase(daysSprTT.ToString(), normalFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase("NO", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
             table.AddCell(new Phrase("NON-DANGEROUS", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 2);
             table.AddCell(new Phrase("NO", boldFont));
+            table.AddCell(new Phrase("NON-DANGEROUS", boldFont)); // Most Serious Offense - Non Dangerous Felony
             table.AddCell(new Phrase("VIOL CALLS", boldFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase("UNSUCCESSFUL", boldFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1); // Switch to 2 cells
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1); // Switch to 2 cells
             table.AddCell(new Phrase(indigentNoTT.ToString(), normalFont));
             table.AddCell(new Phrase(FcNonDangerousTT.ToString(), normalFont));
             table.AddCell(new Phrase(McNonDangerousTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 2);
             table.AddCell(new Phrase(bwOrderedNoTT.ToString(), normalFont));
+            table.AddCell(new Phrase(msoNonDangerousTT.ToString(), normalFont)); // Most Serious Offense - Non Dangerous Felony
             table.AddCell(new Phrase(ncViolCallsTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.AddCell(new Phrase(unsuccessfulTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 1);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            // table.AddCell(New Phrase("UNKNOWN", boldFont))
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
+            table.AddCell(new Phrase("MISD ONLY", boldFont)); // Most Serious Offense - Misdemeanor Only
             table.AddCell(new Phrase("CONTACT", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 4);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            // table.AddCell(New Phrase(indigentUnkTT, myFont))
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 6);
+            table.AddCell(new Phrase(msoMisdTT.ToString(), normalFont));
             table.AddCell(new Phrase(ncContactTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
+            table.AddCell(new Phrase("MSO TOTALS", boldFont));
             table.AddCell(new Phrase("OTHER", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 7);
+            table.AddCell(new Phrase(msoTotal.ToString(), normalFont));
             table.AddCell(new Phrase(ncOtherTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase("UA", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase(ncUATT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase("VIOL TOTALS", boldFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.AddCell(new Phrase(ncTotalsTT.ToString(), normalFont));
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
-            table.AddCell(blankCell);
+            AddBlankCells(table, 3);
             PdfPCell caption = new PdfPCell(new Phrase("Chart below is based on the defendants criminal histories. " + Environment.NewLine + "It categorizes each defendant by their most serious offense.", captionFont));
             caption.Colspan = 4;
             caption.Border = 0;
             table.AddCell(caption);
-            blankCell.Colspan = 7;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             table.DefaultCell.BackgroundColor = new BaseColor(0, 183, 183);
             PdfPCell hdrCell = new PdfPCell(new Phrase("OFFENSE TYPE", boldFont));
             hdrCell.Colspan = 3;
@@ -874,53 +826,54 @@ namespace tjc.Modules.PretrialServices
             table.AddCell(hdrCell);
             table.AddCell(new Phrase("TOTAL", boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.LIGHT_GRAY;
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             PdfPCell ttlCell = new PdfPCell(new Phrase("Dangerous Felony", boldFont));
             ttlCell.Colspan = 3;
             table.AddCell(ttlCell);
             table.AddCell(new Phrase(FcDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             PdfPCell ttlCell2 = new PdfPCell(new Phrase("Non-Dangerous Felony", boldFont));
             ttlCell2.Colspan = 3;
             table.AddCell(ttlCell2);
             table.AddCell(new Phrase(FcNonDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             PdfPCell ttlCell3 = new PdfPCell(new Phrase("Dangerous Misdemeanor", boldFont));
             ttlCell3.Colspan = 3;
             table.AddCell(ttlCell3);
             table.AddCell(new Phrase(McDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             PdfPCell ttlCell4 = new PdfPCell(new Phrase("Non-Dangerous Misdemeanor", boldFont));
             ttlCell4.Colspan = 3;
             table.AddCell(ttlCell4);
             table.AddCell(new Phrase(McNonDangerousTT_h.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             PdfPCell ttlCell5 = new PdfPCell(new Phrase("No prior offense", boldFont));
             ttlCell5.Colspan = 3;
             table.AddCell(ttlCell5);
             table.AddCell(new Phrase(NoPriorsTT.ToString(), normalFont));
-            table.AddCell(blankCell);
+            AddBlankCells(table, 8);
             if (IsMonthEnd)
             {
                 colDefendantRunningTotal.AddRange(colDefendantDayTotal);
                 colDefendantDayTotal.Clear();
             }
-
             return table;
         }
-
         public void WriteDaily(ref Document doc, DateTime Indate)
         {
+            var ctl = new DefendantInProgramController();
+            IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramForReport(CountyId, Indate);
+
             Paragraph pDates = new Paragraph(reportTitle + Environment.NewLine + "For " + beginningDate + " to " + enddingDate + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
             pDates.Alignment = Element.ALIGN_CENTER;
             doc.Add(pDates);
             Paragraph pCurrentDate = new Paragraph(Indate.ToShortDateString() + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 9, Font.NORMAL));
             doc.Add(pCurrentDate);
-            doc.Add(getIntakelog(Indate));
+            doc.Add(getIntakelog(Indate, defendantsInProgram));
             Paragraph pDefendant = new Paragraph("Defendants Ordered into Program " + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLDITALIC));
             pDefendant.Alignment = Element.ALIGN_CENTER;
             doc.Add(pDefendant);
-            doc.Add(GetDefendantLog(Indate));
+            doc.Add(GetDefendantLog(Indate, defendantsInProgram));
             doc.Add(new Paragraph(" "));
             doc.Add(new Paragraph(string.Format("* {0} PTS does not make recommendations @ 1st appearance.", CountyId), new Font(Font.FontFamily.HELVETICA, 5)));
             doc.Add(new Paragraph("* In accordance with the FCIC/NCIC rules, only convictions in the State of Florida are reflected.", new Font(Font.FontFamily.HELVETICA, 5)));
@@ -929,10 +882,13 @@ namespace tjc.Modules.PretrialServices
                 if (IsWeekend(Indate))
                 {
                     doc.NewPage();
-                    Paragraph pTitleW = new Paragraph(reportTitleW + Environment.NewLine + "For " + GetWeekTextValue(Indate).Replace("Week", Indate.Year.ToString() + " Week") + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
+                    Paragraph pTitleW = new Paragraph(reportTitleW + Environment.NewLine + "For " + GetWeekTextValue(Indate, false).Replace("Week", Indate.Year.ToString() + " Week") + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleW.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleW);
-                    doc.Add(GetCombinedTotals(Indate, false, false));
+                    doc.Add(GetCombinedTotalsTop(Indate, false, false));
+                    doc.Add(pDefendant);
+
+                    doc.Add(GetCombinedTotalsBottom(Indate, false, false));
                 }
             }
             if (reportType == ReportType.monthly | reportType == ReportType.yearly)
@@ -943,22 +899,25 @@ namespace tjc.Modules.PretrialServices
                     Paragraph pTitleM = new Paragraph(reportTitleM + Environment.NewLine + "For " + Indate.ToString("MMMM") + " " + Indate.Year.ToString() + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleM.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleM);
-                    doc.Add(GetCombinedTotals(Indate, true, false));
+                    doc.Add(GetCombinedTotalsTop(Indate, true, false));
+                    doc.Add(pDefendant);
+                    doc.Add(GetCombinedTotalsBottom(Indate, true, false));
+                    doc.NewPage();
                 }
             }
             if (reportType == ReportType.yearly)
             {
                 if (IsYearEnd(Indate))
                 {
-                    doc.NewPage();
                     Paragraph pTitleM = new Paragraph(reportTitleY + Environment.NewLine + "For " + beginningDate + " to " + enddingDate + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
                     pTitleM.Alignment = Element.ALIGN_CENTER;
                     doc.Add(pTitleM);
-                    doc.Add(GetCombinedTotals(Indate, true, true));
+                    doc.Add(GetCombinedTotalsTop(Indate, true, true));
+                    doc.Add(pDefendant);
+                    doc.Add(GetCombinedTotalsBottom(Indate, true, true));
                 }
             }
         }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             Document doc = new Document(PageSize.LETTER.Rotate(), 10, 10, 42, 35);
@@ -970,26 +929,26 @@ namespace tjc.Modules.PretrialServices
             if (Request.QueryString["mid"] != null)
                 Int32.TryParse(Request.QueryString["mid"].ToString(), out ModuleId);
             if (Request.QueryString["rid"] != null)
-                reportTypeQSValue= Request.QueryString["rid"].ToString();
+                reportTypeQSValue = Request.QueryString["rid"].ToString();
             if (Request.QueryString["indate"] != null)
                 reportDate = DateTime.Parse(Request.QueryString["indate"]);
 
-            var cCtl = new CountyController();
-            County county = cCtl.GetCounty(CountyId);
+            var cCtl = new Globals.CountyController();
+            Globals.County county = cCtl.GetCounty(CountyId);
             if (ModuleId > 0)
             {
                 var mCtl = new ModuleController();
                 ModuleInfo moduleInfo = mCtl.GetModule(ModuleId);
                 if (moduleInfo.TabModuleSettings.Contains("ReportDirectory"))
                 {
-                    ReportRootUrl= moduleInfo.TabModuleSettings["ReportDirectory"].ToString();
+                    ReportRootUrl = moduleInfo.TabModuleSettings["ReportDirectory"].ToString();
                 }
             }
             if (county != null)
             {
                 CountyName = county.CountyName;
             }
-            if (reportTypeQSValue=="daily")
+            if (reportTypeQSValue == "daily")
             {
                 reportType = ReportType.daily;
             }
@@ -1023,7 +982,7 @@ namespace tjc.Modules.PretrialServices
                 pdfWriter1.StrictImageSequence = true;
                 pdfWriter1.SetLinearPageMode();
                 // Define the page header
-                
+
                 PageEventHandler.Title = " ";
                 PageEventHandler.HeaderFont = FontFactory.GetFont(BaseFont.COURIER_BOLD, 10, Font.BOLD);
                 doc.Open();
@@ -1039,7 +998,7 @@ namespace tjc.Modules.PretrialServices
                 enddingDate = new DateTime(reportDate.Year, reportDate.Month, lastDay).ToShortDateString();
                 reportName = string.Format("pts-CRTK-Monthly-{0}-{1}-{2}.pdf", CountyId, reportDate.Month.ToString(), reportDate.Year.ToString());
                 PdfWriter pdfWriter1 = PdfWriter.GetInstance(doc, new FileStream(appPath + reportName, FileMode.Create));
-               
+
                 pdfWriter1.PageEvent = PageEventHandler;
                 pdfWriter1.SetFullCompression();
                 pdfWriter1.StrictImageSequence = true;
@@ -1064,11 +1023,11 @@ namespace tjc.Modules.PretrialServices
                 int firstDay = GetWeekStartDay(reportDate);
                 int lastDayMonth = GetLastDayOfMonth(reportDate).Day;
                 int lastDay = firstDay + 6;
-                if(lastDay>lastDayMonth)
+                if (lastDay > lastDayMonth)
                     lastDay = lastDayMonth;
                 beginningDate = new DateTime(reportDate.Year, reportDate.Month, firstDay).ToShortDateString();
                 enddingDate = new DateTime(reportDate.Year, reportDate.Month, lastDay).ToShortDateString();
-                reportName = string.Format("pts-CRTK-{0}-{1}-{2}-{3}.pdf", CountyId, GetWeekTextValue(reportDate).Replace(" ", "-"), reportDate.Month.ToString(), reportDate.Year.ToString());
+                reportName = string.Format("pts-CRTK-{0}-{1}-{2}-{3}.pdf", CountyId, GetWeekTextValue(reportDate, true).Replace(" ", "-"), reportDate.Month.ToString(), reportDate.Year.ToString());
                 PdfWriter pdfWriter1 = PdfWriter.GetInstance(doc, new FileStream(appPath + reportName, FileMode.Create));
                 pdfWriter1.PageEvent = PageEventHandler;
                 pdfWriter1.SetFullCompression();
@@ -1124,8 +1083,7 @@ namespace tjc.Modules.PretrialServices
                 doc.Close();
 
             }
-
-            Response.Redirect(string.Format("{0}{1}", ReportRootUrl, reportName));
+            Response.Redirect(string.Format("{0}{1}?ver={2}", ReportRootUrl, reportName, DateTime.Now.ToString("MMddyyyhhmmss")));
         }
     }
 }

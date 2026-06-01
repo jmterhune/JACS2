@@ -6,7 +6,7 @@
         <div class="btn-group" role="group" aria-label="Basic example">
             <asp:HyperLink ID="lnkSearch" CssClass="btn btn-primary" runat="server"><i class="fas fa-search"></i> Case Search</asp:HyperLink>
             <asp:HyperLink ID="lnkNew" CssClass="btn btn-dark" runat="server"><i class="fas fa-plus"></i> New Case</asp:HyperLink>
-            <asp:LinkButton ID="cmdDelete" CssClass="btn btn-secondary confirm-delete-case" runat="server"><i class="fas fa-trash"></i> Delete Case</asp:LinkButton>
+            <asp:LinkButton ID="cmdDelete" CssClass="btn btn-secondary confirm-delete-case" runat="server" OnClick="cmdDelete_Click"><i class="fas fa-trash"></i> Delete Case</asp:LinkButton>
         </div>
     </div>
     <div class="row">
@@ -14,10 +14,10 @@
             <div class="form-group">
                 <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
                 <div class="input-group">
-                    <asp:TextBox TabIndex="1" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                     <div class="input-group-append">
                         <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                     </div>
@@ -29,15 +29,15 @@
                     <div class="row">
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                            <asp:TextBox runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                            <asp:TextBox runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-12">
                             <asp:Label runat="server" AssociatedControlID="txtBusinessName" Text="Business Name" />
-                            <asp:TextBox runat="server" ID="txtBusinessName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtBusinessName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                     </div>
                 </div>
@@ -47,13 +47,13 @@
             <div class="form-group">
                 <asp:Label runat="server" AssociatedControlID="drpCountyLetter" ToolTip="Citizen's Dispute Settlement Program Case Number" Text="CDSP Number" />
                 <div class="input-group">
-                    <asp:DropDownList TabIndex="1" runat="server" CssClass="form-control" ID="drpCDSPType" ClientIDMode="Static">
+                    <asp:DropDownList  TabIndex="1" runat="server" CssClass="form-control" ID="drpCDSPType" ClientIDMode="Static">
                         <asp:ListItem Text="< Select Type >" Value="" />
                         <asp:ListItem Text="CDSP" title="Citizen's Dispute Settlement Program" />
                         <asp:ListItem Text="CDSPF" title="Citizen's Dispute Settlement Program Family" />
                     </asp:DropDownList>
-                    <asp:TextBox TabIndex="1" ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                    <asp:TextBox TabIndex="1" ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                     <asp:DropDownList TabIndex="1" ID="drpCountyLetter" runat="server" ToolTip="County" CssClass="form-control location-field" ClientIDMode="Static">
                         <asp:ListItem Text="" Value=""></asp:ListItem>
                         <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
@@ -72,15 +72,15 @@
                     <div class="row">
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtLastName_p2" Text="Last Name" />
-                            <asp:TextBox runat="server" ID="txtLastName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtLastName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtFirstName_p2" Text="First Name" />
-                            <asp:TextBox runat="server" ID="txtFirstName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtFirstName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                         <div class="col-12">
                             <asp:Label runat="server" AssociatedControlID="txtBusinessName_p2" Text="Business Name" />
-                            <asp:TextBox runat="server" ID="txtBusinessName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtBusinessName_p2" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtReferralSource" Text="Program Referral Source" />
                         <div class="combo-container">
-                            <asp:TextBox runat="server" ID="txtReferralSource" MaxLength="50" ClientIDMode="Static" CssClass="combo form-control" autocomplete="off" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtReferralSource" MaxLength="50" ClientIDMode="Static" CssClass="combo form-control" />
                             <datalist id="dlReferralSource" class="form-control combo-list">
                                 <asp:Literal ID="ltReferralSourceOptions" runat="server" />
                             </datalist>
@@ -133,11 +133,11 @@
                 <div class="col-auto">
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtCaseReceived" Text="Date Case Received" />
-                        <asp:TextBox runat="server" ID="txtCaseReceived" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
+                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtCaseReceived" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
                     </div>
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                        <asp:TextBox runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
+                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
                     <div class="form-check form-switch mt-4">
                         <asp:CheckBox ID="chkTelephoneSession" runat="server" Text="Virtual Session" />
@@ -246,7 +246,7 @@
                 <fieldset class="outline-fieldset pt-0 pb-0">
                     <legend class="mb-0">
                         <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
-                    <asp:TextBox runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
+                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
                 </fieldset>
             </div>
             <div class="modal fade" id="EventModal" tabindex="-1" role="dialog" aria-labelledby="EventModalLabel" aria-hidden="true">
@@ -277,13 +277,14 @@
                                             <asp:ListItem Text="Failure to Appear" Value="Failure to Appear" />
                                             <asp:ListItem Text="Party Declined to Participate" Value="Party Declined to Participate" />
                                             <asp:ListItem Text="Cancelled" Value="Cancelled" />
+                                             <asp:ListItem Text="No Response" Value="No Response" />
                                         </asp:DropDownList>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
-                                        <asp:TextBox runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtEventDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -312,7 +313,7 @@
                                 <div class="col-auto">
                                     <asp:HiddenField ID="hdMediatorId" runat="server" ClientIDMode="Static" />
                                     <asp:Label runat="server" AssociatedControlID="txtMediator" Text="Mediator Name" />
-                                    <asp:TextBox runat="server" Enabled="false" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" Enabled="false" ID="txtMediator" MaxLength="100" ClientIDMode="Static" CssClass="form-control" />
                                 </div>
                                 <div class="col-auto pt-4 mt-1">
                                     <button class="btn btn-primary mediator-search" title="Search for Mediator" data-mediator="1">
@@ -358,7 +359,7 @@
                                     <div class="form-group row">
                                         <asp:Label runat="server" AssociatedControlID="txtHours" Text="Hours" CssClass="col-auto col-form-label" />
                                         <div class="col-auto">
-                                            <asp:TextBox runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
                                         </div>
                                     </div>
                                 </div>
@@ -382,11 +383,11 @@
                             <div class="row mb-3">
                                 <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="txtMediatorFirstName" Text="First Name" />
-                                    <asp:TextBox runat="server" ID="txtMediatorFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediatorFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                 </div>
                                 <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="txtMediatorLastName" Text="Last Name" />
-                                    <asp:TextBox runat="server" ID="txtMediatorLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediatorLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                 </div>
 
                                 <div class="col-auto pt-4">
@@ -422,21 +423,21 @@
                             <div class="row g-3">
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtFirstNameMed" Text="First Name" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameMed" />
                                 </div>
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtLastNameMed" Text="Last Name" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameMed" />
                                 </div>
                             </div>
                             <div class="row g-3">
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtEmailMed" Text="Email" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmailMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="250" ID="txtEmailMed" />
                                 </div>
                                 <div class="col">
                                     <asp:Label runat="server" AssociatedControlID="txtPhoneMed" Text="Phone" />
-                                    <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhoneMed" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhoneMed" />
                                 </div>
                             </div>
                         </div>
@@ -464,9 +465,9 @@
         OnClick="cmdSave_Click" CssClass="btn btn-primary btn-lg"><i class="fas fa-save"></i> Save</asp:LinkButton>
     <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Reset</asp:HyperLink>
 </p>
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
@@ -571,6 +572,25 @@
                 modal = new bootstrap.Modal(document.getElementById('EditMediatorModal'));
             }
             modal.show();
+        });
+        $('input').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+            }
+        });
+
+        $('#txtMediatorFirstName').keypress(function (event) {
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
+        });
+        $('#txtMediatorLastName').keypress(function (event) {
+
+            if (event.which === 13) { // 13 is the keycode for Enter
+                event.preventDefault();
+                $('#cmdMediatorSearch').click();
+            }
         });
         dataList.querySelectorAll('option').forEach((el, idx, arr) => {
             el.addEventListener('click', (e) => {

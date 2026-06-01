@@ -70,11 +70,11 @@ namespace tjc.Modules.Purchasing
             var orders = ctl.GetFormOrders(startDate, endDate.AddDays(1));
             if (chkShowCompleted.Checked)
             {
-                rptOrders.DataSource = orders;
+                rptOrders.DataSource = orders.OrderByDescending(x=>x.OrderID);
             }
             else
             {
-                rptOrders.DataSource = orders.Where(x => x.CompletedDate.HasValue == false);
+                rptOrders.DataSource = orders.Where(x => x.CompletedDate.HasValue == false).OrderByDescending(x => x.OrderID);
             }
             rptOrders.DataBind();
         }
@@ -124,11 +124,13 @@ namespace tjc.Modules.Purchasing
                 Components.FormOrder formOrder = (Components.FormOrder)e.Item.DataItem;
                 if (formOrder != null)
                 {
+                    HyperLink lnkDetails = (HyperLink)e.Item.FindControl("lnkDetails");
+                    lnkDetails.NavigateUrl = EditUrl("oid", item.OrderID.ToString(), "detail");
                     string formOrderLines = BuildFormOrderLines(formOrder.OrderID);
                     if (!string.IsNullOrEmpty(formOrderLines))
                         ltFormItems.Text = string.Format("<tr><td colspan='6'>" +
                             "<table class='table table-bordered table-dark ms-3'><thead><th>Form #</th><th>Form Title</th><th>Description</th>" +
-                            "<th>Quantity</th><th>End User</th><th>Comments</th><th>Attachments</th></thead><tbody>{0}</tbody>" +
+                            "<th># Sets</th><th>End User</th><th>Comments</th><th>Attachments</th></thead><tbody>{0}</tbody>" +
                             "</table></td></tr>", formOrderLines);
                 }
                 else { ltFormItems.Text = string.Empty; }
@@ -154,10 +156,10 @@ namespace tjc.Modules.Purchasing
         {
             string attachementList = string.Empty;
             var aCtl = new AttachmentController();
-            IEnumerable<Attachment> attachments = aCtl.GetAttachmentsByFormId(ModuleId, formId);
+            IEnumerable<FormOrderAttachment> attachments = aCtl.GetFormAttachmentsByFormId(formId);
             FileManager objFile = new FileManager();
             int attachmentCount = 0;
-            foreach (Attachment f in attachments)
+            foreach (FormOrderAttachment f in attachments)
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)

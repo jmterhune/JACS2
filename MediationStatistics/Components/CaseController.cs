@@ -18,7 +18,17 @@ namespace tjc.Modules.MediationStatistics.Components
         public void DeleteCase(int caseId)
         {
             var t = GetCase(caseId);
+            var sCtl = new SessionController();
+            var eCtl=new EventController();
             DeleteCase(t);
+            foreach (Session session in t.CaseSessions)
+            {
+                foreach (Event evt in session.SessionEvents)
+                {
+                    eCtl.DeleteEvent(evt);
+                }
+                sCtl.DeleteSession(session);
+            }
         }
 
         public void DeleteCase(Case t)

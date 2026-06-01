@@ -21,8 +21,6 @@ namespace tjc.Modules.MediationStatistics.Components
     [TableName("tjc_med_attorneys")]
     //setup the primary key for table
     [PrimaryKey("AttorneyId", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("Attorneys", CacheItemPriority.Default, 20)]
     internal class Attorney : EntityBase
     {
         public int AttorneyId { get; set; }
@@ -50,7 +48,7 @@ namespace tjc.Modules.MediationStatistics.Components
         {
             get
             {
-                if (string.IsNullOrEmpty(FirstName) & string.IsNullOrEmpty(LastName)) { return ""; }
+                if (string.IsNullOrEmpty(FirstName) & string.IsNullOrEmpty(LastName)) { return Firm; }
                 if (string.IsNullOrEmpty(FirstName) & !string.IsNullOrEmpty(LastName))
                     return LastName;
                 if (!string.IsNullOrEmpty(FirstName) & string.IsNullOrEmpty(LastName))

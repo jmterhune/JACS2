@@ -150,7 +150,6 @@ namespace tjc.Modules.MediationStatistics
             string navigateUrl = EditUrl("cid", selectedCaseId.ToString(), selectedCaseType.ToString()); ;
             Response.Redirect(navigateUrl,true);
         }
-
         #endregion
     }
 }

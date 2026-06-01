@@ -14,6 +14,8 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel.DataAnnotations;
 using DotNetNuke.Entities.Content;
 using System;
+using System.ComponentModel;
+using System.Reflection;
 using System.Web.Caching;
 
 namespace tjc.Modules.PretrialServices.Components
@@ -51,11 +53,11 @@ namespace tjc.Modules.PretrialServices.Components
         public string ArrestCharges { get; set; }
 
         public string NonCompArrestViolation { get; set; }
-        public int? Indigent
+        public bool Indigent
         {
             get; set;
         }
-        public int? BwOrdered
+        public bool BwOrdered
         {
             get; set;
         }
@@ -64,7 +66,7 @@ namespace tjc.Modules.PretrialServices.Components
             get; set;
         }
 
-        public int? FtaArrestHearing
+        public bool FtaArrestHearing
         {
             get; set;
         }
@@ -99,7 +101,23 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get; set;
         }
+
         public bool IsRevoked { get; set; }
+        public bool CaseScreened { get; set; }
+        public bool PlacedInProgram { get; set; }
+        public int? BondType { get; set; }
+        public int? NonCompliance { get; set; }
+        public int? CaseType { get; set; }
+        public bool Interviewed { get; set; }
+        public bool Assessed { get; set; }
+        public bool PtrRecommended { get; set; }
+        public bool PtrOrdered { get; set; }
+        public bool IndigentAssessed { get; set; }
+        public bool PtrNotRecommended { get; set; }
+        public string MostSeriousOffense { get; set; }
+
+
+
         [IgnoreColumn]
         public string FormattedIntakeDate
         {
@@ -141,7 +159,7 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get
             {
-                if (Completion == 1) { return "Successful"; } else if (Completion == 0) { return "Non-Successful"; }
+                if (Completion == 1) { return "Successful"; } else if (Completion == 0) { return "Non-Successful"; } else if (Completion == 2) { return "Other"; }
                 return "";
             }
         }
@@ -150,7 +168,7 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get
             {
-                if (Indigent == 1) { return "Yes"; } else if (Indigent == 0) { return "No"; }
+                if (Indigent == true) { return "Yes"; } else if (Indigent == false) { return "No"; }
                 return "";
             }
         }
@@ -159,7 +177,16 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get
             {
-                if (FtaArrestHearing == 1) { return "Yes"; } else if (FtaArrestHearing == 0) { return "No"; }
+                if (FtaArrestHearing == true) { return "Yes"; } else if (FtaArrestHearing == false) { return "No"; }
+                return "";
+            }
+        }
+        [IgnoreColumn]
+        public string FormattedCaseScreened
+        {
+            get
+            {
+                if (CaseScreened == true) { return "Screened"; } else if (CaseScreened == false) { return "Not Screened"; }
                 return "";
             }
         }
@@ -168,15 +195,82 @@ namespace tjc.Modules.PretrialServices.Components
         {
             get
             {
-                if (BwOrdered == 1) { return "Yes"; } else if (BwOrdered == 0) { return "No"; }
+                if (BwOrdered == true) { return "Yes"; } else if (BwOrdered == false) { return "No"; }
                 return "";
             }
         }
-    }
-    public enum SearchType
-    {
-        date = 0,
-        defendantName = 1,
-        caseNumber = 2
+        [IgnoreColumn]
+        public string FormattedPlacedInProgram
+        {
+            get
+            {
+                if (PlacedInProgram == true) { return "Placed"; } else if (PlacedInProgram == false) { return "Not Placed"; }
+                return "";
+            }
+        }
+        [IgnoreColumn]
+        public string FormattedCaseType
+        {
+            get
+            {
+                if (CaseType == (int)Enumerations.CaseCategoryValue.Felony) { return "CF Case"; } else if (CaseType == (int)Enumerations.CaseCategoryValue.Misdemeanor) { return "MM Case"; }
+                return "";
+            }
+        }
+        [IgnoreColumn]
+        public string FormattedBondType
+        {
+            get
+            {
+                if (BondType == (int)Enumerations.BondTypeValue.Secured) { return "Secured"; } else if (BondType == (int)Enumerations.BondTypeValue.NonSecured) { return "Non-Secured"; }
+                return "";
+            }
+        }
+        [IgnoreColumn]
+        public int MonthsSPR
+        {
+            get
+            {
+                int months = 0;
+                if (CompletionDate.HasValue)
+                    months = (CompletionDate.Value.Year - IntakeDate.Value.Year) * 12 + (CompletionDate.Value.Month - IntakeDate.Value.Month);
+                return months;
+            }
+        }
+        [IgnoreColumn]
+        public string FormattedNonCompliance
+        {
+            get
+            {
+                string returnValue = "";
+                switch ((Enumerations.ComplianceStatus)NonCompliance)
+                {
+                    case Enumerations.ComplianceStatus.FTA:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.FTA);
+                        break;
+                    case Enumerations.ComplianceStatus.WarrantIssuedFTA:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.WarrantIssuedFTA);
+                        break;
+                    case Enumerations.ComplianceStatus.ReleaseRevokedFTA:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.ReleaseRevokedFTA);
+                        break;
+                    case Enumerations.ComplianceStatus.NewArrest:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.NewArrest);
+                        break;
+                    case Enumerations.ComplianceStatus.ReleaseRevokedArrest:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.ReleaseRevokedArrest);
+                        break;
+                    case Enumerations.ComplianceStatus.SprNonCompliant:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.SprNonCompliant);
+                        break;
+                    case Enumerations.ComplianceStatus.WarrantIssuedNonCompliant:
+                        returnValue = Enumerations.GetEnumDescription(Enumerations.ComplianceStatus.WarrantIssuedNonCompliant);
+                        break;
+                    default:
+                        break;
+                }
+                return returnValue;
+            }
+        }
     }
 }

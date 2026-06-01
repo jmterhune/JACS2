@@ -12,21 +12,21 @@
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace tjc.Intranet.API.Components.CourtCounsel
 {
-    internal class LogEntryController 
+    internal class LogEntryController
     {
-        private const string CONN_INTRANET = "Intranet.API"; //Connection
-
-     
-        public IEnumerable<LogEntry> GetLogEntrysByCaseNumber(string caseNumber)
+        public IEnumerable<LogEntry> GetLogEntryByCaseNumber(string caseNumber)
         {
             IEnumerable<LogEntry> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<LogEntry>();
-                t = rep.Find("Where CaseNumber Like @0", caseNumber.Trim() + "%");
+                var rep = ctx.GetRepository<LogEntryListItem>();
+                //t = rep.Find("Where CaseNumber Like @0", caseNumber.Trim() + "%").Select(x => new LogEntry { LogId = x.LogId, CaseNumber = x.CaseNumber, Description = x.Description, IsCase = true, CountyId = x.CountyId }).Distinct().ToList();
+                t = ctx.ExecuteQuery<LogEntry>(System.Data.CommandType.StoredProcedure, "court_counsel_get_matching_casenumbers", caseNumber.Trim() + "%");
+
             }
             return t;
         }

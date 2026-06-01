@@ -1,0 +1,33 @@
+.outline-fieldset {
+    padding: 10px 5px 5px 5px;
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ced4da;
+    border-radius: 5px;
+    margin: 10px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px
+}
+
+    .outline-fieldset legend {
+        width: auto;
+        display: inline-block;
+        padding: 0 5px;
+        font-size: .9rem;
+        font-weight: 700;
+        float: none;
+    }
+
+        .outline-fieldset legend.small {
+            font-size: .75rem;
+        }
+.radio-button-list label,.radio-button-list input{ margin-left:5px;}

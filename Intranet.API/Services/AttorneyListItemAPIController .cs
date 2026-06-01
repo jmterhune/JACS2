@@ -10,10 +10,10 @@ using tjc.Intranet.API.Services.ViewModels.Mediation;
 
 namespace tjc.Intranet.API.Services.Mediation
 {
+    [DnnAuthorize]
     public class AttorneyListItemController : DnnApiController
     {
         [HttpGet]
-        [AllowAnonymous]
         public HttpResponseMessage GetAttorneyListItems(int count)
         {
             List<AttorneyListItemViewModel> attorneylistItems = new List<AttorneyListItemViewModel>();
@@ -23,12 +23,17 @@ namespace tjc.Intranet.API.Services.Mediation
             string firstName = query["firstName"].ToString();
             string lastName = query["lastName"].ToString();
             string firm = query["firm"].ToString();
-            Int32.TryParse(query["order[0].column"], out int sortIndex);
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);
-            string sortColumn = GetSortColumn(sortIndex);
-            string sortDirection = query["order[0].dir"];
+            string sortColumn = "LastName"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
             try
             {
                 var ctl = new Components.Mediation.AttorneyListItemController();
@@ -73,7 +78,6 @@ namespace tjc.Intranet.API.Services.Mediation
             return name;
         }
         [HttpPost]
-        [AllowAnonymous]
         public HttpResponseMessage CreateAttorney(AttorneyListItemViewModel attorneyViewItem)
         {
             var ctl = new Components.Mediation.AttorneyListItemController();

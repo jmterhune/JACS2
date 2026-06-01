@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ViewForm.ascx.cs" Inherits="tjc.Modules.Purchasing.ViewForm" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<div id="form-container">
+<div id="form-container" class="purchasing">
     <div class="row">
         <div class="col-4">
             <div class="input-group">
@@ -39,8 +39,8 @@
         </HeaderTemplate>
         <ItemTemplate>
             <tr>
-                <td><%#Eval("OrderID") %></td>
-                <td><%#Eval("RequestedName") %></td>
+                <td><asp:HyperLink ID="lnkDetails" runat="server" ToolTip="Click to view details of the Order"><%#Eval("OrderID") %></asp:HyperLink></td>
+                <td><a href='mailto:<%#Eval("EmailAddress") %>'><%#Eval("RequestedName") %></a></td>
                 <td><%#Eval("Location") %></td>
                 <td><%#Eval("DateRequested") %></td>
                 <td class="text-center">
@@ -56,10 +56,10 @@
         </FooterTemplate>
     </asp:Repeater>
 </div>
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:DnnJsInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:DnnCssInclude runat="server" FilePath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
 <dnn:DnnCssInclude runat="server" FilePath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     jQuery(function ($) {

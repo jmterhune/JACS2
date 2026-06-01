@@ -1,126 +1,160 @@
-.custom-switch {
-    margin-top: 6px
-}
-
-.switch {
-    max-width: 90px;
-    margin-right: 8px
-}
-
-#drpAttorney {
-    min-width: 170px
-}
-
-.inactive {
-    color: #808080 !important
-}
-
-optgroup[label] {
-    color: rgb(0, 120, 212);
-    background-color: #eee;
-    font-size: 1rem;
-}
+/* Court Counsel Module Styles */
 
 .command-icon {
-    cursor: pointer;
-}
-
-label em {
-    color: #dc3545 !important
-}
-
-optgroup .inactive {
-    background-color: #fff;
-    font-size: .9rem;
-}
-
-#drpCountyLetter, #txtCaseYear {
-    width: 4rem;
-    min-width: 4rem;
-    max-width: 4rem;
-}
-
-#txtCaseType {
-    width: 3rem;
-    min-width: 3rem;
-    max-width: 3rem
-}
-
-#txtCaseSequence {
-    min-width: 6rem;
-}
-
-.form-control:disabled {
-    cursor: not-allowed;
-}
-
-small.input-group-text {
-    font-size: .8rem !important;
-    height: 100%
+    width: 30px;
+    text-align: center;
 }
 
 .modal-progress {
     position: fixed;
-    z-index: 999;
-    height: 100%;
-    width: 100%;
     top: 0;
     left: 0;
-    background-color: Black;
-    filter: alpha(opacity=60);
-    opacity: 0.6;
-    -moz-opacity: 0.8;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
 }
 
 .center-progress {
-    z-index: 1000;
-    margin: 300px auto;
-    padding: 10px;
-    width: 50px;
-    filter: alpha(opacity=100);
-    opacity: 1;
-    -moz-opacity: 1;
-}
-/*Calendar Css*/
-.event-item {
-    cursor: pointer;
-    border-bottom: solid 1px #ccc !important;
-    margin-bottom: 5px; 
-    margin-left: -5px;
-    margin-right: -5px;
-    padding-left: 5px;
-    padding-right: 5px;
-    font-size:.7rem;
-}
-    .event-item a {
-        font-size: .7rem !important;
-    }
-    .event-item:hover {
-        background-color: #eee
-    }
-.day{overflow-y:auto !important;}
-@media (max-width:575px) {
-    .display-4 {
-        font-size: 1.5rem;
-    }
-
-    .day h5 {
-        background-color: #f8f9fa;
-        padding: 3px 5px 5px;
-        margin: -8px -8px 8px -8px;
-    }
-
-    .date {
-        padding-left: 4px;
-    }
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-@media (min-width: 576px) {
-    .day {
-        height: 14.2857vw;
+.highLight {
+    background-color: #f4edc1;
+}
+
+.inactive {
+    color: #999;
+}
+
+.error {
+    color: #fff;
+    background-color: #d9534f;
+    border: 1px solid #d43f3a;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.caseReport {
+    min-width: 600px;
+}
+
+.caseReport td {
+    padding: 4px;
+}
+
+.caseDetail {
+    width: 100%;
+    background: #f9f9f9;
+    border: 1px dotted #ccc;
+}
+
+.caseDetail td {
+    padding: 4px;
+}
+
+.caseHeader td {
+    font-weight: bold;
+    padding: 4px;
+}
+
+.caseCount {
+    width: 70px;
+    text-align: right;
+}
+
+.gradTotal {
+    text-align: right;
+    font-weight: bold;
+    border-bottom: double medium;
+}
+
+.totals {
+    background-color: #f4edc1;
+}
+
+.note {
+    margin-top: 15px;
+}
+
+.command-item {
+    width: 30px;
+    text-align: center;
+}
+
+table.dataTable {
+    width: 100% !important;
+}
+
+@media print {
+    .rgMasterTable tbody {
+        font-size: 20px;
     }
 }
-.SumoSelect .select-all {
-    height: 35px !important;
+
+/* Shared case-number widget */
+.county-letter {
+    max-width: 4rem !important;
 }
-.container-fluid{padding:0 !important;}
+
+.case-year {
+    max-width: 4rem !important;
+}
+
+.case-type {
+    max-width: 3rem !important;
+}
+
+.case-sequence {
+    max-width: 6rem !important;
+}
+
+.defendant-suffix {
+    max-width: 4rem !important;
+}
+/* Attorney multi-select dropdown (RadComboBox-style checkbox dropdown) */
+.attorney-dropdown .dropdown-menu {
+    width: 100%;
+    min-width: 280px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.attorney-dropdown .attorney-checklist span {
+    display: block;
+    padding: 2px 4px;
+}
+
+.attorney-dropdown .attorney-checklist input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.attorney-dropdown .attorney-inactive span label {
+    color: #999;
+    font-style: italic;
+}
+
+/* Suppress the <br> tags CheckBoxList emits between inactive items */
+.attorney-dropdown .attorney-inactive br {
+    display: none;
+}
+.attorney-dropdown{width:300px}
+/* Collapsible card header +/- indicator (mirrors JudicialReferral module.css) */
+.collapse-toggle .icon-collapsed {
+    display: none;
+}
+.collapse-toggle .icon-expanded { display: inline-block; }
+.collapse-toggle[aria-expanded="false"] .icon-expanded { display: none; }
+.collapse-toggle[aria-expanded="false"] .icon-collapsed { display: inline-block; }
+
+/* Let the DataSheet's parent Porto ContentPane shrink-wrap so the table uses full screen width */
+.container:has(.datasheet-full-width) {
+    max-width: max-content !important;
+}
+.datasheet-full-width {
+    width: 100%;
+}
+

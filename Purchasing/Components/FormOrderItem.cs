@@ -16,5 +16,8 @@ namespace tjc.Modules.Purchasing.Components
         public DateTime CreatedDate { get; set; }
         public string Description { get; set; }
         public string Recipient { get; set; }
+        public int NumberSets { get; set; }
+        public int NumberParts { get; set; }
+        public string PageType { get; set; }
     }
 }

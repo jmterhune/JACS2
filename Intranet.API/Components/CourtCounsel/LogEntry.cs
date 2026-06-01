@@ -22,13 +22,14 @@ namespace tjc.Intranet.API.Components.CourtCounsel
     {
         public long LogId { get; set; }
         public string CaseNumber { get; set; }
+        public string DefendantName { get; set; }
         public string Description { get; set; }
         public string CaseTypeName { get; set; }
         public long AssignmentId { get; set; }
         public string ActionName { get; set; }
         public DateTime? DateReceived { get; set; }
         public DateTime? MotionFiled { get; set; }
-
+        public int CountyId { get; set; }
         public string AttorneyName { get; set; }
         public string PhaseName { get; set; }
         public string Email { get; set; }

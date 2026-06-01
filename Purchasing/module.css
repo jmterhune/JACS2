@@ -1,7 +1,18 @@
+.dnnFormPopup .ui-dialog-titlebar {
+    padding: 10px !important
+}
 #stamp-container .form-switch, #form-container .form-switch, #supply-container .form-switch {
     padding-top: .4rem
 }
-a {font-size:inherit !important}
+.supply-order-detail-container{
+    width:98%
+}
+.supply-order-detail-container .form-control {
+    padding: 0 .4rem;
+}
+.purchasing a {
+    font-size: inherit !important
+}
 
 .input-group .form-control {
     max-height: 2.4rem;
@@ -39,9 +50,13 @@ a {font-size:inherit !important}
         margin-left:20px
     }
 
-    .attachments a {
+    .attachments a, .attachments a:visited, .attachments a:link,.item-link, .item-link:visited {
         cursor: pointer;
+        color: #0088cc !important
     }
+        .attachments a:hover, .item-link:hover {
+            color: #034c70 !important
+        }
 .spinner {
     position: absolute;
     left: 50%;

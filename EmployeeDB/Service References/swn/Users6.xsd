@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/SWN.Notification.GcmWebService.v2.DataContracts.Location" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfContactLocationLabel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactLocationLabel" nillable="true" type="tns:ContactLocationLabel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactLocationLabel" nillable="true" type="tns:ArrayOfContactLocationLabel" />
+  <xs:complexType name="ContactLocationLabel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="IsPrimary" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Label" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactLocationLabel" nillable="true" type="tns:ContactLocationLabel" />
+  <xs:complexType name="ArrayOfContactLocationsList">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactLocationsList" nillable="true" type="tns:ContactLocationsList" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactLocationsList" nillable="true" type="tns:ArrayOfContactLocationsList" />
+  <xs:complexType name="ContactLocationsList">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ContactId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Locations" nillable="true" type="tns:ArrayOfContactLocation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactLocationsList" nillable="true" type="tns:ContactLocationsList" />
+  <xs:complexType name="ArrayOfContactLocation">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ContactLocation" nillable="true" type="tns:ContactLocation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfContactLocation" nillable="true" type="tns:ArrayOfContactLocation" />
+  <xs:complexType name="ContactLocation">
+    <xs:sequence>
+      <xs:element name="Label" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactLocation" nillable="true" type="tns:ContactLocation" />
+  <xs:complexType name="StreetAddressContactLocation">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ContactLocation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Address1" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Address2" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="City" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Country" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="State" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ZipCode" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="StreetAddressContactLocation" nillable="true" type="tns:StreetAddressContactLocation" />
+</xs:schema>

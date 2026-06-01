@@ -1,0 +1,12 @@
+﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[tjc_prose_contact]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[tjc_prose_contact]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[tjc_prose_case_type]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[tjc_prose_case_type]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[tjc_prose_history]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[tjc_prose_history]
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[tjc_prose_history_list]') AND type in (N'V'))
+	DROP VIEW {databaseOwner}[tjc_prose_history_list]
+GO

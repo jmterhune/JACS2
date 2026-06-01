@@ -1,6 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.MediationStatistics.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
@@ -13,9 +12,9 @@
             <a class="nav-link" href="<%=AttorneyListUrl%>">Manage Lists</a>
         </li>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content pb-0">
         <div id="caseSearch" class="tab-pane active">
-            <div class="toggle toggle-quaternary" data-plugin-toggle="toggle">
+            <div class="toggle toggle-quaternary mb-0" data-plugin-toggle="toggle">
                 <section class="toggle active">
                     <button class="toggle-heading" type="button">Expand for Search / Add Case</button>
                     <div class="toggle-content">
@@ -51,10 +50,10 @@
                                     <div class="col-md-6">
                                         <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
                                         <div class="input-group">
-                                            <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
                                             <div class="input-group-append">
                                                 <small class="input-group-text form-control" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                                             </div>
@@ -69,8 +68,8 @@
                                                 <asp:ListItem Text="CDSP" />
                                                 <asp:ListItem Text="CDSPF" />
                                             </asp:DropDownList>
-                                            <asp:TextBox ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
-                                            <asp:TextBox ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCDSPYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
+                                            <asp:TextBox AutoCompleteType="Disabled" ID="txtCDSPNumber" title="Case Type" runat="server" MaxLength="3" CssClass="form-control upperCase" placeholder="000" ClientIDMode="Static"></asp:TextBox>
                                             <asp:DropDownList ID="drpCountyLetter" runat="server" title="County" CssClass="form-control location-field" ClientIDMode="Static">
                                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                                 <asp:ListItem Text="D" Value="D" title="DeSoto"></asp:ListItem>
@@ -97,15 +96,15 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                        <asp:TextBox runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtLastName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
-                                        <asp:TextBox runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtFirstName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtBusinessName" Text="Business Name" />
-                                        <asp:TextBox runat="server" ID="txtBusinessName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
+                                        <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtBusinessName" MaxLength="50" ClientIDMode="Static" CssClass="form-control" />
                                     </div>
                                 </div>
                             </div>
@@ -119,32 +118,32 @@
                 </section>
             </div>
             <asp:Literal ID="ltMessage" runat="server"></asp:Literal>
-
-            <table id="tblCases" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th>Case Number</th>
-                        <th>Region</th>
-                        <th>Case Type</th>
-                        <th>Party One</th>
-                        <th>Party Two</th>
-                        <th>Created</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-        <div id="reports" class="tab-pane">
         </div>
     </div>
-</div>
 
+</div>
+<div class="ms-2 me-3">
+<table id="tblCases" class="table table-striped">
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>Case Number</th>
+            <th>Region</th>
+            <th>Case Type</th>
+            <th>Party One</th>
+            <th>Party Two</th>
+            <th>Created</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+</table>
+
+</div>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js" />
-<dnn:dnncssinclude runat="server" filepath="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
 <script type="text/javascript">
     var moduleId = <%=ModuleId%>;
@@ -157,11 +156,11 @@
     var businessName = null;
     var pageSize = 25;
     var recordCount = 0;
-    var sortDirection = "asc";
-    var sortColumnIndex = 1;
+    var sortDirection = "desc";
+    var sortColumnIndex = 6;
     var isAdmin = "<%=isAdminUser%>";
-    var currentPage = 1;
-    GetLocalStorage();
+    var currentPage = 0;
+    //GetLocalStorage();
     if (!groupId)
         groupId = 0;
     if (!regionId)
@@ -183,7 +182,7 @@
         }
     });
     function PageInit() {
-       
+
         var restUrl = `/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/GetCaseListItems/${recordCount}`;
         var deleteUrl = "/DesktopModules/tjc.Modules/Mediation/api/CaseListItem/Delete/";
         var caseTable = $('#tblCases').DataTable({
@@ -209,8 +208,8 @@
                     var url = "<%=EditUrl("CDSP")%>";
                     url = url.replace("CDSP", row.groupname);
                     return `<a title="Edit Record" onclick="SetCaseId(${data})" href="${url}/cid/${data}"><i class="fas fa-search"></i></a>`;
-                    }, className: "command-item", orderable: false
-                },
+                }, className: "command-item", orderable: false
+            },
                 { data: "listnumber" },
                 { data: "region" },
                 { data: "group" },
@@ -220,9 +219,10 @@
                 {
                     data: "comments", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
-                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i></a>';
+                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i>';
                         return '';
-                    }, className: "command-item", orderable: false },
+                    }, className: "command-item", orderable: false
+                },
                 {
                     data: "caseid", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
@@ -274,27 +274,33 @@
         caseTable.on('order.dt', function () {
             // This will show: "Ordering on column 1 (asc)", for example
             var order = caseTable.order();
-            localStorage.setItem('mediation.sortDirection', order[0][1]);
-            localStorage.setItem('mediation.sortColumnIndex', order[0][0]);
+            //    localStorage.setItem('mediation.sortDirection', order[0][1]);
+            //    localStorage.setItem('mediation.sortColumnIndex', order[0][0]);
         });
         caseTable.on('page.dt', function () {
             var info = caseTable.page.info();
-            localStorage.setItem('mediation.currentPageIndex', info.page);
+            //localStorage.setItem('mediation.currentPageIndex', info.page);
         });
         caseTable.on('length.dt', function (e, settings, len) {
-            localStorage.setItem('mediation.pageSize', len);
+            // localStorage.setItem('mediation.pageSize', len);
         });
         $("#drpRegion").on("change", function () {
             regionId = null;
             if ($(this).val().length > 0)
                 regionId = $(this).val();
-            localStorage.setItem('mediation.regionId', $(this).val());
+            //    localStorage.setItem('mediation.regionId', $(this).val());
         });
+        //$("#txtCaseSequence").on("blur", function () {
+        //    var number = $("#txtCaseSequence").val();
+        //    if (number.length > 0)
+        //        number = number.toString().padStart(6, '0');
+        //    $("#txtCaseSequence").val(number);
+        //});
         $("#drpGroup").on("change", function () {
             groupId = null;
             if ($(this).val().length > 0)
                 groupId = $(this).val();
-            localStorage.setItem('mediation.groupId', $(this).val());
+            //    localStorage.setItem('mediation.groupId', $(this).val());
         });
         $("#cmdSearch").on("click", function (e) {
             e.preventDefault();
@@ -434,11 +440,11 @@
         if (location.length > 0)
             cdspNumber += location;
         if (cdspNumber != null && cdspNumber.endsWith("-"))
-            cdspNumber = cdspNumber.trimLeft("-");
+            cdspNumber = cdspNumber.slice(0, -1);
         return cdspNumber;
     }
     function SetCaseId(caseId) {
-        localStorage.setItem('mediation.caseId', caseId);
+        // localStorage.setItem('mediation.caseId', caseId);
     }
     function GetLocalStorage() {
         storageRegionId = localStorage.getItem('mediation.regionId');

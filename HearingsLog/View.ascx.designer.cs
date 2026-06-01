@@ -24,6 +24,15 @@ namespace tjc.Modules.HearingLog
         protected global::System.Web.UI.WebControls.HyperLink lnkCourtCounsel;
 
         /// <summary>
+        /// hfSessionTimeout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfSessionTimeout;
+
+        /// <summary>
         /// lnkAdmin control.
         /// </summary>
         /// <remarks>

@@ -8,134 +8,380 @@ namespace tjc.Modules.Purchasing.Components
 {
     internal class AttachmentController
     {
-        public void CreateAttachment(Attachment t)
+
+        #region Supply Order Attachments
+        public void CreateSupplyAttachment(SupplyOrderAttachment t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
+               var file= DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(t.FileID);
+                t.FileName=file.FileName;
+                t.Path=file.RelativePath;
                 rep.Insert(t);
             }
         }
 
-        public void DeleteAttachment(int attachmentId)
+        public void DeleteSupplyAttachment(int attachmentId)
         {
-            var t = GetAttachment(attachmentId);
-            DeleteAttachment(t);
+            var t = GetSupplyAttachment(attachmentId);
+            DeleteSupplyAttachment(t);
         }
-        public void DeleteAttachmentByFileId(int fileId)
+        public void DeleteSupplyAttachmentByFileId(int fileId)
         {
-            var t = GetAttachmentByFileId(fileId);
-            DeleteAttachment(t);
+            var t = GetSupplyAttachmentByFileId(fileId);
+            DeleteSupplyAttachment(t);
         }
-        public void DeleteAttachmentByFormId(int moduleId, int formId)
+        public void DeleteSupplyAttachmentByFormId(int formId)
         {
-            var at = GetAttachmentsByFormId(moduleId, formId);
-            foreach (Attachment a in at)
+            var at = GetSupplyAttachmentsByFormId(formId);
+            foreach (SupplyOrderAttachment a in at)
             {
-                DeleteAttachment(a);
+                DeleteSupplyAttachment(a);
             }
         }
-        public void DeleteAttachmentByOrderId(int moduleId, int orderId)
+        public void DeleteSupplyAttachmentByOrderId(int orderId)
         {
-            var at = GetAttachmentsByOrderId(moduleId, orderId);
-            foreach (Attachment a in at)
+            var at = GetSupplyAttachmentsByOrderId(orderId);
+            foreach (SupplyOrderAttachment a in at)
             {
-                DeleteAttachment(a);
+                DeleteSupplyAttachment(a);
             }
         }
-        public void DeleteAttachment(Attachment t)
+        public void DeleteSupplyAttachment(SupplyOrderAttachment t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
-                DeleteFile(t.FileID);
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
+                DeleteSupplyFile(t.FileID);
                 rep.Delete(t);
             }
         }
-        private void DeleteFile(int fileId)
+        private void DeleteSupplyFile(int fileId)
         {
             FileManager objFile = new FileManager();
             var file = objFile.GetFile(fileId);
             objFile.DeleteFile(file);
         }
-        public IEnumerable<Attachment> GetAttachments(int moduleId)
+        public IEnumerable<SupplyOrderAttachment> GetSupplyAttachments()
         {
-            IEnumerable<Attachment> t;
+            IEnumerable<SupplyOrderAttachment> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
-                t = rep.Get(moduleId);
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
+                t = rep.Get();
             }
             return t;
         }
-        public IEnumerable<Attachment> GetAttachmentsByFormId(int moduleId, int formId)
+        public IEnumerable<SupplyOrderAttachment> GetSupplyAttachmentsByFormId(int formId)
         {
-            IEnumerable<Attachment> t;
+            IEnumerable<SupplyOrderAttachment> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
-                t = rep.Find("Where ModuleID=@0 AND FormID=@1", moduleId, formId);
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
+                t = rep.Find("Where FormID=@0", formId);
             }
             return t;
         }
-        public IEnumerable<Attachment> GetAttachmentsByOrderId(int moduleId, int orderId)
+        public IEnumerable<SupplyOrderAttachment> GetSupplyAttachmentsByOrderId(int orderId)
         {
-            IEnumerable<Attachment> t;
+            IEnumerable<SupplyOrderAttachment> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
-                t = rep.Find("Where ModuleID=@0 AND OrderID=@1", moduleId, orderId);
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
+                t = rep.Find("Where OrderID=@0", orderId);
             }
             return t;
         }
-        public Attachment GetAttachment(int attachmentId)
+        public SupplyOrderAttachment GetSupplyAttachment(int attachmentId)
         {
-            Attachment t;
+            SupplyOrderAttachment t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.GetById(attachmentId);
             }
             return t;
         }
-        public Attachment GetAttachmentByFileId(int fileId)
+        public SupplyOrderAttachment GetSupplyAttachmentByFileId(int fileId)
         {
-            Attachment t;
+            SupplyOrderAttachment t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Find("Where FileID=@0", fileId).FirstOrDefault();
             }
             return t;
         }
 
-        public void UpdateAttachment(Attachment t)
+        public void UpdateSupplyAttachment(SupplyOrderAttachment t)
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 rep.Update(t);
             }
         }
 
-        internal object GetAttachmentsByOrder(int orderId)
+        internal object GetSupplyAttachmentsByOrder(int orderId)
         {
-            IEnumerable<Attachment> t;
+            IEnumerable<SupplyOrderAttachment> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                var rep = ctx.GetRepository<Attachment>();
+                var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);
             }
             return t;
         }
-        public IEnumerable<AttachmentListItem> GetAttachmentsByFormId(int formId)
+        #endregion
+
+
+        #region Stamp Order Attachments
+        public void CreateStampAttachment(StampOrderAttachment t)
         {
-            IEnumerable<AttachmentListItem> t;
             using (IDataContext ctx = DataContext.Instance())
             {
-                t = ctx.ExecuteQuery<AttachmentListItem>(System.Data.CommandType.StoredProcedure, "tjc_purchasing_get_attachments_by_formId", formId);
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                rep.Insert(t);
+            }
+        }
+
+        public void DeleteStampAttachment(int attachmentId)
+        {
+            var t = GetStampAttachment(attachmentId);
+            DeleteStampAttachment(t);
+        }
+        public void DeleteStampAttachmentByFileId(int fileId)
+        {
+            var t = GetStampAttachmentByFileId(fileId);
+            DeleteStampAttachment(t);
+        }
+        public void DeleteStampAttachmentByFormId(int formId)
+        {
+            var at = GetStampAttachmentsByFormId(formId);
+            foreach (StampOrderAttachment a in at)
+            {
+                DeleteStampAttachment(a);
+            }
+        }
+        public void DeleteStampAttachmentByOrderId(int orderId)
+        {
+            var at = GetStampAttachmentsByOrderId(orderId);
+            foreach (StampOrderAttachment a in at)
+            {
+                DeleteStampAttachment(a);
+            }
+        }
+        public void DeleteStampAttachment(StampOrderAttachment t)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                DeleteStampFile(t.FileID);
+                rep.Delete(t);
+            }
+        }
+        private void DeleteStampFile(int fileId)
+        {
+            FileManager objFile = new FileManager();
+            var file = objFile.GetFile(fileId);
+            objFile.DeleteFile(file);
+        }
+        public IEnumerable<StampOrderAttachment> GetStampAttachments()
+        {
+            IEnumerable<StampOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                t = rep.Get();
             }
             return t;
         }
+        public IEnumerable<StampOrderAttachment> GetStampAttachmentsByFormId(int formId)
+        {
+            IEnumerable<StampOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                t = rep.Find("Where FormID=@0", formId);
+            }
+            return t;
+        }
+        public IEnumerable<StampOrderAttachment> GetStampAttachmentsByOrderId(int orderId)
+        {
+            IEnumerable<StampOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                t = rep.Find("Where OrderID=@0", orderId);
+            }
+            return t;
+        }
+        public StampOrderAttachment GetStampAttachment(int attachmentId)
+        {
+            StampOrderAttachment t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                t = rep.GetById(attachmentId);
+            }
+            return t;
+        }
+        public StampOrderAttachment GetStampAttachmentByFileId(int fileId)
+        {
+            StampOrderAttachment t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                t = rep.Find("Where FileID=@0", fileId).FirstOrDefault();
+            }
+            return t;
+        }
+
+        public void UpdateStampAttachment(StampOrderAttachment t)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                rep.Update(t);
+            }
+        }
+
+        internal object GetStampAttachmentsByOrder(int orderId)
+        {
+            IEnumerable<StampOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<StampOrderAttachment>();
+                t = rep.Find("Where OrderID=@0", orderId);
+            }
+            return t;
+        }
+        #endregion
+
+        #region Form Order Attachments
+        public void CreateFormAttachment(FormOrderAttachment t)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                rep.Insert(t);
+            }
+        }
+
+        public void DeleteFormAttachment(int attachmentId)
+        {
+            var t = GetFormAttachment(attachmentId);
+            DeleteFormAttachment(t);
+        }
+        public void DeleteFormAttachmentByFileId(int fileId)
+        {
+            var t = GetFormAttachmentByFileId(fileId);
+            DeleteFormAttachment(t);
+        }
+        public void DeleteFormAttachmentByFormId(int formId)
+        {
+            var at = GetFormAttachmentsByFormId(formId);
+            foreach (FormOrderAttachment a in at)
+            {
+                DeleteFormAttachment(a);
+            }
+        }
+        public void DeleteFormAttachmentByOrderId(int orderId)
+        {
+            var at = GetFormAttachmentsByOrderId(orderId);
+            foreach (FormOrderAttachment a in at)
+            {
+                DeleteFormAttachment(a);
+            }
+        }
+        public void DeleteFormAttachment(FormOrderAttachment t)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                DeleteFormFile(t.FileID);
+                rep.Delete(t);
+            }
+        }
+        private void DeleteFormFile(int fileId)
+        {
+            FileManager objFile = new FileManager();
+            var file = objFile.GetFile(fileId);
+            objFile.DeleteFile(file);
+        }
+        public IEnumerable<FormOrderAttachment> GetFormAttachments()
+        {
+            IEnumerable<FormOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                t = rep.Get();
+            }
+            return t;
+        }
+        public IEnumerable<FormOrderAttachment> GetFormAttachmentsByFormId(int formId)
+        {
+            IEnumerable<FormOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                t = rep.Find("Where FormID=@0", formId);
+            }
+            return t;
+        }
+        public IEnumerable<FormOrderAttachment> GetFormAttachmentsByOrderId(int orderId)
+        {
+            IEnumerable<FormOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                t = rep.Find("Where OrderID=@0", orderId);
+            }
+            return t;
+        }
+        public FormOrderAttachment GetFormAttachment(int attachmentId)
+        {
+            FormOrderAttachment t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                t = rep.GetById(attachmentId);
+            }
+            return t;
+        }
+        public FormOrderAttachment GetFormAttachmentByFileId(int fileId)
+        {
+            FormOrderAttachment t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                t = rep.Find("Where FileID=@0", fileId).FirstOrDefault();
+            }
+            return t;
+        }
+
+        public void UpdateFormAttachment(FormOrderAttachment t)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                rep.Update(t);
+            }
+        }
+
+        internal object GetFormAttachmentsByOrder(int orderId)
+        {
+            IEnumerable<FormOrderAttachment> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var rep = ctx.GetRepository<FormOrderAttachment>();
+                t = rep.Find("Where OrderID=@0", orderId);
+            }
+            return t;
+        }
+     
+        #endregion
+
     }
 }

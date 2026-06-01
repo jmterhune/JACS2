@@ -12,7 +12,6 @@
 
 using DotNetNuke.Abstractions;
 using DotNetNuke.Entities.Modules;
-using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
