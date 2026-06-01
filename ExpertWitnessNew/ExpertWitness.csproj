@@ -101,39 +101,39 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\RequestList.ascx.cs">
+    <Compile Include="RequestList.ascx.cs">
       <DependentUpon>RequestList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\RequestList.ascx.designer.cs">
+    <Compile Include="RequestList.ascx.designer.cs">
       <DependentUpon>RequestList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\ExpertList.ascx.cs">
+    <Compile Include="ExpertList.ascx.cs">
       <DependentUpon>ExpertList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\ExpertList.ascx.designer.cs">
+    <Compile Include="ExpertList.ascx.designer.cs">
       <DependentUpon>ExpertList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\TemplateList.ascx.cs">
+    <Compile Include="TemplateList.ascx.cs">
       <DependentUpon>TemplateList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\TemplateList.ascx.designer.cs">
+    <Compile Include="TemplateList.ascx.designer.cs">
       <DependentUpon>TemplateList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\TypeList.ascx.cs">
+    <Compile Include="TypeList.ascx.cs">
       <DependentUpon>TypeList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\TypeList.ascx.designer.cs">
+    <Compile Include="TypeList.ascx.designer.cs">
       <DependentUpon>TypeList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\LocationList.ascx.cs">
+    <Compile Include="LocationList.ascx.cs">
       <DependentUpon>LocationList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\LocationList.ascx.designer.cs">
+    <Compile Include="LocationList.ascx.designer.cs">
       <DependentUpon>LocationList.ascx</DependentUpon>
     </Compile>
     <Compile Include="Components\ExpertBase.cs" />
@@ -184,11 +184,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Admin\RequestList.ascx" />
-    <Content Include="Admin\ExpertList.ascx" />
-    <Content Include="Admin\TemplateList.ascx" />
-    <Content Include="Admin\TypeList.ascx" />
-    <Content Include="Admin\LocationList.ascx" />
+    <Content Include="RequestList.ascx" />
+    <Content Include="ExpertList.ascx" />
+    <Content Include="TemplateList.ascx" />
+    <Content Include="TypeList.ascx" />
+    <Content Include="LocationList.ascx" />
     <Content Include="Documentation\Documentation.css" />
     <Content Include="Documentation\Documentation.html" />
     <Content Include="License.txt" />
@@ -279,7 +279,6 @@
     <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
     <ItemGroup>
       <DeployContent Include="*.ascx" />
-      <DeployContent Include="Admin\**\*.ascx" />
       <DeployContent Include="**\App_LocalResources\**\*.resx" />
       <DeployContent Include="*.css" />
       <DeployContent Include="Scripts\**\*.js" />
