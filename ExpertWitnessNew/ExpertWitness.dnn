@@ -20,7 +20,7 @@
       <components>
         <component type="Script">
           <scripts>
-            <basePath>DesktopModules\ExpertWitness</basePath>
+            <basePath>DesktopModules\tjc.Modules\ExpertWitness</basePath>
             <script type="Install">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>00.00.01.SqlDataProvider</name>
@@ -41,7 +41,7 @@
 
         <component type="ResourceFile">
           <resourceFiles>
-            <basePath>DesktopModules/ExpertWitness</basePath>
+            <basePath>DesktopModules/tjc.Modules/ExpertWitness</basePath>
             <resourceFile>
               <name>Resources.zip</name>
             </resourceFile>
@@ -49,61 +49,98 @@
         </component>
 
         <component type="Module">
-          <desktopModule>
-            <moduleName>ExpertWitness</moduleName>
-            <foldername>ExpertWitness</foldername>
-            <businessControllerClass>tjc.Modules.ExpertWitness.Components.FeatureController, ExpertWitness</businessControllerClass>
-            <supportedFeatures>
-              <supportedFeature>IPortable</supportedFeature>
-              <supportedFeature>ISearchable</supportedFeature>
-              <supportedFeature>IUpgradeable</supportedFeature>
-            </supportedFeatures>
-            <moduleDefinitions>
-              <moduleDefinition>
-                <friendlyName>ExpertWitness</friendlyName>
-                <defaultCacheTime>0</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>DesktopModules/ExpertWitness/View.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle />
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>Settings</controlKey>
-                    <controlSrc>DesktopModules/ExpertWitness/Settings.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>ExpertWitness Settings</controlTitle>
-                    <controlType>Edit</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                </moduleControls>
-              </moduleDefinition>
-              <moduleDefinition>
-                <friendlyName>ExpertWitness Contracted List</friendlyName>
-                <defaultCacheTime>0</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>DesktopModules/ExpertWitness/ContractedList.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle />
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                </moduleControls>
-              </moduleDefinition>
-            </moduleDefinitions>
-          </desktopModule>
-          <eventMessage>
+			<desktopModule>
+				<moduleName>Expert Witness</moduleName>
+				<foldername>tjc.modules/ExpertWitness</foldername>
+				<businessControllerClass />
+				<supportedFeatures />
+				<moduleDefinitions>
+					<moduleDefinition>
+						<friendlyName>Expert Witness</friendlyName>
+						<definitionName>Expert Witness</definitionName>
+						<defaultCacheTime>0</defaultCacheTime>
+						<moduleControls>
+							<moduleControl>
+								<controlKey />
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/View.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle />
+								<controlType>View</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+								<viewOrder>0</viewOrder>
+							</moduleControl>
+							<moduleControl>
+								<controlKey>evaluation</controlKey>
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/admin/TemplateList.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle>Evaluation List</controlTitle>
+								<controlType>View</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+								<viewOrder>0</viewOrder>
+							</moduleControl>
+							<moduleControl>
+								<controlKey>expert</controlKey>
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/admin/ExpertList.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle>Expert List</controlTitle>
+								<controlType>View</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+								<viewOrder>0</viewOrder>
+							</moduleControl>
+							<moduleControl>
+								<controlKey>location</controlKey>
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/admin/LocationList.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle>Location List</controlTitle>
+								<controlType>View</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+								<viewOrder>0</viewOrder>
+							</moduleControl>
+							<moduleControl>
+								<controlKey>request</controlKey>
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/admin/RequestList.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle>Request List</controlTitle>
+								<controlType>View</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+								<viewOrder>0</viewOrder>
+							</moduleControl>
+							<moduleControl>
+								<controlKey>Settings</controlKey>
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/Settings.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle>Expert Witness Settings</controlTitle>
+								<controlType>Edit</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+							</moduleControl>
+							<moduleControl>
+								<controlKey>type</controlKey>
+								<controlSrc>DesktopModules/tjc.modules/ExpertWitness/admin/TypeList.ascx</controlSrc>
+								<supportsPartialRendering>False</supportsPartialRendering>
+								<controlTitle>Expert Type List</controlTitle>
+								<controlType>View</controlType>
+								<iconFile />
+								<helpUrl />
+								<supportsPopUps>False</supportsPopUps>
+								<viewOrder>0</viewOrder>
+							</moduleControl>
+						</moduleControls>
+					</moduleDefinition>
+				</moduleDefinitions>
+			</desktopModule>
+			<eventMessage>
             <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
             <processorCommand>UpgradeModule</processorCommand>
             <attributes>
@@ -116,7 +153,7 @@
         <component type="Assembly">
           <assemblies>
             <assembly>
-              <name>ExpertWitness.dll</name>
+              <name>tjc.Modules.ExpertWitness.dll</name>
               <path>bin</path>
             </assembly>
           </assemblies>

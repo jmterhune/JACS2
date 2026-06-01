@@ -1,167 +1,113 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="TypeList.ascx.cs" Inherits="tjc.Modules.ExpertWitness.TypeList" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="TypeList.ascx.cs" Inherits="tjc.Modules.ExpertWitness.TypeList" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+
+<script type="text/javascript">
+    window.__ewCtx = { moduleId: <%= ModuleId %>, tabId: <%= TabId %> };
+</script>
 
 <div class="tabs">
     <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link" href="<%=RequestListUrl %>">Requests</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=ExpertListUrl %>">Experts</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=EvaluationTypeListUrl %>">Evaluation Types</a>
-        </li>
-        <li class="nav-item active">
-            <a class="nav-link" href="#types" data-toggle="tab">Expert Types</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=LocationListUrl %>">Locations</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="<%=RequestListUrl %>">Requests</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=ExpertListUrl %>">Experts</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=EvaluationTypeListUrl %>">Evaluation Types</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#types" data-bs-toggle="tab">Expert Types</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=LocationListUrl %>">Locations</a></li>
     </ul>
     <div class="tab-content">
         <div id="types" class="tab-pane active">
-            <asp:UpdatePanel ID="pnlTypes" runat="server" RenderMode="Block" OnUnload="pnlTypes_Unload">
-                <ContentTemplate>
-                    <asp:UpdateProgress ID="upProgressEvent" runat="server">
-                        <ProgressTemplate>
-                            <div class="modal-progress">
-                                <div class="center-progress">
-                                    <img alt="" src="/images/loading.gif" />
-                                </div>
-                            </div>
-                        </ProgressTemplate>
-                    </asp:UpdateProgress>
-                    <asp:Literal ID="ltMessage" runat="server" />
-                    <asp:Repeater ID="rptType" runat="server" OnItemCreated="rptType_ItemCreated" OnItemCommand="rptType_ItemCommand">
-                        <HeaderTemplate>
-                            <table id="tblType" class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>&nbsp;</th>
-                                        <th>ID</th>
-                                        <th class="w-100">Type</th>
-                                        <th>&nbsp;</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                        </HeaderTemplate>
-                        <ItemTemplate>
-                            <tr>
-                                <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CssClass="text-primary" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"TypeID").ToString() %>'><i class="fas fa-edit"></i></asp:LinkButton>
-                                <td><%#Eval("TypeID")%></td>
-                                <td><%#Eval("TypeName")%></td>
-                                <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"TypeID").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
-                                </td>
-                            </tr>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            </tbody>
-                    </table>
-                        </FooterTemplate>
-                    </asp:Repeater>
-                    <div class="modal fade" id="EditTypeModal" tabindex="-1" role="dialog" aria-labelledby="EditTypeModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="EditTypeModalLabel">Add / Edit Type</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <asp:Label runat="server" AssociatedControlID="txtTypeName" Text="Type" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtTypeName" />
-                                    </div>
-                                    <asp:HiddenField ID="hdTypeId" ClientIDMode="Static" runat="server" />
-                                </div>
-                                <div class="modal-footer justify-content-between">
-                                    <asp:Button OnClientClick="ToggleEditForm(false)" CssClass="btn btn-primary" ID="cmdSave" runat="server" Text="Save" OnClick="cmdSave_Click" />
-                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ContentTemplate>
-                <Triggers>
-                    <asp:AsyncPostBackTrigger ControlID="cmdSave" EventName="Click" />
-                </Triggers>
-
-            </asp:UpdatePanel>
+            <button type="button" id="ewTypeAdd" class="btn btn-success"><i class="fas fa-plus"></i>&nbsp;Add Type</button>
+            <table id="tblTypes" class="table table-striped table-hover ew-admin-table">
+                <thead>
+                    <tr>
+                        <th class="command-item no-sort"></th>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th class="command-item no-sort"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4" class="text-center text-muted">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
-<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+
+<div class="modal fade" id="TypeEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Type</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="TypeID" value="0" />
+                <div class="mb-3">
+                    <label>Type:</label>
+                    <input type="text" name="TypeName" class="form-control" maxlength="50" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="ewTypeSave" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="~/DesktopModules/tjc.modules/ExpertWitness/module.css" Priority="100" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/ExpertWitness/Scripts/ew-core.js" Priority="200" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/ExpertWitness/Scripts/ew-admin.js" Priority="210" />
 
 <script type="text/javascript">
-    (function ($, Sys) {
-
-        $(document).ready(function () {
-            Sys.Application.add_load(function (s, e) { PageInit(); });
-            PageInit();
-        });
-
-    }(jQuery, window.Sys));
-
-    function PageInit() {
-        var table = $('#tblType').DataTable({
-            "order": [[1, "asc"]],
-            "oLanguage": {
-                "sSearch": "Filter by Text"
+    jQuery(function () {
+        if (!window.ew || !window.ew.makeAdminTab) return;
+        window.ew.makeAdminTab({
+            resource: "Types",
+            idField: "TypeID",
+            tableId: "#tblTypes",
+            modalId: "TypeEditModal",
+            addBtnId: "#ewTypeAdd",
+            saveBtnId: "#ewTypeSave",
+            editClass: "ew-type-edit",
+            delClass: "ew-type-delete",
+            colCount: 4,
+            order: [[2, "asc"]],
+            addTitle: "Add Type",
+            editTitle: "Edit Type",
+            addedText: "Type added.",
+            updatedText: "Type updated.",
+            deletedText: "Type deleted.",
+            confirmText: "Are you sure you wish to delete this expert type?",
+            rowHtml: function (t) {
+                return '<tr data-id="' + t.TypeID + '">' +
+                    '<td class="command-item"><a href="#" class="text-primary ew-type-edit" title="Edit"><i class="fas fa-edit"></i></a></td>' +
+                    '<td>' + t.TypeID + '</td>' +
+                    '<td>' + window.ew.esc(t.TypeName) + '</td>' +
+                    '<td class="command-item"><a href="#" class="text-danger ew-type-delete" title="Delete"><i class="fas fa-trash"></i></a></td>' +
+                    '</tr>';
             },
-            "aoColumns": [
-                { "bSortable": false },
-                { "bSortable": true },
-                { "bSortable": true },
-                { "bSortable": false },],
-            autoWidth: true,
-        });
-        $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#EditTypeModal"><i class="fa fa-plus"></i>&nbsp;Add Type</button>');
-        table.on('draw', function () {
-            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
-                e.preventDefault();
-                var href = this.href || '';
-                Swal.fire({
-                    title: 'Delete Type?',
-                    text: 'Are you sure you wish to Delete the selected Type?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No',
-                    confirmButtonColor: '#d33'
-                }).then(function (r) {
-                    if (r.isConfirmed) {
-                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
-                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
-                    }
-                });
-            });
-        });
-        table.draw();
-    }
-    function ToggleEditForm(toggleValue) {
-        if (toggleValue) {
-            $('#EditTypeModal').modal('show');
-        } else {
-            $('#EditTypeModal').modal('hide');
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        }
-        return true;
-    }
-    function ClearForm() {
-        $('#txtTypeName').val("");
-        $('#hdTypeId').val("");
-        return false;
-    }
+            fillForm: function ($m, t) {
+                $m.find('[name="TypeID"]').val(t ? t.TypeID : 0);
+                $m.find('[name="TypeName"]').val(t ? t.TypeName : "");
+            },
+            readForm: function ($m) {
+                return {
+                    TypeID: parseInt($m.find('[name="TypeID"]').val(), 10) || 0,
+                    TypeName: $m.find('[name="TypeName"]').val()
+                };
+            },
+            validate: function (d) {
+                return (d.TypeName && d.TypeName.trim()) ? null : "Type name is required.";
+            }
+        }).init();
+    });
 </script>
-

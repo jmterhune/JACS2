@@ -1,215 +1,142 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RequestList.ascx.cs" Inherits="tjc.Modules.ExpertWitness.RequestList" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RequestList.ascx.cs" Inherits="tjc.Modules.ExpertWitness.RequestList" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+
+<script type="text/javascript">
+    window.__ewCtx = { moduleId: <%= ModuleId %>, tabId: <%= TabId %> };
+</script>
 
 <div class="tabs">
     <ul class="nav nav-tabs">
-        <li class="nav-item active">
-            <a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=ExpertListUrl %>">Experts</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=EvaluationTypeListUrl %>">Evaluation Types</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=TypeListUrl %>">Expert Types</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="<%=LocationListUrl %>">Locations</a>
-        </li>
+        <li class="nav-item"><a class="nav-link active" href="#requests" data-bs-toggle="tab">Requests</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=ExpertListUrl %>">Experts</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=EvaluationTypeListUrl %>">Evaluation Types</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=TypeListUrl %>">Expert Types</a></li>
+        <li class="nav-item"><a class="nav-link" href="<%=LocationListUrl %>">Locations</a></li>
     </ul>
     <div class="tab-content">
         <div id="requests" class="tab-pane active">
-            <asp:UpdatePanel ID="pnlRequests" runat="server" RenderMode="Block" OnUnload="pnlRequests_Unload">
-                <ContentTemplate>
-                    <asp:UpdateProgress ID="upProgressEvent" runat="server">
-                        <ProgressTemplate>
-                            <div class="modal-progress">
-                                <div class="center-progress">
-                                    <img alt="" src="/images/loading.gif" />
-                                </div>
-                            </div>
-                        </ProgressTemplate>
-                    </asp:UpdateProgress>
-                    <asp:Literal ID="ltMessage" runat="server" />
-                    <asp:Repeater ID="rptRequest" runat="server" OnItemCreated="rptRequest_ItemCreated" OnItemCommand="rptRequest_ItemCommand">
-                        <HeaderTemplate>
-                            <table id="tblRequest" class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>&nbsp;</th>
-                                        <th>ID</th>
-                                        <th>Case Number</th>
-                                        <th>Template Type</th>
-                                        <th>Location</th>
-                                        <th>Submitted By</th>
-                                        <th>Date Submitted</th>
-                                        <th>&nbsp;</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                        </HeaderTemplate>
-                        <ItemTemplate>
-                            <tr>
-                                <td class="command-item">
-                                    <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"RequestID").ToString() %>'><i class="fa fa-search"></i></asp:LinkButton>
-                                <td><%#Eval("RequestID")%></td>
-                                <td><%#Eval("CaseNumber")%></td>
-                                <td><%#Eval("TemplateName")%></td>
-                                <td><%#Eval("LocationName")%></td>
-                                <td><%#Eval("CreatedBy")%></td>
-                                <td><%#Eval("CreatedDate","{0:MM/dd/yyyy}")%></td>
-                                <td class="command-item">
-                                    <asp:LinkButton ID="cmdDelete" CssClass="text-danger confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"RequestID").ToString() %>'><i class="fas fa-trash"></i></asp:LinkButton>
-                                </td>
-                            </tr>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            </tbody>
-                    </table>
-                        </FooterTemplate>
-                    </asp:Repeater>
-                    <div class="modal fade" id="ShowRequestModal" tabindex="-1" role="dialog" aria-labelledby="ShowRequestModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="ShowRequestModalLabel">View Request</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <asp:HiddenField ID="hdRequestId" ClientIDMode="Static" runat="server" />
-                                    <div class="row mb-2">
-                                        <div class="col-6">
-                                            <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number" />
-                                            <asp:TextBox runat="server" ReadOnly="true" ClientIDMode="Static" CssClass="form-control" ID="txtCaseNumber" />
-                                        </div>
-                                        <div class="col-6">
-                                            <asp:Label runat="server" AssociatedControlID="txtLocation" Text="Location" />
-                                            <asp:TextBox runat="server" ReadOnly="true" ClientIDMode="Static" CssClass="form-control" ID="txtLocation" />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <asp:Label runat="server" AssociatedControlID="txtTemplate" Text="Evaluation Type" />
-                                            <asp:TextBox runat="server" ReadOnly="true" ClientIDMode="Static" CssClass="form-control" ID="txtTemplate" />
-                                        </div>
-                                    </div>
-                                <h4 class="mt-2">Requirements</h4>
-                                <ul>
-                                    <asp:Literal ID="ltRequirements" runat="server"></asp:Literal>
-                                </ul>
-                                <h4>Experts Selected</h4>
-                                <asp:Repeater ID="rptExperts" runat="server">
-                                    <HeaderTemplate>
-                                        <table id="tblExperts" class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Requirement #</th>
-                                                    <th>Expert Name</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                    </HeaderTemplate>
-                                    <ItemTemplate>
-                                        <tr>
-                                            <td><%#Eval("Sequence")%></td>
-                                            <td><%#Eval("Description")%></td>
-                                        </tr>
-                                    </ItemTemplate>
-                                    <FooterTemplate>
-                                        </tbody>
-                                            </table>
-                                    </FooterTemplate>
-                                </asp:Repeater>
-                                </div>
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ContentTemplate>
-            </asp:UpdatePanel>
+            <table id="tblRequests" class="table table-striped table-hover ew-admin-table">
+                <thead>
+                    <tr>
+                        <th class="command-item no-sort"></th>
+                        <th>ID</th>
+                        <th>Case Number</th>
+                        <th>Evaluation Type</th>
+                        <th>Location</th>
+                        <th>Submitted By</th>
+                        <th>Date Submitted</th>
+                        <th class="command-item no-sort"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="8" class="text-center text-muted">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
-<%-- SweetAlert2 + Noty for confirms / toast notifications --%>
+
+<div class="modal fade" id="RequestViewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">View Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Case Number</label>
+                        <div class="form-control-plaintext" data-field="CaseNumber"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Location</label>
+                        <div class="form-control-plaintext" data-field="LocationName"></div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label>Evaluation Type</label>
+                        <div class="form-control-plaintext" data-field="TemplateName"></div>
+                    </div>
+                </div>
+                <h6>Requirements</h6>
+                <ul data-field="Requirements"></ul>
+                <h6>Experts Selected</h6>
+                <table class="table table-striped ew-admin-table">
+                    <thead>
+                        <tr><th>Requirement #</th><th>Expert Name</th></tr>
+                    </thead>
+                    <tbody data-field="Experts"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.css" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/Noty/bootstrap-v4.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="~/DesktopModules/tjc.modules/ExpertWitness/module.css" Priority="100" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/ExpertWitness/Scripts/ew-core.js" Priority="200" />
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/ExpertWitness/Scripts/ew-admin.js" Priority="210" />
 
 <script type="text/javascript">
-    (function ($, Sys) {
+    jQuery(function () {
+        var ew = window.ew;
+        if (!ew || !ew.makeAdminTab) return;
 
-        $(document).ready(function () {
-            Sys.Application.add_load(function (s, e) { PageInit(); });
-            PageInit();
-        });
-
-    }(jQuery, window.Sys));
-
-    function PageInit() {
-        var table = $('#tblRequest').DataTable({
-            "order": [[1, "desc"]],
-            "oLanguage": {
-                "sSearch": "Filter by Text"
-            },
-            "aoColumns": [
-                { "bSortable": false },
-                { "bSortable": true },
-                { "bSortable": true },
-                { "bSortable": true },
-                { "bSortable": true },
-                { "bSortable": true },
-                { "bSortable": true },
-                { "bSortable": false },],
-            autoWidth: true,
-        });
-        table.on('draw', function () {
-            $(".confirm").not('[data-swal-bound]').attr('data-swal-bound', '1').on('click', function (e) {
-                e.preventDefault();
-                var href = this.href || '';
-                Swal.fire({
-                    title: 'Delete Request?',
-                    text: 'Are you sure you wish to Delete the selected Request?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No',
-                    confirmButtonColor: '#d33'
-                }).then(function (r) {
-                    if (r.isConfirmed) {
-                        var m = href.match(/__doPostBack\(['"]([^'"]+)['"],\s*['"]([^'"]*)['"]\)/);
-                        if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
-                    }
-                });
-            });
-        });
-        table.draw();
-    }
-    function ToggleEditForm(toggleValue) {
-        if (toggleValue) {
-            $('#ShowRequestModal').modal('show');
-        } else {
-            $('#ShowRequestModal').modal('hide');
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
+        function fmtDate(d) {
+            if (!d) return "";
+            var dt = new Date(d);
+            if (isNaN(dt.getTime())) return ew.esc(String(d));
+            var mm = ("0" + (dt.getMonth() + 1)).slice(-2), dd = ("0" + dt.getDate()).slice(-2);
+            return mm + "/" + dd + "/" + dt.getFullYear();
         }
-        return true;
-    }
-    function ClearForm() {
-        $('#txtCaseNumber').val("");
-        $('#txtTemplate').val("");
-        $('#txtLocation').val("");
-        $('#txtCaseNumber').val("");
-        $('#hdRequestId').val("");
-        return false;
-    }
-</script>
 
+        ew.makeAdminTab({
+            resource: "Requests",
+            tableId: "#tblRequests",
+            modalId: "RequestViewModal",
+            viewClass: "ew-request-view",
+            delClass: "ew-request-delete",
+            colCount: 8,
+            order: [[1, "desc"]],
+            deletedText: "Request deleted.",
+            confirmText: "Are you sure you wish to delete this request?",
+            rowHtml: function (r) {
+                return '<tr data-id="' + r.RequestID + '">' +
+                    '<td class="command-item"><a href="#" class="text-primary ew-request-view" title="View"><i class="fas fa-search"></i></a></td>' +
+                    '<td>' + r.RequestID + '</td>' +
+                    '<td>' + ew.esc(r.CaseNumber) + '</td>' +
+                    '<td>' + ew.esc(r.TemplateName) + '</td>' +
+                    '<td>' + ew.esc(r.LocationName) + '</td>' +
+                    '<td>' + ew.esc(r.CreatedBy) + '</td>' +
+                    '<td>' + fmtDate(r.CreatedDate) + '</td>' +
+                    '<td class="command-item"><a href="#" class="text-danger ew-request-delete" title="Delete"><i class="fas fa-trash"></i></a></td>' +
+                    '</tr>';
+            },
+            onView: function (item, $m) {
+                $m.find('[data-field="CaseNumber"]').text(item.CaseNumber || "");
+                $m.find('[data-field="LocationName"]').text(item.LocationName || "");
+                $m.find('[data-field="TemplateName"]').text(item.TemplateName || "");
+                var reqs = (item.Requirements || []).map(function (r) {
+                    return '<li><strong>Requirement #' + r.Sequence + ':</strong> Select [' + r.NumberRequired + '] ' + ew.esc(r.Types) + '</li>';
+                }).join("");
+                $m.find('[data-field="Requirements"]').html(reqs || '<li class="text-muted">None</li>');
+                var exps = (item.Experts || []).map(function (x) {
+                    return '<tr><td>' + x.Sequence + '</td><td>' + ew.esc(x.Description) + '</td></tr>';
+                }).join("");
+                $m.find('[data-field="Experts"]').html(exps || '<tr><td colspan="2" class="text-muted">None</td></tr>');
+            }
+        }).init();
+    });
+</script>

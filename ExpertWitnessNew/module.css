@@ -216,3 +216,7 @@ table.dataTable td, table.dataTable th {
     width: 12rem;
     text-align: center;
 }
+/* AJAX admin lists (DataTables) */
+.ew-admin-table {
+    width: 100%;
+}

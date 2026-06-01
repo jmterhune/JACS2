@@ -58,6 +58,11 @@
       <HintPath>..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -75,6 +80,17 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Net.Http.Formatting.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web.Http">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -123,6 +139,11 @@
     <Compile Include="Components\ExpertBase.cs" />
     <Compile Include="Components\RequestedTemplateController.cs" />
     <Compile Include="Components\TypeController.cs" />
+    <Compile Include="Components\Api\ServiceRouteMapper.cs" />
+    <Compile Include="Components\Api\ApiModels.cs" />
+    <Compile Include="Components\Api\TypesController.cs" />
+    <Compile Include="Components\Api\LocationsController.cs" />
+    <Compile Include="Components\Api\RequestsController.cs" />
     <Compile Include="Components\TemplateController.cs" />
     <Compile Include="Components\RequestController.cs" />
     <Compile Include="Components\LocationController.cs" />
@@ -176,6 +197,8 @@
     <Content Include="Settings.ascx" />
     <Content Include="View.ascx" />
     <Content Include="ContractedList.ascx" />
+    <Content Include="Scripts\ew-core.js" />
+    <Content Include="Scripts\ew-admin.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ExpertWitness.dnn" />
@@ -259,6 +282,7 @@
       <DeployContent Include="Admin\**\*.ascx" />
       <DeployContent Include="**\App_LocalResources\**\*.resx" />
       <DeployContent Include="*.css" />
+      <DeployContent Include="Scripts\**\*.js" />
       <DeployContent Include="$(DNNFileName).dnn" />
       <DeployContent Include="License.txt" />
       <DeployContent Include="ReleaseNotes.txt" />
