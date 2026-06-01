@@ -144,6 +144,8 @@
     <Compile Include="Components\Api\TypesController.cs" />
     <Compile Include="Components\Api\LocationsController.cs" />
     <Compile Include="Components\Api\RequestsController.cs" />
+    <Compile Include="Components\Api\ExpertsController.cs" />
+    <Compile Include="Components\Api\TemplatesController.cs" />
     <Compile Include="Components\TemplateController.cs" />
     <Compile Include="Components\RequestController.cs" />
     <Compile Include="Components\LocationController.cs" />
