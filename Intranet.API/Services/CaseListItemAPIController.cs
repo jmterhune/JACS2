@@ -24,13 +24,13 @@ namespace tjc.Intranet.API.Services.Mediation
             var query = Request.GetQueryNameValuePairs()
                    .ToDictionary(kv => kv.Key, kv => kv.Value,
                         StringComparer.OrdinalIgnoreCase);
-            Int32.TryParse(query["region"], out int regionId);
-            Int32.TryParse(query["group"], out int groupId);
-            string firstName = query["firstName"].ToString();
-            string lastName = query["lastName"].ToString();
-            string businessName = query["businessName"].ToString();
-            string cdspNumber = query["cdspNumber"].ToString();
-            string caseNumber = query["caseNumber"].ToString();
+            Int32.TryParse(query.ContainsKey("region") ? query["region"] : null, out int regionId);
+            Int32.TryParse(query.ContainsKey("group") ? query["group"] : null, out int groupId);
+            string firstName = query.ContainsKey("firstName") ? query["firstName"] ?? "" : "";
+            string lastName = query.ContainsKey("lastName") ? query["lastName"] ?? "" : "";
+            string businessName = query.ContainsKey("businessName") ? query["businessName"] ?? "" : "";
+            string cdspNumber = query.ContainsKey("cdspNumber") ? query["cdspNumber"] ?? "" : "";
+            string caseNumber = query.ContainsKey("caseNumber") ? query["caseNumber"] ?? "" : "";
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);

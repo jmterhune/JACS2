@@ -15,6 +15,7 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Web.UI;
 
 namespace tjc.Modules.CourtCounsel
 {
@@ -26,6 +27,47 @@ namespace tjc.Modules.CourtCounsel
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
             JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+            RegisterSessionMonitor();
+        }
+
+        private void RegisterSessionMonitor()
+        {
+            if (Request.IsAuthenticated == false) return;
+
+            Page.ClientScript.RegisterClientScriptInclude(GetType(), "SessionMonitorScript", ResolveUrl("~/DesktopModules/tjc.modules/CourtCounsel/Scripts/session-monitor.js"));
+
+            double timeoutMinutes = System.Web.Security.FormsAuthentication.Timeout.TotalMinutes;
+            string logoffUrl;
+            try
+            {
+                logoffUrl = _navigationManager.NavigateURL(TabId, "Logoff");
+            }
+            catch
+            {
+                logoffUrl = null;
+            }
+            if (string.IsNullOrEmpty(logoffUrl))
+            {
+                // Fallback: append /ctl/Logoff to the current page path. DNN's URL
+                // provider handles this at any depth.
+                string current = Request.Url.AbsolutePath.TrimEnd('/');
+                logoffUrl = current + "/ctl/Logoff";
+            }
+
+            string init =
+                "(function(){function go(){if(window.SessionMonitor){SessionMonitor.init({" +
+                "timeoutMinutes:" + timeoutMinutes.ToString("0") + "," +
+                "warningMinutes:5," +
+                "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'," +
+                "keepAliveUrl:'/'" +
+                "});}else{setTimeout(go,200);}}go();})();";
+
+            ScriptManager.RegisterStartupScript(this, GetType(), "SessionMonitorInit", init, true);
         }
 
         public string AdminRole

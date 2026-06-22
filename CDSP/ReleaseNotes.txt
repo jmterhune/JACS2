@@ -1,0 +1,14 @@
+<h3>CDSP Submissions (Admin)</h3>
+<p>Intranet module that lists CDSP / Family Pre-Filing form submissions from the
+jud12.flcourts.org database (tjc_cdsp_submission, via the Jud12 connection) and lets
+staff review a submission and mark it completed.</p>
+
+<div class="License">
+	<p class="Owner"><b>Version 00.00.01</b></p>
+	<ul>
+		<li>Submission list (DataTables): search, sort, paging; magnifier opens the detail view.</li>
+		<li>Show/Hide completed toggle (defaults to hiding completed submissions).</li>
+		<li>Checkbox icon at the end of each row toggles Completed, with a confirmation prompt.</li>
+		<li>Detail view with Set Completed and Cancel; both return to the list where you left off.</li>
+	</ul>
+</div>

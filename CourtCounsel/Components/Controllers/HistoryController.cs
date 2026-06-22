@@ -70,6 +70,23 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             return t;
         }
 
+        /// <summary>
+        /// Substring search on CaseNumber. Returns one DISTINCT row per matching case/party combo so
+        /// entering "4034" finds "S-2016-CF-004034" (or any other case number containing the substring).
+        /// </summary>
+        public IEnumerable<HistoryInfo> SearchByCaseNumber(string partial)
+        {
+            IEnumerable<HistoryInfo> t;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                t = ctx.ExecuteQuery<HistoryInfo>(
+                    System.Data.CommandType.Text,
+                    "SELECT DISTINCT CaseNumber, PartyName, CaseType, Responsible, logId, DateReceived, DateDue, RequestedBy, County, Description, Phase, Action, FollowUp, DateCompleted, TimeSpent, Comments, StatusName, MotionFiled, LastModifiedDate FROM tjc_cc_history WHERE CaseNumber LIKE @0 ORDER BY CaseNumber",
+                    "%" + partial + "%");
+            }
+            return t;
+        }
+
         public IEnumerable<HistoryInfo> SearchByAttorney(string attorney, string statusFilter)
         {
             IEnumerable<HistoryInfo> t;
@@ -198,14 +215,20 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
                 var args = new List<object>();
                 int paramIndex = 0;
 
+                // When the status filter is "Completed", the user is asking
+                // "what was completed in this date range" — so the start/end
+                // date range applies to DateCompleted, not DateReceived.
+                bool filterOnCompletedDate = string.Equals(statusFilter, "Completed", StringComparison.OrdinalIgnoreCase);
+                string dateColumn = filterOnCompletedDate ? "DateCompleted" : "DateReceived";
+
                 if (startDate.HasValue)
                 {
-                    conditions.Add(string.Format("DateReceived >= @{0}", paramIndex++));
+                    conditions.Add(string.Format("{0} >= @{1}", dateColumn, paramIndex++));
                     args.Add(startDate.Value);
                 }
                 if (endDate.HasValue)
                 {
-                    conditions.Add(string.Format("DateReceived <= @{0}", paramIndex++));
+                    conditions.Add(string.Format("{0} <= @{1}", dateColumn, paramIndex++));
                     args.Add(endDate.Value);
                 }
                 if (!string.IsNullOrEmpty(statusFilter))

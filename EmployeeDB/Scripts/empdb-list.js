@@ -618,6 +618,273 @@
     })();
     empdb.swn = swn;
 
+    /* ---------------- Supervisors (HR admins only) ----------------
+       Different shape from the makeAdminTab pattern: there's no modal
+       form — the user picks a target via the typeahead and the click
+       itself does the POST. The roster table below lets the user
+       toggle Active (PUT) and Delete (refused with 409 if the
+       supervisor is still assigned to any employee). */
+    var supervisors = (function () {
+        var $tbody;
+        var $searchInput;
+        var $searchResults;
+        var dt;
+        var searchTimer = null;
+        var SEARCH_DEBOUNCE_MS = 200;
+
+        function destroyDt() {
+            if (!dt) return;
+            try { dt.destroy(); } catch (e) {}
+            dt = null;
+        }
+
+        function buildDt() {
+            if (!$.fn.DataTable) return;
+            destroyDt();
+            dt = $("#tblSupervisors").DataTable({
+                "order": [[0, "asc"]],
+                "pageLength": 25,
+                "stateSave": true,
+                "stateDuration": 60 * 60 * 24,
+                "stateSaveCallback": function (settings, data) {
+                    try { localStorage.setItem("empdb-tblSupervisors-v1", JSON.stringify(data)); } catch (e) {}
+                },
+                "stateLoadCallback": function () {
+                    try { return JSON.parse(localStorage.getItem("empdb-tblSupervisors-v1")); } catch (e) { return null; }
+                },
+                "columnDefs": [{ "orderable": false, "targets": "no-sort" }]
+            });
+        }
+
+        function rowHtml(s) {
+            // s: { SupervisorId, EmployeeId, FirstName, LastName, IsActive,
+            //      IsEmployeeActive, AssigneeCount, DisplayName }
+            var name = s.DisplayName || (esc(s.LastName) + ", " + esc(s.FirstName));
+            var checked = s.IsActive ? "checked" : "";
+            var count   = (typeof s.AssigneeCount === "number") ? s.AssigneeCount : 0;
+            // Dim the icon + count when nobody's assigned — clicking still
+            // opens the modal (it'll just show "No employees assigned") but
+            // the visual weight tracks the data.
+            var iconClass    = count > 0 ? "text-primary"   : "text-muted";
+            var badgeClass   = count > 0 ? "bg-primary"     : "bg-secondary";
+            return '<tr data-id="' + s.SupervisorId + '" data-employee-id="' + s.EmployeeId + '">'
+                +    '<td>' + esc(name) + '</td>'
+                +    '<td class="text-center">'
+                +        '<a href="#" class="empdb-supervisor-assignees ' + iconClass + '" '
+                +           'data-id="' + s.SupervisorId + '" '
+                +           'data-name="' + esc(name) + '" '
+                +           'title="View employees assigned to this supervisor">'
+                +           '<i class="fas fa-users"></i>'
+                +           '&nbsp;<span class="badge ' + badgeClass + '">' + count + '</span>'
+                +        '</a>'
+                +    '</td>'
+                +    '<td class="text-center">'
+                +        '<input type="checkbox" class="form-check-input empdb-supervisor-active" '
+                +              'data-id="' + s.SupervisorId + '" ' + checked + ' />'
+                +    '</td>'
+                +    '<td class="command-icon">'
+                +        '<a href="#" class="text-danger empdb-supervisor-delete" title="Delete">'
+                +            '<i class="fas fa-trash"></i>'
+                +        '</a>'
+                +    '</td>'
+                + '</tr>';
+        }
+
+        function reload() {
+            return empdb.api.get("Supervisors/All").then(function (rows) {
+                if (!$tbody) return;
+                if (!rows || !rows.length) {
+                    destroyDt();
+                    $tbody.html('<tr><td colspan="4" class="text-muted text-center">No supervisors yet — search above to add one.</td></tr>');
+                    return;
+                }
+                destroyDt();
+                $tbody.html(rows.map(rowHtml).join(""));
+                buildDt();
+            }).catch(function (err) {
+                empdb.notifyError("Load failed: " + err.message);
+            });
+        }
+
+        /**
+         * Open the assignees modal for a supervisor. Loads the list
+         * lazily — the modal opens immediately with a "Loading…"
+         * placeholder so the user sees feedback before the API returns.
+         */
+        function openAssigneesModal(supervisorId, supervisorName) {
+            $("#empdbSupAssigneesName").text(supervisorName || "");
+            $("#empdbSupAssigneesList")
+                .html('<li class="list-group-item text-muted">Loading…</li>');
+            empdb.showModal("SupervisorAssigneesModal");
+
+            empdb.api.get("Supervisors/Assignees?id=" + supervisorId)
+                .then(function (rows) {
+                    if (!rows || !rows.length) {
+                        $("#empdbSupAssigneesList").html(
+                            '<li class="list-group-item text-muted">No employees assigned to this supervisor.</li>');
+                        return;
+                    }
+                    var html = rows.map(function (r) {
+                        var name  = esc(r.DisplayName || (r.LastName + ", " + r.FirstName));
+                        var title = r.JobTitle
+                            ? ' <small class="text-muted">— ' + esc(r.JobTitle) + '</small>'
+                            : '';
+                        var badge = r.IsActive
+                            ? ''
+                            : ' <span class="badge bg-secondary ms-2">terminated</span>';
+                        return '<li class="list-group-item">' + name + title + badge + '</li>';
+                    }).join("");
+                    $("#empdbSupAssigneesList").html(html);
+                })
+                .catch(function (err) {
+                    $("#empdbSupAssigneesList").html(
+                        '<li class="list-group-item text-danger">Load failed: ' + esc(err.message) + '</li>');
+                });
+        }
+
+        function hideSearchResults() {
+            if ($searchResults) {
+                $searchResults.empty().hide();
+            }
+        }
+
+        function renderSearchResults(matches) {
+            if (!matches || !matches.length) {
+                $searchResults
+                    .html('<div class="list-group-item text-muted">No matching employees.</div>')
+                    .show();
+                return;
+            }
+            var html = matches.map(function (m) {
+                var name = esc(m.DisplayName || (m.LastName + ", " + m.FirstName));
+                var inactiveBadge = m.IsActive
+                    ? ""
+                    : ' <span class="badge bg-secondary ms-2">terminated</span>';
+                var title = m.JobTitle ? ' <small class="text-muted">— ' + esc(m.JobTitle) + '</small>' : '';
+                return '<a href="#" class="list-group-item list-group-item-action empdb-supervisor-add-pick" '
+                    +     'data-employee-id="' + m.EmployeeId + '">'
+                    +     name + title + inactiveBadge
+                    +  '</a>';
+            }).join("");
+            $searchResults.html(html).show();
+        }
+
+        function runSearch(q) {
+            if (!q || q.length < 2) {
+                hideSearchResults();
+                return;
+            }
+            empdb.api.get("Supervisors/SearchEmployees?q=" + encodeURIComponent(q))
+                .then(renderSearchResults)
+                .catch(function (err) {
+                    empdb.notifyError("Search failed: " + err.message);
+                });
+        }
+
+        function addSupervisor(employeeId) {
+            return empdb.api.post("Supervisors", { EmployeeId: employeeId, IsActive: true })
+                .then(function () {
+                    empdb.notifySuccess("Supervisor added.");
+                    $searchInput.val("");
+                    hideSearchResults();
+                    reload();
+                })
+                .catch(function (err) {
+                    empdb.notifyError("Add failed: " + err.message);
+                });
+        }
+
+        function toggleActive(supervisorId, makeActive) {
+            return empdb.api.put("Supervisors/" + supervisorId, { IsActive: makeActive })
+                .then(function () {
+                    empdb.notifySuccess(makeActive ? "Marked active." : "Marked inactive.");
+                })
+                .catch(function (err) {
+                    empdb.notifyError("Update failed: " + err.message);
+                    // Roll the checkbox back to match server state.
+                    reload();
+                });
+        }
+
+        function deleteSupervisor(supervisorId) {
+            return empdb.confirmDelete("Remove this supervisor from the list?")
+                .then(function (ok) {
+                    if (!ok) return;
+                    return empdb.api.del("Supervisors/" + supervisorId)
+                        .then(function () {
+                            empdb.notifySuccess("Supervisor removed.");
+                            reload();
+                        })
+                        .catch(function (err) {
+                            // Server returns 409 with a message when the supervisor
+                            // is still assigned to employees. Surface that text
+                            // verbatim — it includes a remediation hint.
+                            empdb.notifyError("Delete refused: " + err.message);
+                        });
+                });
+        }
+
+        function init() {
+            $tbody         = $("#tblSupervisors tbody");
+            $searchInput   = $("#empdbSupervisorSearch");
+            $searchResults = $("#empdbSupervisorSearchResults");
+            if (!$tbody.length) return;
+
+            // Typeahead: debounce, then call the server's search endpoint.
+            $searchInput.on("input", function () {
+                var q = $(this).val();
+                if (searchTimer) clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () { runSearch(q); }, SEARCH_DEBOUNCE_MS);
+            });
+            // Hide results when the input loses focus, but give the click on
+            // a result item enough time to register first.
+            $searchInput.on("blur", function () {
+                setTimeout(hideSearchResults, 150);
+            });
+            // Re-show last results if the input is refocused with text in it.
+            $searchInput.on("focus", function () {
+                if ($searchResults && $searchResults.children().length) $searchResults.show();
+            });
+
+            // Click a typeahead result -> POST /Supervisors with that EmployeeId.
+            $(document).on("click", ".empdb-supervisor-add-pick", function (e) {
+                e.preventDefault();
+                var id = parseInt($(this).data("employee-id"), 10);
+                if (!id || id <= 0) return;
+                addSupervisor(id);
+            });
+
+            // Users icon -> assignees modal.
+            $tbody.on("click", ".empdb-supervisor-assignees", function (e) {
+                e.preventDefault();
+                var id   = parseInt($(this).data("id"), 10);
+                var name = $(this).data("name") || "";
+                if (!id) return;
+                openAssigneesModal(id, name);
+            });
+
+            // Active toggle (PUT).
+            $tbody.on("change", ".empdb-supervisor-active", function () {
+                var id = parseInt($(this).data("id"), 10);
+                if (!id) return;
+                var makeActive = $(this).is(":checked");
+                toggleActive(id, makeActive);
+            });
+
+            // Trash (DELETE).
+            $tbody.on("click", ".empdb-supervisor-delete", function (e) {
+                e.preventDefault();
+                var id = parseInt($(this).closest("tr").data("id"), 10);
+                if (!id) return;
+                deleteSupervisor(id);
+            });
+
+            reload();
+        }
+
+        return { init: init, reload: reload };
+    })();
+
     $(function () {
         // SWN buttons live on EmployeeList; init unconditionally — the
         // handlers themselves no-op on pages without the buttons.
@@ -634,6 +901,9 @@
         // Departments table is only rendered for site admins; init() no-ops
         // when the table element isn't present.
         departments.init();
+        // Supervisors table is only rendered for HR admins; init() no-ops
+        // when the table element isn't present.
+        supervisors.init();
     });
 
 })(window, window.jQuery);

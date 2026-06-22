@@ -1,0 +1,2 @@
+sqlcmd -S 10.212.72.62 -U intranet_web_user -P intranet_web_user \
+       -i prod-deploy-employee-data.sql

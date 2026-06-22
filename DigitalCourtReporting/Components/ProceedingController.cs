@@ -10,6 +10,11 @@ namespace tjc.Modules.DigitalCourtReporting.Components
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Proceeding>();
+                int userId = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo().UserID;
+                t.CreatedByID = userId > 0 ? userId : 1;
+                t.CreatedDate = DateTime.Now;
+                t.LastModifiedByID = userId > 0 ? userId : 1;
+                t.LastModifiedDate = DateTime.Now;
                 rep.Insert(t);
             }
         }
@@ -65,7 +70,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
                         break;
 
                 }
-                if (countyId>0)
+                if (countyId > 0)
                 {
                     if (!string.IsNullOrEmpty(query))
                         query += string.Format(" AND JurisdictionID ={0}", countyId);
@@ -131,6 +136,9 @@ namespace tjc.Modules.DigitalCourtReporting.Components
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<Proceeding>();
+                int userId = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo().UserID;
+                t.LastModifiedByID = userId > 0 ? userId : 1;
+                t.LastModifiedDate = DateTime.Now;
                 rep.Update(t);
             }
         }
@@ -150,7 +158,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
             {
                 string sql = string.Format("DELETE FROM tjc_dcr_accounting WHERE ProceedingID = {0}", proceedingId);
                 ctx.Execute(System.Data.CommandType.Text, sql);
-                sql= string.Format("DELETE FROM tjc_dcr_audio WHERE ProceedingID = {0}", proceedingId);
+                sql = string.Format("DELETE FROM tjc_dcr_audio WHERE ProceedingID = {0}", proceedingId);
                 ctx.Execute(System.Data.CommandType.Text, sql);
                 sql = string.Format("DELETE FROM tjc_dcr_notification WHERE ProceedingID = {0}", proceedingId);
                 ctx.Execute(System.Data.CommandType.Text, sql);

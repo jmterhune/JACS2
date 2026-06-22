@@ -28,6 +28,8 @@ namespace tjc.Modules.JudicialReferral.Views
                         SelectRole(drpJaRole, Settings["JaRole"].ToString());
                     if (Settings.Contains("CounselRole"))
                         SelectRole(drpCounselRole, Settings["CounselRole"].ToString());
+                    if (Settings.Contains("CounselAdminRole"))
+                        SelectRole(drpCounselAdminRole, Settings["CounselAdminRole"].ToString());
                     if (Settings.Contains("CourtCounselEmail"))
                         txtCounselEmail.Text = Settings["CourtCounselEmail"].ToString();
                     if (Settings.Contains("FolderName"))
@@ -47,6 +49,7 @@ namespace tjc.Modules.JudicialReferral.Views
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "JudgeRole", drpJudgeRole.SelectedValue);
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "JaRole", drpJaRole.SelectedValue);
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "CounselRole", drpCounselRole.SelectedValue);
+                ModuleController.Instance.UpdateModuleSetting(ModuleId, "CounselAdminRole", drpCounselAdminRole.SelectedValue);
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "CourtCounselEmail", txtCounselEmail.Text);
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "FolderName", txtFolderName.Text);
             }
@@ -64,7 +67,7 @@ namespace tjc.Modules.JudicialReferral.Views
                                 .OrderBy(r => r.RoleName)
                                 .ToList();
 
-            foreach (var ddl in new[] { drpJudgeRole, drpJaRole, drpCounselRole })
+            foreach (var ddl in new[] { drpJudgeRole, drpJaRole, drpCounselRole, drpCounselAdminRole })
             {
                 ddl.Items.Clear();
                 ddl.Items.Add(new ListItem("-- Select Role --", ""));

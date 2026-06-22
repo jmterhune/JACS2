@@ -84,5 +84,20 @@ namespace tjc.Modules.CourtCounsel.Views
             }
             return string.Empty;
         }
+
+        /// <summary>
+        /// ISO-8601 (yyyy-MM-dd) so DataTables can sort the date column
+        /// lexicographically as if it were a real date. Emit as the cell's
+        /// data-order attribute; the visible text stays in short-date form.
+        /// Empty string for null sorts first under ASC (keeps open records on top).
+        /// </summary>
+        protected string FormatDateIso(object dateValue)
+        {
+            if (dateValue != null && dateValue != DBNull.Value)
+            {
+                return Convert.ToDateTime(dateValue).ToString("yyyy-MM-dd");
+            }
+            return string.Empty;
+        }
     }
 }

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using tjc.Modules.CourtCounsel.Components.Controllers;
+using tjc.Modules.CourtCounsel.Components.Models;
 
 namespace tjc.Modules.CourtCounsel.Views
 {
@@ -30,14 +31,44 @@ namespace tjc.Modules.CourtCounsel.Views
             if (!IsPostBack)
             {
                 _partyName = PartyName;
+                var caseNumberPartial = CaseNumber;
+                var ctrl = new HistoryController();
 
-                if (!string.IsNullOrEmpty(_partyName))
+                if (!string.IsNullOrEmpty(caseNumberPartial))
                 {
-                    var ctrl = new HistoryController();
+                    // Substring case-number search routed here from Search.ascx
+                    litResultsHeading.Text = "Case Number Search Results";
+                    var results = ctrl.SearchByCaseNumber(caseNumberPartial).ToList();
+                    rptCaseList.DataSource = results;
+                    rptCaseList.DataBind();
+                }
+                else if (!string.IsNullOrEmpty(_partyName))
+                {
+                    litResultsHeading.Text = "Case Name Search Results";
                     var results = ctrl.SearchByCaseName(_partyName).ToList();
                     rptCaseList.DataSource = results;
                     rptCaseList.DataBind();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Same logic as AttorneyCaseList.GetStatus — Active + non-empty StatusName
+        /// shows the saved StatusName text; otherwise the bucket name.
+        /// </summary>
+        protected string GetStatus(HistoryInfo item)
+        {
+            if (item == null) return string.Empty;
+
+            if (item.Status == HistoryInfo.CurrentStatus.Active && !string.IsNullOrEmpty(item.StatusName))
+                return item.StatusName;
+
+            switch (item.Status)
+            {
+                case HistoryInfo.CurrentStatus.Active: return "Active";
+                case HistoryInfo.CurrentStatus.Inactive: return "Inactive";
+                case HistoryInfo.CurrentStatus.Complete: return "Complete";
+                default: return string.Empty;
             }
         }
 

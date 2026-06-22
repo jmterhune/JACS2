@@ -107,40 +107,60 @@ namespace tjc.Modules.CourtRegistry
         {
             try
             {
-                bool hasLocation = false;
                 if (!IsPostBack)
                 {
+                    // Populate dropdowns first
                     var ctl = new LocationController();
-                    IEnumerable<Location> locations = ctl.GetLocations();
-                    foreach (Location location in locations)
+                    foreach (Location location in ctl.GetLocations())
                         drpLocations.Items.Add(new ListItem(location.LocationName, location.LocationID.ToString()));
                     drpLocations.Items.Insert(0, new ListItem("All Locations", "0"));
                     BindDropdownLists();
-                    drpYear.SelectedValue = _year.ToString();
+
+                    // Resolve year — querystring wins, otherwise default to current fiscal year
+                    if (RequestedYear > 0)
+                    {
+                        _year = RequestedYear;
+                    }
+                    else
+                    {
+                        var sCtl = new SettingController();
+                        Setting setting = sCtl.GetSettings().FirstOrDefault();
+                        if (setting != null && setting.BeginFiscalYearMonth > 0 && setting.BeginFiscalYearDay > 0)
+                        {
+                            var beginFiscalYear = new DateTime(DateTime.Now.Year, setting.BeginFiscalYearMonth, setting.BeginFiscalYearDay);
+                            _year = beginFiscalYear < DateTime.Now ? DateTime.Now.Year + 1 : DateTime.Now.Year;
+                        }
+                        else
+                        {
+                            _year = DateTime.Now.Year;
+                        }
+                    }
+                    var yrItem = drpYear.Items.FindByValue(_year.ToString());
+                    if (yrItem != null) drpYear.SelectedValue = _year.ToString();
+
+                    // Resolve location — querystring wins, otherwise default ("All Locations")
+                    if (RequestedLocationId > 0)
+                    {
+                        var locItem = drpLocations.Items.FindByValue(RequestedLocationId.ToString());
+                        if (locItem != null)
+                        {
+                            _locationId = RequestedLocationId;
+                            drpLocations.SelectedValue = _locationId.ToString();
+                        }
+                    }
+                    if (_locationId == 0 && drpLocations.Items.Count > 0)
+                        _locationId = Int32.Parse(drpLocations.SelectedValue);
+
+                    BindData();
                 }
-                if (RequestedYear > 0)
-                    _year = RequestedYear;
                 else
                 {
-                    var sCtl = new SettingController();
-                    Setting setting = sCtl.GetSettings().FirstOrDefault();
-                    var beginFiscalYear = new DateTime(DateTime.Now.Year, setting.BeginFiscalYearMonth, setting.BeginFiscalYearDay);
-                    if (beginFiscalYear < DateTime.Now)
-                        _year = DateTime.Now.Year + 1;
-                    else
-                        _year = DateTime.Now.Year;
+                    // Postback — read current selections from the form
+                    if (drpYear.Items.Count > 0 && Int32.TryParse(drpYear.SelectedValue, out int yr))
+                        _year = yr;
+                    if (drpLocations.Items.Count > 0 && Int32.TryParse(drpLocations.SelectedValue, out int loc))
+                        _locationId = loc;
                 }
-                if (drpLocations.Items.Count > 0)
-                    hasLocation = true;
-                if (RequestedLocationId > 0 & hasLocation == false)
-                {
-                    _locationId = RequestedLocationId;
-                    drpLocations.SelectedValue = _locationId.ToString();
-                }
-                else if (hasLocation)
-                    _locationId = Int32.Parse(drpLocations.SelectedValue);
-                if (!IsPostBack)
-                    BindData();
             }
             catch (Exception exc) //Module failed to load
             {

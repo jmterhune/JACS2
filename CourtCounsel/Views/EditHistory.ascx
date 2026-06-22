@@ -239,6 +239,13 @@
         InitializeOptGroups('<%= drpStatus.ClientID %>');
 
         InitCaseNumberWidget();
+
+        // Scroll the Comments textarea to the bottom so the most recent
+        // entries are visible without manual scrolling.
+        var $comments = $('#<%= txtComments.ClientID %>');
+        if ($comments.length) {
+            $comments.scrollTop($comments[0].scrollHeight);
+        }
     });
 
     function InitCaseNumberWidget() {

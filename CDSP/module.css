@@ -1,0 +1,62 @@
+/* CDSP Submissions (admin) module styles.
+   Spacing/width live here as named classes rather than inline styles or utility classes. */
+
+.cdsp-list .cdsp-toggle {
+    margin: 0.5rem 0 1rem 0;
+}
+
+.cdsp-table {
+    width: 100%;
+}
+
+/* Narrow, centered columns for the row-action icons (magnifier / complete toggle). */
+.cdsp-col-icon {
+    width: 2.5rem;
+    text-align: center;
+}
+
+.cdsp-icon-btn {
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.cdsp-detail .cdsp-section {
+    margin-top: 1.5rem;
+}
+
+.cdsp-detail .cdsp-section-title {
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.cdsp-detail dl {
+    margin-bottom: 0;
+}
+
+.cdsp-detail dt {
+    font-weight: 600;
+}
+
+.cdsp-detail .cdsp-actions {
+    margin-top: 1.5rem;
+}
+
+.cdsp-detail .cdsp-actions .btn {
+    margin-right: 0.5rem;
+}
+
+/* Row action icons are anchors now (AJAX), not postbacks. */
+.cdsp-list .cdsp-icon-btn {
+    cursor: pointer;
+}
+
+/* Per-column spacing for the detail fields inside the modal. */
+.cdsp-detail .row > [class*="col-"] dl {
+    margin-bottom: 0.75rem;
+}
+
+.cdsp-detail .cdsp-loading {
+    padding: 2rem 0;
+}

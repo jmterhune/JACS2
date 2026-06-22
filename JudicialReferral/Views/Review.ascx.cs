@@ -86,9 +86,8 @@ namespace tjc.Modules.JudicialReferral.Views
             if (objReferral.MotionDate.HasValue)
                 txtMotionDate.Text = objReferral.MotionDate.Value.ToString("yyyy-MM-dd");
             txtMotionTitle.Text = objReferral.MotionTitle;
-
-            var judgeItem = drpJudge.Items.FindByValue(objReferral.JudgeId.ToString());
-            if (judgeItem != null) drpJudge.SelectedValue = objReferral.JudgeId.ToString();
+            if (objReferral.JudgeId>0)
+                drpJudge.SelectedValue = objReferral.JudgeId.ToString();
 
             if (!string.IsNullOrEmpty(objReferral.DirectedMotionsCriminal))
             {
@@ -327,16 +326,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void SendToCounsel(JudgeReferralInfo objReferral)
         {
-            var objJudge = UserController.GetUserById(PortalId, objReferral.JudgeId);
-            if (objJudge == null) return;
-            string emailFrom = objJudge.Email;
-            string toEmail = CourtCounselEmail;
-            string subject = "Judicial Referral Request";
-            string body = string.Format(
-                "<p>Please review the <a href='{0}'>Judicial Referral Request</a> for case number {1}.</p>",
-                EditUrl("rid", objReferral.ReferralId.ToString(), "editlog"),
-                objReferral.CaseNumber);
-            Mail.SendEmail(emailFrom, toEmail, subject, body);
+            JudgeReferralController.SendToCounsel(objReferral, PortalId, TabId, ModuleId, CourtCounselEmail);
         }
 
         protected void cmdComplete_Click(object sender, EventArgs e)

@@ -97,7 +97,10 @@
                 <td><%# Eval("MotionTitle") %></td>
                 <td><%# Eval("JudgeName") %></td>
                 <td data-order='<%# Eval("JaCreatedDate", "{0:yyyyMMdd}") %>'><%# Eval("JaCreatedDate", "{0:MM/dd/yyyy}") %></td>
-                <td><%# Eval("StatusName") %></td>
+                <td class="status-cell" data-rid='<%# Eval("ReferralId") %>' data-status='<%# Eval("Status") %>'>
+                    <span class="status-text"><%# Eval("StatusName") %></span>
+                    <%# RenderStatusEditIcon() %>
+                </td>
                 <td><%# Eval("ReferralId") %></td>
             </tr>
         </ItemTemplate>
@@ -122,6 +125,64 @@
                     ]
                 });
             }
+
+            // In-place status editor for Court Counsel (icon is only emitted server-side
+            // for that role). Click the pencil → SweetAlert2 modal with a status dropdown
+            // → POST to the WebAPI handler → update the cell on success.
+            $('#table-referrals').off('click.statusEdit').on('click.statusEdit', '.status-edit', function (e) {
+                e.preventDefault();
+                var $cell = $(this).closest('.status-cell');
+                var rid = $cell.data('rid');
+                var current = $cell.data('status');
+
+                Swal.fire({
+                    title: 'Update Status',
+                    input: 'select',
+                    inputOptions: {
+                        1: 'New',
+                        3: 'Referred to Court Counsel',
+                        4: 'Retained by Judge',
+                        5: 'Completed'
+                    },
+                    inputValue: String(current),
+                    showCancelButton: true,
+                    confirmButtonText: 'Update',
+                    showLoaderOnConfirm: true,
+                    allowOutsideClick: function () { return !Swal.isLoading(); },
+                    preConfirm: function (newStatus) {
+                        var token = $('input[name="__RequestVerificationToken"]').val();
+                        var ctx = window.__JR_ModuleContext || {};
+                        return $.ajax({
+                            url: '/DesktopModules/JudicialReferral/API/Status/Update',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ ReferralId: rid, Status: parseInt(newStatus, 10) }),
+                            beforeSend: function (xhr) {
+                                if (token) xhr.setRequestHeader('RequestVerificationToken', token);
+                                // DnnApiController.ActiveModule reads these headers to
+                                // resolve module settings (CounselRole, CourtCounselEmail).
+                                if (ctx.moduleId) xhr.setRequestHeader('ModuleId', ctx.moduleId);
+                                if (ctx.tabId)    xhr.setRequestHeader('TabId',    ctx.tabId);
+                            }
+                        }).fail(function (xhr) {
+                            var msg = (xhr.responseJSON && xhr.responseJSON.error)
+                                || xhr.statusText || 'Update failed.';
+                            Swal.showValidationMessage(msg);
+                        });
+                    }
+                }).then(function (result) {
+                    if (result.isConfirmed && result.value) {
+                        $cell.data('status', result.value.status);
+                        $cell.find('.status-text').text(result.value.statusName);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Status updated',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
         });
     }
     InitReferralsTable();
@@ -139,3 +200,5 @@
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
+<dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.all.min.js" />

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.ThreatReport.View" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.ThreatReport.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
 <asp:Repeater ID="rptIncidentList" runat="server">
@@ -36,15 +36,9 @@
     </FooterTemplate>
 </asp:Repeater>
 
-<p>
-    <asp:HyperLink ID="lnkEdit" Visible="false" runat="server" CssClass="btn btn-danger"><em class="fa fa-exclamation"></em>&nbsp; Report an Incident</asp:HyperLink></p>
-<asp:Repeater ID="rptViewers" runat="server">
-    <HeaderTemplate><hr /><h4>Distribution List</h4><ul class="list card-columns-3"></HeaderTemplate>
-    <ItemTemplate><li><%#DataBinder.Eval(Container.DataItem,"DisplayName") %></li></ItemTemplate>
-    <FooterTemplate></ul></FooterTemplate>
-</asp:Repeater>
-<dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnncssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 <script type="text/javascript">
 
     $(document).ready(function () {

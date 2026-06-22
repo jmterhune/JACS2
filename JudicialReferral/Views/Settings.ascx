@@ -18,6 +18,10 @@
         <asp:DropDownList ID="drpCounselRole" runat="server" CssClass="form-select" />
     </div>
     <div class="dnnFormItem">
+        <dnn:Label ID="lblCounselAdminRole" runat="server" ControlName="drpCounselAdminRole" />
+        <asp:DropDownList ID="drpCounselAdminRole" runat="server" CssClass="form-select" />
+    </div>
+    <div class="dnnFormItem">
         <dnn:Label ID="lblCounselEmail" runat="server" ControlName="txtCounselEmail" />
         <asp:TextBox ID="txtCounselEmail" runat="server" />
     </div>

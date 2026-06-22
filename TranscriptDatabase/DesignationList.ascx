@@ -133,7 +133,6 @@
                         </div>
                         <div class="col">
                             <button type="button" id="cmdAddAttorney" class="btn btn-primary">Add Selected Attorney</button>
-                            <button type="button" id="cmdAttorney" class="btn btn-dark float-end" data-toggle="modal" data-target="#EditAttorneyModal">Add New Attorney</button>
                         </div>
                         <input type="hidden" id="attorneyCount">
                     </div>
@@ -577,6 +576,20 @@
         attorneyTable = $('#tblAttorneys').DataTable({
             searching: false,
             autoWidth: true,
+            layout: {
+                topEnd: function () {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.id = 'cmdAttorney';
+                    btn.className = 'btn btn-dark';
+                    btn.setAttribute('data-bs-toggle', 'modal');
+                    btn.setAttribute('data-bs-target', '#EditAttorneyModal');
+                    btn.setAttribute('data-toggle', 'modal');
+                    btn.setAttribute('data-target', '#EditAttorneyModal');
+                    btn.textContent = 'Add New Attorney';
+                    return btn;
+                }
+            },
             columns: [
                 { data: "name" },
                 { data: "office" },

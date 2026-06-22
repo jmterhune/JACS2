@@ -1,4 +1,7 @@
+using DotNetNuke.Common;
 using DotNetNuke.Data;
+using DotNetNuke.Entities.Users;
+using DotNetNuke.Services.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,6 +124,30 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
                     rep.Delete(item);
                 }
             }
+        }
+
+        /// <summary>
+        /// Emails Court Counsel notifying them that a referral has been routed to
+        /// them. Pulled out of Review.ascx.cs so the in-place status editor on
+        /// View.ascx (which goes through the WebAPI handler) can fire the same
+        /// notification when an editor moves a referral to ReferredToCounsel.
+        /// </summary>
+        public static void SendToCounsel(JudgeReferralInfo objReferral, int portalId, int tabId, int moduleId, string courtCounselEmail)
+        {
+            if (objReferral == null) return;
+            var objJudge = UserController.GetUserById(portalId, objReferral.JudgeId);
+            if (objJudge == null) return;
+
+            string editUrl = Globals.NavigateURL(tabId, "editlog",
+                "mid=" + moduleId,
+                "rid=" + objReferral.ReferralId);
+
+            string subject = "Judicial Referral Request";
+            string body = string.Format(
+                "<p>Please review the <a href='{0}'>Judicial Referral Request</a> for case number {1}.</p>",
+                editUrl, objReferral.CaseNumber);
+
+            Mail.SendEmail(objJudge.Email, courtCounselEmail, subject, body);
         }
     }
 }

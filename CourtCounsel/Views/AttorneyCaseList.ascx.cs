@@ -65,6 +65,18 @@ namespace tjc.Modules.CourtCounsel.Views
         }
 
         /// <summary>
+        /// ISO-8601 (yyyy-MM-dd) so DataTables can sort the date column
+        /// lexicographically as if it were a real date. Emitted as each cell's
+        /// data-order attribute; the visible text stays in short-date form.
+        /// Empty string for null sorts first under ASC.
+        /// </summary>
+        protected string FormatDateIso(DateTime? date)
+        {
+            if (date.HasValue) return date.Value.ToString("yyyy-MM-dd");
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Truncate a long party name to 30 chars + ellipsis, matching the legacy AttorneyCaseList.vb FormatLongName helper.
         /// </summary>
         protected string FormatLongName(string longName)

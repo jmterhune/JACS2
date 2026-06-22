@@ -14,6 +14,8 @@ namespace tjc.Modules.JudicialReferral.Views
         protected global::System.Web.UI.WebControls.DropDownList drpJaRole;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblCounselRole;
         protected global::System.Web.UI.WebControls.DropDownList drpCounselRole;
+        protected global::DotNetNuke.UI.UserControls.LabelControl lblCounselAdminRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpCounselAdminRole;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblCounselEmail;
         protected global::System.Web.UI.WebControls.TextBox txtCounselEmail;
         protected global::DotNetNuke.UI.UserControls.LabelControl lblFolder;

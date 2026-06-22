@@ -156,10 +156,35 @@ namespace tjc.Modules.EmployeeDB.Views
 
         private void BindSupervisors()
         {
+            // Pull the roster from tjc_supervisor (managed via the
+            // Supervisors admin tab on EmployeeList). Each option is tagged
+            // with data-supgroup="active" or "inactive"; empdb-edit.js runs
+            // on page load and wraps each group in a native <optgroup
+            // label="Active|Inactive"> so the section headers render as
+            // proper grouped options. Inactive options get a disabled
+            // attribute too — they stay visible for already-assigned
+            // employees but can't be picked for new saves.
             drpSupervisor.Items.Clear();
             drpSupervisor.Items.Add(new ListItem("", ""));
-            foreach (var s in _employeeController.GetSupervisors())
-                drpSupervisor.Items.Add(new ListItem(s.DisplayName, s.EmployeeId.ToString()));
+
+            var roster = _employeeController.GetSupervisors().ToList();
+            var active   = roster.Where(s =>  s.IsActive).OrderBy(s => s.LastName).ThenBy(s => s.FirstName);
+            var inactive = roster.Where(s => !s.IsActive).OrderBy(s => s.LastName).ThenBy(s => s.FirstName);
+
+            foreach (var s in active)
+            {
+                var li = new ListItem(s.LastName + ", " + s.FirstName, s.EmployeeId.ToString());
+                li.Attributes["data-supgroup"] = "active";
+                drpSupervisor.Items.Add(li);
+            }
+            foreach (var s in inactive)
+            {
+                var li = new ListItem(s.LastName + ", " + s.FirstName, s.EmployeeId.ToString());
+                li.Attributes["data-supgroup"] = "inactive";
+                li.Attributes["disabled"]      = "disabled";
+                li.Attributes["class"]         = "text-muted";
+                drpSupervisor.Items.Add(li);
+            }
         }
 
         private void BindDepartments()

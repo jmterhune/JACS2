@@ -70,6 +70,9 @@
             <li class="nav-item"><a class="nav-link" href="#pane-jobclasses" data-bs-toggle="tab" data-toggle="tab">Classes</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-races" data-bs-toggle="tab" data-toggle="tab">Race</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-locations" data-bs-toggle="tab" data-toggle="tab">Office Locations</a></li>
+            <% if (IsHrAdmin) { %>
+            <li class="nav-item"><a class="nav-link" href="#pane-supervisors" data-bs-toggle="tab" data-toggle="tab">Supervisors</a></li>
+            <% } %>
             <% if (IsSiteAdmin) { %>
             <li class="nav-item"><a class="nav-link" href="#pane-departments" data-bs-toggle="tab" data-toggle="tab">Departments</a></li>
             <% } %>
@@ -191,6 +194,35 @@
                     </tbody>
                 </table>
             </div>
+
+            <% if (IsHrAdmin) { %>
+            <%-- ===== Supervisors (API-driven, HR admins only) =====
+                 Employee typeahead at the top: type to search, click a
+                 suggestion to add as a supervisor. The lower table is the
+                 current roster — Active toggles IsActive on the row;
+                 Trash deletes the row (refused server-side if the
+                 supervisor is still assigned to any employees). --%>
+            <div class="tab-pane" id="pane-supervisors">
+                <div class="mb-3 empdb-supervisor-search">
+                    <label for="empdbSupervisorSearch" class="form-label">Add a supervisor — search for an employee:</label>
+                    <input type="text" id="empdbSupervisorSearch" class="form-control" placeholder="Type a name…" autocomplete="off" />
+                    <div id="empdbSupervisorSearchResults" class="empdb-supervisor-results list-group" style="display:none;"></div>
+                </div>
+                <table id="tblSupervisors" class="table table-striped table-bordered table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center no-sort" style="width:110px;">Assignees</th>
+                            <th class="text-center" style="width:90px;">Active</th>
+                            <th class="command-item no-sort" style="width:60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" class="text-muted text-center">Loading…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
 
             <% if (IsSiteAdmin) { %>
             <%-- ===== Departments (API-driven, site admins only) ===== --%>
@@ -371,6 +403,31 @@
                 <div class="modal-footer">
                     <button type="button" id="empdbDepartmentSave" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (IsHrAdmin) { %>
+    <%-- ===== Supervisor Assignees (read-only list popup) =====
+         Opened from the users icon on each Supervisors-tab row.
+         The body is populated by the supervisors driver in
+         empdb-list.js after a GET Supervisors/Assignees?id=... --%>
+    <div class="modal fade" id="SupervisorAssigneesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Employees assigned to <span id="empdbSupAssigneesName" class="fw-semibold"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="empdbSupAssigneesList" class="list-group"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

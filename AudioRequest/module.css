@@ -42,11 +42,6 @@ span.text-lg {
     border: 1px solid #5e81b5;
 }
 
-.delete-proceeding {
-    margin-top: -32px;
-}
-
-
 @media (min-width: 767px) {
 
     ul.dnnFormRadioButtons {

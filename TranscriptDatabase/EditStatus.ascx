@@ -68,10 +68,8 @@
 
                     </div>
                     <div id="updateTrascriptFiled" class="alert alert-warning form-group date-panel" style="display: none">
-                        <label for="txtTranscriptFiledUpdate">Enter File Date<em>*</em></label>
+                        <label for="txtTranscriptFiledUpdate">Enter File Date</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtTranscriptFiledUpdate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
-                        <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="transcriptfiled" CssClass="label label-danger"
-                            ErrorMessage="File Date Is Required" ControlToValidate="txtTranscriptFiledUpdate" runat="server" />
                         <asp:CustomValidator ID="valTranscriptFiledIsDate" runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="transcriptfiled" CssClass="label label-danger"
                             ErrorMessage="Invalid Date" ControlToValidate="txtTranscriptFiledUpdate" ClientValidationFunction="ValidateDateType">
                         </asp:CustomValidator>

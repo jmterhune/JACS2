@@ -77,6 +77,12 @@
   <data name="lblCounselRole.HelpText" xml:space="preserve">
     <value>The security role for Court Counsel staff.</value>
   </data>
+  <data name="lblCounselAdminRole.Text" xml:space="preserve">
+    <value>Court Counsel Admin Role:</value>
+  </data>
+  <data name="lblCounselAdminRole.HelpText" xml:space="preserve">
+    <value>The security role that may update a referral's status from the View list.</value>
+  </data>
   <data name="lblCounselEmail.Text" xml:space="preserve">
     <value>Court Counsel Email:</value>
   </data>
