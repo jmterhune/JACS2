@@ -122,6 +122,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 _ctrl.DeleteExpertLocations(id);
                 _ctrl.DeleteExpertTypes(id);
                 _ctrl.DeleteExpertTemplates(id);
+                _ctrl.DeleteExpertRequests(id);  // historical request links (FK -> before the expert)
+                _ctrl.DeleteExpertCart(id);       // transient cart rows (no FK -> would otherwise orphan)
                 _ctrl.DeleteExpert(id);
                 return Request.CreateResponse(HttpStatusCode.NoContent);
             }

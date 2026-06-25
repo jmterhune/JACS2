@@ -1,7 +1,8 @@
 .command-item {
     cursor: pointer;
-    width: 16px;
-    max-width: 16px;
+    width: 2rem;
+    max-width: 2rem;
+    text-align: center;
 }
 label em{ color:darkred}
 .radio-button-list {
@@ -219,4 +220,9 @@ table.dataTable td, table.dataTable th {
 /* AJAX admin lists (DataTables) */
 .ew-admin-table {
     width: 100%;
+}
+/* Gap between the parked "Add" button and the page-length dropdown */
+.dataTables_length > .btn,
+.dt-length > .btn {
+    margin-right: 0.5rem;
 }

@@ -22,10 +22,26 @@ namespace tjc.Modules.ExpertWitness.Components
     {
         public void CreateRequestedTemplate(RequestCart t)
         {
+            // Stamp every cart row. The cart is rebuilt (delete+reinsert) on each
+            // interaction, so this also acts as a "last touched" time: an active
+            // session keeps refreshing it, only abandoned carts age out.
+            t.CreatedDate = DateTime.Now;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 rep.Insert(t);
+            }
+        }
+
+        // Housekeeping: drop carts last touched more than <days> ago. Rows with no
+        // CreatedDate are pre-timestamp leftovers and are treated as expired.
+        public void PurgeExpiredCart(int days)
+        {
+            if (days < 1) days = 7;
+            DateTime cutoff = DateTime.Now.AddDays(-days);
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.GetRepository<RequestCart>().Delete("WHERE CreatedDate IS NULL OR CreatedDate < @0", cutoff);
             }
         }
 

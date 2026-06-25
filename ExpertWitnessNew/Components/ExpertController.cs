@@ -138,6 +138,24 @@ namespace tjc.Modules.ExpertWitness.Components
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_delete_expert_templates", expertId);
             }
         }
+        // Historical request links. tjc_expert_expert_by_request has an FK to the
+        // expert, so these must be removed before the expert row itself.
+        public void DeleteExpertRequests(int expertId)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.GetRepository<ExpertRequest>().Delete("WHERE ExpertID = @0", expertId);
+            }
+        }
+        // Transient selection-cart rows. tjc_expert_requested_template has no FK, so
+        // without this an expert delete leaves orphaned cart rows behind.
+        public void DeleteExpertCart(int expertId)
+        {
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                ctx.GetRepository<RequestCart>().Delete("WHERE ExpertID = @0", expertId);
+            }
+        }
         public void CreateExpertTemplate(int expertId,int templateId)
         {
             using (IDataContext ctx = DataContext.Instance())

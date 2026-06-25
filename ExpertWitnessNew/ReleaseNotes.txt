@@ -9,6 +9,14 @@
 <div class="License">
 	<h3>About the ExpertWitness</h3>
 	<p class="Owner">
+		<b>Version 00.00.04</b><br /><br />
+	</p>
+	<p>Fixes the same expert appearing more than once in a single requirement.</p>
+	<h4>Changes</h4>
+	<ul>
+		<li>An expert who satisfies a requirement through more than one of its specialties (an "A or B or C" requirement) is now listed only once, so the same expert can no longer be selected or added multiple times for that requirement.</li>
+	</ul>
+	<p class="Owner">
 		<b>Version 00.00.03</b><br /><br />
 	</p>
 	<p>Admin lists converted to AJAX + a module Web API (no postbacks), with confirm-before-delete; plus the 00.00.02 selection and contracted-list changes.</p>

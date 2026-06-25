@@ -80,6 +80,7 @@ namespace tjc.Modules.ExpertWitness
                     }
                     GlobalID = Guid.NewGuid();
                     BindLists();
+                    PurgeExpiredCart();
                 }
             }
             catch (Exception exc) //Module failed to load
@@ -275,6 +276,23 @@ namespace tjc.Modules.ExpertWitness
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
         }
+        private void PurgeExpiredCart()
+        {
+            // Opportunistic housekeeping so abandoned carts don't accumulate. The
+            // retention window defaults to 7 days; override with a "CartRetentionDays"
+            // module setting. Never let a cleanup failure break the page.
+            try
+            {
+                int days = 7;
+                if (Settings.Contains("CartRetentionDays"))
+                    int.TryParse(Convert.ToString(Settings["CartRetentionDays"]), out days);
+                new RequestedTemplateController().PurgeExpiredCart(days);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+            }
+        }
         private void BindLists()
         {
             var tCtl = new TemplateController();
@@ -322,7 +340,7 @@ namespace tjc.Modules.ExpertWitness
                 }
                 tempRequestedTemplate = rCtl.GetTemporaryRequestedTemplates(tt.TemplateID, tt.Sequence, locationId)
                    .Where(x => !listSelectedExperts.Contains(x.ExpertID) && !listRequestedTemplate.Select(lt => lt.ExpertID).Contains(x.ExpertID) && !usedExpertIds.Contains(x.ExpertID))
-                   .Select(r => new RequestedTemplate() { ExpertID = r.ExpertID, ExpertName = r.ExpertName, Comments = r.Comments, TemplateID = templateId, NumberRequired = r.NumberRequired, Header = r.Header, Sequence = tt.Sequence, Guid = GlobalID, Status = Convert.ToInt32(RequestStatus.unselected), Position = r.Position }).Distinct().ToList().Except(PassedExperts, new RequestedTemplateComparer()).OrderBy(x => GetShuffleKey(x.ExpertID, x.Position)).Take(numberRemaining).ToList();
+                   .Select(r => new RequestedTemplate() { ExpertID = r.ExpertID, ExpertName = r.ExpertName, Comments = r.Comments, TemplateID = templateId, NumberRequired = r.NumberRequired, Header = r.Header, Sequence = tt.Sequence, Guid = GlobalID, Status = Convert.ToInt32(RequestStatus.unselected), Position = r.Position }).Distinct(new RequestedTemplateComparer()).ToList().Except(PassedExperts, new RequestedTemplateComparer()).OrderBy(x => GetShuffleKey(x.ExpertID, x.Position)).Take(numberRemaining).ToList();
 
                 if (tempRequestedTemplate.Count < numberRemaining)
                     errorMessage += "<li>There are not enough experts available to fulfill requirement # " + tt.Sequence.ToString() + "</li>";
