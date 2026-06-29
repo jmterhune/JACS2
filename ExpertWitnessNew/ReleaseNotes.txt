@@ -9,6 +9,14 @@
 <div class="License">
 	<h3>About the ExpertWitness</h3>
 	<p class="Owner">
+		<b>Version 00.00.05</b><br /><br />
+	</p>
+	<p>Adds Email and Phone to experts for the public Expert Witness List.</p>
+	<h4>Changes</h4>
+	<ul>
+		<li>Experts now have Email and Phone fields, editable in the admin Expert form, for display on the public (internet) Expert Witness List module.</li>
+	</ul>
+	<p class="Owner">
 		<b>Version 00.00.04</b><br /><br />
 	</p>
 	<p>Fixes the same expert appearing more than once in a single requirement.</p>

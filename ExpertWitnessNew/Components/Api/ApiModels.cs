@@ -70,6 +70,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
         public string LocationDisplay { get; set; }
         public DateTime? ContractEnds { get; set; }
         public string Comments { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
     }
 
     public class ExpertEditDto
@@ -78,6 +80,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
         public string Description { get; set; }
         public DateTime? ContractEnds { get; set; }
         public string Comments { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
         public List<int> LocationIDs { get; set; }
         public List<int> TypeIDs { get; set; }
         public List<int> TemplateIDs { get; set; }

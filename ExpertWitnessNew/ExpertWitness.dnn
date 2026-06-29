@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="ExpertWitness" type="Module" version="00.00.04">
+    <package name="ExpertWitness" type="Module" version="00.00.05">
       <friendlyName>ExpertWitness</friendlyName>
       <description>Joe Terhune ExpertWitness module</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
@@ -35,6 +35,11 @@
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>00.00.04.SqlDataProvider</name>
               <version>00.00.04</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.05.SqlDataProvider</name>
+              <version>00.00.05</version>
             </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
@@ -151,7 +156,7 @@
             <attributes>
               <businessControllerClass>tjc.Modules.ExpertWitness.Components.FeatureController, ExpertWitness</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>00.00.01,00.00.02,00.00.03,00.00.04</upgradeVersionsList>
+              <upgradeVersionsList>00.00.01,00.00.02,00.00.03,00.00.04,00.00.05</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>

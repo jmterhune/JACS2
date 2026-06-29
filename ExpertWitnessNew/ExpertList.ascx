@@ -56,6 +56,16 @@
                         <input type="date" name="ContractEnds" class="form-control" />
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        <input type="email" name="Email" class="form-control" maxlength="255" />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Phone</label>
+                        <input type="text" name="Phone" class="form-control" maxlength="50" />
+                    </div>
+                </div>
                 <fieldset class="outline-fieldset">
                     <legend>Locations</legend>
                     <div id="ewExpertLocations" class="column-4"></div>
@@ -157,6 +167,8 @@
                     $m.find('[name="ExpertID"]').val(x ? x.ExpertID : 0);
                     $m.find('[name="Description"]').val(x ? x.Description : "");
                     $m.find('[name="Comments"]').val(x ? (x.Comments || "") : "");
+                    $m.find('[name="Email"]').val(x ? (x.Email || "") : "");
+                    $m.find('[name="Phone"]').val(x ? (x.Phone || "") : "");
                     $m.find('[name="ContractEnds"]').val(x && x.ContractEnds ? String(x.ContractEnds).slice(0, 10) : "");
                     $m.find(".ew-loc-check, .ew-type-check, .ew-tmpl-check").prop("checked", false);
                     if (x) {
@@ -172,6 +184,8 @@
                         Description: $m.find('[name="Description"]').val(),
                         ContractEnds: ce ? ce : null,
                         Comments: $m.find('[name="Comments"]').val(),
+                        Email: $m.find('[name="Email"]').val(),
+                        Phone: $m.find('[name="Phone"]').val(),
                         LocationIDs: checkedVals($m, ".ew-loc-check"),
                         TypeIDs: checkedVals($m, ".ew-type-check"),
                         TemplateIDs: checkedVals($m, ".ew-tmpl-check")

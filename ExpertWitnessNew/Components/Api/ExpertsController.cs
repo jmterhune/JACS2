@@ -34,6 +34,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                     Description = x.Description,
                     ContractEnds = x.ContractEnds,
                     Comments = x.Comments,
+                    Email = x.Email,
+                    Phone = x.Phone,
                     TypeDisplay = string.Join(", ", _ctrl.GetExpertTypeTypes(x.ExpertID).Select(t => t.TypeName)),
                     LocationDisplay = string.Join(", ", _ctrl.GetExpertLocationLocations(x.ExpertID).Select(l => l.LocationName))
                 }).ToList();
@@ -55,6 +57,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                     Description = x.Description,
                     ContractEnds = x.ContractEnds,
                     Comments = x.Comments,
+                    Email = x.Email,
+                    Phone = x.Phone,
                     LocationIDs = _ctrl.GetExpertLocationLocations(id).Select(l => l.LocationID).ToList(),
                     TypeIDs = _ctrl.GetExpertTypeTypes(id).Select(t => t.TypeID).ToList(),
                     TemplateIDs = _ctrl.GetExpertTemplateTemplates(id).Select(t => t.TemplateID).ToList()
@@ -76,6 +80,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                     Description = item.Description.Trim(),
                     ContractEnds = item.ContractEnds,
                     Comments = item.Comments,
+                    Email = item.Email,
+                    Phone = item.Phone,
                     CreatedBy = UserInfo.Username,
                     CreatedDate = DateTime.Now,
                     ModifiedBy = UserInfo.Username,
@@ -101,6 +107,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 entity.Description = item.Description.Trim();
                 entity.ContractEnds = item.ContractEnds;
                 entity.Comments = item.Comments;
+                entity.Email = item.Email;
+                entity.Phone = item.Phone;
                 entity.ModifiedBy = UserInfo.Username;
                 entity.ModifiedDate = DateTime.Now;
                 _ctrl.UpdateExpert(entity);

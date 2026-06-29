@@ -15,6 +15,8 @@ namespace tjc.Modules.ExpertWitness.Components
         public string Description { get; set; }
         public DateTime? ContractEnds { get; set; }
         public string Comments { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
         [IgnoreColumn]
         public string LocationDisplay
         {
