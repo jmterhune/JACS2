@@ -93,12 +93,14 @@
                 $tbody.on("click", "." + cfg.editClass, function (e) {
                     e.preventDefault();
                     var id = $(this).closest("tr").data("id");
+                    ew.showProgress();
                     ew.api.get(cfg.resource + "/" + encodeURIComponent(id)).then(function (item) {
+                        ew.hideProgress();
                         var $m = $("#" + cfg.modalId);
                         cfg.fillForm($m, item);
                         $m.find(".modal-title").text(cfg.editTitle);
                         ew.showModal(cfg.modalId);
-                    }).catch(function (err) { ew.notifyError("Load failed: " + err.message); });
+                    }).catch(function (err) { ew.hideProgress(); ew.notifyError("Load failed: " + err.message); });
                 });
             }
 
@@ -140,14 +142,16 @@
                         if (err) { ew.notifyError(err); return; }
                     }
                     var idVal = (cfg.idField && data[cfg.idField]) || 0;
+                    ew.showProgress();
                     var p = idVal > 0
                         ? ew.api.put(cfg.resource + "/" + idVal, data)
                         : ew.api.post(cfg.resource, data);
                     p.then(function () {
+                        ew.hideProgress();
                         ew.hideModal(cfg.modalId);
                         ew.notifySuccess(idVal > 0 ? (cfg.updatedText || "Saved.") : (cfg.addedText || "Added."));
                         reload();
-                    }).catch(function (err) { ew.notifyError("Save failed: " + err.message); });
+                    }).catch(function (err) { ew.hideProgress(); ew.notifyError("Save failed: " + err.message); });
                 });
             }
 

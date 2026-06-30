@@ -221,8 +221,20 @@ table.dataTable td, table.dataTable th {
 .ew-admin-table {
     width: 100%;
 }
-/* Gap between the parked "Add" button and the page-length dropdown */
-.dataTables_length > .btn,
-.dt-length > .btn {
-    margin-right: 0.5rem;
+/* Indeterminate progress bar shown during edit/save (ew.showProgress/hideProgress) */
+.ew-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+}
+
+.ew-progress .progress {
+    height: 6px;
+    border-radius: 0;
+}
+
+.ew-progress .progress-bar {
+    width: 100%;
 }

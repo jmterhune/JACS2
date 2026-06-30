@@ -15,7 +15,7 @@
     </ul>
     <div class="tab-content">
         <div id="evaluations" class="tab-pane active">
-            <button type="button" id="ewTemplateAdd" class="btn btn-success"><i class="fas fa-plus"></i>&nbsp;Add Evaluation Type</button>
+            <button type="button" id="ewTemplateAdd" class="btn btn-success me-3"><i class="fas fa-plus"></i>&nbsp;Add Evaluation Type</button>
             <table id="tblTemplates" class="table table-striped table-hover ew-admin-table">
                 <thead>
                     <tr>
@@ -55,7 +55,7 @@
                     </div>
                     <div id="ewTemplateTypes" class="column-2"></div>
                     <p>
-                        <button type="button" class="btn btn-outline-primary" id="ewTemplateAddReq">Add Requirement</button>
+                        <button type="button" class="btn btn-outline-primary me-3" id="ewTemplateAddReq">Add Requirement</button>
                     </p>
                 </fieldset>
                 <table id="tblTemplateReqs" class="table table-striped ew-admin-table">
@@ -66,8 +66,8 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" id="ewTemplateSave" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="ewTemplateSave" class="btn btn-primary me-3">Save</button>
+                <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

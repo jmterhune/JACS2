@@ -15,7 +15,7 @@
     </ul>
     <div class="tab-content">
         <div id="types" class="tab-pane active">
-            <button type="button" id="ewTypeAdd" class="btn btn-success"><i class="fas fa-plus"></i>&nbsp;Add Type</button>
+            <button type="button" id="ewTypeAdd" class="btn btn-success me-3"><i class="fas fa-plus"></i>&nbsp;Add Type</button>
             <table id="tblTypes" class="table table-striped table-hover ew-admin-table">
                 <thead>
                     <tr>
@@ -48,8 +48,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="ewTypeSave" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="ewTypeSave" class="btn btn-primary me-3">Save</button>
+                <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

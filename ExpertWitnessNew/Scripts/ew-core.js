@@ -126,5 +126,22 @@
             .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     };
 
+    /* ---------- progress bar (indeterminate, fixed at top of the viewport) ---------- */
+    ew.showProgress = function () {
+        var el = document.getElementById("ewProgress");
+        if (!el) {
+            el = document.createElement("div");
+            el.id = "ewProgress";
+            el.className = "ew-progress";
+            el.innerHTML = '<div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div></div>';
+            document.body.appendChild(el);
+        }
+        el.style.display = "block";
+    };
+    ew.hideProgress = function () {
+        var el = document.getElementById("ewProgress");
+        if (el) el.style.display = "none";
+    };
+
     window.ew = ew;
 })(window, jQuery);
