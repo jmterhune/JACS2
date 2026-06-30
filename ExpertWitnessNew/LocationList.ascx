@@ -20,7 +20,7 @@
                 <thead>
                     <tr>
                         <th class="command-item no-sort"></th>
-                        <th>ID</th>
+                        <th class="ew-id-col">ID</th>
                         <th>Location</th>
                         <th class="command-item no-sort"></th>
                     </tr>
@@ -44,7 +44,7 @@
                 <input type="hidden" name="LocationID" value="0" />
                 <div class="mb-3">
                     <label>Location:</label>
-                    <input type="text" name="LocationName" class="form-control" maxlength="50" />
+                    <input type="text" name="LocationName" class="form-control" maxlength="250" />
                 </div>
             </div>
             <div class="modal-footer">

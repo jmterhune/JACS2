@@ -30,7 +30,7 @@
                             <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control case-year" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                             <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-type" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
                             <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase case-sequence" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                            <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="10" CssClass="form-control upperCase defendant-suffix" ClientIDMode="Static"></asp:TextBox>
+                            <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase defendant-suffix" ClientIDMode="Static"></asp:TextBox>
                             <small class="input-group-text" title="County-Year-Case Type-Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
                         </div>
                         <small class="form-text text-muted d-block">
@@ -41,11 +41,11 @@
                 <div class="row mb-3">
                     <div class="col-12 col-lg-6 mb-3 mb-lg-0">
                         <label for="<%=txtCaseParties.ClientID %>">Case Name</label>
-                        <asp:TextBox ID="txtCaseParties" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="txtCaseParties" runat="server" MaxLength="2000" CssClass="form-control"></asp:TextBox>
                     </div>
                     <div class="col-12 col-md-8 col-lg-4 mb-3 mb-md-0">
                         <label for="<%=txtMotionTitle.ClientID %>">Motion Title</label>
-                        <asp:TextBox ID="txtMotionTitle" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="txtMotionTitle" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
                     </div>
                     <div class="col-12 col-md-4 col-lg-2">
                         <label for="<%=txtMotionDate.ClientID %>">Motion Date</label>

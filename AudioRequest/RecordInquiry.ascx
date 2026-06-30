@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-md-6">
                     <asp:Label ID="lblPhone" runat="server" AssociatedControlID="txtPhone" Text="Phone<em>*</em>" />
-                    <asp:TextBox ID="txtPhone" runat="server" MaxLength="15" CssClass="form-control phone_us" placeholder="(555) 555-5555" AutoCompleteType="BusinessPhone" />
+                    <asp:TextBox ID="txtPhone" runat="server" MaxLength="50" CssClass="form-control phone_us" placeholder="(555) 555-5555" AutoCompleteType="BusinessPhone" />
                     <asp:RequiredFieldValidator ID="valPhone" runat="server" SetFocusOnError="true" Display="Dynamic"
                         ErrorMessage="Phone is Required" ControlToValidate="txtPhone" CssClass="label label-danger" />
                     <asp:RegularExpressionValidator ID="valIsPhone" runat="server" SetFocusOnError="true"
@@ -87,7 +87,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <asp:Label ID="lblDefendant" runat="server" AssociatedControlID="txtDefendant" Text="Defendant's Name<em>*</em>" />
-                    <asp:TextBox ID="txtDefendant" runat="server" MaxLength="50" CssClass="form-control" />
+                    <asp:TextBox ID="txtDefendant" runat="server" MaxLength="250" CssClass="form-control" />
                     <asp:RequiredFieldValidator ID="valDefendant" runat="server" SetFocusOnError="true" Display="Dynamic"
                         ErrorMessage="Defendant's Name is Required"
                         ControlToValidate="txtDefendant" CssClass="label label-danger" />
@@ -134,7 +134,7 @@
                 </div>
                 <div class="col-md-6">
                     <asp:Label ID="lblTime" runat="server" AssociatedControlID="txtTime" Text="Time of Proceeding" />
-                    <asp:TextBox ID="txtTime" runat="server" MaxLength="50" CssClass="form-control" placeholder="HH:MM AM" />
+                    <asp:TextBox ID="txtTime" runat="server" MaxLength="100" CssClass="form-control" placeholder="HH:MM AM" />
                     <%--                    <asp:RequiredFieldValidator ID="valTime" runat="server" SetFocusOnError="true" Display="Dynamic" CssClass="label label-danger"
                         ErrorMessage="Time of Proceeding is Required" ControlToValidate="txtTime" />
                     <asp:RegularExpressionValidator ID="valTimeFormat" runat="server" ControlToValidate="txtTime"

@@ -58,13 +58,13 @@
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=txtFirstName.ClientID %>">First Name <span class="text-danger">*</span></label>
-                        <asp:TextBox ID="txtFirstName" runat="server" CssClass="form-control" MaxLength="100" />
+                        <asp:TextBox ID="txtFirstName" runat="server" CssClass="form-control" MaxLength="50" />
                         <asp:RequiredFieldValidator ID="rfvFirstName" runat="server" ControlToValidate="txtFirstName"
                             ErrorMessage="First Name is required." Display="None" />
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=txtLastName.ClientID %>">Last Name <span class="text-danger">*</span></label>
-                        <asp:TextBox ID="txtLastName" runat="server" CssClass="form-control" MaxLength="100" />
+                        <asp:TextBox ID="txtLastName" runat="server" CssClass="form-control" MaxLength="50" />
                         <asp:RequiredFieldValidator ID="rfvLastName" runat="server" ControlToValidate="txtLastName"
                             ErrorMessage="Last Name is required." Display="None" />
                     </div>
@@ -77,7 +77,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-4">
                         <label for="<%=txtJobTitle.ClientID %>">Job Title</label>
-                        <asp:TextBox ID="txtJobTitle" runat="server" CssClass="form-control" MaxLength="100" />
+                        <asp:TextBox ID="txtJobTitle" runat="server" CssClass="form-control" MaxLength="150" />
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=txtSsn.ClientID %>">SSN <span class="text-danger">*</span></label>
@@ -119,18 +119,19 @@
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <label for="<%=txtAddressLine1.ClientID %>">Address Line 1</label>
-                        <asp:TextBox ID="txtAddressLine1" runat="server" CssClass="form-control" MaxLength="200" />
+                        <%-- Address is one nvarchar(300) column stored as Line1 + newline + Line2, so each line caps at 149. --%>
+                        <asp:TextBox ID="txtAddressLine1" runat="server" CssClass="form-control" MaxLength="149" />
                     </div>
                     <div class="col-12 col-lg-6">
                         <label for="<%=txtAddressLine2.ClientID %>">Address Line 2</label>
-                        <asp:TextBox ID="txtAddressLine2" runat="server" CssClass="form-control" MaxLength="200" />
+                        <asp:TextBox ID="txtAddressLine2" runat="server" CssClass="form-control" MaxLength="149" />
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=txtCity.ClientID %>">City</label>
-                        <asp:TextBox ID="txtCity" runat="server" CssClass="form-control" MaxLength="100" />
+                        <asp:TextBox ID="txtCity" runat="server" CssClass="form-control" MaxLength="50" />
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=drpState.ClientID %>">State</label>
@@ -191,7 +192,7 @@
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=txtZip.ClientID %>">Zip</label>
-                        <asp:TextBox ID="txtZip" runat="server" CssClass="form-control" MaxLength="10" />
+                        <asp:TextBox ID="txtZip" runat="server" CssClass="form-control" MaxLength="12" />
                     </div>
 
                 </div>
@@ -199,14 +200,14 @@
                 <div class="row">
                     <div class="col-12 col-lg-4">
                         <label for="<%=txtEmail.ClientID %>">Work Email</label>
-                        <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" MaxLength="200" TextMode="Email" />
+                        <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" MaxLength="250" TextMode="Email" />
                         <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail"
                             ValidationExpression="^\s*$|^[\w.!#$%&'*+\-/=?^_`{|}~]+@[\w\-]+(\.[\w\-]+)+\s*$"
                             ErrorMessage="Work Email is not a valid email address." Display="None" />
                     </div>
                     <div class="col-12 col-lg-4">
                         <label for="<%=txtPersonalEmail.ClientID %>">Personal Email</label>
-                        <asp:TextBox ID="txtPersonalEmail" runat="server" CssClass="form-control" MaxLength="200" TextMode="Email" />
+                        <asp:TextBox ID="txtPersonalEmail" runat="server" CssClass="form-control" MaxLength="250" TextMode="Email" />
                         <asp:RegularExpressionValidator ID="revPersonalEmail" runat="server" ControlToValidate="txtPersonalEmail"
                             ValidationExpression="^\s*$|^[\w.!#$%&'*+\-/=?^_`{|}~]+@[\w\-]+(\.[\w\-]+)+\s*$"
                             ErrorMessage="Personal Email is not a valid email address." Display="None" />
@@ -261,7 +262,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=txtPosition.ClientID %>">Position</label>
-                        <asp:TextBox ID="txtPosition" runat="server" CssClass="form-control" MaxLength="100" />
+                        <asp:TextBox ID="txtPosition" runat="server" CssClass="form-control" MaxLength="150" />
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <label for="<%=drpCounty.ClientID %>">County</label>
@@ -474,7 +475,7 @@
                         <div class="row mt-2">
                             <div class="col-12">
                                 <label>Description</label>
-                                <input type="text" name="Description" class="form-control" maxlength="500" />
+                                <input type="text" name="Description" class="form-control" maxlength="2000" />
                             </div>
                         </div>
                     </div>
@@ -594,7 +595,8 @@
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <label>Number</label>
-                                <input type="text" name="PhoneNumber" class="form-control empdb-phone-mask" maxlength="25" placeholder="(999) 999-9999" />
+                                <%-- Masked input; DigitsOnly strips the mask before storage. nvarchar(20) holds the raw digits, and 20 still fits the formatted "(999) 999-9999" (14). --%>
+                                <input type="text" name="PhoneNumber" class="form-control empdb-phone-mask" maxlength="20" placeholder="(999) 999-9999" />
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <label>Extension</label>
@@ -660,11 +662,11 @@
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
                                 <label>First Name</label>
-                                <input type="text" name="FirstName" class="form-control" maxlength="100" />
+                                <input type="text" name="FirstName" class="form-control" maxlength="50" />
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <label>Last Name</label>
-                                <input type="text" name="LastName" class="form-control" maxlength="100" />
+                                <input type="text" name="LastName" class="form-control" maxlength="50" />
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <label>Relationship</label>
@@ -678,15 +680,18 @@
                         <div class="row mt-2">
                             <div class="col-12 col-md-6 col-lg-4">
                                 <label>Phone - Home</label>
-                                <input type="text" name="PhoneHome" class="form-control empdb-phone-mask" maxlength="25" placeholder="(999) 999-9999" />
+                                <%-- Masked; DigitsOnly strips before storage. nvarchar(20) holds raw digits; 20 still fits the formatted "(999) 999-9999" (14). --%>
+                                <input type="text" name="PhoneHome" class="form-control empdb-phone-mask" maxlength="20" placeholder="(999) 999-9999" />
                             </div>
                             <div class="col-12 col-md-6 col-lg-4">
                                 <label>Phone - Work</label>
-                                <input type="text" name="PhoneWork" class="form-control empdb-phone-mask" maxlength="25" placeholder="(999) 999-9999" />
+                                <%-- Masked; DigitsOnly strips before storage. nvarchar(20) holds raw digits; 20 still fits the formatted "(999) 999-9999" (14). --%>
+                                <input type="text" name="PhoneWork" class="form-control empdb-phone-mask" maxlength="20" placeholder="(999) 999-9999" />
                             </div>
                             <div class="col-12 col-md-6 col-lg-4">
                                 <label>Phone - Mobile</label>
-                                <input type="text" name="PhoneMobile" class="form-control empdb-phone-mask" maxlength="25" placeholder="(999) 999-9999" />
+                                <%-- Masked; DigitsOnly strips before storage. nvarchar(20) holds raw digits; 20 still fits the formatted "(999) 999-9999" (14). --%>
+                                <input type="text" name="PhoneMobile" class="form-control empdb-phone-mask" maxlength="20" placeholder="(999) 999-9999" />
                             </div>
                         </div>
                     </div>

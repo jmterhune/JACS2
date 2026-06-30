@@ -89,11 +89,11 @@
             <div class="row form-group">
                 <div class="col-md-4">
                     <label for="txtTribunalCaseNumber">Tribunal Case Number</label>
-                    <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                 </div>
                 <div class="col-md-4">
                     <label for="txtAppellateCaseNumber">Appellate Case Number</label>
-                    <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                    <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                 </div>
             </div>
             <div class="row form-group">

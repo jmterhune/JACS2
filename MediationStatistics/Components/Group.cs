@@ -22,11 +22,11 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("MediationGroups", CacheItemPriority.Default, 20)]
     internal class Group : EntityBase
     {
-        public int GroupId { get; set; }
+        public int GroupId { get; set; }  // int (identity PK)
 
-        public string Description { get; set; }
+        public string Description { get; set; }  // nvarchar(50)
 
-        public bool? CourtOrdered { get; set; }
+        public bool? CourtOrdered { get; set; }  // bit
         [IgnoreColumn]
         public GroupType GroupEnum
         {

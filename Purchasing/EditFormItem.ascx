@@ -14,7 +14,7 @@
             <asp:HiddenField ID="hdOrderId" ClientIDMode="Static" runat="server" />
             <div class="col-md-6">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRequestor" Text="Requester Name" />
-                <asp:TextBox ID="txtRequestor" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="txtRequestor" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtRequestor"
                     CssClass="label label-danger" ErrorMessage="Requester is Required" />
             </div>

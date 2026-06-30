@@ -16,15 +16,15 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("NhitItemId", AutoIncrement = true)]
     public class NhitItemInfo
     {
-        public int NhitItemId { get; set; }
-        public string Category { get; set; }
-        public string Name { get; set; }
-        public string Notes { get; set; }
-        public int SortOrder { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public int NhitItemId { get; set; }  // int
+        public string Category { get; set; }  // varchar(20)
+        public string Name { get; set; }  // varchar(200)
+        public string Notes { get; set; }  // varchar(500)
+        public int SortOrder { get; set; }  // int
+        public bool IsActive { get; set; }  // bit
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
     }
 }

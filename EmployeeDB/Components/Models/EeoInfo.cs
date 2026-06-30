@@ -7,53 +7,53 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("EeoId", AutoIncrement = true)]
     public class EeoInfo
     {
-        public long EeoId { get; set; }
-        public int? JobGroupId { get; set; }
-        public decimal? PopulationMale { get; set; }
-        public decimal? PopulationFemale { get; set; }
-        public decimal? PopulationWhite { get; set; }
-        public decimal? PopulationIndian { get; set; }
-        public decimal? PopulationBlack { get; set; }
-        public decimal? PopulationAsian { get; set; }
-        public decimal? PopulationHispanic { get; set; }
-        public decimal? PopulationOther { get; set; }
-        public decimal? HireMale { get; set; }
-        public decimal? HireFemale { get; set; }
-        public decimal? HireWhite { get; set; }
-        public decimal? HireBlack { get; set; }
-        public decimal? HireAsian { get; set; }
-        public decimal? HireIndian { get; set; }
-        public decimal? HireHispanic { get; set; }
-        public decimal? HireOther { get; set; }
-        public decimal? PromoMale { get; set; }
-        public decimal? PromoFemale { get; set; }
-        public decimal? PromoWhite { get; set; }
-        public decimal? PromoBlack { get; set; }
-        public decimal? PromoAsian { get; set; }
-        public decimal? PromoIndian { get; set; }
-        public decimal? PromoHispanic { get; set; }
-        public decimal? PromoOther { get; set; }
-        public decimal? TransferMale { get; set; }
-        public decimal? TransferFemale { get; set; }
-        public decimal? TransferWhite { get; set; }
-        public decimal? TransferBlack { get; set; }
-        public decimal? TransferAsian { get; set; }
-        public decimal? TransferIndian { get; set; }
-        public decimal? TransferHispanic { get; set; }
-        public decimal? TransferOther { get; set; }
-        public decimal? TermMale { get; set; }
-        public decimal? TermFemale { get; set; }
-        public decimal? TermWhite { get; set; }
-        public decimal? TermBlack { get; set; }
-        public decimal? TermIndian { get; set; }
-        public decimal? TermAsian { get; set; }
-        public decimal? TermHispanic { get; set; }
-        public decimal? TermOther { get; set; }
-        public int? Year { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public long EeoId { get; set; }  // bigint
+        public int? JobGroupId { get; set; }  // int
+        public decimal? PopulationMale { get; set; }  // decimal(18,4)
+        public decimal? PopulationFemale { get; set; }  // decimal(18,4)
+        public decimal? PopulationWhite { get; set; }  // decimal(18,4)
+        public decimal? PopulationIndian { get; set; }  // decimal(18,4)
+        public decimal? PopulationBlack { get; set; }  // decimal(18,4)
+        public decimal? PopulationAsian { get; set; }  // decimal(18,4)
+        public decimal? PopulationHispanic { get; set; }  // decimal(18,4)
+        public decimal? PopulationOther { get; set; }  // decimal(18,4)
+        public decimal? HireMale { get; set; }  // decimal(18,4)
+        public decimal? HireFemale { get; set; }  // decimal(18,4)
+        public decimal? HireWhite { get; set; }  // decimal(18,4)
+        public decimal? HireBlack { get; set; }  // decimal(18,4)
+        public decimal? HireAsian { get; set; }  // decimal(18,4)
+        public decimal? HireIndian { get; set; }  // decimal(18,4)
+        public decimal? HireHispanic { get; set; }  // decimal(18,4)
+        public decimal? HireOther { get; set; }  // decimal(18,4)
+        public decimal? PromoMale { get; set; }  // decimal(18,4)
+        public decimal? PromoFemale { get; set; }  // decimal(18,4)
+        public decimal? PromoWhite { get; set; }  // decimal(18,4)
+        public decimal? PromoBlack { get; set; }  // decimal(18,4)
+        public decimal? PromoAsian { get; set; }  // decimal(18,4)
+        public decimal? PromoIndian { get; set; }  // decimal(18,4)
+        public decimal? PromoHispanic { get; set; }  // decimal(18,4)
+        public decimal? PromoOther { get; set; }  // decimal(18,4)
+        public decimal? TransferMale { get; set; }  // decimal(18,4)
+        public decimal? TransferFemale { get; set; }  // decimal(18,4)
+        public decimal? TransferWhite { get; set; }  // decimal(18,4)
+        public decimal? TransferBlack { get; set; }  // decimal(18,4)
+        public decimal? TransferAsian { get; set; }  // decimal(18,4)
+        public decimal? TransferIndian { get; set; }  // decimal(18,4)
+        public decimal? TransferHispanic { get; set; }  // decimal(18,4)
+        public decimal? TransferOther { get; set; }  // decimal(18,4)
+        public decimal? TermMale { get; set; }  // decimal(18,4)
+        public decimal? TermFemale { get; set; }  // decimal(18,4)
+        public decimal? TermWhite { get; set; }  // decimal(18,4)
+        public decimal? TermBlack { get; set; }  // decimal(18,4)
+        public decimal? TermIndian { get; set; }  // decimal(18,4)
+        public decimal? TermAsian { get; set; }  // decimal(18,4)
+        public decimal? TermHispanic { get; set; }  // decimal(18,4)
+        public decimal? TermOther { get; set; }  // decimal(18,4)
+        public int? Year { get; set; }  // int
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
 
         /// <summary>Resolved JobGroup.Description, populated by the API layer
         /// on read so the list can render the category name without a second

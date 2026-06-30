@@ -26,27 +26,27 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("Cases", CacheItemPriority.Default, 20)]
     internal class Case : EntityBase
     {
-        public int CaseId { get; set; }
+        public int CaseId { get; set; }  // int (identity PK)
 
-        public int? RegionId { get; set; }
+        public int? RegionId { get; set; }  // int
 
-        public int? GroupId { get; set; }
+        public int? GroupId { get; set; }  // int
 
-        public string CaseNumber { get; set; }
+        public string CaseNumber { get; set; }  // nvarchar(50)
 
-        public string CDSPNumber { get; set; }
+        public string CDSPNumber { get; set; }  // nvarchar(50)
 
-        public string p1_FirstName { get; set; }
+        public string p1_FirstName { get; set; }  // nvarchar(50)
 
-        public string p1_LastName { get; set; }
+        public string p1_LastName { get; set; }  // nvarchar(50)
 
-        public string p1_business { get; set; }
+        public string p1_business { get; set; }  // nvarchar(50)
 
-        public string p2_FirstName { get; set; }
+        public string p2_FirstName { get; set; }  // nvarchar(50)
 
-        public string p2_LastName { get; set; }
+        public string p2_LastName { get; set; }  // nvarchar(50)
 
-        public string p2_business { get; set; }
+        public string p2_business { get; set; }  // nvarchar(50)
         [IgnoreColumn]
         public IEnumerable<Session> CaseSessions
         {

@@ -12,7 +12,7 @@ namespace tjc.Modules.RecordDestruction.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class RetentionPeriod : AuditBase
     {
-        public int RetentionPeriodID { get; set; }
-        public string Description { get; set; }
+        public int RetentionPeriodID { get; set; } // int
+        public string Description { get; set; } // nvarchar(100)
     }
 }

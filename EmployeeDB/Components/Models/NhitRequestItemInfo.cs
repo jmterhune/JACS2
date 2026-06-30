@@ -11,11 +11,11 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("NhitRequestItemId", AutoIncrement = true)]
     public class NhitRequestItemInfo
     {
-        public int NhitRequestItemId { get; set; }
-        public int NhitRequestId { get; set; }
-        public int NhitItemId { get; set; }
-        public string ItemSnapshotName { get; set; }
-        public string ItemSnapshotCategory { get; set; }
-        public bool IsChecked { get; set; }
+        public int NhitRequestItemId { get; set; }  // int
+        public int NhitRequestId { get; set; }  // int
+        public int NhitItemId { get; set; }  // int
+        public string ItemSnapshotName { get; set; }  // varchar(200)
+        public string ItemSnapshotCategory { get; set; }  // varchar(20)
+        public bool IsChecked { get; set; }  // bit
     }
 }

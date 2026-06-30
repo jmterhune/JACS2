@@ -11,7 +11,8 @@ namespace tjc.Modules.ExpertWitness.Components
     [Cacheable("Locations", CacheItemPriority.Default, 20)]
     internal class Location: ExpertBase
     {
-        public int LocationID { get; set; }
-        public string LocationName { get; set; }
+        // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_location).
+        public int LocationID { get; set; }  // int (identity PK)
+        public string LocationName { get; set; }  // nvarchar(250)
     }
 }

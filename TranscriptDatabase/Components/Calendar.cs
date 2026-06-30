@@ -10,19 +10,19 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("Calendars", CacheItemPriority.Default, 20)]
     internal class Calendar:EntityBase
     {
-        public int EventID { get; set; }
+        public int EventID { get; set; }  // int
 
-        public string Subject { get; set; }
+        public string Subject { get; set; }  // nvarchar(255)
 
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; }  // smalldatetime
 
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; }  // smalldatetime
 
-        public int EventTypeID { get; set; }
+        public int EventTypeID { get; set; }  // int
 
-        public int DesignationID { get; set; }
+        public int DesignationID { get; set; }  // int
 
-        public bool RequestOutstanding { get; set; }
+        public bool RequestOutstanding { get; set; }  // bit
         [IgnoreColumn]
         [EnumDataType(typeof(EventTypes))]
         public EventTypes EventType
@@ -43,26 +43,26 @@ namespace tjc.Modules.TranscriptDatabase.Components
             {
                     return Enumerations.GetEnumDescription(EventType);
             }
-        }      
+        }
     }
     [TableName("tjc_rec_calendar_events")]
     [PrimaryKey("EventID", AutoIncrement = true)]
     internal class CalendarListItem : EntityBase
     {
-        public int EventID { get; set; }
+        public int EventID { get; set; }  // int
 
-        public string Subject { get; set; }
+        public string Subject { get; set; }  // nvarchar(255)
 
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; }  // smalldatetime
 
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; }  // smalldatetime
 
-        public int EventTypeID { get; set; }
-        public string County { get; set; }
+        public int EventTypeID { get; set; }  // int
+        public string County { get; set; }  // nvarchar(50)
 
-        public int DesignationID { get; set; }
-        public string CourtReporterName { get; set; }
-        public bool RequestOutstanding { get; set; }
+        public int DesignationID { get; set; }  // int
+        public string CourtReporterName { get; set; }  // int (view column is int)
+        public bool RequestOutstanding { get; set; }  // bit
         [IgnoreColumn]
         [EnumDataType(typeof(EventTypes))]
         public EventTypes EventType

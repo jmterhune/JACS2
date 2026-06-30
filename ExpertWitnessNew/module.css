@@ -1,7 +1,7 @@
 .command-item {
     cursor: pointer;
-    width: 2rem;
-    max-width: 2rem;
+    width: 1%;
+    white-space: nowrap;
     text-align: center;
 }
 label em{ color:darkred}
@@ -220,6 +220,11 @@ table.dataTable td, table.dataTable th {
 /* AJAX admin lists (DataTables) */
 .ew-admin-table {
     width: 100%;
+}
+/* ID column fits its content instead of stretching with the 100%-wide table. */
+.ew-admin-table th.ew-id-col {
+    width: 1%;
+    white-space: nowrap;
 }
 /* Indeterminate progress bar shown during edit/save (ew.showProgress/hideProgress) */
 .ew-progress {

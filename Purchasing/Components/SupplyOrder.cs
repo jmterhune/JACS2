@@ -10,12 +10,12 @@ namespace tjc.Modules.Purchasing.Components
 
     internal class SupplyOrder
     {
-        public int OrderID { get; set; }
-        public string Location { get; set; }
-        public string RequestedName { get; set; }
-        public string EmailAddress { get; set; }
-        public DateTime DateRequested { get; set; }
-        public DateTime? CompletedDate { get; set; }
+        public int OrderID { get; set; } // int
+        public string Location { get; set; } // nvarchar(150)
+        public string RequestedName { get; set; } // nvarchar(100)
+        public string EmailAddress { get; set; } // nvarchar(250)
+        public DateTime DateRequested { get; set; } // datetime
+        public DateTime? CompletedDate { get; set; } // datetime
         [IgnoreColumn]
         public IEnumerable<SupplyOrderItem> SupplyOrderItems
         {

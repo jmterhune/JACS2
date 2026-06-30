@@ -12,6 +12,7 @@
 
 namespace tjc.Modules.AudioRequest.Components
 {
+    // NOTE: prod (intranet.jud12.local) table is actually named tjc_dcr_proceeding; column sizes below were verified against it.
     [TableName("aws_dcr_Proceeding")]
     //setup the primary key for table
     [PrimaryKey("ProceedingId", AutoIncrement = true)]
@@ -21,65 +22,65 @@ namespace tjc.Modules.AudioRequest.Components
     [Scope("ModuleId")]
     class ProceedingInfo
     {
-        public int ModuleId { get; set; }
+        public int ModuleId { get; set; }  // int
 
-        public int ProceedingId { get; set; }
+        public int ProceedingId { get; set; }  // int (ProceedingID, identity PK)
 
-        public string Requestor { get; set; }
+        public string Requestor { get; set; }  // nvarchar(50)
 
-        public string Address { get; set; }
+        public string Address { get; set; }  // nvarchar(100)
 
-        public string City { get; set; }
+        public string City { get; set; }  // nvarchar(50)
 
-        public string State { get; set; }
+        public string State { get; set; }  // nchar(2)
 
-        public string Zip { get; set; }
+        public string Zip { get; set; }  // nvarchar(11)
 
-        public string Phone { get; set; }
+        public string Phone { get; set; }  // nvarchar(50) — stored formatted, e.g. "(941) 555-1234" (mask NOT stripped)
 
-        public string Fax { get; set; }
+        public string Fax { get; set; }  // nvarchar(50) — stored formatted, e.g. "(941) 555-1234" (mask NOT stripped)
 
-        public string Email { get; set; }
+        public string Email { get; set; }  // nvarchar(150)
 
-        public int RequestorId { get; set; }
+        public int RequestorId { get; set; }  // int (RequestorID)
 
-        public DateTime RequestedDate { get; set; }
+        public DateTime RequestedDate { get; set; }  // smalldatetime
 
-        public string CDPreference { get; set; }
+        public string CDPreference { get; set; }  // nvarchar(25)
 
-        public string Jurisdiction { get; set; }
+        public string Jurisdiction { get; set; }  // nvarchar(10)
 
-        public string CaseName { get; set; }
+        public string CaseName { get; set; }  // nvarchar(250)
 
-        public string Judge { get; set; }
+        public string Judge { get; set; }  // nvarchar(50)
 
-        public string CaseNumber { get; set; }
+        public string CaseNumber { get; set; }  // nvarchar(20)
 
-        public string ProceedingDate { get; set; }
+        public string ProceedingDate { get; set; }  // nvarchar(50)
 
-        public string ProceedingTime { get; set; }
+        public string ProceedingTime { get; set; }  // nvarchar(100)
 
-        public string Location { get; set; }
+        public string Location { get; set; }  // nvarchar(10)
 
-        public string ProceedingType { get; set; }
+        public string ProceedingType { get; set; }  // nvarchar(250)
 
-        public string Involvement { get; set; }
+        public string Involvement { get; set; }  // nvarchar(50)
 
-        public string Instructions { get; set; }
+        public string Instructions { get; set; }  // nvarchar(750)
 
-        public string TranscriptionList { get; set; }
+        public string TranscriptionList { get; set; }  // nvarchar(3)
 
-        public string DeliveryMethod { get; set; }
+        public string DeliveryMethod { get; set; }  // nvarchar(50)
 
-        public bool Agency { get; set; }
+        public bool Agency { get; set; }  // bit
 
-        public bool CA { get; set; }
+        public bool CA { get; set; }  // bit
 
-        public bool Closed { get; set; }
+        public bool Closed { get; set; }  // bit
 
-        public bool Paid { get; set; }
+        public bool Paid { get; set; }  // bit
 
-        public bool IsInquiry { get; set; }
+        public bool IsInquiry { get; set; }  // bit
 
     }
 }

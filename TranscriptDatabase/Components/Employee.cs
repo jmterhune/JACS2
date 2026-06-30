@@ -9,11 +9,11 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("Employees", CacheItemPriority.Default, 20)]
     internal class Employee : EntityBase
     {
-        public int EmployeeID { get; set; }
-        public int EmployeeTypeID { get; set; }
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
-        public string Title { get; set; }
+        public int EmployeeID { get; set; }  // int
+        public int EmployeeTypeID { get; set; }  // int
+        public string LastName { get; set; }  // nvarchar(200)
+        public string FirstName { get; set; }  // nvarchar(50)
+        public string Title { get; set; }  // nvarchar(50)
         [IgnoreColumn]
         public string EmployeeName { get { return string.Format("{0}, {1}", LastName, FirstName); } }
         [IgnoreColumn]

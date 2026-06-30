@@ -5,11 +5,11 @@ namespace tjc.Modules.Purchasing.Components
 {
     internal class Attachment
     {
-        public int AttachmentID { get; set; }
-        public int FileID { get; set; }
-        public int OrderID { get; set; }
-        public string Path { get; set; }
-        public string FileName { get; set; }
+        public int AttachmentID { get; set; } // int
+        public int FileID { get; set; } // int
+        public int OrderID { get; set; } // int
+        public string Path { get; set; } // nvarchar(2000)
+        public string FileName { get; set; } // nvarchar(500)
     }
 
     [TableName("tjc_purchasing_form_order_attachments")]
@@ -17,7 +17,7 @@ namespace tjc.Modules.Purchasing.Components
     [PrimaryKey("AttachmentID", AutoIncrement = true)]
     internal class FormOrderAttachment: Attachment
     {
-        public int FormID { get; set; }
+        public int FormID { get; set; } // int
     }
 
     internal class AttachmentListItem : FormOrderAttachment

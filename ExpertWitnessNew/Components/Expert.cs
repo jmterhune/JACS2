@@ -11,12 +11,13 @@ namespace tjc.Modules.ExpertWitness.Components
     [Cacheable("Experts", CacheItemPriority.Default, 20)]
     internal class Expert : ExpertBase
     {
-        public int ExpertID { get; set; }
-        public string Description { get; set; }
-        public DateTime? ContractEnds { get; set; }
-        public string Comments { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
+        // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_expert).
+        public int ExpertID { get; set; }  // int (identity PK)
+        public string Description { get; set; }  // nvarchar(50)
+        public DateTime? ContractEnds { get; set; }  // datetime
+        public string Comments { get; set; }  // nvarchar(max)
+        public string Email { get; set; }  // nvarchar(255)
+        public string Phone { get; set; }  // nvarchar(50)
         [IgnoreColumn]
         public string LocationDisplay
         {
@@ -60,41 +61,41 @@ namespace tjc.Modules.ExpertWitness.Components
     //setup the primary key for table
     internal class ExpertType
     {
-        public int ExpertID { get; set; }
-        public int TypeID { get; set; }
-        public int Sequence { get; set; }
+        public int ExpertID { get; set; }  // int
+        public int TypeID { get; set; }  // int
+        public int Sequence { get; set; }  // int
 
     }
     [TableName("tjc_expert_expert_by_template")]
     //setup the primary key for table
     internal class ExpertTemplate
     {
-        public int ExpertID { get; set; }
-        public int TemplateID { get; set; }
-        public int Position { get; set; }
+        public int ExpertID { get; set; }  // int
+        public int TemplateID { get; set; }  // int
+        public int Position { get; set; }  // int
     }
     [TableName("tjc_expert_expert_by_location")]
     //setup the primary key for table
     internal class ExpertLocation
     {
-        public int ExpertID { get; set; }
-        public int LocationID { get; set; }
+        public int ExpertID { get; set; }  // int
+        public int LocationID { get; set; }  // int
     }
     [TableName("tjc_expert_expert_by_request")]
     //setup the primary key for table
     internal class ExpertRequest
     {
-        public int ExpertID { get; set; }
-        public int RequestID { get; set; }
-        public int Sequence { get; set; }
+        public int ExpertID { get; set; }  // int
+        public int RequestID { get; set; }  // int
+        public int Sequence { get; set; }  // int
     }
     [TableName("tjc_expert_expert_request")]
     //setup the primary key for table
     internal class ExpertRequestListItem
     {
-        public int ExpertID { get; set; }
-        public int RequestID { get; set; }
-        public int Sequence { get; set; }
-        public string Description { get; set; }
+        public int ExpertID { get; set; }  // int
+        public int RequestID { get; set; }  // int
+        public int Sequence { get; set; }  // int
+        public string Description { get; set; }  // nvarchar(50)
     }
 }

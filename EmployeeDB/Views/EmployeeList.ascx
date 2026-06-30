@@ -256,7 +256,7 @@
                     <input type="hidden" name="JobGroupId" value="0" />
                     <div class="mb-3">
                         <label>Description:</label>
-                        <input type="text" name="Description" class="form-control" maxlength="200" />
+                        <input type="text" name="Description" class="form-control" maxlength="100" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -276,7 +276,7 @@
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label>Class Name:</label>
-                            <input type="text" name="ClassName" class="form-control" maxlength="200" />
+                            <input type="text" name="ClassName" class="form-control" maxlength="50" />
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Class Code:</label>
@@ -290,7 +290,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>FLSA:</label>
-                            <input type="text" name="FLSA" class="form-control" maxlength="50" />
+                            <input type="text" name="FLSA" class="form-control" maxlength="2" />
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>EEO:</label>
@@ -332,11 +332,11 @@
                     <input type="hidden" name="RaceId" value="0" />
                     <div class="mb-3">
                         <label>Race Code:</label>
-                        <input type="text" name="RaceCode" class="form-control" maxlength="20" />
+                        <input type="text" name="RaceCode" class="form-control" maxlength="10" />
                     </div>
                     <div class="mb-3">
                         <label>Description:</label>
-                        <input type="text" name="Description" class="form-control" maxlength="200" />
+                        <input type="text" name="Description" class="form-control" maxlength="100" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -355,16 +355,16 @@
                     <input type="hidden" name="OfficeLocationId" value="0" />
                     <div class="mb-3">
                         <label>Description:</label>
-                        <input type="text" name="Description" class="form-control" maxlength="200" />
+                        <input type="text" name="Description" class="form-control" maxlength="100" />
                     </div>
                     <div class="mb-3">
                         <label>Address:</label>
-                        <input type="text" name="Address" class="form-control" maxlength="200" />
+                        <input type="text" name="Address" class="form-control" maxlength="300" />
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>City:</label>
-                            <input type="text" name="City" class="form-control" maxlength="100" />
+                            <input type="text" name="City" class="form-control" maxlength="50" />
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>State:</label>
@@ -372,7 +372,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>Zip:</label>
-                            <input type="text" name="Zip" class="form-control" maxlength="10" />
+                            <input type="text" name="Zip" class="form-control" maxlength="12" />
                         </div>
                     </div>
                 </div>
@@ -393,7 +393,7 @@
                     <input type="hidden" name="GroupID" value="0" />
                     <div class="mb-3">
                         <label>Group Name:</label>
-                        <input type="text" name="GroupName" class="form-control" maxlength="200" />
+                        <input type="text" name="GroupName" class="form-control" maxlength="50" />
                     </div>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" name="IsSwnGroup" id="empdbDepartmentSwn" />

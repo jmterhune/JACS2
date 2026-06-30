@@ -9,9 +9,9 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("tjc_rec_Offices", CacheItemPriority.Default, 20)]
     internal class Office : EntityBase
     {
-        public int OfficeID { get; set; }
-        public string Description { get; set; }
-        public int? DeliveryTypeID { get; set; }
+        public int OfficeID { get; set; }  // int
+        public string Description { get; set; }  // nvarchar(100)
+        public int? DeliveryTypeID { get; set; }  // int
         [IgnoreColumn]
         [EnumDataType(typeof(DeliveryTypes))]
         public DeliveryTypes DeliveryType

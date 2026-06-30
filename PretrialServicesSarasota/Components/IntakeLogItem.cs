@@ -11,42 +11,42 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class IntakeLogItem : EntityBase
     {
-        public long LogId
-        {
-            get; set;
-        }
-        
-        public DateTime? IntakeDate
+        public long LogId // bigint
         {
             get; set;
         }
 
-        public int? Interviewed
+        public DateTime? IntakeDate // smalldatetime
         {
             get; set;
         }
 
-        public int? Assessed
+        public int? Interviewed // int
         {
             get; set;
         }
 
-        public int? PtrRecommended
+        public int? Assessed // int
         {
             get; set;
         }
 
-        public int? PtrNotRecommended
+        public int? PtrRecommended // int
         {
             get; set;
         }
 
-        public int? PtrOrdered
+        public int? PtrNotRecommended // int
         {
             get; set;
         }
 
-        public int? IndigentAssessed
+        public int? PtrOrdered // int
+        {
+            get; set;
+        }
+
+        public int? IndigentAssessed // int
         {
             get; set;
         }

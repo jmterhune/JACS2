@@ -48,6 +48,7 @@
                 "order": cfg.order || [[0, "asc"]],
                 "pageLength": 25,
                 "stateSave": true,
+                "autoWidth": false,
                 "columnDefs": [{ "orderable": false, "targets": "no-sort" }]
             });
             // Park the Add button in DataTables' length container.

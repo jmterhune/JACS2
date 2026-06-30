@@ -14,11 +14,11 @@
             <asp:HiddenField ID="hdOrderId" ClientIDMode="Static" runat="server" />
             <div class="col-md-3">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRequestor" Text="Requester Name<em>*</em>" />
-                <asp:TextBox ID="txtRequestor" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="txtRequestor" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
             </div>
             <div class="col-md-4 ">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtEmail" Text="Requester Email<em>*</em>" />
-                <asp:TextBox ID="txtEmail" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="txtEmail" runat="server" MaxLength="250" CssClass="form-control"></asp:TextBox>
             </div>
             <div class="col-md-3 ">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="drpLocation" Text="Delivery Location<em>*</em>" />
@@ -85,13 +85,13 @@
                             <asp:HiddenField ID="hdSupplyId" ClientIDMode="Static" runat="server" />
                             <div class="col-md-6">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtSupplyNumber" Text="Item Number<em>*</em>" />
-                                <asp:TextBox ID="txtSupplyNumber" ClientIDMode="Static" runat="server" MaxLength="10" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtSupplyNumber" ClientIDMode="Static" runat="server" MaxLength="200" CssClass="form-control"></asp:TextBox>
                                 <asp:RequiredFieldValidator runat="server" ValidationGroup="Supply" ControlToValidate="txtSupplyNumber"
                                     CssClass="label label-danger" Display="Dynamic" ErrorMessage="Item Number is Required. Enter NA if there is none." />
                             </div>
                             <div class="col-md-6">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRecipient" Text="Recipient Name<em>*</em>" />
-                                <asp:TextBox ID="txtRecipient" ClientIDMode="Static" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtRecipient" ClientIDMode="Static" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
                                 <asp:RequiredFieldValidator runat="server" Display="Dynamic" ValidationGroup="Supply" ControlToValidate="txtRecipient"
                                     CssClass="label label-danger" ErrorMessage="Recipient is Required" />
                             </div>

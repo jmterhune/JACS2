@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-md-6">
                     <asp:Label ID="lblPhone" runat="server" AssociatedControlID="txtPhone" Text="Phone<em>*</em>" />
-                    <asp:TextBox ID="txtPhone" runat="server" MaxLength="15" CssClass="form-control phone_us" placeholder="(555) 555-5555" AutoCompleteType="BusinessPhone" />
+                    <asp:TextBox ID="txtPhone" runat="server" MaxLength="50" CssClass="form-control phone_us" placeholder="(555) 555-5555" AutoCompleteType="BusinessPhone" />
                     <asp:RequiredFieldValidator ID="valPhone" runat="server" SetFocusOnError="true" Display="Dynamic"
                         ErrorMessage="Phone is Required" ControlToValidate="txtPhone" CssClass="label label-danger" />
                     <asp:RegularExpressionValidator ID="valIsPhone" runat="server" SetFocusOnError="true"
@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-md-6">
                     <asp:Label ID="lblFax" runat="server" AssociatedControlID="txtFax" Text="Fax" />
-                    <asp:TextBox ID="txtFax" runat="server" MaxLength="15" CssClass="form-control phone_us" placeholder="(555) 555-5555" AutoCompleteType="BusinessFax" />
+                    <asp:TextBox ID="txtFax" runat="server" MaxLength="50" CssClass="form-control phone_us" placeholder="(555) 555-5555" AutoCompleteType="BusinessFax" />
                     <asp:RegularExpressionValidator ID="valisFax" runat="server" SetFocusOnError="true"
                         Display="Dynamic" ErrorMessage="Fax Number is not in Correct Format i.e. (555) 555-5555"
                         ControlToValidate="txtFax" ValidationExpression="((\(\d{3}\) ?)|(\d{3}-))?\d{3}-\d{4}" CssClass="label label-danger"></asp:RegularExpressionValidator>
@@ -200,7 +200,7 @@
                 </div>
                 <div class="col-md-6">
                     <asp:Label ID="lblTime" runat="server" AssociatedControlID="txtTime" Text="Time of Proceeding" />
-                    <asp:TextBox ID="txtTime" runat="server" MaxLength="50" CssClass="form-control" placeholder="HH:MM AM" />
+                    <asp:TextBox ID="txtTime" runat="server" MaxLength="100" CssClass="form-control" placeholder="HH:MM AM" />
                 </div>
             </div>
         </div>

@@ -72,7 +72,7 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtContact" Text="Contact" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtContact" />
+                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="100" ID="txtContact" />
                                     </div>
                                     <asp:HiddenField ID="hdContactId" ClientIDMode="Static" runat="server" />
                                 </div>

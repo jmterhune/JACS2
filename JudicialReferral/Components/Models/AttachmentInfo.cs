@@ -6,10 +6,10 @@ namespace tjc.Modules.JudicialReferral.Components.Models
     [PrimaryKey("AttachmentID", AutoIncrement = true)]
     public class AttachmentInfo
     {
-        public int AttachmentID { get; set; }
-        public int ReferralID { get; set; }
-        public int FileID { get; set; }
-        public string Path { get; set; }
-        public string FileName { get; set; }
+        public int AttachmentID { get; set; }  // int
+        public int ReferralID { get; set; }  // int
+        public int FileID { get; set; }  // int
+        public string Path { get; set; }  // nvarchar(2000)
+        public string FileName { get; set; }  // nvarchar(500)
     }
 }

@@ -149,13 +149,13 @@
                 <div class="row form-group">
                     <div class="col-md-3">
                         <label for="txtTribunalCaseNumber">Tribunal Case Number</label>
-                        <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                        <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
                             ErrorMessage="Tribunal Case Number Is Required" ControlToValidate="txtTribunalCaseNumber" EnableClientScript="true" runat="server" />
                     </div>
                     <div class="col-md-3">
                         <label for="txtAppellateCaseNumber">Appellate Case Number</label>
-                        <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                        <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                     </div>
                     <div class="col-md-3">
                         <label for="txtServiceDate">Service Date</label>

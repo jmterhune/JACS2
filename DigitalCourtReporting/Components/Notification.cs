@@ -8,14 +8,14 @@ namespace tjc.Modules.DigitalCourtReporting.Components
     [Cacheable("Notifications", CacheItemPriority.Default, 20)]
     internal class Notification : EntityBase
     {
-        public int DeliveryID { get; set; }
-        public int ProceedingID { get; set; }
-        public string Description { get; set; }
-        public string DateCalled { get; set; }
-        public string Responsible { get; set; }
-        public string PersonCalled { get; set; }
-        public string ReceivedBy { get; set; }
-        public string PickupDate { get; set; }
-        public string Notes { get; set; }
+        public int DeliveryID { get; set; }            // int
+        public int ProceedingID { get; set; }          // int
+        public string Description { get; set; }         // nvarchar(14)
+        public string DateCalled { get; set; }          // nvarchar(12)
+        public string Responsible { get; set; }         // nvarchar(50)
+        public string PersonCalled { get; set; }        // nvarchar(50)
+        public string ReceivedBy { get; set; }          // nvarchar(50)
+        public string PickupDate { get; set; }          // nvarchar(12)
+        public string Notes { get; set; }               // nvarchar(max)
     }
 }

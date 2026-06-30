@@ -12,15 +12,16 @@ namespace tjc.Modules.ExpertWitness.Components
     [Cacheable("ExperWitnessTemplates", CacheItemPriority.Default, 20)]
     internal class RequestCart : ExpertBase
     {
-        public int RequestID { get; set; }
-        public int TemplateID { get; set; }
-        public int ExpertID { get; set; }
-        public Guid Guid { get; set; }
-        public string ExpertName { get; set; }
-        public int Sequence { get; set; }
-        public int Status { get; set; }
-        public int CurrentOrder { get; set; }
-        public string Comments { get; set; }
+        // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_requested_template).
+        public int RequestID { get; set; }  // int
+        public int TemplateID { get; set; }  // int
+        public int ExpertID { get; set; }  // int
+        public Guid Guid { get; set; }  // uniqueidentifier
+        public string ExpertName { get; set; }  // nvarchar(2000)
+        public int Sequence { get; set; }  // int
+        public int Status { get; set; }  // int
+        public int CurrentOrder { get; set; }  // int
+        public string Comments { get; set; }  // nvarchar(max)
 
     }
     internal class RequestedTemplate : RequestCart

@@ -16,6 +16,8 @@ using System.Web.Caching;
 
 namespace tjc.Modules.AudioRequest.Components
 {
+    // NOTE: table tjc_PressCart was NOT found in prod (intranet.jud12.local); string column sizes below are unverified.
+    //       This model/controller is not surfaced by any editable .ascx form in this module.
     [TableName("tjc_PressCart")]
     //setup the primary key for table
     [PrimaryKey("CartId", AutoIncrement = true)]
@@ -25,58 +27,58 @@ namespace tjc.Modules.AudioRequest.Components
     [Scope("ModuleId")]
     class CartInfo
     {
-        public int CartId { get; set; }
+        public int CartId { get; set; }  // int (identity PK)
 
-        public string LastName { get; set; }
+        public string LastName { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string FirstName { get; set; }
+        public string FirstName { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string MiddleName { get; set; }
+        public string MiddleName { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string Email { get; set; }
+        public string Email { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string Phone { get; set; }
+        public string Phone { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string ContactName { get; set; }
+        public string ContactName { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string ContactEmail { get; set; }
+        public string ContactEmail { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string ContactPhone { get; set; }
+        public string ContactPhone { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string CourtDate { get; set; }
+        public string CourtDate { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string CourtTime { get; set; }
+        public string CourtTime { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string County { get; set; }
+        public string County { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string Courthouse { get; set; }
+        public string Courthouse { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string Courtroom { get; set; }
+        public string Courtroom { get; set; }  // nvarchar(?) — table not found in prod
 
-        public string Judge { get; set; }
+        public string Judge { get; set; }  // nvarchar(?) — table not found in prod
 
-        public bool TelevisionCombo { get; set; }
+        public bool TelevisionCombo { get; set; }  // bit
 
-        public bool Laptop { get; set; }
+        public bool Laptop { get; set; }  // bit
 
-        public bool Projector { get; set; }
+        public bool Projector { get; set; }  // bit
 
-        public bool DVD { get; set; }
+        public bool DVD { get; set; }  // bit
 
-        public bool VCR { get; set; }
+        public bool VCR { get; set; }  // bit
 
-        public bool Cassette { get; set; }
+        public bool Cassette { get; set; }  // bit
 
-        public bool DocumentCamera { get; set; }
+        public bool DocumentCamera { get; set; }  // bit
 
-        public bool XRay { get; set; }
+        public bool XRay { get; set; }  // bit
 
-        public string Comments { get; set; }
+        public string Comments { get; set; }  // nvarchar(?) — table not found in prod
 
-        public bool TrainingRequired { get; set; }
+        public bool TrainingRequired { get; set; }  // bit
 
-        public int ModuleId { get; set; }
+        public int ModuleId { get; set; }  // int
 
-        public DateTime CreatedOnDate { get; set; }
+        public DateTime CreatedOnDate { get; set; }  // datetime
     }
 }

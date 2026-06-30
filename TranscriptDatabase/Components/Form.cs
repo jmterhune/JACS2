@@ -11,8 +11,8 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("Forms", CacheItemPriority.Default, 20)]
     internal class Form : EntityBase
     {
-        public int FormID { get; set; }
-        public int FileID { get; set; }
+        public int FormID { get; set; }  // int
+        public int FileID { get; set; }  // int
         [IgnoreColumn]
         public string FilePath
         {
@@ -28,7 +28,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
                 return null;
             }
         }
-        public int DocumentTypeID { get; set; }
+        public int DocumentTypeID { get; set; }  // int
         [IgnoreColumn]
         [EnumDataType(typeof(DocumentTypes))]
         public DocumentTypes DocumentType

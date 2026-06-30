@@ -11,39 +11,39 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("Designations", CacheItemPriority.Default, 20)]
     public class Designation : EntityBase
     {
-        public int DesignationID { get; set; }
+        public int DesignationID { get; set; }  // int
 
-        public string dLastName { get; set; }
+        public string dLastName { get; set; }  // nvarchar(50)
 
-        public string dFirstName { get; set; }
+        public string dFirstName { get; set; }  // nvarchar(50)
 
-        public string dMiddleName { get; set; }
+        public string dMiddleName { get; set; }  // nvarchar(50)
 
-        public string County { get; set; }
+        public string County { get; set; }  // nvarchar(50)
 
-        public string LowerTribunalCaseNumber { get; set; }
+        public string LowerTribunalCaseNumber { get; set; }  // nvarchar(100)
 
-        public string AppellateCaseNumber { get; set; }
+        public string AppellateCaseNumber { get; set; }  // nvarchar(100)
 
-        public DateTime? ServiceDate { get; set; }
+        public DateTime? ServiceDate { get; set; }  // smalldatetime
 
-        public DateTime? ReceiptDate { get; set; }
+        public DateTime? ReceiptDate { get; set; }  // smalldatetime
 
-        public DateTime? DueDate { get; set; }
+        public DateTime? DueDate { get; set; }  // smalldatetime
 
-        public bool PublicDefenderAppointed { get; set; }
+        public bool PublicDefenderAppointed { get; set; }  // bit
 
-        public bool DeclaredIndigent { get; set; }
+        public bool DeclaredIndigent { get; set; }  // bit
 
-        public bool CourtAppointedCounsel { get; set; }
+        public bool CourtAppointedCounsel { get; set; }  // bit
 
-        public DateTime? TranscriptFiled { get; set; }
+        public DateTime? TranscriptFiled { get; set; }  // smalldatetime
 
-        public bool AcknowledgmentFiled { get; set; }
+        public bool AcknowledgmentFiled { get; set; }  // bit
 
-        public string Comment { get; set; }
+        public string Comment { get; set; }  // nvarchar(4000)
 
-        public bool Archived { get; set; }
+        public bool Archived { get; set; }  // bit
         [IgnoreColumn]
         public string DisplayName
         {
@@ -156,7 +156,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [PrimaryKey("DesignationID", AutoIncrement = true)]
     public class DesignationListItem : Designation
     {
-        public string CreatedByName { get; set; }
-        public string CaseNumber { get; set; }
+        public string CreatedByName { get; set; }  // nvarchar(128)
+        public string CaseNumber { get; set; }  // nvarchar(100)
     }
 }

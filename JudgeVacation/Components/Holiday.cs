@@ -10,17 +10,17 @@ namespace tjc.Modules.JudgeVacation.Components
 
     internal class Holiday
     {
-        public int HolidayID
+        public int HolidayID // int
         {
             get; set;
         }
 
-        public DateTime HolidayDate
+        public DateTime HolidayDate // date
         {
             get; set;
         }
 
-        public string Description
+        public string Description // nvarchar(50)
         {
             get; set;
         }

@@ -11,21 +11,23 @@ namespace tjc.Modules.ExpertWitness.Components
     [Cacheable("Requests", CacheItemPriority.Default, 20)]
     internal class Request : ExpertBase
     {
-        public int RequestID { get; set; }
-        public int TemplateID { get; set; }
-        public int LocationID { get; set; }
-        public string CaseNumber { get; set; }
+        // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_request).
+        public int RequestID { get; set; }  // int (identity PK)
+        public int TemplateID { get; set; }  // int
+        public int LocationID { get; set; }  // int
+        public string CaseNumber { get; set; }  // nvarchar(50)
     }
     [TableName("tjc_expert_request_list")]
     [PrimaryKey("RequestID", AutoIncrement = true)]
     //configure caching using PetaPoco
     internal class RequestListItem :ExpertBase
     {
-        public int RequestID { get; set; }
-        public int TemplateID { get; set; }
-        public int LocationID { get; set; }
-        public string CaseNumber { get; set; }
-        public string LocationName { get; set; }
-        public string TemplateName { get; set; }
+        // Maps to the tjc_expert_request_list view (sizes per production).
+        public int RequestID { get; set; }  // int
+        public int TemplateID { get; set; }  // int
+        public int LocationID { get; set; }  // int
+        public string CaseNumber { get; set; }  // nvarchar(50)
+        public string LocationName { get; set; }  // nvarchar(250)
+        public string TemplateName { get; set; }  // nvarchar(200)
     }
 }

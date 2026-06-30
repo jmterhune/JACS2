@@ -25,7 +25,7 @@
                         <asp:TextBox ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control case-year" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                         <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-type" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
                         <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase case-sequence" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
-                        <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="10" CssClass="form-control upperCase defendant-suffix" ClientIDMode="Static"></asp:TextBox>
+                        <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase defendant-suffix" ClientIDMode="Static"></asp:TextBox>
                     </div>                        
                     <small class="form-text text-muted" title="County-Year-Case Type-Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
 
@@ -35,7 +35,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="<%=txtCaseName.ClientID %>">Case Name <span class="text-danger">*</span></label>
-                    <asp:TextBox ID="txtCaseName" runat="server" CssClass="form-control" />
+                    <asp:TextBox ID="txtCaseName" runat="server" MaxLength="100" CssClass="form-control" />
                     <asp:RequiredFieldValidator ID="valCaseName" runat="server" Display="None" ControlToValidate="txtCaseName"
                         ErrorMessage="Case Name Required"></asp:RequiredFieldValidator>
                 </div>

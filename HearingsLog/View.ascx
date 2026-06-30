@@ -209,26 +209,26 @@
                                 <div class="row">
                                     <div class="col-auto">
                                         <label for="txtCaseName">Case Name</label>
-                                        <asp:TextBox ID="txtCaseName" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                                        <asp:TextBox ID="txtCaseName" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="500"></asp:TextBox>
                                     </div>
                                     <div class="col-auto">
                                         <label for="txtCaseNumber">Case Number</label>
-                                        <asp:TextBox ID="txtCaseNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="30"></asp:TextBox>
+                                        <asp:TextBox ID="txtCaseNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="200"></asp:TextBox>
                                     </div>
                                     <div class="col-auto">
                                         <label for="txtDIN">
                                             <abbr title="Document Identification Number">DIN</abbr></label>
-                                        <asp:TextBox ID="txtDIN" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                        <asp:TextBox ID="txtDIN" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="200"></asp:TextBox>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-auto">
                                         <label for="txtMotionTitle">Motion Title</label>
-                                        <asp:TextBox ID="txtMotionTitle" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="200"></asp:TextBox>
+                                        <asp:TextBox ID="txtMotionTitle" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="500"></asp:TextBox>
                                     </div>
                                     <div class="col-auto">
                                         <label for="txtDraftedBy">Drafted By</label>
-                                        <asp:TextBox ID="txtDraftedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                        <asp:TextBox ID="txtDraftedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="500"></asp:TextBox>
                                     </div>
                                 </div>
                                 <div class="row">

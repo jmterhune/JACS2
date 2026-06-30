@@ -87,7 +87,7 @@
         </div>
         <div class="col-5">
             <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Numbers <span class='text-muted fst-italic'>(Leave Blank for New Case)</span>" />
-            <asp:TextBox runat="server" CssClass="form-control" MaxLength="500" ID="txtCaseNumber" />
+            <asp:TextBox runat="server" CssClass="form-control" MaxLength="250" ID="txtCaseNumber" />
         </div>
     </div>
     <div class="row form-group">

@@ -20,7 +20,7 @@
                 <thead>
                     <tr>
                         <th class="command-item no-sort"></th>
-                        <th>ID</th>
+                        <th class="ew-id-col">ID</th>
                         <th>Evaluation Type</th>
                         <th>Required Expert Types</th>
                         <th class="command-item no-sort"></th>

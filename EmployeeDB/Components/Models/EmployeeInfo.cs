@@ -8,56 +8,57 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("EmployeeId", AutoIncrement = true)]
     public class EmployeeInfo
     {
-        public int EmployeeId { get; set; }
-        public int? UserId { get; set; }
-        public int? SupervisorId { get; set; }
-        public int? DepartmentId { get; set; }
-        public int? JobGroupId { get; set; }
-        public int? ClassId { get; set; }
-        public string BadgeNumber { get; set; }
-        public string Position { get; set; }
-        public string EmploymentType { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string MiddleInitial { get; set; }
-        public string Email { get; set; }
-        public string PersonalEmail { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Zip { get; set; }
-        public int? OfficeLocationId { get; set; }
-        public int? CountyId { get; set; }
-        public int? FileId { get; set; }
-        public DateTime? HireDate { get; set; }
-        public DateTime? TerminationDate { get; set; }
-        public DateTime? ServiceDate { get; set; }
-        public DateTime? BirthDate { get; set; }
-        public string Race { get; set; }
-        public string Gender { get; set; }
-        public string JobTitle { get; set; }
-        public decimal? Salary { get; set; }
-        public decimal? AnnualLeaveBalance { get; set; }
-        public decimal? SickLeaveBalance { get; set; }
-        [DigitsOnly] public string SocialSecurityNumber { get; set; }
-        public string AgencyOfEmployment { get; set; }
-        public bool? IsActive { get; set; }
-        public bool IsEmployee { get; set; }
-        public bool? ManateeAccess { get; set; }
-        public string SarasotaAccess { get; set; }
-        public string DesotoAccess { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        // Column sizes below reflect production (judmansql03.intranet.jud12.local.dbo.tjc_employee).
+        public int EmployeeId { get; set; }                            // int (identity PK)
+        public int? UserId { get; set; }                               // int
+        public int? SupervisorId { get; set; }                         // int
+        public int? DepartmentId { get; set; }                         // int
+        public int? JobGroupId { get; set; }                           // int
+        public int? ClassId { get; set; }                              // int
+        public string BadgeNumber { get; set; }                        // nvarchar(50)
+        public string Position { get; set; }                           // nvarchar(150)
+        public string EmploymentType { get; set; }                     // nvarchar(20)
+        public string FirstName { get; set; }                          // nvarchar(50)
+        public string LastName { get; set; }                           // nvarchar(50)
+        public string MiddleInitial { get; set; }                      // nvarchar(1)
+        public string Email { get; set; }                              // nvarchar(250)
+        public string PersonalEmail { get; set; }                      // nvarchar(250)
+        public string Address { get; set; }                            // nvarchar(300) - AddressLine1 + "\n" + AddressLine2
+        public string City { get; set; }                               // nvarchar(50)
+        public string State { get; set; }                              // nvarchar(50)
+        public string Zip { get; set; }                                // nvarchar(12)
+        public int? OfficeLocationId { get; set; }                     // int
+        public int? CountyId { get; set; }                             // int
+        public int? FileId { get; set; }                               // int
+        public DateTime? HireDate { get; set; }                        // datetime
+        public DateTime? TerminationDate { get; set; }                 // datetime
+        public DateTime? ServiceDate { get; set; }                     // datetime
+        public DateTime? BirthDate { get; set; }                       // datetime
+        public string Race { get; set; }                               // char(1)
+        public string Gender { get; set; }                             // char(1)
+        public string JobTitle { get; set; }                           // nvarchar(150)
+        public decimal? Salary { get; set; }                           // money
+        public decimal? AnnualLeaveBalance { get; set; }               // decimal(18,2)
+        public decimal? SickLeaveBalance { get; set; }                 // decimal(18,2)
+        [DigitsOnly] public string SocialSecurityNumber { get; set; }  // char(9) - digits only (form mask 999-99-9999)
+        public string AgencyOfEmployment { get; set; }                 // char(1)
+        public bool? IsActive { get; set; }                            // bit
+        public bool IsEmployee { get; set; }                           // bit
+        public bool? ManateeAccess { get; set; }                       // bit
+        public string SarasotaAccess { get; set; }                     // nvarchar(50)
+        public string DesotoAccess { get; set; }                       // nvarchar(50)
+        public DateTime CreatedDate { get; set; }                      // datetime
+        public int CreatedById { get; set; }                           // int
+        public DateTime LastModifiedDate { get; set; }                 // datetime
+        public int LastModifiedById { get; set; }                      // int
 
         // Added in EmployeeDB 0.0.3 to support the HR reports that used to
         // live in Documentation\DROP Participants.xlsx and
         // Documentation\JA seniority.xlsx → Certified Interpreters sheet.
-        public DateTime? DropEntryDate { get; set; }
-        public DateTime? DropExitDate { get; set; }
-        public decimal? DropLeavePayout { get; set; }
-        public DateTime? CertificationDate { get; set; }
+        public DateTime? DropEntryDate { get; set; }                   // datetime
+        public DateTime? DropExitDate { get; set; }                    // datetime
+        public decimal? DropLeavePayout { get; set; }                  // decimal(8,2)
+        public DateTime? CertificationDate { get; set; }               // datetime
 
         [IgnoreColumn]
         public string DisplayName

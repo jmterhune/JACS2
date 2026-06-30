@@ -24,30 +24,30 @@ namespace tjc.Modules.FamilySelfHelp.Components
     public class Client : EntityBase
     {
 
-        public long ClientId
+        public long ClientId // bigint
         {
             get;set;
         }
-        public string LastName
+        public string LastName // nvarchar(50)
         {
             get; set;
         }
 
-        public string Email
+        public string Email // nvarchar(250)
         {
             get; set;
         }
 
-        public string Phone
+        public string Phone // nvarchar(50)
         {
             get; set;
         }
 
-        public string FirstName
+        public string FirstName // nvarchar(50)
         {
             get; set;
         }
-        public string MiddleInitial
+        public string MiddleInitial // nvarchar(1)
         {
             get; set;
         }

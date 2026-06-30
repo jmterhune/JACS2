@@ -9,26 +9,27 @@ namespace tjc.Modules.JudgeVacation.Components
     [Cacheable("JudgeVacations", CacheItemPriority.Default, 20)]
     public class JudgeVacation
     {
-        public int CalendarID
+        public int CalendarID // int
         {
             get; set;
         }
-        public int JudgeID
+        public int JudgeID // int
         {
             get; set;
         }
-        public DateTime StartDate
+        public DateTime StartDate // date
         {
             get; set;
         }
-        public DateTime EndDate
+        public DateTime EndDate // date
         {
             get; set;
         }
-        public int VacationDays
+        public int VacationDays // int
         {
             get; set;
         }
+        // PROD table tjc_vacation_vacations also has: Email nvarchar(200) (not mapped in this model)
     }
     public class JudgeVacationReport:JudgeVacation
     {

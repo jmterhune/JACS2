@@ -22,21 +22,21 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("Appearances", CacheItemPriority.Default, 20)]
     internal class Appearance : EntityBase
     {
-        public int AppearanceId { get; set; }
-        public string Description { get; set; }
-        public bool Active { get; set; }
+        public int AppearanceId { get; set; }  // int (identity PK)
+        public string Description { get; set; }  // nvarchar(50)
+        public bool Active { get; set; }  // bit
     }
 
     [TableName("tjc_med_appearance_by_group")]
     internal class AppearanceGroup : EntityBase
     {
-        public int AppearanceId { get; set; }
-        public int GroupId { get; set; }
-        public int? SortOrder { get; set; }
+        public int AppearanceId { get; set; }  // int
+        public int GroupId { get; set; }  // int
+        public int? SortOrder { get; set; }  // int
     }
     internal class AppearanceListItem : Appearance
     {
-        public int SortOrder { get; set; }
+        public int SortOrder { get; set; }  // int
 
     }
 }

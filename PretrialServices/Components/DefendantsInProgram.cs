@@ -28,93 +28,93 @@ namespace tjc.Modules.PretrialServices.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class DefendantInProgram : EntityBase
     {
-        public long ItemId
+        public long ItemId // bigint
         {
             get; set;
         }
-        public DateTime? IntakeDate
+        public DateTime? IntakeDate // smalldatetime
         {
             get; set;
         }
-        public DateTime? FtaDate
+        public DateTime? FtaDate // smalldatetime
         {
             get; set;
         }
-        public DateTime? CompletionDate
+        public DateTime? CompletionDate // smalldatetime
         {
             get; set;
         }
-        public string DefendantName
+        public string DefendantName // nvarchar(100)
         {
             get; set;
         }
-        public string CaseNumber { get; set; }
+        public string CaseNumber { get; set; } // nvarchar(200)
 
-        public string ArrestCharges { get; set; }
+        public string ArrestCharges { get; set; } // nvarchar(max)
 
-        public string NonCompArrestViolation { get; set; }
-        public bool Indigent
+        public string NonCompArrestViolation { get; set; } // nvarchar(50)
+        public bool Indigent // bit
         {
             get; set;
         }
-        public bool BwOrdered
+        public bool BwOrdered // bit
         {
             get; set;
         }
-        public int? Completion
-        {
-            get; set;
-        }
-
-        public bool FtaArrestHearing
+        public int? Completion // int
         {
             get; set;
         }
 
-        public int FcDangerous
+        public bool FtaArrestHearing // bit
         {
             get; set;
         }
 
-        public int FcNonDangerous
+        public int FcDangerous // int
         {
             get; set;
         }
 
-        public int McDangerous
-        {
-            get; set;
-        }
-        public int McNonDangerous
-        {
-            get; set;
-        }
-        public int CourtAppearances
-        {
-            get; set;
-        }
-        public int DaysSpr
-        {
-            get; set;
-        }
-        public int CountyId
+        public int FcNonDangerous // int
         {
             get; set;
         }
 
-        public bool IsRevoked { get; set; }
-        public bool CaseScreened { get; set; }
-        public bool PlacedInProgram { get; set; }
-        public int? BondType { get; set; }
-        public int? NonCompliance { get; set; }
-        public int? CaseType { get; set; }
-        public bool Interviewed { get; set; }
-        public bool Assessed { get; set; }
-        public bool PtrRecommended { get; set; }
-        public bool PtrOrdered { get; set; }
-        public bool IndigentAssessed { get; set; }
-        public bool PtrNotRecommended { get; set; }
-        public string MostSeriousOffense { get; set; }
+        public int McDangerous // int
+        {
+            get; set;
+        }
+        public int McNonDangerous // int
+        {
+            get; set;
+        }
+        public int CourtAppearances // int
+        {
+            get; set;
+        }
+        public int DaysSpr // int (DaysSPR)
+        {
+            get; set;
+        }
+        public int CountyId // int
+        {
+            get; set;
+        }
+
+        public bool IsRevoked { get; set; } // bit
+        public bool CaseScreened { get; set; } // bit
+        public bool PlacedInProgram { get; set; } // bit
+        public int? BondType { get; set; } // int
+        public int? NonCompliance { get; set; } // int
+        public int? CaseType { get; set; } // int
+        public bool Interviewed { get; set; } // bit
+        public bool Assessed { get; set; } // bit
+        public bool PtrRecommended { get; set; } // bit
+        public bool PtrOrdered { get; set; } // bit
+        public bool IndigentAssessed { get; set; } // bit
+        public bool PtrNotRecommended { get; set; } // bit
+        public string MostSeriousOffense { get; set; } // nvarchar(50)
 
 
 

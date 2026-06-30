@@ -20,13 +20,13 @@
             <div class="row">
                 <div class="col-lg-4">
                     <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRequestor" Text="Requester Name<em>*</em>" />
-                    <asp:TextBox ID="txtRequestor" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                    <asp:TextBox ID="txtRequestor" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtRequestor"
                         CssClass="label label-danger" ErrorMessage="Requester is Required" />
                 </div>
                 <div class="col-lg-4">
                     <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtPhone" Text="Phone<em>*</em>" />
-                    <asp:TextBox ID="txtPhone" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                    <asp:TextBox ID="txtPhone" runat="server" MaxLength="20" CssClass="form-control"></asp:TextBox>
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtPhone"
                         CssClass="label label-danger" ErrorMessage="Phone is Required" />
                 </div>
@@ -60,7 +60,7 @@
                 </div>
                 <div class="col-lg-4">
                     <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtConsumerName" Text="Who is the Stamp for?<em>*</em>" />
-                    <asp:TextBox ID="txtConsumerName" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                    <asp:TextBox ID="txtConsumerName" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtConsumerName"
                         CssClass="label label-danger" ErrorMessage="Phone is Required" />
                 </div>
@@ -90,7 +90,7 @@
                 </div>
                 <div class="col-auto">
                     <asp:Label runat="server" ID="lblFontSize" CssClass="form-label" ClientIDMode="Static" AssociatedControlID="txtFontSize" Text="Font Size<em>*</em>" />
-                    <asp:TextBox ID="txtFontSize" runat="server" MaxLength="50" TextMode="Number" CssClass="form-control" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtFontSize" runat="server" MaxLength="20" TextMode="Number" CssClass="form-control" ClientIDMode="Static"></asp:TextBox>
                     <div class="form-text"><i>(Numeric Point Size)</i></div>
                     <asp:RequiredFieldValidator runat="server" ClientIDMode="Static" ID="valFontSize" ControlToValidate="txtFontSize"
                         CssClass="label label-danger" ErrorMessage="Font Size is Required" />

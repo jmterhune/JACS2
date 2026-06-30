@@ -10,7 +10,8 @@ namespace tjc.Modules.ExpertWitness.Components
     [Cacheable("ExperWitnessTypes", CacheItemPriority.Default, 20)]
     internal class Type : ExpertBase
     {
-        public int TypeID { get; set; }
-        public string TypeName { get; set; }
-    }  
+        // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_type).
+        public int TypeID { get; set; }  // int (identity PK)
+        public string TypeName { get; set; }  // nvarchar(50)
+    }
 }

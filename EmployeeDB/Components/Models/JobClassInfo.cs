@@ -9,19 +9,19 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [Cacheable("tjc_employee_class", CacheItemPriority.Default, 20)]
     public class JobClassInfo
     {
-        public int ClassId { get; set; }
-        public string ClassName { get; set; }
-        public int ClassCode { get; set; }
-        public int? PayGrade { get; set; }
-        public string FLSA { get; set; }
-        public int? EEO { get; set; }
-        public decimal? MMax { get; set; }
-        public decimal? MMin { get; set; }
-        public decimal? AMax { get; set; }
-        public decimal? AMin { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public int ClassId { get; set; }  // int
+        public string ClassName { get; set; }  // nvarchar(50)
+        public int ClassCode { get; set; }  // int
+        public int? PayGrade { get; set; }  // int
+        public string FLSA { get; set; }  // nvarchar(2)
+        public int? EEO { get; set; }  // int
+        public decimal? MMax { get; set; }  // money
+        public decimal? MMin { get; set; }  // money
+        public decimal? AMax { get; set; }  // money
+        public decimal? AMin { get; set; }  // money
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
     }
 }

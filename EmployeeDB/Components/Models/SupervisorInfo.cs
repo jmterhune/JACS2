@@ -18,13 +18,13 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [Cacheable("tjc_supervisor", CacheItemPriority.Default, 20)]
     public class SupervisorInfo
     {
-        public int SupervisorId { get; set; }
-        public int EmployeeId { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public int SupervisorId { get; set; }  // int
+        public int EmployeeId { get; set; }  // int
+        public bool IsActive { get; set; }  // bit
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
     }
 
     /// <summary>

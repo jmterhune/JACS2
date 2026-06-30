@@ -115,7 +115,7 @@
                                         </div>
                                         <div class="col-3">
                                             <asp:Label runat="server" AssociatedControlID="txtExtension" Text="Extension" />
-                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="10" ID="txtExtension" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtExtension" />
                                         </div>
                                         <div class="col-5">
                                             <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Email" />

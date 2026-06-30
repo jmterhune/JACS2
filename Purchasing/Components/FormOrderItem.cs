@@ -7,17 +7,17 @@ namespace tjc.Modules.Purchasing.Components
     [PrimaryKey("FormID", AutoIncrement = true)]
     public class FormOrderItem
     {
-        public int FormID { get; set; }
-        public string FormNumber { get; set; }
-        public string FormName { get; set; }
-        public int OrderID { get; set; }
-        public int Quantity { get; set; }
-        public string Comments { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string Description { get; set; }
-        public string Recipient { get; set; }
-        public int NumberSets { get; set; }
-        public int NumberParts { get; set; }
-        public string PageType { get; set; }
+        public int FormID { get; set; } // int
+        public string FormNumber { get; set; } // nvarchar(200)
+        public string FormName { get; set; } // nvarchar(200)
+        public int OrderID { get; set; } // int
+        public int Quantity { get; set; } // int
+        public string Comments { get; set; } // nvarchar(max)
+        public DateTime CreatedDate { get; set; } // datetime
+        public string Description { get; set; } // nvarchar(2000)
+        public string Recipient { get; set; } // nvarchar(100)
+        public int NumberSets { get; set; } // int
+        public int NumberParts { get; set; } // int
+        public string PageType { get; set; } // nvarchar(20)
     }
 }

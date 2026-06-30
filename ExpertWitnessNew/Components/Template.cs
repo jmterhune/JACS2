@@ -11,8 +11,9 @@ namespace tjc.Modules.ExpertWitness.Components
     [Cacheable("ExperWitnessTemplates", CacheItemPriority.Default, 20)]
     internal class Template : ExpertBase
     {
-        public int TemplateID { get; set; }
-        public string TemplateName { get; set; }
+        // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_template).
+        public int TemplateID { get; set; }  // int (identity PK)
+        public string TemplateName { get; set; }  // nvarchar(200)
         [IgnoreColumn]
         public string TypesRequired
         {
@@ -40,9 +41,9 @@ namespace tjc.Modules.ExpertWitness.Components
     //setup the primary key for table
     internal class TemplateSequence
     {
-        public int TemplateID { get; set; }
-        public int Sequence { get; set; }
-        public int NumberRequired { get; set; }
+        public int TemplateID { get; set; }  // int
+        public int Sequence { get; set; }  // int
+        public int NumberRequired { get; set; }  // int
         [IgnoreColumn]
         public string HeaderTypes
         {
@@ -64,9 +65,9 @@ namespace tjc.Modules.ExpertWitness.Components
     //setup the primary key for table
     internal class TemplateType
     {
-        public int TemplateID { get; set; }
-        public int TypeID { get; set; }
-        public int Sequence { get; set; }
+        public int TemplateID { get; set; }  // int
+        public int TypeID { get; set; }  // int
+        public int Sequence { get; set; }  // int
     }
     internal class TemplateRequirement
     {
