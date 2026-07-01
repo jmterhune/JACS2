@@ -141,6 +141,7 @@
     <Compile Include="Components\TypeController.cs" />
     <Compile Include="Components\Api\ServiceRouteMapper.cs" />
     <Compile Include="Components\Api\ApiModels.cs" />
+    <Compile Include="Components\Api\ExpertWitnessAdminAuthorizeAttribute.cs" />
     <Compile Include="Components\Api\TypesController.cs" />
     <Compile Include="Components\Api\LocationsController.cs" />
     <Compile Include="Components\Api\RequestsController.cs" />

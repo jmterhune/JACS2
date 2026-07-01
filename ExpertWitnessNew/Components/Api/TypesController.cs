@@ -16,7 +16,7 @@ using EwType = tjc.Modules.ExpertWitness.Components.Type;
 namespace tjc.Modules.ExpertWitness.Components.Api
 {
     /// <summary>REST endpoints for the Expert Types admin list.</summary>
-    [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+    [ExpertWitnessAdminAuthorize]
     [ValidateAntiForgeryToken]
     public class TypesController : DnnApiController
     {

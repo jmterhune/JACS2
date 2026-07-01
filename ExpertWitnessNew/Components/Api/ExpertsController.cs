@@ -16,7 +16,7 @@ using tjc.Modules.ExpertWitness.Components;
 namespace tjc.Modules.ExpertWitness.Components.Api
 {
     /// <summary>REST endpoints for the Experts admin list (with Location / Type / Evaluation associations).</summary>
-    [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+    [ExpertWitnessAdminAuthorize]
     [ValidateAntiForgeryToken]
     public class ExpertsController : DnnApiController
     {

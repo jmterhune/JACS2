@@ -19,7 +19,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
     /// REST endpoints for the Evaluation Types (templates) admin list. Each template
     /// has a set of requirements (sequence + number-required + the qualifying types).
     /// </summary>
-    [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+    [ExpertWitnessAdminAuthorize]
     [ValidateAntiForgeryToken]
     public class TemplatesController : DnnApiController
     {

@@ -19,7 +19,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
     /// Read + delete endpoints for the Requests admin list. Requests are created
     /// from the public View; this list only lists, shows detail, and deletes.
     /// </summary>
-    [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.Edit)]
+    [ExpertWitnessAdminAuthorize]
     [ValidateAntiForgeryToken]
     public class RequestsController : DnnApiController
     {
