@@ -14,6 +14,7 @@ namespace tjc.Modules.ExpertWitness.Components
         // Column sizes below reflect production (intranet.jud12.local.dbo.tjc_expert_template).
         public int TemplateID { get; set; }  // int (identity PK)
         public string TemplateName { get; set; }  // nvarchar(200)
+        public bool ExcludeSouthCounty { get; set; }  // bit - hides the South County (Venice) column on the public list for this evaluation type
         [IgnoreColumn]
         public string TypesRequired
         {

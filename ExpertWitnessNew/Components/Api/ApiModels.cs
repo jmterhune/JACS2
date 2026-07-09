@@ -93,6 +93,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
         public int TemplateID { get; set; }
         public string TemplateName { get; set; }
         public string TypesRequired { get; set; }
+        public bool ExcludeSouthCounty { get; set; }
     }
 
     public class TemplateRequirementDto
@@ -106,6 +107,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
     {
         public int TemplateID { get; set; }
         public string TemplateName { get; set; }
+        public bool ExcludeSouthCounty { get; set; }
         public List<TemplateRequirementDto> Requirements { get; set; }
     }
 }

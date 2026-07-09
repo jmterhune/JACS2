@@ -23,11 +23,12 @@
                         <th class="ew-id-col">ID</th>
                         <th>Evaluation Type</th>
                         <th>Required Expert Types</th>
+                        <th class="no-sort text-center">Exclude South County</th>
                         <th class="command-item no-sort"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="5" class="text-center text-muted">Loading&hellip;</td></tr>
+                    <tr><td colspan="6" class="text-center text-muted">Loading&hellip;</td></tr>
                 </tbody>
             </table>
         </div>
@@ -46,6 +47,10 @@
                 <div class="mb-3">
                     <label>Evaluation Type</label>
                     <input type="text" name="TemplateName" class="form-control" maxlength="200" />
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" name="ExcludeSouthCounty" id="ewExcludeSouthCounty" />
+                    <label class="form-check-label" for="ewExcludeSouthCounty">Exclude South County (Venice)</label>
                 </div>
                 <fieldset class="outline-fieldset">
                     <legend>Add Requirement</legend>
@@ -142,7 +147,7 @@
                 renderReqs();
             });
 
-            ew.makeAdminTab({
+            var tab = ew.makeAdminTab({
                 resource: "Templates",
                 idField: "TemplateID",
                 tableId: "#tblTemplates",
@@ -151,7 +156,7 @@
                 saveBtnId: "#ewTemplateSave",
                 editClass: "ew-template-edit",
                 delClass: "ew-template-delete",
-                colCount: 5,
+                colCount: 6,
                 order: [[2, "asc"]],
                 addTitle: "Add Evaluation Type",
                 editTitle: "Edit Evaluation Type",
@@ -165,12 +170,16 @@
                         '<td>' + t.TemplateID + '</td>' +
                         '<td>' + ew.esc(t.TemplateName) + '</td>' +
                         '<td>' + ew.esc(t.TypesRequired) + '</td>' +
+                        '<td class="text-center"><a href="#" class="ew-template-sc-toggle" title="Toggle exclude South County (Venice)">' +
+                            (t.ExcludeSouthCounty ? '<i class="fas fa-check-square text-primary"></i>' : '<i class="fas fa-square text-muted"></i>') +
+                        '</a></td>' +
                         '<td class="command-item"><a href="#" class="text-danger ew-template-delete" title="Delete"><i class="fas fa-trash"></i></a></td>' +
                         '</tr>';
                 },
                 fillForm: function ($m, t) {
                     $m.find('[name="TemplateID"]').val(t ? t.TemplateID : 0);
                     $m.find('[name="TemplateName"]').val(t ? t.TemplateName : "");
+                    $m.find('[name="ExcludeSouthCounty"]').prop("checked", !!(t && t.ExcludeSouthCounty));
                     reqs = (t && t.Requirements ? t.Requirements : []).map(function (r) {
                         var ids = r.TypeIDs || [];
                         return { numberRequired: r.NumberRequired, typeIds: ids, typeNames: ids.map(function (id) { return typeNameById[id] || id; }) };
@@ -182,6 +191,7 @@
                     return {
                         TemplateID: parseInt($m.find('[name="TemplateID"]').val(), 10) || 0,
                         TemplateName: $m.find('[name="TemplateName"]').val(),
+                        ExcludeSouthCounty: $m.find('[name="ExcludeSouthCounty"]').is(":checked"),
                         Requirements: reqs.map(function (r, i) {
                             return { Sequence: i + 1, NumberRequired: r.numberRequired, TypeIDs: r.typeIds };
                         })
@@ -192,7 +202,18 @@
                     if (!d.Requirements.length) return "Add at least one requirement.";
                     return null;
                 }
-            }).init();
+            });
+            tab.init();
+
+            // Toggle Exclude South County (Venice) straight from the list.
+            $(document).on("click", ".ew-template-sc-toggle", function (e) {
+                e.preventDefault();
+                var id = $(this).closest("tr").data("id");
+                ew.api.post("Templates/ToggleSouthCounty?id=" + encodeURIComponent(id)).then(function (r) {
+                    ew.notifySuccess(r && r.ExcludeSouthCounty ? "South County (Venice) excluded." : "South County (Venice) included.");
+                    tab.reload();
+                }).catch(function (err) { ew.notifyError("Update failed: " + err.message); });
+            });
         }).catch(function (err) { ew.notifyError("Load failed: " + err.message); });
     });
 </script>

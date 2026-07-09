@@ -35,6 +35,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 {
                     TemplateID = x.TemplateID,
                     TemplateName = x.TemplateName,
+                    ExcludeSouthCounty = x.ExcludeSouthCounty,
                     TypesRequired = BuildTypesRequired(x.TemplateID)
                 }).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, items);
@@ -55,7 +56,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                     NumberRequired = s.NumberRequired,
                     TypeIDs = _ctrl.GetTemplateTypeTypesBySequence(id, s.Sequence).Select(t => t.TypeID).ToList()
                 }).ToList();
-                var dto = new TemplateEditDto { TemplateID = x.TemplateID, TemplateName = x.TemplateName, Requirements = requirements };
+                var dto = new TemplateEditDto { TemplateID = x.TemplateID, TemplateName = x.TemplateName, ExcludeSouthCounty = x.ExcludeSouthCounty, Requirements = requirements };
                 return Request.CreateResponse(HttpStatusCode.OK, dto);
             }
             catch (Exception ex) { return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex); }
@@ -71,6 +72,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 var entity = new Template
                 {
                     TemplateName = item.TemplateName.Trim(),
+                    ExcludeSouthCounty = item.ExcludeSouthCounty,
                     CreatedBy = UserInfo.Username,
                     CreatedDate = DateTime.Now,
                     ModifiedBy = UserInfo.Username,
@@ -94,6 +96,7 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 var entity = _ctrl.GetTemplate(id);
                 if (entity == null) return Request.CreateResponse(HttpStatusCode.NotFound);
                 entity.TemplateName = item.TemplateName.Trim();
+                entity.ExcludeSouthCounty = item.ExcludeSouthCounty;
                 entity.ModifiedBy = UserInfo.Username;
                 entity.ModifiedDate = DateTime.Now;
                 // Replace requirements, then update the template row.
@@ -115,6 +118,24 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 _ctrl.DeleteTemplateSequences(id);
                 _ctrl.DeleteTemplate(id);
                 return Request.CreateResponse(HttpStatusCode.NoContent);
+            }
+            catch (Exception ex) { return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex); }
+        }
+
+        /// <summary>Flip the ExcludeSouthCounty flag for a single evaluation type (inline list toggle).</summary>
+        [HttpPost]
+        [ActionName("ToggleSouthCounty")]
+        public HttpResponseMessage ToggleSouthCounty(int id)
+        {
+            try
+            {
+                var entity = _ctrl.GetTemplate(id);
+                if (entity == null) return Request.CreateResponse(HttpStatusCode.NotFound);
+                entity.ExcludeSouthCounty = !entity.ExcludeSouthCounty;
+                entity.ModifiedBy = UserInfo.Username;
+                entity.ModifiedDate = DateTime.Now;
+                _ctrl.UpdateTemplate(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { entity.TemplateID, entity.ExcludeSouthCounty });
             }
             catch (Exception ex) { return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex); }
         }
