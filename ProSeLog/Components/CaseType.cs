@@ -22,14 +22,14 @@ namespace tjc.Modules.ProSeLog.Components
     [Cacheable("tjc_prose_CaseTypes", CacheItemPriority.Default, 20)]
     internal class CaseType
     {
-        public int CaseTypeID { get; set; }
+        public int CaseTypeID { get; set; } // int
 
-        public string CaseTypeName { get; set; }
+        public string CaseTypeName { get; set; } // nvarchar(50)
 
     }
     [TableName("tjc_prose_case_numbers")]
     public class CaseNumber
     {
-        public string Text { get; set; }
+        public string Text { get; set; } // nvarchar(50)
     }
 }

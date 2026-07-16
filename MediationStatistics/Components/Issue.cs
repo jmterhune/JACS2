@@ -22,20 +22,20 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("Issues", CacheItemPriority.Default, 20)]
     internal class Issue : EntityBase
     {
-        public int IssueId { get; set; }
-        public string Description { get; set; }
-        public bool Active { get; set; }
+        public int IssueId { get; set; }  // int (identity PK)
+        public string Description { get; set; }  // nvarchar(50)
+        public bool Active { get; set; }  // bit
     }
     [TableName("tjc_med_issue_by_group")]
     internal class IssueGroup : EntityBase
     {
-        public int GroupId { get; set; }
-        public int IssueId { get; set; }
-        public int? SortOrder { get; set; }
+        public int GroupId { get; set; }  // int
+        public int IssueId { get; set; }  // int
+        public int? SortOrder { get; set; }  // int
     }
     internal class IssueListItem : Issue
     {
-        public int SortOrder { get; set; }
+        public int SortOrder { get; set; }  // int
 
     }
     [TableName("tjc_med_issue_by_session")]
@@ -43,8 +43,8 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("SessionIssues", CacheItemPriority.Default, 20)]
     internal class SessionIssue : EntityBase
     {
-        public int SessionId { get; set; }
-        public int IssueId { get; set; }
+        public int SessionId { get; set; }  // int
+        public int IssueId { get; set; }  // int
 
     }
 }

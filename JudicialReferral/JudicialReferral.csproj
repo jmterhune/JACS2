@@ -58,7 +58,13 @@
     </Reference>
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Intranet-new\bin\DotNetNuke.Web.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Web.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
@@ -112,6 +118,9 @@
     <Compile Include="Components\Controllers\JudgeReferralController.cs" />
     <Compile Include="Components\Controllers\AttachmentController.cs" />
     <Compile Include="Components\FeatureController.cs" />
+    <!-- Services (WebAPI) -->
+    <Compile Include="Services\StatusController.cs" />
+    <Compile Include="Services\RouteMapper.cs" />
     <!-- Views -->
     <Compile Include="Views\View.ascx.cs">
       <DependentUpon>View.ascx</DependentUpon>
@@ -160,6 +169,7 @@
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
     <Content Include="module.css" />
     <Content Include="Scripts\module.js" />
+    <Content Include="Scripts\session-monitor.js" />
     <Content Include="Views\App_LocalResources\Settings.ascx.resx" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />

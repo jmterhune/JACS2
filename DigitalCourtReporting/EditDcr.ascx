@@ -212,13 +212,13 @@
         <div class="row form-group">
             <div class="col-md-4">
                 <label for="txtReceivedBy">Processed By<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtProcessedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtProcessedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Processed By is Required" ControlToValidate="txtProcessedBy" runat="server" />
             </div>
             <div class="col-md-4">
                 <label for="txtTrackingNumber">Tracking Number<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtTrackingNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtTrackingNumber" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Tracking Number is Required" ControlToValidate="txtTrackingNumber" runat="server" />
             </div>

@@ -15,7 +15,7 @@
         </div>
         <div class="col-auto">
             <asp:Label runat="server" AssociatedControlID="txtDescription" ResourceKey="Description" />
-            <asp:TextBox runat="server" ID="txtDescription" CssClass="form-control" />
+            <asp:TextBox runat="server" ID="txtDescription" CssClass="form-control" MaxLength="50" />
         </div>
     </div>
     <p class="mt-3">

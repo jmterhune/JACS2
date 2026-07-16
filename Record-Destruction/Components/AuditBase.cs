@@ -20,12 +20,12 @@ namespace tjc.Modules.RecordDestruction.Components
 {
     internal class AuditBase
     {
-            public DateTime CreatedDate { get; set; }
+            public DateTime CreatedDate { get; set; } // datetime
 
-            public int CreatedByID { get; set; }
+            public int CreatedByID { get; set; } // int
 
-            public DateTime LastModifiedDate { get; set; }
+            public DateTime LastModifiedDate { get; set; } // datetime
 
-            public int LastModifiedByID { get; set; }
+            public int LastModifiedByID { get; set; } // int
     }
 }

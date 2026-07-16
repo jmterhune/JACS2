@@ -8,13 +8,13 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("ExtensionRequests", CacheItemPriority.Default, 20)]
     public class ExtensionRequest : EntityBase
     {
-        public int ExtensionID { get; set; }
-        public int DesignationID { get; set; }
-        public int EventTypeID { get; set; }
-        public DateTime? RequestedDate { get; set; }
-        public DateTime? GrantedDate { get; set; }
-        public DateTime? SubmittedDate { get; set; }
-        public bool Approved { get; set; }
+        public int ExtensionID { get; set; }  // int
+        public int DesignationID { get; set; }  // int
+        public int EventTypeID { get; set; }  // int
+        public DateTime? RequestedDate { get; set; }  // smalldatetime
+        public DateTime? GrantedDate { get; set; }  // smalldatetime
+        public DateTime? SubmittedDate { get; set; }  // smalldatetime
+        public bool Approved { get; set; }  // bit
         [IgnoreColumn]
         public EventTypes EventType
         {

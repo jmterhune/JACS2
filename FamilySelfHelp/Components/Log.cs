@@ -28,49 +28,49 @@ namespace tjc.Modules.FamilySelfHelp.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class Log : EntityBase
     {
-        public long LogId
+        public long LogId // bigint
         {
             get; set;
         }
-        public long ClientId
-        {
-            get; set;
-        }
-
-        public string ClientType
-        {
-            get; set;
-        }
-        public bool? HasAppointment
-        {
-            get; set;
-        }
-        public DateTime? ServiceDate
+        public long ClientId // int
         {
             get; set;
         }
 
-        public bool IsNewCase
+        public string ClientType // nvarchar(20)
+        {
+            get; set;
+        }
+        public bool? HasAppointment // bit
+        {
+            get; set;
+        }
+        public DateTime? ServiceDate // datetime
         {
             get; set;
         }
 
-        public string CaseNumber
+        public bool IsNewCase // bit
         {
             get; set;
         }
 
-        public string Division
+        public string CaseNumber // nvarchar(250)
         {
             get; set;
         }
 
-        public string ContactMethod
+        public string Division // nvarchar(50)
         {
             get; set;
         }
 
-        public bool InterpreterProvided
+        public string ContactMethod // nvarchar(50)
+        {
+            get; set;
+        }
+
+        public bool InterpreterProvided // bit
         {
             get; set;
         }
@@ -92,12 +92,12 @@ namespace tjc.Modules.FamilySelfHelp.Components
                 return ctl.GetServicesByLog(LogId);
             }
         }
-        public string Location
+        public string Location // nvarchar(50)
         {
             get; set;
         }
 
-        public decimal TimeSpent
+        public decimal TimeSpent // decimal(18,2)
         {
             get; set;
         }
@@ -136,14 +136,14 @@ namespace tjc.Modules.FamilySelfHelp.Components
     [TableName("tjc_shc_case_types")]
     internal class CaseType
     {
-        public long LogID { get; set; }
-        public string CaseTypeName { get; set; }
+        public long LogID { get; set; } // bigint
+        public string CaseTypeName { get; set; } // nvarchar(50)
     }
     [TableName("tjc_shc_services")]
     internal class Service
     {
-        public long LogID { get; set; }
-        public string ServiceName { get; set; }
+        public long LogID { get; set; } // bigint
+        public string ServiceName { get; set; } // nvarchar(50)
 
     }
     internal class Report : Log

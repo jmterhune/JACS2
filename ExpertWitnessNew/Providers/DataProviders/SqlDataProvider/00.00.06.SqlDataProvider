@@ -1,0 +1,21 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/***** Adds ExcludeSouthCounty to the evaluation type   *****/
+/***** (template). When set, the public Expert Witness  *****/
+/***** List hides the South County (Venice) column for  *****/
+/***** that evaluation type's table. Additive/idempotent.*****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_template]') AND [name] = 'ExcludeSouthCounty')
+	ALTER TABLE {databaseOwner}[{objectQualifier}tjc_expert_template] ADD [ExcludeSouthCounty] BIT NOT NULL CONSTRAINT [DF_{objectQualifier}tjc_expert_template_ExcludeSouthCounty] DEFAULT(0)
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

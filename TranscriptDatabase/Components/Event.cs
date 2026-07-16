@@ -9,52 +9,52 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [PrimaryKey("EventID", AutoIncrement = true)]
     public class Event : EntityBase
     {
-        public int EventID { get; set; }
-        public int DesignationID { get; set; }
-        public DateTime? HearingDate { get; set; }
-        public int PresidingJudgeID { get; set; }
-        public string HearingType { get; set; }
-        public int CourtReporterID { get; set; }
-        public int Pages { get; set; }
-        public int DaysUntilComplete { get; set; }
-        public int ScopistID { get; set; }
-        public DateTime? ScopSent { get; set; }
-        public DateTime? ScopReturned { get; set; }
-        public int ScopPagesIn { get; set; }
-        public int ScopPagesOut { get; set; }
-        public int TranscriptionistID { get; set; }
-        public DateTime? TransSent { get; set; }
-        public DateTime? TransReturned { get; set; }
-        public int TransPagesIn { get; set; }
-        public int TransPagesOut { get; set; }
-        public int EditorID { get; set; }
-        public DateTime? EditSent { get; set; }
-        public DateTime? EditReturned { get; set; }
-        public int EditPagesIn { get; set; }
-        public int EditPagesOut { get; set; }
-        public int ProoferID { get; set; }
-        public DateTime? ProofSent { get; set; }
-        public DateTime? ProofReturned { get; set; }
-        public int ProofPagesIn { get; set; }
-        public int ProofPagesOut { get; set; }
-        public int CompletedByUserID { get; set; }
-        public DateTime? Completed { get; set; }
-        public int CompletedPages { get; set; }
-        public string Comments { get; set; }
+        public int EventID { get; set; }  // int
+        public int DesignationID { get; set; }  // int
+        public DateTime? HearingDate { get; set; }  // smalldatetime
+        public int PresidingJudgeID { get; set; }  // int
+        public string HearingType { get; set; }  // nvarchar(50)
+        public int CourtReporterID { get; set; }  // int
+        public int Pages { get; set; }  // int
+        public int DaysUntilComplete { get; set; }  // int
+        public int ScopistID { get; set; }  // int
+        public DateTime? ScopSent { get; set; }  // smalldatetime
+        public DateTime? ScopReturned { get; set; }  // smalldatetime
+        public int ScopPagesIn { get; set; }  // int
+        public int ScopPagesOut { get; set; }  // int
+        public int TranscriptionistID { get; set; }  // int
+        public DateTime? TransSent { get; set; }  // smalldatetime
+        public DateTime? TransReturned { get; set; }  // smalldatetime
+        public int TransPagesIn { get; set; }  // int
+        public int TransPagesOut { get; set; }  // int
+        public int EditorID { get; set; }  // int
+        public DateTime? EditSent { get; set; }  // smalldatetime
+        public DateTime? EditReturned { get; set; }  // smalldatetime
+        public int EditPagesIn { get; set; }  // int
+        public int EditPagesOut { get; set; }  // int
+        public int ProoferID { get; set; }  // int
+        public DateTime? ProofSent { get; set; }  // smalldatetime
+        public DateTime? ProofReturned { get; set; }  // smalldatetime
+        public int ProofPagesIn { get; set; }  // int
+        public int ProofPagesOut { get; set; }  // int
+        public int CompletedByUserID { get; set; }  // int
+        public DateTime? Completed { get; set; }  // smalldatetime
+        public int CompletedPages { get; set; }  // int
+        public string Comments { get; set; }  // nvarchar(MAX)
 
     }
     [TableName("tjc_rec_event_list")]
     [PrimaryKey("EventID", AutoIncrement = false)]
     public class EventListItem : Event
     {
-        public string CourtReporterName { get; set; }
-        public string CreatedByName { get; set; }
-        public string ScopistName { get; set; }
-        public string TranscriptionistName { get; set; }
-        public string ProoferName { get; set; }
-        public string EditorName { get; set; }
-        public string CompletedByName { get; set; }
-        public string PresidingJudgeName { get; set; }
+        public string CourtReporterName { get; set; }  // nvarchar(102)
+        public string CreatedByName { get; set; }  // nvarchar(128)
+        public string ScopistName { get; set; }  // nvarchar(152)
+        public string TranscriptionistName { get; set; }  // nvarchar(152)
+        public string ProoferName { get; set; }  // nvarchar(152)
+        public string EditorName { get; set; }  // nvarchar(152)
+        public string CompletedByName { get; set; }  // nvarchar(128)
+        public string PresidingJudgeName { get; set; }  // nvarchar(152)
         [IgnoreColumn]
         public string HearingDateFormatted
         {

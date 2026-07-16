@@ -22,26 +22,26 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("CaseTypes", CacheItemPriority.Default, 20)]
     internal class CaseType: EntityBase
     {
-        public int CaseTypeId { get; set; }
+        public int CaseTypeId { get; set; }  // int (identity PK)
 
-        public string Description { get; set; }
+        public string Description { get; set; }  // nvarchar(50)
 
-        public bool Active { get; set; }
+        public bool Active { get; set; }  // bit
     }
 
     [TableName("tjc_med_casetype_by_group")]
     internal class CaseTypeGroup : EntityBase
     {
-        public int GroupId { get; set; }
+        public int GroupId { get; set; }  // int
 
-        public int CaseTypeId { get; set; }
+        public int CaseTypeId { get; set; }  // int
 
-        public int? SortOrder { get; set; }
+        public int? SortOrder { get; set; }  // int
     }
 
     internal class CaseTypeListItem : CaseType
     {
-        public int SortOrder { get; set; }
+        public int SortOrder { get; set; }  // int
 
     }
 }

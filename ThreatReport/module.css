@@ -3,6 +3,11 @@ label em, em.lbl {
     font-weight: inherit;
 }
 
+#ThreatReport .form-control .form-check,
+#ThreatReport .form-control .form-check-label {
+    margin: 0;
+}
+
 .dnnFormRadioButtons {
     float: none !important;
     border-radius: 4px;

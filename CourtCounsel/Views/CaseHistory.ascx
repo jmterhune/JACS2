@@ -49,7 +49,7 @@
                 <asp:Repeater ID="rptHistory" runat="server" OnItemCommand="rptHistory_ItemCommand">
                     <ItemTemplate>
                         <tr>
-                            <td>
+                            <td data-order='<%#FormatDateIso(Eval("DateReceived")) %>'>
                                 <a href='<%#EditUrl("lid",Eval("LogId").ToString(),"EditHistory") %>'>
                                     <%#FormatDate(Eval("DateReceived")) %>
                                 </a>
@@ -57,7 +57,7 @@
                             <td><%#Eval("Action") %></td>
                             <td><%#Eval("Responsible") %></td>
                             <td><%#Eval("StatusName") %></td>
-                            <td><%#FormatDate(Eval("DateCompleted")) %></td>
+                            <td data-order='<%#FormatDateIso(Eval("DateCompleted")) %>'><%#FormatDate(Eval("DateCompleted")) %></td>
                             <td>
                                 <asp:LinkButton runat="server" CommandName="delete" CommandArgument='<%#Eval("LogId") %>'
                                     CausesValidation="false" CssClass="confirm btn btn-sm btn-danger"
@@ -84,7 +84,7 @@
         jQuery(document).ready(function ($) {
             if ($.fn.DataTable) {
                 $('#history-list').DataTable({
-                    "order": [],
+                    "order": [[4, "asc"]],   // Date Completed ascending; empty data-order sorts first so open records stay at top
                     "pageLength": 25,
                     "columnDefs": [
                         { "orderable": false, "targets": -1 }

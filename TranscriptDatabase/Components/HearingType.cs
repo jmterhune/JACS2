@@ -8,7 +8,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("HearingTypes", CacheItemPriority.Default, 20)]
     internal class HearingType:EntityBase
     {
-        public int HearingTypeID { get; set; }
-        public string HearingTypeName { get; set; }
+        public int HearingTypeID { get; set; }  // int
+        public string HearingTypeName { get; set; }  // nvarchar(50)
     }
 }

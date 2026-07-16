@@ -471,7 +471,7 @@
                 <fieldset class="outline-fieldset pt-0 pb-0">
                     <legend class="mb-0">
                         <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
-                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" CssClass="form-control border-0" />
+                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtComments" ClientIDMode="Static" TextMode="MultiLine" Rows="3" MaxLength="4000" CssClass="form-control border-0" />
                 </fieldset>
             </div>
             <div class="modal fade" id="EventModal" tabindex="-1" role="dialog" aria-labelledby="EventModalLabel" aria-hidden="true">
@@ -627,7 +627,6 @@
                                     <button type="button" class="btn btn-primary" id="cmdSearch">Search</button>
                                 </div>
                             </div>
-                            <button class="btn btn-success btn-sm float-end attorney-add pull-down"><i class="fa fa-plus" aria-hidden="true"></i>Add Attorney</button>
                             <table id="tblAttorneys" class="table table-striped w-100">
                                 <thead>
                                     <tr>
@@ -681,7 +680,7 @@
                                 </div>
                                 <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtExtension" Text="Extension" />
-                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="10" ID="txtExtension" />
+                                    <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtExtension" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -785,7 +784,6 @@
                                     <button type="button" class="btn btn-primary" id="cmdMediatorSearch">Search</button>
                                 </div>
                             </div>
-                            <button class="btn btn-success btn-sm float-end mediator-add pull-down"><i class="fa fa-plus" aria-hidden="true"></i>Add Mediator</button>
                             <table id="tblMediators" class="table table-striped w-100">
                                 <thead>
                                     <tr>
@@ -858,6 +856,7 @@
     <asp:HyperLink ID="lnkCancel" CssClass="btn btn-secondary btn-lg" runat="server"><i class="fas fa-redo"></i> Reset</asp:HyperLink>
 </p>
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jquery/jquery.mask.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
 
@@ -902,12 +901,22 @@
         });
     }(jQuery, window.Sys));
     function PageInit() {
+        $('.phone').mask('(000) 000-0000');
         service.baseUrl = service.framework.getServiceRoot(service.path);
         var attyAction = "GetAttorneyListItems";
         var attyRestUrl = `${service.baseUrl}AttorneyListItem/${attyAction}/${recordCount}`;
         attorneyTable = $('#tblAttorneys').DataTable({
             "searching": false,
             autoWidth: true,
+            layout: {
+                topEnd: function () {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn-success btn-sm attorney-add';
+                    btn.innerHTML = '<i class="fa fa-plus" aria-hidden="true"></i>Add Attorney';
+                    return btn;
+                }
+            },
             ajax: {
                 url: attyRestUrl,
                 type: "GET",
@@ -945,6 +954,15 @@
         mediatorTable = $('#tblMediators').DataTable({
             "searching": false,
             autoWidth: true,
+            layout: {
+                topEnd: function () {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn-success btn-sm mediator-add';
+                    btn.innerHTML = '<i class="fa fa-plus" aria-hidden="true"></i>Add Mediator';
+                    return btn;
+                }
+            },
             ajax: {
                 url: medRestUrl,
                 type: "GET",
@@ -1303,7 +1321,7 @@
         var lastName = $("#txtLastNameMed").val();
         var email = $("#txtEmailMed").val();
         var phone = $("#txtPhoneMed").val();
-        var mediator = { firstname: firstName, lastname: lastName, emai: email, phone: phone };
+        var mediator = { firstname: firstName, lastname: lastName, email: email, phone: phone };
         try {
             $.ajax({
                 type: "POST",

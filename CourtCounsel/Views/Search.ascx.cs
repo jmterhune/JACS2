@@ -78,11 +78,11 @@ namespace tjc.Modules.CourtCounsel.Views
                     }
                     break;
 
-                case "2": // Case Number
+                case "2": // Case Number — substring match; route through CaseList so the user picks
                     var caseNum = swSearchTerm.Text.Trim();
                     if (!string.IsNullOrEmpty(caseNum))
                     {
-                        Response.Redirect(EditUrl("cn", caseNum, "CaseHistory"));
+                        Response.Redirect(EditUrl("cn", caseNum, "CaseList"));
                     }
                     break;
 

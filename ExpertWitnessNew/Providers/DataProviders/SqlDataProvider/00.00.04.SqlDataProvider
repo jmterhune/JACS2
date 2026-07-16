@@ -1,0 +1,115 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/***** Prevents the same expert from being surfaced     *****/
+/***** (and therefore selected/added) more than once    *****/
+/***** for a single requirement.                        *****/
+/*****                                                  *****/
+/***** Root cause: both candidate procedures join an    *****/
+/***** expert to every matching type in an OR-style     *****/
+/***** requirement, so an expert who holds more than    *****/
+/***** one of those specialties was returned once per   *****/
+/***** matching type. tjc_expert_get_requested_template *****/
+/***** _temp tried to guard with SELECT DISTINCT, but   *****/
+/***** the DISTINCT included NEWID(), which is unique    *****/
+/***** per row and silently defeated it.                *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_get_requested_template_temp]') AND type IN (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_get_requested_template_temp]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_get_requested_template_temp]
+	@TemplateId INT, @Sequence INT, @LocationId INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	-- De-duplicate the expert set FIRST (a contracted expert who matches the
+	-- requirement through several types collapses to a single row here), THEN
+	-- assign one Guid per expert. Selecting NEWID() inside a DISTINCT, as the
+	-- old version did, made every row unique and defeated the de-duplication.
+	SELECT
+		d.ExpertID,
+		d.ExpertName,
+		d.Comments,
+		d.TemplateID,
+		NEWID() AS Guid,
+		0 AS Status,
+		d.Position
+	FROM (
+		SELECT DISTINCT
+			e.ExpertID,
+			e.Description AS ExpertName,
+			e.Comments,
+			et.TemplateID,
+			et.Position
+		FROM {databaseOwner}[{objectQualifier}tjc_expert_expert] e
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_expert_by_location] l ON e.ExpertID = l.ExpertID
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_expert_by_template] et ON e.ExpertID = et.ExpertID
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_type_by_template] ts ON ts.TemplateID = et.TemplateID
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_expert_by_type] ext ON ext.ExpertID = e.ExpertID AND ext.TypeID = ts.TypeID
+		WHERE l.LocationID = @LocationId
+			AND e.ContractEnds > GETDATE()
+			AND ts.Sequence = @Sequence
+			AND et.TemplateID = @TemplateId
+	) d
+	ORDER BY d.Position;
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_requested_template_by_template_by_location_by_sequence]') AND type IN (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_requested_template_by_template_by_location_by_sequence]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_requested_template_by_template_by_location_by_sequence]
+	@templateId INT, @locationId INT, @sequence INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	-- Mirrors tjc_expert_get_requested_template_temp so the "Add Additional
+	-- Expert" availability check matches the list the judge actually sees:
+	-- only experts who hold one of the requirement's types, under an active
+	-- contract, one row per expert. The previous version omitted the
+	-- expert-by-type join entirely, so it ignored the required specialty and
+	-- returned each expert once per type in the requirement.
+	SELECT
+		d.ExpertID,
+		d.ExpertName,
+		d.Comments,
+		d.TemplateID,
+		d.Sequence,
+		NEWID() AS Guid,
+		d.Position,
+		0 AS Status
+	FROM (
+		SELECT DISTINCT
+			ex.ExpertID,
+			ex.Description AS ExpertName,
+			ex.Comments,
+			@templateId AS TemplateID,
+			@sequence AS Sequence,
+			et.Position
+		FROM {databaseOwner}[{objectQualifier}tjc_expert_expert] ex
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_expert_by_location] l ON ex.ExpertID = l.ExpertID
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_expert_by_template] et ON ex.ExpertID = et.ExpertID
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_type_by_template] ts ON ts.TemplateID = et.TemplateID
+			JOIN {databaseOwner}[{objectQualifier}tjc_expert_expert_by_type] ext ON ext.ExpertID = ex.ExpertID AND ext.TypeID = ts.TypeID
+		WHERE l.LocationID = @locationId
+			AND ex.ContractEnds > GETDATE()
+			AND ts.Sequence = @sequence
+			AND et.TemplateID = @templateId
+	) d
+	ORDER BY d.Position;
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

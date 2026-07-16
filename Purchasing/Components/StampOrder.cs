@@ -9,22 +9,22 @@ namespace tjc.Modules.Purchasing.Components
     [PrimaryKey("OrderID", AutoIncrement = true)]
     internal class StampOrder
     {
-        public int OrderID { get; set; }
-        public DateTime DateCreated { get; set; }
-        public string Location { get; set; }
-        public string RequestedName { get; set; }
-        public string ConsumerName { get; set; }
-        public string Phone { get; set; }
-        public string StampType { get; set; }
-        public string Sample { get; set; }
-        public string FontStyle { get; set; }
-        public string FontSize { get; set; }
-        public string InkColor { get; set; }
-        public int Quantity { get; set; }
-        public string Instructions { get; set; }
-        public DateTime? CompletedDate { get; set; }
-        public OrderStatus Status { get; set; }
-        public string EmailAddress { get; set; }
+        public int OrderID { get; set; } // int
+        public DateTime DateCreated { get; set; } // datetime
+        public string Location { get; set; } // nvarchar(50)
+        public string RequestedName { get; set; } // nvarchar(100)
+        public string ConsumerName { get; set; } // nvarchar(100)
+        public string Phone { get; set; } // nvarchar(20)
+        public string StampType { get; set; } // nvarchar(20)
+        public string Sample { get; set; } // nvarchar(max)
+        public string FontStyle { get; set; } // nvarchar(20)
+        public string FontSize { get; set; } // nvarchar(20)
+        public string InkColor { get; set; } // nvarchar(20)
+        public int Quantity { get; set; } // int
+        public string Instructions { get; set; } // nvarchar(max)
+        public DateTime? CompletedDate { get; set; } // datetime
+        public OrderStatus Status { get; set; } // int
+        public string EmailAddress { get; set; } // nvarchar(250)
         [IgnoreColumn]
         public IEnumerable<StampOrderAttachment> StampOrderAttachments
         {

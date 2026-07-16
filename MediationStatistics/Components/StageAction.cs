@@ -22,10 +22,10 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("StageOfActions", CacheItemPriority.Default, 20)]
     internal class StageAction : EntityBase
     {
-        public int StageOfActionId { get; set; }
+        public int StageOfActionId { get; set; }  // int (identity PK)
 
-        public string Description { get; set; }
+        public string Description { get; set; }  // nvarchar(50)
 
-        public bool Active { get; set; }
+        public bool Active { get; set; }  // bit
     }
 }

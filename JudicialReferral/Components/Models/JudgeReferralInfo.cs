@@ -25,59 +25,59 @@ namespace tjc.Modules.JudicialReferral.Components.Models
     [PrimaryKey("ReferralId", AutoIncrement = true)]
     public class JudgeReferralInfo
     {
-        public int ReferralId { get; set; }
-        public int JaID { get; set; }
-        public int JudgeId { get; set; }
-        public DateTime? JaCreatedDate { get; set; }
-        public DateTime? JudgeResponseDate { get; set; }
-        public DateTime? CounselReceivedDate { get; set; }
-        public int Status { get; set; }
-        public string CaseParties { get; set; }
-        public string CaseNumber { get; set; }
-        public string MotionTitle { get; set; }
-        public DateTime? MotionDate { get; set; }
-        public DateTime? RequestedCompletionDate { get; set; }
-        public bool CounselAssistance { get; set; }
-        public string JudgeMotions { get; set; }
-        public int SelectedDivision { get; set; }
+        public int ReferralId { get; set; }  // int (ReferralID)
+        public int JaID { get; set; }  // int
+        public int JudgeId { get; set; }  // int (JudgeID)
+        public DateTime? JaCreatedDate { get; set; }  // date
+        public DateTime? JudgeResponseDate { get; set; }  // date
+        public DateTime? CounselReceivedDate { get; set; }  // date
+        public int Status { get; set; }  // int
+        public string CaseParties { get; set; }  // nvarchar(2000)
+        public string CaseNumber { get; set; }  // nvarchar(25)
+        public string MotionTitle { get; set; }  // nvarchar(50)
+        public DateTime? MotionDate { get; set; }  // date
+        public DateTime? RequestedCompletionDate { get; set; }  // date
+        public bool CounselAssistance { get; set; }  // bit
+        public string JudgeMotions { get; set; }  // nvarchar(2000)
+        public int SelectedDivision { get; set; }  // int
 
         // Criminal
-        public bool StatusOrderCriminal { get; set; }
-        public DateTime? StatusOrderCriminalFiled { get; set; }
-        public bool MotionVacateCriminal { get; set; }
-        public bool MotionCorrectCriminal { get; set; }
-        public DateTime? MotionCorrectCriminalFiled { get; set; }
-        public bool MotionDirectedCriminal { get; set; }
-        public string DirectedMotionsCriminal { get; set; }
-        public bool OtherMotionCriminal { get; set; }
-        public string OtherMotionCriminalText { get; set; }
-        public bool PretrialMotionCriminal { get; set; }
-        public string PretrialMotionCriminalText { get; set; }
-        public bool ResearchCriminal { get; set; }
-        public string ResearchCriminalText { get; set; }
+        public bool StatusOrderCriminal { get; set; }  // bit
+        public DateTime? StatusOrderCriminalFiled { get; set; }  // date
+        public bool MotionVacateCriminal { get; set; }  // bit
+        public bool MotionCorrectCriminal { get; set; }  // bit
+        public DateTime? MotionCorrectCriminalFiled { get; set; }  // date
+        public bool MotionDirectedCriminal { get; set; }  // bit
+        public string DirectedMotionsCriminal { get; set; }  // nvarchar(2000)
+        public bool OtherMotionCriminal { get; set; }  // bit
+        public string OtherMotionCriminalText { get; set; }  // nvarchar(50)
+        public bool PretrialMotionCriminal { get; set; }  // bit
+        public string PretrialMotionCriminalText { get; set; }  // nvarchar(50)
+        public bool ResearchCriminal { get; set; }  // bit
+        public string ResearchCriminalText { get; set; }  // nvarchar(50)
 
         // Civil
-        public bool MotionDismissCivil { get; set; }
-        public bool MotionSummaryJudgementCivil { get; set; }
-        public bool MotionDiscoveryCivil { get; set; }
-        public bool MotionAttorneyFeeCivil { get; set; }
-        public bool OtherMotionCivil { get; set; }
-        public string OtherMotionCivilText { get; set; }
-        public bool ResearchMotionCivil { get; set; }
-        public string ResearchMotionCivilText { get; set; }
+        public bool MotionDismissCivil { get; set; }  // bit
+        public bool MotionSummaryJudgementCivil { get; set; }  // bit
+        public bool MotionDiscoveryCivil { get; set; }  // bit
+        public bool MotionAttorneyFeeCivil { get; set; }  // bit
+        public bool OtherMotionCivil { get; set; }  // bit
+        public string OtherMotionCivilText { get; set; }  // nvarchar(50)
+        public bool ResearchMotionCivil { get; set; }  // bit
+        public string ResearchMotionCivilText { get; set; }  // nvarchar(50)
 
         // Family
-        public bool PetitionTimeShareFamily { get; set; }
-        public bool PetitionChildSupportFamily { get; set; }
-        public bool MotionDiscoveryFamily { get; set; }
-        public bool MotionAttorneyFeeFamily { get; set; }
-        public bool OtherMotionFamily { get; set; }
-        public string OtherMotionFamilyText { get; set; }
-        public bool ResearchMotionFamily { get; set; }
-        public string ResearchMotionFamilyText { get; set; }
+        public bool PetitionTimeShareFamily { get; set; }  // bit
+        public bool PetitionChildSupportFamily { get; set; }  // bit
+        public bool MotionDiscoveryFamily { get; set; }  // bit
+        public bool MotionAttorneyFeeFamily { get; set; }  // bit
+        public bool OtherMotionFamily { get; set; }  // bit
+        public string OtherMotionFamilyText { get; set; }  // nvarchar(50)
+        public bool ResearchMotionFamily { get; set; }  // bit
+        public string ResearchMotionFamilyText { get; set; }  // nvarchar(50)
 
         // Appeals
-        public string TypeOfAppeal { get; set; }
+        public string TypeOfAppeal { get; set; }  // nvarchar(50)
 
         [IgnoreColumn]
         public string JudgeName { get; set; }

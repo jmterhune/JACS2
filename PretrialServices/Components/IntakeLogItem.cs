@@ -11,52 +11,52 @@ namespace tjc.Modules.PretrialServices.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class IntakeLogItem : EntityBase
     {
-        public long LogId
+        public long LogId // bigint
         {
             get; set;
         }
-        public int CountyId
+        public int CountyId // int
         {
             get; set;
         }
-        public DateTime? IntakeDate
-        {
-            get; set;
-        }
-
-        public int? Interviewed
+        public DateTime? IntakeDate // smalldatetime
         {
             get; set;
         }
 
-        public int? Assessed
+        public int? Interviewed // int
         {
             get; set;
         }
 
-        public int? PtrRecommended
-        {
-            get; set;
-        }
-        public int? PtrRecommendedInProgram
-        {
-            get; set;
-        }
-        public int? BondSecuredInProgram
-        {
-            get; set;
-        }
-        public int? PtrNotRecommended
+        public int? Assessed // int
         {
             get; set;
         }
 
-        public int? PtrOrdered
+        public int? PtrRecommended // int
+        {
+            get; set;
+        }
+        public int? PtrRecommendedInProgram // not in prod tjc_pts_intake_log
+        {
+            get; set;
+        }
+        public int? BondSecuredInProgram // not in prod tjc_pts_intake_log
+        {
+            get; set;
+        }
+        public int? PtrNotRecommended // int
         {
             get; set;
         }
 
-        public int? IndigentAssessed
+        public int? PtrOrdered // int
+        {
+            get; set;
+        }
+
+        public int? IndigentAssessed // int
         {
             get; set;
         }

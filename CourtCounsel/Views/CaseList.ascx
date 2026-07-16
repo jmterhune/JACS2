@@ -16,7 +16,7 @@
     </div>
 </nav>
 
-<h2>Case Name Search Results</h2>
+<h2><asp:Literal ID="litResultsHeading" runat="server" Text="Case Search Results" /></h2>
 
 <div class="table-responsive">
     <table id="case-list" class="table table-striped table-bordered table-hover" style="width:100%">
@@ -26,6 +26,7 @@
                 <th>Case Number</th>
                 <th>Case Type</th>
                 <th>Attorney</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@
                         </td>
                         <td><%#Eval("CaseType") %></td>
                         <td><%#Eval("Responsible") %></td>
+                        <td><%#GetStatus((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>

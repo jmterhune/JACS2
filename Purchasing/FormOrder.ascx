@@ -15,7 +15,7 @@
             <asp:HiddenField ID="hdOrderId" ClientIDMode="Static" runat="server" />
             <div class="col-md-4">
                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRequestor" Text="Requester Name<em>*</em>" />
-                <asp:TextBox ID="txtRequestor" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="txtRequestor" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
                 <asp:RequiredFieldValidator runat="server" ControlToValidate="txtRequestor" ValidationGroup="Order"
                     CssClass="label label-danger" ErrorMessage="Requester is Required" />
             </div>
@@ -106,7 +106,7 @@
                             <asp:HiddenField ID="hdFormId" ClientIDMode="Static" runat="server" />
                             <div class="col-md-4">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtFormNumber" Text="Form #<em>*</em>" />
-                                <asp:TextBox ID="txtFormNumber" ClientIDMode="Static" runat="server" MaxLength="10" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtFormNumber" ClientIDMode="Static" runat="server" MaxLength="200" CssClass="form-control"></asp:TextBox>
                                 <div class="form-text">Enter NA if no form number exists</div>
                                 <asp:RequiredFieldValidator runat="server" ValidationGroup="Form" ControlToValidate="txtFormNumber"
                                     CssClass="label label-danger" Display="Dynamic" ErrorMessage="Form Number is Required. Enter NA if there is none." />
@@ -126,7 +126,7 @@
                             </div>
                             <div class="col-md-8">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtRecipient" Text="Recipient Name<em>*</em>" />
-                                <asp:TextBox ID="txtRecipient" ClientIDMode="Static" runat="server" MaxLength="50" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtRecipient" ClientIDMode="Static" runat="server" MaxLength="100" CssClass="form-control"></asp:TextBox>
                                 <asp:RequiredFieldValidator runat="server" Display="Dynamic" ValidationGroup="Form" ControlToValidate="txtRecipient"
                                     CssClass="label label-danger" ErrorMessage="Recipient is Required" />
                             </div>

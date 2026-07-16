@@ -81,7 +81,7 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtRetentionPeriod" Text="Retention Period" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtRetentionPeriod" />
+                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="100" ID="txtRetentionPeriod" />
                                     </div>
                                     <asp:HiddenField ID="hdRetentionPeriodId" ClientIDMode="Static" runat="server" />
                                 </div>

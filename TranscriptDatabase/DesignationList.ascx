@@ -133,7 +133,6 @@
                         </div>
                         <div class="col">
                             <button type="button" id="cmdAddAttorney" class="btn btn-primary">Add Selected Attorney</button>
-                            <button type="button" id="cmdAttorney" class="btn btn-dark float-end" data-toggle="modal" data-target="#EditAttorneyModal">Add New Attorney</button>
                         </div>
                         <input type="hidden" id="attorneyCount">
                     </div>
@@ -150,13 +149,13 @@
                 <div class="row form-group">
                     <div class="col-md-3">
                         <label for="txtTribunalCaseNumber">Tribunal Case Number</label>
-                        <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                        <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="new" CssClass="label label-danger"
                             ErrorMessage="Tribunal Case Number Is Required" ControlToValidate="txtTribunalCaseNumber" EnableClientScript="true" runat="server" />
                     </div>
                     <div class="col-md-3">
                         <label for="txtAppellateCaseNumber">Appellate Case Number</label>
-                        <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="120"></asp:TextBox>
+                        <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                     </div>
                     <div class="col-md-3">
                         <label for="txtServiceDate">Service Date</label>
@@ -577,6 +576,20 @@
         attorneyTable = $('#tblAttorneys').DataTable({
             searching: false,
             autoWidth: true,
+            layout: {
+                topEnd: function () {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.id = 'cmdAttorney';
+                    btn.className = 'btn btn-dark';
+                    btn.setAttribute('data-bs-toggle', 'modal');
+                    btn.setAttribute('data-bs-target', '#EditAttorneyModal');
+                    btn.setAttribute('data-toggle', 'modal');
+                    btn.setAttribute('data-target', '#EditAttorneyModal');
+                    btn.textContent = 'Add New Attorney';
+                    return btn;
+                }
+            },
             columns: [
                 { data: "name" },
                 { data: "office" },

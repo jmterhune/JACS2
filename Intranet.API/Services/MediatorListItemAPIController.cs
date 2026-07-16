@@ -11,7 +11,7 @@ using tjc.Intranet.API.Services.ViewModels.Mediation;
 
 namespace tjc.Intranet.API.Services.Mediation
 {
-    [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.View)]
+    [DnnAuthorize]
 
     public class MediatorListItemController : DnnApiController
     {
@@ -22,8 +22,8 @@ namespace tjc.Intranet.API.Services.Mediation
             int recordCount = count;
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-            string firstName = query["firstName"].ToString();
-            string lastName = query["lastName"].ToString();
+            string firstName = query.ContainsKey("firstName") ? query["firstName"] ?? "" : "";
+            string lastName = query.ContainsKey("lastName") ? query["lastName"] ?? "" : "";
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);

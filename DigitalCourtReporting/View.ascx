@@ -20,7 +20,7 @@
             <li><a class="dropdown-item search-type" href="#" data-st="0">Case Name</a></li>
             <li><a class="dropdown-item search-type" href="#" data-st="1">Case Number</a></li>
             <li><a class="dropdown-item search-type" href="#" data-st="2">Tracking Number</a></li>
-            <li><a class="dropdown-item search-type" href="#" data-st="3">Requestor Number</a></li>
+            <li><a class="dropdown-item search-type" href="#" data-st="3">Requestor Name</a></li>
         </ul>
     </div>
     <div id="swSearchTerm" class="input-group">
@@ -175,6 +175,7 @@
         $("#lnkComplete").on("click", function (e) {
             e.preventDefault();
             listType = 3; searchType = -1; searchText = 'null'; countyId = -1;
+            SetSearchType(-1);
             proceedingTable.draw();
             UpdateHeader();
         });

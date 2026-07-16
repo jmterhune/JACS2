@@ -10,6 +10,23 @@
 .command-item a { margin-right: 0.5rem; text-decoration: none; }
 .command-item i { vertical-align: middle; }
 
+/* Supervisors admin tab — typeahead search dropdown. The results
+   container is anchored just under the search input via the wrapping
+   .empdb-supervisor-search; constrain its height + scroll so a large
+   match set doesn't push the supervisor table off-screen. */
+.empdb-supervisor-search { position: relative; max-width: 540px; }
+.empdb-supervisor-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    max-height: 320px;
+    overflow-y: auto;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    background: #fff;
+}
+
 /* Modal progress overlay */
 .modal-progress {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;

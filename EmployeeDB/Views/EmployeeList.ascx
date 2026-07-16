@@ -70,6 +70,9 @@
             <li class="nav-item"><a class="nav-link" href="#pane-jobclasses" data-bs-toggle="tab" data-toggle="tab">Classes</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-races" data-bs-toggle="tab" data-toggle="tab">Race</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-locations" data-bs-toggle="tab" data-toggle="tab">Office Locations</a></li>
+            <% if (IsHrAdmin) { %>
+            <li class="nav-item"><a class="nav-link" href="#pane-supervisors" data-bs-toggle="tab" data-toggle="tab">Supervisors</a></li>
+            <% } %>
             <% if (IsSiteAdmin) { %>
             <li class="nav-item"><a class="nav-link" href="#pane-departments" data-bs-toggle="tab" data-toggle="tab">Departments</a></li>
             <% } %>
@@ -192,6 +195,35 @@
                 </table>
             </div>
 
+            <% if (IsHrAdmin) { %>
+            <%-- ===== Supervisors (API-driven, HR admins only) =====
+                 Employee typeahead at the top: type to search, click a
+                 suggestion to add as a supervisor. The lower table is the
+                 current roster — Active toggles IsActive on the row;
+                 Trash deletes the row (refused server-side if the
+                 supervisor is still assigned to any employees). --%>
+            <div class="tab-pane" id="pane-supervisors">
+                <div class="mb-3 empdb-supervisor-search">
+                    <label for="empdbSupervisorSearch" class="form-label">Add a supervisor — search for an employee:</label>
+                    <input type="text" id="empdbSupervisorSearch" class="form-control" placeholder="Type a name…" autocomplete="off" />
+                    <div id="empdbSupervisorSearchResults" class="empdb-supervisor-results list-group" style="display:none;"></div>
+                </div>
+                <table id="tblSupervisors" class="table table-striped table-bordered table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="text-center no-sort" style="width:110px;">Assignees</th>
+                            <th class="text-center" style="width:90px;">Active</th>
+                            <th class="command-item no-sort" style="width:60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" class="text-muted text-center">Loading…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+
             <% if (IsSiteAdmin) { %>
             <%-- ===== Departments (API-driven, site admins only) ===== --%>
             <div class="tab-pane" id="pane-departments">
@@ -224,7 +256,7 @@
                     <input type="hidden" name="JobGroupId" value="0" />
                     <div class="mb-3">
                         <label>Description:</label>
-                        <input type="text" name="Description" class="form-control" maxlength="200" />
+                        <input type="text" name="Description" class="form-control" maxlength="100" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -244,7 +276,7 @@
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label>Class Name:</label>
-                            <input type="text" name="ClassName" class="form-control" maxlength="200" />
+                            <input type="text" name="ClassName" class="form-control" maxlength="50" />
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Class Code:</label>
@@ -258,7 +290,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>FLSA:</label>
-                            <input type="text" name="FLSA" class="form-control" maxlength="50" />
+                            <input type="text" name="FLSA" class="form-control" maxlength="2" />
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>EEO:</label>
@@ -300,11 +332,11 @@
                     <input type="hidden" name="RaceId" value="0" />
                     <div class="mb-3">
                         <label>Race Code:</label>
-                        <input type="text" name="RaceCode" class="form-control" maxlength="20" />
+                        <input type="text" name="RaceCode" class="form-control" maxlength="10" />
                     </div>
                     <div class="mb-3">
                         <label>Description:</label>
-                        <input type="text" name="Description" class="form-control" maxlength="200" />
+                        <input type="text" name="Description" class="form-control" maxlength="100" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -323,16 +355,16 @@
                     <input type="hidden" name="OfficeLocationId" value="0" />
                     <div class="mb-3">
                         <label>Description:</label>
-                        <input type="text" name="Description" class="form-control" maxlength="200" />
+                        <input type="text" name="Description" class="form-control" maxlength="100" />
                     </div>
                     <div class="mb-3">
                         <label>Address:</label>
-                        <input type="text" name="Address" class="form-control" maxlength="200" />
+                        <input type="text" name="Address" class="form-control" maxlength="300" />
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>City:</label>
-                            <input type="text" name="City" class="form-control" maxlength="100" />
+                            <input type="text" name="City" class="form-control" maxlength="50" />
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>State:</label>
@@ -340,7 +372,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>Zip:</label>
-                            <input type="text" name="Zip" class="form-control" maxlength="10" />
+                            <input type="text" name="Zip" class="form-control" maxlength="12" />
                         </div>
                     </div>
                 </div>
@@ -361,7 +393,7 @@
                     <input type="hidden" name="GroupID" value="0" />
                     <div class="mb-3">
                         <label>Group Name:</label>
-                        <input type="text" name="GroupName" class="form-control" maxlength="200" />
+                        <input type="text" name="GroupName" class="form-control" maxlength="50" />
                     </div>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" name="IsSwnGroup" id="empdbDepartmentSwn" />
@@ -371,6 +403,31 @@
                 <div class="modal-footer">
                     <button type="button" id="empdbDepartmentSave" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (IsHrAdmin) { %>
+    <%-- ===== Supervisor Assignees (read-only list popup) =====
+         Opened from the users icon on each Supervisors-tab row.
+         The body is populated by the supervisors driver in
+         empdb-list.js after a GET Supervisors/Assignees?id=... --%>
+    <div class="modal fade" id="SupervisorAssigneesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Employees assigned to <span id="empdbSupAssigneesName" class="fw-semibold"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="empdbSupAssigneesList" class="list-group"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

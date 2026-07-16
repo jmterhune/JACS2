@@ -22,9 +22,9 @@ namespace tjc.Modules.ProSeLog.Components
     [Cacheable("tjc_prose_Contacts", CacheItemPriority.Default, 20)]
     internal class Contact
     {
-        public int ContactID { get; set; }
+        public int ContactID { get; set; } // int
 
-        public string ContactName { get; set; }
+        public string ContactName { get; set; } // nvarchar(100)
 
     }
 }

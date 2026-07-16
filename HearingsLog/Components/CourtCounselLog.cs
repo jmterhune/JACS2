@@ -9,19 +9,19 @@ namespace tjc.Modules.HearingLog.Components
     [Cacheable("CourtCounselLogs", CacheItemPriority.Default, 20)]
     public class CourtCounselLog
     {
-        public int LogID { get; set; }
-        public int JudgeID { get; set; }
-        public string JudgeName { get; set; }
-        public string CaseName { get; set; }
-        public string CaseNumber { get; set; }
-        public string CaseType { get; set; }
-        public string CaseStatus { get; set; }
-        public string County { get; set; }
-        public string Attorney { get; set; }
-        public string Description { get; set; }
-        public DateTime? MotionFiled { get; set; }
-        public DateTime DateReceived { get; set; }
-        public DateTime DateCompleted { get; set; }
+        public int LogID { get; set; }            // int (logId)
+        public int JudgeID { get; set; }          // int
+        public string JudgeName { get; set; }     // varchar(25)
+        public string CaseName { get; set; }      // varchar(100)
+        public string CaseNumber { get; set; }    // varchar(18)
+        public string CaseType { get; set; }      // varchar(50)
+        public string CaseStatus { get; set; }    // nvarchar(50)
+        public string County { get; set; }        // varchar(10)
+        public string Attorney { get; set; }      // varchar(25)
+        public string Description { get; set; }   // varchar(100)
+        public DateTime? MotionFiled { get; set; } // smalldatetime
+        public DateTime DateReceived { get; set; } // smalldatetime
+        public DateTime DateCompleted { get; set; } // smalldatetime
         [IgnoreColumn]
         public DateTime? SixtiethDayDate
         {

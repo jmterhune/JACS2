@@ -1,0 +1,64 @@
+/***********************************************************************
+ * EmployeeDB 0.0.4 install script
+ *
+ * Promotes "is a supervisor" from a string-match against the Position
+ * field to an explicit roster in its own table.
+ *
+ *   tjc_supervisor — one row per employee designated as a supervisor.
+ *                    Managed via the new Supervisors admin tab on the
+ *                    EmployeeList page; the Supervisor dropdown on the
+ *                    Edit Employee form is now populated by joining
+ *                    against this table.
+ *
+ *   IsActive       — soft on/off switch. The dropdown groups Active
+ *                    supervisors at the top (selectable) and Inactive
+ *                    supervisors below (disabled), so an existing
+ *                    employee whose supervisor was deactivated keeps
+ *                    showing the historical pointer without offering
+ *                    the same choice for new saves.
+ *
+ *   EmployeeId     — UNIQUE; a person is either on the supervisor list
+ *                    or not. There is no duplicate-supervisor scenario.
+ *
+ * Existing supervisor references on tjc_employee.SupervisorId are
+ * seeded into the new table as Active so historical assignments keep
+ * resolving on the first page load after the upgrade.
+ ***********************************************************************/
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.objects
+    WHERE object_id = OBJECT_ID('{databaseOwner}{objectQualifier}tjc_supervisor')
+      AND type = 'U')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_supervisor (
+        SupervisorId     INT IDENTITY(1, 1) NOT NULL,
+        EmployeeId       INT NOT NULL,
+        IsActive         BIT NOT NULL CONSTRAINT DF_tjc_supervisor_IsActive DEFAULT (1),
+        CreatedDate      DATETIME NOT NULL CONSTRAINT DF_tjc_supervisor_CreatedDate DEFAULT (GETDATE()),
+        CreatedById      INT NOT NULL CONSTRAINT DF_tjc_supervisor_CreatedById DEFAULT (-1),
+        LastModifiedDate DATETIME NOT NULL CONSTRAINT DF_tjc_supervisor_LastModifiedDate DEFAULT (GETDATE()),
+        LastModifiedById INT NOT NULL CONSTRAINT DF_tjc_supervisor_LastModifiedById DEFAULT (-1),
+        CONSTRAINT PK_tjc_supervisor PRIMARY KEY CLUSTERED (SupervisorId),
+        CONSTRAINT UQ_tjc_supervisor_EmployeeId UNIQUE (EmployeeId)
+    );
+END
+GO
+
+/* Seed from historical assignments on tjc_employee.SupervisorId. Anyone
+ * already picked as someone's supervisor becomes an Active row in the
+ * new table. Re-running the migration is a no-op (the NOT EXISTS guard
+ * prevents duplicate inserts even if multiple employees pointed at the
+ * same supervisor). */
+INSERT INTO {databaseOwner}{objectQualifier}tjc_supervisor
+       (EmployeeId, IsActive, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById)
+SELECT DISTINCT e.SupervisorId, 1, GETDATE(), -1, GETDATE(), -1
+FROM   {databaseOwner}{objectQualifier}tjc_employee e
+WHERE  e.SupervisorId IS NOT NULL
+  AND  e.SupervisorId > 0
+  AND  NOT EXISTS (
+       SELECT 1
+       FROM   {databaseOwner}{objectQualifier}tjc_supervisor s
+       WHERE  s.EmployeeId = e.SupervisorId
+  );
+GO

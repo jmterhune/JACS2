@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="CourtCounsel" type="Module" version="00.00.01">
+    <package name="CourtCounsel" type="Module" version="00.00.02">
       <friendlyName>Court Counsel</friendlyName>
       <description>Court Counsel case management module</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
@@ -25,6 +25,11 @@
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>00.00.01.SqlDataProvider</name>
               <version>00.00.01</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.02.SqlDataProvider</name>
+              <version>00.00.02</version>
             </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
@@ -168,7 +173,7 @@
             <attributes>
               <businessControllerClass>tjc.Modules.CourtCounsel.Components.FeatureController, tjc.Modules.CourtCounsel</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>00.00.01</upgradeVersionsList>
+              <upgradeVersionsList>00.00.01,00.00.02</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>

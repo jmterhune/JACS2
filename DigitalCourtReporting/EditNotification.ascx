@@ -267,7 +267,7 @@
         <div class="row form-group">
             <div class="col-md-4"   runat="server" id="dvCalledPerson">
                 <label for="txtCalledPerson">Person Spoke With<em class="call-req text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledPerson" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledPerson" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                 <asp:CustomValidator ID="valCalledPerson" runat="server" OnServerValidate="valCalledPerson_ServerValidate"
                     ControlToValidate="txtCalledPerson"
                     Display="Dynamic"
@@ -279,13 +279,13 @@
             </div>
             <div class="col-md-4"  runat="server" id="dvCalledBy">
                 <label for="txtCalledBy">Called / Mailed By<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                 <asp:RequiredFieldValidator ID="valCalledMailedBy" Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Called / Mailed By is Required" ControlToValidate="txtCalledBy" runat="server" />
             </div>
             <div class="col-md-4"   runat="server" id="dvRecipient">
                 <label for="txtRecipient">Picked Up By/Delivered To</label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtRecipient" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtRecipient" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
             </div>
         </div>
         <div class="form-group">

@@ -11,14 +11,14 @@ namespace tjc.Modules.RecordDestruction.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class Log : AuditBase
     {
-        public int LogID { get; set; }
-        public string Description { get; set; }
-        public int GroupID { get; set; }
-        public int RecordTypeID { get; set; }
-        public int RetentionPeriodID { get; set; }
-        public int DestructionMethodID { get; set; }
-        public int YearCreated { get; set; }
-        public DateTime? DateDestroyed { get; set; }
-        public int FileID { get; set; }
+        public int LogID { get; set; } // int
+        public string Description { get; set; } // nvarchar(2000)
+        public int GroupID { get; set; } // int
+        public int RecordTypeID { get; set; } // int
+        public int RetentionPeriodID { get; set; } // int
+        public int DestructionMethodID { get; set; } // int
+        public int YearCreated { get; set; } // int
+        public DateTime? DateDestroyed { get; set; } // datetime
+        public int FileID { get; set; } // int
     }
 }

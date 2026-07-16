@@ -98,7 +98,7 @@
 
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
-                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastName" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="200" ID="txtLastName" />
                                                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="name" CssClass="label label-danger"
                                                     ErrorMessage="Last Name Is Required" ControlToValidate="txtLastName" runat="server" />
 

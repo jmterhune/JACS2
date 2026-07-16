@@ -15,47 +15,47 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("NhitRequestId", AutoIncrement = true)]
     public class NhitRequestInfo
     {
-        public int NhitRequestId { get; set; }
-        public int? EmployeeId { get; set; }
+        public int NhitRequestId { get; set; }  // int
+        public int? EmployeeId { get; set; }  // int
 
         // Employee-unique fields ----------------------------------------
-        public string EmployeeName { get; set; }
-        public string AKA { get; set; }
-        public string PositionTitle { get; set; }
-        public string SupervisorName { get; set; }
-        public string DepartmentUnitGroup { get; set; }
-        public string OfficeSuiteNumber { get; set; }
-        public string DeskPhoneNumber { get; set; }
-        public DateTime? TodaysDate { get; set; }
-        public DateTime? EffectiveDate { get; set; }
-        public DateTime? TempInternEndDate { get; set; }
+        public string EmployeeName { get; set; }  // varchar(200)
+        public string AKA { get; set; }  // varchar(100)
+        public string PositionTitle { get; set; }  // varchar(150)
+        public string SupervisorName { get; set; }  // varchar(200)
+        public string DepartmentUnitGroup { get; set; }  // varchar(150)
+        public string OfficeSuiteNumber { get; set; }  // varchar(50)
+        public string DeskPhoneNumber { get; set; }  // varchar(50)
+        public DateTime? TodaysDate { get; set; }  // date
+        public DateTime? EffectiveDate { get; set; }  // date
+        public DateTime? TempInternEndDate { get; set; }  // date
 
         // Profile-derived fields ----------------------------------------
-        public string BuildingLocation { get; set; }
-        public string EmployeeType { get; set; }
-        public bool EquipmentLaptop { get; set; }
-        public bool EquipmentTwoInOne { get; set; }
-        public bool EquipmentDesktop { get; set; }
-        public bool EquipmentCellPhone { get; set; }
-        public string AccessCardTo { get; set; }
-        public string KeysNeeded { get; set; }
-        public string ParkingAccess { get; set; }
-        public string EmailDistributionGroups { get; set; }
-        public string CalendarAccess { get; set; }
-        public string ShareDriveAccess { get; set; }
-        public string AdditionalPrinterAccess { get; set; }
-        public bool ManagerBlog { get; set; }
-        public bool AddToSupervisorDropdown { get; set; }
-        public bool WorkCellphoneSetup { get; set; }
-        public string Notes { get; set; }
+        public string BuildingLocation { get; set; }  // varchar(50)
+        public string EmployeeType { get; set; }  // varchar(20)
+        public bool EquipmentLaptop { get; set; }  // bit
+        public bool EquipmentTwoInOne { get; set; }  // bit
+        public bool EquipmentDesktop { get; set; }  // bit
+        public bool EquipmentCellPhone { get; set; }  // bit
+        public string AccessCardTo { get; set; }  // varchar(max)
+        public string KeysNeeded { get; set; }  // varchar(max)
+        public string ParkingAccess { get; set; }  // varchar(max)
+        public string EmailDistributionGroups { get; set; }  // varchar(max)
+        public string CalendarAccess { get; set; }  // varchar(max)
+        public string ShareDriveAccess { get; set; }  // varchar(max)
+        public string AdditionalPrinterAccess { get; set; }  // varchar(max)
+        public bool ManagerBlog { get; set; }  // bit
+        public bool AddToSupervisorDropdown { get; set; }  // bit
+        public bool WorkCellphoneSetup { get; set; }  // bit
+        public string Notes { get; set; }  // varchar(max)
 
         // Submission metadata -------------------------------------------
-        public DateTime SubmittedDate { get; set; }
-        public int SubmittedById { get; set; }
-        public string EmailSentTo { get; set; }
-        public DateTime? EmailSentDate { get; set; }
-        public bool? EmailSuccess { get; set; }
-        public string EmailErrorMessage { get; set; }
+        public DateTime SubmittedDate { get; set; }  // datetime
+        public int SubmittedById { get; set; }  // int
+        public string EmailSentTo { get; set; }  // varchar(500)
+        public DateTime? EmailSentDate { get; set; }  // datetime
+        public bool? EmailSuccess { get; set; }  // bit
+        public string EmailErrorMessage { get; set; }  // varchar(max)
 
         // Not persisted — populated client-side on POST, fanned out into
         // tjc_nhit_request_item rows by NhitRequestController.Create.

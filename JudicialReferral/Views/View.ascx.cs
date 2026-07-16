@@ -4,6 +4,7 @@
 */
 
 using DotNetNuke.Entities.Users;
+using DotNetNuke.Framework;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using System;
@@ -118,6 +119,38 @@ namespace tjc.Modules.JudicialReferral.Views
         protected void cmdReferral_Click(object sender, EventArgs e)
         {
             Response.Redirect(EditUrl("referral"));
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+            // Ensure jQuery + the __RequestVerificationToken hidden input are emitted
+            // so the SweetAlert2 status-update flow can call the WebAPI handler with
+            // antiforgery protection.
+            ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
+
+            // Emit ModuleId + TabId for the JS to forward as request headers.
+            // Without these, DnnApiController.ActiveModule returns null and the
+            // status-update endpoint can't read module settings (CounselRole,
+            // CourtCounselEmail).
+            string ctx = string.Format(
+                "window.__JR_ModuleContext = {{ moduleId: {0}, tabId: {1} }};",
+                ModuleId, TabId);
+            System.Web.UI.ScriptManager.RegisterStartupScript(this, GetType(),
+                "JRModuleContext", ctx, true);
+        }
+
+        /// <summary>
+        /// Emits the in-place "edit status" icon for the status column.
+        /// Only rendered for users in the Court Counsel Admin role (or superusers);
+        /// returns an empty string for everyone else, so the icon is invisible
+        /// to Judge, JA, and regular Counsel users without any client-side hiding.
+        /// </summary>
+        protected string RenderStatusEditIcon()
+        {
+            if (UserId <= 0) return string.Empty;
+            if (!IsCounselAdmin && !UserInfo.IsSuperUser) return string.Empty;
+            return "<a href=\"javascript:void(0)\" class=\"status-edit ms-2\" title=\"Update status\"><i class=\"fas fa-edit\"></i></a>";
         }
     }
 }

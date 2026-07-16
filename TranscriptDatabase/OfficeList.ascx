@@ -84,7 +84,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <asp:Label runat="server" AssociatedControlID="txtDescription" Text="Office Description" />
-                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtDescription" />
+                                                <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="100" ID="txtDescription" />
                                                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="office" CssClass="label label-danger"
                                                     ErrorMessage="Office Description Is Required" ControlToValidate="txtDescription" runat="server" />
 

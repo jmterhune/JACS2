@@ -139,6 +139,7 @@
     <Compile Include="Components\Models\EeoInfo.cs" />
     <Compile Include="Components\Models\SwnInterfaceLogInfo.cs" />
     <Compile Include="Components\Models\GroupInfo.cs" />
+    <Compile Include="Components\Models\SupervisorInfo.cs" />
     <Compile Include="Components\Models\CountyInfo.cs" />
     <Compile Include="Components\Models\EmployeeListItem.cs" />
     <!-- New Hire IT Worksheet -->
@@ -160,6 +161,7 @@
     <Compile Include="Components\Controllers\ServiceHistoryController.cs" />
     <Compile Include="Components\Controllers\EeoController.cs" />
     <Compile Include="Components\Controllers\GroupController.cs" />
+    <Compile Include="Components\Controllers\SupervisorController.cs" />
     <Compile Include="Components\Controllers\CountyController.cs" />
     <Compile Include="Components\Controllers\EmployeeReportController.cs" />
     <Compile Include="Components\Controllers\SwnInterfaceLogController.cs" />
@@ -187,6 +189,7 @@
     <Compile Include="Components\Api\MembershipsController.cs" />
     <Compile Include="Components\Api\PhotosController.cs" />
     <Compile Include="Components\Api\DepartmentsController.cs" />
+    <Compile Include="Components\Api\SupervisorsController.cs" />
     <Compile Include="Components\Api\EeosController.cs" />
     <Compile Include="Components\Api\SwnController.cs" />
     <Compile Include="Components\Api\NhitItemsController.cs" />
@@ -309,6 +312,7 @@
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.02.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.03.SqlDataProvider" />
+    <Content Include="Providers\DataProviders\SqlDataProvider\00.00.04.SqlDataProvider" />
     <Content Include="Providers\DataProviders\SqlDataProvider\Uninstall.SqlDataProvider" />
   </ItemGroup>
   <ItemGroup>

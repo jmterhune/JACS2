@@ -1,0 +1,7 @@
+﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ExpertWitness_Items]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}ExpertWitness_Items]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_update_expert_template_position]') AND type IN (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[{objectQualifier}tjc_expert_update_expert_template_position]
+GO

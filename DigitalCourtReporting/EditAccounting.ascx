@@ -216,7 +216,7 @@
             </div>
             <div class="col-auto">
                 <label for="txtCheckMo">Check or MO Number<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtCheckMo" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtCheckMo" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="30"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Check Number Required" ControlToValidate="txtCheckMo" runat="server" />
             </div>
@@ -228,14 +228,14 @@
             </div>
             <div class="col-md-3">
                 <label for="txtReceivedBy">Received By<em class="text-danger">*</em></label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtReceivedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="25"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtReceivedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
                 <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger"
                     ErrorMessage="Received By Required" ControlToValidate="txtReceivedBy" runat="server" />
             </div>
         </div>
         <div class="form-group">
                 <label for="txtAccountingNotes">Notes</label>
-                <asp:TextBox AutoCompleteType="Disabled" ID="txtAccountingNotes" ClientIDMode="Static" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox AutoCompleteType="Disabled" ID="txtAccountingNotes" ClientIDMode="Static" runat="server" TextMode="MultiLine" CssClass="form-control" MaxLength="750"></asp:TextBox>
         </div>
     </fieldset>
     <hr />

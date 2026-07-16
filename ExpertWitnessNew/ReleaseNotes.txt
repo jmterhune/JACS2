@@ -1,0 +1,41 @@
+﻿<h3>ExpertWitness</h3>
+<p class="Contributor">
+	Joe Terhune <br />
+	<a href="mailto:jterhune@jud12.flcourts.org">jterhune@jud12.flcourts.org</a><br />
+	<a href=https://www.jud12.flcourts.org/>https://www.jud12.flcourts.org/</a><br />
+	This extension was created using <a href="https://www.christoc.com">Christoc's</a> Module Development Templates for DNN.
+</p>
+<hr/>
+<div class="License">
+	<h3>About the ExpertWitness</h3>
+	<p class="Owner">
+		<b>Version 00.00.05</b><br /><br />
+	</p>
+	<p>Adds Email and Phone to experts for the public Expert Witness List.</p>
+	<h4>Changes</h4>
+	<ul>
+		<li>Experts now have Email and Phone fields, editable in the admin Expert form, for display on the public (internet) Expert Witness List module.</li>
+	</ul>
+	<p class="Owner">
+		<b>Version 00.00.04</b><br /><br />
+	</p>
+	<p>Fixes the same expert appearing more than once in a single requirement.</p>
+	<h4>Changes</h4>
+	<ul>
+		<li>An expert who satisfies a requirement through more than one of its specialties (an "A or B or C" requirement) is now listed only once, so the same expert can no longer be selected or added multiple times for that requirement.</li>
+	</ul>
+	<p class="Owner">
+		<b>Version 00.00.03</b><br /><br />
+	</p>
+	<p>Admin lists converted to AJAX + a module Web API (no postbacks), with confirm-before-delete; plus the 00.00.02 selection and contracted-list changes.</p>
+
+	<h4>Changes</h4>
+	<ul>
+			<li>All admin lists (Experts, Evaluation Types, Expert Types, Locations, Requests) now load and save via AJAX against a module Web API &ndash; no page postbacks. Deletes prompt for confirmation.</li>
+				<li>Fixed the rotation so a used expert is moved to the back of the line (the new position is now persisted), and added a recency-weighted shuffle so the same expert no longer keeps surfacing.</li>
+			<li>An expert can no longer be added to the same request more than once.</li>
+			<li>Added a public, read-only "Contracted Experts" view (experts whose contract end date is today or later), grouped by category with county coverage and a last-updated date.</li>
+			<li>Replaced server-side module messages with SweetAlert2 / Noty notifications.</li>
+	</ul>
+
+</div>

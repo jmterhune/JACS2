@@ -12,9 +12,9 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("NhitProfileItemId", AutoIncrement = true)]
     public class NhitProfileItemInfo
     {
-        public int NhitProfileItemId { get; set; }
-        public int NhitProfileId { get; set; }
-        public int NhitItemId { get; set; }
-        public bool IsChecked { get; set; }
+        public int NhitProfileItemId { get; set; }  // int
+        public int NhitProfileId { get; set; }  // int
+        public int NhitItemId { get; set; }  // int
+        public bool IsChecked { get; set; }  // bit
     }
 }

@@ -8,17 +8,17 @@ namespace tjc.Modules.Purchasing.Components
     [PrimaryKey("SupplyID", AutoIncrement = true)]
     internal class SupplyOrderItem
     {
-        public int SupplyID { get; set; }
-        public string ItemNumber { get; set; }
-        public int OrderID { get; set; }
-        public int Quantity { get; set; }
-        public string Comments { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string Description { get; set; }
-        public string Store { get; set; }
-        public string Link { get; set; }
-        public string UnitOfMeasure { get; set; }
-        public string Recipient { get; set; }
+        public int SupplyID { get; set; } // int
+        public string ItemNumber { get; set; } // nvarchar(200)
+        public int OrderID { get; set; } // int
+        public int Quantity { get; set; } // int
+        public string Comments { get; set; } // nvarchar(max)
+        public DateTime CreatedDate { get; set; } // datetime
+        public string Description { get; set; } // nvarchar(2000)
+        public string Store { get; set; } // nvarchar(250)
+        public string Link { get; set; } // nvarchar(max)
+        public string UnitOfMeasure { get; set; } // nvarchar(50)
+        public string Recipient { get; set; } // nvarchar(100)
         [IgnoreColumn]
         public string LinkedDescription
         {

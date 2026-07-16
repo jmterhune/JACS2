@@ -12,9 +12,9 @@ namespace tjc.Modules.RecordDestruction.Components
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     internal class Group : AuditBase
     {
-        public int GroupID { get; set; }
+        public int GroupID { get; set; } // int
 
-        public string GroupName { get; set; }
+        public string GroupName { get; set; } // nvarchar(50)
 
     }
     

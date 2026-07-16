@@ -45,38 +45,38 @@
   <ItemGroup>
     <Reference Include="DotNetNuke, Version=7.0.2.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\bin\DotNetNuke.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Abstractions, Version=9.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Jud12.flcourts.org\bin\DotNetNuke.Abstractions.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.DependencyInjection, Version=9.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Jud12.flcourts.org\bin\DotNetNuke.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.DependencyInjection.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.WebUtility.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\websites\intranet-new\bin\PetaPoco.dll</HintPath>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\PetaPoco.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -92,37 +92,14 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="tjc.Modules.Globals, Version=0.0.1.29148, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\websites\intranet-new\bin\tjc.Modules.Globals.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="attachment.ashx.cs">
-      <DependentUpon>attachment.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="CompletedRequest.ascx.cs">
-      <DependentUpon>CompletedRequest.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CompletedRequest.ascx.designer.cs">
-      <DependentUpon>CompletedRequest.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Components\Incident.cs" />
     <Compile Include="Components\Attachment.cs" />
     <Compile Include="Components\AttachmentController.cs" />
     <Compile Include="Components\PersonController.cs" />
     <Compile Include="Components\IncidentController.cs" />
     <Compile Include="Components\Person.cs" />
-    <Compile Include="Components\uploadHandler.cs" />
-    <Compile Include="Edit.ascx.cs">
-      <DependentUpon>Edit.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Edit.ascx.designer.cs">
-      <DependentUpon>Edit.ascx</DependentUpon>
-    </Compile>
     <Compile Include="ViewThreat.ascx.cs">
       <DependentUpon>ViewThreat.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -133,17 +110,7 @@
     <Compile Include="ThreatReportModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ThreatReportModuleSettingsBase.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.ascx.cs">
-      <DependentUpon>Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Settings.ascx.designer.cs">
-      <DependentUpon>Settings.ascx</DependentUpon>
-    </Compile>
     <Compile Include="View.ascx.cs">
       <DependentUpon>View.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -153,22 +120,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="attachment.ashx" />
-    <Content Include="CompletedRequest.ascx" />
-    <Content Include="Edit.ascx" />
     <Content Include="ViewThreat.ascx" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
-    <Content Include="Settings.ascx" />
     <Content Include="View.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_LocalResources\Settings.ascx.resx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Providers\DataProviders\SqlDataProvider\00.00.01.SqlDataProvider" />
@@ -178,16 +138,17 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompletedRequest.ascx.resx">
-      <DependentUpon>CompletedRequest.ascx.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="ThreatReport.dnn" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Globals\Globals.csproj">
+      <Project>{7066EACB-E672-4110-B73D-C1A230B16EAB}</Project>
+      <Name>Globals</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="web.config" />
-    <None Include="ThreatUploadHandler.att" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

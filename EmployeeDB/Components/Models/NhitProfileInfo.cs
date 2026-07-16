@@ -18,29 +18,29 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("NhitProfileId", AutoIncrement = true)]
     public class NhitProfileInfo
     {
-        public int NhitProfileId { get; set; }
-        public string ProfileName { get; set; }
-        public string BuildingLocation { get; set; }
-        public string EmployeeType { get; set; }
-        public bool EquipmentLaptop { get; set; }
-        public bool EquipmentTwoInOne { get; set; }
-        public bool EquipmentDesktop { get; set; }
-        public bool EquipmentCellPhone { get; set; }
-        public string AccessCardTo { get; set; }
-        public string KeysNeeded { get; set; }
-        public string ParkingAccess { get; set; }
-        public string EmailDistributionGroups { get; set; }
-        public string CalendarAccess { get; set; }
-        public string ShareDriveAccess { get; set; }
-        public string AdditionalPrinterAccess { get; set; }
-        public bool ManagerBlog { get; set; }
-        public bool AddToSupervisorDropdown { get; set; }
-        public bool WorkCellphoneSetup { get; set; }
-        public string Notes { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public int NhitProfileId { get; set; }  // int
+        public string ProfileName { get; set; }  // varchar(100)
+        public string BuildingLocation { get; set; }  // varchar(50)
+        public string EmployeeType { get; set; }  // varchar(20)
+        public bool EquipmentLaptop { get; set; }  // bit
+        public bool EquipmentTwoInOne { get; set; }  // bit
+        public bool EquipmentDesktop { get; set; }  // bit
+        public bool EquipmentCellPhone { get; set; }  // bit
+        public string AccessCardTo { get; set; }  // varchar(max)
+        public string KeysNeeded { get; set; }  // varchar(max)
+        public string ParkingAccess { get; set; }  // varchar(max)
+        public string EmailDistributionGroups { get; set; }  // varchar(max)
+        public string CalendarAccess { get; set; }  // varchar(max)
+        public string ShareDriveAccess { get; set; }  // varchar(max)
+        public string AdditionalPrinterAccess { get; set; }  // varchar(max)
+        public bool ManagerBlog { get; set; }  // bit
+        public bool AddToSupervisorDropdown { get; set; }  // bit
+        public bool WorkCellphoneSetup { get; set; }  // bit
+        public string Notes { get; set; }  // varchar(max)
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
 
         // Not persisted — populated by NhitProfileController on Get and read
         // by the API layer on Save so the round-trip carries the catalog

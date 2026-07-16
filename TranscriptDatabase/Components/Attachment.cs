@@ -8,11 +8,11 @@ namespace tjc.Modules.TranscriptDatabase.Components
     [Cacheable("Attachments", CacheItemPriority.Default, 20)]
     internal class Attachment : EntityBase
     {
-        public int AttachmentID { get; set; }
-        public int DesignationID { get; set; }
-        public int FileID { get; set; }
-        public string Path { get; set; }
-        public string FileDescription { get; set; }
+        public int AttachmentID { get; set; }  // int
+        public int DesignationID { get; set; }  // int
+        public int FileID { get; set; }  // int
+        public string Path { get; set; }  // nvarchar(2000)
+        public string FileDescription { get; set; }  // nvarchar(150)
         [IgnoreColumn]
         public string RelativePath
         {

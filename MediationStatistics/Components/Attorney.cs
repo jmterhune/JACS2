@@ -23,25 +23,25 @@ namespace tjc.Modules.MediationStatistics.Components
     [PrimaryKey("AttorneyId", AutoIncrement = true)]
     internal class Attorney : EntityBase
     {
-        public int AttorneyId { get; set; }
+        public int AttorneyId { get; set; }  // int (identity PK)
 
-        public string FirstName { get; set; }
+        public string FirstName { get; set; }  // nvarchar(50)
 
-        public string LastName { get; set; }
+        public string LastName { get; set; }  // nvarchar(50)
 
-        public string Firm { get; set; }
+        public string Firm { get; set; }  // nvarchar(50)
 
-        public string Phone { get; set; }
+        public string Phone { get; set; }  // nvarchar(50)
 
-        public string Extension { get; set; }
+        public string Extension { get; set; }  // nvarchar(50)
 
-        public string Address { get; set; }
-        public string Email { get; set; }
-        public string City { get; set; }
+        public string Address { get; set; }  // nvarchar(150)
+        public string Email { get; set; }  // nvarchar(250)
+        public string City { get; set; }  // nvarchar(50)
 
-        public string State { get; set; }
+        public string State { get; set; }  // nvarchar(50)
 
-        public string Zip { get; set; }
+        public string Zip { get; set; }  // nvarchar(50)
 
         [IgnoreColumn]
         public string FullName

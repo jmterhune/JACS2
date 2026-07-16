@@ -82,7 +82,7 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <asp:Label runat="server" AssociatedControlID="txtDestructionMethod" Text="Destruction Method" />
-                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtDestructionMethod" />
+                                        <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="100" ID="txtDestructionMethod" />
                                     </div>
                                     <asp:HiddenField ID="hdDestructionMethodId" ClientIDMode="Static" runat="server" />
                                 </div>

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intranet.API", "Intranet.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManateeJacsCaseMaintenace", "ManateeJacsCaseMaintenace\ManateeJacsCaseMaintenace.csproj", "{7140211D-1C7E-4A85-B6A7-EF22320CC126}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reports", "Reports\Reports.csproj", "{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeReports", "Reports\EmployeeReports.csproj", "{80A7561A-64F5-4AC4-9CB1-3A7156B66D26}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeDB", "EmployeeDB\EmployeeDB.csproj", "{03F91FA2-3625-43B0-9F2F-563C65A82C89}"
 EndProject
@@ -37,8 +37,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtRegistry", "CourtRegis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Record-Destruction", "Record-Destruction\Record-Destruction.csproj", "{5B0BF1FE-8AE5-420A-BCE3-643A48F5C0F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpertWitness", "ExpertWitness\ExpertWitness.csproj", "{D07A060D-4EC6-4792-886B-1AA73BD360E9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtReporting", "CourtReporting\CourtReporting.csproj", "{6EB89284-918D-4EA8-8417-09139C904B7D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearingsLog", "HearingsLog\HearingsLog.csproj", "{0711116E-AF67-46CD-95D6-554831319119}"
@@ -56,6 +54,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtCounsel", "CourtCounsel\CourtCounsel.csproj", "{B8E3A1D2-4C5F-6789-0ABC-DEF123456789}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JudicialReferral", "JudicialReferral\JudicialReferral.csproj", "{C9F4B2E3-5D6A-789B-0CDE-F23456789012}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpertWitness", "ExpertWitnessNew\ExpertWitness.csproj", "{D07A060D-4EC6-4792-886B-1AA73BD360E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CDSP", "CDSP\CDSP.csproj", "{CAEA6FA0-7B9B-4462-A2DA-EF5C36DA4B1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,10 +131,6 @@ Global
 		{5B0BF1FE-8AE5-420A-BCE3-643A48F5C0F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B0BF1FE-8AE5-420A-BCE3-643A48F5C0F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B0BF1FE-8AE5-420A-BCE3-643A48F5C0F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6EB89284-918D-4EA8-8417-09139C904B7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6EB89284-918D-4EA8-8417-09139C904B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EB89284-918D-4EA8-8417-09139C904B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -169,6 +167,14 @@ Global
 		{C9F4B2E3-5D6A-789B-0CDE-F23456789012}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9F4B2E3-5D6A-789B-0CDE-F23456789012}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9F4B2E3-5D6A-789B-0CDE-F23456789012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D07A060D-4EC6-4792-886B-1AA73BD360E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAEA6FA0-7B9B-4462-A2DA-EF5C36DA4B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAEA6FA0-7B9B-4462-A2DA-EF5C36DA4B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAEA6FA0-7B9B-4462-A2DA-EF5C36DA4B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAEA6FA0-7B9B-4462-A2DA-EF5C36DA4B1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

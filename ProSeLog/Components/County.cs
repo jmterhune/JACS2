@@ -6,7 +6,7 @@ namespace tjc.Modules.ProSeLog.Components
     [TableName("tjc_gl_counties")]
     internal class County
     {
-        public int CountyId { get; set; }
-        public string CountyName { get; set; }
+        public int CountyId { get; set; } // int
+        public string CountyName { get; set; } // nvarchar(50)
     }
 }

@@ -1,0 +1,20 @@
+/* CourtCounsel Module - Version 00.00.02 */
+/* Widen tjc_cc_history.CaseNumber from varchar(18) to varchar(50). */
+/* The Copy button on the Judicial Referral EditLog view inserts a row */
+/* into tjc_cc_history using the JR's CaseNumber, which is nvarchar(50). */
+/* Case numbers with a defendant suffix (e.g. S-2023-CF-006436-0000) */
+/* exceed 18 chars and were getting truncated. */
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.columns c
+    JOIN sys.tables  t ON c.object_id = t.object_id
+    WHERE t.name = 'tjc_cc_history'
+      AND c.name = 'CaseNumber'
+      AND c.max_length < 50
+)
+BEGIN
+    ALTER TABLE {databaseOwner}[{objectQualifier}tjc_cc_history]
+        ALTER COLUMN CaseNumber varchar(50) NOT NULL;
+END
+GO

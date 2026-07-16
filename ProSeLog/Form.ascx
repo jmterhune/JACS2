@@ -26,15 +26,15 @@
                 </div>
                 <div class="col-auto">
                     <asp:Label runat="server" AssociatedControlID="txtPetitioner" Text="Petitioner" />
-                    <asp:TextBox ID="txtPetitioner" runat="server" CssClass="form-control" />
+                    <asp:TextBox ID="txtPetitioner" runat="server" MaxLength="50" CssClass="form-control" />
                 </div>
                 <div class="col-auto">
                     <asp:Label runat="server" AssociatedControlID="txtRespondent" Text="Respondent" />
-                    <asp:TextBox ID="txtRespondent" runat="server" CssClass="form-control" />
+                    <asp:TextBox ID="txtRespondent" runat="server" MaxLength="50" CssClass="form-control" />
                 </div>
                 <div class="col-3">
                     <asp:Label runat="server" AssociatedControlID="txtCaseName" Text="Case Name<em>*</em>" ToolTip="required" />
-                    <asp:TextBox ID="txtCaseName" runat="server" MaxLength="100" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
+                    <asp:TextBox ID="txtCaseName" runat="server" MaxLength="50" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
                 </div>
             </div>
             <div class="row form-group">

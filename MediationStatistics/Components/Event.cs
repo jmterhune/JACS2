@@ -24,42 +24,42 @@ namespace tjc.Modules.MediationStatistics.Components
     [Cacheable("Events", CacheItemPriority.Default, 20)]
     internal class Event : EntityBase
     {
-        public int EventId { get; set; }
+        public int EventId { get; set; }  // int (identity PK)
 
-        public int SessionId { get; set; }
+        public int SessionId { get; set; }  // int
 
-        public bool? MediationHeld { get; set; }
+        public bool? MediationHeld { get; set; }  // bit
 
-        public string ReasonNotHeld { get; set; }
+        public string ReasonNotHeld { get; set; }  // nvarchar(50)
 
-        public DateTime? EventDate { get; set; }
+        public DateTime? EventDate { get; set; }  // smalldatetime
 
-        public string Comments { get; set; }
+        public string Comments { get; set; }  // nvarchar(2000)
 
-        public string AgreementType { get; set; }
-        public string MediatorType { get; set; }
-        public int MediatorId { get; set; }
-        public bool? AgreementSubmittedParties { get; set; }
+        public string AgreementType { get; set; }  // char(1)
+        public string MediatorType { get; set; }  // nvarchar(50)
+        public int MediatorId { get; set; }  // int
+        public bool? AgreementSubmittedParties { get; set; }  // bit
 
-        public bool? AgreementPreparedAttorney { get; set; }
+        public bool? AgreementPreparedAttorney { get; set; }  // bit
 
-        public bool? AgreementSigned { get; set; }
+        public bool? AgreementSigned { get; set; }  // bit
 
-        public bool? AdjournedTimeRemaining { get; set; }
+        public bool? AdjournedTimeRemaining { get; set; }  // bit
 
-        public decimal? TimeRemaining { get; set; }
+        public decimal? TimeRemaining { get; set; }  // decimal(18,2)
 
-        public int? SignedCount1 { get; set; }
+        public int? SignedCount1 { get; set; }  // int
 
-        public int? SignedCount2 { get; set; }
+        public int? SignedCount2 { get; set; }  // int
 
-        public int? SignedCount3 { get; set; }
+        public int? SignedCount3 { get; set; }  // int
 
-        public bool? Signed1 { get; set; }
+        public bool? Signed1 { get; set; }  // bit
 
-        public bool? Signed2 { get; set; }
+        public bool? Signed2 { get; set; }  // bit
 
-        public bool? Signed3 { get; set; }
+        public bool? Signed3 { get; set; }  // bit
         [IgnoreColumn]
         public IEnumerable<Appearance> EventAppearances
         {
@@ -87,8 +87,8 @@ namespace tjc.Modules.MediationStatistics.Components
     [TableName("tjc_med_event_appearances")]
     internal class EventAppearance : EntityBase
     {
-        public int EventId { get; set; }
+        public int EventId { get; set; }  // int
 
-        public int AppearanceId { get; set; }
+        public int AppearanceId { get; set; }  // int
     }
 }

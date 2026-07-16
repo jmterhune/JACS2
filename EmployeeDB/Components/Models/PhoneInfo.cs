@@ -8,21 +8,21 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [PrimaryKey("PhoneId", AutoIncrement = true)]
     public class PhoneInfo
     {
-        public long PhoneId { get; set; }
-        public int EmployeeId { get; set; }
-        public int? OfficeLocationId { get; set; }
-        public string PhoneType { get; set; }
-        [DigitsOnly] public string PhoneNumber { get; set; }
-        public string Extension { get; set; }
-        public bool IsMain { get; set; }
-        public int? PhoneCascade { get; set; }
-        public bool SwnText { get; set; }
-        public bool SwnCall { get; set; }
-        public bool SwnExcludeExtension { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public long PhoneId { get; set; }  // bigint
+        public int EmployeeId { get; set; }  // int
+        public int? OfficeLocationId { get; set; }  // int
+        public string PhoneType { get; set; }  // nvarchar(20)
+        [DigitsOnly] public string PhoneNumber { get; set; }  // nvarchar(20) — stored as raw digits (mask stripped)
+        public string Extension { get; set; }  // nvarchar(10)
+        public bool IsMain { get; set; }  // bit
+        public int? PhoneCascade { get; set; }  // int
+        public bool SwnText { get; set; }  // bit
+        public bool SwnCall { get; set; }  // bit
+        public bool SwnExcludeExtension { get; set; }  // bit
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
 
         /// <summary>Description of the OfficeLocation row, populated by the
         /// API layer on read so the JS can render the column directly without

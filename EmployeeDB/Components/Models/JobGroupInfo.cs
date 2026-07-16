@@ -9,11 +9,11 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [Cacheable("tjc_employee_job_group", CacheItemPriority.Default, 20)]
     public class JobGroupInfo
     {
-        public int JobGroupId { get; set; }
-        public string Description { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedById { get; set; }
+        public int JobGroupId { get; set; }  // int
+        public string Description { get; set; }  // nvarchar(100)
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedById { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedById { get; set; }  // int
     }
 }

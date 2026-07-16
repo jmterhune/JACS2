@@ -1,0 +1,24 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/***** Adds Email and Phone to the expert record so the *****/
+/***** public Expert Witness List (internet site) can   *****/
+/***** display them. Nullable / additive.               *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_expert]') AND [name] = 'Email')
+	ALTER TABLE {databaseOwner}[{objectQualifier}tjc_expert_expert] ADD [Email] NVARCHAR(255) NULL
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_expert_expert]') AND [name] = 'Phone')
+	ALTER TABLE {databaseOwner}[{objectQualifier}tjc_expert_expert] ADD [Phone] NVARCHAR(50) NULL
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

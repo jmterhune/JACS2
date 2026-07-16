@@ -15,13 +15,13 @@ namespace tjc.Modules.EmployeeDB.Components.Models
     [Cacheable("tjc_gl_group", CacheItemPriority.Default, 20)]
     public class GroupInfo
     {
-        public int GroupID { get; set; }
-        public string GroupName { get; set; }
-        public int GroupType { get; set; }
-        public bool IsSwnGroup { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int CreatedByID { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public int LastModifiedByID { get; set; }
+        public int GroupID { get; set; }  // int
+        public string GroupName { get; set; }  // nvarchar(50)
+        public int GroupType { get; set; }  // int
+        public bool IsSwnGroup { get; set; }  // bit
+        public DateTime CreatedDate { get; set; }  // datetime
+        public int CreatedByID { get; set; }  // int
+        public DateTime LastModifiedDate { get; set; }  // datetime
+        public int LastModifiedByID { get; set; }  // int
     }
 }

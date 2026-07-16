@@ -95,7 +95,7 @@
                                         </div>
                                         <div class="col">
                                             <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
-                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="50" ID="txtPhone" />
+                                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control phone" MaxLength="15" ID="txtPhone" />
                                         </div>
                                     </div>
                                     <div class="row g-3">

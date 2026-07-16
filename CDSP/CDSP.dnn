@@ -1,0 +1,65 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="CDSPAdmin" type="Module" version="00.00.01">
+      <friendlyName>CDSP Submissions</friendlyName>
+      <description>Intranet admin for reviewing CDSP / Family Pre-Filing form submissions (tjc_cdsp_submission).</description>
+      <iconFile>~/Images/icon_extensions_32px.png</iconFile>
+      <owner>
+        <name>12th Judicial Circuit</name>
+        <organization>12th Judicial Circuit</organization>
+        <url>https://www.jud12.flcourts.org</url>
+        <email>jterhune@jud12.flcourts.org</email>
+      </owner>
+      <license src="License.txt"></license>
+      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="CoreVersion">09.08.00</dependency>
+      </dependencies>
+      <components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/tjc.modules/CDSPAdmin</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>CDSP Submissions</moduleName>
+            <foldername>tjc.modules/CDSPAdmin</foldername>
+            <businessControllerClass />
+            <supportedFeatures />
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>CDSP Submissions</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/tjc.modules/CDSPAdmin/Views/SubmissionList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle />
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <name>tjc.Modules.CDSPAdmin.dll</name>
+              <path>bin</path>
+            </assembly>
+          </assemblies>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

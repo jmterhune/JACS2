@@ -48,9 +48,9 @@
                         </td>
                         <td><%#Eval("CaseType") %></td>
                         <td><%#Eval("Responsible") %></td>
-                        <td><%#FormatDate((DateTime?)Eval("DateReceived")) %></td>
+                        <td data-order='<%#FormatDateIso((DateTime?)Eval("DateReceived")) %>'><%#FormatDate((DateTime?)Eval("DateReceived")) %></td>
                         <td><%#GetStatus((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
-                        <td runat="server" ID="tdCompleted"><%#FormatDate((DateTime?)Eval("DateCompleted")) %></td>
+                        <td runat="server" ID="tdCompleted" data-order='<%#FormatDateIso((DateTime?)Eval("DateCompleted")) %>'><%#FormatDate((DateTime?)Eval("DateCompleted")) %></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>
@@ -63,7 +63,7 @@
         jQuery(document).ready(function ($) {
             if ($.fn.DataTable) {
                 $('#attorney-case-list').DataTable({
-                    "order": [[4, "desc"]],
+                    "order": [[4, "asc"]],   // Action Date ascending; date-aware via data-order
                     "pageLength": 25
                 });
             }

@@ -68,10 +68,10 @@ namespace tjc.Modules.DigitalCourtReporting
             if (mailtolist.Length > 1)
             {
                 foreach (var s in mailtolist)
-                    DotNetNuke.Services.Mail.Mail.SendEmail(proceeding.Email, s, "", jurisdiction + " Reporting Request", EmailBody(proceeding, location));
+                    DotNetNuke.Services.Mail.Mail.SendEmail(mailTo, mailTo, s, jurisdiction + " Reporting Request", EmailBody(proceeding, location));
             }
             else
-                DotNetNuke.Services.Mail.Mail.SendEmail(proceeding.Email, mailTo, "", jurisdiction + " Reporting Request", EmailBody(proceeding, location));
+                DotNetNuke.Services.Mail.Mail.SendEmail(mailTo, mailTo, mailTo, jurisdiction + " Reporting Request", EmailBody(proceeding, location));
         }
         private string GetCountyName(int countyId)
         {

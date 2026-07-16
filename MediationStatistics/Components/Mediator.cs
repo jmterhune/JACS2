@@ -23,15 +23,15 @@ namespace tjc.Modules.MediationStatistics.Components
     [PrimaryKey("MediatorId", AutoIncrement = true)]
     internal class Mediator : EntityBase
     {
-        public int MediatorId { get; set; }
+        public int MediatorId { get; set; }  // int (identity PK)
 
-        public string FirstName { get; set; }
+        public string FirstName { get; set; }  // nvarchar(50)
 
-        public string LastName { get; set; }
+        public string LastName { get; set; }  // nvarchar(50)
 
-        public string Phone { get; set; }
+        public string Phone { get; set; }  // nvarchar(20)
 
-        public string Email { get; set; }
+        public string Email { get; set; }  // nvarchar(250)
         [IgnoreColumn]
         public string MediatorName
         {

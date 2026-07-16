@@ -604,10 +604,10 @@ namespace tjc.Modules.TranscriptDatabase
             try
             {
                 bool hasDate = DateTime.TryParse(txtTranscriptFiledUpdate.Text, out DateTime filedDate);
+                var ctl = new DesignationController();
+                Designation designation = ctl.GetDesignation(DesignationId);
                 if (hasDate)
                 {
-                    var ctl = new DesignationController();
-                    Designation designation = ctl.GetDesignation(DesignationId);
                     if (!designation.TranscriptFiled.HasValue || filedDate != designation.TranscriptFiled)
                     {
                         designation.TranscriptFiled = filedDate;
@@ -615,27 +615,33 @@ namespace tjc.Modules.TranscriptDatabase
                         UpdateDueDate(designation);
                         txtTranscriptFiledDate.Text = filedDate.ToShortDateString();
                     }
-                    var cCtl = new CalendarController();
-                    Components.Calendar calendarEvent = cCtl.GetCalendarByDesignation(DesignationId);
-                    if (calendarEvent != null)
+                }
+                else if (designation.TranscriptFiled.HasValue)
+                {
+                    designation.TranscriptFiled = null;
+                    ctl.UpdateDesignation(designation);
+                    txtTranscriptFiledDate.Text = string.Empty;
+                }
+                var cCtl = new CalendarController();
+                Components.Calendar calendarEvent = cCtl.GetCalendarByDesignation(DesignationId);
+                if (calendarEvent != null)
+                {
+                    if (hasDate)
+                        calendarEvent.EventTypeID = (int)EventTypes.transcriptFiled;
+                    else
                     {
-                        if (hasDate)
-                            calendarEvent.EventTypeID = (int)EventTypes.transcriptFiled;
-                        else
+                        var eCtl = new ExtensionRequestController();
+                        calendarEvent.EventTypeID = (int)EventTypes.dueDate;
+                        IEnumerable<ExtensionRequest> extensions = eCtl.GetExtensionRequestsByDesignation(DesignationId);
+                        if (extensions.Count() > 0)
                         {
-                            var eCtl = new ExtensionRequestController();
-                            calendarEvent.EventTypeID = (int)EventTypes.dueDate;
-                            IEnumerable<ExtensionRequest> extensions = eCtl.GetExtensionRequestsByDesignation(DesignationId);
-                            if (extensions.Count() > 0)
-                            {
-                                ExtensionRequest extension = extensions.OrderByDescending(et => et.EventTypeID).FirstOrDefault();
-                                calendarEvent.EventTypeID = extension.EventTypeID;
-                                if (!extension.Approved)
-                                    calendarEvent.RequestOutstanding = true;
-                            }
+                            ExtensionRequest extension = extensions.OrderByDescending(et => et.EventTypeID).FirstOrDefault();
+                            calendarEvent.EventTypeID = extension.EventTypeID;
+                            if (!extension.Approved)
+                                calendarEvent.RequestOutstanding = true;
                         }
-                        cCtl.UpdateCalendar(calendarEvent);
                     }
+                    cCtl.UpdateCalendar(calendarEvent);
                 }
             }
             catch (Exception exc)

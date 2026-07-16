@@ -43,13 +43,14 @@
                     <asp:TemplateField HeaderText="Mode">
                         <HeaderTemplate>
                             Mode<br />
-                            <span class="text-nowrap"><a href="#" onclick="setAll('Zoom'); return false;">Zoom</a> | <a href="#" onclick="setAll('Transport'); return false;">Transport</a>
+                            <span class="text-nowrap"><a href="#" onclick="setAll('Zoom'); return false;">Zoom</a> | <a href="#" onclick="setAll('Transport'); return false;">Transport</a> | <a href="#" onclick="setAll('InPerson'); return false;">In-Person</a>
                             </span>
                         </HeaderTemplate>
                         <ItemTemplate>
                             <div class="text-nowrap">
                                 <asp:RadioButton ID="rbZoom" runat="server" GroupName='<%# "Mode" + Container.DataItemIndex %>' Text="Zoom" />
                                 <asp:RadioButton ID="rbTransport" runat="server" GroupName='<%# "Mode" + Container.DataItemIndex %>' Text="Transport" />
+                                <asp:RadioButton ID="rbInPerson" runat="server" GroupName='<%# "Mode" + Container.DataItemIndex %>' Text="In-Person" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
@@ -150,6 +151,7 @@
             var row = $(this);
             row.find('input[id*="rbZoom"]').prop('checked', mode === 'Zoom');
             row.find('input[id*="rbTransport"]').prop('checked', mode === 'Transport');
+            row.find('input[id*="rbInPerson"]').prop('checked', mode === 'InPerson');
         });
     }
 

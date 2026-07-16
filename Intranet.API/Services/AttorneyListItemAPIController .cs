@@ -20,9 +20,9 @@ namespace tjc.Intranet.API.Services.Mediation
             int recordCount = count;
             int filteredCount = 0;
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-            string firstName = query["firstName"].ToString();
-            string lastName = query["lastName"].ToString();
-            string firm = query["firm"].ToString();
+            string firstName = query.ContainsKey("firstName") ? query["firstName"] ?? "" : "";
+            string lastName = query.ContainsKey("lastName") ? query["lastName"] ?? "" : "";
+            string firm = query.ContainsKey("firm") ? query["firm"] ?? "" : "";
             Int32.TryParse(query["length"], out int pageSize);
             Int32.TryParse(query["start"], out int recordOffset);
             Int32.TryParse(query["draw"], out int draw);

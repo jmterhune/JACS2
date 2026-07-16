@@ -109,12 +109,30 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         public void UpdateEmployee(EmployeeInfo item, int userId = -1)
         {
             ModelNormalizer.Normalize(item);
+
+            // Capture the pre-save IsActive so we can detect a
+            // active -> inactive transition and auto-sync the supervisor
+            // roster. We only fire on the transition (not whenever the
+            // saved value is false), so a manual reactivation on the
+            // Supervisors admin tab isn't undone by a subsequent save
+            // that leaves the employee inactive.
+            var beforeIsActive = GetEmployee(item.EmployeeId)?.IsActive;
+
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 rep.Update(item);
+            }
+
+            // active -> inactive sync. Reactivation (false -> true) is
+            // deliberately left alone — HR Admin decides whether a
+            // returning employee should be back on the supervisor roster.
+            var nowIsActive = item.IsActive == true;
+            if (beforeIsActive == true && !nowIsActive)
+            {
+                new SupervisorController().DeactivateForEmployee(item.EmployeeId, userId);
             }
         }
 
@@ -164,16 +182,49 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
-        public IEnumerable<EmployeeInfo> GetSupervisors()
+        /// <summary>Returns the supervisor roster for the EditEmployee
+        /// dropdown — one row per <c>tjc_supervisor</c> entry, joined to
+        /// <c>tjc_employee</c> for name display. Each row carries the
+        /// supervisor's <c>IsActive</c> flag so the dropdown can render
+        /// Active / Inactive groups (inactive ones disabled).
+        ///
+        /// Earlier revisions of this method matched on
+        /// <c>Position LIKE '%Supervisor%'</c> or "is already someone's
+        /// supervisor"; both are now obsolete — supervisors are explicitly
+        /// managed via the Supervisors admin tab on EmployeeList.</summary>
+        public IEnumerable<SupervisorRow> GetSupervisors()
         {
             using (IDataContext ctx = DataContext.Instance())
             {
-                string sql = @"SELECT * FROM tjc_employee
-                               WHERE IsEmployee = 1
-                                 AND (Position LIKE '%Supervisor%'
-                                      OR EmployeeId IN (SELECT DISTINCT SupervisorId FROM tjc_employee WHERE SupervisorId IS NOT NULL))
-                               ORDER BY LastName, FirstName";
-                return ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, sql);
+                var sql = @"SELECT e.EmployeeId, e.FirstName, e.LastName, s.IsActive
+                            FROM tjc_employee e
+                            INNER JOIN tjc_supervisor s ON s.EmployeeId = e.EmployeeId
+                            WHERE e.IsEmployee = 1
+                            ORDER BY s.IsActive DESC, e.LastName, e.FirstName";
+                return ctx.ExecuteQuery<SupervisorRow>(CommandType.Text, sql);
+            }
+        }
+
+        /// <summary>Type-ahead search across employees by name. Used by the
+        /// Supervisors admin tab to find a candidate before promoting them.
+        /// Matches <c>FirstName</c>, <c>LastName</c>, or "Last, First" so
+        /// the user can type either order. Results are capped at
+        /// <paramref name="limit"/> rows (default 20).</summary>
+        public IEnumerable<EmployeeInfo> SearchByName(string q, int limit = 20)
+        {
+            if (string.IsNullOrWhiteSpace(q)) return Enumerable.Empty<EmployeeInfo>();
+            // Cap defensively — caller can request a larger window but never
+            // an unbounded SELECT.
+            if (limit <= 0) limit = 20;
+            if (limit > 100) limit = 100;
+            using (IDataContext ctx = DataContext.Instance())
+            {
+                var sql = "SELECT TOP " + limit + " * FROM tjc_employee "
+                        + "WHERE IsEmployee = 1 "
+                        + "  AND (FirstName LIKE @0 OR LastName LIKE @0 "
+                        + "       OR (LastName + ', ' + FirstName) LIKE @0) "
+                        + "ORDER BY LastName, FirstName";
+                return ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, sql, "%" + q.Trim() + "%");
             }
         }
 
