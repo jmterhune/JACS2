@@ -120,7 +120,7 @@
                 var id = r[idF];
                 return '<div class="form-check">' +
                     '<input class="form-check-input ' + cls + '" type="checkbox" value="' + id + '" id="' + cls + '_' + id + '">' +
-                    '<label class="form-check-label" for="' + cls + '_' + id + '">' + ew.esc(r[nameF]) + '</label></div>';
+                    '<label class="form-check-label d-block" for="' + cls + '_' + id + '">' + ew.esc(r[nameF]) + '</label></div>';
             }).join(""));
         }
         function checkedVals($m, sel) {
@@ -151,7 +151,7 @@
                 deletedText: "Expert deleted.",
                 confirmText: "Are you sure you wish to delete this expert?",
                 rowHtml: function (x) {
-                    var cmt = x.Comments ? '<i class="fas fa-comment-alt" title="' + ew.esc(x.Comments) + '"></i>' : "";
+                    var cmt = x.Comments ? '<a data-bs-html="true" data-toggle="tooltip" title="<strong>Comments:</strong><p>' + ew.esc(x.Comments) + '</p>"><i class="fas fa-comment-alt"></i></a>' : "";
                     return '<tr data-id="' + x.ExpertID + '">' +
                         '<td class="command-item"><a href="#" class="text-primary ew-expert-edit" title="Edit"><i class="fas fa-edit"></i></a></td>' +
                         '<td>' + x.ExpertID + '</td>' +

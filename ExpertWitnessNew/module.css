@@ -243,3 +243,15 @@ table.dataTable td, table.dataTable th {
 .ew-progress .progress-bar {
     width: 100%;
 }
+
+/* Comment tooltips (Experts list): Porto dims the tooltip body text to gray;
+   force all tooltip text white. */
+.tooltip-inner,
+.tooltip-inner * {
+    color: #fff !important;
+}
+
+/* Comment icon is a tooltip trigger (anchor without href) -- show a pointer cursor. */
+.ew-admin-table a[data-toggle="tooltip"] {
+    cursor: pointer;
+}

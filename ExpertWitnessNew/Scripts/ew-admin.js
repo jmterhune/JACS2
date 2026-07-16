@@ -51,6 +51,11 @@
                 "autoWidth": false,
                 "columnDefs": [{ "orderable": false, "targets": "no-sort" }]
             });
+            // Initialize Bootstrap tooltips (e.g. the Comments column) on load and after
+            // each redraw so rows brought in by paging/sorting get their tooltip too.
+            var initTips = function () { if ($.fn.tooltip) $(cfg.tableId + ' [data-toggle="tooltip"]').tooltip(); };
+            dt.on('draw', initTips);
+            initTips();
             // Park the Add button in DataTables' length container.
             if (cfg.addBtnId) {
                 var $wrap = $(cfg.tableId).closest('.dataTables_wrapper, .dt-container');
