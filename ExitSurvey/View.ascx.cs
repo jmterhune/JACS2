@@ -63,6 +63,8 @@ namespace tjc.Modules.ExitSurvey
                 cblAdvantages.Items.Add(new ListItem(r.Label, r.Key));
                 cblReasons.Items.Add(new ListItem(r.Label, r.Key));
             }
+
+            txtDateCompleted.Text = DateTime.Now.ToString("MM/dd/yyyy");
         }
 
         // Fills the label and the 5-point rating list for a single matrix row.
