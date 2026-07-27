@@ -117,39 +117,39 @@
             </asp:RadioButtonList>
         </div>
 
-        <%-- Optional identifying section ------------------------------------ --%>
-        <h5 class="exit-survey-question">Optional</h5>
+        <%-- Personal Info section ------------------------------------------- --%>
+        <div class="exit-survey-section">Personal Info</div>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="<%= txtName.ClientID %>">Name</label>
+                <label class="exit-survey-req" for="<%= txtName.ClientID %>">Name</label>
                 <asp:TextBox ID="txtName" runat="server" CssClass="form-control" MaxLength="150" />
             </div>
             <div class="col-md-6">
-                <label for="<%= txtPositionTitle.ClientID %>">Most recent position title in Court employment</label>
+                <label class="exit-survey-req" for="<%= txtPositionTitle.ClientID %>">Most recent position title in Court employment</label>
                 <asp:TextBox ID="txtPositionTitle" runat="server" CssClass="form-control" MaxLength="150" />
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="<%= txtSupervisorName.ClientID %>">Name of Supervisor</label>
+                <label class="exit-survey-req" for="<%= txtSupervisorName.ClientID %>">Name of Supervisor</label>
                 <asp:TextBox ID="txtSupervisorName" runat="server" CssClass="form-control" MaxLength="150" />
             </div>
             <div class="col-md-6">
-                <label for="<%= txtSupervisorTitle.ClientID %>">Supervisor's Title</label>
+                <label class="exit-survey-req" for="<%= txtSupervisorTitle.ClientID %>">Supervisor's Title</label>
                 <asp:TextBox ID="txtSupervisorTitle" runat="server" CssClass="form-control" MaxLength="150" />
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-4">
-                <label for="<%= txtHired.ClientID %>">Month/Year you were hired at the Court</label>
+                <label class="exit-survey-req" for="<%= txtHired.ClientID %>">Month/Year you were hired at the Court</label>
                 <asp:TextBox ID="txtHired" runat="server" CssClass="form-control" MaxLength="50" />
             </div>
             <div class="col-md-4">
-                <label for="<%= txtSeparated.ClientID %>">Month/Year you separated</label>
+                <label class="exit-survey-req" for="<%= txtSeparated.ClientID %>">Month/Year you separated</label>
                 <asp:TextBox ID="txtSeparated" runat="server" CssClass="form-control" MaxLength="50" />
             </div>
             <div class="col-md-4">
-                <label for="<%= txtDateCompleted.ClientID %>">Date Exit Survey Completed</label>
+                <label class="exit-survey-req" for="<%= txtDateCompleted.ClientID %>">Date Exit Survey Completed</label>
                 <asp:TextBox ID="txtDateCompleted" runat="server" CssClass="form-control" MaxLength="50" />
             </div>
         </div>

@@ -99,6 +99,7 @@
     <Compile Include="Admin\ResponseDetail.ascx.designer.cs">
       <DependentUpon>ResponseDetail.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Components\EmployeeLookup.cs" />
     <Compile Include="Components\ExitSurveyController.cs" />
     <Compile Include="Components\ExitSurveyResponse.cs" />
     <Compile Include="Components\SurveyDefinition.cs" />

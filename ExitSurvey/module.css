@@ -9,6 +9,21 @@
     margin-bottom: .5rem;
 }
 
+/* Section header (Personal Info) - same weight as a question, no required mark */
+.exit-survey .exit-survey-section {
+    font-weight: 600;
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+
+/* Required indicator on every question and every Personal Info field label */
+.exit-survey .exit-survey-question::after,
+.exit-survey .exit-survey-req::after {
+    content: " *";
+    color: #dc3545;
+}
+
 .exit-survey .exit-survey-rating-label {
     font-weight: 500;
 }

@@ -65,6 +65,34 @@ namespace tjc.Modules.ExitSurvey
             }
 
             txtDateCompleted.Text = DateTime.Now.ToString("MM/dd/yyyy");
+
+            AutoFillPersonalInfo();
+        }
+
+        // Pre-fills the Personal Info section from the EmployeeDB record that matches
+        // the signed-in user. Fields stay editable so the employee can correct them.
+        private void AutoFillPersonalInfo()
+        {
+            if (UserId <= 0 || UserInfo == null) return;
+
+            var empCtl = new EmployeeLookupController();
+            EmployeeLookup emp = empCtl.GetForUser(UserId, UserInfo.FirstName, UserInfo.LastName);
+            if (emp == null) return;
+
+            txtName.Text = emp.FullName;
+            txtPositionTitle.Text = emp.Title ?? "";
+            if (emp.HireDate.HasValue) txtHired.Text = emp.HireDate.Value.ToString("MM/yyyy");
+            if (emp.TerminationDate.HasValue) txtSeparated.Text = emp.TerminationDate.Value.ToString("MM/yyyy");
+
+            if (emp.SupervisorId.HasValue && emp.SupervisorId.Value > 0)
+            {
+                EmployeeLookup sup = empCtl.GetById(emp.SupervisorId.Value);
+                if (sup != null)
+                {
+                    txtSupervisorName.Text = sup.FullName;
+                    txtSupervisorTitle.Text = sup.Title ?? "";
+                }
+            }
         }
 
         // Fills the label and the 5-point rating list for a single matrix row.
@@ -93,6 +121,16 @@ namespace tjc.Modules.ExitSurvey
         {
             try
             {
+                List<string> errors = ValidateForm();
+                if (errors.Count > 0)
+                {
+                    string html = "<p>Please complete the following before submitting:</p><ul><li>" +
+                        string.Join("</li><li>", errors) + "</li></ul>";
+                    plhMessage.Controls.Add(Skin.GetModuleMessageControl(
+                        "Some items still need your attention", html, ModuleMessage.ModuleMessageType.RedError));
+                    return;
+                }
+
                 var ctl = new ExitSurveyController();
 
                 var response = new ExitSurveyResponse
@@ -138,6 +176,71 @@ namespace tjc.Modules.ExitSurvey
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        // Server-side "everything is required" check. Q2 and Q4 apply only when the
+        // employee accepted another position (Q3 = Yes); the Q1 "Other (specify)" row
+        // is the one optional matrix item.
+        private List<string> ValidateForm()
+        {
+            var errors = new List<string>();
+            bool acceptedPosition = rblAccepted.SelectedValue == "1";
+
+            if (!AllRowsRated(rptGeneral, SurveyDefinition.GeneralConditions, "other"))
+                errors.Add("Question 1 - rate every work area.");
+
+            if (string.IsNullOrEmpty(rblAccepted.SelectedValue))
+                errors.Add("Question 3 - indicate whether you accepted another position.");
+
+            if (acceptedPosition && !AnyChecked(cblAdvantages))
+                errors.Add("Question 2 - select at least one advantage of the new employer.");
+
+            if (acceptedPosition && rblEmployerType.SelectedIndex < 0)
+                errors.Add("Question 4 - select the type of employer.");
+
+            if (!AnyChecked(cblReasons))
+                errors.Add("Question 5 - select at least one reason you left.");
+
+            if (!AllRowsRated(rptSupervision, SurveyDefinition.SupervisionItems, null))
+                errors.Add("Question 6 - rate every supervision item.");
+
+            if (string.IsNullOrWhiteSpace(txtQ7.Text))
+                errors.Add("Question 7 - describe your training/resources.");
+
+            if (string.IsNullOrWhiteSpace(txtQ8.Text))
+                errors.Add("Question 8 - add your comments.");
+
+            if (string.IsNullOrEmpty(rblWouldReturn.SelectedValue))
+                errors.Add("Question 9 - indicate whether you would return.");
+
+            if (string.IsNullOrWhiteSpace(txtName.Text)) errors.Add("Personal Info - Name.");
+            if (string.IsNullOrWhiteSpace(txtPositionTitle.Text)) errors.Add("Personal Info - Most recent position title.");
+            if (string.IsNullOrWhiteSpace(txtSupervisorName.Text)) errors.Add("Personal Info - Name of Supervisor.");
+            if (string.IsNullOrWhiteSpace(txtSupervisorTitle.Text)) errors.Add("Personal Info - Supervisor's Title.");
+            if (string.IsNullOrWhiteSpace(txtHired.Text)) errors.Add("Personal Info - Month/Year you were hired.");
+            if (string.IsNullOrWhiteSpace(txtSeparated.Text)) errors.Add("Personal Info - Month/Year you separated.");
+            if (string.IsNullOrWhiteSpace(txtDateCompleted.Text)) errors.Add("Personal Info - Date Exit Survey Completed.");
+
+            return errors;
+        }
+
+        // True when every matrix row (except an optional key) has a rating selected.
+        private bool AllRowsRated(Repeater repeater, List<SurveyItem> items, string optionalKey)
+        {
+            for (int i = 0; i < items.Count && i < repeater.Items.Count; i++)
+            {
+                if (optionalKey != null && items[i].Key == optionalKey) continue;
+                var rbl = (RadioButtonList)repeater.Items[i].FindControl("rblRating");
+                if (rbl == null || string.IsNullOrEmpty(rbl.SelectedValue)) return false;
+            }
+            return true;
+        }
+
+        private static bool AnyChecked(CheckBoxList list)
+        {
+            foreach (ListItem li in list.Items)
+                if (li.Selected) return true;
+            return false;
         }
 
         // Walks a matrix repeater in list order and persists each selected rating.
