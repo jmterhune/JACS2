@@ -24,6 +24,20 @@
     color: #dc3545;
 }
 
+/* Inline validation message (styled as a label label-danger badge, like the
+   validators in other modules). Hidden until it has text. */
+.exit-survey .es-error {
+    margin-top: .25rem;
+}
+
+.exit-survey .es-error:empty {
+    display: none !important;
+}
+
+.exit-survey .es-invalid > .form-control {
+    border-color: #dc3545;
+}
+
 .exit-survey .exit-survey-rating-label {
     font-weight: 500;
 }
@@ -54,6 +68,13 @@
 /* Admin results / detail tables */
 .exit-survey-results .exit-survey-item {
     width: 45%;
+}
+
+/* Row action icons: bare icons (no button chrome), like the EmployeeDB lists */
+.exit-survey-actions a {
+    text-decoration: none;
+    font-size: 1.1rem;
+    cursor: pointer;
 }
 
 .exit-survey-detail .exit-survey-meta dt {

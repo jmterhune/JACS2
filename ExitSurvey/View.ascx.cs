@@ -14,6 +14,8 @@ using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
 using System;
 using System.Collections.Generic;
+using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using tjc.Modules.ExitSurvey.Components;
 
@@ -25,6 +27,19 @@ namespace tjc.Modules.ExitSurvey
         protected string UserDisplayName
         {
             get { return UserId > 0 && !string.IsNullOrWhiteSpace(UserInfo.DisplayName) ? UserInfo.DisplayName : "Employee"; }
+        }
+
+        // Bind the two rating matrices on every request (including postback) so their
+        // rows exist before postback data is applied - otherwise the repeaters come
+        // back empty on submit and ratings would neither validate nor save.
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            rptGeneral.DataSource = SurveyDefinition.GeneralConditions;
+            rptGeneral.DataBind();
+
+            rptSupervision.DataSource = SurveyDefinition.SupervisionItems;
+            rptSupervision.DataBind();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -49,12 +64,6 @@ namespace tjc.Modules.ExitSurvey
 
         private void BindForm()
         {
-            rptGeneral.DataSource = SurveyDefinition.GeneralConditions;
-            rptGeneral.DataBind();
-
-            rptSupervision.DataSource = SurveyDefinition.SupervisionItems;
-            rptSupervision.DataBind();
-
             foreach (SurveyItem t in SurveyDefinition.EmployerTypes)
                 rblEmployerType.Items.Add(new ListItem(t.Label, t.Key));
 
@@ -121,13 +130,17 @@ namespace tjc.Modules.ExitSurvey
         {
             try
             {
+                // Client-side validation normally blocks submission; this is the
+                // no-JS backstop and reports through the same SweetAlert dialog.
                 List<string> errors = ValidateForm();
                 if (errors.Count > 0)
                 {
-                    string html = "<p>Please complete the following before submitting:</p><ul><li>" +
-                        string.Join("</li><li>", errors) + "</li></ul>";
-                    plhMessage.Controls.Add(Skin.GetModuleMessageControl(
-                        "Some items still need your attention", html, ModuleMessage.ModuleMessageType.RedError));
+                    string items = "";
+                    foreach (var er in errors) items += "<li>" + HttpUtility.HtmlEncode(er) + "</li>";
+                    string html = "<p>Please complete the following before submitting:</p><ul style='text-align:left;'>" + items + "</ul>";
+                    string script = "if(window.Swal){Swal.fire({title:'Some items still need your attention',icon:'error',html:" +
+                        HttpUtility.JavaScriptStringEncode(html, true) + ",confirmButtonText:'OK'});}";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "esvalfail", script, true);
                     return;
                 }
 

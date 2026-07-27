@@ -10,6 +10,8 @@
 '
 */
 using DotNetNuke.Services.Exceptions;
+using DotNetNuke.UI.Skins;
+using DotNetNuke.UI.Skins.Controls;
 using System;
 using System.Linq;
 using System.Web.UI.WebControls;
@@ -23,6 +25,9 @@ namespace tjc.Modules.ExitSurvey.Admin
         {
             try
             {
+                // DataTables needs jQuery; make sure DNN emits it.
+                DotNetNuke.Framework.jQuery.RequestRegistration();
+
                 if (!IsAdmin)
                 {
                     Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
@@ -37,11 +42,36 @@ namespace tjc.Modules.ExitSurvey.Admin
             }
         }
 
+        protected void rptResults_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            try
+            {
+                if (!IsAdmin) return;
+                if (e.CommandName == "delete")
+                {
+                    int responseId;
+                    if (int.TryParse(Convert.ToString(e.CommandArgument), out responseId))
+                    {
+                        new ExitSurveyController().DeleteResponse(responseId);
+                        BindResults();
+                        plhMessage.Controls.Add(Skin.GetModuleMessageControl(
+                            "Deleted", "The exit survey response was deleted.",
+                            ModuleMessage.ModuleMessageType.GreenSuccess));
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+
         private void BindResults()
         {
             var ctl = new ExitSurveyController();
             var responses = ctl.GetResponses(ModuleId).ToList();
             pnlEmpty.Visible = responses.Count == 0;
+            rptResults.Visible = responses.Count > 0;
             rptResults.DataSource = responses;
             rptResults.DataBind();
         }
@@ -53,7 +83,6 @@ namespace tjc.Modules.ExitSurvey.Admin
 
             var response = (ExitSurveyResponse)e.Item.DataItem;
 
-            ((Literal)e.Item.FindControl("ltSubmitted")).Text = response.CreatedOnDate.ToString("MM/dd/yyyy h:mm tt");
             ((Literal)e.Item.FindControl("ltName")).Text = Server.HtmlEncode(
                 !string.IsNullOrWhiteSpace(response.OptName) ? response.OptName :
                 (!string.IsNullOrWhiteSpace(response.CreatedByName) ? response.CreatedByName : "(anonymous)"));
