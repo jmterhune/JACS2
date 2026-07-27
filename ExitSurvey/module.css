@@ -24,15 +24,15 @@
     margin-right: .1rem;
 }
 
-/* Stacked single-column choices (Q4 employer type, Q5 reasons) */
-.exit-survey .stacked-options td,
-.exit-survey .stacked-options label {
-    display: block;
+/* Horizontal checkbox lists (Q2 advantages, Q5 reasons), styled like the
+   form-check checkboxes on the EmployeeDB edit form */
+.exit-survey .es-check-list label {
+    margin-left: .25rem;
+    margin-right: 1.25rem;
 }
 
-.exit-survey .stacked-options label {
-    margin-left: .25rem;
-    margin-bottom: .25rem;
+.exit-survey .es-check-list input {
+    vertical-align: middle;
 }
 
 /* Admin results / detail tables */
@@ -42,4 +42,31 @@
 
 .exit-survey-detail .exit-survey-meta dt {
     font-weight: 600;
+}
+
+.exit-survey-print-title {
+    margin-bottom: 1rem;
+}
+
+/* Print / Save-as-PDF: show only the survey detail, drop the DNN skin chrome */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .exit-survey-detail,
+    .exit-survey-detail * {
+        visibility: visible;
+    }
+
+    .exit-survey-detail {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .d-print-none {
+        display: none !important;
+    }
 }

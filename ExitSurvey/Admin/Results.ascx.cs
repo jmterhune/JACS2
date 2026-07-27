@@ -63,6 +63,10 @@ namespace tjc.Modules.ExitSurvey.Admin
 
             var lnkView = (HyperLink)e.Item.FindControl("lnkView");
             lnkView.NavigateUrl = EditUrl("rid", response.ResponseID.ToString(), "detail");
+
+            // Print icon opens the detail in print mode (auto-fires the browser print dialog).
+            var lnkPrint = (HyperLink)e.Item.FindControl("lnkPrint");
+            lnkPrint.NavigateUrl = EditUrl("rid", response.ResponseID.ToString(), "detail", "print=1");
         }
 
         private static string YesNo(bool? value)

@@ -16,12 +16,17 @@ namespace tjc.Modules.ExitSurvey
         protected global::System.Web.UI.WebControls.Panel pnlForm;
         protected global::System.Web.UI.WebControls.CheckBox chkDoNotShare;
         protected global::System.Web.UI.WebControls.Repeater rptGeneral;
+        protected global::System.Web.UI.WebControls.Panel divQ1Other;
         protected global::System.Web.UI.WebControls.TextBox txtQ1Other;
-        protected global::System.Web.UI.WebControls.TextBox txtQ2;
+        protected global::System.Web.UI.WebControls.CheckBoxList cblAdvantages;
+        protected global::System.Web.UI.WebControls.Panel divQ2Other;
+        protected global::System.Web.UI.WebControls.TextBox txtQ2Other;
         protected global::System.Web.UI.WebControls.RadioButtonList rblAccepted;
         protected global::System.Web.UI.WebControls.RadioButtonList rblEmployerType;
+        protected global::System.Web.UI.WebControls.Panel divQ4Other;
         protected global::System.Web.UI.WebControls.TextBox txtQ4Other;
         protected global::System.Web.UI.WebControls.CheckBoxList cblReasons;
+        protected global::System.Web.UI.WebControls.Panel divQ5Other;
         protected global::System.Web.UI.WebControls.TextBox txtQ5Other;
         protected global::System.Web.UI.WebControls.Repeater rptSupervision;
         protected global::System.Web.UI.WebControls.TextBox txtQ7;

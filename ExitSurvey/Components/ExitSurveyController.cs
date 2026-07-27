@@ -100,6 +100,11 @@ namespace tjc.Modules.ExitSurvey.Components
                     .Find("WHERE ResponseID = @0 ORDER BY ReasonID", responseId);
             }
         }
+
+        public IEnumerable<ExitSurveyReason> GetReasons(int responseId, string section)
+        {
+            return GetReasons(responseId).Where(r => r.Section == section);
+        }
         #endregion
     }
 }

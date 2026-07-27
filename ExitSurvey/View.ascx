@@ -2,14 +2,14 @@
 
 <div class="container-fluid exit-survey">
 
-    <asp:HyperLink ID="lnkResults" runat="server" Visible="false" CssClass="btn btn-secondary" Text="View Results" />
+    <asp:HyperLink ID="lnkResults" runat="server" Visible="false" CssClass="btn btn-secondary mb-2" Text="View Results" />
 
     <asp:PlaceHolder ID="plhMessage" runat="server" EnableViewState="false"></asp:PlaceHolder>
 
     <asp:Panel ID="pnlForm" runat="server">
 
         <div class="exit-survey-intro">
-            <p>Dear Employee,</p>
+            <p>Dear <%= UserDisplayName %>,</p>
             <p>As you prepare to leave the Twelfth Judicial Circuit, you have gained experience, insight and opinions as a valued employee. Therefore, we kindly request that you share your opinion and impression of working with the Twelfth Circuit by completing an employee exit survey.</p>
             <p>This survey is designed to obtain your feedback which will assist us in making the Twelfth Circuit an employer of choice for existing and future employees. So your comments will be very valuable in the development of training, benefits, our recruitment and retention efforts, and our efforts to improve our work environment.</p>
             <p>Again, your honesty is greatly appreciated and your opinions valued, and we ask that you complete all items.</p>
@@ -37,15 +37,19 @@
                 </div>
             </ItemTemplate>
         </asp:Repeater>
-        <div class="row mb-3">
+        <asp:Panel ID="divQ1Other" runat="server" CssClass="row mb-3 q1-other d-none">
             <div class="col-md-4"><label for="<%= txtQ1Other.ClientID %>">Other (specify)</label></div>
             <div class="col-md-8"><asp:TextBox ID="txtQ1Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
-        </div>
+        </asp:Panel>
 
         <%-- Q2 -------------------------------------------------------------- --%>
         <div class="mb-3">
-            <label class="exit-survey-question" for="<%= txtQ2.ClientID %>">2. If you are accepting employment elsewhere, what advantages do you feel the new employer offers that you have not found here at the Twelfth Judicial Circuit?</label>
-            <asp:TextBox ID="txtQ2" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-control" />
+            <span class="exit-survey-question">2. If you are accepting employment elsewhere, what advantages do you feel the new employer offers that you have not found here at the Twelfth Judicial Circuit? (Select all that apply.)</span>
+            <asp:CheckBoxList ID="cblAdvantages" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="es-check-list q2-list" />
+            <asp:Panel ID="divQ2Other" runat="server" CssClass="row mt-2 q2-other d-none">
+                <div class="col-md-4"><label for="<%= txtQ2Other.ClientID %>">Other (specify)</label></div>
+                <div class="col-md-8"><asp:TextBox ID="txtQ2Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
+            </asp:Panel>
         </div>
 
         <%-- Q3 -------------------------------------------------------------- --%>
@@ -60,21 +64,21 @@
         <%-- Q4 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">4. If yes, what type of employer?</span>
-            <asp:RadioButtonList ID="rblEmployerType" runat="server" RepeatDirection="Vertical" RepeatLayout="Flow" CssClass="stacked-options" />
-            <div class="row mt-2">
+            <asp:RadioButtonList ID="rblEmployerType" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="rating-options q4-list" />
+            <asp:Panel ID="divQ4Other" runat="server" CssClass="row mt-2 q4-other d-none">
                 <div class="col-md-4"><label for="<%= txtQ4Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ4Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
-            </div>
+            </asp:Panel>
         </div>
 
         <%-- Q5 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">5. What influenced you to leave the Twelfth Judicial Circuit? (Select all that apply.)</span>
-            <asp:CheckBoxList ID="cblReasons" runat="server" RepeatDirection="Vertical" RepeatLayout="Flow" CssClass="stacked-options" />
-            <div class="row mt-2">
+            <asp:CheckBoxList ID="cblReasons" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="es-check-list q5-list" />
+            <asp:Panel ID="divQ5Other" runat="server" CssClass="row mt-2 q5-other d-none">
                 <div class="col-md-4"><label for="<%= txtQ5Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ5Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
-            </div>
+            </asp:Panel>
         </div>
 
         <%-- Q6 -------------------------------------------------------------- --%>
@@ -156,6 +160,57 @@
             <asp:Button ID="cmdSubmit" runat="server" CssClass="btn btn-primary" OnClick="cmdSubmit_Click" Text="Submit Survey" />
         </p>
 
+        <p>Thank you for participating in the Employee Exit Survey and telling us about your experience working for the State Courts System. Please return the completed survey to: Human Resources Office, Court Administration, Judge Lynn N. Silvertooth Judicial Center, 8th Floor, 2002 Ringling Blvd., Sarasota, FL 34237</p>
+
+        <p>Best of luck in your future endeavors!</p>
+
     </asp:Panel>
 
 </div>
+
+<script type="text/javascript">
+    (function () {
+        function isOtherChecked(list) {
+            var labels = list.querySelectorAll("label");
+            for (var i = 0; i < labels.length; i++) {
+                if (/^\s*Other/i.test(labels[i].textContent)) {
+                    var input = document.getElementById(labels[i].getAttribute("for"));
+                    if (input) return input.checked;
+                }
+            }
+            return false;
+        }
+        // Show an "Other (specify)" panel only while its Other option is selected.
+        function wireOther(listSelector, otherSelector) {
+            var list = document.querySelector(listSelector);
+            var other = document.querySelector(otherSelector);
+            if (!list || !other) return;
+            var inputs = list.querySelectorAll("input");
+            function toggle() { other.classList.toggle("d-none", !isOtherChecked(list)); }
+            for (var i = 0; i < inputs.length; i++) inputs[i].addEventListener("change", toggle);
+            toggle();
+        }
+        // Q1's "Other (specify)" free text shows once its matrix row is rated.
+        function wireQ1() {
+            var trigger = document.querySelector(".q1-other-trigger");
+            var other = document.querySelector(".q1-other");
+            if (!trigger || !other) return;
+            var inputs = trigger.querySelectorAll("input");
+            function toggle() {
+                var any = false;
+                for (var i = 0; i < inputs.length; i++) if (inputs[i].checked) any = true;
+                other.classList.toggle("d-none", !any);
+            }
+            for (var i = 0; i < inputs.length; i++) inputs[i].addEventListener("change", toggle);
+            toggle();
+        }
+        function init() {
+            wireOther(".q2-list", ".q2-other");
+            wireOther(".q4-list", ".q4-other");
+            wireOther(".q5-list", ".q5-other");
+            wireQ1();
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+        else init();
+    })();
+</script>

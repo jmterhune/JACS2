@@ -13,13 +13,15 @@ namespace tjc.Modules.ExitSurvey.Admin
     {
         protected global::System.Web.UI.WebControls.PlaceHolder plhMessage;
         protected global::System.Web.UI.WebControls.HyperLink lnkBack;
+        protected global::System.Web.UI.WebControls.Button cmdPrint;
         protected global::System.Web.UI.WebControls.Panel pnlDetail;
         protected global::System.Web.UI.WebControls.Literal ltSubmitted;
         protected global::System.Web.UI.WebControls.Literal ltSubmittedBy;
         protected global::System.Web.UI.WebControls.Literal ltShare;
         protected global::System.Web.UI.WebControls.Repeater rptGeneral;
         protected global::System.Web.UI.WebControls.Literal ltQ1Other;
-        protected global::System.Web.UI.WebControls.Literal ltQ2;
+        protected global::System.Web.UI.WebControls.Repeater rptAdvantages;
+        protected global::System.Web.UI.WebControls.Literal ltQ2Other;
         protected global::System.Web.UI.WebControls.Literal ltQ3;
         protected global::System.Web.UI.WebControls.Literal ltQ4;
         protected global::System.Web.UI.WebControls.Repeater rptReasons;

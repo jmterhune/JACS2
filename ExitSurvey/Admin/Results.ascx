@@ -36,7 +36,10 @@
                 <td><asp:Literal ID="ltAccepted" runat="server" /></td>
                 <td><asp:Literal ID="ltReturn" runat="server" /></td>
                 <td><asp:Literal ID="ltShare" runat="server" /></td>
-                <td><asp:HyperLink ID="lnkView" runat="server" CssClass="btn btn-sm btn-primary" Text="View" /></td>
+                <td>
+                    <asp:HyperLink ID="lnkView" runat="server" CssClass="btn btn-sm btn-primary" Text="View" />
+                    <asp:HyperLink ID="lnkPrint" runat="server" CssClass="btn btn-sm btn-secondary" ToolTip="Print / Save as PDF"><i class="fas fa-print"></i></asp:HyperLink>
+                </td>
             </tr>
         </ItemTemplate>
         <FooterTemplate>

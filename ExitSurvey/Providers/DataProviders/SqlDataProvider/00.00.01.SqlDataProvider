@@ -16,7 +16,7 @@ CREATE TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_response]
 	[ModuleID] INT NOT NULL,
 	[DoNotShareWithSupervisor] BIT NOT NULL CONSTRAINT [DF_{objectQualifier}tjc_exit_survey_response_share] DEFAULT (0),
 	[Q1OtherSpecify] NVARCHAR(255) NULL,
-	[Q2Advantages] NVARCHAR(MAX) NULL,
+	[Q2AdvantagesOther] NVARCHAR(255) NULL,
 	[Q3AcceptedPosition] BIT NULL,
 	[Q4EmployerType] NVARCHAR(100) NULL,
 	[Q4EmployerTypeOther] NVARCHAR(255) NULL,
@@ -62,6 +62,7 @@ CREATE TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_reason]
 (
 	[ReasonID] INT NOT NULL IDENTITY (1, 1),
 	[ResponseID] INT NOT NULL,
+	[Section] NVARCHAR(20) NOT NULL CONSTRAINT [DF_{objectQualifier}tjc_exit_survey_reason_section] DEFAULT ('leave'),
 	[ReasonKey] NVARCHAR(60) NOT NULL,
 	[ReasonLabel] NVARCHAR(255) NOT NULL,
 	CONSTRAINT [PK_{objectQualifier}tjc_exit_survey_reason] PRIMARY KEY CLUSTERED ([ReasonID])

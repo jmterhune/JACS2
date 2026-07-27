@@ -30,8 +30,9 @@ namespace tjc.Modules.ExitSurvey.Components
         // Q1 "Other (specify)" free-text label (the rating itself is a rating row)
         public string Q1OtherSpecify { get; set; }
 
-        // Q2 advantages of the new employer
-        public string Q2Advantages { get; set; }
+        // Q2 advantages of the new employer are multi-select (stored as "advantages"
+        // rows in tjc_exit_survey_reason); this holds only the "Other (specify)" text.
+        public string Q2AdvantagesOther { get; set; }
 
         // Q3 have you accepted another position?
         public bool? Q3AcceptedPosition { get; set; }
@@ -98,13 +99,18 @@ namespace tjc.Modules.ExitSurvey.Components
         }
     }
 
-    // A checked reason from Q5 ("What influenced you to leave?").
+    // A checked option from a multi-select question. Section distinguishes the
+    // Q2 advantages ("advantages") from the Q5 leave reasons ("leave").
     [TableName("tjc_exit_survey_reason")]
     [PrimaryKey("ReasonID", AutoIncrement = true)]
     public class ExitSurveyReason
     {
+        public const string SectionAdvantages = "advantages";
+        public const string SectionLeave = "leave";
+
         public int ReasonID { get; set; }
         public int ResponseID { get; set; }
+        public string Section { get; set; }
         public string ReasonKey { get; set; }
         public string ReasonLabel { get; set; }
     }

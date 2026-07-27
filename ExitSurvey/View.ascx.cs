@@ -21,6 +21,12 @@ namespace tjc.Modules.ExitSurvey
 {
     public partial class View : ExitSurveyModuleBase
     {
+        // Greets the signed-in employee by name; falls back to "Employee" for anonymous.
+        protected string UserDisplayName
+        {
+            get { return UserId > 0 && !string.IsNullOrWhiteSpace(UserInfo.DisplayName) ? UserInfo.DisplayName : "Employee"; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -53,7 +59,10 @@ namespace tjc.Modules.ExitSurvey
                 rblEmployerType.Items.Add(new ListItem(t.Label, t.Key));
 
             foreach (SurveyItem r in SurveyDefinition.LeaveReasons)
+            {
+                cblAdvantages.Items.Add(new ListItem(r.Label, r.Key));
                 cblReasons.Items.Add(new ListItem(r.Label, r.Key));
+            }
         }
 
         // Fills the label and the 5-point rating list for a single matrix row.
@@ -71,6 +80,11 @@ namespace tjc.Modules.ExitSurvey
             hfKey.Value = item.Key;
             foreach (SurveyItem scale in SurveyDefinition.RatingScale)
                 rblRating.Items.Add(new ListItem(scale.Label, scale.Key));
+
+            // Only Q1 (general conditions) has an "Other (specify)" row; mark it so
+            // the client can reveal the Q1 specify text box once it is rated.
+            if (item.Key == "other")
+                rblRating.CssClass += " q1-other-trigger";
         }
 
         protected void cmdSubmit_Click(object sender, EventArgs e)
@@ -84,7 +98,7 @@ namespace tjc.Modules.ExitSurvey
                     ModuleID = ModuleId,
                     DoNotShareWithSupervisor = chkDoNotShare.Checked,
                     Q1OtherSpecify = NullIfEmpty(txtQ1Other.Text),
-                    Q2Advantages = NullIfEmpty(txtQ2.Text),
+                    Q2AdvantagesOther = NullIfEmpty(txtQ2Other.Text),
                     Q3AcceptedPosition = ParseYesNo(rblAccepted.SelectedValue),
                     Q4EmployerType = rblEmployerType.SelectedItem != null ? rblEmployerType.SelectedItem.Text : null,
                     Q4EmployerTypeOther = NullIfEmpty(txtQ4Other.Text),
@@ -109,11 +123,8 @@ namespace tjc.Modules.ExitSurvey
                 SaveRatings(ctl, responseId, SurveyDefinition.SectionGeneral, SurveyDefinition.GeneralConditions, rptGeneral);
                 SaveRatings(ctl, responseId, SurveyDefinition.SectionSupervision, SurveyDefinition.SupervisionItems, rptSupervision);
 
-                foreach (ListItem li in cblReasons.Items)
-                {
-                    if (li.Selected)
-                        ctl.CreateReason(new ExitSurveyReason { ResponseID = responseId, ReasonKey = li.Value, ReasonLabel = li.Text });
-                }
+                SaveSelections(ctl, responseId, ExitSurveyReason.SectionAdvantages, cblAdvantages);
+                SaveSelections(ctl, responseId, ExitSurveyReason.SectionLeave, cblReasons);
 
                 pnlForm.Visible = false;
                 plhMessage.Controls.Add(Skin.GetModuleMessageControl(
@@ -143,6 +154,22 @@ namespace tjc.Modules.ExitSurvey
                     ItemLabel = items[i].Label,
                     Rating = rating
                 });
+            }
+        }
+
+        // Persists the checked items of a multi-select question as reason rows.
+        private void SaveSelections(ExitSurveyController ctl, int responseId, string section, CheckBoxList list)
+        {
+            foreach (ListItem li in list.Items)
+            {
+                if (li.Selected)
+                    ctl.CreateReason(new ExitSurveyReason
+                    {
+                        ResponseID = responseId,
+                        Section = section,
+                        ReasonKey = li.Value,
+                        ReasonLabel = li.Text
+                    });
             }
         }
 

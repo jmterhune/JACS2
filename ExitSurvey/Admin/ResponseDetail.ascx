@@ -4,9 +4,14 @@
 
     <asp:PlaceHolder ID="plhMessage" runat="server" EnableViewState="false"></asp:PlaceHolder>
 
-    <asp:HyperLink ID="lnkBack" runat="server" CssClass="btn btn-secondary" Text="&larr; Back to Results" />
+    <div class="mb-2 d-print-none">
+        <asp:HyperLink ID="lnkBack" runat="server" CssClass="btn btn-secondary" Text="&larr; Back to Results" />
+        <asp:Button ID="cmdPrint" runat="server" CssClass="btn btn-primary" OnClientClick="window.print(); return false;" Text="Print / Save as PDF" />
+    </div>
 
     <asp:Panel ID="pnlDetail" runat="server">
+
+        <h4 class="exit-survey-print-title">Twelfth Judicial Circuit Employee Exit Survey</h4>
 
         <dl class="row exit-survey-meta">
             <dt class="col-sm-3">Submitted</dt>
@@ -34,7 +39,15 @@
         </dl>
 
         <h5 class="exit-survey-question">2. Advantages the new employer offers</h5>
-        <p><asp:Literal ID="ltQ2" runat="server" /></p>
+        <asp:Repeater ID="rptAdvantages" runat="server">
+            <HeaderTemplate><ul></HeaderTemplate>
+            <ItemTemplate><li><%# Server.HtmlEncode((string)Eval("ReasonLabel")) %></li></ItemTemplate>
+            <FooterTemplate></ul></FooterTemplate>
+        </asp:Repeater>
+        <dl class="row">
+            <dt class="col-sm-3">Other (specify)</dt>
+            <dd class="col-sm-9"><asp:Literal ID="ltQ2Other" runat="server" /></dd>
+        </dl>
 
         <h5 class="exit-survey-question">3. Have you accepted another position?</h5>
         <p><asp:Literal ID="ltQ3" runat="server" /></p>

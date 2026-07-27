@@ -12,6 +12,7 @@
 using DotNetNuke.Services.Exceptions;
 using System;
 using System.Web;
+using System.Web.UI;
 using tjc.Modules.ExitSurvey.Components;
 
 namespace tjc.Modules.ExitSurvey.Admin
@@ -38,7 +39,14 @@ namespace tjc.Modules.ExitSurvey.Admin
                 }
                 lnkBack.NavigateUrl = ResultsUrl;
                 if (!IsPostBack)
+                {
                     BindDetail();
+                    // When reached via the results print icon, open the browser print
+                    // dialog automatically so the admin can save/print a filing copy.
+                    if (pnlDetail.Visible && Request.QueryString["print"] == "1")
+                        ScriptManager.RegisterStartupScript(this, GetType(), "esprint",
+                            "window.onload = function(){ window.print(); };", true);
+                }
             }
             catch (Exception exc)
             {
@@ -66,14 +74,16 @@ namespace tjc.Modules.ExitSurvey.Admin
             rptGeneral.DataBind();
             ltQ1Other.Text = Enc(response.Q1OtherSpecify);
 
-            ltQ2.Text = Multiline(response.Q2Advantages);
+            rptAdvantages.DataSource = ctl.GetReasons(response.ResponseID, ExitSurveyReason.SectionAdvantages);
+            rptAdvantages.DataBind();
+            ltQ2Other.Text = Enc(response.Q2AdvantagesOther);
             ltQ3.Text = YesNo(response.Q3AcceptedPosition);
 
             ltQ4.Text = Enc(response.Q4EmployerType);
             if (!string.IsNullOrWhiteSpace(response.Q4EmployerTypeOther))
                 ltQ4.Text += (string.IsNullOrEmpty(ltQ4.Text) ? "" : " &ndash; ") + Enc(response.Q4EmployerTypeOther);
 
-            rptReasons.DataSource = ctl.GetReasons(response.ResponseID);
+            rptReasons.DataSource = ctl.GetReasons(response.ResponseID, ExitSurveyReason.SectionLeave);
             rptReasons.DataBind();
             ltQ5Other.Text = Enc(response.Q5ReasonsOther);
 
