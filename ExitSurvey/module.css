@@ -24,6 +24,12 @@
     color: #dc3545;
 }
 
+/* Suppress the required asterisk on a question that is not currently required
+   (e.g. Q4 when Q3 is not "Yes") */
+.exit-survey .exit-survey-question.es-noreq::after {
+    content: none;
+}
+
 /* Inline validation message (styled as a label label-danger badge, like the
    validators in other modules). Hidden until it has text. */
 .exit-survey .es-error {

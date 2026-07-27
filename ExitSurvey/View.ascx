@@ -226,11 +226,28 @@
             for (var i = 0; i < inputs.length; i++) inputs[i].addEventListener("change", toggle);
             toggle();
         }
+        // Q4 is only required when Q3 = Yes; show/hide its required asterisk to match.
+        function wireQ4Required() {
+            var q3 = document.querySelector(".q3-list");
+            var q4field = document.querySelector('.es-field[data-vcond="accepted"]');
+            if (!q3 || !q4field) return;
+            var q4label = q4field.querySelector(".exit-survey-question");
+            if (!q4label) return;
+            var inputs = q3.querySelectorAll("input[type=radio]");
+            function update() {
+                var sel = q3.querySelector("input[type=radio]:checked");
+                var accepted = !!(sel && sel.value === "1");
+                q4label.classList.toggle("es-noreq", !accepted);
+            }
+            for (var i = 0; i < inputs.length; i++) inputs[i].addEventListener("change", update);
+            update();
+        }
         function init() {
             wireOther(".q2-list", ".q2-other");
             wireOther(".q4-list", ".q4-other");
             wireOther(".q5-list", ".q5-other");
             wireQ1();
+            wireQ4Required();
             wireClearOnChange();
         }
         // Hide a field's error as soon as the user starts fixing it.
