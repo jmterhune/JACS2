@@ -22,7 +22,7 @@
         </div>
 
         <%-- Q1 -------------------------------------------------------------- --%>
-        <h5 class="exit-survey-question">1. This question relates to general conditions of the job from which employee resigned. Please indicate how you feel about the listed work areas at the office/work unit.</h5>
+        <div class="exit-survey-question">1. This question relates to general conditions of the job from which employee resigned. Please indicate how you feel about the listed work areas at the office/work unit.</div>
         <asp:Repeater ID="rptGeneral" runat="server" OnItemDataBound="rptRating_ItemDataBound">
             <ItemTemplate>
                 <div class="row mb-3 exit-survey-rating">
@@ -81,7 +81,7 @@
         </div>
 
         <%-- Q6 -------------------------------------------------------------- --%>
-        <h5 class="exit-survey-question">6. Please indicate your feelings about the supervision you received while employed with the Twelfth Judicial Circuit.</h5>
+        <div class="exit-survey-question">6. Please indicate your feelings about the supervision you received while employed with the Twelfth Judicial Circuit.</div>
         <asp:Repeater ID="rptSupervision" runat="server" OnItemDataBound="rptRating_ItemDataBound">
             <ItemTemplate>
                 <div class="row mb-3 exit-survey-rating">
