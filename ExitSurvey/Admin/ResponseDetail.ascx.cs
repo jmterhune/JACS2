@@ -45,7 +45,7 @@ namespace tjc.Modules.ExitSurvey.Admin
                     // dialog automatically so the admin can save/print a filing copy.
                     if (pnlDetail.Visible && Request.QueryString["print"] == "1")
                         ScriptManager.RegisterStartupScript(this, GetType(), "esprint",
-                            "window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 300); });", true);
+                            "window.addEventListener('load', function(){ setTimeout(function(){ printExitSurvey(); }, 400); });", true);
                 }
             }
             catch (Exception exc)

@@ -6,7 +6,7 @@
 
     <div class="mb-2 d-print-none">
         <asp:HyperLink ID="lnkBack" runat="server" CssClass="btn btn-secondary" Text="&larr; Back to Results" />
-        <asp:Button ID="cmdPrint" runat="server" CssClass="btn btn-primary" OnClientClick="window.print(); return false;" Text="Print / Save as PDF" />
+        <asp:Button ID="cmdPrint" runat="server" CssClass="btn btn-primary" OnClientClick="printExitSurvey(); return false;" Text="Print / Save as PDF" />
     </div>
 
     <asp:Panel ID="pnlDetail" runat="server">
@@ -108,3 +108,43 @@
     </asp:Panel>
 
 </div>
+
+<script type="text/javascript">
+    // Print only the survey detail: clone pnlDetail into a hidden iframe that
+    // carries the page's stylesheets, so the DNN skin/chrome is left out and the
+    // printout starts cleanly at the top (1in margin from @page in module.css).
+    function printExitSurvey() {
+        var src = document.getElementById("<%= pnlDetail.ClientID %>");
+        if (!src) { window.print(); return; }
+
+        var heads = "";
+        var nodes = document.querySelectorAll('link[rel="stylesheet"], style');
+        for (var i = 0; i < nodes.length; i++) heads += nodes[i].outerHTML;
+
+        var frame = document.createElement("iframe");
+        frame.setAttribute("aria-hidden", "true");
+        frame.style.position = "fixed";
+        frame.style.right = "0";
+        frame.style.bottom = "0";
+        frame.style.width = "0";
+        frame.style.height = "0";
+        frame.style.border = "0";
+        document.body.appendChild(frame);
+
+        var doc = frame.contentWindow.document;
+        doc.open();
+        doc.write('<!DOCTYPE html><html><head><meta charset="utf-8">' + heads +
+            '<style>@page{margin:1in;}html,body{margin:0;padding:0;background:#fff;}</style></head>' +
+            '<body><div class="container-fluid exit-survey exit-survey-detail exit-survey-print">' +
+            src.innerHTML + '</div></body></html>');
+        doc.close();
+
+        var iw = frame.contentWindow;
+        // Give the copied stylesheets a moment to load before printing.
+        setTimeout(function () {
+            iw.focus();
+            iw.print();
+            setTimeout(function () { if (frame.parentNode) frame.parentNode.removeChild(frame); }, 1000);
+        }, 500);
+    }
+</script>
