@@ -87,7 +87,7 @@
         <h5 class="exit-survey-question">9. Would you consider working here again?</h5>
         <p><asp:Literal ID="ltQ9" runat="server" /></p>
 
-        <h5 class="exit-survey-question">Optional</h5>
+        <h5 class="exit-survey-section">Personal Info</h5>
         <dl class="row exit-survey-meta">
             <dt class="col-sm-3">Name</dt>
             <dd class="col-sm-9"><asp:Literal ID="ltName" runat="server" /></dd>

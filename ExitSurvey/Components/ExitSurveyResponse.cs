@@ -53,7 +53,7 @@ namespace tjc.Modules.ExitSurvey.Components
         // Q9 would you consider working here again?
         public bool? Q9WouldReturn { get; set; }
 
-        // Optional identifying section
+        // Personal Info identifying section
         public string OptName { get; set; }
         public string OptPositionTitle { get; set; }
         public string OptSupervisorName { get; set; }
