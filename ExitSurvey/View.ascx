@@ -37,7 +37,7 @@
             </ItemTemplate>
         </asp:Repeater>
         <asp:Panel ID="divQ1Other" runat="server" CssClass="row mb-3 q1-other d-none">
-            <div class="col-md-4"><label for="<%= txtQ1Other.ClientID %>">Other (specify)</label></div>
+            <div class="col-auto"><label for="<%= txtQ1Other.ClientID %>">Other (specify)</label></div>
             <div class="col-md-8"><asp:TextBox ID="txtQ1Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
         </asp:Panel>
 
@@ -46,7 +46,7 @@
             <span class="exit-survey-question">2. If you are accepting employment elsewhere, what advantages do you feel the new employer offers that you have not found here at the Twelfth Judicial Circuit? (Select all that apply.)</span>
             <asp:CheckBoxList ID="cblAdvantages" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="es-check-list q2-list" />
             <asp:Panel ID="divQ2Other" runat="server" CssClass="row mt-2 q2-other d-none">
-                <div class="col-md-4"><label for="<%= txtQ2Other.ClientID %>">Other (specify)</label></div>
+                <div class="col-auto"><label for="<%= txtQ2Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ2Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
             </asp:Panel>
         </div>
@@ -65,7 +65,7 @@
             <span class="exit-survey-question">4. If yes, what type of employer?</span>
             <asp:RadioButtonList ID="rblEmployerType" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="rating-options q4-list" />
             <asp:Panel ID="divQ4Other" runat="server" CssClass="row mt-2 q4-other d-none">
-                <div class="col-md-4"><label for="<%= txtQ4Other.ClientID %>">Other (specify)</label></div>
+                <div class="col-auto"><label for="<%= txtQ4Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ4Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
             </asp:Panel>
         </div>
@@ -75,7 +75,7 @@
             <span class="exit-survey-question">5. What influenced you to leave the Twelfth Judicial Circuit? (Select all that apply.)</span>
             <asp:CheckBoxList ID="cblReasons" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="es-check-list q5-list" />
             <asp:Panel ID="divQ5Other" runat="server" CssClass="row mt-2 q5-other d-none">
-                <div class="col-md-4"><label for="<%= txtQ5Other.ClientID %>">Other (specify)</label></div>
+                <div class="col-auto"><label for="<%= txtQ5Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ5Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
             </asp:Panel>
         </div>
