@@ -1,0 +1,45 @@
+.exit-survey .exit-survey-intro p {
+    margin-bottom: .5rem;
+}
+
+.exit-survey .exit-survey-question {
+    font-weight: 600;
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+
+.exit-survey .exit-survey-rating-label {
+    font-weight: 500;
+}
+
+/* Horizontal 5-point rating: space the options evenly and keep the label
+   beside its radio */
+.exit-survey .rating-options label {
+    margin-left: .25rem;
+    margin-right: 1.25rem;
+}
+
+.exit-survey .rating-options input {
+    margin-right: .1rem;
+}
+
+/* Stacked single-column choices (Q4 employer type, Q5 reasons) */
+.exit-survey .stacked-options td,
+.exit-survey .stacked-options label {
+    display: block;
+}
+
+.exit-survey .stacked-options label {
+    margin-left: .25rem;
+    margin-bottom: .25rem;
+}
+
+/* Admin results / detail tables */
+.exit-survey-results .exit-survey-item {
+    width: 45%;
+}
+
+.exit-survey-detail .exit-survey-meta dt {
+    font-weight: 600;
+}

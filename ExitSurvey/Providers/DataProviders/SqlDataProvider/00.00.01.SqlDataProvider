@@ -1,0 +1,77 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/* Main response row - one per completed exit survey */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_response]') AND type in (N'U'))
+CREATE TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_response]
+(
+	[ResponseID] INT NOT NULL IDENTITY (1, 1),
+	[ModuleID] INT NOT NULL,
+	[DoNotShareWithSupervisor] BIT NOT NULL CONSTRAINT [DF_{objectQualifier}tjc_exit_survey_response_share] DEFAULT (0),
+	[Q1OtherSpecify] NVARCHAR(255) NULL,
+	[Q2Advantages] NVARCHAR(MAX) NULL,
+	[Q3AcceptedPosition] BIT NULL,
+	[Q4EmployerType] NVARCHAR(100) NULL,
+	[Q4EmployerTypeOther] NVARCHAR(255) NULL,
+	[Q5ReasonsOther] NVARCHAR(255) NULL,
+	[Q7Training] NVARCHAR(MAX) NULL,
+	[Q8Comments] NVARCHAR(MAX) NULL,
+	[Q9WouldReturn] BIT NULL,
+	[OptName] NVARCHAR(150) NULL,
+	[OptPositionTitle] NVARCHAR(150) NULL,
+	[OptSupervisorName] NVARCHAR(150) NULL,
+	[OptSupervisorTitle] NVARCHAR(150) NULL,
+	[OptHiredMonthYear] NVARCHAR(50) NULL,
+	[OptSeparatedMonthYear] NVARCHAR(50) NULL,
+	[OptDateCompleted] NVARCHAR(50) NULL,
+	[CreatedByUserId] INT NULL,
+	[CreatedByName] NVARCHAR(150) NULL,
+	[CreatedOnDate] DATETIME NOT NULL,
+	CONSTRAINT [PK_{objectQualifier}tjc_exit_survey_response] PRIMARY KEY CLUSTERED ([ResponseID])
+)
+GO
+
+/* Satisfaction matrix cells for Q1 (general conditions) and Q6 (supervision) */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_rating]') AND type in (N'U'))
+CREATE TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_rating]
+(
+	[RatingID] INT NOT NULL IDENTITY (1, 1),
+	[ResponseID] INT NOT NULL,
+	[Section] NVARCHAR(20) NOT NULL,
+	[ItemKey] NVARCHAR(60) NOT NULL,
+	[ItemLabel] NVARCHAR(255) NOT NULL,
+	[Rating] INT NOT NULL CONSTRAINT [DF_{objectQualifier}tjc_exit_survey_rating_rating] DEFAULT (0),
+	CONSTRAINT [PK_{objectQualifier}tjc_exit_survey_rating] PRIMARY KEY CLUSTERED ([RatingID])
+)
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_{objectQualifier}tjc_exit_survey_rating_response' AND object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_rating]'))
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}tjc_exit_survey_rating_response] ON {databaseOwner}[{objectQualifier}tjc_exit_survey_rating] ([ResponseID])
+GO
+
+/* Selected reasons for Q5 (what influenced you to leave) */
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_reason]') AND type in (N'U'))
+CREATE TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_reason]
+(
+	[ReasonID] INT NOT NULL IDENTITY (1, 1),
+	[ResponseID] INT NOT NULL,
+	[ReasonKey] NVARCHAR(60) NOT NULL,
+	[ReasonLabel] NVARCHAR(255) NOT NULL,
+	CONSTRAINT [PK_{objectQualifier}tjc_exit_survey_reason] PRIMARY KEY CLUSTERED ([ReasonID])
+)
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_{objectQualifier}tjc_exit_survey_reason_response' AND object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_reason]'))
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}tjc_exit_survey_reason_response] ON {databaseOwner}[{objectQualifier}tjc_exit_survey_reason] ([ResponseID])
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -1,0 +1,8 @@
+Employee Exit Survey
+
+00.00.01
+- Initial release. Public exit-survey form (Q1-Q9 plus optional identifying section)
+  matching the Twelfth Judicial Circuit Employee Exit Survey. Responses are stored in
+  tjc_exit_survey_response / tjc_exit_survey_rating / tjc_exit_survey_reason.
+- HR results view (admin) with read-only detail of each submission.
+- Settings: Administrator Role.
