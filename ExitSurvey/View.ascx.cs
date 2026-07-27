@@ -67,6 +67,8 @@ namespace tjc.Modules.ExitSurvey
             foreach (SurveyItem t in SurveyDefinition.EmployerTypes)
                 rblEmployerType.Items.Add(new ListItem(t.Label, t.Key));
 
+            // Q2 leads with an opt-out for employees not leaving for another job.
+            cblAdvantages.Items.Add(new ListItem("Not Accepting employment elsewhere", "not_accepting"));
             foreach (SurveyItem r in SurveyDefinition.LeaveReasons)
             {
                 cblAdvantages.Items.Add(new ListItem(r.Label, r.Key));
@@ -202,12 +204,13 @@ namespace tjc.Modules.ExitSurvey
             if (!AllRowsRated(rptGeneral, SurveyDefinition.GeneralConditions, "other"))
                 errors.Add("Question 1 - rate every work area.");
 
+            if (!AnyChecked(cblAdvantages))
+                errors.Add("Question 2 - select at least one option (or \"Not Accepting employment elsewhere\").");
+
             if (string.IsNullOrEmpty(rblAccepted.SelectedValue))
                 errors.Add("Question 3 - indicate whether you accepted another position.");
 
-            if (acceptedPosition && !AnyChecked(cblAdvantages))
-                errors.Add("Question 2 - select at least one advantage of the new employer.");
-
+            // Question 4 only applies when Q3 = Yes.
             if (acceptedPosition && rblEmployerType.SelectedIndex < 0)
                 errors.Add("Question 4 - select the type of employer.");
 

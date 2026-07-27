@@ -19,12 +19,15 @@ namespace tjc.Modules.ExitSurvey.Admin
         protected global::System.Web.UI.WebControls.Literal ltSubmittedBy;
         protected global::System.Web.UI.WebControls.Literal ltShare;
         protected global::System.Web.UI.WebControls.Repeater rptGeneral;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlQ1Other;
         protected global::System.Web.UI.WebControls.Literal ltQ1Other;
         protected global::System.Web.UI.WebControls.Repeater rptAdvantages;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlQ2Other;
         protected global::System.Web.UI.WebControls.Literal ltQ2Other;
         protected global::System.Web.UI.WebControls.Literal ltQ3;
         protected global::System.Web.UI.WebControls.Literal ltQ4;
         protected global::System.Web.UI.WebControls.Repeater rptReasons;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlQ5Other;
         protected global::System.Web.UI.WebControls.Literal ltQ5Other;
         protected global::System.Web.UI.WebControls.Repeater rptSupervision;
         protected global::System.Web.UI.WebControls.Literal ltQ7;

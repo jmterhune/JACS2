@@ -84,9 +84,17 @@
     margin-bottom: 1rem;
 }
 
-/* Print / Save-as-PDF: show only the survey detail, drop the DNN skin chrome */
+/* Print / Save-as-PDF: show only the survey detail, drop the DNN skin chrome.
+   One inch of top margin, nothing extra above the content. */
+@page {
+    margin: 1in;
+}
+
 @media print {
+    /* Force every ancestor to static so the detail anchors to the top of the
+       page (a positioned DNN pane was leaving a large gap at the top). */
     body * {
+        position: static !important;
         visibility: hidden;
     }
 
@@ -96,7 +104,7 @@
     }
 
     .exit-survey-detail {
-        position: absolute;
+        position: absolute !important;
         top: 0;
         left: 0;
         width: 100%;

@@ -33,8 +33,8 @@
             </ItemTemplate>
             <FooterTemplate></tbody></table></FooterTemplate>
         </asp:Repeater>
-        <dl class="row">
-            <dt class="col-sm-3">Other (specify)</dt>
+        <dl id="pnlQ1Other" runat="server" visible="false" class="row">
+            <dt class="col-sm-3">Other</dt>
             <dd class="col-sm-9"><asp:Literal ID="ltQ1Other" runat="server" /></dd>
         </dl>
 
@@ -44,8 +44,8 @@
             <ItemTemplate><li><%# Server.HtmlEncode((string)Eval("ReasonLabel")) %></li></ItemTemplate>
             <FooterTemplate></ul></FooterTemplate>
         </asp:Repeater>
-        <dl class="row">
-            <dt class="col-sm-3">Other (specify)</dt>
+        <dl id="pnlQ2Other" runat="server" visible="false" class="row">
+            <dt class="col-sm-3">Other</dt>
             <dd class="col-sm-9"><asp:Literal ID="ltQ2Other" runat="server" /></dd>
         </dl>
 
@@ -61,8 +61,8 @@
             <ItemTemplate><li><%# Server.HtmlEncode((string)Eval("ReasonLabel")) %></li></ItemTemplate>
             <FooterTemplate></ul></FooterTemplate>
         </asp:Repeater>
-        <dl class="row">
-            <dt class="col-sm-3">Other (specify)</dt>
+        <dl id="pnlQ5Other" runat="server" visible="false" class="row">
+            <dt class="col-sm-3">Other</dt>
             <dd class="col-sm-9"><asp:Literal ID="ltQ5Other" runat="server" /></dd>
         </dl>
 

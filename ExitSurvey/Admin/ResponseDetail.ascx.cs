@@ -73,10 +73,12 @@ namespace tjc.Modules.ExitSurvey.Admin
             rptGeneral.DataSource = ctl.GetRatings(response.ResponseID, SurveyDefinition.SectionGeneral);
             rptGeneral.DataBind();
             ltQ1Other.Text = Enc(response.Q1OtherSpecify);
+            pnlQ1Other.Visible = !string.IsNullOrWhiteSpace(response.Q1OtherSpecify);
 
             rptAdvantages.DataSource = ctl.GetReasons(response.ResponseID, ExitSurveyReason.SectionAdvantages);
             rptAdvantages.DataBind();
             ltQ2Other.Text = Enc(response.Q2AdvantagesOther);
+            pnlQ2Other.Visible = !string.IsNullOrWhiteSpace(response.Q2AdvantagesOther);
             ltQ3.Text = YesNo(response.Q3AcceptedPosition);
 
             ltQ4.Text = Enc(response.Q4EmployerType);
@@ -86,6 +88,7 @@ namespace tjc.Modules.ExitSurvey.Admin
             rptReasons.DataSource = ctl.GetReasons(response.ResponseID, ExitSurveyReason.SectionLeave);
             rptReasons.DataBind();
             ltQ5Other.Text = Enc(response.Q5ReasonsOther);
+            pnlQ5Other.Visible = !string.IsNullOrWhiteSpace(response.Q5ReasonsOther);
 
             rptSupervision.DataSource = ctl.GetRatings(response.ResponseID, SurveyDefinition.SectionSupervision);
             rptSupervision.DataBind();

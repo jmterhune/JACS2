@@ -48,7 +48,7 @@
         </asp:Panel>
 
         <%-- Q2 -------------------------------------------------------------- --%>
-        <div class="mb-3 es-field" data-vtype="checks" data-vcond="accepted" data-vlabel="Question 2 &ndash; advantages of the new employer" data-vmsg="Select at least one advantage of the new employer.">
+        <div class="mb-3 es-field" data-vtype="checks" data-vlabel="Question 2 &ndash; advantages of the new employer" data-vmsg="Select at least one option (or &quot;Not Accepting employment elsewhere&quot;).">
             <span class="exit-survey-question">2. If you are accepting employment elsewhere, what advantages do you feel the new employer offers that you have not found here at the Twelfth Judicial Circuit? (Select all that apply.)</span>
             <asp:CheckBoxList ID="cblAdvantages" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="es-check-list q2-list" />
             <asp:Panel ID="divQ2Other" runat="server" CssClass="row mt-2 q2-other d-none">
