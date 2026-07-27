@@ -62,7 +62,7 @@ namespace tjc.Modules.ExitSurvey.Components
             new SurveyItem("advancement", "Advancement/promotional opportunities"),
             new SurveyItem("other_benefits", "Other benefits (retirement, insurance, leave, etc.)"),
             new SurveyItem("overall", "Overall working for the Court"),
-            new SurveyItem("other", "Other (specify)"),
+            new SurveyItem("other", "Other"),
         };
 
         // Q6 - supervision received.
@@ -86,7 +86,7 @@ namespace tjc.Modules.ExitSurvey.Components
             new SurveyItem("private_sector", "Private Sector"),
             new SurveyItem("non_profit", "Non-Profit Organization"),
             new SurveyItem("other_court", "Another Court or office within State Courts System"),
-            new SurveyItem("other", "Other (specify)"),
+            new SurveyItem("other", "Other"),
         };
 
         // Q5 - what influenced you to leave (multi-select).
@@ -103,7 +103,7 @@ namespace tjc.Modules.ExitSurvey.Components
             new SurveyItem("less_work", "Less work"),
             new SurveyItem("more_hours", "More hours"),
             new SurveyItem("fewer_hours", "Fewer hours"),
-            new SurveyItem("other", "Other (specify)"),
+            new SurveyItem("other", "Other"),
         };
     }
 }

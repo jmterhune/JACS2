@@ -17,9 +17,8 @@
             <p>Unless specifically requested otherwise, pursuant to the State Courts System Personnel Policy, your responses to the Employee Exit Survey will be part of your personnel file.</p>
         </div>
 
-        <div class="form-check mb-3">
-            <asp:CheckBox ID="chkDoNotShare" runat="server" CssClass="form-check-input" />
-            <label class="form-check-label" for="<%= chkDoNotShare.ClientID %>">Check here if you request that the Exit Survey not be shared with your supervisor.</label>
+        <div class="mb-3 exit-survey-single-check">
+            <asp:CheckBox ID="chkDoNotShare" runat="server" Text="Check here if you request that the Exit Survey not be shared with your supervisor." />
         </div>
 
         <%-- Q1 -------------------------------------------------------------- --%>
@@ -32,7 +31,7 @@
                         <asp:HiddenField ID="hfKey" runat="server" />
                     </div>
                     <div class="col-md-8">
-                        <asp:RadioButtonList ID="rblRating" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="rating-options"></asp:RadioButtonList>
+                        <asp:RadioButtonList ID="rblRating" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="rating-options"></asp:RadioButtonList>
                     </div>
                 </div>
             </ItemTemplate>
@@ -45,7 +44,7 @@
         <%-- Q2 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">2. If you are accepting employment elsewhere, what advantages do you feel the new employer offers that you have not found here at the Twelfth Judicial Circuit? (Select all that apply.)</span>
-            <asp:CheckBoxList ID="cblAdvantages" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="es-check-list q2-list" />
+            <asp:CheckBoxList ID="cblAdvantages" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="es-check-list q2-list" />
             <asp:Panel ID="divQ2Other" runat="server" CssClass="row mt-2 q2-other d-none">
                 <div class="col-md-4"><label for="<%= txtQ2Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ2Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
@@ -55,7 +54,7 @@
         <%-- Q3 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">3. Have you accepted another position?</span>
-            <asp:RadioButtonList ID="rblAccepted" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="rating-options">
+            <asp:RadioButtonList ID="rblAccepted" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="rating-options">
                 <asp:ListItem Text="Yes" Value="1" />
                 <asp:ListItem Text="No" Value="0" />
             </asp:RadioButtonList>
@@ -64,7 +63,7 @@
         <%-- Q4 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">4. If yes, what type of employer?</span>
-            <asp:RadioButtonList ID="rblEmployerType" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="rating-options q4-list" />
+            <asp:RadioButtonList ID="rblEmployerType" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="rating-options q4-list" />
             <asp:Panel ID="divQ4Other" runat="server" CssClass="row mt-2 q4-other d-none">
                 <div class="col-md-4"><label for="<%= txtQ4Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ4Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
@@ -74,7 +73,7 @@
         <%-- Q5 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">5. What influenced you to leave the Twelfth Judicial Circuit? (Select all that apply.)</span>
-            <asp:CheckBoxList ID="cblReasons" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="es-check-list q5-list" />
+            <asp:CheckBoxList ID="cblReasons" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="es-check-list q5-list" />
             <asp:Panel ID="divQ5Other" runat="server" CssClass="row mt-2 q5-other d-none">
                 <div class="col-md-4"><label for="<%= txtQ5Other.ClientID %>">Other (specify)</label></div>
                 <div class="col-md-8"><asp:TextBox ID="txtQ5Other" runat="server" CssClass="form-control" MaxLength="255" /></div>
@@ -91,7 +90,7 @@
                         <asp:HiddenField ID="hfKey" runat="server" />
                     </div>
                     <div class="col-md-8">
-                        <asp:RadioButtonList ID="rblRating" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="rating-options"></asp:RadioButtonList>
+                        <asp:RadioButtonList ID="rblRating" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="rating-options"></asp:RadioButtonList>
                     </div>
                 </div>
             </ItemTemplate>
@@ -112,7 +111,7 @@
         <%-- Q9 -------------------------------------------------------------- --%>
         <div class="mb-3">
             <span class="exit-survey-question">9. Would you consider working for the Twelfth Judicial Circuit again in the future?</span>
-            <asp:RadioButtonList ID="rblWouldReturn" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="rating-options">
+            <asp:RadioButtonList ID="rblWouldReturn" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="rating-options">
                 <asp:ListItem Text="Yes" Value="1" />
                 <asp:ListItem Text="No" Value="0" />
             </asp:RadioButtonList>

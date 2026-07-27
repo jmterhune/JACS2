@@ -13,26 +13,27 @@
     font-weight: 500;
 }
 
-/* Horizontal 5-point rating: space the options evenly and keep the label
-   beside its radio */
-.exit-survey .rating-options label {
-    margin-left: .25rem;
+/* Horizontal option lists (5-point ratings, Q2/Q5 checkboxes, Q3/Q4/Q9).
+   Rendered as an unordered list so each input+label is one non-breaking item
+   that wraps together, never splitting the box from its label. */
+.exit-survey ul.rating-options,
+.exit-survey ul.es-check-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.exit-survey ul.rating-options > li,
+.exit-survey ul.es-check-list > li {
+    display: inline-block;
+    white-space: nowrap;
     margin-right: 1.25rem;
 }
 
-.exit-survey .rating-options input {
-    margin-right: .1rem;
-}
-
-/* Horizontal checkbox lists (Q2 advantages, Q5 reasons), styled like the
-   form-check checkboxes on the EmployeeDB edit form */
-.exit-survey .es-check-list label {
+.exit-survey ul.rating-options label,
+.exit-survey ul.es-check-list label,
+.exit-survey .exit-survey-single-check label {
     margin-left: .25rem;
-    margin-right: 1.25rem;
-}
-
-.exit-survey .es-check-list input {
-    vertical-align: middle;
 }
 
 /* Admin results / detail tables */
