@@ -302,16 +302,18 @@
         if (missing.length) {
             var first = root.querySelector(".es-invalid");
             function scrollToFirst() {
-                if (first && first.scrollIntoView) first.scrollIntoView({ behavior: "smooth", block: "center" });
+                if (first && first.scrollIntoView) first.scrollIntoView({ behavior: "smooth", block: "start" });
             }
             var list = missing.map(function (m) { return "<li>" + m + "</li>"; }).join("");
             if (window.Swal) {
-                // Scroll to the first flagged field once the user dismisses the dialog.
+                // returnFocus:false stops SweetAlert from jumping back to the submit
+                // button on close; then scroll the first flagged field to the top.
                 Swal.fire({
                     title: "Some items still need your attention",
                     icon: "error",
                     html: '<p>Please complete the following before submitting:</p><ul style="text-align:left;">' + list + "</ul>",
-                    confirmButtonText: "OK"
+                    confirmButtonText: "OK",
+                    returnFocus: false
                 }).then(scrollToFirst);
             } else {
                 alert("Please complete all required items before submitting.");
