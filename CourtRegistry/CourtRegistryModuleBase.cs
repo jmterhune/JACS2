@@ -101,6 +101,7 @@ namespace tjc.Modules.CourtRegistry
         public string UpdateJacCodeUrl { get { return EditUrl("manage-codes"); } }
         public string LocationListUrl { get { return EditUrl("locations"); } }
         public string CaseTypeListUrl { get { return EditUrl("case-types"); } }
+        public string CompareUrl { get { return EditUrl("compare"); } }
 
     }
 }

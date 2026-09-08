@@ -75,6 +75,7 @@ namespace tjc.Modules.CourtRegistry
                         var attorney = aCtl.GetAttorney(application.AttorneyID);
                         PopulateApplication(application);
                         PopulateAttorney(attorney);
+                        BuildPrevYearJacModal(application);
                     }
                     else
                     {
@@ -87,6 +88,47 @@ namespace tjc.Modules.CourtRegistry
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        /// <summary>Fill the "Previous Year JAC Codes" modal with the codes this
+        /// applicant selected in the prior fiscal year, laid out one column per
+        /// county/location (mirrors the CodeComparison view's per-location grid).</summary>
+        private void BuildPrevYearJacModal(Components.Application app)
+        {
+            int prevYear = app.Year - 1;
+            ltPrevYearTitle.Text = string.Format("JAC Codes Selected for Fiscal Year {0} - {1}", prevYear - 1, prevYear);
+
+            var appCtl = new ApplicationController();
+            var codes = appCtl.GetJacCodesByYear(prevYear, app.AttorneyID).ToList();
+            if (codes.Count == 0)
+            {
+                ltPrevYearJac.Text = "<p>No JAC codes were selected for the previous year.</p>";
+                return;
+            }
+
+            var locations = codes.Select(c => c.LocationName).Distinct().OrderBy(n => n).ToList();
+            var byLocation = locations.ToDictionary(
+                l => l,
+                l => codes.Where(c => c.LocationName == l).Select(c => c.JacCodeID).Distinct().OrderBy(c => c).ToList());
+            int maxRows = byLocation.Values.Max(list => list.Count);
+
+            var sb = new StringBuilder();
+            sb.Append("<table class=\"table table-sm table-bordered text-center prevYearJac\"><thead><tr>");
+            foreach (var l in locations)
+                sb.AppendFormat("<th>{0}</th>", System.Web.HttpUtility.HtmlEncode(l));
+            sb.Append("</tr></thead><tbody>");
+            for (int i = 0; i < maxRows; i++)
+            {
+                sb.Append("<tr>");
+                foreach (var l in locations)
+                {
+                    var list = byLocation[l];
+                    sb.AppendFormat("<td>{0}</td>", i < list.Count ? list[i].ToString() : "&nbsp;");
+                }
+                sb.Append("</tr>");
+            }
+            sb.Append("</tbody></table>");
+            ltPrevYearJac.Text = sb.ToString();
         }
 
         private void PopulateAttorney(Attorney atty)
@@ -202,12 +244,12 @@ namespace tjc.Modules.CourtRegistry
         {
             switch ((CodeStatus)status)
             {
-                case CodeStatus.New: return "badge badge-primary";
-                case CodeStatus.Approved: return "badge badge-success";
-                case CodeStatus.Rejected: return "badge badge-warning";
-                case CodeStatus.Removed: return "badge badge-dark";
-                case CodeStatus.Locked: return "badge badge-danger";
-                default: return "badge badge-default";
+                case CodeStatus.New: return "badge bg-primary";
+                case CodeStatus.Approved: return "badge bg-success";
+                case CodeStatus.Rejected: return "badge bg-warning text-dark";
+                case CodeStatus.Removed: return "badge bg-dark";
+                case CodeStatus.Locked: return "badge bg-danger";
+                default: return "badge bg-secondary";
             }
         }
 

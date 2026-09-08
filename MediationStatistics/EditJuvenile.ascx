@@ -17,21 +17,19 @@
     </div>
     <div class="row">
         <div class="col-6">
-            <div class="form-group">
+            <div class="mb-3">
                 <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
                 <div class="input-group">
                     <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseYear" title="Year" runat="server" MaxLength="4" CssClass="form-control year-field" placeholder="YYYY" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
                     <asp:TextBox AutoCompleteType="Disabled" TabIndex="1" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
-                    <div class="input-group-append">
-                        <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
-                    </div>
+                    <small class="input-group-text form-control rounded-end" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                 </div>
             </div>
             <fieldset class="outline-fieldset mb-0">
                 <legend>Case Information</legend>
-                <div class="form-group">
+                <div class="mb-3">
                     <div class="row">
                         <div class="col-6">
                             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
@@ -74,14 +72,14 @@
             <div class="row">
                 <div class="col-auto">
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="txtOrderReferral" Text="Order of Referral" />
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtOrderReferral" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
 
                 </div>
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" MaxLength="15" TextMode="Date" ClientIDMode="Static" CssClass="form-control" />
                     </div>
@@ -122,37 +120,37 @@
                     <div class="template">
                         <fieldset disabled>
                             <legend>Event Number <%#Container.ItemIndex + 1%>
-                                <asp:Label ID="lblHoursRemaining" runat="server" CssClass="ms-5 fw-bold badge badge-danger">Hours Remaining: <%#Eval("TimeRemaining","{0:n}")%></asp:Label></legend>
+                                <asp:Label ID="lblHoursRemaining" runat="server" CssClass="ms-5 fw-bold badge bg-danger">Hours Remaining: <%#Eval("TimeRemaining","{0:n}")%></asp:Label></legend>
                             <div class="row">
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class="form-check form-switch mt-4">
                                             <input class="form-check-input" type="checkbox" id="chkMeetingHeldItem" <%#Convert.ToBoolean(Eval("MediationHeld"))?"checked":""%>>
                                             <label class="form-check-label" for="chkMeetingHeldItem">Mediation Held</label>
                                         </div>
-                                        <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='form-group'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
+                                        <%#Convert.ToBoolean(Eval("MediationHeld").ToString())?"":"<div class='row'><div class='col-12'><div class='mb-3'><label for='txtReasonNotHeld' class='form-label'>Reason Not Held:</label> <span id='txtReasonNotHeld'>" + Eval("ReasonNotHeld", "{0:d}") + "</span></div></div></div>"%>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="txtEventDateItem" class="form-label">Event Date</label>
                                         <input id="txtEventDateItem" class="form-control" type="text" value='<%#Eval("EventDate", "{0:d}")%>' />
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="txtAgreementTypeItem">Agreement Type</label>
                                         <input class="form-control" type="text" id="txtAgreementTypeItem" value='<%#GetAgreementType(Eval("AgreementType").ToString())%>'>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="txtMediatoryTypeItem">Mediator Type</label>
                                         <input id="txtMediatorTypeItem" class="form-control" type="text" value='<%#Eval("MediatorType")%>' />
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="txtMediatorItem">Mediator Name</label>
                                         <input id="txtMediatorItem" class="form-control" type="text" value='<%#Eval("MediatorName")%>' />
                                     </div>
@@ -161,7 +159,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="chkAdjournedTimeRemainingItem" <%#Convert.ToBoolean(Eval("AdjournedTimeRemaining"))?"checked":""%>>
                                             <label class="form-check-label me-3" for="chkAdjournedTimeRemainingItem">Adjourned with Time Remaining</label>
@@ -180,7 +178,7 @@
                     <hr />
                 </SeparatorTemplate>
             </asp:Repeater>
-            <div class="form-group">
+            <div class="mb-3">
                 <fieldset class="outline-fieldset pt-0 pb-0">
                     <legend class="mb-0">
                         <asp:Label runat="server" AssociatedControlID="txtComments" Text="Session Comments" /></legend>
@@ -194,18 +192,18 @@
                             <h4 class="modal-title" id="EventModalLabel">Add / Edit Event</h4>
                             <button type="button" class="close event-close" onclick="CloseEventModal(event)">&times;</button>
                         </div>
-                        <div class="modal-body form-group">
+                        <div class="modal-body mb-3">
                             <asp:HiddenField ID="hdEventId" runat="server" />
                             <div class="row">
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class="form-check form-switch mt-4">
                                             <asp:CheckBox ID="chkMeetingHeld" ClientIDMode="Static" runat="server" onclick="hideReason(this)" Text="Mediation Held" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" ID="lblReason" AssociatedControlID="drpReason" CssClass="reason" Text="Reason Not Held" />
                                         <asp:DropDownList ID="drpReason" runat="server" ClientIDMode="Static" CssClass="form-control reason selectMe">
                                             <asp:ListItem Value="" Text="< Select Reason>" />
@@ -218,13 +216,13 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtEventDate" Text="Event Date" />
                                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtEventDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="rblAgreementType" Text="Agreement" />
                                         <asp:RadioButtonList ID="rblAgreementType" ClientIDMode="Static" CssClass="form-control radio-button-list agreement" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
                                             <asp:ListItem Text="None" Value="N" Selected="True" />
@@ -236,7 +234,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="drpMediatorType" Text="Mediator Type" />
                                         <asp:DropDownList ID="drpMediatorType" runat="server" ToolTip="Mediator Type" CssClass="form-control" ClientIDMode="Static">
                                             <asp:ListItem Text="< Select Mediator >" Value=""></asp:ListItem>
@@ -262,14 +260,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-auto">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class="form-check form-switch mt-2">
                                             <asp:CheckBox ID="chkAdjournedTimeRemaining" ClientIDMode="Static" runat="server" Text="Adjourned with time remaining?" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="form-group row">
+                                    <div class="row mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtHours" CssClass="col-auto col-form-label" Text="Hours" />
                                         <div class="col-auto">
                                             <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtHours" step="0.01" TextMode="Number" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
@@ -291,9 +289,9 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="mediatorModalLabel">Mediator Search</h4>
-                            <button type="button" class="close" onclick="CloseMediatorModal(event)" aria-hidden="true">&times;</button>
+                            <button type="button" class="btn-close" onclick="CloseMediatorModal(event)" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body form-group">
+                        <div class="modal-body mb-3">
                             <div class="row mb-3">
                                 <div class="col-auto">
                                     <asp:Label runat="server" AssociatedControlID="txtMediatorFirstName" Text="First Name" />
@@ -330,7 +328,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="EditMediatorModalLabel">Add Mediator</h4>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row g-3">
@@ -682,7 +680,7 @@
     function ToggleEventForm(toggleValue) {
 
         if (toggleValue) {
-            $('#EventModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EventModal')).show();
             if ($("#chkMeetingHeld").is(":checked")) {
                 $(".reason").hide();
                 $("select.reason").val('');
@@ -690,7 +688,7 @@
                 $(".reason").show();
             }
         } else {
-            $('#EventModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EventModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
             // modal.hide();

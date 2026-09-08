@@ -130,7 +130,7 @@ namespace tjc.Modules.HearingLog
                 var ctl = new JudgeController();
                 var jacsJudges = ctl.GetJacsJudgeByCounty(drpCounty.SelectedValue);
                 chlJacsJudges.DataSource = jacsJudges.OrderBy(x => x.JudgeName);
-                chlJacsJudges.DataTextField = "JudgeName";
+                chlJacsJudges.DataTextField = "JudgeListName";
                 chlJacsJudges.DataValueField = "JacsUserID";
                 chlJacsJudges.DataBind();
                 Int32.TryParse(drpJudge.SelectedValue, out var judgeUserId);

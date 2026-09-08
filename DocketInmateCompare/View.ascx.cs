@@ -132,6 +132,7 @@ namespace tjc.Modules.DocketInmateCompare
                     TextBox txtEventType = (TextBox)row.FindControl("txtEventType");
                     int id = Convert.ToInt32(row.Cells[0].Text);
                     var item = controller.GetItem(id);
+                    if (item == null) continue;
                     item.Mode = ReadMode(row);
                     item.Start = txtStart.Text;
                     item.EventType = txtEventType.Text;
@@ -161,24 +162,46 @@ namespace tjc.Modules.DocketInmateCompare
         protected void btnGenerateWord_Click(object sender, EventArgs e)
         {
             var controller = new NameMatchResultController();
-            var setGuid = Guid.Parse(hfCurrentSetGuid.Value);
+            Guid.TryParse(hfCurrentSetGuid.Value, out Guid setGuid);
 
-            // Update modes, start times, and event types from grid
+            // Build the document rows straight from the grid so generation reflects exactly
+            // what is on screen and keeps working even when the backing records were already
+            // removed by a previous generate (DeleteItemsBySetGuid below) -- which is what
+            // produced the NullReferenceException on a second generate.
+            var results = new List<NameMatchResult>();
             for (int i = 0; i < gvMatches.Rows.Count; i++)
             {
                 GridViewRow row = gvMatches.Rows[i];
+                if (row.RowType != DataControlRowType.DataRow) continue;
+
                 TextBox txtStart = (TextBox)row.FindControl("txtStart");
                 TextBox txtEventType = (TextBox)row.FindControl("txtEventType");
-                int id = Convert.ToInt32(row.Cells[0].Text);
-                var item = controller.GetItem(id);
-                item.Mode = ReadMode(row);
-                item.Start = txtStart.Text;
-                item.EventType = txtEventType.Text;
-                controller.UpdateItem(item);
-            }
+                string mode = ReadMode(row);
+                string start = txtStart != null ? txtStart.Text : string.Empty;
+                string eventType = txtEventType != null ? txtEventType.Text : string.Empty;
 
-            // Retrieve from database
-            var results = controller.GetItemsBySetGuid(setGuid);
+                results.Add(new NameMatchResult
+                {
+                    JailName = Server.HtmlDecode(row.Cells[2].Text),
+                    CourtCase = Server.HtmlDecode(row.Cells[3].Text),
+                    Start = start,
+                    EventType = eventType,
+                    Mode = mode
+                });
+
+                // Best-effort: persist the edits back to the record if it still exists.
+                if (int.TryParse(row.Cells[0].Text, out int id))
+                {
+                    var item = controller.GetItem(id);
+                    if (item != null)
+                    {
+                        item.Mode = mode;
+                        item.Start = start;
+                        item.EventType = eventType;
+                        controller.UpdateItem(item);
+                    }
+                }
+            }
 
             // Generate Word document using OpenXML, matching the Sarasota Jail Hearings request form
             MemoryStream stream = new MemoryStream();

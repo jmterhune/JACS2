@@ -4,7 +4,7 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#logForm" data-toggle="tab">Record Destruction Log</a>
+            <a class="nav-link" href="#logForm" data-bs-toggle="tab">Record Destruction Log</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=SearchLogUrl %>">Search Log</a>
@@ -28,13 +28,13 @@
         <div id="logForm" class="tab-pane active fire-bg">
             <div class="row">
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="txtName" Text="Name" />
                         <asp:TextBox ID="txtName" Enabled="false" ReadOnly="true" runat="server" CssClass="form-control" />
                     </div>
                 </div>
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="drpDepartment" Text="Department" />
                         <asp:DropDownList ID="drpDepartment" runat="server" CssClass="form-control" AppendDataBoundItems="True" DataTextField="GroupName"
                             DataValueField="GroupID">
@@ -47,7 +47,7 @@
             </div>
             <div class="row">
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="drpRecordType" Text="Record Type" />
                         <asp:DropDownList ID="drpRecordType" runat="server" CssClass="form-control" AppendDataBoundItems="True" DataTextField="Description"
                             DataValueField="RecordTypeID">
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="drpRetentionPeriod" Text="Retention Period" />
                         <asp:DropDownList ID="drpRetentionPeriod" runat="server" CssClass="form-control" AppendDataBoundItems="True" DataTextField="Description"
                             DataValueField="RetentionPeriodID">
@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="drpDestructionMethod" Text="Destruction Method" />
                         <asp:DropDownList ID="drpDestructionMethod" runat="server" CssClass="form-control" AppendDataBoundItems="True" DataTextField="Description"
                             DataValueField="DestructionMethodID">
@@ -85,7 +85,7 @@
             </div>
             <div class="row">
                 <div class="col-6">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="txtDescription" Text="Description" />
                         <asp:TextBox runat="server" ID="txtDescription" MaxLength="2000" TextMode="MultiLine" Rows="4" CssClass="form-control" />
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtDescription"
@@ -95,7 +95,7 @@
             </div>
             <div class="row">
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="txtName" Text="Year Record was Created" />
                         <asp:TextBox ID="txtYearCreated" runat="server" CssClass="form-control" TextMode="Number" />
                         <asp:RequiredFieldValidator ID="valYearCreated" runat="server" Display="Dynamic" ControlToValidate="txtYearCreated" CssClass="label label-danger"
@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="col-auto">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <asp:Label runat="server" AssociatedControlID="txtDateDestroyed" Text="Date Destroyed" />
                         <asp:TextBox ID="txtDateDestroyed" runat="server" CssClass="form-control date-picker" />
                         <asp:RequiredFieldValidator ID="valDateDestroyed" runat="server" Display="Dynamic" ControlToValidate="txtDateDestroyed" CssClass="label label-danger"

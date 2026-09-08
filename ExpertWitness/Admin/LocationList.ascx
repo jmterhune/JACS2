@@ -16,7 +16,7 @@
             <a class="nav-link" href="<%=TypeListUrl %>">Expert Types</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#locations" data-toggle="tab">Locations</a>
+            <a class="nav-link" href="#locations" data-bs-toggle="tab">Locations</a>
         </li>
     </ul>
     <div class="tab-content">
@@ -67,10 +67,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditLocationModalLabel">Add / Edit Location</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtLocationName" Text="Location" />
                                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLocationName" />
                                     </div>
@@ -150,9 +150,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditLocationModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditLocationModal')).show();
         } else {
-            $('#EditLocationModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditLocationModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

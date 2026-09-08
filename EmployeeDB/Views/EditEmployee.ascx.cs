@@ -97,6 +97,15 @@ namespace tjc.Modules.EmployeeDB.Views
                     {
                         LoadEmployee();
                         cmdDelete.Visible = true;
+                        // Jump straight to this employee's New Hire IT Worksheet
+                        // (same module, NewHireIT controlKey) with the EmployeeId
+                        // in the query string so the worksheet pre-populates.
+                        cmdWorksheet.NavigateUrl = _navigationManager.NavigateURL(
+                            TabId,
+                            "NewHireIT",
+                            "mid=" + ModuleId,
+                            "EmployeeId=" + EmployeeId);
+                        cmdWorksheet.Visible = true;
                     }
                     else
                     {

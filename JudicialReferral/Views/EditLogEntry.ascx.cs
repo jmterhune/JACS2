@@ -43,6 +43,9 @@ namespace tjc.Modules.JudicialReferral.Views
                                 txtMotionFiled.Text = objReferral.MotionDate.Value.ToString("yyyy-MM-dd");
                             if (objReferral.JudgeResponseDate.HasValue)
                                 txtReceived.Text = objReferral.JudgeResponseDate.Value.ToString("yyyy-MM-dd");
+                            // Display-only: show the referral notes for context. These are
+                            // intentionally NOT copied into the Court Counsel history record.
+                            txtNotes.Text = objReferral.Notes;
 
                             var files = attCtl.GetAttachmentsByReferral(objReferral.ReferralId).ToList();
                             rptFiles.DataSource = files;

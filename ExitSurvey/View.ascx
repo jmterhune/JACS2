@@ -29,7 +29,7 @@
         <div class="es-matrix" data-vlabel="Question 1 &ndash; rate every work area">
         <asp:Repeater ID="rptGeneral" runat="server" OnItemDataBound="rptRating_ItemDataBound">
             <ItemTemplate>
-                <div class="row mb-3 exit-survey-rating">
+                <div class="row mb-1 exit-survey-rating">
                     <div class="col-md-4 exit-survey-rating-label">
                         <asp:Literal ID="ltLabel" runat="server"></asp:Literal>
                         <asp:HiddenField ID="hfKey" runat="server" />
@@ -95,7 +95,7 @@
         <div class="es-matrix" data-vlabel="Question 6 &ndash; rate every supervision item">
         <asp:Repeater ID="rptSupervision" runat="server" OnItemDataBound="rptRating_ItemDataBound">
             <ItemTemplate>
-                <div class="row mb-3 exit-survey-rating">
+                <div class="row mb-1 exit-survey-rating">
                     <div class="col-md-4 exit-survey-rating-label">
                         <asp:Literal ID="ltLabel" runat="server"></asp:Literal>
                         <asp:HiddenField ID="hfKey" runat="server" />

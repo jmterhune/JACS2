@@ -53,7 +53,7 @@ namespace tjc.Modules.ExpertWitness.Components
             {
                 if (string.IsNullOrEmpty(Comments))
                     return "";
-                return string.Format("<i class=\"fas fa-comment-alt\" data-html=\"true\" title=\"{0}\" data-toggle=\"tooltip\"></i>", Comments); 
+                return string.Format("<i class=\"fas fa-comment-alt\" data-html=\"true\" title=\"{0}\" data-bs-toggle=\"tooltip\"></i>", Comments);
             }
         }
     }

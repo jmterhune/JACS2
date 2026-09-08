@@ -33,7 +33,7 @@
             <div class="col-6">
                 <section class="call-to-action call-to-action-default pt-3 pb-2">
                     <p class="text-start">Begin typing the clients last name below to check for previous log</p>
-                    <div class="row form-group">
+                    <div class="row mb-3">
                         <div class="col text-start">
                             <asp:Label runat="server" AssociatedControlID="txtName" CssClass="fw-bold" Text="Client" ToolTip="Begin typing the clients last name below to check for previous log" />
                             <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtName" />

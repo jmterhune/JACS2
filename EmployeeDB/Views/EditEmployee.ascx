@@ -41,12 +41,12 @@
 
     <div class="tabs tabs-primary">
     <ul class="nav nav-tabs" id="empTabs" role="tablist">
-        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" data-bs-toggle="tab" href="#tabDetails">Details</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" data-bs-toggle="tab" href="#tabPhones">Phone Numbers</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" data-bs-toggle="tab" href="#tabGroups">Groups</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" data-bs-toggle="tab" href="#tabHistory">Employment</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" data-bs-toggle="tab" href="#tabPhoto">Photo</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" data-bs-toggle="tab" href="#tabContacts">Emergency Contacts</a></li>
+        <li class="nav-item active"><a class="nav-link active" data-bs-toggle="tab" href="#tabDetails">Details</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabPhones">Phone Numbers</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabGroups">Groups</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabHistory">Employment</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabPhoto">Photo</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabContacts">Emergency Contacts</a></li>
     </ul>
 
     <div class="tab-content pt-3">
@@ -748,6 +748,9 @@
             CausesValidation="false" OnClick="cmdDelete_Click"
             OnClientClick="return confirm('Are you sure you want to delete this employee?');" />
         <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
+        <asp:HyperLink ID="cmdWorksheet" runat="server" CssClass="btn btn-info float-end" Visible="false">
+            <i class="fas fa-clipboard-list"></i>&nbsp;IT Worksheet
+        </asp:HyperLink>
     </div>
 </div>
 

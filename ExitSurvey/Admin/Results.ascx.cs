@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 */
+using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
@@ -26,7 +27,7 @@ namespace tjc.Modules.ExitSurvey.Admin
             try
             {
                 // DataTables needs jQuery; make sure DNN emits it.
-                DotNetNuke.Framework.jQuery.RequestRegistration();
+                JavaScript.RequestRegistration(CommonJs.jQuery);
 
                 if (!IsAdmin)
                 {

@@ -65,16 +65,16 @@
 
     <div class="tabs">
         <ul class="nav nav-tabs" id="employeeAdminTabs" role="tablist">
-            <li class="nav-item active"><a class="nav-link" href="#pane-employees" data-bs-toggle="tab" data-toggle="tab">Employees</a></li>
-            <li class="nav-item"><a class="nav-link" href="#pane-jobgroups" data-bs-toggle="tab" data-toggle="tab">Job Categories</a></li>
-            <li class="nav-item"><a class="nav-link" href="#pane-jobclasses" data-bs-toggle="tab" data-toggle="tab">Classes</a></li>
-            <li class="nav-item"><a class="nav-link" href="#pane-races" data-bs-toggle="tab" data-toggle="tab">Race</a></li>
-            <li class="nav-item"><a class="nav-link" href="#pane-locations" data-bs-toggle="tab" data-toggle="tab">Office Locations</a></li>
+            <li class="nav-item active"><a class="nav-link" href="#pane-employees" data-bs-toggle="tab">Employees</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pane-jobgroups" data-bs-toggle="tab">Job Categories</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pane-jobclasses" data-bs-toggle="tab">Classes</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pane-races" data-bs-toggle="tab">Race</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pane-locations" data-bs-toggle="tab">Office Locations</a></li>
             <% if (IsHrAdmin) { %>
-            <li class="nav-item"><a class="nav-link" href="#pane-supervisors" data-bs-toggle="tab" data-toggle="tab">Supervisors</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pane-supervisors" data-bs-toggle="tab">Supervisors</a></li>
             <% } %>
             <% if (IsSiteAdmin) { %>
-            <li class="nav-item"><a class="nav-link" href="#pane-departments" data-bs-toggle="tab" data-toggle="tab">Departments</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pane-departments" data-bs-toggle="tab">Departments</a></li>
             <% } %>
         </ul>
 

@@ -6,7 +6,7 @@
             <a class="nav-link" href="<%=DesignationListUrl%>">Designations</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#calendar" data-toggle="tab">Calendar</a>
+            <a class="nav-link" href="#calendar" data-bs-toggle="tab">Calendar</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=AttorneyListUrl%>">Attorneys</a>
@@ -73,10 +73,10 @@
                                         <h5 class="col-sm p-1 mb-0 text-center text-white">Saturday</h5>
                                     </div>
                                 </div>
-                                <div class="row g-0 border border-right-0 border-bottom-0">
+                                <div class="row g-0 border border-end-0 border-bottom-0">
                             </HeaderTemplate>
                             <ItemTemplate>
-                                <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate <%#(bool)Eval("Muted")?"d-none d-sm-inline-block bg-light text-muted":"" %>">
+                                <div class="day col-sm p-2 border border-start-0 border-top-0 text-truncate <%#(bool)Eval("Muted")?"d-none d-sm-inline-block bg-light text-muted":"" %>">
                                     <h5 class="row align-items-center">
                                         <span class="date col-1"><%#Eval("Day") %></span>
                                         <small class="col d-sm-none text-center text-muted"><%#Eval("DayOfWeek") %></small>
@@ -93,7 +93,7 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h4 class="modal-title" id="event-subject">Title</h4>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div id="event-body" class="modal-body">
                                     </div>
@@ -131,7 +131,7 @@
         });
     }(jQuery, window.Sys));
     function PageInit() {
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
         $("#lstUsers").SumoSelect({ selectAll: false, placeholder: 'All Reporters' });
         $(".event-item").on("dblclick", function (e) {
             var subject = $(this).data("subject");
@@ -139,7 +139,7 @@
             var user = $(this).data("user");
             $("#event-subject").text(subject);
             $("#event-body").html(`<p>${body}</p><p><strong>Last Modified By:</strong> ${user}</p>`);
-            $('#tooltipModal').modal("show");
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('tooltipModal')).show();
         });
     }
     function CloseModal() {

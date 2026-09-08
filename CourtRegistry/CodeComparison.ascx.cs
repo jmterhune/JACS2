@@ -46,12 +46,54 @@ namespace tjc.Modules.CourtRegistry
                         }
                     }
                     drpYear.Items.Insert(0, new ListItem("Select Year", "-1"));
+
+                    // When launched from an application row (?aid=N) preselect
+                    // that application's attorney and default the comparison to
+                    // its fiscal year vs. the prior year, then run it.
+                    PreselectFromApplication();
                 }
             }
             catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        private void PreselectFromApplication()
+        {
+            var qs = Request.QueryString["aid"];
+            if (string.IsNullOrEmpty(qs) || !int.TryParse(qs, out int aid) || aid <= 0)
+                return;
+
+            var appCtl = new ApplicationController();
+            var application = appCtl.GetApplication(aid);
+            if (application == null)
+                return;
+
+            int year = application.Year;
+            SelectYear(drpYear, year);
+
+            drpYear2.Enabled = true;
+            foreach (ListItem item in drpYear2.Items)
+                item.Enabled = item.Value != year.ToString();
+            SelectYear(drpYear2, year - 1);
+
+            var attyValue = application.AttorneyID.ToString();
+            if (drpAttorney.Items.FindByValue(attyValue) != null)
+                drpAttorney.SelectedValue = attyValue;
+
+            RunComparison();
+        }
+
+        /// <summary>Select <paramref name="year"/> in the dropdown, adding it
+        /// as an item first if the standard maxYear-3..maxYear range didn't
+        /// include it (e.g. an older application).</summary>
+        private void SelectYear(DropDownList dd, int year)
+        {
+            string val = year.ToString();
+            if (dd.Items.FindByValue(val) == null)
+                dd.Items.Add(new ListItem(val, val));
+            dd.SelectedValue = val;
         }
 
         protected void drpYear_SelectedIndexChanged(object sender, EventArgs e)
@@ -67,6 +109,11 @@ namespace tjc.Modules.CourtRegistry
         }
 
         protected void cmdCompare_Click(object sender, EventArgs e)
+        {
+            RunComparison();
+        }
+
+        private void RunComparison()
         {
             ltCompareTable.Text = string.Empty;
             ltCompareTableHeader.Text = string.Empty;

@@ -135,5 +135,15 @@ namespace tjc.Modules.JudicialReferral
         public bool IsCounselAdmin { get { return UserId > 0 && UserInfo.IsInRole(CounselAdminRole); } }
 
         public string HomeUrl { get { return _navigationManager.NavigateURL(); } }
+
+        /// <summary>
+        /// Trim and cap a string to the given DB column length so PetaPoco
+        /// inserts/updates never overflow the underlying nvarchar column.
+        /// </summary>
+        protected static string Trunc(string value, int max)
+        {
+            value = (value ?? string.Empty).Trim();
+            return value.Length > max ? value.Substring(0, max) : value;
+        }
     }
 }

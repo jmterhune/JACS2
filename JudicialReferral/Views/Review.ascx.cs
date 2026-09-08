@@ -86,6 +86,7 @@ namespace tjc.Modules.JudicialReferral.Views
             if (objReferral.MotionDate.HasValue)
                 txtMotionDate.Text = objReferral.MotionDate.Value.ToString("yyyy-MM-dd");
             txtMotionTitle.Text = objReferral.MotionTitle;
+            txtNotes.Text = objReferral.Notes;
             if (objReferral.JudgeId>0)
                 drpJudge.SelectedValue = objReferral.JudgeId.ToString();
 
@@ -229,6 +230,7 @@ namespace tjc.Modules.JudicialReferral.Views
                 objReferral.MotionDate = parsed;
 
             objReferral.MotionTitle = txtMotionTitle.Text;
+            objReferral.Notes = Trunc(txtNotes.Text, 2000);
             if (!string.IsNullOrEmpty(drpJudge.SelectedValue))
                 objReferral.JudgeId = int.Parse(drpJudge.SelectedValue);
 

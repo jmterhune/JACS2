@@ -17,7 +17,7 @@
 
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#contacts" data-toggle="tab">Contacts</a>
+            <a class="nav-link" href="#contacts" data-bs-toggle="tab">Contacts</a>
         </li>
     </ul>
     <div class="tab-content">
@@ -67,10 +67,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditContactModalLabel">Add / Edit Contact</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtContact" Text="Contact" />
                                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="100" ID="txtContact" />
                                     </div>
@@ -139,9 +139,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditContactModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditContactModal')).show();
         } else {
-            $('#EditContactModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditContactModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

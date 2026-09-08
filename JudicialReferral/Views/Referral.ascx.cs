@@ -145,6 +145,7 @@ namespace tjc.Modules.JudicialReferral.Views
                 CaseNumber = caseNumber,
                 MotionTitle = txtMotionTitle.Text,
                 MotionDate = motionDate == DateTime.MinValue ? (DateTime?)null : motionDate,
+                Notes = Trunc(txtNotes.Text, 2000),
                 Status = (int)Statuses.NewReferral
             };
 

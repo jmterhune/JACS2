@@ -10,7 +10,7 @@
             <a class="nav-link" href="<%=ExpertListUrl %>">Experts</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#evalutions" data-toggle="tab">Evaluation Types</a>
+            <a class="nav-link" href="#evalutions" data-bs-toggle="tab">Evaluation Types</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=TypeListUrl %>">Expert Types</a>
@@ -69,17 +69,17 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditTemplateModalLabel">Add / Edit Template</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtTemplateName" Text="Template" />
                                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="200" ID="txtTemplateName" />
                                         <asp:RequiredFieldValidator ValidationGroup="Template" runat="server" ControlToValidate="txtTemplateName" Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Template Name is Required" />
                                     </div>
                                     <fieldset class="outline-fieldset">
                                         <legend>Add Requirements</legend>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <asp:Label runat="server" AssociatedControlID="txtNumberRequired" Text="Number Required" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="Number" ID="txtNumberRequired" />
                                             <asp:RequiredFieldValidator ValidationGroup="Type" runat="server" ControlToValidate="txtNumberRequired" Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="Number Required is Required" />
@@ -248,11 +248,11 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditTemplateModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditTemplateModal')).show();
         } else {
             var isValid = Page_ClientValidate("Template");
             if (isValid) {
-                $('#EditTemplateModal').modal('hide');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('EditTemplateModal')).hide();
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
             }

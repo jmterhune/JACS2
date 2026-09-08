@@ -8,7 +8,7 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div class="alert alert-info"><i class="fa fa-info-circle"></i>&nbsp;The list below displays the barnumbers that have been excluded from the Florida Bar Import routine.</div>
 
-<button class="btn btn-primary" data-toggle="modal" data-target="#formModal">Add Attorney to Exclude </button>
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">Add Attorney to Exclude </button>
 <hr />
 
 <asp:Repeater ID="rptAttorneyList" runat="server" OnItemCommand="rptAttorneyList_ItemCommand">
@@ -47,10 +47,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="formModalLabel">Add Bar Number to Exclude</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="form-group mt-lg">
+                <div class="mt-lg">
                     <div class="row">
                         <div class="col-sm-12">
                             <asp:Label ID="lblBarnumber" runat="server" Text="Bar Number" AssociatedControlID="txtBarNumber"></asp:Label>
@@ -62,7 +62,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <asp:Button ID="cmdSave" CssClass="btn btn-primary" runat="server" OnClick="cmdSave_Click" Text="Save" />
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

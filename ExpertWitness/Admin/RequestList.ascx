@@ -4,7 +4,7 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#requests" data-toggle="tab">Requests</a>
+            <a class="nav-link" href="#requests" data-bs-toggle="tab">Requests</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ExpertListUrl %>">Experts</a>
@@ -75,7 +75,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="ShowRequestModalLabel">View Request</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <asp:HiddenField ID="hdRequestId" ClientIDMode="Static" runat="server" />
@@ -195,9 +195,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#ShowRequestModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('ShowRequestModal')).show();
         } else {
-            $('#ShowRequestModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('ShowRequestModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

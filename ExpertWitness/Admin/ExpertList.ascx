@@ -7,7 +7,7 @@
             <a class="nav-link" href="<%=RequestListUrl %>">Requests</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#experts" data-toggle="tab">Experts</a>
+            <a class="nav-link" href="#experts" data-bs-toggle="tab">Experts</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=EvaluationTypeListUrl %>">Evaluation Types</a>
@@ -75,10 +75,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditExpertModalLabel">Add / Edit Expert</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-8">
                                             <asp:Label runat="server" AssociatedControlID="txtExpertName" Text="Expert" />
                                             <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtExpertName" />
@@ -103,7 +103,7 @@
                                         <asp:CheckBoxList ID="clsEvaluationTypes" runat="server" RepeatDirection="Vertical" CssClass="radio-button-list form-check form-switch evaluation-types" RepeatLayout="UnorderedList">
                                         </asp:CheckBoxList>
                                     </fieldset>
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtComments" Text="Comments" />
                                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="MultiLine" Rows="4" ID="txtComments" />
                                     </div>
@@ -148,7 +148,7 @@
 
     function PageInit() {
         $(".date-picker").datepicker();
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
         var table = $('#tblExpert').DataTable({
             "order": [[1, "asc"]],
             "oLanguage": {
@@ -190,9 +190,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditExpertModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditExpertModal')).show();
         } else {
-            $('#EditExpertModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditExpertModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

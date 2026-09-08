@@ -4,7 +4,7 @@
 <div id="ThreatReport">
     <fieldset>
         <legend>Person Making This Report</legend>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-6">
                     <asp:Label Text="Name" runat="server" AssociatedControlID="txtPersonReporting" />
@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-4">
                     <asp:Label Text="Phone" runat="server" AssociatedControlID="txtPersonReportingPhone" />
@@ -35,7 +35,7 @@
     </fieldset>
     <fieldset>
         <legend>Location of Incident</legend>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-6">
                     <asp:TextBox ID="txtLocation" ReadOnly="true" runat="server" CssClass="form-control" />
@@ -45,7 +45,7 @@
     </fieldset>
     <fieldset>
         <legend>Nature of Incident</legend>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-6">
                     <asp:Label Text="Date of Incident" runat="server" AssociatedControlID="txtDate" />
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-12">
                     <asp:Label Text="Briefly describe the incident" runat="server" AssociatedControlID="txtIncidentDescription" />
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-6">
                     <asp:Label Text="If a specific person was targeted, indicate their name" runat="server" AssociatedControlID="txtPersonTargeted" />
@@ -99,12 +99,12 @@
                 <div class="card card-default">
                     <div class="card-header">
                         <h4 class="card-title">
-                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" aria-expanded="false" href="<%#"#Suspect-" + Container.ItemIndex + 1 %>"><%#DataBinder.Eval(Container.DataItem, "FirstName")%> <%#DataBinder.Eval(Container.DataItem, "LastName")%> </a>
+                            <a class="accordion-toggle collapsed" data-bs-toggle="collapse" data-bs-parent="#accordion" aria-expanded="false" href="<%#"#Suspect-" + Container.ItemIndex + 1 %>"><%#DataBinder.Eval(Container.DataItem, "FirstName")%> <%#DataBinder.Eval(Container.DataItem, "LastName")%> </a>
                         </h4>
                     </div>
                     <div id="<%#"Suspect-" + Container.ItemIndex + 1 %>" class="accordion-body collapse">
                         <div class="card-body container">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <label class="d-block">
@@ -128,7 +128,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <label class="d-block">
@@ -152,16 +152,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="d-block">
                                             Vehicle Info
-                                        <input type="text" readonly class="form-control" value="<%#DataBinder.Eval(Container.DataItem, "Vehicle")%>"></label>
+                                            <textarea rows="4" readonly class="form-control"><%#DataBinder.Eval(Container.DataItem, "Vehicle")%></textarea>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="d-block">
@@ -181,7 +182,7 @@
     </fieldset>
     <fieldset>
         <legend>Actions Taken on Scene</legend>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-6">
                     <asp:Label Text="Reported to Law Enforcement on (date)" runat="server" AssociatedControlID="txtDateReportedLeo" />
@@ -193,7 +194,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-6">
                     <asp:Label Text="Law Enforcement Agency" runat="server" AssociatedControlID="txtAgency" />
@@ -205,7 +206,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <div class="row">
                 <div class="col-md-12">
                     <asp:Label Text="Other Actions" runat="server" AssociatedControlID="txtActionTaken" />
@@ -230,7 +231,7 @@
             </asp:Repeater>
         </div>
     </fieldset>
-    <div class="form-group">
+    <div class="mb-3">
         <div class="row">
             <div class="col-md-12">
                 <asp:HyperLink ID="lnkReturn" runat="server" CssClass="btn btn-primary btn-lg" Text="Return to List" />

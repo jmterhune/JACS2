@@ -60,12 +60,21 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <label for="fuAttachments">Attachments</label>
-                    <p class="text-muted small">Acceptable file types: .docx, .doc, .xls, .xlsx, .pdf</p>
-                    <asp:FileUpload ID="fuAttachments" runat="server" AllowMultiple="true" CssClass="form-control-file" accept=".docx,.doc,.xls,.xlsx,.pdf" />
+                    <label for="filePicker">Attachments</label>
+                    <p class="text-muted small">Acceptable file types: .docx, .doc, .xls, .xlsx, .pdf. Add files one at a time or several at once; they will appear below.</p>
+                    <input type="file" id="filePicker" multiple accept=".docx,.doc,.xls,.xlsx,.pdf" class="form-control-file" />
+                    <ul id="stagedList" class="list-group staged-files"></ul>
+                    <asp:FileUpload ID="fuAttachments" runat="server" AllowMultiple="true" CssClass="d-none" accept=".docx,.doc,.xls,.xlsx,.pdf" />
                     <asp:CustomValidator ID="valUpload" runat="server" CssClass="text-danger"
                         ClientValidationFunction="validateUpload" ErrorMessage="Please Attach File" Display="None" />
                     <asp:HiddenField ID="hdJudge" runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="<%=txtNotes.ClientID %>">Notes</label>
+                    <asp:TextBox ID="txtNotes" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4" />
                 </div>
             </div>
     <hr />
@@ -102,8 +111,71 @@
     (function ($) {
         $(document).ready(function () {
             InitCaseNumberWidget();
+            InitAttachmentStaging();
         });
     }(jQuery));
+
+    // Stage attachments client-side so the user can add files one at a time,
+    // see the running list, and remove any before submitting. The visible
+    // picker only feeds the staged array; the real (hidden) asp:FileUpload has
+    // its FileList rebuilt via DataTransfer so the postback posts every file.
+    function InitAttachmentStaging() {
+        var picker = document.getElementById('filePicker');
+        var hidden = document.getElementById('<%= fuAttachments.ClientID %>');
+        var listEl = document.getElementById('stagedList');
+        if (!picker || !hidden || !listEl) return;
+
+        var staged = [];
+
+        function sync() {
+            var dt = new DataTransfer();
+            for (var i = 0; i < staged.length; i++) dt.items.add(staged[i]);
+            hidden.files = dt.files;
+            render();
+        }
+
+        function render() {
+            listEl.innerHTML = '';
+            for (var i = 0; i < staged.length; i++) {
+                (function (idx, f) {
+                    var li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                    var label = document.createElement('span');
+                    var icon = document.createElement('i');
+                    icon.className = 'fas fa-file';
+                    label.appendChild(icon);
+                    label.appendChild(document.createTextNode(' ' + f.name));
+
+                    var remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'btn btn-sm btn-link text-danger';
+                    remove.title = 'Remove';
+                    remove.innerHTML = '<i class="fas fa-trash"></i>';
+                    remove.onclick = function () {
+                        staged.splice(idx, 1);
+                        sync();
+                    };
+
+                    li.appendChild(label);
+                    li.appendChild(remove);
+                    listEl.appendChild(li);
+                }(i, staged[i]));
+            }
+        }
+
+        picker.addEventListener('change', function () {
+            var files = picker.files;
+            for (var i = 0; i < files.length; i++) {
+                var f = files[i];
+                var dup = staged.some(function (s) { return s.name === f.name && s.size === f.size; });
+                if (!dup) staged.push(f);
+            }
+            // Reset so re-picking the same file still fires change and appends.
+            picker.value = '';
+            sync();
+        });
+    }
 
     function InitCaseNumberWidget() {
         // Force any field tagged .upperCase to keep its actual value upper case
