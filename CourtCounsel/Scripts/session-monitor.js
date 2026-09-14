@@ -6,15 +6,14 @@
  * "Stay signed in" reloads the current page (the request itself refreshes
  * the sliding-expiration cookie) and restarts the timer. Abandoning the
  * session — either by clicking "Sign out" or by letting the countdown run
- * out — logs the user off (auth cookie cleared) and sends them to the
- * portal home page.
+ * out — navigates to DNN's logoff handler, which clears the auth cookie
+ * and redirects to the portal home page on its own.
  *
  * Usage (emitted from CourtCounselModuleBase / JudicialReferralModuleBase):
  *   SessionMonitor.init({
  *     timeoutMinutes: 60,      // forms-auth timeout, fallback only
  *     secondsRemaining: 3600,  // auth ticket's real remaining lifetime
  *     warningMinutes: 20,
- *     homeUrl: '/',
  *     logoffUrl: '/ctl/Logoff'
  *   });
  *
@@ -84,7 +83,7 @@
             if (this.modal && remainingMs > warningMs) this.modal.hide();
 
             this.warningTimer = setTimeout(function () { self.showWarning(); }, remainingMs - warningMs);
-            this.expiryTimer = setTimeout(function () { self.logOffAndGoHome(); }, remainingMs);
+            this.expiryTimer = setTimeout(function () { self.logOff(); }, remainingMs);
         },
 
         clearTimers: function () {
@@ -119,7 +118,7 @@
 
             var self = this;
             document.getElementById('sessionStayBtn').addEventListener('click', function () { self.keepAlive(); });
-            document.getElementById('sessionSignOutBtn').addEventListener('click', function () { self.logOffAndGoHome(); });
+            document.getElementById('sessionSignOutBtn').addEventListener('click', function () { self.logOff(); });
         },
 
         showWarning: function () {
@@ -151,18 +150,16 @@
             window.location.reload();
         },
 
-        logOffAndGoHome: function () {
+        logOff: function () {
             // The user abandoned the session — either clicked "Sign out" or
-            // let the countdown run out. Both do the same thing: ping DNN's
-            // logoff handler same-origin so the auth cookie actually gets
-            // cleared server-side, then land on the home page regardless of
-            // whatever page the portal's logoff control would otherwise
-            // redirect to.
+            // let the countdown run out. Navigate to DNN's logoff handler
+            // the same way the site's own logout link does: a background
+            // fetch() here did NOT end the session, and the redirect that
+            // followed it just left the user on the home page still signed
+            // in. DNN clears the auth cookie and handles the redirect home
+            // itself, so there's nothing to do afterwards.
             this.clearTimers();
-            var self = this;
-            fetch(this.cfg.logoffUrl, { credentials: 'same-origin', cache: 'no-store' })
-                .catch(function (err) { try { console.warn('SessionMonitor logoff ping failed:', err); } catch (e) { } })
-                .then(function () { window.location.href = self.cfg.homeUrl; });
+            window.location.href = this.cfg.logoffUrl;
         }
     };
 

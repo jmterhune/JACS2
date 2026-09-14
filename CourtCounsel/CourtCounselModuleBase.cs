@@ -59,20 +59,6 @@ namespace tjc.Modules.CourtCounsel
                 logoffUrl = current + "/ctl/Logoff";
             }
 
-            string homeUrl;
-            try
-            {
-                homeUrl = _navigationManager.NavigateURL(PortalSettings.HomeTabId);
-            }
-            catch
-            {
-                homeUrl = null;
-            }
-            if (string.IsNullOrEmpty(homeUrl))
-            {
-                homeUrl = "/";
-            }
-
             // How much life the auth ticket actually has left. The client
             // can't infer this from the timeout alone: ASP.NET reissues a
             // sliding-expiration cookie only once a request arrives past the
@@ -94,8 +80,7 @@ namespace tjc.Modules.CourtCounsel
                 "timeoutMinutes:" + timeoutMinutes.ToString("0") + "," +
                 "secondsRemaining:" + secondsRemaining + "," +
                 "warningMinutes:20," +
-                "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'," +
-                "homeUrl:'" + homeUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'" +
+                "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'" +
                 "});}else{setTimeout(go,200);}}go();})();";
 
             ScriptManager.RegisterStartupScript(this, GetType(), "SessionMonitorInit", init, true);
