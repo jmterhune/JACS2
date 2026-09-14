@@ -3,16 +3,17 @@
  *
  * Pops a Bootstrap 5 modal at (timeoutMinutes - warningMinutes) into the
  * forms-auth window warning the user their session is about to expire.
- * "Stay signed in" pings the server (refreshing the sliding-expiration cookie)
- * and restarts the timer. If the countdown runs out, redirects to the DNN
- * login page with returnurl preserved.
+ * "Stay signed in" reloads the current page (the request itself refreshes
+ * the sliding-expiration cookie) and restarts the timer. If the countdown
+ * runs out, the user is logged off (auth cookie cleared) and sent to the
+ * portal home page.
  *
  * Usage (emitted from CourtCounselModuleBase / JudicialReferralModuleBase):
  *   SessionMonitor.init({
  *     timeoutMinutes: 90,
  *     warningMinutes: 5,
- *     loginUrl: '/Login?ReturnUrl=...',
- *     keepAliveUrl: '/'
+ *     homeUrl: '/',
+ *     logoffUrl: '/ctl/Logoff'
  *   });
  *
  * Re-init is safe — calling init() again restarts the timers without
@@ -52,7 +53,7 @@
             this.expiryTime = Date.now() + totalMs;
 
             this.warningTimer = setTimeout(function () { self.showWarning(); }, totalMs - warningMs);
-            this.expiryTimer = setTimeout(function () { self.signOut(); }, totalMs);
+            this.expiryTimer = setTimeout(function () { self.expire(); }, totalMs);
         },
 
         clearTimers: function () {
@@ -110,51 +111,32 @@
         },
 
         keepAlive: function () {
-            // Hit a same-origin URL with credentials — the browser sends the
-            // auth cookie automatically, the server's sliding-expiration logic
-            // issues a fresh Set-Cookie on the response, and the user stays on
-            // this page with any unsaved form state intact. No DOM mutation,
-            // no navigation, no reload.
+            // Reload the current page. The request carries the auth cookie,
+            // the server's sliding-expiration logic issues a fresh Set-Cookie
+            // on the response, and the page's own re-render restarts the
+            // timers. If the session had actually already expired, the
+            // reload lands on DNN's login page like any other request would.
+            this.clearTimers();
+            window.location.reload();
+        },
+
+        expire: function () {
+            // Countdown ran out with no response from the user. Ping DNN's
+            // logoff handler same-origin so the auth cookie actually gets
+            // cleared server-side, then land on the home page regardless of
+            // whatever page the portal's logoff control would otherwise
+            // redirect to.
+            this.clearTimers();
             var self = this;
-            var url = (this.cfg && this.cfg.keepAliveUrl) || '/';
-            // Bust caches so the request always reaches the server (and thus
-            // the auth ticket gets refreshed).
-            var cacheBuster = (url.indexOf('?') >= 0 ? '&' : '?') + '_k=' + Date.now();
-            // Note: use default redirect handling (follow). DNN portals often
-            // redirect '/' to a friendlier URL; with redirect:'manual' that
-            // shows up as an opaque response and we'd have no way to tell
-            // whether auth survived.
-            fetch(url + cacheBuster, {
-                credentials: 'same-origin',
-                cache: 'no-store',
-                method: 'GET'
-            })
-            .then(function (resp) {
-                // If the request ended up on a login page or returned 401,
-                // the session is actually gone — sign the user out via DNN's
-                // logoff handler instead of pretending we extended it.
-                var finalUrl = (resp.url || '').toLowerCase();
-                if (resp.status === 401 || finalUrl.indexOf('login') >= 0) {
-                    self.signOut();
-                    return;
-                }
-                if (self.modal) { self.modal.hide(); }
-                if (self.countdownTimer) { clearInterval(self.countdownTimer); self.countdownTimer = null; }
-                self.start();
-            })
-            .catch(function (err) {
-                // Network error — surface it so a silent dead button doesn't
-                // mystify the user, and keep the modal up.
-                try { console.warn('SessionMonitor keepAlive failed:', err); } catch (e) { }
-            });
+            fetch(this.cfg.logoffUrl, { credentials: 'same-origin', cache: 'no-store' })
+                .catch(function (err) { try { console.warn('SessionMonitor logoff ping failed:', err); } catch (e) { } })
+                .then(function () { window.location.href = self.cfg.homeUrl; });
         },
 
         signOut: function () {
             // Sign-out via DNN's /ctl/Logoff handler — clears the auth cookie
             // server-side and DNN sends the user to the portal's configured
-            // logoff page (the site home page in a logged-out state by default).
-            // Used for both the Sign Out button and the countdown-expired
-            // auto-action, so users always land at the same place.
+            // logoff page. Used only for the explicit "Sign out" button.
             this.clearTimers();
             window.location.href = this.cfg.logoffUrl;
         }

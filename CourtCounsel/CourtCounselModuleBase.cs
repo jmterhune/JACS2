@@ -59,12 +59,26 @@ namespace tjc.Modules.CourtCounsel
                 logoffUrl = current + "/ctl/Logoff";
             }
 
+            string homeUrl;
+            try
+            {
+                homeUrl = _navigationManager.NavigateURL(PortalSettings.HomeTabId);
+            }
+            catch
+            {
+                homeUrl = null;
+            }
+            if (string.IsNullOrEmpty(homeUrl))
+            {
+                homeUrl = "/";
+            }
+
             string init =
                 "(function(){function go(){if(window.SessionMonitor){SessionMonitor.init({" +
                 "timeoutMinutes:" + timeoutMinutes.ToString("0") + "," +
                 "warningMinutes:5," +
                 "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'," +
-                "keepAliveUrl:'/'" +
+                "homeUrl:'" + homeUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'" +
                 "});}else{setTimeout(go,200);}}go();})();";
 
             ScriptManager.RegisterStartupScript(this, GetType(), "SessionMonitorInit", init, true);
