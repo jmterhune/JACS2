@@ -5,7 +5,7 @@
    <MSBuildDnnBinPath Condition="'$(MSBuildDnnBinPath)' == ''">$(MSBuildProjectDirectory)\bin</MSBuildDnnBinPath>
    <!-- Locate the tasks assembly relative to this file first. SolutionDir is
         only meaningful when the build was started from the solution; building
-        this .csproj on its own (msbuild CourtCounsel.csproj, or a CI step
+        a module .csproj on its own (msbuild <module>.csproj, or a CI step
         targeting the project directly) leaves it as ".", which collapsed the
         path to a non-existent BuildScripts\.\packages\... and failed
         PackageModule with MSB4062. This file lives in <module>\BuildScripts,
