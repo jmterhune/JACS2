@@ -42,10 +42,15 @@ namespace tjc.Modules.CourtCounsel
             Page.ClientScript.RegisterClientScriptInclude(GetType(), "SessionMonitorScript", ResolveUrl("~/DesktopModules/tjc.modules/CourtCounsel/Scripts/session-monitor.js"));
 
             double timeoutMinutes = System.Web.Security.FormsAuthentication.Timeout.TotalMinutes;
+            // Log off through the Home tab (/Home/ctl/Logoff), not the current
+            // one. Building this from the current tab produced a bare
+            // /ctl/Logoff when the module sat at the site root, which isn't a
+            // valid logoff URL; anchoring to Home also makes Home the page
+            // DNN returns to after clearing the auth cookie.
             string logoffUrl;
             try
             {
-                logoffUrl = _navigationManager.NavigateURL(TabId, "Logoff");
+                logoffUrl = _navigationManager.NavigateURL(PortalSettings.HomeTabId, "Logoff");
             }
             catch
             {
@@ -53,10 +58,7 @@ namespace tjc.Modules.CourtCounsel
             }
             if (string.IsNullOrEmpty(logoffUrl))
             {
-                // Fallback: append /ctl/Logoff to the current page path. DNN's URL
-                // provider handles this at any depth.
-                string current = Request.Url.AbsolutePath.TrimEnd('/');
-                logoffUrl = current + "/ctl/Logoff";
+                logoffUrl = "/Home/ctl/Logoff";
             }
 
             // How much life the auth ticket actually has left. The client
