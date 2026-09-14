@@ -73,10 +73,27 @@ namespace tjc.Modules.CourtCounsel
                 homeUrl = "/";
             }
 
+            // How much life the auth ticket actually has left. The client
+            // can't infer this from the timeout alone: ASP.NET reissues a
+            // sliding-expiration cookie only once a request arrives past the
+            // halfway point of the window, so a page load in the first half
+            // does NOT extend the session. A client-side "now + timeout"
+            // clock would then warn after the session had already died.
+            // Sent as remaining seconds rather than an absolute time so
+            // client/server clock skew can't distort it.
+            int secondsRemaining = 0;
+            var formsIdentity = Context.User.Identity as System.Web.Security.FormsIdentity;
+            if (formsIdentity != null && formsIdentity.Ticket != null)
+            {
+                TimeSpan remaining = formsIdentity.Ticket.Expiration - DateTime.Now;
+                if (remaining > TimeSpan.Zero) secondsRemaining = (int)remaining.TotalSeconds;
+            }
+
             string init =
                 "(function(){function go(){if(window.SessionMonitor){SessionMonitor.init({" +
                 "timeoutMinutes:" + timeoutMinutes.ToString("0") + "," +
-                "warningMinutes:5," +
+                "secondsRemaining:" + secondsRemaining + "," +
+                "warningMinutes:20," +
                 "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'," +
                 "homeUrl:'" + homeUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'" +
                 "});}else{setTimeout(go,200);}}go();})();";
