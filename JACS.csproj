@@ -509,6 +509,7 @@
     <Compile Include="Components\EmailController.cs" />
     <Compile Include="Components\Event.cs" />
     <Compile Include="Components\EventController.cs" />
+    <Compile Include="Components\EventNotificationMailer.cs" />
     <Compile Include="Components\EventReminder.cs" />
     <Compile Include="Components\EventReminderController.cs" />
     <Compile Include="Components\EventStatus.cs" />
