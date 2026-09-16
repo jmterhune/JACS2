@@ -44,6 +44,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Bar member import: shares the WinSCP + GenericParser DLLs that the
+         standalone "Bar Member Import" Windows service already uses. Both
+         packages live in the sibling tjc.Modules\packages folder. WinSCP.exe
+         (the assistant process WinSCPnet drives) is brought in by the
+         WinSCP.targets import near the bottom of this file. -->
+    <Reference Include="DotNetNuke.Web, Version=10.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="PetaPoco, Version=6.0.683.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\websites\apps.jud12.flcourts.org\bin\PetaPoco.dll</HintPath>
+    </Reference>
+    <Reference Include="WinSCPnet, Version=1.8.3.11614, Culture=neutral, PublicKeyToken=2271ec4a3c56d0bf, processorArchitecture=MSIL">
+      <HintPath>..\tjc.Modules\packages\WinSCP.5.19.2\lib\net40\WinSCPnet.dll</HintPath>
+    </Reference>
+    <Reference Include="GenericParsing, Version=1.1.6.22888, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\tjc.Modules\packages\GenericParser.1.1.6\lib\net20\GenericParsing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="DocumentFormat.OpenXml, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>packages\DocumentFormat.OpenXml.3.3.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
       <Private>True</Private>
@@ -67,9 +88,6 @@
     <Reference Include="DotNetNuke.DependencyInjection, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\websites\intranet-new\bin\DotNetNuke.DependencyInjection.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
@@ -196,9 +214,6 @@
       <HintPath>..\..\..\..\websites\intranet-new\bin\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -278,6 +293,9 @@
       <DependentUpon>ApiLogView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Components\ApiEndpointController.cs" />
+    <Compile Include="Components\BarMemberFile.cs" />
+    <Compile Include="Components\ClerkEventService.cs" />
+    <Compile Include="Components\EventNotificationMailer.cs" />
     <Compile Include="Components\ApiLog.cs" />
     <Compile Include="Components\ApiLogController.cs" />
     <Compile Include="Components\CourtController.cs" />
@@ -291,6 +309,8 @@
     </Compile>
     <Compile Include="Scheduled\ScheduleExpireEvents.cs" />
     <Compile Include="Scheduled\ScheduleExtendCalendar.cs" />
+    <Compile Include="Scheduled\ScheduleImportBarMembers.cs" />
+    <Compile Include="Scheduled\ScheduleUpdateBarMembers.cs" />
     <Compile Include="DocketView.ascx.cs">
       <DependentUpon>DocketView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -509,7 +529,6 @@
     <Compile Include="Components\EmailController.cs" />
     <Compile Include="Components\Event.cs" />
     <Compile Include="Components\EventController.cs" />
-    <Compile Include="Components\EventNotificationMailer.cs" />
     <Compile Include="Components\EventReminder.cs" />
     <Compile Include="Components\EventReminderController.cs" />
     <Compile Include="Components\EventStatus.cs" />
@@ -544,6 +563,7 @@
     <Compile Include="Components\TimeslotMotionController.cs" />
     <Compile Include="Components\UserDefinedField.cs" />
     <Compile Include="Components\UserDefinedFieldController.cs" />
+    <Compile Include="Components\UserDefinedFieldTemplate.cs" />
     <Compile Include="Controls\navbar.ascx.cs">
       <DependentUpon>navbar.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -738,6 +758,9 @@
     <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
+  <!-- Bar member import: copies WinSCP.exe (the assistant that WinSCPnet
+       launches) into the build output so it ships next to WinSCPnet.dll. -->
+  <Import Project="..\tjc.Modules\packages\WinSCP.5.19.2\build\WinSCP.targets" Condition="Exists('..\tjc.Modules\packages\WinSCP.5.19.2\build\WinSCP.targets')" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
   </Target>
   <PropertyGroup>
@@ -747,8 +770,13 @@
     <ItemGroup>
       <_DeployBin Include="$(TargetPath)" />
       <_DeployBin Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
-      <_DeployContent Include="**\*.ascx;**\*.dnn;**\*.css;**\*.js;**\*.html;**\*.htm;**\*.png;**\*.jpg;**\*.jpeg;**\*.gif;**\*.svg;**\*.ico;App_LocalResources\**\*.resx;ReleaseNotes.txt;License.txt"
-                      Exclude=".claude\**;.git\**;.vs\**;packages\**;obj\**;bin\**;BuildScripts\**;backups\**" />
+      <!-- Bar import: WinSCPnet wraps the WinSCP.exe assistant process. Keep
+           both — and the GenericParsing DLL — on the deploy list so they ship
+           to the dev/test web roots alongside our DLL. -->
+      <_DeployBin Include="$(TargetDir)WinSCPnet.dll" Condition="Exists('$(TargetDir)WinSCPnet.dll')" />
+      <_DeployBin Include="$(TargetDir)WinSCP.exe" Condition="Exists('$(TargetDir)WinSCP.exe')" />
+      <_DeployBin Include="$(TargetDir)GenericParsing.dll" Condition="Exists('$(TargetDir)GenericParsing.dll')" />
+      <_DeployContent Include="**\*.ascx;**\*.dnn;**\*.css;**\*.js;**\*.html;**\*.htm;**\*.png;**\*.jpg;**\*.jpeg;**\*.gif;**\*.svg;**\*.ico;App_LocalResources\**\*.resx;ReleaseNotes.txt;License.txt" Exclude=".claude\**;.git\**;.vs\**;packages\**;node_modules\**;obj\**;bin\**;BuildScripts\**;backups\**" />
     </ItemGroup>
     <Copy SourceFiles="@(_DeployBin)" DestinationFolder="$(DeploySite)\bin" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(_DeployContent)" DestinationFiles="@(_DeployContent->'$(DeploySite)\DesktopModules\tjc.modules\JACS\%(Identity)')" SkipUnchangedFiles="true" />
