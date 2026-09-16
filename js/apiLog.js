@@ -68,7 +68,7 @@ class ApiLogController {
                 },
                 {
                     data: "created_at",
-                    render: v => v ? new Date(v).toLocaleString() : ''
+                    render: v => formatEasternDateTime(v)
                 },
                 { data: "county_name", render: v => v || '' },
                 { data: "action", render: v => v || '' },
@@ -168,7 +168,7 @@ class ApiLogController {
                 }
                 const r = res.data;
                 $('#dtl_logId').text(r.log_id);
-                $('#dtl_createdAt').text(r.created_at ? new Date(r.created_at).toLocaleString() : '');
+                $('#dtl_createdAt').text(formatEasternDateTime(r.created_at));
                 $('#dtl_county').text(r.county_name || (r.county_id || ''));
                 $('#dtl_application').text(r.application_name || '');
                 $('#dtl_action').text(r.action || '');

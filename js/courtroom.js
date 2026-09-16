@@ -312,9 +312,20 @@ class CourtroomController {
             timeout: 15000,
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: (response) => {
-                if (response?.data && Array.isArray(response.data)) {
-                    response.data.forEach(item => $clerkCourtroom.append(`<option value="${item.Key}">${item.Value}</option>`));
-                    if (response.data.length > 0) $clerkCourtroom.prop('disabled', false);
+                const items = Array.isArray(response?.data) ? response.data : [];
+
+                items.forEach(item => $clerkCourtroom.append(`<option value="${item.Key}">${item.Value}</option>`));
+
+                if (items.length > 0) {
+                    $clerkCourtroom.prop('disabled', false);
+                    return;
+                }
+
+                // Nothing to choose from — say why rather than leaving an empty list.
+                if (response?.error) {
+                    ShowNotification("Clerk Courtrooms", response.error, 'warning');
+                } else {
+                    ShowNotification("Clerk Courtrooms", "No results were returned from the clerk.", 'info');
                 }
             },
             error: (error) => {

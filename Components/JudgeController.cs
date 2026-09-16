@@ -207,65 +207,97 @@ namespace tjc.Modules.jacs.Components
             return dummyJudges.OrderBy(j => j.Value).ToList();
         }
        
-        public List<KeyValuePair<long, string>> GetJudgeXrefDropDownItemsByCounty(long countyId)
+        /// <summary>
+        /// Loads the clerk's judge list for a county. <paramref name="error"/> is set to a
+        /// user-facing reason whenever the list comes back empty, so the caller can say
+        /// why instead of showing an empty dropdown.
+        /// </summary>
+        public List<KeyValuePair<long, string>> GetJudgeXrefDropDownItemsByCounty(long countyId, out string error)
         {
+            error = null;
+            var empty = new List<KeyValuePair<long, string>>();
+
             try
             {
-                var countyCtl = new CountyController();
-                var county = countyCtl.GetCounty(countyId);
+                var county = new CountyController().GetCounty(countyId);
 
                 if (county == null || string.IsNullOrWhiteSpace(county.auth_end_point_url))
                 {
+                    error = "This county has no Auth Endpoint URL configured.";
                     Exceptions.LogException(new Exception($"County not found or missing auth endpoint for county ID {countyId}"));
-                    return new List<KeyValuePair<long, string>>();
-                }
-
-                // Use the STATIC token stored in the county table (already decrypted)
-                string token = county.decrypted_token;
-                if (string.IsNullOrWhiteSpace(token))
-                {
-                    Exceptions.LogException(new Exception($"Static token is missing/empty for county ID {countyId} ({county.name})"));
-                    return new List<KeyValuePair<long, string>>();
+                    return empty;
                 }
 
                 var apiCtl = new ApiEndpointController();
-                var api = apiCtl.GetApiEndpointByCountyAndType(county.id, (int)ApiEndpointType.GetClerkJudges);
 
+                // Token comes from the county's auth endpoint; it is refreshed
+                // automatically when missing or within five minutes of expiring.
+                string token = apiCtl.EnsureValidTokenAsync(county).Result;
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    error = "Could not obtain an auth token for this county.";
+                    Exceptions.LogException(new Exception($"Auth token unavailable for county ID {countyId} ({county.name})"));
+                    return empty;
+                }
+
+                var api = apiCtl.GetApiEndpointByCountyAndType(county.id, (int)ApiEndpointType.GetClerkJudges);
                 if (api == null)
                 {
+                    error = "No Get Clerk Judges endpoint is configured for this county.";
                     Exceptions.LogException(new Exception($"No API endpoint configured for GetClerkJudges in county ID {countyId} ({county.name})"));
-                    return new List<KeyValuePair<long, string>>();
+                    return empty;
                 }
 
                 try
                 {
-                    var response = apiCtl.CallExternalApi(api, token, null, HttpMethod.Get).Result;   // still using .Result for now
+                    var response = apiCtl.CallExternalApi(api, token, null, HttpMethod.Get).Result;
+                    string json = response.Content.ReadAsStringAsync().Result;
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        string errorContent = response.Content.ReadAsStringAsync().Result;
+                        error = $"The clerk returned HTTP {(int)response.StatusCode} {response.StatusCode}.";
                         Exceptions.LogException(new Exception(
-                            $"External Clerk Judge API failed (static token). CountyID: {countyId}, Status: {response.StatusCode}, Response: {errorContent}"));
-                        return new List<KeyValuePair<long, string>>();
+                            $"GetClerkJudges failed. CountyID: {countyId}, Status: {response.StatusCode}, Response: {json}"));
+                        return empty;
                     }
 
-                    var json = response.Content.ReadAsStringAsync().Result;
-                    var judges = JsonConvert.DeserializeObject<List<JudgeXrefItem>>(json);
+                    string parseError;
+                    var judges = ApiEndpointController.ParseClerkListResponse<JudgeXrefItem>(json, out parseError);
 
-                    return judges?.Select(j => new KeyValuePair<long, string>(j.JudgeId, j.JudgeName))
+                    if (!string.IsNullOrWhiteSpace(parseError))
+                    {
+                        error = parseError;
+                        Exceptions.LogException(new Exception(
+                            $"GetClerkJudges for county {countyId} reported: {parseError}. Body: {json}"));
+                        return empty;
+                    }
+
+                    if (judges.Count == 0)
+                    {
+                        error = "No results were returned from the clerk.";
+                        // Log the raw body — this is the only record of what the clerk
+                        // actually sent, since GetClerkJudges is not written to api_log.
+                        Exceptions.LogException(new Exception(
+                            $"GetClerkJudges returned no judges for county {countyId} ({county.name}). Body: {json}"));
+                        return empty;
+                    }
+
+                    return judges.Select(j => new KeyValuePair<long, string>(j.JudgeId, j.JudgeName))
                                  .OrderBy(j => j.Value)
-                                 .ToList() ?? new List<KeyValuePair<long, string>>();
+                                 .ToList();
                 }
                 catch (Exception ex)
                 {
-                    Exceptions.LogException(new Exception($"Error calling external Judge API (static token) for county {countyId} ({county.name})", ex));
-                    return new List<KeyValuePair<long, string>>();
+                    error = "The call to the clerk's judge endpoint failed: " + ex.Message;
+                    Exceptions.LogException(new Exception($"Error calling external Judge API for county {countyId} ({county.name})", ex));
+                    return empty;
                 }
             }
             catch (Exception ex)
             {
-                Exceptions.LogException(new Exception($"Unexpected error in GetJudgeDropDownItemsForCounty for county {countyId}", ex));
-                return new List<KeyValuePair<long, string>>();
+                error = "Unexpected error loading clerk judges: " + ex.Message;
+                Exceptions.LogException(new Exception($"Unexpected error in GetJudgeXrefDropDownItemsByCounty for county {countyId}", ex));
+                return empty;
             }
         }
 

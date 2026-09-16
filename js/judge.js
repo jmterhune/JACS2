@@ -403,11 +403,20 @@ class JudgeController {
             timeout: 15000,
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: (response) => {
-                if (response?.data && Array.isArray(response.data)) {
-                    response.data.forEach(item => $clerkJudge.append(`<option value="${item.Key}">${item.Value}</option>`));
-                    if (response.data.length > 0) $clerkJudge.prop('disabled', false);
+                const items = Array.isArray(response?.data) ? response.data : [];
+
+                items.forEach(item => $clerkJudge.append(`<option value="${item.Key}">${item.Value}</option>`));
+
+                if (items.length > 0) {
+                    $clerkJudge.prop('disabled', false);
+                    return;
+                }
+
+                // Nothing to choose from — say why rather than leaving an empty list.
+                if (response?.error) {
+                    ShowNotification("Clerk Judges", response.error, 'warning');
                 } else {
-                    ShowNotification("Info", "No clerk judges found for this county.", 'info');
+                    ShowNotification("Clerk Judges", "No results were returned from the clerk.", 'info');
                 }
             },
             error: (error) => {

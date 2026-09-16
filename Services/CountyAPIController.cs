@@ -141,7 +141,15 @@ namespace tjc.Modules.jacs.Services
                 }
                 if (string.IsNullOrWhiteSpace(county.password))
                 {
-                    county.password = existingCounty.password;  // already encrypted
+                    county.password = existingCounty.password;
+                }
+                if (string.IsNullOrWhiteSpace(county.token))
+                {
+                    // The form posts a token only when one was just fetched via "Test Auth
+                    // Endpoint". Without one, keep what is stored so a routine edit never
+                    // wipes a working token (and its expiration).
+                    county.token = existingCounty.token;
+                    county.expiration_date = existingCounty.expiration_date;
                 }
                 ctl.UpdateCounty(county);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "County updated successfully" });
@@ -150,6 +158,74 @@ namespace tjc.Modules.jacs.Services
             {
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = 500, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Tests the auth endpoint using the values currently ENTERED on the county form
+        /// rather than what is stored, so credentials can be validated before the county
+        /// is saved — including for a county that does not exist yet. On success the token
+        /// + expiration are written straight to the county record (when it already
+        /// exists) and also returned so the form can display them; for a county that has
+        /// not been created yet, Save persists them instead.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> TestAuthToken(JObject p1)
+        {
+            try
+            {
+                var candidate = new County
+                {
+                    id = p1 != null && p1["id"] != null ? p1["id"].Value<long>() : 0,
+                    auth_end_point_url = p1 != null && p1["auth_end_point_url"] != null ? p1["auth_end_point_url"].Value<string>() : null,
+                    user_name = p1 != null && p1["user_name"] != null ? p1["user_name"].Value<string>() : null,
+                    // GetJwtToken expects the PLAINTEXT password, which is what the form posts.
+                    password = p1 != null && p1["password"] != null ? p1["password"].Value<string>() : null
+                };
+
+                if (string.IsNullOrWhiteSpace(candidate.auth_end_point_url))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest,
+                        new { status = 400, message = "Enter an Auth Endpoint URL before testing." });
+                }
+
+                if (string.IsNullOrWhiteSpace(candidate.user_name) || string.IsNullOrWhiteSpace(candidate.password))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest,
+                        new { status = 400, message = "Enter a user name and password before testing." });
+                }
+
+                // RefreshAuthTokenAsync calls the endpoint and, when the county already
+                // exists, writes the token + expiration to its record.
+                var result = await new ApiEndpointController().RefreshAuthTokenAsync(candidate);
+                if (result == null || string.IsNullOrWhiteSpace(result.Token))
+                {
+                    // Prefer the auth endpoint's own "error" text so the admin sees the
+                    // real reason rather than a generic message.
+                    string failure = result != null && !string.IsNullOrWhiteSpace(result.Error)
+                        ? result.Error
+                        : "The auth endpoint did not return a token. Check the URL and credentials — the response details are in the DNN event log.";
+
+                    return Request.CreateResponse(HttpStatusCode.BadGateway,
+                        new { status = 502, message = failure });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    status = 200,
+                    message = candidate.id > 0
+                        ? "Auth succeeded. Token and expiration saved to the county."
+                        : "Auth succeeded. Save the county to store the token.",
+                    token = result.Token,
+                    expiration_date = result.Expiration
+                });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    new { status = 500, message = ex.Message });
             }
         }
 

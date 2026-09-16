@@ -19,6 +19,7 @@ class CountyController {
         this.updateUrl = null;
         this.createUrl = null;
         this.viewUrl = null;
+        this.testAuthUrl = null;
         countyControllerInstance = this;
     }
 
@@ -29,6 +30,7 @@ class CountyController {
         this.updateUrl = `${this.service.baseUrl}CountyAPI/UpdateCounty`;
         this.createUrl = `${this.service.baseUrl}CountyAPI/CreateCounty`;
         this.viewUrl = `${this.service.baseUrl}CountyAPI/GetCounty/`;
+        this.testAuthUrl = `${this.service.baseUrl}CountyAPI/TestAuthToken`;
         const listUrl = `${this.service.baseUrl}CountyAPI/GetCounties/${this.recordCount}`;
         const detailModalElement = document.getElementById('CountyDetailModal');
         const editModalElement = document.getElementById('CountyEditModal');
@@ -95,6 +97,17 @@ class CountyController {
             pageLength: 25,
         });
         this.countyTable.search('').draw(false);   // ← Clears saved search term
+
+        // The browser was autofilling the DataTables search box (with "sitehost"),
+        // because an unnamed text input matches its saved-value heuristics. Give it a
+        // distinct name so there is nothing remembered to match, and opt out of
+        // autofill/autocorrect.
+        $('#tblCounty_wrapper').find('input[type="search"], input.dt-input')
+            .attr('name', 'countySearch')
+            .attr('autocomplete', 'off')
+            .attr('autocorrect', 'off')
+            .attr('autocapitalize', 'off')
+            .attr('spellcheck', 'false');
         this.countyTable.on('draw', function () {
             $(".delete").on("click", function (e) {
                 e.preventDefault();
@@ -204,6 +217,17 @@ class CountyController {
             }
         });
 
+        $("#edit_cmdTestAuth").on("click", function (e) {
+            e.preventDefault();
+            countyControllerInstance.testAuthToken();
+        });
+
+        // The test posts the credentials typed on the form, so it only becomes
+        // available once both are present.
+        $("#edit_countyUserName, #edit_countyPassword").on("input", function () {
+            countyControllerInstance.toggleTestAuthEnabled();
+        });
+
         $("#edit_countyAuthUrl").on("input", function () {
             const $this = $(this);
             const value = $this.val().trim();
@@ -247,7 +271,17 @@ class CountyController {
                             $("#edit_countyAuthUrl").val(response.data.auth_end_point_url || '');
                             $("#edit_countyUserName").val(response.data.user_name || '');
                             $("#edit_countyPassword").val('');
-                            $("#edit_countyToken").val('');
+                            // Token + expiration are read-only here: they are issued by
+                            // the auth endpoint, never edited on this form.
+                            $("#edit_countyToken").val(response.data.token || '');
+                            // Keep the raw value next to the formatted display so Save
+                            // posts something the server can parse.
+                            $("#edit_countyExpiration")
+                                .val(countyControllerInstance.formatDateTime(response.data.expiration_date))
+                                .data("raw", response.data.expiration_date || null);
+                            // Testing uses the entered credentials, so the button stays
+                            // disabled until a user name and password are typed.
+                            countyControllerInstance.toggleTestAuthEnabled();
                             $("#CountyEditModalLabel").html(`Edit County: ${response.data.name}`);
                         } else {
                             $("#countyName").html(response.data.name);
@@ -256,6 +290,7 @@ class CountyController {
                             $("#countyUserName").html(response.data.user_name || '');
                             $("#countyPassword").html(response.data.password || '');
                             $("#countyToken").html(response.data.token || '');
+                            $("#countyExpiration").html(countyControllerInstance.formatDateTime(response.data.expiration_date));
                             $("#hdCountyId").val(response.data.id);
                         }
                         $(progressId).hide();
@@ -294,7 +329,9 @@ class CountyController {
                 auth_end_point_url: $("#edit_countyAuthUrl").val().trim(),
                 user_name: $("#edit_countyUserName").val().trim(),
                 password: $("#edit_countyPassword").val().trim() || null,
-                token: $("#edit_countyToken").val().trim() || null
+                // Populated by "Test Auth Endpoint" and saved with the record.
+                token: $("#edit_countyToken").val().trim() || null,
+                expiration_date: $("#edit_countyExpiration").data("raw") || null
             };
             $.ajax({
                 url: this.createUrl,
@@ -339,7 +376,10 @@ class CountyController {
                 auth_end_point_url: $("#edit_countyAuthUrl").val().trim(),
                 user_name: $("#edit_countyUserName").val().trim(),
                 password: $("#edit_countyPassword").val().trim() || null,
-                token: $("#edit_countyToken").val().trim() || null
+                // Populated by "Test Auth Endpoint" and saved with the record. When it is
+                // empty the server keeps whatever token is already stored.
+                token: $("#edit_countyToken").val().trim() || null,
+                expiration_date: $("#edit_countyExpiration").data("raw") || null
             };
             $.ajax({
                 url: this.updateUrl,
@@ -421,6 +461,7 @@ class CountyController {
         $("#countyUserName").html("");
         $("#countyPassword").html("");
         $("#countyToken").html("");
+        $("#countyExpiration").html("");
         $("#hdCountyId").val("");
     }
 
@@ -432,6 +473,8 @@ class CountyController {
         $("#edit_countyUserName").val("");
         $("#edit_countyPassword").val("");
         $("#edit_countyToken").val("");
+        $("#edit_countyExpiration").val("").removeData("raw");
+        $("#edit_cmdTestAuth").prop("disabled", true);
     }
 
     clearEditValidations() {
@@ -439,6 +482,80 @@ class CountyController {
         $("#edit_countyName").next(".invalid-feedback").hide();
         $("#edit_countyCode").removeClass("is-invalid");
         $("#edit_countyCode").next(".invalid-feedback").hide();
+    }
+
+    toggleTestAuthEnabled() {
+        const hasUserName = $("#edit_countyUserName").val().trim() !== "";
+        const hasPassword = $("#edit_countyPassword").val().trim() !== "";
+        $("#edit_cmdTestAuth").prop("disabled", !(hasUserName && hasPassword));
+    }
+
+    testAuthToken() {
+        const authUrl = $("#edit_countyAuthUrl").val().trim();
+        const userName = $("#edit_countyUserName").val().trim();
+        const password = $("#edit_countyPassword").val().trim();
+
+        if (!userName || !password) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Credentials Required',
+                text: 'Enter a user name and password before testing the auth endpoint.'
+            });
+            return;
+        }
+
+        const countyId = $("#edit_hdCountyId").val();
+        $("#edit_progress_county").show();
+        $("#edit_cmdTestAuth").prop("disabled", true);
+
+        $.ajax({
+            url: this.testAuthUrl,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: countyId ? parseInt(countyId) : 0,
+                auth_end_point_url: authUrl,
+                user_name: userName,
+                password: password
+            }),
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: function (response) {
+                $("#edit_progress_county").hide();
+                countyControllerInstance.toggleTestAuthEnabled();
+                if (response && response.status === 200) {
+                    $("#edit_countyToken").val(response.token || '');
+                    $("#edit_countyExpiration")
+                        .val(countyControllerInstance.formatDateTime(response.expiration_date))
+                        .data("raw", response.expiration_date || null);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Auth Succeeded',
+                        text: response.message || 'Token retrieved. Save the county to store it.'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Auth Failed',
+                        text: response.message || 'The auth endpoint did not return a token.'
+                    });
+                }
+            },
+            error: function (error) {
+                $("#edit_progress_county").hide();
+                countyControllerInstance.toggleTestAuthEnabled();
+                const msg = (error.responseJSON && error.responseJSON.message)
+                    ? error.responseJSON.message
+                    : (error.statusText || "Failed to reach the auth endpoint.");
+                Swal.fire({ icon: 'error', title: 'Auth Failed', text: msg });
+            }
+        });
+    }
+
+    formatDateTime(value) {
+        // The expiration is stored and sent as UTC; formatEasternDateTime (jacs.js)
+        // converts it into EST/EDT so the admin reads it in court time.
+        return formatEasternDateTime(value);
     }
 
     isValidUrl(url) {

@@ -291,9 +291,7 @@ namespace tjc.Modules.jacs.Services
                         ClerkApiResult<List<ClerkCaseResult>>.Failure(
                             "GetCase API endpoint is not configured for this county"));
 
-                string token = !string.IsNullOrWhiteSpace(county.decrypted_token)
-                    ? county.decrypted_token
-                    : await apiCtl.GetJwtToken(county);
+                string token = await apiCtl.EnsureValidTokenAsync(county);
 
                 if (string.IsNullOrWhiteSpace(token))
                 {
@@ -319,8 +317,21 @@ namespace tjc.Modules.jacs.Services
                             $"The clerk API returned an error ({(int)externalResponse.StatusCode}). {responseBody}"));
                 }
 
-                var rawItems = JsonConvert.DeserializeObject<List<ClerkCaseRaw>>(responseBody);
-                if (rawItems == null || rawItems.Count == 0)
+                // Spec 2.1: getCase answers with { "data": [ ... ], "error": "" }.
+                // Deserializing straight into a List would throw on that wrapper.
+                string parseError;
+                var rawItems = ApiEndpointController.ParseClerkListResponse<ClerkCaseRaw>(responseBody, out parseError);
+
+                if (!string.IsNullOrWhiteSpace(parseError))
+                {
+                    Exceptions.LogException(new Exception(
+                        $"SearchCaseNumberDetails: clerk reported '{parseError}' for court {courtId}, " +
+                        $"case '{caseNum}': {responseBody}"));
+                    return Request.CreateResponse(HttpStatusCode.BadGateway,
+                        ClerkApiResult<List<ClerkCaseResult>>.Failure(parseError));
+                }
+
+                if (rawItems.Count == 0)
                     return Request.CreateResponse(HttpStatusCode.NotFound,
                         ClerkApiResult<List<ClerkCaseResult>>.Failure(
                             "No cases found for the supplied case number"));
@@ -532,6 +543,13 @@ namespace tjc.Modules.jacs.Services
                     });
                 }
 
+                // Notify attorneys that the hearing was created. Runs after
+                // the timeslot link is in place so the mailer can resolve the
+                // start/duration through GetTimeslotByEventId. Best-effort —
+                // the mailer swallows its own errors so a failed send never
+                // masks a successful create.
+                new EventNotificationMailer().SendCreated(evt);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { status = 200, message = "Event created successfully", clerk_event_id = evt.clerk_event_id, clerk_case_id = evt.clerk_case_id });
             }
@@ -581,6 +599,15 @@ namespace tjc.Modules.jacs.Services
                 if (existingEvent == null)
                     return Request.CreateResponse(HttpStatusCode.NotFound,
                         new { status = 404, message = "Event not found." });
+
+                // clerk_event_id / clerk_case_id are assigned when the event is
+                // first created against the clerk (CreateEvent stamps them on the
+                // local row). The Update payload from the UI doesn't include
+                // them, so reading them off the inbound `evt` yields 0/null and
+                // the clerk receives EventId=0. Always source those ids from the
+                // persisted record — the UI cannot change them.
+                evt.clerk_event_id = existingEvent.clerk_event_id;
+                evt.clerk_case_id = existingEvent.clerk_case_id;
 
                 // Verify the current timeslot has a courtroom assigned.
                 var teCtl = new TimeslotEventController();
@@ -634,8 +661,10 @@ namespace tjc.Modules.jacs.Services
                                          ?? string.Empty
                     };
 
+                    // Log the clerk_event_id (not the JACS row id) so api_log
+                    // rows line up with the identifier the clerk side knows.
                     var clerkResponse = await CallClerkApi(ctx, ApiEndpointType.UpdateEvent, clerkPayload, HttpMethod.Post,
-                        BuildLogContext(eventId: evt.id, caseId: evt.clerk_case_id));
+                        BuildLogContext(eventId: evt.clerk_event_id, caseId: evt.clerk_case_id));
                     string clerkBody = await clerkResponse.Content.ReadAsStringAsync();
 
                     var clerkWriteResult = string.IsNullOrWhiteSpace(clerkBody)
@@ -682,9 +711,11 @@ namespace tjc.Modules.jacs.Services
                 // ------------------------------------------------------------------
                 ctl.UpdateEvent(evt);
 
+                // JS contract: courtCalendar.js updateEvent() reads result.status
+                // and result.message. Match the CreateEvent / RescheduleEvent
+                // shape so the success path doesn't get reported as an error.
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    ClerkApiResult<ClerkWriteAckResponse>.Success(
-                        new ClerkWriteAckResponse { Message = "Event updated successfully" }));
+                    new { status = 200, message = "Event updated successfully" });
             }
             catch (ValidationException vex)
             {
@@ -770,9 +801,9 @@ namespace tjc.Modules.jacs.Services
 
                     var clerkPayload = new
                     {
-                        NewEvent = new
+                        NewEvent = new // this is the NEW event data with the clerks event id and case id to find event and case on the clerk side
                         {
-                            EventId        = eventToReschedule.clerk_event_id,
+                            EventId        = eventToReschedule.clerk_event_id, 
                             CaseId         = eventToReschedule.clerk_case_id > 0 ? (long?)eventToReschedule.clerk_case_id : null,
                             JudgeId        = clerkNew.JudgeId,
                             Action         = "Modify",
@@ -784,21 +815,23 @@ namespace tjc.Modules.jacs.Services
                             Notes          = eventToReschedule.notes,
                             UDF            = clerkNew.UDF
                         },
-                        CurrentEvent = new
-                        {
-                            EventDateTime  = clerkCurrent.EventDateTime,
-                            CourtRoomId    = clerkCurrent.CourtRoomId,
-                            Duration       = clerkCurrent.Duration,
+                        CurrentEvent = new // this is the current event data provided for context if the clerk needs it
+                        { 
                             JudgeId        = clerkCurrent.JudgeId,
                             EventType      = clerkCurrent.EventType,
+                            EventDateTime  = clerkCurrent.EventDateTime,
+                            Duration       = clerkCurrent.Duration,
+                            CourtRoomId    = clerkCurrent.CourtRoomId,                         
                             Notes          = eventToReschedule.notes,
                             UDF            = clerkCurrent.UDF
                         },
                         Reason = "Rescheduled"
                     };
 
+                    // Log the clerk_event_id (not the JACS row id) so api_log
+                    // rows line up with the identifier the clerk side knows.
                     var clerkResponse = await CallClerkApi(ctx, ApiEndpointType.RescheduleEvent, clerkPayload, HttpMethod.Post,
-                        BuildLogContext(eventId: eventToReschedule.id, caseId: eventToReschedule.clerk_case_id));
+                        BuildLogContext(eventId: eventToReschedule.clerk_event_id, caseId: eventToReschedule.clerk_case_id));
 
                     if (!clerkResponse.IsSuccessStatusCode)
                     {
@@ -828,6 +861,33 @@ namespace tjc.Modules.jacs.Services
                         Exceptions.LogException(new Exception(
                             $"RescheduleEvent: clerk returned an error but GetEvent confirms reschedule was " +
                             $"applied for event {p1.event_id}. Proceeding with local save."));
+                    }
+                    else
+                    {
+                        // The clerk's RescheduleEvent now returns the event's id
+                        // (spec: { "data": { "EventId": nnn }, "error": "" }). If the clerk
+                        // assigned a new id, adopt it so later Update/Cancel calls reference
+                        // the correct clerk event. Persisted by the UpdateEvent in Step 2.
+                        string clerkBody = await clerkResponse.Content.ReadAsStringAsync();
+                        try
+                        {
+                            var rescheduleRaw = JsonConvert.DeserializeObject<ClerkAddEventRaw>(clerkBody);
+                            if (rescheduleRaw != null
+                                && rescheduleRaw.EventId > 0
+                                && rescheduleRaw.EventId != eventToReschedule.clerk_event_id)
+                            {
+                                Exceptions.LogException(new Exception(
+                                    $"RescheduleEvent: clerk returned EventId {rescheduleRaw.EventId} " +
+                                    $"(was {eventToReschedule.clerk_event_id}) for event {p1.event_id}; updating clerk_event_id."));
+                                eventToReschedule.clerk_event_id = rescheduleRaw.EventId;
+                            }
+                        }
+                        catch (Exception parseEx)
+                        {
+                            // Non-fatal: the reschedule succeeded; we just couldn't read a new EventId.
+                            Exceptions.LogException(new Exception(
+                                $"RescheduleEvent: could not parse clerk reschedule response for event {p1.event_id}. Body: {clerkBody}", parseEx));
+                        }
                     }
                 }
                 catch (InvalidOperationException configEx)
@@ -875,9 +935,30 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var query = Request.GetQueryNameValuePairs()
-                                   .ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
-                string reason = query.ContainsKey("cancellation_reason") ? query["cancellation_reason"] : string.Empty;
+                // The event id is bound from the route, so Web API does not
+                // auto-bind the JSON body — read it ourselves. The browser sends
+                // { cancellation_reason: "..." } in the body; legacy callers may
+                // still send it as a query-string param, so fall back to that.
+                string reason = string.Empty;
+                string bodyText = await Request.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(bodyText))
+                {
+                    try
+                    {
+                        var bodyJson = JObject.Parse(bodyText);
+                        reason = bodyJson["cancellation_reason"]?.ToString()
+                                 ?? bodyJson["reason"]?.ToString()
+                                 ?? string.Empty;
+                    }
+                    catch { /* non-JSON body — fall through to query string */ }
+                }
+                if (string.IsNullOrWhiteSpace(reason))
+                {
+                    var query = Request.GetQueryNameValuePairs()
+                                       .ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+                    if (query.TryGetValue("cancellation_reason", out var qReason))
+                        reason = qReason;
+                }
 
                 if (p1 <= 0)
                     return Request.CreateResponse(HttpStatusCode.NotFound,
@@ -910,8 +991,10 @@ namespace tjc.Modules.jacs.Services
                         Reason  = reason
                     };
 
+                    // Log the clerk_event_id (not the JACS row id) so api_log
+                    // rows line up with the identifier the clerk side knows.
                     var clerkResponse = await CallClerkApi(ctx, ApiEndpointType.CancelEvent, clerkPayload, HttpMethod.Post,
-                        BuildLogContext(eventId: eventToCancel.id, caseId: eventToCancel.clerk_case_id));
+                        BuildLogContext(eventId: eventToCancel.clerk_event_id, caseId: eventToCancel.clerk_case_id));
 
                     if (!clerkResponse.IsSuccessStatusCode)
                     {
@@ -962,6 +1045,10 @@ namespace tjc.Modules.jacs.Services
                 eventToCancel.status_id = cancelledStatus?.id;
                 eventToCancel.updated_at = DateTime.Now;
                 ctl.UpdateEvent(eventToCancel);
+
+                // Notify attorneys (best-effort — mailer swallows its own errors
+                // so a failed send never masks a successful cancel).
+                new EventNotificationMailer().SendCancellation(eventToCancel, reason);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new EventCancelResult { cancelled = true, error = null });
@@ -1055,9 +1142,7 @@ namespace tjc.Modules.jacs.Services
                 throw new InvalidOperationException($"County {court.county_id} not found for court {courtId}.");
 
             var apiCtl = new ApiEndpointController();
-            string token = !string.IsNullOrWhiteSpace(county.decrypted_token)
-                ? county.decrypted_token
-                : await apiCtl.GetJwtToken(county);
+            string token = await apiCtl.EnsureValidTokenAsync(county);
 
             if (string.IsNullOrWhiteSpace(token))
                 throw new InvalidOperationException(
@@ -1135,7 +1220,7 @@ namespace tjc.Modules.jacs.Services
 
                 var getPayload = new { EventId = clerkEventId };
                 var getResponse = await ctx.ApiCtl.CallExternalApi(getApi, ctx.Token, getPayload, HttpMethod.Post,
-                    BuildLogContext(action: ApiEndpointType.GetEvent.ToString()));
+                    BuildLogContext(eventId: clerkEventId, action: ApiEndpointType.GetEvent.ToString()));
 
                 if (getResponse == null || !getResponse.IsSuccessStatusCode)
                     return false;
@@ -1206,29 +1291,14 @@ namespace tjc.Modules.jacs.Services
                 }
             }
 
-            // UDF: parse composite-key template JSON → human-readable field names
+            // UDF: parse the template JSON → human-readable field name → value map.
+            // UserDefinedFieldTemplate.Parse understands both the current
+            // {"userDefinedFields":[...]} format and the legacy composite-key format.
             var udf = new Dictionary<string, string>();
-            if (!string.IsNullOrWhiteSpace(evt.template))
+            foreach (var entry in UserDefinedFieldTemplate.Parse(evt.template))
             {
-                try
-                {
-                    var templateObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(evt.template);
-                    if (templateObj != null)
-                    {
-                        foreach (var kvp in templateObj)
-                        {
-                            string fieldName = kvp.Key.Contains("_|")
-                                ? kvp.Key.Split(new[] { "_|" }, StringSplitOptions.None)[0]
-                                : kvp.Key;
-                            if (!string.IsNullOrWhiteSpace(kvp.Value))
-                                udf[fieldName] = kvp.Value;
-                        }
-                    }
-                }
-                catch (Exception udfEx)
-                {
-                    Exceptions.LogException(new Exception("BuildClerkEventPayload: failed to parse UDF template JSON.", udfEx));
-                }
+                if (!string.IsNullOrWhiteSpace(entry.FieldName) && !string.IsNullOrWhiteSpace(entry.Value))
+                    udf[entry.FieldName] = entry.Value;
             }
 
             return System.Threading.Tasks.Task.FromResult(new ClerkEventPayload

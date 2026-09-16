@@ -89,7 +89,7 @@ class HolidayController {
                 {
                     data: "date",
                     render: function (data) {
-                        return data ? new Date(data).toLocaleDateString() : '';
+                        return formatEasternDate(data);
                     }
                 },
                 {
@@ -326,7 +326,7 @@ class HolidayController {
                             $("#HolidayEditModalLabel").html(`Edit Holiday: ${response.data.name}`);
                         } else {
                             $("#holName").html(response.data.name);
-                            $("#holDate").html(new Date(response.data.date).toLocaleDateString());
+                            $("#holDate").html(formatEasternDate(response.data.date));
                             $("#hdHolidayId").val(response.data.id);
                         }
                         $(progressId).hide();

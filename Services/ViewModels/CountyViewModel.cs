@@ -15,6 +15,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
             user_name = county.user_name;
             password = county.decrypted_password;
             token = county.decrypted_token;
+            expiration_date = county.expiration_date;
 
         }
 
@@ -40,6 +41,9 @@ namespace tjc.Modules.jacs.Services.ViewModels
 
         [JsonProperty("token")]
         public string token { get; set; }
+
+        [JsonProperty("expiration_date")]
+        public System.DateTime? expiration_date { get; set; }
 
     }
 }

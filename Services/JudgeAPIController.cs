@@ -253,24 +253,22 @@ namespace tjc.Modules.jacs.Services
         {
             try
             {
-                var ctl = new JudgeController();
-                List<KeyValuePair<long, string>> judges;
-
-                if (p1 > 0)
+                if (p1 <= 0)
                 {
-                    judges = ctl.GetJudgeXrefDropDownItemsByCounty(p1);
-                }
-                else
                     return Request.CreateResponse(new
                     {
                         data = new List<KeyValuePair<long, string>>(),
                         error = "No county selected"
                     });
+                }
+
+                string error;
+                var judges = new JudgeController().GetJudgeXrefDropDownItemsByCounty(p1, out error);
 
                 return Request.CreateResponse(new
                 {
                     data = judges,
-                    error = (string)null
+                    error = error
                 });
             }
             catch (Exception ex)

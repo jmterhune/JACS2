@@ -18,6 +18,8 @@ namespace tjc.Modules.jacs.Components
                 {
                     t.password = EncryptionHelper.Encrypt(t.password);
                 }
+                // The form may supply a token + expiration obtained from the "Test Auth
+                // Endpoint" button; store the token encrypted, like the password.
                 if (!string.IsNullOrWhiteSpace(t.token))
                 {
                     t.token = EncryptionHelper.Encrypt(t.token);
@@ -91,16 +93,50 @@ namespace tjc.Modules.jacs.Components
         }
         public void UpdateCounty(County t)
         {
+            string password = string.IsNullOrWhiteSpace(t.password)
+                ? t.password
+                : EncryptionHelper.Encrypt(t.password);
+            string token = string.IsNullOrWhiteSpace(t.token)
+                ? t.token
+                : EncryptionHelper.Encrypt(t.token);
+
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<County>();
-                t.updated_at = System.DateTime.Now;
-                if (!string.IsNullOrWhiteSpace(t.password))
-                {
-                    t.password = EncryptionHelper.Encrypt(t.password);
-                }
-                rep.Update(t);
+                // token + expiration_date are saved along with the rest of the form.
+                // CountyAPIController substitutes the stored values when the form posts
+                // no token, so a routine edit never wipes an existing one.
+                ctx.Execute(System.Data.CommandType.Text,
+                    "UPDATE counties SET name = @0, code = @1, auth_end_point_url = @2, " +
+                    "user_name = @3, password = @4, token = @5, expiration_date = @6, updated_at = @7 WHERE id = @8",
+                    t.name, t.code, t.auth_end_point_url, t.user_name, password,
+                    token, t.expiration_date, System.DateTime.Now, t.id);
             }
+
+            DotNetNuke.Common.Utilities.DataCache.RemoveCache("Counties");
+        }
+        /// <summary>
+        /// Persists a freshly issued auth token (and its expiration) for a county.
+        /// The token is encrypted at rest, matching CreateCounty/GetCounty. Only the
+        /// token/expiration/updated_at columns are touched so the already-encrypted
+        /// password is never re-encrypted or clobbered. The County entity is
+        /// [Cacheable], so the cached copy is dropped afterwards — otherwise the next
+        /// GetCounty would return the stale expiration and re-authenticate on every
+        /// call.
+        /// </summary>
+        public void SaveAuthToken(long countyId, string plaintextToken, System.DateTime? expiration)
+        {
+            string encrypted = string.IsNullOrWhiteSpace(plaintextToken)
+                ? plaintextToken
+                : EncryptionHelper.Encrypt(plaintextToken);
+
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                ctx.Execute(System.Data.CommandType.Text,
+                    "UPDATE counties SET token = @0, expiration_date = @1, updated_at = @2 WHERE id = @3",
+                    encrypted, expiration, System.DateTime.Now, countyId);
+            }
+
+            DotNetNuke.Common.Utilities.DataCache.RemoveCache("Counties");
         }
         public IEnumerable<County> GetCountiesPaged(string searchTerm, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {

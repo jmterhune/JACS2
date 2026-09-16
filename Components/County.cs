@@ -18,6 +18,33 @@ namespace tjc.Modules.jacs.Components
         public string user_name { get; set; }
         public string password { get; set; }
         public string token { get; set; }
+
+        private DateTime? _expiration_date;
+        /// <summary>
+        /// When the clerk auth token stops being accepted, always held in UTC.
+        ///
+        /// UTC is the canonical form everywhere: it is what we compare against
+        /// DateTime.UtcNow, what we write to the counties table, and — because the Kind
+        /// is stamped here — what serializes as "...Z" so the browser can render it in
+        /// the admin's own time zone. SQL Server hands DateTime back as Unspecified, so
+        /// normalizing in the setter is what keeps a round-tripped value honest.
+        /// </summary>
+        public DateTime? expiration_date
+        {
+            get { return _expiration_date; }
+            set
+            {
+                if (!value.HasValue)
+                {
+                    _expiration_date = null;
+                    return;
+                }
+
+                _expiration_date = value.Value.Kind == DateTimeKind.Local
+                    ? value.Value.ToUniversalTime()
+                    : DateTime.SpecifyKind(value.Value, DateTimeKind.Utc);
+            }
+        }
         public DateTime? created_at { get; set; }
         public DateTime? updated_at { get; set; }
         [IgnoreColumn]

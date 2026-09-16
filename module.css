@@ -2,6 +2,15 @@
 .container:has(.DnnModule-JACS) {
     max-width: 100% !important;
 }
+/* When the side menu is open (desktop), shift the section title right so it lines
+   up with the main content; when the menu collapses, the :has() match drops and
+   the title returns to its natural spot next to the toggle button.
+   211px = side-menu width (250px) minus the toggle button's footprint. */
+@media (min-width: 768px) {
+    .DnnModule-JACS:has(#sidebarMenu.show) section.navbar > h2 {
+        margin-left: 211px;
+    }
+}
 /* Custom styles for vertical navbar */
 .sidebar {
     min-height: 100vh;
@@ -26,6 +35,30 @@
             color: white;
             border-radius: 5px;
         }
+
+/* DNN 10.3.3 / Porto 8: Inner.theme.css re-asserts
+   `.nav-link:link, .nav-link:visited { color: var(--bs-nav-link-color) }`. That has the
+   same specificity (0,2,0) as `.sidebar .nav-link` above but loads later, so it turned
+   these links blue — and because :link still matches an <a href> while it is hovered, it
+   also outranked Bootstrap's own `.nav-link:hover` rule. Scoping by the #sidebarMenu id
+   (1,2,0) keeps the module in control regardless of load order, with no !important. */
+#sidebarMenu .nav-link:link,
+#sidebarMenu .nav-link:visited {
+    color: #333;
+}
+
+/* The current page keeps its white-on-blue treatment; .active carries the id too so it
+   still outranks the rule above. */
+#sidebarMenu .nav-link.active:link,
+#sidebarMenu .nav-link.active:visited {
+    color: #fff;
+}
+
+/* Listed last so hover/focus wins over :link/:visited at equal specificity. */
+#sidebarMenu .nav-link:hover,
+#sidebarMenu .nav-link:focus {
+    color: var(--bs-nav-link-hover-color);
+}
 
 .sub-menu .nav-link {
     padding-left: 40px; /* Indent sub-menu items */
@@ -146,6 +179,12 @@ input.calendar-select {
     border-color: #86b7fe;
     box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
 }
+/* Red border on a TomSelect when validateEventForm marks it invalid. The
+   underlying <select> gets .is-invalid for free from Bootstrap, but the
+   visible widget is the .ts-wrapper, so we mirror the class there. */
+.ts-wrapper.is-invalid .ts-control {
+    border-color: #dc3545 !important;
+}
 .ts-wrapper.single .ts-control {
     background-color: transparent !important;
     background-image: none !important;
@@ -226,6 +265,27 @@ div.form-check {
         color: #333 !important;
         background-color:transparent !important;
     }
+/* Search box on the filter line, pushed to the far-right of the row. Shared by
+   the Events and Timeslot lists for a consistent layout. The filter <ul> spans
+   the full width so margin-left:auto on the search item shifts it to the edge. */
+.navbar-filters .navbar-nav {
+    width: 100%;
+}
+.navbar-filters .filter-search-item {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+/* "Search:" label matches the default DataTables views (normal weight, inline). */
+.navbar-filters .filter-search-item label {
+    margin-bottom: 0;
+    font-weight: 400;
+    white-space: nowrap;
+}
+.navbar-filters .filter-search {
+    width: 14rem;
+}
 
 /* List Styles*/
 .command-item {
@@ -275,6 +335,33 @@ div.dt-button-info h2 {
 }
 td.dt-type-numeric,th.dt-type-numeric {
     text-align: left !important;
+}
+/* Search/filter loading indicator (Events list): render DataTables' `processing`
+   overlay as a full-width indeterminate Bootstrap progress bar pinned to the top
+   of the table so it's visible from the search box. Shown on search, filter, sort
+   and paging. Scoped to #tblEvent_wrapper; other lists keep the default indicator. */
+#tblEvent_wrapper div.dt-processing {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    z-index: 20;
+}
+/* Hide DataTables' default animated dots so only the progress bar shows. */
+#tblEvent_wrapper div.dt-processing > *:not(.jacs-loading) {
+    display: none;
+}
+.jacs-loading {
+    width: 100%;
+}
+.jacs-loading .progress-bar {
+    width: 100%;
+    background-color: #007bff;
 }
 /* Modal Styles*/
 .dnnFormPopup .ui-dialog-titlebar {
@@ -455,4 +542,13 @@ i.fas, i.fa {
      .fc-daygrid-day.fc-day-sun {
        display: none !important;
      } */
+}
+/* County: the token and its expiration are written only by the auth endpoint,
+   never typed. Bootstrap styles a readonly input exactly like an editable one,
+   so mark them so it is obvious they are display-only. */
+#edit_countyToken[readonly],
+#edit_countyExpiration[readonly] {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    color: var(--bs-secondary-color, #6c757d);
+    cursor: default;
 }

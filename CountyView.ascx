@@ -47,6 +47,7 @@
                         <tr><td><strong>User Name:</strong></td><td><span id="countyUserName"></span></td></tr>
                         <tr><td><strong>Password:</strong></td><td><span id="countyPassword" style="word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; display:block;"></span></td></tr>
                         <tr><td><strong>Token:</strong></td><td><span id="countyToken" style="word-break:break-all; white-space:pre-wrap; overflow-wrap:break-word; display:block;"></span></td></tr>
+                        <tr><td><strong>Token Expiration (EST/EDT):</strong></td><td><span id="countyExpiration"></span></td></tr>
                     </tbody>
                 </table>
                 <input type="hidden" id="hdCountyId" />
@@ -105,9 +106,21 @@
                             </div>
                         </div>
                         <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label>Token</label>
+                                <input type="text" id="edit_countyToken" class="form-control" readonly tabindex="-1" aria-readonly="true">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Token Expiration (EST/EDT)</label>
+                                <input type="text" id="edit_countyExpiration" class="form-control" readonly tabindex="-1" aria-readonly="true">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-12">
-                                <label>Token (leave blank to keep existing)</label>
-                                <input type="password" id="edit_countyToken" class="form-control">
+                                <button type="button" class="btn btn-primary" id="edit_cmdTestAuth" disabled>
+                                    <i class="fas fa-key" aria-hidden="true"></i>&nbsp;Test Auth Endpoint
+                                </button>
+                                <div class="form-text">Uses the Auth Endpoint URL, User Name and Password entered above — not the saved values. The returned token and expiration are filled in below; click Save to store them.</div>
                             </div>
                         </div>
                     </div>
