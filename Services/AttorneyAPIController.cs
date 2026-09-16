@@ -241,6 +241,105 @@ namespace tjc.Modules.jacs.Services
             }
         }
 
+        #region Substitute Email Settings
+
+        // The substitute-recipient switch is administered from the attorney screen
+        // because that is where attorney email addresses are maintained, so these two
+        // endpoints live here rather than in a controller of their own. They read and
+        // write a host-level setting, so both require an administrator — the attorney
+        // page is already admin-gated in AttorneyView.ascx.cs, and this closes the gap
+        // for anyone calling the service directly.
+
+        [HttpGet]
+        public HttpResponseMessage GetSubstituteEmail()
+        {
+            try
+            {
+                if (!UserInfo.IsAdmin)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden,
+                        new { data = (object)null, error = "Administrator access is required." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    data = new
+                    {
+                        enabled = NotificationSettings.Enabled,
+                        address = NotificationSettings.Address
+                    },
+                    error = (string)null
+                });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    new { data = (object)null, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public HttpResponseMessage SaveSubstituteEmail(JObject p1)
+        {
+            try
+            {
+                if (!UserInfo.IsAdmin)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden,
+                        new { status = 403, message = "Administrator access is required." });
+                }
+
+                bool enabled = p1 != null && p1["enabled"] != null && p1["enabled"].Value<bool>();
+                string address = p1 != null && p1["address"] != null ? p1["address"].Value<string>() : null;
+                address = (address ?? string.Empty).Trim();
+
+                if (enabled && !NotificationSettings.IsValidAddress(address))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                    {
+                        status = 400,
+                        message = "Enter a valid substitute email address before turning substitution on."
+                    });
+                }
+
+                // An address typed but left invalid is rejected even while off, so a
+                // later toggle-on cannot fail on something saved earlier.
+                if (!enabled && address.Length > 0 && !NotificationSettings.IsValidAddress(address))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                    {
+                        status = 400,
+                        message = "That substitute email address is not valid. Correct it or clear the field."
+                    });
+                }
+
+                NotificationSettings.Save(enabled, address);
+
+                // Worth an audit trail: this silently reroutes every attorney notice.
+                Exceptions.LogException(new Exception(
+                    $"Substitute email {(enabled ? "ENABLED -> '" + address + "'" : "DISABLED")} " +
+                    $"by user {UserInfo.Username} (id {UserInfo.UserID})."));
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    status = 200,
+                    message = enabled
+                        ? $"Substitution is ON. All event notifications will go to {address}."
+                        : "Substitution is OFF. Event notifications will go to the attorneys on file."
+                });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    new { status = 500, message = $"Failed to save the substitute email setting: {ex.Message}" });
+            }
+        }
+
+        #endregion
+
         private string GetSortColumn(int columnIndex)
         {
             switch (columnIndex)

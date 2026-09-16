@@ -41,6 +41,17 @@ class AttorneyController {
                 $("#edit_cmdSave").trigger('click');
             }
         });
+
+        // Substitute email: reload from the server each time the modal opens so two
+        // admins can't act on a stale view of a setting that affects everyone.
+        $("#cmdSubstituteEmail").on('click', () => this.LoadSubstituteEmail(true));
+        $("#subemail_enabled").on('change', () => this.RenderSubstituteEmailState());
+        $("#subemail_cmdSave").on('click', () => this.SaveSubstituteEmail());
+        // Re-evaluate on every keystroke so the switch unlocks the moment the address
+        // becomes valid, and re-locks if it is cleared or broken again.
+        $("#subemail_address").on('input blur', () => this.RenderSubstituteEmailState());
+        // Surface the badge on load — substitution being on is easy to forget.
+        this.LoadSubstituteEmail(false);
         this.attorneyTable = $('#tblAttorney').DataTable({
             searching: true,
             autoWidth: true,
@@ -636,6 +647,132 @@ class AttorneyController {
             $("#edit_progress-attorney").hide();
             ShowNotification("Error Updating Attorney", e.message, 'error');
         }
+    }
+
+    /// A single bare address, matching what the server accepts. Deliberately stricter
+    /// than the server on one point — a domain must contain a dot — because the typo
+    /// this catches ("name@gmail") would otherwise be accepted and quietly send every
+    /// test notice into a void.
+    isValidSubstituteAddress(value) {
+        return /^[^\s@,;<>"]+@[^\s@,;<>"]+\.[^\s@,;<>"]+$/.test((value || '').trim());
+    }
+
+    /// The address gates the switch: it cannot be flipped on until a valid one is
+    /// entered, and clearing or breaking the address switches it back off. That keeps
+    /// "on" from ever meaning "silently discard every notification".
+    RenderSubstituteEmailState() {
+        const address = $("#subemail_address").val();
+        const addressOk = this.isValidSubstituteAddress(address);
+
+        if (!addressOk) $("#subemail_enabled").prop('checked', false);
+        $("#subemail_enabled").prop('disabled', !addressOk);
+
+        const enabled = $("#subemail_enabled").is(':checked');
+        $("#subemail_warning").toggle(enabled);
+
+        $("#subemail_switch_hint").text(addressOk
+            ? 'Turning this on redirects every notification until you turn it back off.'
+            : 'Enter a valid email address above to enable this switch.');
+
+        // Only mark the field wrong once something has been typed — an empty field on
+        // open is the normal starting state, not an error.
+        const typed = ($("#subemail_address").val() || '').trim().length > 0;
+        $("#subemail_address").toggleClass('is-invalid', typed && !addressOk);
+    }
+
+    /// Loads the saved setting. With showModal the modal is opened once the values are
+    /// in place, so it never flashes stale content; without it only the badge updates.
+    LoadSubstituteEmail(showModal) {
+        if (showModal) $("#subemail_progress").show();
+        $.ajax({
+            url: `${this.service.baseUrl}AttorneyAPI/GetSubstituteEmail`,
+            type: 'GET',
+            dataType: 'json',
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: (response) => {
+                $("#subemail_progress").hide();
+                const data = (response && response.data) ? response.data : { enabled: false, address: '' };
+
+                $("#subemail_enabled").prop('checked', !!data.enabled);
+                $("#subemail_address").val(data.address || '').removeClass('is-invalid');
+                attorneyControllerInstance.RenderSubstituteEmailState();
+                $("#substituteEmailBadge").toggle(!!data.enabled);
+
+                if (showModal) {
+                    const modalEl = document.getElementById('SubstituteEmailModal');
+                    if (modalEl) bootstrap.Modal.getOrCreateInstance(modalEl).show();
+                }
+            },
+            error: (error) => {
+                $("#subemail_progress").hide();
+                // Staying quiet on the background load keeps a permissions error from
+                // greeting every admin who opens the page.
+                if (!showModal) return;
+                const msg = (error.responseJSON && error.responseJSON.error)
+                    ? error.responseJSON.error
+                    : (error.statusText || "Failed to load the substitute email setting.");
+                ShowNotification("Error", msg, 'error');
+            }
+        });
+    }
+
+    SaveSubstituteEmail() {
+        const enabled = $("#subemail_enabled").is(':checked');
+        const address = $("#subemail_address").val().trim();
+
+        // The switch cannot be flipped on without a valid address, so this is a
+        // backstop rather than the primary guard — it catches a tampered-with DOM.
+        // The server enforces the same rule independently.
+        if (enabled && !this.isValidSubstituteAddress(address)) {
+            $("#subemail_address").addClass('is-invalid');
+            ShowNotification("Substitute Email", "Enter a valid email address before turning substitution on.", 'error');
+            return;
+        }
+
+        // A malformed address is rejected even while off, so a later toggle-on can
+        // never fail on something that was saved earlier.
+        if (!enabled && address !== "" && !this.isValidSubstituteAddress(address)) {
+            $("#subemail_address").addClass('is-invalid');
+            ShowNotification("Substitute Email", "That email address is not valid. Correct it or clear the field.", 'error');
+            return;
+        }
+
+        $("#subemail_progress").show();
+        $.ajax({
+            url: `${this.service.baseUrl}AttorneyAPI/SaveSubstituteEmail`,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ enabled: enabled, address: address }),
+            beforeSend: xhr => this.setAjaxHeaders(xhr),
+            success: (response) => {
+                $("#subemail_progress").hide();
+                if (response && response.status === 200) {
+                    $("#substituteEmailBadge").toggle(enabled);
+                    Swal.fire({
+                        icon: enabled ? 'warning' : 'success',
+                        title: enabled ? 'Substitution On' : 'Substitution Off',
+                        text: response.message
+                    });
+                    const modalEl = document.getElementById('SubstituteEmailModal');
+                    if (modalEl) {
+                        const modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+                    }
+                } else {
+                    $("#subemail_address").addClass('is-invalid');
+                    ShowNotification("Substitute Email", (response && response.message) || "Failed to save the setting.", 'error');
+                }
+            },
+            error: (error) => {
+                $("#subemail_progress").hide();
+                const msg = (error.responseJSON && error.responseJSON.message)
+                    ? error.responseJSON.message
+                    : (error.statusText || "Failed to save the substitute email setting.");
+                $("#subemail_address").addClass('is-invalid');
+                ShowNotification("Substitute Email", msg, 'error');
+            }
+        });
     }
 
     setAjaxHeaders(xhr) {

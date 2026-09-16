@@ -15,6 +15,12 @@
             All Attorneys are imported from the Florida Bar. Attorney User Accounts are enabled automatically upon verification of bar number.
         </div>
         <a id="lnkAdd" class="btn btn-primary me-3" tabindex="-1" href="#" data-bs-toggle="modal" data-bs-target="#AttorneyEditModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Attorney</a>
+        <button type="button" id="cmdSubstituteEmail" class="btn btn-outline-secondary">
+            <i class="fas fa-envelope" aria-hidden="true"></i>&nbsp;Substitute Email
+        </button>
+        <span id="substituteEmailBadge" class="badge bg-warning text-dark ms-2" style="display: none;">
+            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;Substitution ON
+        </span>
         <table id="tblAttorney" class="table table-striped w-100">
             <thead>
                 <tr>
@@ -172,6 +178,53 @@
         </div>
     </div>
 </div>
+<!-- Substitute Email Modal -->
+<div class="modal fade" id="SubstituteEmailModal" tabindex="-1" aria-labelledby="SubstituteEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="subemail_progress" class="modal-progress" style="display: none;">
+                <div class="center-progress">
+                    <img alt="" src="/images/loading.gif" />
+                </div>
+            </div>
+            <div class="modal-header">
+                <h4 class="modal-title" id="SubstituteEmailModalLabel">Substitute Email Address</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p class="mb-3">
+                        While substitution is on, <strong>every</strong> hearing created and hearing
+                        cancellation notice goes to the address below instead of the attorneys on the
+                        event. Nothing reaches the real recipients until it is turned back off.
+                    </p>
+                    <div class="mb-3">
+                        <label for="subemail_address">Substitute Email Address<em>*</em></label>
+                        <input type="email" id="subemail_address" class="form-control" autocomplete="off" placeholder="name@jud12.flcourts.org">
+                        <div class="invalid-feedback" id="subemail_address-error">Enter a valid email address.</div>
+                        <div class="form-text">Saved for this site only, so turning it on here never affects another environment.</div>
+                    </div>
+                    <div class="form-check form-switch mb-1">
+                        <input class="form-check-input" type="checkbox" role="switch" id="subemail_enabled" disabled>
+                        <label class="form-check-label" for="subemail_enabled">Use a substitute address for all notification emails</label>
+                    </div>
+                    <div class="form-text" id="subemail_switch_hint">Enter a valid email address above to enable this switch.</div>
+                    <div id="subemail_warning" class="alert alert-warning mt-3 mb-0" role="alert" style="display: none;">
+                        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                        Substitution is currently <strong>ON</strong>. Attorneys are not receiving notifications.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-success" id="subemail_cmdSave">
+                    <i class="fas fa-save" aria-hidden="true"></i>&nbsp;Save
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/imask.js" ForceProvider="DnnFormBottomProvider" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/jacs.js" ForceProvider="DnnFormBottomProvider" Priority="100" />
 <dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/JACS/js/attorney.js" ForceProvider="DnnFormBottomProvider" Priority="101" />
