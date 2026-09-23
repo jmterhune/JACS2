@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,16 @@ namespace tjc.Modules.Globals
 {
     internal class GroupController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public GroupController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateGroup(Group t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Group>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.Globals
 
         public void DeleteGroup(Group t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Group>();
                 rep.Delete(t);
@@ -44,19 +52,19 @@ namespace tjc.Modules.Globals
         public IEnumerable<Group> GetGroups()
         {
             IEnumerable<Group> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Group>();
                 t = rep.Get();
             }
             return t;
         }
-        
-        
+
+
         public Group GetGroup(int groupId)
         {
             Group t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Group>();
                 t = rep.GetById(groupId);
@@ -66,7 +74,7 @@ namespace tjc.Modules.Globals
 
         public void UpdateGroup(Group t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Group>();
                 rep.Update(t);

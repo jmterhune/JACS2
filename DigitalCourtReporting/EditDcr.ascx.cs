@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,12 +37,14 @@ namespace tjc.Modules.DigitalCourtReporting
     {
         #region Properties
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #endregion
 
         #region Methods
         public EditDcr()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         #endregion
        
@@ -59,7 +62,7 @@ namespace tjc.Modules.DigitalCourtReporting
 
                         if (ProceedingId != Null.NullInteger)
                         {
-                            var ctl = new ProceedingController();
+                            var ctl = new ProceedingController(_hostSettings);
                             ProceedingListItem proceeding = ctl.GetProceedingListItem(ProceedingId);
 
                             {
@@ -89,7 +92,7 @@ namespace tjc.Modules.DigitalCourtReporting
                                 txtProceddingType.Text = proceeding.ProceedingType;
                                 ltNotes.Text = proceeding.Instructions;
                                 txtCityStateZip.Text = string.Format("{0}, {1} {2}", proceeding.City, proceeding.State, proceeding.Zip);
-                                var aCtl = new AccountController();
+                                var aCtl = new AccountController(_hostSettings);
                                 Account account = aCtl.GetAccountByProceeding(proceeding.ProceedingID);
                                 if (account != null)
                                 {
@@ -120,7 +123,7 @@ namespace tjc.Modules.DigitalCourtReporting
         {
             try
             {
-                var aCtl = new AudioController();
+                var aCtl = new AudioController(_hostSettings);
                 Audio audio = aCtl.GetAudiosByProceeding(ProceedingId).FirstOrDefault() ?? new Audio { ProceedingID = ProceedingId };
                 audio.Juvenile = rblCourOrderAttach.SelectedValue;
                 audio.Indigence = rblClerkCertAttach.SelectedValue;
@@ -138,7 +141,7 @@ namespace tjc.Modules.DigitalCourtReporting
                     aCtl.UpdateAudio(audio);
                 else
                     aCtl.CreateAudio(audio);
-                var pCtl = new ProceedingController();
+                var pCtl = new ProceedingController(_hostSettings);
                 Proceeding proceeding = pCtl.GetProceeding(ProceedingId);
                 proceeding.CA = true;
                 pCtl.UpdateProceeding(proceeding);

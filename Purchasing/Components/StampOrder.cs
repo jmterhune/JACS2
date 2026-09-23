@@ -1,6 +1,9 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace tjc.Modules.Purchasing.Components
 {
@@ -30,7 +33,10 @@ namespace tjc.Modules.Purchasing.Components
         {
             get
             {
-                var ctl = new AttachmentController();
+                // This is a PetaPoco entity mapped by reflection (needs a parameterless constructor),
+                // so IHostSettings can't be constructor-injected here the way the controllers get it.
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new AttachmentController(hostSettings);
                 return ctl.GetStampAttachmentsByOrderId(OrderID);
             }
         }

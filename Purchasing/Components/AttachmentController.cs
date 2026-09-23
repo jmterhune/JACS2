@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using DotNetNuke.Services.FileSystem;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,17 @@ namespace tjc.Modules.Purchasing.Components
 {
     internal class AttachmentController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttachmentController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         #region Supply Order Attachments
         public void CreateSupplyAttachment(SupplyOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                var file= DotNetNuke.Services.FileSystem.FileManager.Instance.GetFile(t.FileID);
@@ -50,7 +57,7 @@ namespace tjc.Modules.Purchasing.Components
         }
         public void DeleteSupplyAttachment(SupplyOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 DeleteSupplyFile(t.FileID);
@@ -59,14 +66,14 @@ namespace tjc.Modules.Purchasing.Components
         }
         private void DeleteSupplyFile(int fileId)
         {
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             var file = objFile.GetFile(fileId);
             objFile.DeleteFile(file);
         }
         public IEnumerable<SupplyOrderAttachment> GetSupplyAttachments()
         {
             IEnumerable<SupplyOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Get();
@@ -76,7 +83,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<SupplyOrderAttachment> GetSupplyAttachmentsByFormId(int formId)
         {
             IEnumerable<SupplyOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Find("Where FormID=@0", formId);
@@ -86,7 +93,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<SupplyOrderAttachment> GetSupplyAttachmentsByOrderId(int orderId)
         {
             IEnumerable<SupplyOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);
@@ -96,7 +103,7 @@ namespace tjc.Modules.Purchasing.Components
         public SupplyOrderAttachment GetSupplyAttachment(int attachmentId)
         {
             SupplyOrderAttachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.GetById(attachmentId);
@@ -106,7 +113,7 @@ namespace tjc.Modules.Purchasing.Components
         public SupplyOrderAttachment GetSupplyAttachmentByFileId(int fileId)
         {
             SupplyOrderAttachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Find("Where FileID=@0", fileId).FirstOrDefault();
@@ -116,7 +123,7 @@ namespace tjc.Modules.Purchasing.Components
 
         public void UpdateSupplyAttachment(SupplyOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 rep.Update(t);
@@ -126,7 +133,7 @@ namespace tjc.Modules.Purchasing.Components
         internal object GetSupplyAttachmentsByOrder(int orderId)
         {
             IEnumerable<SupplyOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupplyOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);
@@ -139,7 +146,7 @@ namespace tjc.Modules.Purchasing.Components
         #region Stamp Order Attachments
         public void CreateStampAttachment(StampOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 rep.Insert(t);
@@ -174,7 +181,7 @@ namespace tjc.Modules.Purchasing.Components
         }
         public void DeleteStampAttachment(StampOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 DeleteStampFile(t.FileID);
@@ -183,14 +190,14 @@ namespace tjc.Modules.Purchasing.Components
         }
         private void DeleteStampFile(int fileId)
         {
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             var file = objFile.GetFile(fileId);
             objFile.DeleteFile(file);
         }
         public IEnumerable<StampOrderAttachment> GetStampAttachments()
         {
             IEnumerable<StampOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 t = rep.Get();
@@ -200,7 +207,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<StampOrderAttachment> GetStampAttachmentsByFormId(int formId)
         {
             IEnumerable<StampOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 t = rep.Find("Where FormID=@0", formId);
@@ -210,7 +217,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<StampOrderAttachment> GetStampAttachmentsByOrderId(int orderId)
         {
             IEnumerable<StampOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);
@@ -220,7 +227,7 @@ namespace tjc.Modules.Purchasing.Components
         public StampOrderAttachment GetStampAttachment(int attachmentId)
         {
             StampOrderAttachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 t = rep.GetById(attachmentId);
@@ -230,7 +237,7 @@ namespace tjc.Modules.Purchasing.Components
         public StampOrderAttachment GetStampAttachmentByFileId(int fileId)
         {
             StampOrderAttachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 t = rep.Find("Where FileID=@0", fileId).FirstOrDefault();
@@ -240,7 +247,7 @@ namespace tjc.Modules.Purchasing.Components
 
         public void UpdateStampAttachment(StampOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 rep.Update(t);
@@ -250,7 +257,7 @@ namespace tjc.Modules.Purchasing.Components
         internal object GetStampAttachmentsByOrder(int orderId)
         {
             IEnumerable<StampOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StampOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);
@@ -262,7 +269,7 @@ namespace tjc.Modules.Purchasing.Components
         #region Form Order Attachments
         public void CreateFormAttachment(FormOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 rep.Insert(t);
@@ -297,7 +304,7 @@ namespace tjc.Modules.Purchasing.Components
         }
         public void DeleteFormAttachment(FormOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 DeleteFormFile(t.FileID);
@@ -306,14 +313,14 @@ namespace tjc.Modules.Purchasing.Components
         }
         private void DeleteFormFile(int fileId)
         {
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             var file = objFile.GetFile(fileId);
             objFile.DeleteFile(file);
         }
         public IEnumerable<FormOrderAttachment> GetFormAttachments()
         {
             IEnumerable<FormOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 t = rep.Get();
@@ -323,7 +330,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<FormOrderAttachment> GetFormAttachmentsByFormId(int formId)
         {
             IEnumerable<FormOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 t = rep.Find("Where FormID=@0", formId);
@@ -333,7 +340,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<FormOrderAttachment> GetFormAttachmentsByOrderId(int orderId)
         {
             IEnumerable<FormOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);
@@ -343,7 +350,7 @@ namespace tjc.Modules.Purchasing.Components
         public FormOrderAttachment GetFormAttachment(int attachmentId)
         {
             FormOrderAttachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 t = rep.GetById(attachmentId);
@@ -353,7 +360,7 @@ namespace tjc.Modules.Purchasing.Components
         public FormOrderAttachment GetFormAttachmentByFileId(int fileId)
         {
             FormOrderAttachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 t = rep.Find("Where FileID=@0", fileId).FirstOrDefault();
@@ -363,7 +370,7 @@ namespace tjc.Modules.Purchasing.Components
 
         public void UpdateFormAttachment(FormOrderAttachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 rep.Update(t);
@@ -373,7 +380,7 @@ namespace tjc.Modules.Purchasing.Components
         internal object GetFormAttachmentsByOrder(int orderId)
         {
             IEnumerable<FormOrderAttachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderAttachment>();
                 t = rep.Find("Where OrderID=@0", orderId);

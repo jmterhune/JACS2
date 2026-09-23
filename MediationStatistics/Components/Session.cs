@@ -1,5 +1,8 @@
 ﻿
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Web.Caching;
@@ -72,7 +75,9 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public bool? Interpreter { get; set; }  // bit
         [IgnoreColumn]
-        public IEnumerable<Event> SessionEvents { get { var ctl = new EventController();
+        public IEnumerable<Event> SessionEvents { get {
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new EventController(hostSettings);
                 return ctl.GetEventsBySession(SessionId);
             } }
         [IgnoreColumn]
@@ -80,7 +85,8 @@ namespace tjc.Modules.MediationStatistics.Components
         {
             get
             {
-                var ctl = new IssueController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new IssueController(hostSettings);
                 return ctl.GetIssuesBySession(SessionId);
             }
         }

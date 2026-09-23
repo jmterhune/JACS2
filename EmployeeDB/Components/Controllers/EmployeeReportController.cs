@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,20 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class EmployeeReportController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EmployeeReportController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         // Every report query restricts to IsEmployee = 1. Non-employee rows
         // (vendors, contractors, terminated user shells) are filtered out
         // at the data layer so each view doesn't have to remember.
 
         public IEnumerable<EmployeeInfo> GetBirthdays(int month, int countyId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT * FROM tjc_employee
                                WHERE MONTH(BirthDate) = @0
@@ -29,7 +37,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EmployeeInfo> GetTerminated(DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT * FROM tjc_employee
                                WHERE TerminationDate BETWEEN @0 AND @1
@@ -39,9 +47,11 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
-        public IEnumerable<EmployeeInfo> GetActiveEmployeesForSwn()
+        /// <summary>Active roster for the Crisis24 Person/HR feed — see
+        /// Components\Helpers\Crisis24ExportBuilder.cs.</summary>
+        public IEnumerable<EmployeeInfo> GetActiveEmployeesForExport()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT * FROM tjc_employee
                                WHERE IsActive = 1 AND IsEmployee = 1
@@ -52,7 +62,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EmployeeInfo> GetSupervisorList()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT DISTINCT s.*
                                FROM tjc_employee s

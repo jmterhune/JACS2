@@ -47,7 +47,7 @@ namespace tjc.Modules.ExpertWitness
             {
                 if (Page.IsPostBack == false)
                 {
-                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var ctl = DotNetNuke.Security.Roles.RoleController.Instance;
                     var listroles = ctl.GetRoles(PortalId);
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles.OrderBy(jud => jud.RoleName)
 )
@@ -68,7 +68,7 @@ namespace tjc.Modules.ExpertWitness
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
                 modules.UpdateModuleSetting(ModuleId, "AdminRole", drpAdminRole.SelectedValue);
             }
             catch (Exception exc) //Module failed to load

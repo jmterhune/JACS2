@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.ComponentModel.DataAnnotations;
 using DotNetNuke.Data;
 using System;
@@ -49,6 +50,13 @@ namespace tjc.Modules.ExitSurvey.Components
 
     public class EmployeeLookupController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EmployeeLookupController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         // Finds the employee record for the signed-in user: by DNN UserId first
         // (exact), then by first/last name as the user asked ("search for the
         // logged in user's name in the employee database").
@@ -64,7 +72,7 @@ namespace tjc.Modules.ExitSurvey.Components
 
         public EmployeeLookup GetById(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<EmployeeLookup>().GetById(employeeId);
             }
@@ -72,7 +80,7 @@ namespace tjc.Modules.ExitSurvey.Components
 
         private EmployeeLookup FindOne(string condition, params object[] args)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<EmployeeLookup>().Find(condition, args).FirstOrDefault();
             }

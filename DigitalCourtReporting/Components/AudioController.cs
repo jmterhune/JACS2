@@ -1,12 +1,20 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 namespace tjc.Modules.DigitalCourtReporting.Components
 {
     internal class AudioController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AudioController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAudio(Audio t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Audio>();
                 rep.Insert(t);
@@ -19,7 +27,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void DeleteAudio(Audio t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Audio>();
                 rep.Delete(t);
@@ -28,7 +36,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<Audio> GetAudios()
         {
             IEnumerable<Audio> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Audio>();
                 t = rep.Get();
@@ -38,7 +46,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public Audio GetAudio(int audioId)
         {
             Audio t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Audio>();
                 t = rep.GetById(audioId);
@@ -48,7 +56,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<Audio> GetAudiosByProceeding(int proceedingId)
         {
             IEnumerable<Audio> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Audio>();
                 t = rep.Find("Where ProceedingID = @0",proceedingId);
@@ -57,7 +65,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void UpdateAudio(Audio t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Audio>();
                 rep.Update(t);

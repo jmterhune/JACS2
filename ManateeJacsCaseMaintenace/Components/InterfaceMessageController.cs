@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -18,11 +19,17 @@ namespace tjc.Modules.JacsCaseMaint.Components
     {
 
         private const string CONN_INTRANET = "jacsManatee";
+        private readonly IHostSettings _hostSettings;
+
+        public InterfaceMessageController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<InterfaceMessage> GetMessages(string year,string caseType, string sequence)
         {
             IEnumerable<InterfaceMessage> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 string casenumber = string.Format("%{0}%{1}%{2}%", year, caseType, sequence);
                 var rep = ctx.GetRepository<InterfaceMessage>();
@@ -34,7 +41,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public InterfaceMessage GetMessage(int messagId)
         {
             InterfaceMessage t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<InterfaceMessage>();
                 t = rep.GetById(messagId);

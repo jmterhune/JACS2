@@ -13,19 +13,29 @@
       <Output TaskParameter="Value" PropertyName="Version" />
     </XmlRead>
 
-    <!--in VS 2012 we exclude the packages folder -->
-    <ItemGroup>     
-      <InstallInclude Include="**\*.ascx" Exclude="packages\**" />
-      <InstallInclude Include="**\*.asmx" Exclude="packages\**" />
-      <InstallInclude Include="**\*.css" Exclude="packages\**" />
-      <InstallInclude Include="**\*.html" Exclude="packages\**" />
-      <InstallInclude Include="**\*.htm" Exclude="packages\**" />
-      <InstallInclude Include="**\*.resx" Exclude="packages\**" />
-      <InstallInclude Include="**\*.aspx" Exclude="packages\**" />
-      <InstallInclude Include="**\*.js" Exclude="packages\**" />
-      <InstallInclude Include="**\*.txt"  Exclude="**\obj\**;**\_ReSharper*\**;packages\**;**\.git\**;" />
-      <InstallInclude Include="**\images\**" Exclude="packages\**" />
-      
+    <!-- Folders that must never reach an installed site:
+           packages / obj      — build inputs and intermediates
+           .git / .claude      — tooling metadata
+           _Retired-SWN        — the removed Send Word Now client and its
+                                 SwnList.ascx view. The globs below are
+                                 project-wide, so without this exclude the
+                                 retired view ships in Resources.zip and gets
+                                 written back into DesktopModules on install. -->
+    <PropertyGroup>
+      <PackageExclude>packages\**;**\obj\**;**\_ReSharper*\**;**\.git\**;**\.claude\**;_Retired-SWN\**</PackageExclude>
+    </PropertyGroup>
+    <ItemGroup>
+      <InstallInclude Include="**\*.ascx" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.asmx" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.css" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.html" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.htm" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.resx" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.aspx" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.js" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\*.txt" Exclude="$(PackageExclude)" />
+      <InstallInclude Include="**\images\**" Exclude="$(PackageExclude)" />
+
     </ItemGroup>
 
     <ItemGroup>

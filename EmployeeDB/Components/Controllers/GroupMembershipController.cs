@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class GroupMembershipController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public GroupMembershipController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void AddMembership(int groupId, int employeeId, int userId = -1)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"IF NOT EXISTS (SELECT 1 FROM tjc_employee_group_membership WHERE GroupId = @0 AND EmployeeId = @1)
                                INSERT INTO tjc_employee_group_membership
@@ -23,7 +31,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void DeleteMembership(int groupId, int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "DELETE FROM tjc_employee_group_membership WHERE GroupId = @0 AND EmployeeId = @1",
@@ -33,7 +41,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void ClearMembership(int groupId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "DELETE FROM tjc_employee_group_membership WHERE GroupId = @0",
@@ -43,7 +51,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<GroupMembershipInfo> GetForEmployee(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupMembershipInfo>();
                 return rep.Find("WHERE EmployeeId = @0", employeeId);
@@ -52,7 +60,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<GroupMembershipInfo> GetForGroup(int groupId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupMembershipInfo>();
                 return rep.Find("WHERE GroupId = @0", groupId);

@@ -9,10 +9,12 @@ namespace tjc.Modules.TranscriptDatabase
     public class TranscriptDatabaseModuleBase : PortalModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         public TranscriptDatabaseModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
         public int DesignationId
         {

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.FamilySelfHelp.Components
 {
     internal class ClientController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ClientController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateClient(Client t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Client>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
 
         public void DeleteClient(Client t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Client>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public IEnumerable<Client> GetExistingClient(string lastname, string firstname)
         {
             IEnumerable<Client> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Client>();
                 t = rep.Find("Where LastName = @0 AND FirstName = @1",lastname,firstname);
@@ -54,7 +62,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public IEnumerable<Client> GetClients()
         {
             IEnumerable<Client> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Client>();
                 t = rep.Get();
@@ -63,7 +71,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         }
         public void MergeClients(long newClientId, long oldClientId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_shc_merge_client_log",newClientId,oldClientId);
             }
@@ -71,7 +79,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public IEnumerable<ClientName> GetClientNames(string name)
         {
             IEnumerable<ClientName> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = "SELECT  [LastName] + ', ' + [FirstName] As 'Text', ClientId as 'Value' FROM tjc_shc_Client WHERE ([LastName] + ', ' + [FirstName] ) LIKE '%@0%' ORDER BY [LastName], [FirstName]";
                 t = ctx.ExecuteQuery<ClientName>(System.Data.CommandType.Text, sql, name);
@@ -82,7 +90,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public Client GetClient(long clientId)
         {
             Client t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Client>();
                 t = rep.Find("Where ClientId=@0", clientId).FirstOrDefault();
@@ -92,7 +100,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
 
         public void UpdateClient(Client t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Client>();
                 rep.Update(t);

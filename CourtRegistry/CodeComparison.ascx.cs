@@ -3,9 +3,10 @@
 '  All rights reserved.
 */
 
-using DotNetNuke.Common;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.UI.Skins.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,21 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class CodeComparison : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CodeComparison()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!Page.IsPostBack)
                 {
-                    lnkCancel.NavigateUrl = Globals.NavigateURL();
-                    var aCtl = new AttorneyController();
+                    lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
+                    var aCtl = new AttorneyController(_hostSettings);
                     var attorneys = aCtl.GetAttornies()
                         .OrderBy(a => a.LastName).ThenBy(a => a.FirstName)
                         .Select(a => new { Display = a.LastName + ", " + a.FirstName, a.AttorneyID })
@@ -35,7 +43,7 @@ namespace tjc.Modules.CourtRegistry
                     drpAttorney.DataBind();
                     drpAttorney.Items.Insert(0, new ListItem("Select Attorney", ""));
 
-                    var appCtl = new ApplicationController();
+                    var appCtl = new ApplicationController(_hostSettings);
                     int maxYear = appCtl.GetMaxApplicationYear();
                     if (maxYear > 0)
                     {
@@ -65,7 +73,7 @@ namespace tjc.Modules.CourtRegistry
             if (string.IsNullOrEmpty(qs) || !int.TryParse(qs, out int aid) || aid <= 0)
                 return;
 
-            var appCtl = new ApplicationController();
+            var appCtl = new ApplicationController(_hostSettings);
             var application = appCtl.GetApplication(aid);
             if (application == null)
                 return;
@@ -132,7 +140,7 @@ namespace tjc.Modules.CourtRegistry
             }
             int.TryParse(drpAttorney.SelectedValue, out int attorneyId);
 
-            var appCtl = new ApplicationController();
+            var appCtl = new ApplicationController(_hostSettings);
             var year1Codes = appCtl.GetJacCodesByYear(year1, attorneyId).ToList();
             var year2Codes = appCtl.GetJacCodesByYear(year2, attorneyId).ToList();
 

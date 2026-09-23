@@ -1,4 +1,5 @@
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,11 +11,15 @@ namespace tjc.Modules.JudicialReferral
     public class JudicialReferralModuleBase : PortalModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        protected readonly IHostSettings _hostSettings;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
 
         public JudicialReferralModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
 
         protected override void OnPreRender(EventArgs e)

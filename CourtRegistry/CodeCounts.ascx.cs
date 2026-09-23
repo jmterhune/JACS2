@@ -3,8 +3,9 @@
 '  All rights reserved.
 */
 
-using DotNetNuke.Common;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,13 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class CodeCounts : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CodeCounts()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -24,11 +32,11 @@ namespace tjc.Modules.CourtRegistry
                 if (!string.IsNullOrEmpty(qs))
                     int.TryParse(qs, out year);
 
-                lnkCancel.NavigateUrl = Globals.NavigateURL();
+                lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                 ltHeader.Text = string.Format("JAC Code Application Counts for {0}-{1}", year - 1, year);
 
-                var appCtl = new ApplicationController();
-                var locCtl = new LocationController();
+                var appCtl = new ApplicationController(_hostSettings);
+                var locCtl = new LocationController(_hostSettings);
                 var counts = appCtl.GetJacCodeCounts(year).ToList();
                 var locations = locCtl.GetLocations().OrderBy(l => l.LocationName).Select(l => l.LocationName).ToList();
                 if (locations.Count == 0)

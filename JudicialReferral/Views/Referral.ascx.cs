@@ -19,8 +19,14 @@ namespace tjc.Modules.JudicialReferral.Views
 {
     public partial class Referral : JudicialReferralModuleBase
     {
-        private readonly JudgeReferralController ctl = new JudgeReferralController();
-        private readonly AttachmentController attCtl = new AttachmentController();
+        private readonly JudgeReferralController ctl;
+        private readonly AttachmentController attCtl;
+
+        public Referral()
+        {
+            ctl = new JudgeReferralController(_hostSettings);
+            attCtl = new AttachmentController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -65,7 +71,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void PopulateJudgeList()
         {
-            var rCtl = new RoleController();
+            var rCtl = RoleController.Instance;
             var judgeList = rCtl.GetUsersByRole(PortalId, JudgeRole);
             var judges = new List<UserInfo>();
             foreach (UserInfo j in judgeList)
@@ -167,7 +173,7 @@ namespace tjc.Modules.JudicialReferral.Views
         private void SendToJudge(JudgeReferralInfo objReferral)
         {
             const string emailFrom = "noreply.intranet@jud12.flcourts.org";
-            var user = UserController.GetUserById(PortalId, objReferral.JudgeId);
+            var user = UserController.GetUserById(_hostSettings, PortalId, objReferral.JudgeId);
             if (user == null) return;
             string toEmail = user.Email;
             string subject = "New Judicial Referral Request";

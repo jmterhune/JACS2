@@ -1,13 +1,21 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.MediationStatistics.Components
 {
     internal class StageActionController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public StageActionController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateStageAction(StageAction t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StageAction>();
                 rep.Insert(t);
@@ -22,7 +30,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteStageAction(StageAction t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StageAction>();
                 rep.Delete(t);
@@ -32,7 +40,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<StageAction> GetStageActions()
         {
             IEnumerable<StageAction> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StageAction>();
                 t = rep.Get();
@@ -43,7 +51,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public StageAction GetStageAction(int stageActionId)
         {
             StageAction t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StageAction>();
                 t = rep.GetById(stageActionId);
@@ -53,7 +61,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void UpdateStageAction(StageAction t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StageAction>();
                 rep.Update(t);

@@ -14,10 +14,18 @@ namespace tjc.Modules.EmployeeDB.Views
 {
     public partial class DetailPopUp : EmployeeDBModuleBase
     {
-        private readonly EmployeeController _employees = new EmployeeController();
-        private readonly PhoneController _phones = new PhoneController();
-        private readonly GroupController _groups = new GroupController();
-        private readonly OfficeLocationController _locations = new OfficeLocationController();
+        private readonly EmployeeController _employees;
+        private readonly PhoneController _phones;
+        private readonly GroupController _groups;
+        private readonly OfficeLocationController _locations;
+
+        public DetailPopUp()
+        {
+            _employees = new EmployeeController(_hostSettings);
+            _phones = new PhoneController(_hostSettings);
+            _groups = new GroupController(_hostSettings);
+            _locations = new OfficeLocationController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,17 @@ namespace tjc.Intranet.API.Components.CourtCounsel
 {
     internal class LogEntryController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public LogEntryController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public IEnumerable<LogEntry> GetLogEntryByCaseNumber(string caseNumber)
         {
             IEnumerable<LogEntry> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<LogEntryListItem>();
                 //t = rep.Find("Where CaseNumber Like @0", caseNumber.Trim() + "%").Select(x => new LogEntry { LogId = x.LogId, CaseNumber = x.CaseNumber, Description = x.Description, IsCase = true, CountyId = x.CountyId }).Distinct().ToList();

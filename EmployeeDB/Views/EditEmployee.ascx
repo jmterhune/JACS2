@@ -234,15 +234,11 @@
                         <label for="<%=txtTerminationDate.ClientID %>">Termination Date</label>
                         <asp:TextBox ID="txtTerminationDate" runat="server" CssClass="form-control" TextMode="SingleLine" type="date" />
                     </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <label for="<%=txtBadgeNumber.ClientID %>">Badge Number</label>
-                        <asp:TextBox ID="txtBadgeNumber" runat="server" CssClass="form-control" MaxLength="50" />
-                    </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
-                        <label for="<%=drpSupervisor.ClientID %>">Supervisor</label>
+                        <label runat="server" id="lblSupervisor">Supervisor</label>
                         <asp:DropDownList ID="drpSupervisor" runat="server" CssClass="form-control" />
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
@@ -261,7 +257,7 @@
 
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
-                        <label for="<%=txtPosition.ClientID %>">Position</label>
+                        <label for="<%=txtPosition.ClientID %>">Position Number</label>
                         <asp:TextBox ID="txtPosition" runat="server" CssClass="form-control" MaxLength="150" />
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
@@ -539,9 +535,9 @@
                         <th>Number</th>
                         <th>Ext</th>
                         <th>Cascade</th>
-                        <th class="text-center">SWN Call?</th>
-                        <th class="text-center">SWN Text?</th>
-                        <th class="text-center">SWN Exclude Ext?</th>
+                        <th class="text-center">Call?</th>
+                        <th class="text-center">Text?</th>
+                        <th class="text-center">Exclude Ext?</th>
                         <th class="command-item"></th>
                     </tr>
                 </thead>
@@ -570,7 +566,7 @@
                                 <%-- Phone type dropdown. The default option's value
                                      is "Other" (not empty) so unselected rows
                                      still satisfy the model's required PhoneType
-                                     column and don't accidentally land in SWN's
+                                     column and don't accidentally land in the
                                      SMS-eligible bucket. Only "Work Cell" and
                                      "Mobile" match the cell/mobile SMS filter. --%>
                                 <select name="PhoneType" class="form-control">
@@ -605,13 +601,13 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-12 col-md-6 col-lg-3">
-                                <label>SWN Cascade</label>
+                                <label>Cascade</label>
                                 <input type="number" name="PhoneCascade" class="form-control" min="0" step="1" />
                             </div>
                             <div class="col-12 col-md-6 col-lg-9">
-                                <div class="form-check"><input type="checkbox" name="SwnCall" class="form-check-input" id="empdbPhCall" /><label class="form-check-label" for="empdbPhCall">SWN Call?</label></div>
-                                <div class="form-check"><input type="checkbox" name="SwnText" class="form-check-input" id="empdbPhText" /><label class="form-check-label" for="empdbPhText">SWN Text?</label></div>
-                                <div class="form-check"><input type="checkbox" name="SwnExcludeExtension" class="form-check-input" id="empdbPhExcl" /><label class="form-check-label" for="empdbPhExcl">SWN Exclude Ext?</label></div>
+                                <div class="form-check"><input type="checkbox" name="SwnCall" class="form-check-input" id="empdbPhCall" /><label class="form-check-label" for="empdbPhCall">Call?</label></div>
+                                <div class="form-check"><input type="checkbox" name="SwnText" class="form-check-input" id="empdbPhText" /><label class="form-check-label" for="empdbPhText">Text?</label></div>
+                                <div class="form-check"><input type="checkbox" name="SwnExcludeExtension" class="form-check-input" id="empdbPhExcl" /><label class="form-check-label" for="empdbPhExcl">Exclude Ext?</label></div>
                             </div>
                         </div>
                     </div>

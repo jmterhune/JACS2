@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.JudgeVacation.Components
 {
     internal class HolidayController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public HolidayController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateHoliday(Holiday t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.JudgeVacation.Components
 
         public void DeleteHoliday(Holiday t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<Holiday> GetHolidays()
         {
             IEnumerable<Holiday> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<Holiday> GetHolidays(int year)
         {
             IEnumerable<Holiday> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 t = rep.Find("WHERE YEAR(HolidayDate)=@0",year);
@@ -65,7 +73,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<Holiday> GetReportHolidays(int startYear,int endYear)
         {
             IEnumerable<Holiday> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 t = rep.Find("WHERE YEAR(HolidayDate)>=@0 AND YEAR(HolidayDate)<=@1", startYear,endYear);
@@ -75,7 +83,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<Holiday> GetHolidaysByRange(DateTime startDate, DateTime endDate)
         {
             IEnumerable<Holiday> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 t = rep.Find("WHERE HolidayDate BETWEEN @0 and @1", startDate, endDate);
@@ -85,7 +93,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public Holiday GetHoliday(int holidayId)
         {
             Holiday t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 t = rep.GetById(holidayId);
@@ -95,7 +103,7 @@ namespace tjc.Modules.JudgeVacation.Components
 
         public void UpdateHoliday(Holiday t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Holiday>();
                 rep.Update(t);
@@ -105,7 +113,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<AvailableYears> GetYearsAvailable(int judgeId)
         {
             IEnumerable<AvailableYears> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<AvailableYears>(System.Data.CommandType.StoredProcedure, "tjc_vacation_get_judge_years",judgeId);
             }
@@ -114,7 +122,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<AvailableYears> GetYearsAvailable()
         {
             IEnumerable<AvailableYears> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<AvailableYears>(System.Data.CommandType.StoredProcedure, "tjc_vacation_get_years");
             }

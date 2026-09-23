@@ -1,13 +1,26 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.MediationStatistics.Components
 {
     internal class AppearanceController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AppearanceController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        private IDataContext GetContext()
+        {
+            return DataContext.Instance(_hostSettings);
+        }
+
         public void CreateAppearance(Appearance t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Appearance>();
                 rep.Insert(t);
@@ -22,7 +35,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteAppearance(Appearance t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Appearance>();
                 rep.Delete(t);
@@ -32,7 +45,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Appearance> GetAppearances()
         {
             IEnumerable<Appearance> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Appearance>();
                 t = rep.Get();
@@ -43,7 +56,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public Appearance GetAppearance(int appearanceId)
         {
             Appearance t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Appearance>();
                 t = rep.GetById(appearanceId);
@@ -53,7 +66,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void UpdateAppearance(Appearance t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Appearance>();
                 rep.Update(t);
@@ -62,7 +75,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Appearance> GetEventAppearances(int eventId)
         {
             IEnumerable<Appearance> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
 
                 t = ctx.ExecuteQuery<Appearance>(System.Data.CommandType.StoredProcedure, "tjc_med_get_event_appearances",eventId);

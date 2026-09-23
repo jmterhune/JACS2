@@ -10,7 +10,9 @@
 '
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using tjc.Modules.ThreatReport.Components;
@@ -23,6 +25,13 @@ namespace tjc.Modules.ThreatReport
     /// </summary>
     public partial class View : ThreatReportModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -41,7 +50,7 @@ namespace tjc.Modules.ThreatReport
                         return;
                     }
 
-                    IncidentController ctl = new IncidentController();
+                    IncidentController ctl = new IncidentController(_hostSettings);
                     rptIncidentList.DataSource = ctl.GetIncidents().Where(x => x.Location != null);
                     rptIncidentList.DataBind();
                 }

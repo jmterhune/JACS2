@@ -1,13 +1,17 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Mail;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using UserInfo = DotNetNuke.Entities.Users.UserInfo;
 
 namespace tjc.Modules.TranscriptDatabase.Components
@@ -15,6 +19,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
     public static class Notifications
     {
         private static UserInfo userinfo=UserController.Instance.GetCurrentUserInfo();
+        private static readonly IHostSettings _hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
         private static void NotifiyRecordingManager(EventListItem evt, EventListItem evtOld, int sequence, int portalId, string displayName, string managerRole, string county)
         {
             string subject = string.Format("Event Update to Designation - {0}", displayName);
@@ -116,7 +121,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
 
         public static void SendCourtReporterNotification(int ReporterId, string defendant, string url, int sequence, int portalId, UserInfo user, string county)
         {
-            string toemail = UserController.GetUserById(portalId, ReporterId).Email;
+            string toemail = UserController.GetUserById(_hostSettings, portalId, ReporterId).Email;
             string fromEmail = "dcrgrpsar@jud12.flcourts.org";
             if (county.ToLower() == "manatee")
                 fromEmail = "dcrgrpman@jud12.flcourts.org";
@@ -144,8 +149,8 @@ namespace tjc.Modules.TranscriptDatabase.Components
 
         public static void SendCourtReporterTransferrNotification(int oldReporterId, int ReporterId, string displayname, string url, int sequence, int portalId, string county)
         {
-            string toEmail = UserController.GetUserById(portalId, oldReporterId).Email;
-            string courtReporterName = UserController.GetUserById(portalId, ReporterId).DisplayName;
+            string toEmail = UserController.GetUserById(_hostSettings, portalId, oldReporterId).Email;
+            string courtReporterName = UserController.GetUserById(_hostSettings, portalId, ReporterId).DisplayName;
             string fromEmail = "dcrgrpsar@jud12.flcourts.org";
             if (county.ToLower() == "manatee")
                 fromEmail = "dcrgrpman@jud12.flcourts.org";
@@ -162,7 +167,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
             string fromEmail = user.Email;
             foreach (Event evt in events)
             {
-                UserInfo courtReporterUser = UserController.GetUserById(portalId, evt.CourtReporterID);
+                UserInfo courtReporterUser = UserController.GetUserById(_hostSettings, portalId, evt.CourtReporterID);
                 if (courtReporterUser != null)
                 {
                     string body = string.Format("The extension request for Designation - {0} has been granted.  The new due date is {1}", displayName, requestedDate.ToShortDateString());
@@ -191,7 +196,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         {
             string body = "The Court Reporter field for <strong>Designation</strong> " + displayName + ", <strong>Event</strong> " + sequence + " has been set to blank. Please reassign a court reporter to the event.";
             string subject = "Court Reporter Assigned Set to Blank";
-            DotNetNuke.Security.Roles.RoleController ctlRole = new DotNetNuke.Security.Roles.RoleController();
+            var ctlRole = DotNetNuke.Security.Roles.RoleController.Instance;
             var lstManager = RoleController.Instance.GetUsersByRole(portalId, managerRole);
             string fromEmail = "dcrgrpsar@jud12.flcourts.org";
             if (county.ToLower() == "manatee")

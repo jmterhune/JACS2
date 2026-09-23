@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.TranscriptDatabase.Services.ViewModels;
@@ -6,9 +7,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class EmployeeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EmployeeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateEmployee(Employee t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 rep.Insert(t);
@@ -21,7 +29,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteEmployee(Employee t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 rep.Delete(t);
@@ -30,7 +38,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Employee> GetEmployees()
         {
             IEnumerable<Employee> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 t = rep.Get();
@@ -40,7 +48,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Employee> GetEmployeesByType( EmployeeTypes employeeType)
         {
             IEnumerable<Employee> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 t = rep.Find("Where EmployeeTypeID = @0",(int)employeeType);
@@ -50,7 +58,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<DropDownViewModel> GetEmployeeDropDownByType(EmployeeTypes employeeType)
         {
             IEnumerable<DropDownViewModel> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 t = rep.Find("Where EmployeeTypeID = @0", (int)employeeType).Select(emp=> new DropDownViewModel { Id=emp.EmployeeID, Name=emp.EmployeeName}).OrderBy(x => x.Name);
@@ -60,7 +68,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Employee GetEmployee(int employeeId)
         {
             Employee t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 t = rep.GetById(employeeId);
@@ -69,7 +77,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateEmployee(Employee t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Employee>();
                 rep.Update(t);

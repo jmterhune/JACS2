@@ -27,6 +27,11 @@ namespace tjc.Modules.CourtCounsel.Views
         {
             liAdmin.Visible = IsAdmin;
 
+            // Explains a save that never completes instead of leaving the
+            // button stuck on "Saving…" — see Scripts/save-watchdog.js.
+            Page.ClientScript.RegisterClientScriptInclude(GetType(), "SaveWatchdogScript",
+                ResolveUrl("~/DesktopModules/tjc.modules/CourtCounsel/Scripts/save-watchdog.js"));
+
             _logId = LogId;
             _caseNumber = CaseNumber;
 
@@ -48,7 +53,7 @@ namespace tjc.Modules.CourtCounsel.Views
                     PopulateCaseNumberFields(_caseNumber);
 
                     // Try to pre-fill party name from existing records
-                    var ctrl = new HistoryController();
+                    var ctrl = new HistoryController(_hostSettings);
                     var existing = ctrl.GetHistoryByCaseNumber(_caseNumber).FirstOrDefault();
                     if (existing != null)
                     {
@@ -61,7 +66,7 @@ namespace tjc.Modules.CourtCounsel.Views
         private void BindLists()
         {
             // Case Types
-            var caseTypeCtrl = new CaseTypeController();
+            var caseTypeCtrl = new CaseTypeController(_hostSettings);
             drpCaseType.Items.Clear();
             drpCaseType.Items.Add(new ListItem("", ""));
             foreach (var ct in caseTypeCtrl.GetCaseTypes().OrderBy(c => c.CaseType))
@@ -70,7 +75,7 @@ namespace tjc.Modules.CourtCounsel.Views
             }
 
             // Counties
-            var countyCtrl = new CountyController();
+            var countyCtrl = new CountyController(_hostSettings);
             drpCounty.Items.Clear();
             drpCounty.Items.Add(new ListItem("< Select County >", ""));
             foreach (var c in countyCtrl.GetCounties().OrderBy(c => c.County))
@@ -79,7 +84,7 @@ namespace tjc.Modules.CourtCounsel.Views
             }
 
             // Actions
-            var actionCtrl = new ActionTakenController();
+            var actionCtrl = new ActionTakenController(_hostSettings);
             drpAction.Items.Clear();
             drpAction.Items.Add(new ListItem("", ""));
             foreach (var a in actionCtrl.GetActions().OrderBy(a => a.Action))
@@ -90,7 +95,7 @@ namespace tjc.Modules.CourtCounsel.Views
             // Requestors (active/inactive groups)
             BindActiveInactiveDropDown(drpRequestor, () =>
             {
-                var ctrl = new RequestorController();
+                var ctrl = new RequestorController(_hostSettings);
                 var all = ctrl.GetRequestors().ToList();
                 var active = all.Where(r => r.IsActive == true).OrderBy(r => r.RequestorName)
                     .Select(r => new ListItem(r.RequestorName, r.RequestorName)).ToList();
@@ -102,7 +107,7 @@ namespace tjc.Modules.CourtCounsel.Views
             // Attorneys (active/inactive groups)
             BindActiveInactiveDropDown(drpAttorney, () =>
             {
-                var ctrl = new AttorneyController();
+                var ctrl = new AttorneyController(_hostSettings);
                 var all = ctrl.GetAttorneys().ToList();
                 var active = all.Where(a => a.IsActive == true).OrderBy(a => a.AttorneyName)
                     .Select(a => new ListItem(a.AttorneyName, a.AttorneyName)).ToList();
@@ -115,7 +120,7 @@ namespace tjc.Modules.CourtCounsel.Views
             // appear in the configured DB sequence (typically shortest → longest).
             BindActiveInactiveDropDown(drpTimeSpan, () =>
             {
-                var ctrl = new TimeSpentController();
+                var ctrl = new TimeSpentController(_hostSettings);
                 var all = ctrl.GetTimeSpents().ToList();
                 var active = all.Where(t => t.IsActive).OrderBy(t => t.TimeSpanId)
                     .Select(t => new ListItem(t.TimeSpan, t.TimeSpan)).ToList();
@@ -153,7 +158,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void LoadRecord(int logId)
         {
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             var item = ctrl.GetHistory(logId);
             if (item == null)
             {
@@ -202,7 +207,7 @@ namespace tjc.Modules.CourtCounsel.Views
         {
             if (!Page.IsValid) return;
 
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             int existingLogId;
             int.TryParse(hdLogId.Value, out existingLogId);
             bool isUpdate = existingLogId > 0;
@@ -305,7 +310,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
             if (targetId > 0)
             {
-                var ctrl = new HistoryController();
+                var ctrl = new HistoryController(_hostSettings);
                 var item = ctrl.GetHistory(targetId);
                 if (item != null && !string.IsNullOrEmpty(item.CaseNumber))
                     caseNum = item.CaseNumber;

@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,12 +38,14 @@ namespace tjc.Modules.DigitalCourtReporting
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #endregion
 
         #region Methods
         public EditInquiry()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void SendEmails(Proceeding proceeding)
         {
@@ -125,7 +128,7 @@ namespace tjc.Modules.DigitalCourtReporting
                     {
                         if (ProceedingId != Null.NullInteger)
                         {
-                            var ctl = new ProceedingController();
+                            var ctl = new ProceedingController(_hostSettings);
                             ProceedingListItem proceeding = ctl.GetProceedingListItem(ProceedingId);
 
                             {
@@ -148,7 +151,7 @@ namespace tjc.Modules.DigitalCourtReporting
                                 txtProceddingType.Text = proceeding.ProceedingType;
                                 ltNotes.Text = proceeding.Instructions;
                                 txtCityStateZip.Text = string.Format("{0}, {1} {2}", proceeding.City, proceeding.State, proceeding.Zip);
-                                var aCtl = new AccountController();
+                                var aCtl = new AccountController(_hostSettings);
                                 Account account = aCtl.GetAccountByProceeding(proceeding.ProceedingID);
                                 if (account != null)
                                 {
@@ -179,7 +182,7 @@ namespace tjc.Modules.DigitalCourtReporting
         {
             try
             {
-                var ctl = new ProceedingController();
+                var ctl = new ProceedingController(_hostSettings);
                 Proceeding proceeding = ctl.GetProceeding(ProceedingId);
                 if (proceeding != null)
                 {
@@ -204,7 +207,7 @@ namespace tjc.Modules.DigitalCourtReporting
         {
             try
             {
-                var ctl = new ProceedingController();
+                var ctl = new ProceedingController(_hostSettings);
                 Proceeding proceeding = ctl.GetProceeding(ProceedingId);
                 if (proceeding != null)
                 {

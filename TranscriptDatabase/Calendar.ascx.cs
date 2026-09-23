@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,6 +42,7 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
 
@@ -48,6 +50,7 @@ namespace tjc.Modules.TranscriptDatabase
         public Calendar()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void PopulateUserList()
         {
@@ -60,7 +63,7 @@ namespace tjc.Modules.TranscriptDatabase
         private void BindCalendar(DateTime currentDate)
         {
             CurrentDate = currentDate;
-            var tc = new CalendarController();
+            var tc = new CalendarController(_hostSettings);
             List<int> selectedUsers = GetSelectedUsers();
             rptCalendar.DataSource = tc.GetCalendarEvents(currentDate, drpCounty.SelectedValue, selectedUsers, EditUrl("status"));
             rptCalendar.DataBind();

@@ -2,8 +2,10 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,13 +19,20 @@ namespace tjc.Modules.DocketInmateCompare
 {
     public partial class View : PortalModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack && !string.IsNullOrEmpty(hfCurrentSetGuid.Value))
                 {
-                    var controller = new NameMatchResultController();
+                    var controller = new NameMatchResultController(_hostSettings);
                     var setGuid = Guid.Parse(hfCurrentSetGuid.Value);
                     gvMatches.DataSource = controller.GetItemsBySetGuid(setGuid);
                     gvMatches.DataBind();
@@ -60,7 +69,7 @@ namespace tjc.Modules.DocketInmateCompare
                 var comparer = new DefendantNameComparer(0.88); // Adjust threshold as needed
                 List<NameMatchResult> results = comparer.CompareFiles(courtPath, jailPath);
 
-                var controller = new NameMatchResultController();
+                var controller = new NameMatchResultController(_hostSettings);
                 Guid setGuid = Guid.NewGuid();
                 hfCurrentSetGuid.Value = setGuid.ToString();
 
@@ -124,7 +133,7 @@ namespace tjc.Modules.DocketInmateCompare
             if (e.CommandName == "DeleteRow")
             {
                 // Update all remaining rows before delete
-                var controller = new NameMatchResultController();
+                var controller = new NameMatchResultController(_hostSettings);
                 for (int i = 0; i < gvMatches.Rows.Count; i++)
                 {
                     GridViewRow row = gvMatches.Rows[i];
@@ -161,7 +170,7 @@ namespace tjc.Modules.DocketInmateCompare
 
         protected void btnGenerateWord_Click(object sender, EventArgs e)
         {
-            var controller = new NameMatchResultController();
+            var controller = new NameMatchResultController(_hostSettings);
             Guid.TryParse(hfCurrentSetGuid.Value, out Guid setGuid);
 
             // Build the document rows straight from the grid so generation reflects exactly

@@ -52,7 +52,7 @@ namespace tjc.Modules.HearingLog
             {
                 if (Page.IsPostBack == false)
                 {
-                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var ctl = DotNetNuke.Security.Roles.RoleController.Instance;
                     var listroles = ctl.GetRoles(PortalId);
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
                     {
@@ -88,7 +88,7 @@ namespace tjc.Modules.HearingLog
         {
             try
             {
-                ModuleController objModules = new ModuleController();
+                var objModules = ModuleController.Instance;
                 string ChiefJudgeRole = drpRoles.SelectedValue;
                 string JudgeRole = drpJudgeRole.SelectedValue;
                 string JaRole = drpJaRole.SelectedValue;

@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class CalendarController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CalendarController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateCalendar(Calendar t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Calendar>();
                 rep.Insert(t);
@@ -24,7 +32,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteCalendar(Calendar t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Calendar>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Calendar> GetCalendars()
         {
             IEnumerable<Calendar> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Calendar>();
                 t = rep.Get();
@@ -43,7 +51,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Calendar GetCalendar(int calendarId)
         {
             Calendar t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Calendar>();
                 t = rep.GetById(calendarId);
@@ -53,7 +61,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Calendar GetCalendarByDesignation(int designationId)
         {
             Calendar t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Calendar>();
                 t = rep.Find("Where DesignationID=@0", designationId).OrderByDescending(x=>x.EventTypeID).FirstOrDefault();
@@ -62,7 +70,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateCalendar(Calendar t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Calendar>();
                 rep.Update(t);
@@ -78,7 +86,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
             List<CalendarEvent> calendarEvents = new List<CalendarEvent>();
             IEnumerable<CalendarListItem> t;
             int reporterId = 0;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CalendarListItem>();
                 if (courtReporterIds == null || courtReporterIds.Count <= 1)
@@ -108,7 +116,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         private string GetEventListItems(IEnumerable<CalendarListItem> t, string url, int reporterId)
         {
             string eventList = "";
-            var ctl = new DesignationController();
+            var ctl = new DesignationController(_hostSettings);
             foreach (CalendarListItem @event in t)
             {
                 Designation designation = ctl.GetDesignation(@event.DesignationID);

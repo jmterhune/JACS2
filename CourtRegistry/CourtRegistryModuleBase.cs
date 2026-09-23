@@ -20,11 +20,13 @@ namespace tjc.Modules.CourtRegistry
 {
     public class CourtRegistryModuleBase : PortalModuleBase
     {
-        private readonly INavigationManager _navigationManager;
+        protected readonly INavigationManager _navigationManager;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         public CourtRegistryModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
         public string ApproverUsername
         {

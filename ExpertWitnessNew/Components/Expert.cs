@@ -1,4 +1,7 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Web.Caching;
 
@@ -24,7 +27,8 @@ namespace tjc.Modules.ExpertWitness.Components
             get
             {
                 string locationDisplay = "";
-                var ctl = new ExpertController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new ExpertController(hostSettings);
                 foreach (Location location in ctl.GetExpertLocationLocations(ExpertID))
                 {
                     locationDisplay += string.Format("{0}, ", location.LocationName);
@@ -38,7 +42,8 @@ namespace tjc.Modules.ExpertWitness.Components
             get
             {
                 string typeDisplay = "";
-                var ctl = new ExpertController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new ExpertController(hostSettings);
                 foreach (Type type in ctl.GetExpertTypeTypes(ExpertID))
                 {
                     typeDisplay += string.Format("{0}, ", type.TypeName);

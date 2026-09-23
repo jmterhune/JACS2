@@ -34,7 +34,7 @@ namespace tjc.Modules.ExitSurvey.Admin
             {
                 if (!IsAdmin)
                 {
-                    Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
+                    Response.Redirect(_navigationManager.NavigateURL(), true);
                     return;
                 }
                 lnkBack.NavigateUrl = ResultsUrl;
@@ -56,7 +56,7 @@ namespace tjc.Modules.ExitSurvey.Admin
 
         private void BindDetail()
         {
-            var ctl = new ExitSurveyController();
+            var ctl = new ExitSurveyController(_hostSettings);
             var response = ctl.GetResponse(ResponseId);
             if (response == null || response.ModuleID != ModuleId)
             {

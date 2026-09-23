@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -26,6 +27,7 @@ namespace tjc.Modules.ExpertWitness
     {
         #region Properties
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private string _requestedID = string.Empty;
         private string _currentSequence = string.Empty;
         private string[] _addedExperts = new string[0];
@@ -91,10 +93,10 @@ namespace tjc.Modules.ExpertWitness
         protected void cmdUpdate_Click(object sender, EventArgs e)
         {
             string errorMessage = "";
-            var tCtl = new TemplateController();
-            var eCtl = new ExpertController();
-            var rtCtl = new RequestedTemplateController();
-            var rCtl = new RequestController();
+            var tCtl = new TemplateController(_hostSettings);
+            var eCtl = new ExpertController(_hostSettings);
+            var rtCtl = new RequestedTemplateController(_hostSettings);
+            var rCtl = new RequestController(_hostSettings);
             Int32.TryParse(drpEvaluation.SelectedValue, out int TemplateID);
             Template objTemplate = tCtl.GetTemplate(TemplateID);
             IEnumerable<RequestCart> SelectedExperts = rtCtl.GetRequestedTemplatesByGuidByStatus(GlobalID, Convert.ToInt32(RequestStatus.selected));
@@ -158,7 +160,7 @@ namespace tjc.Modules.ExpertWitness
         }
         protected void cmdReset_Click(object sender, EventArgs e)
         {
-            var rtCtl = new RequestedTemplateController();
+            var rtCtl = new RequestedTemplateController(_hostSettings);
             rtCtl.DeleteRequestTemplatesByGuid(GlobalID);
             Response.Redirect(_navigationManager.NavigateURL(), true);
         }
@@ -222,7 +224,7 @@ namespace tjc.Modules.ExpertWitness
             }
             if (e.CommandName == "select")
             {
-                var ctl = new RequestedTemplateController();
+                var ctl = new RequestedTemplateController(_hostSettings);
                 int expertId= Convert.ToInt32(e.CommandArgument); 
                 RequestCart requestCart=ctl.GetRequestedTemplatesByExpertByGuidBySequence(expertId,GlobalID,seq);
                 requestCart.Status = Convert.ToInt32(RequestStatus.selected);
@@ -232,7 +234,7 @@ namespace tjc.Modules.ExpertWitness
             if (e.CommandName == "pass")
             {
                 int expertId = Convert.ToInt32(e.CommandArgument);
-                var ctl = new RequestedTemplateController();
+                var ctl = new RequestedTemplateController(_hostSettings);
                 RequestCart requestCart = ctl.GetRequestedTemplatesByExpertByGuidBySequence(expertId, GlobalID, seq);
                 requestCart.Status = Convert.ToInt32(RequestStatus.passed);
                 ctl.UpdateRequestedTemplate(requestCart);
@@ -275,6 +277,7 @@ namespace tjc.Modules.ExpertWitness
         public View()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void PurgeExpiredCart()
         {
@@ -286,7 +289,7 @@ namespace tjc.Modules.ExpertWitness
                 int days = 7;
                 if (Settings.Contains("CartRetentionDays"))
                     int.TryParse(Convert.ToString(Settings["CartRetentionDays"]), out days);
-                new RequestedTemplateController().PurgeExpiredCart(days);
+                new RequestedTemplateController(_hostSettings).PurgeExpiredCart(days);
             }
             catch (Exception ex)
             {
@@ -295,8 +298,8 @@ namespace tjc.Modules.ExpertWitness
         }
         private void BindLists()
         {
-            var tCtl = new TemplateController();
-            var lCtl = new LocationController();
+            var tCtl = new TemplateController(_hostSettings);
+            var lCtl = new LocationController(_hostSettings);
             drpEvaluation.DataSource = tCtl.GetTemplates().OrderBy(t => t.TemplateName);
             drpEvaluation.DataTextField = "TemplateName";
             drpEvaluation.DataValueField = "TemplateID";
@@ -312,10 +315,10 @@ namespace tjc.Modules.ExpertWitness
         {
             List<RequestedTemplate> tempRequestedTemplate = new List<RequestedTemplate>();
             List<RequestedTemplate> listRequestedTemplate = new List<RequestedTemplate>();
-            var tCtl = new TemplateController();
-            var lCtl = new LocationController();
-            var rCtl = new RequestedTemplateController();
-            var eCtl = new ExpertController();
+            var tCtl = new TemplateController(_hostSettings);
+            var lCtl = new LocationController(_hostSettings);
+            var rCtl = new RequestedTemplateController(_hostSettings);
+            var eCtl = new ExpertController(_hostSettings);
             Int32.TryParse(drpEvaluation.SelectedValue, out int templateId);
             Int32.TryParse(drpLocation.SelectedValue, out int locationId);
             Template objTemplate = tCtl.GetTemplate(templateId);
@@ -380,7 +383,7 @@ namespace tjc.Modules.ExpertWitness
         {
             int templateId = Int32.Parse(drpEvaluation.SelectedValue);
             int locationId = Int32.Parse(drpLocation.SelectedValue);
-            var ctl = new RequestedTemplateController();
+            var ctl = new RequestedTemplateController(_hostSettings);
             // Every expert already in this request (any sequence, any status) so we never
             // offer the same expert twice.
             var usedExpertIds = new HashSet<int>(ctl.GetRequestedTemplates(GlobalID).Select(i => i.ExpertID));
@@ -410,7 +413,7 @@ namespace tjc.Modules.ExpertWitness
         }
         private int GetNewPosition(int templateId)
         {
-            var ctl = new ExpertController();
+            var ctl = new ExpertController(_hostSettings);
             int position = 0;
             var expertTemplates = ctl.GetExpertTemplates(templateId);
             if (expertTemplates.Count() > 0)
@@ -438,26 +441,26 @@ namespace tjc.Modules.ExpertWitness
         }
         private void FillRequestCart()
         {
-            var ctl = new RequestedTemplateController();
+            var ctl = new RequestedTemplateController(_hostSettings);
             // Delete Existing request items in cart
             IEnumerable<RequestCart> requestCarts = ctl.GetRequestedTemplates(GlobalID);
             foreach (var requestCart in requestCarts) { ctl.DeleteRequestedTemplate(requestCart); }
         }
         private void BindRepeater()
         {
-            var ctl = new RequestedTemplateController();
+            var ctl = new RequestedTemplateController(_hostSettings);
             IEnumerable<RequestedTemplate> requestCarts = ctl.GetRequestedTemplatesByGuid(GlobalID);
             rptExpertSelection.DataSource = requestCarts.Select(x => new RequestedTemplate() { ExpertID = x.ExpertID, ExpertName = x.ExpertName, Comments = x.Comments, Guid = x.Guid, Header = x.HeaderTypes, NumberRequired = x.NumberRequired, RequestID = x.RequestID, Sequence = x.Sequence, Status = x.Status, TemplateID = x.TemplateID });
             rptExpertSelection.DataBind();
         }
         private IEnumerable<RequestCart> GetPassedExperts()
         {
-            var ctl = new RequestedTemplateController();
+            var ctl = new RequestedTemplateController(_hostSettings);
             return ctl.GetRequestedTemplatesByGuidByStatus(GlobalID, Convert.ToInt32(RequestStatus.passed));
         }
         private IEnumerable<RequestCart> GetSelectedExperts()
         {
-            var ctl = new RequestedTemplateController();
+            var ctl = new RequestedTemplateController(_hostSettings);
             return ctl.GetRequestedTemplatesByGuidByStatus(GlobalID, Convert.ToInt32(RequestStatus.selected));
         }
         #endregion

@@ -10,6 +10,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,16 @@ namespace tjc.Modules.DocketInmateCompare.Components
 {
     internal class NameMatchResultController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public NameMatchResultController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateItem(NameMatchResult t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<NameMatchResult>();
                 rep.Insert(t);
@@ -37,7 +45,7 @@ namespace tjc.Modules.DocketInmateCompare.Components
 
         public void DeleteItem(NameMatchResult t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<NameMatchResult>();
                 rep.Delete(t);
@@ -47,7 +55,7 @@ namespace tjc.Modules.DocketInmateCompare.Components
         public IEnumerable<NameMatchResult> GetItems()
         {
             IEnumerable<NameMatchResult> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<NameMatchResult>();
                 t = rep.Get();
@@ -58,7 +66,7 @@ namespace tjc.Modules.DocketInmateCompare.Components
         public NameMatchResult GetItem(int itemId)
         {
             NameMatchResult t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<NameMatchResult>();
                 t = rep.GetById(itemId);
@@ -68,7 +76,7 @@ namespace tjc.Modules.DocketInmateCompare.Components
 
         public void UpdateItem(NameMatchResult t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<NameMatchResult>();
                 rep.Update(t);
@@ -77,7 +85,7 @@ namespace tjc.Modules.DocketInmateCompare.Components
 
         public IEnumerable<NameMatchResult> GetItemsBySetGuid( Guid setGuid)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<NameMatchResult>();
                 var items = rep.Find("WHERE SetGuid = @0",  setGuid);
@@ -87,7 +95,7 @@ namespace tjc.Modules.DocketInmateCompare.Components
 
         public void DeleteItemsBySetGuid( Guid setGuid)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text, "DELETE FROM {databaseOwner}{objectQualifier}tjc_inmate_matches WHERE SetGuid = @0",  setGuid);
             }

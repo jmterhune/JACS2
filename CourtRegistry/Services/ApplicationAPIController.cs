@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Security;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +15,8 @@ namespace tjc.Modules.CourtRegistry.Services
     [DnnAuthorize]
     public class ApplicationAPIController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         public HttpResponseMessage GetApplicationListItems(int count)
         {
@@ -53,7 +58,7 @@ namespace tjc.Modules.CourtRegistry.Services
             }
             try
             {
-                var ctl = new ApplicationController();
+                var ctl = new ApplicationController(_hostSettings);
                 filteredCount = ctl.GetApplicationListCount(applicationId, periodYear, firstName, lastName, statusId);
                 if (count == 0) { recordCount = filteredCount; }
                 caselistItems = ctl.GetApplicationListPaged(applicationId, periodYear, firstName, lastName, statusId, recordOffset, pageSize, sortColumn, sortDirection).Select(applicationListItem => new ApplicationViewModel(applicationListItem)).ToList();
@@ -71,7 +76,7 @@ namespace tjc.Modules.CourtRegistry.Services
         {
             try
             {
-                var ctl = new ApplicationController();
+                var ctl = new ApplicationController(_hostSettings);
                 ctl.DeleteApplication(applicationId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }

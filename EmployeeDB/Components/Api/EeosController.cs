@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +21,15 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class EeosController : DnnApiController
     {
-        private readonly EeoController _eeo = new EeoController();
-        private readonly JobGroupController _jobGroups = new JobGroupController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly EeoController _eeo;
+        private readonly JobGroupController _jobGroups;
+
+        public EeosController()
+        {
+            _eeo = new EeoController(_hostSettings);
+            _jobGroups = new JobGroupController(_hostSettings);
+        }
 
         /// <summary>EEO row plus the resolved job-group description so the JS
         /// list can render the category name without an extra round-trip.</summary>

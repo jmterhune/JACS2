@@ -18,8 +18,14 @@ namespace tjc.Modules.JudicialReferral.Views
 {
     public partial class Review : JudicialReferralModuleBase
     {
-        private readonly JudgeReferralController ctl = new JudgeReferralController();
-        private readonly AttachmentController attCtl = new AttachmentController();
+        private readonly JudgeReferralController ctl;
+        private readonly AttachmentController attCtl;
+
+        public Review()
+        {
+            ctl = new JudgeReferralController(_hostSettings);
+            attCtl = new AttachmentController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -40,7 +46,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void PopulateJudgeList()
         {
-            var rCtl = new RoleController();
+            var rCtl = RoleController.Instance;
             var judgeList = rCtl.GetUsersByRole(PortalId, JudgeRole);
             var judges = new List<UserInfo>();
             foreach (UserInfo j in judgeList) judges.Add(j);

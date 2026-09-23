@@ -86,7 +86,7 @@ namespace tjc.Modules.ExitSurvey
         {
             if (UserId <= 0 || UserInfo == null) return;
 
-            var empCtl = new EmployeeLookupController();
+            var empCtl = new EmployeeLookupController(_hostSettings);
             EmployeeLookup emp = empCtl.GetForUser(UserId, UserInfo.FirstName, UserInfo.LastName);
             if (emp == null) return;
 
@@ -146,7 +146,7 @@ namespace tjc.Modules.ExitSurvey
                     return;
                 }
 
-                var ctl = new ExitSurveyController();
+                var ctl = new ExitSurveyController(_hostSettings);
 
                 var response = new ExitSurveyResponse
                 {

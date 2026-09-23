@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,16 @@ namespace tjc.Modules.RecordDestruction.Components
 {
     internal class RecordTypeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RecordTypeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateRecordType(RecordType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RecordType>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.RecordDestruction.Components
 
         public void DeleteRecordType(RecordType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RecordType>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public IEnumerable<RecordType> GetRecordTypes()
         {
             IEnumerable<RecordType> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RecordType>();
                 t = rep.Get();
@@ -53,7 +61,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public RecordType GetRecordType(int recordTypeId)
         {
             RecordType t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RecordType>();
                 t = rep.GetById(recordTypeId);
@@ -63,7 +71,7 @@ namespace tjc.Modules.RecordDestruction.Components
 
         public void UpdateRecordType(RecordType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RecordType>();
                 rep.Update(t);

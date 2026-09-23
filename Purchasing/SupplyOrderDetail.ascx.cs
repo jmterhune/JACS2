@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -29,6 +30,7 @@ namespace tjc.Modules.Purchasing
     public partial class SupplyOrderDetail : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private string _currentProtocol;
         public int OrderId
         {
@@ -47,6 +49,7 @@ namespace tjc.Modules.Purchasing
         public SupplyOrderDetail()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         #region Event Handlers    
@@ -62,7 +65,7 @@ namespace tjc.Modules.Purchasing
                 _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
                 if (!IsPostBack)
                 {
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     if (CurrentOrderId > 0)
                     {
                         hdOrderId.Value = CurrentOrderId.ToString();
@@ -70,7 +73,7 @@ namespace tjc.Modules.Purchasing
                         {
                             hdSupplyId.Value = CurrentItemId.ToString();
                         }
-                        var ctl = new SupplyOrderController();
+                        var ctl = new SupplyOrderController(_hostSettings);
                         var order = ctl.GetSupplyOrder(OrderId);
                         
                         if (order != null)
@@ -97,7 +100,7 @@ namespace tjc.Modules.Purchasing
         protected void rptSupplies_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             Int32.TryParse(e.CommandArgument.ToString(), out int supplyId);
-            var ctl = new SupplyOrderController();
+            var ctl = new SupplyOrderController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteSupplyOrderItem(supplyId);
@@ -125,7 +128,7 @@ namespace tjc.Modules.Purchasing
             {
                 orderId = int.Parse(hdOrderId.Value);
             }
-            var ctl = new SupplyOrderController();
+            var ctl = new SupplyOrderController(_hostSettings);
             Components.SupplyOrder order = new Components.SupplyOrder();
 
             int supplyId = 0;
@@ -188,7 +191,7 @@ namespace tjc.Modules.Purchasing
         {
             if (OrderId > 0)
             {
-                var ctl = new SupplyOrderController();
+                var ctl = new SupplyOrderController(_hostSettings);
                 var order = ctl.GetSupplyOrder(OrderId);
                 try
                 {
@@ -229,13 +232,13 @@ namespace tjc.Modules.Purchasing
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
 
             string attachementList = string.Empty;
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             int attachmentCount = 0;
             foreach (SupplyOrderAttachment f in attachments)
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)
-                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' target='_blank' title='{4}'>attachment #{5}</a></li>", currentProtocol, PortalAlias.HTTPAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
+                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' target='_blank' title='{4}'>attachment #{5}</a></li>", currentProtocol, ((IPortalAliasInfo)PortalAlias).HttpAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
             }
             return attachementList;
 
@@ -285,7 +288,7 @@ namespace tjc.Modules.Purchasing
         }
         protected void BindSupplysList(int orderId)
         {
-            var ctl = new SupplyOrderController();
+            var ctl = new SupplyOrderController(_hostSettings);
             rptSupplies.DataSource = ctl.GetSupplyOrderItemsByOrder(orderId);
             rptSupplies.DataBind();
         }

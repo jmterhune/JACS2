@@ -62,7 +62,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindRoles()
         {
-            var roleCtrl = new RoleController();
+            var roleCtrl = RoleController.Instance;
             var roles = roleCtrl.GetRoles(PortalId).Cast<RoleInfo>().OrderBy(r => r.RoleName).ToList();
 
             drpAdminRole.Items.Clear();

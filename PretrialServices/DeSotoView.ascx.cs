@@ -10,9 +10,11 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Data;
 using System.Linq;
@@ -39,15 +41,24 @@ namespace tjc.Modules.PretrialServices
     /// -----------------------------------------------------------------------------
     public partial class DeSotoView : PretrialServicesModuleBase
     {
-        private DefendantInProgramController ctl = new DefendantInProgramController();
+        private readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
+        private readonly DefendantInProgramController ctl;
+
+        public DeSotoView()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            ctl = new DefendantInProgramController(_hostSettings);
+        }
         #region Events
 
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {                   
-                JavaScript.RequestRegistration(CommonJs.jQueryUI);
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.jQueryUI);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
 
                 if (!Page.IsPostBack)
                 {

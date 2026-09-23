@@ -10,11 +10,15 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Caching;
 using System.Web.Services.Description;
 
@@ -79,7 +83,8 @@ namespace tjc.Modules.FamilySelfHelp.Components
         {
             get
             {
-                var ctl = new Components.LogController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new Components.LogController(hostSettings);
                 return ctl.GetCaseTypesByLog(LogId);
             }
         }
@@ -88,7 +93,8 @@ namespace tjc.Modules.FamilySelfHelp.Components
         {
             get
             {
-                var ctl = new Components.LogController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new Components.LogController(hostSettings);
                 return ctl.GetServicesByLog(LogId);
             }
         }
@@ -106,7 +112,8 @@ namespace tjc.Modules.FamilySelfHelp.Components
         {
             get
             {
-               var ctl=new Components.LogController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new Components.LogController(hostSettings);
                 var services=ctl.GetServicesByLog(LogId).Select(x=>x.ServiceName);
                 return string.Join(", ", services);
             }
@@ -116,7 +123,8 @@ namespace tjc.Modules.FamilySelfHelp.Components
         {
             get
             {
-                var ctl = new Components.LogController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new Components.LogController(hostSettings);
                 var caseTypes = ctl.GetCaseTypesByLog(LogId).Select(x => x.CaseTypeName);
                 return string.Join(", ", caseTypes);
             }
@@ -127,7 +135,8 @@ namespace tjc.Modules.FamilySelfHelp.Components
             get
             {
                 Client client = new Client();
-                var ctl = new ClientController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new ClientController(hostSettings);
                 client = ctl.GetClient(ClientId);
                 if (client != null) { return client; } else { return new Client(); }
             }

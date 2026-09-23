@@ -13,7 +13,6 @@
         <asp:DropDownList ID="drpCounty" runat="server" OnSelectedIndexChanged="drpCounty_SelectedIndexChanged" AutoPostBack="true" CssClass="form-control">
             <asp:ListItem Text="< Select County >" Value="" />
             <asp:ListItem Text="DeSoto" Value="d" />
-            <asp:ListItem Text="Manatee" Value="m" />
             <asp:ListItem Text="Sarasota" Value="s" />
         </asp:DropDownList>
         <asp:RequiredFieldValidator ID="valCounty" runat="server" Display="Dynamic" ControlToValidate="drpCounty"

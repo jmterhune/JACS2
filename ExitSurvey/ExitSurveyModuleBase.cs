@@ -9,12 +9,24 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 */
+using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace tjc.Modules.ExitSurvey
 {
     public class ExitSurveyModuleBase : PortalModuleBase
     {
+        protected readonly IHostSettings _hostSettings;
+        protected readonly INavigationManager _navigationManager;
+
+        public ExitSurveyModuleBase()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+
         public string ResultsUrl { get { return EditUrl("results"); } }
 
         public string AdminRole

@@ -56,7 +56,7 @@ namespace tjc.Modules.JacsCaseMaint
         }
         private void BindCaseCycleList(int caseId)
         {
-            var tc = new CaseCycleController();
+            var tc = new CaseCycleController(_hostSettings);
             List<CaseCycle> caseCycles = new List<CaseCycle>();
             if (caseId <= 0)
             {
@@ -72,10 +72,10 @@ namespace tjc.Modules.JacsCaseMaint
         }
         private void BindCaseList()
         {
-            var tc = new InterfaceMessageController();
+            var tc = new InterfaceMessageController(_hostSettings);
             rptInterfaceList.DataSource = tc.GetMessages(txtYear.Text, txtCaseType.Text, txtSequence.Text);
             rptInterfaceList.DataBind();
-            var cl = new CaseController();
+            var cl = new CaseController(_hostSettings);
             IEnumerable<Cases> cases = cl.GetCases(txtYear.Text, txtCaseType.Text, txtSequence.Text);
             rptCaseList.DataSource = cases;
             rptCaseList.DataBind();
@@ -90,7 +90,7 @@ namespace tjc.Modules.JacsCaseMaint
         {
             if (e.CommandName == "Delete")
             {
-                var tc = new CaseCycleController();
+                var tc = new CaseCycleController(_hostSettings);
                 tc.DeleteCaseCycle(Convert.ToInt32(e.CommandArgument));
                 BindCaseCycleList(CurrentCaseCycleId);
             }
@@ -100,7 +100,7 @@ namespace tjc.Modules.JacsCaseMaint
         {
             if (e.CommandName == "Delete")
             {
-                var tc = new CaseController();
+                var tc = new CaseController(_hostSettings);
                 tc.DeleteCase(e.CommandArgument.ToString());
                 BindCaseList();
             }

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Collections;
 using DotNetNuke.Data;
 using System.Collections.Generic;
@@ -19,9 +20,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class AttorneyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttorneyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Attorney> GetAttorneys()
         {
             IEnumerable<Attorney> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.Get();
@@ -53,7 +61,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<DropDownViewModel> GetAttorneyDropDownList()
         {
             IEnumerable<DropDownViewModel> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.Get().Select(atty=> new DropDownViewModel { Id= atty.AttorneyID, Name=atty.ListName, Office=atty.OfficeName});
@@ -63,7 +71,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Attorney GetAttorney(int attorneyId)
         {
             Attorney t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.GetById(attorneyId);
@@ -72,7 +80,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Update(t);
@@ -81,7 +89,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<AttorneyViewModel> GetDesignationAttorneys(int designationId)
         {
             IEnumerable<AttorneyViewModel> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<AttorneyViewModel>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_attorneys_by_designation", designationId);
             }
@@ -90,7 +98,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Attorney> GetAttorneysByDesignation(int designationId)
         {
             IEnumerable<Attorney> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<Attorney>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_attorneys_by_designation", designationId);
             }

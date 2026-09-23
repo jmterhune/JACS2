@@ -1,12 +1,20 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class HearingTypeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public HearingTypeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateHearingType(HearingType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingType>();
                 rep.Insert(t);
@@ -19,7 +27,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteHearingType(HearingType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingType>();
                 rep.Delete(t);
@@ -28,7 +36,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<HearingType> GetHearingTypes()
         {
             IEnumerable<HearingType> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingType>();
                 t = rep.Get();
@@ -38,7 +46,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public HearingType GetHearingType(int hearingtypeId)
         {
             HearingType t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingType>();
                 t = rep.GetById(hearingtypeId);
@@ -47,7 +55,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateHearingType(HearingType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingType>();
                 rep.Update(t);

@@ -276,13 +276,13 @@ namespace tjc.Modules.EmployeeDB.Views
         protected global::System.Web.UI.WebControls.TextBox txtTerminationDate;
 
         /// <summary>
-        /// txtBadgeNumber control.
+        /// lblSupervisor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtBadgeNumber;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblSupervisor;
 
         /// <summary>
         /// drpSupervisor control.

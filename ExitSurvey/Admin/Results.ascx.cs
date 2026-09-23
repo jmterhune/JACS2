@@ -13,6 +13,7 @@ using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.UI.Skins;
 using DotNetNuke.UI.Skins.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Web.UI.WebControls;
@@ -22,16 +23,23 @@ namespace tjc.Modules.ExitSurvey.Admin
 {
     public partial class Results : ExitSurveyModuleBase
     {
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
+
+        public Results()
+        {
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 // DataTables needs jQuery; make sure DNN emits it.
-                JavaScript.RequestRegistration(CommonJs.jQuery);
+                _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
 
                 if (!IsAdmin)
                 {
-                    Response.Redirect(DotNetNuke.Common.Globals.NavigateURL(), true);
+                    Response.Redirect(_navigationManager.NavigateURL(), true);
                     return;
                 }
                 if (!IsPostBack)
@@ -53,7 +61,7 @@ namespace tjc.Modules.ExitSurvey.Admin
                     int responseId;
                     if (int.TryParse(Convert.ToString(e.CommandArgument), out responseId))
                     {
-                        new ExitSurveyController().DeleteResponse(responseId);
+                        new ExitSurveyController(_hostSettings).DeleteResponse(responseId);
                         BindResults();
                         plhMessage.Controls.Add(Skin.GetModuleMessageControl(
                             "Deleted", "The exit survey response was deleted.",
@@ -69,7 +77,7 @@ namespace tjc.Modules.ExitSurvey.Admin
 
         private void BindResults()
         {
-            var ctl = new ExitSurveyController();
+            var ctl = new ExitSurveyController(_hostSettings);
             var responses = ctl.GetResponses(ModuleId).ToList();
             pnlEmpty.Visible = responses.Count == 0;
             rptResults.Visible = responses.Count > 0;

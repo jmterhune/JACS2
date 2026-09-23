@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,11 +37,15 @@ namespace tjc.Modules.FamilySelfHelp
     public partial class MergeClients : FamilySelfHelpModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         private ModuleSecurity modSecurty;
 
         public MergeClients()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
         }
         public bool hasDelete
         {
@@ -64,7 +69,7 @@ namespace tjc.Modules.FamilySelfHelp
         public string GetCaseNumbers(string clientId)
         {
 
-            var ctl = new Components.LogController();
+            var ctl = new Components.LogController(_hostSettings);
             IEnumerable<Log> logs = ctl.GetLogsByClient(long.Parse(clientId));
             string outString = "";
             foreach (Log c in logs)
@@ -88,7 +93,7 @@ namespace tjc.Modules.FamilySelfHelp
         {
             try
             {
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
 
                 if (!IsPostBack)
                 {
@@ -120,7 +125,7 @@ namespace tjc.Modules.FamilySelfHelp
             if (e.CommandName == "merge")
             {
                 long clientId = Int32.Parse(e.CommandArgument.ToString());
-                var ctl = new ClientController();
+                var ctl = new ClientController(_hostSettings);
                 foreach (Client d in Clients)
                 {
                     if (d.ClientId != clientId)
@@ -142,7 +147,7 @@ namespace tjc.Modules.FamilySelfHelp
         protected void cmdClient_Click(object sender, EventArgs e)
         {
             long clientId = Int32.Parse(hdClientId.Value);
-            var ctl = new ClientController();
+            var ctl = new ClientController(_hostSettings);
             Client client = ctl.GetClient(clientId);
             if (!Clients.Exists(d => d.ClientId == clientId))
                 Clients.Add(client);

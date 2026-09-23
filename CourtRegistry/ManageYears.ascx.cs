@@ -10,9 +10,11 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.UI.Utilities.Animation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,12 +40,19 @@ namespace tjc.Modules.CourtRegistry
     /// -----------------------------------------------------------------------------
     public partial class ManageYears : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ManageYears()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Methods
         private void SendEmails()
         {
             var sm = new DotNetNuke.Services.Mail.SendTokenizedBulkEmail();
             int year = System.Convert.ToInt32(drpEmailYear.SelectedValue);
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             DotNetNuke.UI.UserControls.TextEditor textEditor = (DotNetNuke.UI.UserControls.TextEditor)this.FindControl("txtBody");
             IEnumerable<Attorney> attorneys= ctl.GetAttorneys(drpAttorneys.SelectedValue=="1", year);
             foreach (Attorney atty in attorneys)
@@ -75,7 +84,7 @@ namespace tjc.Modules.CourtRegistry
         }
         private void BindLists()
         {
-            var ctl = new ApplicationController();
+            var ctl = new ApplicationController(_hostSettings);
             IEnumerable<ApplicationPeriod> periods = ctl.GetApplicationPeriods().OrderByDescending(x => x.PeriodYear); ;
             rptYears.DataSource = periods;
             rptYears.DataBind();
@@ -83,7 +92,7 @@ namespace tjc.Modules.CourtRegistry
             drpExportYear.DataBind();
             drpYear.DataSource = periods;
             drpYear.DataBind();
-            var lCtl = new LocationController();
+            var lCtl = new LocationController(_hostSettings);
             drpLocations.DataSource = lCtl.GetLocations();
             drpLocations.DataBind();
             drpEmailYear.DataSource = periods;
@@ -119,7 +128,7 @@ namespace tjc.Modules.CourtRegistry
             if (e.CommandName == "delete")
             {
                 Int32.TryParse(e.CommandArgument.ToString(), out int year);
-                var ctl = new ApplicationController();
+                var ctl = new ApplicationController(_hostSettings);
                 ctl.DeleteApplicationPeriod(year);
                 BindLists();
 
@@ -127,7 +136,7 @@ namespace tjc.Modules.CourtRegistry
             if (e.CommandName == "edit")
             {
                 Int32.TryParse(e.CommandArgument.ToString(), out int year);
-                var ctl = new ApplicationController();
+                var ctl = new ApplicationController(_hostSettings);
                 ApplicationPeriod applicationPeriod = ctl.GetApplicationPeriod(year);
                 if (applicationPeriod != null)
                 {
@@ -145,7 +154,7 @@ namespace tjc.Modules.CourtRegistry
         {
             int year = Int32.Parse(txtYearPeriodEnds.Text);
             DateTime deadline = DateTime.Parse(txtModificationDeadline.Text);
-            var ctl = new ApplicationController();
+            var ctl = new ApplicationController(_hostSettings);
             var existing = ctl.GetApplicationPeriod(year);
             if (existing != null)
             {

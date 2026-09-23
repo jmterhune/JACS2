@@ -18,8 +18,14 @@ namespace tjc.Modules.JudicialReferral.Views
 {
     public partial class EditLogEntry : JudicialReferralModuleBase
     {
-        private readonly JudgeReferralController ctl = new JudgeReferralController();
-        private readonly AttachmentController attCtl = new AttachmentController();
+        private readonly JudgeReferralController ctl;
+        private readonly AttachmentController attCtl;
+
+        public EditLogEntry()
+        {
+            ctl = new JudgeReferralController(_hostSettings);
+            attCtl = new AttachmentController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +40,7 @@ namespace tjc.Modules.JudicialReferral.Views
                         var objReferral = ctl.GetReferral(ReferralID);
                         if (objReferral != null)
                         {
-                            var judgeInfo = UserController.GetUserById(PortalId, objReferral.JudgeId);
+                            var judgeInfo = UserController.GetUserById(_hostSettings, PortalId, objReferral.JudgeId);
                             if (judgeInfo != null)
                                 txtJudge.Text = judgeInfo.DisplayName;
                             txtCaseName.Text = objReferral.CaseParties;
@@ -76,7 +82,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void BindSimple(DropDownList ddl, string sql)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var items = ctx.ExecuteQuery<StringRow>(CommandType.Text, sql).ToList();
                 foreach (var r in items)
@@ -89,7 +95,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void BindActiveInactive(DropDownList ddl, string sql)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var items = ctx.ExecuteQuery<ActiveRow>(CommandType.Text, sql).ToList();
                 foreach (var r in items.Where(x => x.IsActive))
@@ -128,7 +134,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
                 // Insert into tjc_cc_history
                 int logId;
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     const string sql = @"
                     INSERT INTO tjc_cc_history

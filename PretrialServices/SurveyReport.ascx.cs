@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -35,6 +37,13 @@ namespace tjc.Modules.PretrialServices
     /// -----------------------------------------------------------------------------
     public partial class SurveyReport : PretrialServicesModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public SurveyReport()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Events
 
         protected void Page_Load(object sender, EventArgs e)
@@ -75,7 +84,7 @@ namespace tjc.Modules.PretrialServices
                 startDate = DateTimeExtensions.FirstDayOfMonth(reportDate);
                 endDate = DateTimeExtensions.LastDayOfMonth(reportDate);
             }
-            var ctl = new DefendantInProgramController();
+            var ctl = new DefendantInProgramController(_hostSettings);
             IEnumerable<DefendantInProgram> defendantInPrograms = ctl.GetDefendantsInProgram(startDate, endDate);
             lblScreened.Text = defendantInPrograms.Where(x => x.CaseScreened==true).Count().ToString();
             lblNotScreened.Text = defendantInPrograms.Where(x => x.CaseScreened == false ).Count().ToString();

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,17 @@ namespace tjc.Intranet.API.Components.Employee
     internal class EmployeeController
     {
         private const string CONN_INTRANET = "Intranet"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public EmployeeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public Employee GetEmployeePersonalInfo(string email)
         {
             Employee t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<Employee>();
                 t = rep.Find("Where EmailWork Like @0", email.Trim() + "%").FirstOrDefault();
@@ -32,7 +40,7 @@ namespace tjc.Intranet.API.Components.Employee
         public Employee GetEmployeeById(long employeeId)
         {
             Employee t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<Employee>();
                 t = rep.GetById(employeeId);
@@ -42,7 +50,7 @@ namespace tjc.Intranet.API.Components.Employee
         public Phone GetPhoneById(long phoneId)
         {
             Phone t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<Phone>();
                 t = rep.GetById(phoneId);
@@ -52,7 +60,7 @@ namespace tjc.Intranet.API.Components.Employee
         public EmergencyContact GetEmergencyContactById(long employeeId)
         {
             EmergencyContact t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<EmergencyContact>();
                 t = rep.GetById(employeeId);
@@ -62,7 +70,7 @@ namespace tjc.Intranet.API.Components.Employee
         public IEnumerable<Phone> GetEmployeePhones(long employeeId)
         {
             IEnumerable<Phone> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<Phone>();
                 t = rep.Find("Where EmployeeId = @0", employeeId);
@@ -72,7 +80,7 @@ namespace tjc.Intranet.API.Components.Employee
         public IEnumerable<EmergencyContact> GetEmergencyContacts(long employeeId)
         {
             IEnumerable<EmergencyContact> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<EmergencyContact>();
                 t = rep.Find("Where EmployeeId = @0", employeeId);
@@ -84,7 +92,7 @@ namespace tjc.Intranet.API.Components.Employee
         {
             try
             {
-                using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+                using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
                 {
                     var rep = ctx.GetRepository<Employee>();
                     rep.Update(employee);
@@ -101,7 +109,7 @@ namespace tjc.Intranet.API.Components.Employee
         {
             try
             {
-                using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+                using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
                 {
                     if (phone.PhoneId == 0)
                     {
@@ -122,7 +130,7 @@ namespace tjc.Intranet.API.Components.Employee
         }
         public void DeletePhones(IEnumerable<long> phoneIds)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 foreach (long id in phoneIds)
                 {
@@ -136,7 +144,7 @@ namespace tjc.Intranet.API.Components.Employee
         {
             try
             {
-                using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+                using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
                 {
                     if (contact.ContactId == 0)
                     {
@@ -157,7 +165,7 @@ namespace tjc.Intranet.API.Components.Employee
         }
         public void DeleteEmergencyContacts(IEnumerable<long> contactIds)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 foreach (long id in contactIds)
                 {

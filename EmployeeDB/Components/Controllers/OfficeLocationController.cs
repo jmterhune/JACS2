@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class OfficeLocationController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public OfficeLocationController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public OfficeLocationInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<OfficeLocationInfo>();
                 return rep.GetById(id);
@@ -21,7 +29,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<OfficeLocationInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<OfficeLocationInfo>();
                 return rep.Get();
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<OfficeLocationInfo>();
                 rep.Insert(item);
@@ -61,7 +69,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<OfficeLocationInfo>();
                 rep.Update(item);
@@ -73,7 +81,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var item = GetById(id);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<OfficeLocationInfo>();
                     rep.Delete(item);
@@ -84,7 +92,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         // Returns 1 if deleted; 0 if the location is still referenced by one or more employees.
         public int DeleteLocation(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var inUse = ctx.ExecuteScalar<int>(CommandType.Text,
                     "SELECT COUNT(*) FROM tjc_employee WHERE OfficeLocationId = @0",
@@ -102,7 +110,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void UpdateLocation(int id, string description, int userId = -1)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "UPDATE tjc_employee_office_location SET Description = @0, LastModifiedDate = @1, LastModifiedById = @2 WHERE OfficeLocationId = @3",

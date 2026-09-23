@@ -1,4 +1,7 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Web.Caching;
@@ -32,7 +35,9 @@ namespace tjc.Modules.ExpertWitness.Components
         public string HeaderTypes
         {
             get
-            { var ctl = new TemplateController();
+            {
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new TemplateController(hostSettings);
                 TemplateSequence templateSequence = ctl.GetTemplateSequence(TemplateID,Sequence);
                 string headerTypes = string.Format("Requirement #{0}: ", Sequence);
                 headerTypes += string.Format("Select {0} of the following ( ", templateSequence.NumberRequired);

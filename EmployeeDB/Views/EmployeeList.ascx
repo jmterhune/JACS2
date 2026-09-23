@@ -29,23 +29,24 @@
         <a class="btn btn-primary" href="<%=EditUrl("Details") %>"><i class="fas fa-list"></i>&nbsp;Details List</a>
         <a class="btn btn-primary" href="<%=EditUrl("EEO") %>"><i class="fas fa-balance-scale"></i>&nbsp;EEO Setup</a>
         <a class="btn btn-primary" href="/12th-Circuit-Services/Human-Resources/Employee-Reports"><i class="fas fa-chart-bar"></i>&nbsp;Reports</a>
-        <%-- The SWN buttons hit Components/Api/SwnController.cs via AJAX
-             (see Scripts/empdb-list.js#swn). Buttons are plain HTML now —
-             previously they were asp:LinkButton with postback handlers, but
-             the postback was polluting the URL and there was no good place
-             to surface progress while Sync churned through ~600 contacts.
-             SWN Sync calls AddAllGroups internally, so the explicit
-             "Add All Groups" button is no longer exposed here. --%>
-        <button type="button" id="empdbSwnMissing"     class="btn btn-warning ms-auto"><i class="fas fa-user-slash"></i>&nbsp;Show Missing SWN Contacts</button>
-        <button type="button" id="empdbSwnAddMissing"  class="btn btn-warning"><i class="fas fa-user-plus"></i>&nbsp;Add Missing SWN Contacts</button>
-        <button type="button" id="empdbSwnSync"        class="btn btn-warning"><i class="fas fa-sync"></i>&nbsp;SWN Sync</button>
-        <button type="button" id="empdbSwnExport"      class="btn btn-warning"><i class="fas fa-file-export"></i>&nbsp;SWN Export</button>
+        <%-- Crisis24 Export hits Components/Api/Crisis24Controller.cs via AJAX
+             (see Scripts/empdb-list.js#crisis24). It builds the Person/HR feed
+             CSV and drops it on the Crisis24 SFTP site — nothing is downloaded
+             to the browser, so the roster's PII never lands on a workstation.
+             The old Send Word Now sync buttons that used to sit here are gone
+             along with the SWN web service. --%>
+        <%-- Preview downloads the identical file without transmitting it —
+             used to get the layout approved by Crisis24 before go-live, and
+             as a dry run afterwards. See Crisis24Controller.Preview. --%>
+        <button type="button" id="empdbCrisis24Preview" class="btn btn-warning ms-auto"><i class="fas fa-file-csv"></i>&nbsp;Preview Crisis24 File</button>
+        <button type="button" id="empdbCrisis24Export" class="btn btn-warning"><i class="fas fa-file-export"></i>&nbsp;Crisis24 Export</button>
     </div>
 
-    <%-- Full-screen busy overlay shown while the SWN endpoints are running.
-         The Sync call can take several minutes; this gives the HR Admin a
-         clear "still working" signal so they don't click the button again
-         or navigate away mid-sync. Toggled by Scripts/empdb-list.js. --%>
+    <%-- Full-screen busy overlay shown while the Crisis24 export is running.
+         Building the file and pushing it over SFTP takes a while on a ~600-row
+         roster; this gives the HR Admin a clear "still working" signal so they
+         don't click again or navigate away mid-transfer. Toggled by
+         Scripts/empdb-list.js. --%>
     <div id="empdbBusyOverlay" class="empdb-busy-overlay" style="display:none;" aria-hidden="true">
         <div class="empdb-busy-card">
             <div class="spinner-border text-warning empdb-busy-spinner" role="status">
@@ -65,7 +66,7 @@
 
     <div class="tabs">
         <ul class="nav nav-tabs" id="employeeAdminTabs" role="tablist">
-            <li class="nav-item active"><a class="nav-link" href="#pane-employees" data-bs-toggle="tab">Employees</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#pane-employees" data-bs-toggle="tab">Employees</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-jobgroups" data-bs-toggle="tab">Job Categories</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-jobclasses" data-bs-toggle="tab">Classes</a></li>
             <li class="nav-item"><a class="nav-link" href="#pane-races" data-bs-toggle="tab">Race</a></li>
@@ -199,7 +200,8 @@
             <%-- ===== Supervisors (API-driven, HR admins only) =====
                  Employee typeahead at the top: type to search, click a
                  suggestion to add as a supervisor. The lower table is the
-                 current roster — Active toggles IsActive on the row;
+                 current roster — Active is read-only (reflects the
+                 supervisor's own employee record, not a per-row toggle);
                  Trash deletes the row (refused server-side if the
                  supervisor is still assigned to any employees). --%>
             <div class="tab-pane" id="pane-supervisors">
@@ -233,12 +235,11 @@
                         <tr>
                             <th class="command-item no-sort"></th>
                             <th>Group Name</th>
-                            <th class="text-center">SWN Group?</th>
                             <th class="command-item no-sort"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="4" class="text-muted text-center">Loading…</td></tr>
+                        <tr><td colspan="3" class="text-muted text-center">Loading…</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -395,10 +396,12 @@
                         <label>Group Name:</label>
                         <input type="text" name="GroupName" class="form-control" maxlength="50" />
                     </div>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" name="IsSwnGroup" id="empdbDepartmentSwn" />
-                        <label class="form-check-label" for="empdbDepartmentSwn">Is SWN Group</label>
-                    </div>
+                    <%-- The "Is SWN Group" switch that used to sit here only
+                         drove the group columns on the Send Word Now export.
+                         The Crisis24 Person/HR feed carries no group columns,
+                         so the flag no longer controls anything; the
+                         tjc_gl_group.IsSwnGroup column is left untouched in
+                         the DB (DepartmentsController preserves it on save). --%>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="empdbDepartmentSave" class="btn btn-primary">Save</button>
@@ -652,12 +655,42 @@
         try { sessionStorage.setItem(EMP_TAB_KEY, href); } catch (e) { }
     }
 
+    // Any DataTable built while its tab-pane was hidden (display:none) locks
+    // in zero-width columns — DataTables measures header widths at init time
+    // and never re-measures on its own. Every admin sub-tab except Employees
+    // (the only one visible at page load) hits this: empdb-list.js builds
+    // those tables immediately on document ready, long before the user ever
+    // switches to their tab. Re-running columns.adjust() once the pane is
+    // actually shown fixes it — this is DataTables' own documented fix for
+    // "table initialised in a hidden container".
+    function AdjustDataTablesIn(pane) {
+        if (!pane || !window.jQuery || !jQuery.fn.DataTable) return;
+        jQuery(pane).find("table.dataTable").each(function () {
+            if (jQuery.fn.DataTable.isDataTable(this)) {
+                jQuery(this).DataTable().columns.adjust();
+            }
+        });
+    }
+
     (function ($) {
         $(document).off("click.empTab").on("click.empTab", ".tabs .nav-link[data-toggle=tab], .tabs .nav-link[data-bs-toggle=tab]", function () {
             var href = this.getAttribute("href");
             if (href) { SetActiveEmpTab(href); }
         });
     })(jQuery);
+
+    // Fix up column widths the instant a pane actually becomes visible.
+    // Bootstrap 5 dispatches "shown.bs.tab" as a genuine native Event whose
+    // .type is the literal string "shown.bs.tab" — jQuery's .on() parses the
+    // dots as namespaces and only ever registers a native listener for
+    // "shown", so $(document).on("shown.bs.tab", ...) silently never fires
+    // for it. Native addEventListener is required here.
+    document.addEventListener("shown.bs.tab", function (e) {
+        var trigger = e.target.closest(".tabs .nav-link[data-toggle=tab], .tabs .nav-link[data-bs-toggle=tab]");
+        if (!trigger) return;
+        var href = trigger.getAttribute("href");
+        if (href) { AdjustDataTablesIn(document.querySelector(href)); }
+    });
 
     function RestoreActiveEmpTab() {
         var href = GetActiveEmpTab();
@@ -678,6 +711,11 @@
         if (li) li.classList.add("active");
         link.classList.add("active");
         pane.classList.add("active");
+
+        // This swap bypasses Bootstrap's Tab component entirely (no
+        // shown.bs.tab fires), so fix up the newly-visible pane's
+        // DataTable(s) directly.
+        AdjustDataTablesIn(pane);
     }
 
     jQuery(document).ready(RestoreActiveEmpTab);

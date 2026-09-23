@@ -10,8 +10,10 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.PretrialServices
@@ -38,6 +40,13 @@ namespace tjc.Modules.PretrialServices
     /// -----------------------------------------------------------------------------
     public partial class Settings : PretrialServicesModuleSettingsBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public Settings()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Base Method Implementations
 
         /// -----------------------------------------------------------------------------
@@ -51,7 +60,7 @@ namespace tjc.Modules.PretrialServices
             {
                 if (Page.IsPostBack == false)
                 {
-                    var ctl = new Globals.CountyController();
+                    var ctl = new Globals.CountyController(_hostSettings);
                     drpCounty.DataValueField = "CountyId";
                     drpCounty.DataTextField = "CountyName";
                     drpCounty.DataSource = ctl.GetCounties();
@@ -77,7 +86,7 @@ namespace tjc.Modules.PretrialServices
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
                 //tab module settings
                 modules.UpdateTabModuleSetting(TabModuleId, "CountyId", drpCounty.SelectedValue);
                 modules.UpdateTabModuleSetting(TabModuleId, "ReportUrl", txtReportUrl.Text);

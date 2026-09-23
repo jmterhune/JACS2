@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,16 @@ namespace tjc.Modules.Globals
 {
     public class CountyController
     {
-        
+        private readonly IHostSettings _hostSettings;
+
+        public CountyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateCounty(County t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 rep.Insert(t);
@@ -35,7 +42,7 @@ namespace tjc.Modules.Globals
 
         public void DeleteCounty(County t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 rep.Delete(t);
@@ -45,7 +52,7 @@ namespace tjc.Modules.Globals
         public IEnumerable<County> GetCounties()
         {
             IEnumerable<County> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.Get();
@@ -55,18 +62,18 @@ namespace tjc.Modules.Globals
         public bool CountyExists(int countyId)
         {
             County t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.GetById(countyId);
             }
             return t.CountyId > 0;
         }
- 
+
         public County GetCounty(int countyId)
         {
             County t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.GetById(countyId);
@@ -75,7 +82,7 @@ namespace tjc.Modules.Globals
         }
         public void UpdateCounty(County t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 rep.Update(t);

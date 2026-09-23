@@ -7,7 +7,10 @@
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using tjc.Modules.JudicialReferral.Components.Controllers;
 using tjc.Modules.JudicialReferral.Components.Models;
 
@@ -16,6 +19,8 @@ namespace tjc.Modules.JudicialReferral.Services
     [DnnAuthorize]
     public class StatusController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         public class UpdateRequest
         {
             public int ReferralId { get; set; }
@@ -51,7 +56,7 @@ namespace tjc.Modules.JudicialReferral.Services
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { error = "Unknown status code." });
             }
 
-            var ctl = new JudgeReferralController();
+            var ctl = new JudgeReferralController(_hostSettings);
             ctl.UpdateStatus(req.ReferralId, req.Status);
 
             // Mirror the Review view's behavior: when a referral transitions to

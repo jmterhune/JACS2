@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,11 +10,17 @@ namespace tjc.Modules.MediationStatistics.Components
 {
     internal class ReportController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ReportController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<FeesOwed> GetFeesOwed()
         {
             IEnumerable<FeesOwed> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FeesOwed>();
                 t = rep.Get();
@@ -23,7 +30,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<SessionCount> GetSessionCounts()
         {
             IEnumerable<SessionCount> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SessionCount>();
                 t = rep.Get();
@@ -33,7 +40,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<SessionCount> GetSessionCounts(DateTime startDate, DateTime endDate)
         {
             IEnumerable<SessionCount> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SessionCount>();
                 t = rep.Find("Where ReferralDate Between @0 And @1", startDate, endDate).OrderBy(x => x.Region).ThenBy(x => x.CaseTypeGroup);
@@ -43,7 +50,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<StatChecker> GetStatChecker(DateTime startDate, DateTime endDate)
         {
             IEnumerable<StatChecker> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<StatChecker>();
                 t = rep.Find("Where ReferralDate Between @0 And @1", startDate, endDate).OrderBy(x => x.Region).ThenBy(x => x.CaseTypeGroup);
@@ -53,7 +60,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<FeesOwed> GetFeesOwed(DateTime startDate, DateTime endDate)
         {
             IEnumerable<FeesOwed> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FeesOwed>();
                 t = rep.Find("Where MediationDate Between @0 And @1", startDate, endDate);
@@ -108,7 +115,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<StatMediatorCounts> GetMediatorTypeReport(DateTime startDate, DateTime endDate)
         {
             IEnumerable<StatMediatorCounts> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<StatMediatorCounts>(System.Data.CommandType.StoredProcedure, "tjc_med_mediator_type_stats", startDate, endDate);
@@ -119,7 +126,7 @@ namespace tjc.Modules.MediationStatistics.Components
         {
 
             IEnumerable<StatMediatorCounts> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<StatMediatorCounts>(System.Data.CommandType.StoredProcedure, "tjc_med_mediator_stats", startDate, endDate);
@@ -129,7 +136,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<FeeReportCollectedOwed> GetFeeReportCollectedOwed(DateTime startDate, DateTime endDate)
         {
             IEnumerable<FeeReportCollectedOwed> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<FeeReportCollectedOwed>(System.Data.CommandType.StoredProcedure, "tjc_med_fee_report_collected_owed", startDate, endDate);

@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,18 +27,20 @@ namespace tjc.Modules.JudgeVacation
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public View()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void PopulateYears()
         {
             drpYear.DataTextField = "Years";
             drpYear.DataValueField = "Years";
-            var ctl = new HolidayController();
+            var ctl = new HolidayController(_hostSettings);
             var years = ctl.GetYearsAvailable(UserId);
             if (years.Where(x => x.Years == DateTime.Now.Year).Count() <= 0)
             {
@@ -49,7 +52,7 @@ namespace tjc.Modules.JudgeVacation
 
         private void BindData()
         {
-            var ctl = new JudgeVacationController();
+            var ctl = new JudgeVacationController(_hostSettings);
             rptVacationDays.DataSource = ctl.GetJudgeVacations(UserId, CurrentYear);
             rptVacationDays.DataBind();
         }
@@ -103,7 +106,7 @@ namespace tjc.Modules.JudgeVacation
                         cmdSave.Visible = false;
                         cmdUpdate.Visible = true;
                         pnlRecords.Visible = false;
-                        var ctl = new JudgeVacationController();
+                        var ctl = new JudgeVacationController(_hostSettings);
                         var objJC = ctl.GetJudgeVacation(CalenderID);
                         if (objJC != null)
                         {
@@ -134,7 +137,7 @@ namespace tjc.Modules.JudgeVacation
             if (e.CommandName == "delete")
             {
                 int mycalendarId = int.Parse(e.CommandArgument.ToString());
-                var ctl = new JudgeVacationController();
+                var ctl = new JudgeVacationController(_hostSettings);
                 var objJC = ctl.GetJudgeVacation(mycalendarId);
                 ctl.DeleteJudgeVacation(mycalendarId);
                 SendEmails("d", objJC.StartDate.ToShortDateString(), objJC.EndDate.ToShortDateString(), "", "");
@@ -164,8 +167,8 @@ namespace tjc.Modules.JudgeVacation
             DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
             if (!string.IsNullOrWhiteSpace(StartDatePicker.Text) & !string.IsNullOrWhiteSpace(EndDatePicker.Text))
             {
-                var ctl = new JudgeVacationController();
-                var hCtl = new HolidayController();
+                var ctl = new JudgeVacationController(_hostSettings);
+                var hCtl = new HolidayController(_hostSettings);
                 var objJC = new Components.JudgeVacation()
                 {
                     StartDate = startDate,
@@ -189,8 +192,8 @@ namespace tjc.Modules.JudgeVacation
         {
             DateTime.TryParse(StartDatePicker.Text, out DateTime startDate);
             DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
-            var ctl = new JudgeVacationController();
-            var hCtl = new HolidayController();
+            var ctl = new JudgeVacationController(_hostSettings);
+            var hCtl = new HolidayController(_hostSettings);
             var objJC = ctl.GetJudgeVacation(CalenderID);
             var previousStartDate = objJC.StartDate;
             var previousEndDate = objJC.EndDate;

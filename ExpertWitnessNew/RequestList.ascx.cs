@@ -17,10 +17,12 @@ namespace tjc.Modules.ExpertWitness
     public partial class RequestList : ExpertWitnessModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
 
         public RequestList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -32,7 +34,7 @@ namespace tjc.Modules.ExpertWitness
                     Response.Redirect(_navigationManager.NavigateURL());
                     return;
                 }
-                JavaScript.RequestRegistration(CommonJs.jQuery);
+                _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
                 ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             }
             catch (Exception exc)

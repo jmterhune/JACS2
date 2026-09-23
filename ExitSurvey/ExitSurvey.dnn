@@ -42,7 +42,6 @@
             </resourceFile>
           </resourceFiles>
         </component>
-
         <component type="Module">
           <desktopModule>
             <moduleName>Exit Survey</moduleName>

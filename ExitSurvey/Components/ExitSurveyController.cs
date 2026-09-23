@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 '
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,18 @@ namespace tjc.Modules.ExitSurvey.Components
 {
     public class ExitSurveyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ExitSurveyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         #region Response
         // Inserts the response and returns the identity assigned to it.
         public int CreateResponse(ExitSurveyResponse response)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExitSurveyResponse>();
                 rep.Insert(response);
@@ -31,7 +39,7 @@ namespace tjc.Modules.ExitSurvey.Components
 
         public ExitSurveyResponse GetResponse(int responseId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<ExitSurveyResponse>().GetById(responseId);
             }
@@ -39,7 +47,7 @@ namespace tjc.Modules.ExitSurvey.Components
 
         public IEnumerable<ExitSurveyResponse> GetResponses(int moduleId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<ExitSurveyResponse>()
                     .Find("WHERE ModuleID = @0 ORDER BY CreatedOnDate DESC", moduleId);
@@ -50,7 +58,7 @@ namespace tjc.Modules.ExitSurvey.Components
         {
             var response = GetResponse(responseId);
             if (response == null) return;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<ExitSurveyResponse>().Delete(response);
                 ctx.GetRepository<ExitSurveyRating>().Delete("WHERE ResponseID = @0", responseId);
@@ -62,7 +70,7 @@ namespace tjc.Modules.ExitSurvey.Components
         #region Rating
         public void CreateRating(ExitSurveyRating rating)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<ExitSurveyRating>().Insert(rating);
             }
@@ -70,7 +78,7 @@ namespace tjc.Modules.ExitSurvey.Components
 
         public IEnumerable<ExitSurveyRating> GetRatings(int responseId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<ExitSurveyRating>()
                     .Find("WHERE ResponseID = @0 ORDER BY RatingID", responseId);
@@ -86,7 +94,7 @@ namespace tjc.Modules.ExitSurvey.Components
         #region Reason
         public void CreateReason(ExitSurveyReason reason)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<ExitSurveyReason>().Insert(reason);
             }
@@ -94,7 +102,7 @@ namespace tjc.Modules.ExitSurvey.Components
 
         public IEnumerable<ExitSurveyReason> GetReasons(int responseId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<ExitSurveyReason>()
                     .Find("WHERE ResponseID = @0 ORDER BY ReasonID", responseId);

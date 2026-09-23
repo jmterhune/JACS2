@@ -1,7 +1,10 @@
-using DotNetNuke.Common;
+using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Data;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Mail;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +14,22 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 {
     public class JudgeReferralController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public JudgeReferralController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        private IDataContext GetContext()
+        {
+            return DataContext.Instance(_hostSettings);
+        }
+
         public JudgeReferralInfo GetReferral(int referralId)
         {
             JudgeReferralInfo item;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<JudgeReferralInfo>();
                 item = rep.GetById(referralId);
@@ -25,7 +40,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
         public IEnumerable<JudgeReferralInfo> GetReferralsByJudge(int judgeId)
         {
             IEnumerable<JudgeReferralInfo> items;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<JudgeReferralInfo>();
                 items = rep.Find("WHERE JudgeId = @0", judgeId);
@@ -37,7 +52,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
             string caseNumber, int judgeId, string motionTitle, int status)
         {
             IEnumerable<JudgeReferralInfo> items;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var conditions = new List<string>();
                 var args = new List<object>();
@@ -86,7 +101,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 
         public int AddReferral(JudgeReferralInfo item)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<JudgeReferralInfo>();
                 rep.Insert(item);
@@ -96,7 +111,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 
         public void UpdateReferral(JudgeReferralInfo item)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<JudgeReferralInfo>();
                 rep.Update(item);
@@ -105,7 +120,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 
         public void UpdateStatus(int referralId, int status)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "UPDATE tjc_jr_referrals SET Status = @0 WHERE ReferralId = @1",
@@ -118,7 +133,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
             var item = GetReferral(referralId);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = GetContext())
                 {
                     var rep = ctx.GetRepository<JudgeReferralInfo>();
                     rep.Delete(item);
@@ -135,10 +150,12 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
         public static void SendToCounsel(JudgeReferralInfo objReferral, int portalId, int tabId, int moduleId, string courtCounselEmail)
         {
             if (objReferral == null) return;
-            var objJudge = UserController.GetUserById(portalId, objReferral.JudgeId);
+            var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+            var objJudge = UserController.GetUserById(hostSettings, portalId, objReferral.JudgeId);
             if (objJudge == null) return;
 
-            string editUrl = Globals.NavigateURL(tabId, "editlog",
+            var navigationManager = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<INavigationManager>();
+            string editUrl = navigationManager.NavigateURL(tabId, "editlog",
                 "mid=" + moduleId,
                 "rid=" + objReferral.ReferralId);
 

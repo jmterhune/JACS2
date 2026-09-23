@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,9 +26,11 @@ namespace tjc.Modules.Purchasing
     public partial class ViewForm : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public ViewForm()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         protected void Page_PreRender(object sender, EventArgs e)
         {
@@ -66,7 +69,7 @@ namespace tjc.Modules.Purchasing
         {
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
             var orders = ctl.GetFormOrders(startDate, endDate.AddDays(1));
             if (chkShowCompleted.Checked)
             {
@@ -86,7 +89,7 @@ namespace tjc.Modules.Purchasing
         protected void rptOrders_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int orderId = int.Parse(e.CommandArgument.ToString());
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
 
             if (e.CommandName == "toggle")
             {
@@ -139,7 +142,7 @@ namespace tjc.Modules.Purchasing
         protected string BuildFormOrderLines(int orderId)
         {
             StringBuilder sb = new StringBuilder();
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
             IEnumerable<FormOrderItem> fi = ctl.GetFormOrderItemsByOrder(orderId);
             foreach (FormOrderItem f in fi)
             {
@@ -155,9 +158,9 @@ namespace tjc.Modules.Purchasing
         protected string BuildAttachments(int formId)
         {
             string attachementList = string.Empty;
-            var aCtl = new AttachmentController();
+            var aCtl = new AttachmentController(_hostSettings);
             IEnumerable<FormOrderAttachment> attachments = aCtl.GetFormAttachmentsByFormId(formId);
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             int attachmentCount = 0;
             foreach (FormOrderAttachment f in attachments)
             {

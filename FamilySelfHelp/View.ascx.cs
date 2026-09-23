@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -36,11 +37,15 @@ namespace tjc.Modules.FamilySelfHelp
     public partial class View : FamilySelfHelpModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         private ModuleSecurity modSecurty;
 
         public View()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
         }
         public bool hasDelete
         {
@@ -68,7 +73,7 @@ namespace tjc.Modules.FamilySelfHelp
         {
             try
             {
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
 
                 if (!IsPostBack)
                 {
@@ -113,8 +118,8 @@ namespace tjc.Modules.FamilySelfHelp
                 ClientId = long.Parse(hdClientId.Value);
                 pnlDetails.Visible = true;
                 fsDetails.Visible = true;
-                var ctl = new Components.LogController();
-                var ctlC = new Components.ClientController();
+                var ctl = new Components.LogController(_hostSettings);
+                var ctlC = new Components.ClientController(_hostSettings);
                 Client objClient = ctlC.GetClient(ClientId);
                 lnkEditLink.NavigateUrl = EditUrl("cid", ClientId.ToString(), "client");
                 lnkNewLog.NavigateUrl = EditUrl("cid", ClientId.ToString(), "log");
@@ -137,7 +142,7 @@ namespace tjc.Modules.FamilySelfHelp
 
         protected void rptEvents_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
-            var ctl = new Components.LogController();
+            var ctl = new Components.LogController(_hostSettings);
             int logId = Convert.ToInt32(e.CommandArgument);
             if (e.CommandName == "delete")
             {

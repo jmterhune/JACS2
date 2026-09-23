@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net;
@@ -15,7 +18,13 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class RacesController : DnnApiController
     {
-        private readonly RaceController _ctrl = new RaceController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly RaceController _ctrl;
+
+        public RacesController()
+        {
+            _ctrl = new RaceController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("All")]

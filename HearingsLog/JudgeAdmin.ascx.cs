@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,12 @@ namespace tjc.Modules.HearingLog
     public partial class JudgeAdmin : HearingsLogModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        public JudgeAdmin() => _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        private readonly IHostSettings _hostSettings;
+        public JudgeAdmin()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -45,7 +51,7 @@ namespace tjc.Modules.HearingLog
         {
             Int32.TryParse(drpJudge.SelectedValue, out int judgeUserId);
             Int32.TryParse(drpJA.SelectedValue, out int jaUserId);
-            var ctl = new JudgeController();
+            var ctl = new JudgeController(_hostSettings);
             if (judgeUserId > 0)
                 ctl.DeleteJudgeJaRef(judgeUserId);
             if (judgeUserId > 0 && jaUserId > 0)
@@ -88,7 +94,7 @@ namespace tjc.Modules.HearingLog
         {
             if (drpJudge.SelectedIndex > 0)
             {
-                var ctl = new JudgeController();
+                var ctl = new JudgeController(_hostSettings);
                 Int32.TryParse(drpJudge.SelectedValue, out var judgeUserId);
                 JudgeJa judgeJa = ctl.GetJudgeJaRef(judgeUserId);
                 if (judgeJa != null)
@@ -115,7 +121,7 @@ namespace tjc.Modules.HearingLog
         {
             if (drpJudge.SelectedIndex > 0 && drpCounty.SelectedIndex > 0)
             {
-                var ctl = new JudgeController();
+                var ctl = new JudgeController(_hostSettings);
                 var userJacsJudges = ctl.GetJacsJudgeByUserRef(judgeUserId, drpCounty.SelectedValue);
                 foreach (JacsJudge jj in userJacsJudges)
                 {
@@ -127,7 +133,7 @@ namespace tjc.Modules.HearingLog
         {
             if (drpCounty.SelectedIndex > 0)
             {
-                var ctl = new JudgeController();
+                var ctl = new JudgeController(_hostSettings);
                 var jacsJudges = ctl.GetJacsJudgeByCounty(drpCounty.SelectedValue);
                 chlJacsJudges.DataSource = jacsJudges.OrderBy(x => x.JudgeName);
                 chlJacsJudges.DataTextField = "JudgeListName";
