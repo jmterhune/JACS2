@@ -10,8 +10,12 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Web;
 
 namespace tjc.Modules.CourtRegistry.Components
 {
@@ -34,7 +38,8 @@ namespace tjc.Modules.CourtRegistry.Components
         {
             get
             {
-                var ctl = new CaseTypeController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new CaseTypeController(hostSettings);
                 CaseType caseType = ctl.GetCaseType(CaseTypeID);
                 return caseType != null ? caseType.CaseTypeName : string.Empty;
             }

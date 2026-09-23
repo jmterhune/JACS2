@@ -4,7 +4,7 @@
 */
 
 using DotNetNuke.Abstractions;
-using DotNetNuke.Common;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.UI.Skins.Controls;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,8 +21,14 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class Application : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
         private int _applicationId;
         private List<ApplicationJacCodeDetail> _appJacCodes = new List<ApplicationJacCodeDetail>();
+
+        public Application()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
 
         private bool IsApprover
         {
@@ -42,7 +48,7 @@ namespace tjc.Modules.CourtRegistry
                 _applicationId = aid;
                 if (_applicationId > 0)
                 {
-                    var ctl = new ApplicationController();
+                    var ctl = new ApplicationController(_hostSettings);
                     _appJacCodes = ctl.GetApplicationJacCodes(_applicationId).ToList();
                     PopulateJacCodes();
                 }
@@ -55,7 +61,7 @@ namespace tjc.Modules.CourtRegistry
             {
                 if (!Page.IsPostBack)
                 {
-                    lnkCancel.NavigateUrl = Globals.NavigateURL();
+                    lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                     if (!IsApprover)
                     {
                         cmdReject.Visible = false;
@@ -69,12 +75,13 @@ namespace tjc.Modules.CourtRegistry
                     }
                     if (_applicationId > 0)
                     {
-                        var aCtl = new AttorneyController();
-                        var appCtl = new ApplicationController();
+                        var aCtl = new AttorneyController(_hostSettings);
+                        var appCtl = new ApplicationController(_hostSettings);
                         var application = appCtl.GetApplication(_applicationId);
                         var attorney = aCtl.GetAttorney(application.AttorneyID);
                         PopulateApplication(application);
                         PopulateAttorney(attorney);
+                        BuildPrevYearJacModal(application);
                     }
                     else
                     {
@@ -87,6 +94,47 @@ namespace tjc.Modules.CourtRegistry
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        /// <summary>Fill the "Previous Year JAC Codes" modal with the codes this
+        /// applicant selected in the prior fiscal year, laid out one column per
+        /// county/location (mirrors the CodeComparison view's per-location grid).</summary>
+        private void BuildPrevYearJacModal(Components.Application app)
+        {
+            int prevYear = app.Year - 1;
+            ltPrevYearTitle.Text = string.Format("JAC Codes Selected for Fiscal Year {0} - {1}", prevYear - 1, prevYear);
+
+            var appCtl = new ApplicationController(_hostSettings);
+            var codes = appCtl.GetJacCodesByYear(prevYear, app.AttorneyID).ToList();
+            if (codes.Count == 0)
+            {
+                ltPrevYearJac.Text = "<p>No JAC codes were selected for the previous year.</p>";
+                return;
+            }
+
+            var locations = codes.Select(c => c.LocationName).Distinct().OrderBy(n => n).ToList();
+            var byLocation = locations.ToDictionary(
+                l => l,
+                l => codes.Where(c => c.LocationName == l).Select(c => c.JacCodeID).Distinct().OrderBy(c => c).ToList());
+            int maxRows = byLocation.Values.Max(list => list.Count);
+
+            var sb = new StringBuilder();
+            sb.Append("<table class=\"table table-sm table-bordered text-center prevYearJac\"><thead><tr>");
+            foreach (var l in locations)
+                sb.AppendFormat("<th>{0}</th>", System.Web.HttpUtility.HtmlEncode(l));
+            sb.Append("</tr></thead><tbody>");
+            for (int i = 0; i < maxRows; i++)
+            {
+                sb.Append("<tr>");
+                foreach (var l in locations)
+                {
+                    var list = byLocation[l];
+                    sb.AppendFormat("<td>{0}</td>", i < list.Count ? list[i].ToString() : "&nbsp;");
+                }
+                sb.Append("</tr>");
+            }
+            sb.Append("</tbody></table>");
+            ltPrevYearJac.Text = sb.ToString();
         }
 
         private void PopulateAttorney(Attorney atty)
@@ -202,12 +250,12 @@ namespace tjc.Modules.CourtRegistry
         {
             switch ((CodeStatus)status)
             {
-                case CodeStatus.New: return "badge badge-primary";
-                case CodeStatus.Approved: return "badge badge-success";
-                case CodeStatus.Rejected: return "badge badge-warning";
-                case CodeStatus.Removed: return "badge badge-dark";
-                case CodeStatus.Locked: return "badge badge-danger";
-                default: return "badge badge-default";
+                case CodeStatus.New: return "badge bg-primary";
+                case CodeStatus.Approved: return "badge bg-success";
+                case CodeStatus.Rejected: return "badge bg-warning text-dark";
+                case CodeStatus.Removed: return "badge bg-dark";
+                case CodeStatus.Locked: return "badge bg-danger";
+                default: return "badge bg-secondary";
             }
         }
 
@@ -241,8 +289,8 @@ namespace tjc.Modules.CourtRegistry
                     "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You do not have approval rights") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
                 return;
             }
-            var appCtl = new ApplicationController();
-            var setCtl = new SettingController();
+            var appCtl = new ApplicationController(_hostSettings);
+            var setCtl = new SettingController(_hostSettings);
             var appSetting = setCtl.GetSettings().FirstOrDefault();
 
             var checkboxes = new List<CheckBox>();
@@ -300,12 +348,12 @@ namespace tjc.Modules.CourtRegistry
             appCtl.UpdateApplication(application);
 
             SendNotification(application, !hasApproval, appSetting, removedCodes);
-            Response.Redirect(Globals.NavigateURL(), true);
+            Response.Redirect(_navigationManager.NavigateURL(), true);
         }
 
         private void SendNotification(Components.Application app, bool rejected, Setting appSetting, List<ApplicationJacCodeDetail> removedCodes)
         {
-            var aCtl = new AttorneyController();
+            var aCtl = new AttorneyController(_hostSettings);
             var attorney = aCtl.GetAttorney(app.AttorneyID);
             if (attorney == null || string.IsNullOrEmpty(attorney.Email))
                 return;
@@ -314,7 +362,7 @@ namespace tjc.Modules.CourtRegistry
             var emailCC = appSetting != null ? appSetting.ContactEmail : string.Empty;
             const string subject = "Your Court Registry Application Has Been Reviewed";
 
-            var appCtl = new ApplicationController();
+            var appCtl = new ApplicationController(_hostSettings);
             var details = appCtl.GetApplicationJacCodes(app.ApplicationID).ToList();
             var approved = details.Where(d => d.Status == (int)CodeStatus.Approved).ToList();
             var rejectedList = details.Where(d => d.Status == (int)CodeStatus.Rejected).ToList();

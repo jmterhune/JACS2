@@ -21,10 +21,12 @@ namespace tjc.Modules.RecordDestruction
     public class RecordDestructionModuleBase : PortalModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         public RecordDestructionModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
         public string AttachmentDirectory
         {

@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,9 +24,11 @@ namespace tjc.Modules.Purchasing
     public partial class EditFormItem : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public EditFormItem()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         #region Event Handlers   
@@ -49,8 +52,8 @@ namespace tjc.Modules.Purchasing
                     if (CurrentOrderId > 0)
                     {
                         hdOrderId.Value = CurrentOrderId.ToString();
-                        var ctl = new FormOrderController();
-                        var aCtl = new AttachmentController();
+                        var ctl = new FormOrderController(_hostSettings);
+                        var aCtl = new AttachmentController(_hostSettings);
                         var order = ctl.GetFormOrder(CurrentOrderId);
                         if (order != null)
                         {
@@ -71,7 +74,7 @@ namespace tjc.Modules.Purchasing
         protected void rptForms_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int formId = int.Parse(e.CommandArgument.ToString());
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
 
             if (e.CommandName == "delete")
             {
@@ -100,9 +103,9 @@ namespace tjc.Modules.Purchasing
         protected string BuildAttachments(int formId)
         {
             string attachementList = string.Empty;
-            var aCtl = new AttachmentController();
+            var aCtl = new AttachmentController(_hostSettings);
             IEnumerable<FormOrderAttachment> attachments = aCtl.GetFormAttachmentsByFormId(formId);
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             int attachmentCount = 0;
             foreach (FormOrderAttachment f in attachments)
             {

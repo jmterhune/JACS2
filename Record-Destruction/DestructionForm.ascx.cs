@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Security;
@@ -44,19 +45,21 @@ namespace tjc.Modules.RecordDestruction
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public View()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindLists()
         {
-            var dmCtl = new DestructionMethodController();
-            var gCtl=new GroupController();
-            var rtCtl=new RecordTypeController();
-            var rpCtl=new RetentionPeriodController();
+            var dmCtl = new DestructionMethodController(_hostSettings);
+            var gCtl=new GroupController(_hostSettings);
+            var rtCtl=new RecordTypeController(_hostSettings);
+            var rpCtl=new RetentionPeriodController(_hostSettings);
 
             drpDepartment.DataSource = gCtl.GetGroups();
             drpDepartment.DataBind();
@@ -101,7 +104,7 @@ namespace tjc.Modules.RecordDestruction
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new LogController();
+            var ctl = new LogController(_hostSettings);
             Log log = new Log();
             int fileId = 0;
 

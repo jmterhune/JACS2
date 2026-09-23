@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -40,11 +41,12 @@ namespace tjc.Modules.MediationStatistics
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private int linenumber = 0;
         private string questionaire = "";
         private string regionheader = "";
         private string caseTypeGroup = "";
-        private ReportController ctl = new ReportController();
+        private ReportController ctl;
         #endregion
         #region Properties
 
@@ -53,6 +55,8 @@ namespace tjc.Modules.MediationStatistics
         public Report()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            ctl = new ReportController(_hostSettings);
         }
         public string FormatNumber(string numberString, string percentageString)
         {
@@ -184,7 +188,7 @@ namespace tjc.Modules.MediationStatistics
                 if (!IsPostBack)
                 {
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
-                    var ctl = new MediatorController();
+                    var ctl = new MediatorController(_hostSettings);
                     drpMediator.DataTextField = "MediatorName";
                     drpMediator.DataValueField = "MediatorId";
                     drpMediator.DataSource = ctl.GetMediators();
@@ -240,7 +244,7 @@ namespace tjc.Modules.MediationStatistics
                 case 2:
                     {
                         Referrals.Visible = true;
-                        var ctlSession = new SessionController();
+                        var ctlSession = new SessionController(_hostSettings);
                         var counts = ctlSession.GetReferralSourceItems(startDate, endDate);
                         rptReferrals.DataSource = counts;
                         rptReferrals.DataBind();
@@ -399,7 +403,7 @@ namespace tjc.Modules.MediationStatistics
             int mediatorId = 0;
             string mediatorType = "";
 
-            var ctl = new ReportController();
+            var ctl = new ReportController(_hostSettings);
             IEnumerable<StatMediatorCounts> mediatorCounts = ctl.GetMediatorReport(startDate, endDate);
             if (drpMediator.SelectedIndex > 0)
             {

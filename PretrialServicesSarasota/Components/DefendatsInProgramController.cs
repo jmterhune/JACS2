@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,16 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
     internal class DefendantInProgramController
     {
         private const string CONN_JACS = "intranet"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public DefendantInProgramController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public void CreateDefendantInProgram(DefendantInProgram t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 rep.Insert(t);
@@ -38,7 +45,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
 
         public void DeleteDefendantInProgram(DefendantInProgram t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 rep.Delete(t);
@@ -48,7 +55,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         public IEnumerable<DefendantInProgram> GetDefendantsInProgram()
         {
             IEnumerable<DefendantInProgram> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 t = rep.Get();
@@ -58,7 +65,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         public IEnumerable<DefendantInProgram> GetDefendantsInProgram(DateTime startDate,DateTime endDate)
         {
             IEnumerable<DefendantInProgram> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 t = rep.Find("Where IntakeDate Between @0 AND @1",startDate,endDate);
@@ -68,7 +75,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         public IEnumerable<DefendantInProgram> GetDefendantsInProgramByCaseNumber( string caseNumber)
         {
             IEnumerable<DefendantInProgram> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 t = rep.Find("Where CaseNumber like @0", string.Format("%{0}%",caseNumber));
@@ -78,7 +85,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         public IEnumerable<DefendantInProgram> GetDefendantsInProgramByDefendantName(string defendantName)
         {
             IEnumerable<DefendantInProgram> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 t = rep.Find("Where DefendantName like @0", string.Format("%{0}%", defendantName));
@@ -88,18 +95,18 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         public IEnumerable<DefendantInProgram> GetDefendantsInProgramByDate(DateTime intakeDate)
         {
             IEnumerable<DefendantInProgram> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 t = rep.Find("Where IntakeDate=@0" ,intakeDate);
             }
             return t;
         }
-        
+
         public IEnumerable<int> GetYears()
         {
             IEnumerable<int> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<int>(System.Data.CommandType.Text, "Select Distinct Year(IntakeDate) as Year From tjc_pts_sarasota_defendants_in_program Order by 1");
             }
@@ -110,7 +117,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
         public DefendantInProgram GetDefendantInProgram(long itemId)
         {
             DefendantInProgram t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 t = rep.GetById(itemId);
@@ -120,7 +127,7 @@ namespace tjc.Modules.PretrialServices.Sarasota.Components
 
         public void UpdateDefendantInProgram(DefendantInProgram t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DefendantInProgram>();
                 rep.Update(t);

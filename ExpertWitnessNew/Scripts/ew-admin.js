@@ -53,7 +53,7 @@
             });
             // Initialize Bootstrap tooltips (e.g. the Comments column) on load and after
             // each redraw so rows brought in by paging/sorting get their tooltip too.
-            var initTips = function () { if ($.fn.tooltip) $(cfg.tableId + ' [data-toggle="tooltip"]').tooltip(); };
+            var initTips = function () { if (typeof bootstrap !== 'undefined') $(cfg.tableId + ' [data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); }); };
             dt.on('draw', initTips);
             initTips();
             // Park the Add button in DataTables' length container.

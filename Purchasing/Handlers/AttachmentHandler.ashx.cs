@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Entities.Modules;
+﻿using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using System;
 using System.Collections;
@@ -41,7 +42,7 @@ namespace tjc.Modules.Purchasing.Handlers
                     try
                     {
                         int fileId = System.Convert.ToInt32(fileIdParameter);
-                        DotNetNuke.Services.FileSystem.FileManager objFile = new DotNetNuke.Services.FileSystem.FileManager();
+                        var objFile = DotNetNuke.Services.FileSystem.FileManager.Instance;
                         objFile.DeleteFile(objFile.GetFile(fileId));
                         context.Response.ContentType = "text/plain";
                         context.Response.Write("");
@@ -57,16 +58,15 @@ namespace tjc.Modules.Purchasing.Handlers
         }
         private int InsertAttachment(HttpPostedFile file)
         {
-            ModuleController moduleController = new ModuleController();
-            ModuleInfo modCtl = moduleController.GetModule(_moduleId);
+            ModuleInfo modCtl = ModuleController.Instance.GetModule(_moduleId, Null.NullInteger, false);
             Hashtable setting = modCtl.ModuleSettings;
             string attachmentFolder = "Purchasing-Attachments";
             if (setting.Contains("AttachmentFolderName"))
             {
                 attachmentFolder = setting["AttachmentFolderName"].ToString();
             }
-            DotNetNuke.Services.FileSystem.FolderManager objFolder = new DotNetNuke.Services.FileSystem.FolderManager();
-            DotNetNuke.Services.FileSystem.FileManager objFile = new DotNetNuke.Services.FileSystem.FileManager();
+            var objFolder = DotNetNuke.Services.FileSystem.FolderManager.Instance;
+            var objFile = DotNetNuke.Services.FileSystem.FileManager.Instance;
             DotNetNuke.Services.FileSystem.IFolderInfo folderInfo = null;
             if (objFolder.FolderExists(_portalId, attachmentFolder) == false)
             {

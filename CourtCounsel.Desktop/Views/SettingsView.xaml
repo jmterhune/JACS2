@@ -1,0 +1,31 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <StackPanel MaxWidth="600" HorizontalAlignment="Left">
+        <TextBlock Text="Settings" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+
+        <Label Content="SQL Server Connection String" FontWeight="SemiBold" />
+        <TextBox Text="{Binding ConnectionString, UpdateSourceTrigger=PropertyChanged}" Padding="4" Margin="0,0,0,4"
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="60" />
+        <TextBlock Text="e.g. Server=SQLSERVER;Database=intranet;Integrated Security=True;TrustServerCertificate=True"
+                   Foreground="Gray" FontStyle="Italic" Margin="0,0,0,10" />
+
+        <Button Content="Test Connection" Command="{Binding TestConnectionCommand}" HorizontalAlignment="Left" Padding="12,4" Margin="0,0,0,16" />
+
+        <Label Content="Admin Group (Windows/AD group name)" FontWeight="SemiBold" />
+        <TextBox Text="{Binding AdminGroupName, UpdateSourceTrigger=PropertyChanged}" Padding="4" Margin="0,0,0,4" />
+        <TextBlock Text="Members of this group can use the Admin (lookup-management) screen. Leave blank to allow everyone."
+                   Foreground="Gray" FontStyle="Italic" Margin="0,0,0,16" TextWrapping="Wrap" />
+
+        <Label Content="Template Text" FontWeight="SemiBold" />
+        <TextBox Text="{Binding TemplateText, UpdateSourceTrigger=PropertyChanged}" Padding="4" Margin="0,0,0,16"
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="80" MaxLength="2000" />
+
+        <Button Content="Save" Command="{Binding SaveCommand}" HorizontalAlignment="Left" Padding="16,6" />
+        <TextBlock Text="{Binding StatusMessage}" Margin="0,10,0,0" FontWeight="Bold" TextWrapping="Wrap" />
+    </StackPanel>
+</UserControl>

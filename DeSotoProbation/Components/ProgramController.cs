@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.DeSoto.Probation.Components
     internal class ProgramController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public ProgramController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateProgram(Program t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Program>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
 
         public void DeleteProgram(Program t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Program>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public IEnumerable<Program> GetPrograms()
         {
             IEnumerable<Program> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Program>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public bool ProgramExists(int programId)
         {
             Program t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Program>();
                 t = rep.GetById(programId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public Program GetProgram(int programId)
         {
             Program t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Program>();
                 t = rep.GetById(programId);
@@ -74,7 +82,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         }
         public void UpdateProgram(Program t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Program>();
                 rep.Update(t);

@@ -50,18 +50,19 @@
                     <asp:CheckBox Text="Signed for Guardianship Cases?" ID="chkGuardian" runat="server" Enabled="false" />
                 </td>
                 <td colspan="3" class="text-end">
+                    <button type="button" id="cmdPrevYearJac" class="btn btn-info text-dark"><i class="fas fa-history"></i>&nbsp;Previous Year JAC Codes</button>
                     <asp:LinkButton runat="server" OnClientClick="return Jud12ConfirmPostback(this, 'This will Reject the entire application.\n\nAre You Sure?', 'Confirm');" ID="cmdReject" CssClass="btn btn-danger" Text="Reject All" OnClick="cmdReject_Click" />
                 </td>
             </tr>
         </tbody>
     </table>
     <p class="legend"><strong>Legend:</strong>
-        <span class="badge badge-primary">New</span>
-        <span class="badge badge-success">Approved</span>
-        <span class="badge badge-warning">Rejected</span>
-        <span class="badge badge-dark">Requesting Removal</span>
-        <span class="badge badge-danger">Requested Removal but not Approved</span></p>
-    <p class="text-danger"><strong>Note:</strong> A checked box normally indicates approval. However, for <span class="badge badge-dark">Requesting Removal</span> and <span class="badge badge-danger">Requested Removal but not Approved</span>, <em>uncheck</em> the box to approve the removal.</p>
+        <span class="badge bg-primary">New</span>
+        <span class="badge bg-success">Approved</span>
+        <span class="badge bg-warning text-dark">Rejected</span>
+        <span class="badge bg-dark">Requesting Removal</span>
+        <span class="badge bg-danger">Requested Removal but not Approved</span></p>
+    <p class="text-danger"><strong>Note:</strong> A checked box normally indicates approval. However, for <span class="badge bg-dark">Requesting Removal</span> and <span class="badge bg-danger">Requested Removal but not Approved</span>, <em>uncheck</em> the box to approve the removal.</p>
     <table role="presentation" class="layout">
         <tbody>
             <tr>
@@ -82,8 +83,42 @@
         <asp:LinkButton runat="server" ID="cmdSave" CssClass="btn btn-primary" OnClientClick="return doSubmit(this);" Text="Approve" OnClick="cmdSave_Click" />
         <asp:HyperLink runat="server" ID="lnkCancel" CssClass="btn btn-default" Text="Return to List" NavigateUrl="/" />
     </p>
+
+    <%-- Previous-year JAC codes for this applicant, one column per county.
+         Built server-side into ltPrevYearJac. --%>
+    <div class="modal fade" id="prevYearJacModal" tabindex="-1" aria-labelledby="prevYearJacModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="prevYearJacModalLabel"><asp:Literal ID="ltPrevYearTitle" runat="server" /></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:Literal ID="ltPrevYearJac" runat="server" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
+    // Open the Previous Year JAC Codes modal. Works whether the skin ships
+    // Bootstrap 5 (bootstrap.Modal) or Bootstrap 4 (jQuery .modal).
+    (function () {
+        var btn = document.getElementById('cmdPrevYearJac');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var el = document.getElementById('prevYearJacModal');
+            if (!el) return;
+            if (window.bootstrap && window.bootstrap.Modal) {
+                window.bootstrap.Modal.getOrCreateInstance(el).show();
+            } else if (window.jQuery && window.jQuery.fn.modal) {
+                window.jQuery(el).modal('show');
+            }
+        });
+    })();
     function doSubmit(btn) {
         if (typeof (Page_ClientValidate) == 'function' && Page_ClientValidate() == false) {
             return false;

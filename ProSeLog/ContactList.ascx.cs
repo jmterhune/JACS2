@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,17 +41,19 @@ namespace tjc.Modules.ProSeLog
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public ContactList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         private void BindList()
         {
-            var ctl = new ContactController();
+            var ctl = new ContactController(_hostSettings);
             rptContact.DataSource = ctl.GetContacts();
             rptContact.DataBind();
         }
@@ -70,7 +73,7 @@ namespace tjc.Modules.ProSeLog
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }
@@ -81,7 +84,7 @@ namespace tjc.Modules.ProSeLog
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new ContactController();
+            var ctl = new ContactController(_hostSettings);
             Contact contact = new Contact();
             bool isNew = true;
             if (hdContactId.Value != "")
@@ -111,7 +114,7 @@ namespace tjc.Modules.ProSeLog
         protected void rptContact_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int contactId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new ContactController();
+            var ctl = new ContactController(_hostSettings);
             if (e.CommandName == "delete")
             {
 

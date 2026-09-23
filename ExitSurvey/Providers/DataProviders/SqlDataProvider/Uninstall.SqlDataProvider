@@ -1,0 +1,11 @@
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_rating]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_rating]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_reason]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_reason]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}tjc_exit_survey_response]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}tjc_exit_survey_response]
+GO

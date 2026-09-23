@@ -8,7 +8,7 @@
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#fiscal-years" data-toggle="tab">Manage Fiscal Years</a>
+            <a class="nav-link" href="#fiscal-years" data-bs-toggle="tab">Manage Fiscal Years</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ExceptionListUrl%>">Exceptions</a>
@@ -50,7 +50,7 @@
                 The Modification Deadline determines the date at which changes to applications will no longer be accepted.
                 To stop new applications from being submitted uncheck the Accepting New Applications box.
                     </div>
-                    <button class="btn btn-primary" id="cmdNew" data-toggle="modal" data-target="#addRecord"><i class="fas fa-plus"></i>&nbsp;Add New Record</button>
+                    <button class="btn btn-primary" id="cmdNew" data-bs-toggle="modal" data-bs-target="#addRecord"><i class="fas fa-plus"></i>&nbsp;Add New Record</button>
 <asp:Literal ID="ltModalScript" runat="server" EnableViewState="false" />
                     <asp:Repeater runat="server" ID="rptYears" OnItemCommand="rptYears_ItemCommand">
                         <HeaderTemplate>
@@ -95,7 +95,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="addRecordModalLabel">Add Fiscal Year</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <asp:Button Text="Add Record" ID="cmdAddRecord" runat="server" CssClass="btn btn-primary" ValidationGroup="new" OnClick="cmdAddRecord_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                         <div class="col-4">
                             <fieldset class="outline-fieldset">
                                 <legend>JAC Report for Clerks and Judges</legend>
-                                <div class="row  form-group">
+                                <div class="row  mb-3">
                                     <div class="col-auto">
                                         <asp:Label runat="server" AssociatedControlID="drpLocations" Text="Select Location" />
                                         <asp:DropDownList ID="drpLocations" CssClass="form-control" DataTextField="LocationName" DataValueField="LocationId" runat="server">
@@ -147,7 +147,7 @@
                         <div class="col-4">
                             <fieldset class="outline-fieldset">
                                 <legend>JAC Code Count Report</legend>
-                                <div class="row form-group">
+                                <div class="row mb-3">
                                     <div class="col-auto">
                                         <asp:Label runat="server" AssociatedControlID="drpExportYear" Text="Select Fiscal Year" />
                                         <asp:DropDownList ID="drpExportYear" DataValueField="ApplicationYear" DataTextField="PeriodYear" CssClass="form-control" runat="server">
@@ -160,7 +160,7 @@
                         <div class="col-4">
                             <fieldset class="outline-fieldset">
                                 <legend>Send Customize Emails to Attorneys</legend>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#emailModal"><i class="fas fa-email"></i>Create Email</button>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal"><i class="fas fa-email"></i>Create Email</button>
                             </fieldset>
                         </div>
                     </div>
@@ -169,7 +169,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="emailModalLabel">Send Bulk Emails</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <asp:Literal ID="ltMessage" runat="server" />
@@ -207,7 +207,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <asp:Button ID="cmdSend" CssClass="btn btn-primary" Text="Send" runat="server" OnClick="cmdSend_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>

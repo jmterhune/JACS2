@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 
@@ -6,9 +7,16 @@ namespace tjc.Modules.MediationStatistics.Components
 {
     internal class CaseController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CaseController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateCase(Case t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Case>();
                 rep.Insert(t);
@@ -18,8 +26,8 @@ namespace tjc.Modules.MediationStatistics.Components
         public void DeleteCase(int caseId)
         {
             var t = GetCase(caseId);
-            var sCtl = new SessionController();
-            var eCtl=new EventController();
+            var sCtl = new SessionController(_hostSettings);
+            var eCtl=new EventController(_hostSettings);
             DeleteCase(t);
             foreach (Session session in t.CaseSessions)
             {
@@ -33,7 +41,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteCase(Case t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Case>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Case> GetCases()
         {
             IEnumerable<Case> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Case>();
                 t = rep.Get();
@@ -57,7 +65,7 @@ namespace tjc.Modules.MediationStatistics.Components
             {
                 cdspNumber += "%";
                 caseNumber += "%";
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<Case>();
                     t = rep.Find("Where CaseNumber like @0 or CDSPNumber like @1", caseNumber, cdspNumber);
@@ -65,7 +73,7 @@ namespace tjc.Modules.MediationStatistics.Components
             }else if (!string.IsNullOrEmpty(caseNumber))
             {
                 caseNumber += "%";
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<Case>();
                     t = rep.Find("Where CaseNumber like @0", caseNumber);
@@ -74,7 +82,7 @@ namespace tjc.Modules.MediationStatistics.Components
             else if (!string.IsNullOrEmpty(cdspNumber))
             {
                 cdspNumber += "%";
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<Case>();
                     t = rep.Find("Where CDSPNumber like @0",  cdspNumber);
@@ -88,7 +96,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<CaseListItem> GetCaseList(int groupId, int regionId, string caseNumber, string cdspNumber, string firstName, string lastName,DateTime startDate,DateTime endDate)
         {
             IEnumerable<CaseListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 
                 t = ctx.ExecuteQuery<CaseListItem>(System.Data.CommandType.StoredProcedure, "tjc_med_get_case_list", groupId, regionId, caseNumber, cdspNumber, firstName, lastName,startDate,endDate);
@@ -98,7 +106,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<CaseListItem> GetCaseListPaged(int groupId, int regionId, string caseNumber, string cdspNumber, string firstName, string lastName,string businessName, int rowOffset,int pageSize,string SortOrder,bool sortDesc)
         {
             IEnumerable<CaseListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<CaseListItem>(System.Data.CommandType.StoredProcedure, "tjc_med_get_case_list_paged", groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName, rowOffset, pageSize,SortOrder,sortDesc);
@@ -108,7 +116,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public int GetCaseListCount(int groupId, int regionId, string caseNumber, string cdspNumber, string firstName, string lastName, string businessName)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_med_get_case_list_count", groupId, regionId, caseNumber, cdspNumber, firstName, lastName,businessName);
             }
@@ -119,7 +127,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public Case GetCase(int caseId)
         {
             Case t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Case>();
                 t = rep.GetById(caseId);
@@ -129,7 +137,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void UpdateCase(Case t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Case>();
                 rep.Update(t);

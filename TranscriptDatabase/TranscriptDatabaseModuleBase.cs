@@ -9,10 +9,12 @@ namespace tjc.Modules.TranscriptDatabase
     public class TranscriptDatabaseModuleBase : PortalModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         public TranscriptDatabaseModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
         public int DesignationId
         {
@@ -73,7 +75,7 @@ namespace tjc.Modules.TranscriptDatabase
                 return "Court Reporter Intake";
             }
         }
-        public string  MessageFormat { get{ return "<div class=\"{1} alert-dismissible\" role=\"alert\"><button aria-label=\"Close\" class=\"close\" data-dismiss=\"alert\" type=\"button\"><span aria-hidden=\"true\">&times;</span></button><i class=\"{2}\"></i> {0}</div>"; } }
+        public string  MessageFormat { get{ return "<div class=\"{1} alert-dismissible\" role=\"alert\"><button aria-label=\"Close\" class=\"btn-close\" data-bs-dismiss=\"alert\" type=\"button\"></button><i class=\"{2}\"></i> {0}</div>"; } }
         public string UploadFormFolder
         {
             get

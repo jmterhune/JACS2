@@ -1,0 +1,104 @@
+.exit-survey .exit-survey-intro p {
+    margin-bottom: .5rem;
+}
+
+.exit-survey .exit-survey-question {
+    font-weight: 600;
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+
+/* Section header (Personal Info) - same weight as a question, no required mark */
+.exit-survey .exit-survey-section {
+    font-weight: 600;
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+
+/* Required indicator on every question and every Personal Info field label */
+.exit-survey .exit-survey-question::after,
+.exit-survey .exit-survey-req::after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* Suppress the required asterisk on a question that is not currently required
+   (e.g. Q4 when Q3 is not "Yes") */
+.exit-survey .exit-survey-question.es-noreq::after {
+    content: none;
+}
+
+/* Inline validation message (styled as a label label-danger badge, like the
+   validators in other modules). Hidden until it has text. */
+.exit-survey .es-error {
+    margin-top: .25rem;
+}
+
+.exit-survey .es-error:empty {
+    display: none !important;
+}
+
+.exit-survey .es-invalid > .form-control {
+    border-color: #dc3545;
+}
+
+.exit-survey .exit-survey-rating-label {
+    font-weight: 500;
+}
+
+/* Horizontal option lists (5-point ratings, Q2/Q5 checkboxes, Q3/Q4/Q9).
+   Rendered as an unordered list so each input+label is one non-breaking item
+   that wraps together, never splitting the box from its label. */
+.exit-survey ul.rating-options,
+.exit-survey ul.es-check-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.exit-survey ul.rating-options > li,
+.exit-survey ul.es-check-list > li {
+    display: inline-block;
+    white-space: nowrap;
+    margin-right: 1.25rem;
+}
+
+.exit-survey ul.rating-options label,
+.exit-survey ul.es-check-list label,
+.exit-survey .exit-survey-single-check label {
+    margin-left: .25rem;
+}
+
+/* Admin results / detail tables */
+.exit-survey-results .exit-survey-item {
+    width: 45%;
+}
+
+/* Row action icons: bare icons (no button chrome), like the EmployeeDB lists */
+.exit-survey-actions a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.exit-survey-detail .exit-survey-meta dt {
+    font-weight: 600;
+}
+
+.exit-survey-print-title {
+    margin-bottom: 1rem;
+}
+
+/* Print / Save-as-PDF: the detail is printed in isolation via a hidden iframe
+   (see printExitSurvey in ResponseDetail.ascx), so the DNN chrome is excluded
+   and the content starts at the top. One inch page margin all around. */
+@page {
+    margin: 1in;
+}
+
+@media print {
+    .d-print-none {
+        display: none !important;
+    }
+}

@@ -2,8 +2,10 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,13 +19,20 @@ namespace tjc.Modules.DocketInmateCompare
 {
     public partial class View : PortalModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!IsPostBack && !string.IsNullOrEmpty(hfCurrentSetGuid.Value))
                 {
-                    var controller = new NameMatchResultController();
+                    var controller = new NameMatchResultController(_hostSettings);
                     var setGuid = Guid.Parse(hfCurrentSetGuid.Value);
                     gvMatches.DataSource = controller.GetItemsBySetGuid(setGuid);
                     gvMatches.DataBind();
@@ -60,7 +69,7 @@ namespace tjc.Modules.DocketInmateCompare
                 var comparer = new DefendantNameComparer(0.88); // Adjust threshold as needed
                 List<NameMatchResult> results = comparer.CompareFiles(courtPath, jailPath);
 
-                var controller = new NameMatchResultController();
+                var controller = new NameMatchResultController(_hostSettings);
                 Guid setGuid = Guid.NewGuid();
                 hfCurrentSetGuid.Value = setGuid.ToString();
 
@@ -124,7 +133,7 @@ namespace tjc.Modules.DocketInmateCompare
             if (e.CommandName == "DeleteRow")
             {
                 // Update all remaining rows before delete
-                var controller = new NameMatchResultController();
+                var controller = new NameMatchResultController(_hostSettings);
                 for (int i = 0; i < gvMatches.Rows.Count; i++)
                 {
                     GridViewRow row = gvMatches.Rows[i];
@@ -132,6 +141,7 @@ namespace tjc.Modules.DocketInmateCompare
                     TextBox txtEventType = (TextBox)row.FindControl("txtEventType");
                     int id = Convert.ToInt32(row.Cells[0].Text);
                     var item = controller.GetItem(id);
+                    if (item == null) continue;
                     item.Mode = ReadMode(row);
                     item.Start = txtStart.Text;
                     item.EventType = txtEventType.Text;
@@ -160,25 +170,47 @@ namespace tjc.Modules.DocketInmateCompare
 
         protected void btnGenerateWord_Click(object sender, EventArgs e)
         {
-            var controller = new NameMatchResultController();
-            var setGuid = Guid.Parse(hfCurrentSetGuid.Value);
+            var controller = new NameMatchResultController(_hostSettings);
+            Guid.TryParse(hfCurrentSetGuid.Value, out Guid setGuid);
 
-            // Update modes, start times, and event types from grid
+            // Build the document rows straight from the grid so generation reflects exactly
+            // what is on screen and keeps working even when the backing records were already
+            // removed by a previous generate (DeleteItemsBySetGuid below) -- which is what
+            // produced the NullReferenceException on a second generate.
+            var results = new List<NameMatchResult>();
             for (int i = 0; i < gvMatches.Rows.Count; i++)
             {
                 GridViewRow row = gvMatches.Rows[i];
+                if (row.RowType != DataControlRowType.DataRow) continue;
+
                 TextBox txtStart = (TextBox)row.FindControl("txtStart");
                 TextBox txtEventType = (TextBox)row.FindControl("txtEventType");
-                int id = Convert.ToInt32(row.Cells[0].Text);
-                var item = controller.GetItem(id);
-                item.Mode = ReadMode(row);
-                item.Start = txtStart.Text;
-                item.EventType = txtEventType.Text;
-                controller.UpdateItem(item);
-            }
+                string mode = ReadMode(row);
+                string start = txtStart != null ? txtStart.Text : string.Empty;
+                string eventType = txtEventType != null ? txtEventType.Text : string.Empty;
 
-            // Retrieve from database
-            var results = controller.GetItemsBySetGuid(setGuid);
+                results.Add(new NameMatchResult
+                {
+                    JailName = Server.HtmlDecode(row.Cells[2].Text),
+                    CourtCase = Server.HtmlDecode(row.Cells[3].Text),
+                    Start = start,
+                    EventType = eventType,
+                    Mode = mode
+                });
+
+                // Best-effort: persist the edits back to the record if it still exists.
+                if (int.TryParse(row.Cells[0].Text, out int id))
+                {
+                    var item = controller.GetItem(id);
+                    if (item != null)
+                    {
+                        item.Mode = mode;
+                        item.Start = start;
+                        item.EventType = eventType;
+                        controller.UpdateItem(item);
+                    }
+                }
+            }
 
             // Generate Word document using OpenXML, matching the Sarasota Jail Hearings request form
             MemoryStream stream = new MemoryStream();

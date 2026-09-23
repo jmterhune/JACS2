@@ -35,7 +35,7 @@ namespace tjc.Modules.CourtCounsel.Views
         private void BindDropDowns()
         {
             // Counties
-            var countyCtrl = new CountyController();
+            var countyCtrl = new CountyController(_hostSettings);
             var counties = countyCtrl.GetCounties().OrderBy(c => c.County).ToList();
             drpCounty.Items.Clear();
             drpCounty.Items.Add(new ListItem("-- All --", ""));
@@ -45,7 +45,7 @@ namespace tjc.Modules.CourtCounsel.Views
             }
 
             // Requestors
-            var reqCtrl = new RequestorController();
+            var reqCtrl = new RequestorController(_hostSettings);
             var requestors = reqCtrl.GetRequestors().OrderBy(r => r.RequestorName).ToList();
             drpRequestor.Items.Clear();
             drpRequestor.Items.Add(new ListItem("-- All --", ""));
@@ -55,7 +55,7 @@ namespace tjc.Modules.CourtCounsel.Views
             }
 
             // Attorneys — split active vs. inactive. Inactive render disabled at the bottom.
-            var attCtrl = new AttorneyController();
+            var attCtrl = new AttorneyController(_hostSettings);
             var attorneys = attCtrl.GetAttorneys().ToList();
             var active = attorneys.Where(a => a.IsActive == true).OrderBy(a => a.AttorneyName).ToList();
             var inactive = attorneys.Where(a => a.IsActive != true).OrderBy(a => a.AttorneyName).ToList();
@@ -103,7 +103,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
             var selectedAttorneys = GetSelectedAttorneys();
 
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             var attorney = selectedAttorneys.Count == 1 ? selectedAttorneys.First() : "";
             var results = ctrl.GetFilteredHistory(startDate, endDate, statusFilter, extendedStatus, attorney, county, requestor);
 

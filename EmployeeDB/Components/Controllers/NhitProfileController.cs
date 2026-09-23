@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
     /// </summary>
     public class NhitProfileController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public NhitProfileController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public NhitProfileInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var profile = ctx.GetRepository<NhitProfileInfo>().GetById(id);
                 if (profile != null) HydrateSelectedItems(profile, ctx);
@@ -27,7 +35,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// <summary>Lightweight list for the profile dropdown — Id + Name only.</summary>
         public IEnumerable<NhitProfileInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitProfileInfo>()
                     .Find("ORDER BY ProfileName")
@@ -41,7 +49,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitProfileInfo>().Insert(item);
                 ReplaceSelectedItems(item, ctx);
@@ -64,7 +72,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitProfileInfo>().Update(item);
                 ReplaceSelectedItems(item, ctx);
@@ -75,7 +83,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         {
             var profile = GetById(id);
             if (profile == null) return;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 // Wipe child rows first (no FK in schema, but we want clean
                 // data — keeps the DB tidy and prevents orphaned pivots).

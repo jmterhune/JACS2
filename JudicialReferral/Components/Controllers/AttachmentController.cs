@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.JudicialReferral.Components.Models;
@@ -6,9 +7,16 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 {
     public class AttachmentController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttachmentController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public int AddAttachment(AttachmentInfo item)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttachmentInfo>();
                 rep.Insert(item);
@@ -19,7 +27,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
         public IEnumerable<AttachmentInfo> GetAttachmentsByReferral(int referralId)
         {
             IEnumerable<AttachmentInfo> items;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttachmentInfo>();
                 items = rep.Find("WHERE ReferralID = @0", referralId);
@@ -29,7 +37,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 
         public void DeleteAttachment(int attachmentId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "DELETE FROM tjc_jr_attachments WHERE AttachmentID = @0", attachmentId);
@@ -38,7 +46,7 @@ namespace tjc.Modules.JudicialReferral.Components.Controllers
 
         public void DeleteReferralAttachments(int referralId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "DELETE FROM tjc_jr_attachments WHERE ReferralID = @0", referralId);

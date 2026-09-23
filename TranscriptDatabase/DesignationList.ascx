@@ -3,7 +3,7 @@
 <div class="tabs ms-2 me-2">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#designation" data-toggle="tab">Designations</a>
+            <a class="nav-link" href="#designation" data-bs-toggle="tab">Designations</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=CalendartUrl%>">Calendar</a>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </div>
-            <button id="btnAdd" class="btn btn-primary me-3" tabindex="-1" data-toggle="modal" data-target="#designationModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Designation</button>
+            <button id="btnAdd" class="btn btn-primary me-3" tabindex="-1" data-bs-toggle="modal" data-bs-target="#designationModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Designation</button>
             <table id="tblDesignations" class="table table-striped">
                 <thead>
                     <tr>
@@ -88,7 +88,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="designationModalLabel">Add Designation</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -146,7 +146,7 @@
                         </thead>
                     </table>
                 </fieldset>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-md-3">
                         <label for="txtTribunalCaseNumber">Tribunal Case Number</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
@@ -172,7 +172,7 @@
 
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-md-3">
                         <label for="txtHearingDate">Hearing Date</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtHearingDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
@@ -224,10 +224,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="EditAttorneyModalLabel">Add Attorney</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtFirstNameAtty" Text="First Name" />
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameAtty" />
@@ -241,7 +241,7 @@
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtLastNameAtty" />
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-12">
                         <asp:Label runat="server" AssociatedControlID="drpOffice" Text="Office Location" />
                         <asp:DropDownList runat="server" ID="drpOffice" CssClass="form-control" AppendDataBoundItems="true" ClientIDMode="Static">
@@ -249,20 +249,20 @@
                         </asp:DropDownList>
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row mb-3">
 
                     <div class="col-12">
                         <label for="txtAddress" class="form-label">Address</label>
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" placeholder="1234 Main St" />
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-12">
                         <label for="txtAddress2" class="form-label">Address 2</label>
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress2" placeholder="Apartment, studio, or floor" />
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-md-5">
                         <label for="txtCity" class="form-label">City</label>
                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCity" />
@@ -291,7 +291,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="NameSearchModalLabel">Requested Name with Matching Records</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <table id="tblMatchingNames" class="table table-striped w-100">
@@ -485,7 +485,7 @@
             displayStart: currentPage * pageSize,
         });
         designationTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 designationId = $(this).data("id");
@@ -584,8 +584,6 @@
                     btn.className = 'btn btn-dark';
                     btn.setAttribute('data-bs-toggle', 'modal');
                     btn.setAttribute('data-bs-target', '#EditAttorneyModal');
-                    btn.setAttribute('data-toggle', 'modal');
-                    btn.setAttribute('data-target', '#EditAttorneyModal');
                     btn.textContent = 'Add New Attorney';
                     return btn;
                 }

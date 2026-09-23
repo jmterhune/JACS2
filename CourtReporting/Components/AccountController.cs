@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -16,9 +17,16 @@ namespace tjc.Modules.CourtReporting.Components
 {
     internal class AccountController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AccountController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAccount(Account t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 rep.Insert(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.CourtReporting.Components
 
         public void DeleteAccount(Account t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.CourtReporting.Components
         public IEnumerable<Account> GetAccounts()
         {
             IEnumerable<Account> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 t = rep.Get();
@@ -54,7 +62,7 @@ namespace tjc.Modules.CourtReporting.Components
         public Account GetAccount(int accountId)
         {
             Account t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 t = rep.GetById(accountId);
@@ -64,7 +72,7 @@ namespace tjc.Modules.CourtReporting.Components
 
         public void UpdateAccount(Account t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 rep.Update(t);

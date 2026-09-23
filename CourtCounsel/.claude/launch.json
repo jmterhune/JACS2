@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "jud12.flcourts.org (public site, IIS)",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "echo jud12.flcourts.org is hosted by IIS (always running) at https://localhost:8443"],
+      "port": 8443
+    },
+    {
+      "name": "intranet.jud12.local (IIS)",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "echo intranet.jud12.local is hosted by IIS (always running) at https://www.dnndev.me"],
+      "port": 443
+    }
+  ]
+}

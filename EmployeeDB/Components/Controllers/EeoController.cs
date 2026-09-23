@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class EeoController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EeoController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public EeoInfo GetById(long id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EeoInfo>();
                 return rep.GetById(id);
@@ -21,7 +29,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EeoInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EeoInfo>();
                 return rep.Get();
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EeoInfo>();
                 rep.Insert(item);
@@ -61,7 +69,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EeoInfo>();
                 rep.Update(item);
@@ -73,7 +81,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var item = GetById(id);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<EeoInfo>();
                     rep.Delete(item);
@@ -83,7 +91,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EeoInfo> GetByYear(int year)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EeoInfo>();
                 return rep.Find("WHERE [Year] = @0", year);
@@ -97,7 +105,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         // Count distinct employees whose position history overlaps the reporting window.
         public int GetGenderCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(DISTINCT e.EmployeeId)
                                FROM tjc_employee e
@@ -113,7 +121,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetRaceCount(int jobGroupId, string race, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(DISTINCT e.EmployeeId)
                                FROM tjc_employee e
@@ -129,7 +137,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetGenderHireCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
                                WHERE IsEmployee = 1
@@ -140,7 +148,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetRaceHireCount(int jobGroupId, string race, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
                                WHERE IsEmployee = 1
@@ -151,7 +159,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetGenderPromoTransferCount(int jobGroupId, string gender, string type, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee_position_history ph
                                JOIN tjc_employee e ON e.SocialSecurityNumber = ph.SocialSecurityNumber
@@ -164,7 +172,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetRacePromoTransferCount(int jobGroupId, string race, string type, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee_position_history ph
                                JOIN tjc_employee e ON e.SocialSecurityNumber = ph.SocialSecurityNumber
@@ -177,7 +185,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetGenderTerminationCount(int jobGroupId, string gender, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
                                WHERE IsEmployee = 1
@@ -188,7 +196,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public int GetRaceTerminationCount(int jobGroupId, string race, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT COUNT(*) FROM tjc_employee
                                WHERE IsEmployee = 1
@@ -200,7 +208,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         // Iterates all job groups, computes the full stat set for each, and inserts (or updates) the EeoInfo row for the year.
         public void SaveYearStats(int year, DateTime startDate, DateTime endDate, int userId = -1)
         {
-            var jobGroupController = new JobGroupController();
+            var jobGroupController = new JobGroupController(_hostSettings);
             var jobGroups = jobGroupController.GetAll();
 
             foreach (var jg in jobGroups)
@@ -257,7 +265,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
                 };
 
                 EeoInfo existing;
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<EeoInfo>();
                     existing = rep.Find("WHERE [Year] = @0 AND JobGroupId = @1", year, jg.JobGroupId).FirstOrDefault();

@@ -28,14 +28,14 @@
             <a class="nav-link" href="<%=LocationListUrl%>">Locations</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#caseTypes" data-toggle="tab">Case Types</a>
+            <a class="nav-link" href="#caseTypes" data-bs-toggle="tab">Case Types</a>
         </li>
     </ul>
     <div class="tab-content pb-0">
         <div id="caseTypes" class="tab-pane active">
             <asp:UpdatePanel ID="pnlCaseTypes" runat="server" RenderMode="Block">
                 <ContentTemplate>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#caseTypeModal" onclick="ClearForm()"><i class="fas fa-plus"></i>&nbsp;Add Case Type</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#caseTypeModal" onclick="ClearForm()"><i class="fas fa-plus"></i>&nbsp;Add Case Type</button>
 <asp:Literal ID="ltModalScript" runat="server" EnableViewState="false" />
                     <asp:Repeater ID="rptCaseTypes" runat="server" OnItemCommand="rptCaseTypes_ItemCommand">
                         <HeaderTemplate>
@@ -73,18 +73,18 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="caseTypeModalLabel">Add / Edit Case Type</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <asp:HiddenField ID="hdCaseTypeID" runat="server" />
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-12">
                                             <asp:Label runat="server" AssociatedControlID="txtCaseTypeName" Text="Case Type Name" />
                                             <asp:TextBox runat="server" CssClass="form-control" ID="txtCaseTypeName" />
                                             <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseTypeName" ValidationGroup="ct" Display="Dynamic" CssClass="label label-danger" ErrorMessage="Case Type Name is Required" />
                                         </div>
                                     </div>
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-12">
                                             <asp:CheckBox runat="server" ID="chkActive" Text="Active" />
                                         </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <asp:Button Text="Save" ID="cmdSave" runat="server" CssClass="btn btn-primary" ValidationGroup="ct" OnClick="cmdSave_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>

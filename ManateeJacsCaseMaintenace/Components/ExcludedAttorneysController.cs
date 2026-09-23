@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,17 @@ namespace tjc.Modules.JacsCaseMaint.Components
     internal class ExcludedAttorneysController
     {
         private const string CONN_INTRANET = "jacsDesoto";
+        private readonly IHostSettings _hostSettings;
+
+        public ExcludedAttorneysController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<ExcludedAttorney> GetAttorneys()
         {
             IEnumerable<ExcludedAttorney> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<ExcludedAttorney>();
                 t = rep.Get();
@@ -32,7 +39,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public IEnumerable<ExcludedAttorneyView> GetAttorneyView()
         {
             IEnumerable<ExcludedAttorneyView> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<ExcludedAttorneyView>();
                 t = rep.Get();
@@ -41,7 +48,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         }
         public void CreateAttorney(ExcludedAttorney t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<ExcludedAttorney>();
                 rep.Insert(t);
@@ -50,7 +57,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public ExcludedAttorney GetAttorney(int recordId)
         {
             ExcludedAttorney t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<ExcludedAttorney>();
                 t = rep.GetById(recordId);
@@ -65,7 +72,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
 
         public void DeleteAttorney(ExcludedAttorney t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<ExcludedAttorney>();
                 rep.Delete(t);

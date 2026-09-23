@@ -80,7 +80,7 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="PetaPoco, Version=6.0.683.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />

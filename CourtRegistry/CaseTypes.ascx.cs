@@ -3,7 +3,9 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Web.UI.WebControls;
@@ -13,9 +15,16 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class CaseTypes : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CaseTypes()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         private void BindList()
         {
-            var ctl = new CaseTypeController();
+            var ctl = new CaseTypeController(_hostSettings);
             rptCaseTypes.DataSource = ctl.GetCaseTypes().OrderBy(c => c.CaseTypeName);
             rptCaseTypes.DataBind();
         }
@@ -36,7 +45,7 @@ namespace tjc.Modules.CourtRegistry
         protected void rptCaseTypes_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int.TryParse(e.CommandArgument.ToString(), out int caseTypeId);
-            var ctl = new CaseTypeController();
+            var ctl = new CaseTypeController(_hostSettings);
             if (e.CommandName == "delete" && caseTypeId > 0)
             {
                 ctl.DeleteCaseType(caseTypeId);
@@ -57,7 +66,7 @@ namespace tjc.Modules.CourtRegistry
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new CaseTypeController();
+            var ctl = new CaseTypeController(_hostSettings);
             if (int.TryParse(hdCaseTypeID.Value, out int caseTypeId) && caseTypeId > 0)
             {
                 var caseType = ctl.GetCaseType(caseTypeId);

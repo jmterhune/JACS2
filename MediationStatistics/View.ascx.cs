@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -39,17 +40,19 @@ namespace tjc.Modules.MediationStatistics
     public partial class View : MediationStatisticsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public string isAdminUser = "false";
         #region Methods
         public View()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         private void PopulateDropdowns()
         {
-            var ctlRegion = new RegionController();
-            var ctlGroup = new GroupController();
+            var ctlRegion = new RegionController(_hostSettings);
+            var ctlGroup = new GroupController(_hostSettings);
             IEnumerable<Group> groups = ctlGroup.GetGroups().OrderByDescending(y => y.CourtOrdered).ThenBy(x => x.Description);
             drpGroup.Items.Add(new ListItem("Court Ordered", "<"));
             bool isFirstNonCourtOrdered = false;
@@ -98,7 +101,7 @@ namespace tjc.Modules.MediationStatistics
                             isAdminUser = "true";
                         }
                     }
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     PopulateDropdowns();
                     lnkReset.NavigateUrl = _navigationManager.NavigateURL();
                 }
@@ -126,7 +129,7 @@ namespace tjc.Modules.MediationStatistics
             };
             try
             {
-                var ctl = new CaseController();
+                var ctl = new CaseController(_hostSettings);
                 ctl.CreateCase(newCase);
                 NavigateToCase(newCase.GroupEnum,newCase.CaseId);
             }

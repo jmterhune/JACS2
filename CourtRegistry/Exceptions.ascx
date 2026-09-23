@@ -16,7 +16,7 @@
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#exceptions" data-toggle="tab">Exceptions</a>
+            <a class="nav-link" href="#exceptions" data-bs-toggle="tab">Exceptions</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=BasicSettingsUrl%>">Basic Settings</a>
@@ -51,7 +51,7 @@
                 </asp:UpdateProgress>
                 <div id="exceptions" class="tab-pane active">
                     <div class="p-3 mb-4 bg-light text-dark border rounded">
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-auto">
                                 <asp:Label AssociatedControlID="drpPeriod" Text="Select Period" runat="server" />
                                 <asp:DropDownList runat="server" ClientIDMode="Static" ID="drpPeriod" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="drpPeriod_SelectedIndexChanged">
@@ -76,7 +76,7 @@
                                 </asp:DropDownList>
                             </div>
                         </div>
-                        <div class="row form-group checkbox">
+                        <div class="row checkbox mb-3">
                             <div class="col-auto">
                                 <asp:CheckBox ID="chkExclude" Text="Exclude?" ClientIDMode="Static" TextAlign="Right" runat="server" />
                             </div>

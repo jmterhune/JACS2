@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,16 @@ namespace tjc.Modules.DigitalCourtReporting.Components
 {
     internal class AccountController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AccountController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAccount(Account t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 rep.Insert(t);
@@ -21,7 +29,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void DeleteAccount(Account t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 rep.Delete(t);
@@ -30,7 +38,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<Account> GetAccounts()
         {
             IEnumerable<Account> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 t = rep.Get();
@@ -40,7 +48,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public Account GetAccount(int accountId)
         {
             Account t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 t = rep.GetById(accountId);
@@ -49,7 +57,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void UpdateAccount(Account t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 rep.Update(t);
@@ -59,7 +67,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         internal Account GetAccountByProceeding(int proceedingId)
         {
             Account t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Account>();
                 t = rep.Find("Where ProceedingID=@0",proceedingId).FirstOrDefault();

@@ -8,7 +8,7 @@
         </div>
 
 <div id="ClientEditForm">
-    <div class="form-group row">
+    <div class="row mb-3">
         <div class="col-4">
             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name<em>*</em>" ToolTip="Required" />
             <asp:TextBox runat="server" CssClass="form-control form-control-sm" MaxLength="50" ID="txtLastName" />
@@ -27,7 +27,7 @@
         </div>
        
     </div>
-    <div class="form-group row"> 
+    <div class="row mb-3"> 
         <div class="col-4">
             <asp:Label runat="server" AssociatedControlID="txtEmail" Text="Email" />
             <asp:TextBox runat="server" CssClass="form-control form-control-sm" MaxLength="250" ID="txtEmail" />

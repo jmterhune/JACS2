@@ -42,7 +42,7 @@ namespace tjc.Modules.Purchasing.Components
             {
                 string commentTooltip=string.Empty;
                 if (!string.IsNullOrEmpty(Comments)) {
-                    commentTooltip=string.Format("<i class=\"fas fa-comment-alt\" data-html=\"true\" title='{0}' data-toggle=\"tooltip\"></i>",Comments);
+                    commentTooltip=string.Format("<i class=\"fas fa-comment-alt\" data-bs-html=\"true\" title='{0}' data-bs-toggle=\"tooltip\"></i>",Comments);
                 }
 
                 return commentTooltip;

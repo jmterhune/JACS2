@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
@@ -11,13 +12,18 @@ namespace tjc.Modules.HearingLog
     public partial class CourtCounsel : HearingsLogModuleBase
     {
         private readonly INavigationManager _navigationManager;
-        public CourtCounsel() => _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        private readonly IHostSettings _hostSettings;
+        public CourtCounsel()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
-                var tc = new CourtCounselController();
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
+                var tc = new CourtCounselController(_hostSettings);
                 txtStartDate.Text = DateTime.Now.AddDays(-120).ToShortDateString();
                 txtEndDate.Text = DateTime.Now.ToShortDateString();
                 lnkHearingLog.NavigateUrl = PageUrl;

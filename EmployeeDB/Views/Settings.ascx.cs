@@ -45,21 +45,6 @@ namespace tjc.Modules.EmployeeDB.Views
                             drpHrAdminRole.SelectedValue = roleName;
                     }
 
-                    if (Settings.Contains("Swn_TestUsername"))
-                        txtSwnTestUsername.Text = Settings["Swn_TestUsername"].ToString();
-                    if (Settings.Contains("Swn_TestPassword"))
-                        txtSwnTestPassword.Attributes["value"] = Settings["Swn_TestPassword"].ToString();
-                    if (Settings.Contains("Swn_LiveUsername"))
-                        txtSwnLiveUsername.Text = Settings["Swn_LiveUsername"].ToString();
-                    if (Settings.Contains("Swn_LivePassword"))
-                        txtSwnLivePassword.Attributes["value"] = Settings["Swn_LivePassword"].ToString();
-                    if (Settings.Contains("Swn_UseLive"))
-                    {
-                        bool useLive;
-                        if (bool.TryParse(Settings["Swn_UseLive"].ToString(), out useLive))
-                            chkSwnUseLive.Checked = useLive;
-                    }
-
                     if (Settings.Contains("Notify_FromEmail"))
                         txtNotifyFrom.Text = Settings["Notify_FromEmail"].ToString();
                     if (Settings.Contains("Notify_ToEmail"))
@@ -84,11 +69,6 @@ namespace tjc.Modules.EmployeeDB.Views
             {
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "Employee_ReportUrl", txtReportUrl.Text.Trim());
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "HrAdminRole", drpHrAdminRole.SelectedValue);
-                ModuleController.Instance.UpdateModuleSetting(ModuleId, "Swn_TestUsername", txtSwnTestUsername.Text.Trim());
-                ModuleController.Instance.UpdateModuleSetting(ModuleId, "Swn_TestPassword", txtSwnTestPassword.Text);
-                ModuleController.Instance.UpdateModuleSetting(ModuleId, "Swn_LiveUsername", txtSwnLiveUsername.Text.Trim());
-                ModuleController.Instance.UpdateModuleSetting(ModuleId, "Swn_LivePassword", txtSwnLivePassword.Text);
-                ModuleController.Instance.UpdateModuleSetting(ModuleId, "Swn_UseLive", chkSwnUseLive.Checked.ToString());
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "Notify_FromEmail", txtNotifyFrom.Text.Trim());
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "Notify_ToEmail", txtNotifyTo.Text.Trim());
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "Notify_OnSave", chkNotifyOnSave.Checked.ToString());
@@ -101,7 +81,7 @@ namespace tjc.Modules.EmployeeDB.Views
 
         private void BindRoles()
         {
-            var roleCtrl = new RoleController();
+            var roleCtrl = RoleController.Instance;
             var roles = roleCtrl.GetRoles(PortalId)
                                 .Cast<RoleInfo>()
                                 .OrderBy(r => r.RoleName)

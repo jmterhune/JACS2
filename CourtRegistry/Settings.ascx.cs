@@ -79,7 +79,7 @@ namespace tjc.Modules.CourtRegistry
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
                 modules.UpdateModuleSetting(ModuleId, "PublicUrl", txtUrl.Text);
                 modules.UpdateModuleSetting(ModuleId, "ApproverUsername", txtApprover.Text);
             }

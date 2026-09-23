@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class EmergencyContactController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EmergencyContactController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public EmergencyContactInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmergencyContactInfo>();
                 return rep.GetById(id);
@@ -21,7 +29,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EmergencyContactInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmergencyContactInfo>();
                 return rep.Get();
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmergencyContactInfo>();
                 rep.Insert(item);
@@ -63,7 +71,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmergencyContactInfo>();
                 rep.Update(item);
@@ -75,7 +83,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var item = GetById(id);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<EmergencyContactInfo>();
                     rep.Delete(item);
@@ -85,7 +93,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EmergencyContactInfo> GetForEmployee(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmergencyContactInfo>();
                 return rep.Find("WHERE EmployeeId = @0 ORDER BY CallOrder", employeeId);

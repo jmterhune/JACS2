@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -18,10 +19,16 @@ namespace tjc.Modules.ThreatReport.Components
     class AttachmentController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public AttachmentController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public void CreateAttachment(Attachment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 rep.Insert(t);
@@ -36,7 +43,7 @@ namespace tjc.Modules.ThreatReport.Components
 
         public void DeleteAttachment(Attachment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 rep.Delete(t);
@@ -46,7 +53,7 @@ namespace tjc.Modules.ThreatReport.Components
         public IEnumerable<Attachment> GetAttachments(int id)
         {
             IEnumerable<Attachment> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 t = rep.Find("Where IncidentID = @0", id);
@@ -57,7 +64,7 @@ namespace tjc.Modules.ThreatReport.Components
         public Attachment GetAttachment(int attachmentId)
         {
             Attachment t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 t = rep.GetById(attachmentId);
@@ -67,7 +74,7 @@ namespace tjc.Modules.ThreatReport.Components
 
         public void UpdateAttachment(Attachment t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 rep.Update(t);

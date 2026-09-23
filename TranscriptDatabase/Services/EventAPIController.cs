@@ -1,6 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +19,8 @@ namespace tjc.Modules.TranscriptDatabase.Services
     [DnnAuthorize]
     public class EventController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage GetDesignationEvents(int designationId)
@@ -23,7 +28,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             IEnumerable<EventViewModel> events = Enumerable.Empty<EventViewModel>();
             try
             {
-                var ctl = new Components.EventController();
+                var ctl = new Components.EventController(_hostSettings);
                 events = ctl.GetEventViewModels(designationId);
                 return Request.CreateResponse(new EventResult { data = events, error = null });
             }
@@ -40,7 +45,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         {
             try
             {
-                var ctl = new EventController();
+                var ctl = new Components.EventController(_hostSettings);
                 ctl.DeleteEvent(eventId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -55,7 +60,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         [ActionName("CreateEvent")]
         public HttpResponseMessage CreateEvent(EventViewModel eventViewModel)
         {
-            var ctl = new Components.EventController();
+            var ctl = new Components.EventController(_hostSettings);
             Event eventItem = new Event
             {
                 DesignationID = eventViewModel.DesignationId,
@@ -98,8 +103,8 @@ namespace tjc.Modules.TranscriptDatabase.Services
         [ActionName("CreateExtension")]
         public HttpResponseMessage CreateExtension(ExtensionViewModel extensionRequest)
         {
-            var ctl = new Components.ExtensionRequestController();
-            var cCtl = new Components.CalendarController();
+            var ctl = new Components.ExtensionRequestController(_hostSettings);
+            var cCtl = new Components.CalendarController(_hostSettings);
             ExtensionRequest extension = new ExtensionRequest
             {
                 DesignationID = extensionRequest.DesignationId,

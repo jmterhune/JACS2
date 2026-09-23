@@ -3,7 +3,17 @@
  <PropertyGroup>
    <MSBuildCommunityTasksPath Condition="'$(MSBuildCommunityTasksPath)' == ''">$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
    <MSBuildDnnBinPath Condition="'$(MSBuildDnnBinPath)' == ''">$(MSBuildProjectDirectory)\bin</MSBuildDnnBinPath>
-   <MSBuildCommunityTasksLib>$(SolutionDir)\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
+   <!-- Locate the tasks assembly relative to this file first. SolutionDir is
+        only meaningful when the build was started from the solution; building
+        a module .csproj on its own (msbuild <module>.csproj, or a CI step
+        targeting the project directly) leaves it as ".", which collapsed the
+        path to a non-existent BuildScripts\.\packages\... and failed
+        PackageModule with MSB4062. This file lives in <module>\BuildScripts,
+        so the repo root — where packages\ actually is — is two levels up.
+        The SolutionDir form is kept as a fallback for any layout where that
+        isn't true. -->
+   <MSBuildCommunityTasksLib Condition="Exists('$(MSBuildThisFileDirectory)..\..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.dll')">$(MSBuildThisFileDirectory)..\..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
+   <MSBuildCommunityTasksLib Condition="'$(MSBuildCommunityTasksLib)' == ''">$(SolutionDir)\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
  </PropertyGroup>
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.AspNet.InstallAspNet" />
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.AssemblyInfo" />

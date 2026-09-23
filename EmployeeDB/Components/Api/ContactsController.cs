@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +17,13 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class ContactsController : DnnApiController
     {
-        private readonly EmergencyContactController _contacts = new EmergencyContactController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly EmergencyContactController _contacts;
+
+        public ContactsController()
+        {
+            _contacts = new EmergencyContactController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("ForEmployee")]

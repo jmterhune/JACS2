@@ -200,14 +200,14 @@
 
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="txtNotesDCR">Notes</label>
             <asp:TextBox ID="txtNotesDCR" ClientIDMode="Static" TextMode="MultiLine" ReadOnly="true" CssClass="form-control-plaintext border rounded p-1" runat="server" />
         </div>
     </fieldset>
     <fieldset class="outline-fieldset">
         <legend>Accounting Information</legend>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-auto">
                 <label for="txtPaymentReceived">Date Payment Received<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtPaymentReceived" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
@@ -233,7 +233,7 @@
                     ErrorMessage="Received By Required" ControlToValidate="txtReceivedBy" runat="server" />
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
                 <label for="txtAccountingNotes">Notes</label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtAccountingNotes" ClientIDMode="Static" runat="server" TextMode="MultiLine" CssClass="form-control" MaxLength="750"></asp:TextBox>
         </div>

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.Reports.Components
     internal class PhotoIDController
     {
         private const string CONN_DATACARD = "DataCard"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public PhotoIDController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreatePhotoID(PhotoID t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.Reports.Components
 
         public void DeletePhotoID(PhotoID t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.Reports.Components
         public IEnumerable<PhotoID> GetPhotoIDs()
         {
             IEnumerable<PhotoID> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
                 t = rep.Find("Where BadgeType='Employee' OR BadgeType='Intern'");
@@ -55,7 +63,7 @@ namespace tjc.Modules.Reports.Components
         public IEnumerable<PhotoID> GetPhotoIDs(string lastName)
         {
             IEnumerable<PhotoID> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
                 t = rep.Find("Where (BadgeType='Employee' OR BadgeType='Intern') AND LastName like @0", string.Format("%{0}%",lastName));
@@ -65,7 +73,7 @@ namespace tjc.Modules.Reports.Components
         public PhotoID GetPhotoID(long id)
         {
             PhotoID t;
-            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
                 t = rep.GetById(id);
@@ -75,7 +83,7 @@ namespace tjc.Modules.Reports.Components
 
         public void UpdatePhotoID(PhotoID t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_DATACARD))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_DATACARD))
             {
                 var rep = ctx.GetRepository<PhotoID>();
                 rep.Update(t);

@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Entities.Host;
 using DotNetNuke.Framework.JavaScriptLibraries;
@@ -27,6 +28,7 @@ namespace tjc.Modules.Purchasing
     public partial class StampOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private string _currentProtocol;
         public string attachmentHandler = "";
 
@@ -34,6 +36,7 @@ namespace tjc.Modules.Purchasing
         public StampOrder()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -41,7 +44,7 @@ namespace tjc.Modules.Purchasing
             {
                 attachmentHandler = TemplateSourceDirectory + "/Handlers/AttachmentHandler.ashx";
                 _currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                 if (!IsPostBack)
                 {
                     cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
@@ -73,7 +76,7 @@ namespace tjc.Modules.Purchasing
         }
         protected void AddAttachments(int orderId)
         {
-            var ctl = new AttachmentController();
+            var ctl = new AttachmentController(_hostSettings);
             if (!string.IsNullOrEmpty(hdAttachmentIds.Value))
             {
                 var fileIds = hdAttachmentIds.Value.Split(',');
@@ -88,7 +91,7 @@ namespace tjc.Modules.Purchasing
         }
         protected void PopulateForm(int orderId)
         {
-            var ctl = new StampOrderController();
+            var ctl = new StampOrderController(_hostSettings);
             var order = ctl.GetStampOrder(orderId);
             if (order != null)
             {
@@ -131,15 +134,15 @@ namespace tjc.Modules.Purchasing
         protected string BuildAttachments(int orderId)
         {
             string attachementList = string.Empty;
-            var aCtl = new AttachmentController();
+            var aCtl = new AttachmentController(_hostSettings);
             IEnumerable<StampOrderAttachment> attachments = aCtl.GetStampAttachmentsByOrderId( orderId);
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             int attachmentCount = 0;
             foreach (StampOrderAttachment f in attachments)
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)
-                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' title='{4}'>attachment #{5}</a></li>", _currentProtocol, PortalAlias.HTTPAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
+                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' title='{4}'>attachment #{5}</a></li>", _currentProtocol, ((IPortalAliasInfo)PortalAlias).HttpAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
             }
             return attachementList;
 
@@ -156,8 +159,8 @@ namespace tjc.Modules.Purchasing
         {
             string fromAddress = "purchasing@jud12.flcourts.org";
             var order = new Components.StampOrder { DateCreated = DateTime.Now, RequestedName = txtRequestor.Text, ConsumerName = txtConsumerName.Text, Phone = txtPhone.Text, StampType = drpStampType.SelectedValue, Sample = txtSample.Text, FontStyle = drpFontStyle.SelectedValue, FontSize = txtFontSize.Text, InkColor = drpInkColor.SelectedValue, Instructions = txtInstructions.Text, Quantity = int.Parse(txtQuantity.Text), Location = drpLocation.SelectedValue, EmailAddress = txtEmailAddress.Text };
-            var ctl = new StampOrderController();
-            var aCtl = new AttachmentController();
+            var ctl = new StampOrderController(_hostSettings);
+            var aCtl = new AttachmentController(_hostSettings);
             var sb = new StringBuilder();
             try
             {
@@ -201,7 +204,7 @@ namespace tjc.Modules.Purchasing
                         if (attach.FileID > 0)
                         {
                             var fileInfo = dCtl.GetFile(attach.FileID);
-                            sb.Append(string.Format("<li><a href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, PortalAlias.HTTPAlias,PortalId, fileInfo.RelativePath, fileInfo.FileName));
+                            sb.Append(string.Format("<li><a href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, ((IPortalAliasInfo)PortalAlias).HttpAlias,PortalId, fileInfo.RelativePath, fileInfo.FileName));
                         }
                     }
                     sb.Append("</ul>");

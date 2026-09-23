@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,16 @@ namespace tjc.Modules.RecordDestruction.Components
 {
     internal class DestructionMethodController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public DestructionMethodController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateDestructionMethod(DestructionMethod t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DestructionMethod>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.RecordDestruction.Components
 
         public void DeleteDestructionMethod(DestructionMethod t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DestructionMethod>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public IEnumerable<DestructionMethod> GetDestructionMethods()
         {
             IEnumerable<DestructionMethod> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DestructionMethod>();
                 t = rep.Get();
@@ -53,7 +61,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public DestructionMethod GetDestructionMethod(int destructionMethodId)
         {
             DestructionMethod t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DestructionMethod>();
                 t = rep.GetById(destructionMethodId);
@@ -63,7 +71,7 @@ namespace tjc.Modules.RecordDestruction.Components
 
         public void UpdateDestructionMethod(DestructionMethod t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<DestructionMethod>();
                 rep.Update(t);

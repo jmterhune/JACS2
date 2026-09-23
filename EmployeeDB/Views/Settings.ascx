@@ -44,29 +44,11 @@
                     <div class="form-text">Multiple addresses can be comma-separated.</div>
                 </div>
             </fieldset>
-            <fieldset class="mb-3">
-                <legend class="h6">Send Word Now Credentials</legend>
-                <div class="mb-3">
-                    <label for="<%# txtSwnTestUsername.ClientID %>" class="form-label">Test Username</label>
-                    <asp:TextBox ID="txtSwnTestUsername" runat="server" CssClass="form-control" autocomplete="off" />
-                </div>
-                <div class="mb-3">
-                    <label for="<%# txtSwnTestPassword.ClientID %>" class="form-label">Test Password</label>
-                    <asp:TextBox ID="txtSwnTestPassword" runat="server" CssClass="form-control" TextMode="Password" autocomplete="new-password" />
-                </div>
-                <div class="mb-3">
-                    <label for="<%# txtSwnLiveUsername.ClientID %>" class="form-label">Live Username</label>
-                    <asp:TextBox ID="txtSwnLiveUsername" runat="server" CssClass="form-control" autocomplete="off" />
-                </div>
-                <div class="mb-3">
-                    <label for="<%# txtSwnLivePassword.ClientID %>" class="form-label">Live Password</label>
-                    <asp:TextBox ID="txtSwnLivePassword" runat="server" CssClass="form-control" TextMode="Password" autocomplete="new-password" />
-                </div>
-                <div class="form-check">
-                    <asp:CheckBox ID="chkSwnUseLive" runat="server" CssClass="form-check-input" />
-                    <label class="form-check-label" for="<%# chkSwnUseLive.ClientID %>">Use live credentials (uncheck to use test)</label>
-                </div>
-            </fieldset>
+            <%-- The Crisis24 Person/HR feed is configured with web.config
+                 appSettings (Crisis24FTP and friends) rather than module
+                 settings, because the SFTP credentials belong to the server,
+                 not to a module instance. See
+                 Components\Helpers\Crisis24Uploader.cs. --%>
         </div>
     </div>
 </div>

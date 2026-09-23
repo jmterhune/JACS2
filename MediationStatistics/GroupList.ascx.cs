@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,17 +42,19 @@ namespace tjc.Modules.MediationStatistics
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods 
         public GroupList()
             {
                 _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+                _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
             }
         private void BindList()
         {
            
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             rptGroup.DataSource = ctl.GetGroups();
             rptGroup.DataBind();
         }
@@ -76,8 +79,8 @@ namespace tjc.Modules.MediationStatistics
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
 
-                    JavaScript.RequestRegistration(CommonJs.jQuery);
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
 
                 }
@@ -89,7 +92,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Group group = new Group();
             bool isNew = true;
             if (hdGroupId.Value != "")
@@ -124,7 +127,7 @@ namespace tjc.Modules.MediationStatistics
         protected void rptGroup_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int groupId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteGroup(groupId);

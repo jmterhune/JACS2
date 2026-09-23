@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,12 +37,14 @@ namespace tjc.Modules.DigitalCourtReporting
     {
         #region properties
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #endregion
 
         #region Methods
         public EditAccounting()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         #endregion
 
@@ -59,7 +62,7 @@ namespace tjc.Modules.DigitalCourtReporting
 
                         if (ProceedingId != Null.NullInteger)
                         {
-                            var ctl = new ProceedingController();
+                            var ctl = new ProceedingController(_hostSettings);
                             ProceedingListItem proceeding = ctl.GetProceedingListItem(ProceedingId);
 
                             {
@@ -82,7 +85,7 @@ namespace tjc.Modules.DigitalCourtReporting
                                 txtProceddingType.Text = proceeding.ProceedingType;
                                 ltNotes.Text = proceeding.Instructions;
                                 txtCityStateZip.Text = string.Format("{0}, {1} {2}", proceeding.City, proceeding.State, proceeding.Zip);
-                                var aCtl = new AudioController();
+                                var aCtl = new AudioController(_hostSettings);
                                 Audio audio = aCtl.GetAudiosByProceeding(proceeding.ProceedingID).FirstOrDefault();
                                 if (audio != null)
                                 {
@@ -118,8 +121,8 @@ namespace tjc.Modules.DigitalCourtReporting
         {
             try
             {
-                var ctl = new AccountController();
-                var pCtl = new ProceedingController();
+                var ctl = new AccountController(_hostSettings);
+                var pCtl = new ProceedingController(_hostSettings);
                 Account account = ctl.GetAccountByProceeding(ProceedingId) ?? new Account { ProceedingID= ProceedingId };
                 account.CheckNumber = txtCheckMo.Text;
                 account.ReceivedBy = txtReceivedBy.Text;

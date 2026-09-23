@@ -12,7 +12,7 @@
     </div>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Filter Records">
         <div id="dateFilter" class="input-group me-3" role="group" aria-label="Date group">
-            <button id="btnSearchType" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button id="btnSearchType" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 Search Type
             </button>
             <ul class="dropdown-menu" aria-labelledby="btnSearchType">
@@ -47,7 +47,7 @@
         </div>
 
         <div id="report" class="input-group" role="group" aria-label="Report Group">
-            <button id="btnReportType" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button id="btnReportType" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 Report Type
             </button>
             <ul class="dropdown-menu" aria-labelledby="btnReportType">
@@ -85,7 +85,7 @@
                                 <th>Defendant</th>
                                 <th>Case Number</th>
                                 <th>Charges</th>
-                                  <th><abbr title="Most Serious Offense" data-toggle="tooltip">MSO</abbr></th>
+                                  <th><abbr title="Most Serious Offense" data-bs-toggle="tooltip">MSO</abbr></th>
                                 <th class="text-center">Indigent</th>
                                 <th class="text-center">
                                     <abbr title="Felony Conviction Dangerous">FCD</abbr></th>
@@ -152,7 +152,7 @@
                             <asp:Button OnClientClick="DismissModal()" CausesValidation="False" CssClass="btn-close me-2" aria-hidden="true" ID="cmdClose2" runat="server" Text="&times;" OnClick="cmdClose_Click" />
                         </div>
                         <div class="modal-body pb-0">
-                            <div class="form-group row">
+                            <div class="row mb-3">
                                 <div class="col-2">
                                     <asp:Label runat="server" AssociatedControlID="txtIntakeDate" Text="Intake Date" />
                                     <asp:TextBox runat="server" CssClass="form-control datepicker" MaxLength="50" ID="txtIntakeDate" />
@@ -175,7 +175,7 @@
                                     <asp:TextBox runat="server" CssClass="form-control datepicker completion-date" MaxLength="50" ID="txtCompletionDate" />
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="row mb-3">
                                 <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number<em>*</em>" ToolTip="required" />
                                     <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" ClientIDMode="Static" />
@@ -198,7 +198,7 @@
                                     </asp:DropDownList>
                                 </div>
                             </div>
-                            <div class="row form-group">
+                            <div class="row mb-3">
                                 <div class="col-12 mb-2">
                                     <asp:Label runat="server" AssociatedControlID="txtCharges" Text="Arrest Charges<em>*</em>" />
                                     <asp:TextBox runat="server" TextMode="MultiLine" Rows="2" CssClass="form-control" ID="txtCharges" />
@@ -208,7 +208,7 @@
                                 <div class="col-6">
                                     <fieldset class="form-fieldset">
                                         <legend>Felony Convictions</legend>
-                                        <div class="form-group row">
+                                        <div class="row mb-3">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtfcDanger" Text="Dangerous" />
                                                 <asp:TextBox runat="server" TextMode="Number" CssClass="form-control" ID="txtfcDanger" />
@@ -223,7 +223,7 @@
                                 <div class="col-6">
                                     <fieldset class="form-fieldset">
                                         <legend>Misdemeanor Convictions</legend>
-                                        <div class="form-group row">
+                                        <div class="row mb-3">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtmcDanger" Text="Dangerous" />
                                                 <asp:TextBox runat="server" TextMode="Number" CssClass="form-control" ID="txtmcDanger" />
@@ -236,7 +236,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            <div class="form-group mt-3">
+                            <div class="mt-3">
                                 <div class="row">
                                     <div class="col-4">
                                         <asp:Label runat="server" AssociatedControlID="drpCompletion" Text="Completion" />
@@ -442,20 +442,20 @@
         $("#current-intake-date").text("Selected Intake Date: " + month + "/" + day + "/" + year);
     }
     function DismissModal() {
-        $('#EditDefendantsInProgramModal').modal('hide');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('EditDefendantsInProgramModal')).hide();
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditDefendantsInProgramModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditDefendantsInProgramModal')).show();
         } else {
             if (typeof (Page_ClientValidate) == 'function') {
                 Page_ClientValidate();
             }
 
             if (Page_IsValid) {
-                $('#EditDefendantsInProgramModal').modal('hide');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('EditDefendantsInProgramModal')).hide();
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
             }

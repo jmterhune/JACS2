@@ -26,5 +26,4 @@
   <data name="ControlTitle_EEO.Text"><value>EEO Setup</value></data>
   <data name="ControlTitle_Birthdays.Text"><value>Birthdays</value></data>
   <data name="ControlTitle_Terminated.Text"><value>Terminated Employees</value></data>
-  <data name="ControlTitle_SwnList.Text"><value>SWN Contact Export</value></data>
 </root>

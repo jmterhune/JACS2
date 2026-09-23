@@ -1,12 +1,20 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class AttachmentController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttachmentController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAttachment(Attachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 rep.Insert(t);
@@ -19,7 +27,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteAttachment(Attachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 rep.Delete(t);
@@ -28,7 +36,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Attachment> GetAttachments()
         {
             IEnumerable<Attachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 t = rep.Get();
@@ -38,7 +46,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Attachment> GetAttachmentsByDesignation(int designationId)
         {
             IEnumerable<Attachment> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 t = rep.Find("Where DesignationID = @0",designationId);
@@ -48,7 +56,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Attachment GetAttachment(int attachmentId)
         {
             Attachment t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 t = rep.GetById(attachmentId);
@@ -57,7 +65,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateAttachment(Attachment t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 rep.Update(t);

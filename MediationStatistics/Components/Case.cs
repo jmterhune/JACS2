@@ -10,7 +10,10 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +55,8 @@ namespace tjc.Modules.MediationStatistics.Components
         {
             get
             {
-                var ctl = new SessionController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new SessionController(hostSettings);
                 return ctl.GetSessionsByCase(CaseId);
             }
         }

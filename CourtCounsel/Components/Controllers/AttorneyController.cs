@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.CourtCounsel.Components.Models;
@@ -6,9 +7,16 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 {
     internal class AttorneyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttorneyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAttorney(AttorneyInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttorneyInfo>();
                 rep.Insert(t);
@@ -23,7 +31,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void DeleteAttorney(AttorneyInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttorneyInfo>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<AttorneyInfo> GetAttorneys()
         {
             IEnumerable<AttorneyInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttorneyInfo>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<AttorneyInfo> GetActiveAttorneys()
         {
             IEnumerable<AttorneyInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttorneyInfo>();
                 t = rep.Find("WHERE IsActive = 1");
@@ -55,7 +63,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public AttorneyInfo GetAttorney(int attorneyId)
         {
             AttorneyInfo t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttorneyInfo>();
                 t = rep.GetById(attorneyId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void UpdateAttorney(AttorneyInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<AttorneyInfo>();
                 rep.Update(t);

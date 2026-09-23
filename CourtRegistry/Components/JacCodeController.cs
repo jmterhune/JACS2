@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using iText.Kernel.Geom;
 using System;
@@ -20,10 +21,17 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     internal class JacCodeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public JacCodeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         private const string CONN_JUD12 = "Jud12"; //Connection
         public void CreateJacCode(JacCode t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCode>();
                 rep.Insert(t);
@@ -38,7 +46,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteJacCode(JacCode t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCode>();
                 rep.Delete(t);
@@ -47,7 +55,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<JacCode> GetJacCodes()
         {
             IEnumerable<JacCode> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCode>();
                 t = rep.Get();
@@ -57,7 +65,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<JacCode> GetJacCodesByCaseType(int caseTypeId)
         {
             IEnumerable<JacCode> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCode>();
                 t = rep.Find("Where CaseTypeID=@0", caseTypeId);
@@ -67,7 +75,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public JacCode GetJacCode(int jacCodeId)
         {
             JacCode t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCode>();
                 t = rep.GetById(jacCodeId);
@@ -77,7 +85,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateJacCode(JacCode t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCode>();
                 rep.Update(t);
@@ -86,7 +94,7 @@ namespace tjc.Modules.CourtRegistry.Components
         //
         public void CreateJacCodeUpdate(JacCodeUpdate t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeUpdate>();
                 rep.Insert(t);
@@ -101,7 +109,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteJacCodeUpdate(JacCodeUpdate t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeUpdate>();
                 rep.Delete(t);
@@ -111,7 +119,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<JacCodeUpdate> GetJacCodeUpdates()
         {
             IEnumerable<JacCodeUpdate> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeUpdate>();
                 t = rep.Get();
@@ -122,7 +130,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public JacCodeUpdate GetJacCodeUpdate(int jacCodeId)
         {
             JacCodeUpdate t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeUpdate>();
                 t = rep.GetById(jacCodeId);
@@ -132,7 +140,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateJacCodeUpdate(JacCodeUpdate t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeUpdate>();
                 rep.Update(t);
@@ -141,7 +149,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         internal void ClearExceptions(int appYear)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text, "Delete from tjc_car_jac_code_config Where Year = @0", appYear);
             }
@@ -149,7 +157,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteException(int jacCodeId, int locationId, int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text, "Delete from tjc_car_jac_code_config Where JacCodeID = @0 AND LocationID = @1 AND Year = @2", jacCodeId, locationId, year);
             }
@@ -157,7 +165,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteJacCodeConfig(JacCodeConfig t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeConfig>();
                 rep.Delete(t);
@@ -165,7 +173,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public IEnumerable<JacException> GetJacExceptions(int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<JacException>(System.Data.CommandType.Text,
                     @"SELECT cfg.JacCodeId AS JacCodeID, cfg.LocationId AS LocationID, cfg.[Year],
@@ -180,7 +188,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public JacCodeConfig GetJacCodeConfig(int jacCodeId, int locationId, int year)
         {
             JacCodeConfig t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<JacCodeConfig>();
                 t = rep.Find("Where JacCodeID=@0 AND LocationID = @1 AND Year = @2", jacCodeId, locationId, year).FirstOrDefault();
@@ -189,7 +197,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         internal void CreateJacCodeConfig(JacCodeConfig config)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     @"INSERT INTO tjc_car_jac_code_config (JacCodeId, LocationId, [Year], Exclude, OnlyRenewals)
@@ -199,7 +207,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         internal void UpdateJacCode(JacCodeConfig config)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     @"UPDATE tjc_car_jac_code_config

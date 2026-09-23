@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -16,10 +17,17 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     internal class RegistryController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RegistryController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         private const string CONN_JUD12 = "Jud12"; //Connection
         public void CreateRegistry(Registry t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Registry>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteRegistry(Registry t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Registry>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<Registry> GetRegistrys()
         {
             IEnumerable<Registry> t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Registry>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public Registry GetRegistry(int registryId)
         {
             Registry t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Registry>();
                 t = rep.GetById(registryId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateRegistry(Registry t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Registry>();
                 rep.Update(t);

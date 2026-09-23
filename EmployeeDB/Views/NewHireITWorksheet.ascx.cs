@@ -29,9 +29,16 @@ namespace tjc.Modules.EmployeeDB.Views
     public partial class NewHireITWorksheet : EmployeeDBModuleBase
     {
         // Lazily-instantiated controllers used to gather the preload data.
-        private readonly EmployeeController _employees = new EmployeeController();
-        private readonly GroupController _groups = new GroupController();
-        private readonly OfficeLocationController _locations = new OfficeLocationController();
+        private readonly EmployeeController _employees;
+        private readonly GroupController _groups;
+        private readonly OfficeLocationController _locations;
+
+        public NewHireITWorksheet()
+        {
+            _employees = new EmployeeController(_hostSettings);
+            _groups = new GroupController(_hostSettings);
+            _locations = new OfficeLocationController(_hostSettings);
+        }
 
         /// <summary>
         /// Emitted as a JS literal in the .ascx so the front-end can hide

@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +7,18 @@ namespace tjc.Modules.Purchasing.Components
 {
     internal class FormOrderController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public FormOrderController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         #region Form Orders
 
         public void CreateFormOrder(FormOrder t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrder>();
                 rep.Insert(t);
@@ -30,7 +38,7 @@ namespace tjc.Modules.Purchasing.Components
         }
         public void DeleteFormOrder(FormOrder t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrder>();
                 rep.Delete(t);
@@ -40,7 +48,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<FormOrder> GetFormOrders()
         {
             IEnumerable<FormOrder> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrder>();
                 t = rep.Get();
@@ -50,7 +58,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<FormOrder> GetFormOrders(DateTime startDate, DateTime endDate)
         {
             IEnumerable<FormOrder> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrder>();
                 t = rep.Find("Where DateRequested Between @0 And @1", startDate, endDate);
@@ -61,7 +69,7 @@ namespace tjc.Modules.Purchasing.Components
         public FormOrder GetFormOrder(int orderId)
         {
             FormOrder t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrder>();
                 t = rep.GetById(orderId);
@@ -71,7 +79,7 @@ namespace tjc.Modules.Purchasing.Components
 
         public void UpdateFormOrder(FormOrder t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrder>();
                 rep.Update(t);
@@ -82,7 +90,7 @@ namespace tjc.Modules.Purchasing.Components
         #region Form Order Items
         public void CreateFormOrderItem(FormOrderItem t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderItem>();
                 rep.Insert(t);
@@ -96,7 +104,7 @@ namespace tjc.Modules.Purchasing.Components
         }
         public void DeleteAllFormOrderItems(int moduleId, int orderId)
         {
-            var ctl = new AttachmentController();
+            var ctl = new AttachmentController(_hostSettings);
             ctl.DeleteFormAttachmentByOrderId(orderId);
             var f = GetFormOrderItemsByOrder(orderId);
             foreach (FormOrderItem fi in f)
@@ -106,7 +114,7 @@ namespace tjc.Modules.Purchasing.Components
         }
         public void DeleteFormOrderItem(FormOrderItem t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderItem>();
                 rep.Delete(t);
@@ -116,7 +124,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<FormOrderItem> GetFormOrderItems()
         {
             IEnumerable<FormOrderItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderItem>();
                 t = rep.Get();
@@ -126,7 +134,7 @@ namespace tjc.Modules.Purchasing.Components
         public IEnumerable<FormOrderItem> GetFormOrderItemsByOrder(int orderId)
         {
             IEnumerable<FormOrderItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderItem>();
                 t = rep.Find("Where OrderID=@0", orderId);
@@ -137,7 +145,7 @@ namespace tjc.Modules.Purchasing.Components
         public FormOrderItem GetFormOrderItem(int orderId)
         {
             FormOrderItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderItem>();
                 t = rep.GetById(orderId);
@@ -147,7 +155,7 @@ namespace tjc.Modules.Purchasing.Components
 
         public void UpdateFormOrderItem(FormOrderItem t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<FormOrderItem>();
                 rep.Update(t);

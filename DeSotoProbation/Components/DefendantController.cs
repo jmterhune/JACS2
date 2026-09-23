@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.DeSoto.Probation.Components
     internal class DefendantController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public DefendantController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateDefendant(Defendant t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Defendant>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
 
         public void DeleteDefendant(Defendant t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Defendant>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public IEnumerable<Defendant> GetDefendantes()
         {
             IEnumerable<Defendant> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Defendant>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public bool DefendantExists(int defendantId)
         {
             Defendant t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Defendant>();
                 t = rep.GetById(defendantId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public Defendant GetDefendant(int defendantId)
         {
             Defendant t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Defendant>();
                 t = rep.GetById(defendantId);
@@ -74,7 +82,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         }
         public void UpdateDefendant(Defendant t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Defendant>();
                 rep.Update(t);

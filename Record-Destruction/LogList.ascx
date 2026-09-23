@@ -7,7 +7,7 @@
                 <a class="nav-link" href="<%=DestructionFormURL %>">Record Destruction Log</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="#logItems" data-toggle="tab">Search Log</a>
+                <a class="nav-link" href="#logItems" data-bs-toggle="tab">Search Log</a>
             </li>
              <asp:PlaceHolder ID="phAdminTabs" runat="server" Visible="false">
             <li class="nav-item">

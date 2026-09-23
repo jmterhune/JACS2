@@ -3,8 +3,11 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net;
@@ -19,7 +22,13 @@ namespace tjc.Modules.ExpertWitness.Components.Api
     [ValidateAntiForgeryToken]
     public class LocationsController : DnnApiController
     {
-        private readonly LocationController _ctrl = new LocationController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly LocationController _ctrl;
+
+        public LocationsController()
+        {
+            _ctrl = new LocationController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("All")]

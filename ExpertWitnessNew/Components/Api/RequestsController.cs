@@ -3,8 +3,11 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +26,13 @@ namespace tjc.Modules.ExpertWitness.Components.Api
     [ValidateAntiForgeryToken]
     public class RequestsController : DnnApiController
     {
-        private readonly RequestController _ctrl = new RequestController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly RequestController _ctrl;
+
+        public RequestsController()
+        {
+            _ctrl = new RequestController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("All")]
@@ -53,8 +62,8 @@ namespace tjc.Modules.ExpertWitness.Components.Api
                 var req = _ctrl.GetRequestListItem(id);
                 if (req == null) return Request.CreateResponse(HttpStatusCode.NotFound);
 
-                var tCtl = new TemplateController();
-                var eCtl = new ExpertController();
+                var tCtl = new TemplateController(_hostSettings);
+                var eCtl = new ExpertController(_hostSettings);
 
                 var requirements = tCtl.GetTemplateSequences(req.TemplateID)
                     .OrderBy(s => s.Sequence)
