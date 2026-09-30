@@ -305,12 +305,18 @@ namespace tjc.Modules.jacs.Services
                 // Spec 2.1 getCase. IsJudge is 1 because this is the internal site — every
                 // caller here is a judge or a JA. The clerk security-trims on that, so the
                 // flag has to be present; omitting it left the trimming undefined.
-                // BarNumber, RequestorEmail and UserCredentials are sent as JSON null:
-                // they identify an attorney requestor and do not apply to a judge or JA.
+                //
+                // CaseId is null: this lookup only runs while creating an event, which is
+                // exactly the case spec 2.1 describes as "CaseId will be null when creating
+                // a new event". It used to send 0, which is a real value rather than "not
+                // known" and could be read as a genuine case id by anything matching on it.
+                //
+                // BarNumber, RequestorEmail and UserCredentials are null too: they identify
+                // an attorney requestor and do not apply to a judge or JA.
                 var payload = new
                 {
                     CaseNumber = caseNum,
-                    CaseId = 0,
+                    CaseId = (long?)null,
                     BarNumber = (string)null,
                     RequestorEmail = (string)null,
                     UserCredentials = (string)null,
