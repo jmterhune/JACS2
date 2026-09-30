@@ -487,13 +487,13 @@ namespace tjc.Modules.jacs.Services
                             CaseId         = evt.clerk_case_id > 0 ? (long?)evt.clerk_case_id : null,
                             JudgeId        = clerkEventData.JudgeId,
                             Action         = "New",
-                            EventType      = clerkEventData.EventType,
-                            OtherEventType = clerkEventData.OtherEventType,
+                            EventType      = ApiEndpointController.NullIfBlank(clerkEventData.EventType),
+                            OtherEventType = ApiEndpointController.NullIfBlank(clerkEventData.OtherEventType),
                             EventDateTime  = clerkEventData.EventDateTime,
                             Duration       = clerkEventData.Duration,
                             CourtRoomId    = clerkEventData.CourtRoomId,
-                            Notes          = evt.notes,
-                            UDF            = clerkEventData.UDF
+                            Notes          = ApiEndpointController.NullIfBlank(evt.notes),
+                            UDF            = ApiEndpointController.NullIfEmpty(clerkEventData.UDF)
                         };
 
                         HttpResponseMessage clerkResponse;
@@ -662,16 +662,16 @@ namespace tjc.Modules.jacs.Services
                         CaseId         = evt.clerk_case_id > 0 ? (long?)evt.clerk_case_id : null,
                         JudgeId        = clerkEventData.JudgeId,
                         Action         = "Update",
-                        EventType      = clerkEventData.EventType,
-                        OtherEventType = clerkEventData.OtherEventType,
+                        EventType      = ApiEndpointController.NullIfBlank(clerkEventData.EventType),
+                        OtherEventType = ApiEndpointController.NullIfBlank(clerkEventData.OtherEventType),
                         EventDateTime  = clerkEventData.EventDateTime,
                         Duration       = clerkEventData.Duration,
                         CourtRoomId    = clerkEventData.CourtRoomId,
-                        Notes          = evt.notes,
-                        UDF            = clerkEventData.UDF,
-                        Reason         = p1["cancellation_reason"]?.ToString()
-                                         ?? p1["reason"]?.ToString()
-                                         ?? string.Empty
+                        Notes          = ApiEndpointController.NullIfBlank(evt.notes),
+                        UDF            = ApiEndpointController.NullIfEmpty(clerkEventData.UDF),
+                        Reason         = ApiEndpointController.NullIfBlank(
+                                             p1["cancellation_reason"]?.ToString()
+                                             ?? p1["reason"]?.ToString())
                     };
 
                     // Log the clerk_event_id (not the JACS row id) so api_log
@@ -820,23 +820,23 @@ namespace tjc.Modules.jacs.Services
                             CaseId         = eventToReschedule.clerk_case_id > 0 ? (long?)eventToReschedule.clerk_case_id : null,
                             JudgeId        = clerkNew.JudgeId,
                             Action         = "Modify",
-                            EventType      = clerkNew.EventType,
-                            OtherEventType = clerkNew.OtherEventType,
+                            EventType      = ApiEndpointController.NullIfBlank(clerkNew.EventType),
+                            OtherEventType = ApiEndpointController.NullIfBlank(clerkNew.OtherEventType),
                             EventDateTime  = clerkNew.EventDateTime,
                             Duration       = clerkNew.Duration,
                             CourtRoomId    = clerkNew.CourtRoomId,
-                            Notes          = eventToReschedule.notes,
-                            UDF            = clerkNew.UDF
+                            Notes          = ApiEndpointController.NullIfBlank(eventToReschedule.notes),
+                            UDF            = ApiEndpointController.NullIfEmpty(clerkNew.UDF)
                         },
                         CurrentEvent = new // this is the current event data provided for context if the clerk needs it
                         { 
                             JudgeId        = clerkCurrent.JudgeId,
-                            EventType      = clerkCurrent.EventType,
+                            EventType      = ApiEndpointController.NullIfBlank(clerkCurrent.EventType),
                             EventDateTime  = clerkCurrent.EventDateTime,
                             Duration       = clerkCurrent.Duration,
                             CourtRoomId    = clerkCurrent.CourtRoomId,                         
-                            Notes          = eventToReschedule.notes,
-                            UDF            = clerkCurrent.UDF
+                            Notes          = ApiEndpointController.NullIfBlank(eventToReschedule.notes),
+                            UDF            = ApiEndpointController.NullIfEmpty(clerkCurrent.UDF)
                         },
                         Reason = "Rescheduled"
                     };
@@ -1001,7 +1001,7 @@ namespace tjc.Modules.jacs.Services
                     var clerkPayload = new
                     {
                         EventId = eventToCancel.clerk_event_id,
-                        Reason  = reason
+                        Reason  = ApiEndpointController.NullIfBlank(reason)
                     };
 
                     // Log the clerk_event_id (not the JACS row id) so api_log

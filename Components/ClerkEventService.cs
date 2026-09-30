@@ -119,7 +119,9 @@ namespace tjc.Modules.jacs.Components
                 var clerkPayload = new
                 {
                     EventId = evt.clerk_event_id,
-                    Reason = reason ?? string.Empty,
+                    // JSON null rather than "" when there is no reason, matching the
+                    // public JacsAtty application so the clerk sees one shape from both.
+                    Reason = ApiEndpointController.NullIfBlank(reason),
                 };
 
                 var logCtx = new ApiLogContext

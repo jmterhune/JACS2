@@ -462,6 +462,26 @@ namespace tjc.Modules.jacs.Components
         }
 
         /// <summary>
+        /// An optional clerk field with no value, as JSON null rather than an empty
+        /// string. The public JacsAtty application sends null for these, so matching it
+        /// means the clerk receives one shape from both applications instead of having to
+        /// treat "" and null as the same thing.
+        /// </summary>
+        internal static string NullIfBlank(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? null : value;
+        }
+
+        /// <summary>
+        /// The UDF object as JSON null when it carries nothing, rather than an empty
+        /// "UDF": {}. Same reasoning as <see cref="NullIfBlank"/>.
+        /// </summary>
+        internal static Dictionary<string, string> NullIfEmpty(Dictionary<string, string> values)
+        {
+            return (values == null || values.Count == 0) ? null : values;
+        }
+
+        /// <summary>
         /// Unwraps a clerk list response into <typeparamref name="T"/> items. The clerk
         /// wraps payloads as { "data": [ ... ], "error": "" }; a bare array is accepted
         /// too. A non-empty "error" is reported via <paramref name="error"/>, and any
