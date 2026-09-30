@@ -52,9 +52,7 @@
             </div>
             <div class="modal-header">
                 <h4 class="modal-title" id="ExtendCalendarModalLabel">Extend Calendar</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-info mb-4">
@@ -69,15 +67,15 @@
                                 <asp:Literal ID="ltLastHearing" runat="server" />
                             </div>
                             <div class="col-md-6">
-                                <label for="startTemplate">Starting Template<em>*</em></label>
+                                <label for="ddlStartTemplate">Starting Template<em>*</em></label>
                                 <asp:DropDownList ClientIDMode="Static" ID="ddlStartTemplate" runat="server" CssClass="form-control" required="required" />
                             </div>
                             <div class="col-md-6">
-                                <label for="weeks">Weeks to Extend<em>*</em></label>
+                                <label for="txtWeeks">Weeks to Extend<em>*</em></label>
                                 <asp:TextBox ID="txtWeeks" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="Number" required="required" />
                             </div>
                             <div class="col-md-6">
-                                <label for="startDate">Start Date<em>*</em></label>
+                                <label for="txtStartDate">Start Date<em>*</em></label>
                                 <asp:TextBox ID="txtStartDate" ClientIDMode="Static" runat="server" CssClass="form-control datepicker" required="required" />
                             </div>
                         </div>
@@ -103,9 +101,7 @@
             </div>
             <div class="modal-header">
                 <h4 class="modal-title" id="RescheduleHearingModalLabel">Reschedule Hearing</h4>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
@@ -142,9 +138,14 @@
                 <div class="container-fluid p-0">
                     <div class="tabs mb-0">
                         <ul class="nav nav-tabs">
-                            <li class="nav-item active"><a class="nav-link" data-toggle="tab" href="#timeslotTab">Timeslot(s)</a></li>
-                            <li class="nav-item"><a class="nav-link" id="eventCreateTab" data-toggle="tab" href="#eventTab">Create Event</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#eventsTab">Event(s)</a></li>
+                            <%-- "active" must be on the .nav-link, not just the <li>. Bootstrap finds the
+                                 outgoing tab by looking for .active among the nav links; with none marked,
+                                 the first switch had nothing to deactivate and left #timeslotTab visible
+                                 underneath the new pane. It corrected itself after any click on this tab,
+                                 which is why it only ever showed on the first open. --%>
+                            <li class="nav-item active"><a class="nav-link active" data-bs-toggle="tab" href="#timeslotTab">Timeslot(s)</a></li>
+                            <li class="nav-item"><a class="nav-link" id="eventCreateTab" data-bs-toggle="tab" href="#eventTab">Create Event</a></li>
+                            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#eventsTab">Event(s)</a></li>
                         </ul>
                         <div class="tab-content">
                             <div id="timeslotTab" class="tab-pane active form-group mb-0">
@@ -315,12 +316,12 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label>Attorney</label>
+                                        <label id="event_attorney_label">Attorney</label>
                                         <select id="event_attorney" autocomplete="off"></select>
                                         <div class="invalid-feedback">This Attorney is Required.</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Opposing Attorney</label>
+                                        <label id="event_opposingAttorney_label">Opposing Attorney</label>
                                         <select id="event_opposingAttorney" autocomplete="off"></select>
                                         <div class="invalid-feedback">This Attorney is Required.</div>
                                     </div>

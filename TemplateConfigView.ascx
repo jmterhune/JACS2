@@ -16,8 +16,8 @@
         <h4 class="mb-2"></h4>
         <div class="template-actions d-flex mb-0">
             <div class="actions me-auto">
-                <a href="#" class="btn btn-default m-1" id="multiDeleteBtn"><i class="fa fa-lg fa-trash mr-2"></i> Delete Timeslot(s)</a>
-                <a href="#" class="btn btn-default m-1" id="multiCopyBtn"><i class="fa fa-lg fa-copy mr-2"></i> Copy Timeslot(s)</a>
+                <a href="#" class="btn btn-default m-1" id="multiDeleteBtn"><i class="fa fa-lg fa-trash me-2"></i> Delete Timeslot(s)</a>
+                <a href="#" class="btn btn-default m-1" id="multiCopyBtn"><i class="fa fa-lg fa-copy me-2"></i> Copy Timeslot(s)</a>
             </div>
         </div>
         <div id="calendar"></div>

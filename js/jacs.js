@@ -48,13 +48,21 @@
 });
 
 function setActiveLink(linkId) {
-    // Remove active class from all nav links
-    document.querySelectorAll('.nav-link').forEach(link => {
+    // Scoped to #sidebarMenu on purpose. This used to clear .active from EVERY
+    // .nav-link on the page, and Bootstrap tab headers are .nav-link too — so it
+    // stripped the active class off the first tab of any modal on the page. The
+    // tab then had no outgoing element to deactivate on the first switch, leaving
+    // two panes visible at once until the user clicked a tab and Bootstrap put the
+    // class back. Every link this function manages lives in the sidebar.
+    const sidebar = document.getElementById('sidebarMenu');
+    if (!sidebar) return;
+
+    sidebar.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
     });
-    // Add active class to the specified link
+
     const targetLink = document.getElementById(linkId);
-    if (targetLink) {
+    if (targetLink && sidebar.contains(targetLink)) {
         targetLink.classList.add('active');
     }
 }
@@ -140,7 +148,13 @@ function getQueryStringParam(key) {
 //   as-is. Running such a value through a timeZone conversion would shift it by
 //   the viewer's own offset and show the wrong hearing time outside Eastern.
 // ---------------------------------------------------------------------------
-const JACS_TIME_ZONE = 'America/New_York';
+// Declared with var, not const, on purpose. This file is included by 52 views and
+// can end up loaded twice on one page (nested controls, or a CRM bundle alongside
+// the individual file). A top-level const throws on redeclaration, and that
+// SyntaxError aborts parsing of the WHOLE file — taking the collapse-state setup
+// and every other helper here down with it, for an error that points nowhere near
+// the cause. var redeclares harmlessly, matching the function declarations below.
+var JACS_TIME_ZONE = 'America/New_York';
 
 function jacsHasExplicitTimeZone(value) {
     return typeof value === 'string' && /(?:Z|[+-]\d{2}:?\d{2})\s*$/i.test(value.trim());

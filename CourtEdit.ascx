@@ -25,22 +25,22 @@
                 <div class="tabs" id="form_tabs">
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="nav-item active">
-                            <a href="#tab_main" aria-controls="tab_main" role="tab" data-toggle="tab" class="nav-link active">Main</a>
+                            <a href="#tab_main" aria-controls="tab_main" role="tab" data-bs-toggle="tab" class="nav-link active">Main</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_scheduling" aria-controls="tab_scheduling" role="tab" data-toggle="tab" class="nav-link">Scheduling</a>
+                            <a href="#tab_scheduling" aria-controls="tab_scheduling" role="tab" data-bs-toggle="tab" class="nav-link">Scheduling</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_custom_email" aria-controls="tab_custom_email" role="tab" data-toggle="tab" class="nav-link">Custom Email</a>
+                            <a href="#tab_custom_email" aria-controls="tab_custom_email" role="tab" data-bs-toggle="tab" class="nav-link">Custom Email</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_templates" aria-controls="tab_templates" role="tab" data-toggle="tab" class="nav-link">Templates</a>
+                            <a href="#tab_templates" aria-controls="tab_templates" role="tab" data-bs-toggle="tab" class="nav-link">Templates</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_timeslot_search_header" aria-controls="tab_timeslot_search_header" role="tab" data-toggle="tab" class="nav-link">Timeslot Search Header</a>
+                            <a href="#tab_timeslot_search_header" aria-controls="tab_timeslot_search_header" role="tab" data-bs-toggle="tab" class="nav-link">Timeslot Search Header</a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a href="#tab_docket_print_header" aria-controls="tab_docket_print_header" role="tab" data-toggle="tab" class="nav-link">Docket Print Header</a>
+                            <a href="#tab_docket_print_header" aria-controls="tab_docket_print_header" role="tab" data-bs-toggle="tab" class="nav-link">Docket Print Header</a>
                         </li>
                     </ul>
                     <div class="tab-content p-3">

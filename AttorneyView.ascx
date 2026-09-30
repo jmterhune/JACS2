@@ -133,12 +133,12 @@
                             </div>
                             <div class="col-md-4">
                                 <label>Jud12.flcourts.org User ID<span class="text-danger">*</span></label>
+                                <%-- Bootstrap 5 removed .input-group-append; the button sits directly
+                                     inside .input-group, which is what joins it to the field. --%>
                                 <div class="input-group mb-0">
                                     <input type="number" id="edit_attyUserId" class="form-control">
-                                    <div class="input-group-append mb-0">
-                                        <button id="edit_user_lookup" type="button" title="Lookup UserId from Jud12 site" tabindex="-1" class="btn btn-primary">
-                                            <i class="fas fa-search" aria-hidden="true"></i>&nbsp;Lookup</button>
-                                    </div>
+                                    <button id="edit_user_lookup" type="button" title="Lookup UserId from Jud12 site" tabindex="-1" class="btn btn-primary">
+                                        <i class="fas fa-search" aria-hidden="true"></i>&nbsp;Lookup</button>
                                 </div>
                             </div>
                         </div>

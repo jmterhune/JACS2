@@ -73,7 +73,15 @@
 
 </asp:Panel>
 
-<script src="/DesktopModules/tjc.Modules/Jacs/js/jacs.js"></script>
+<%-- No <script src> for jacs.js here. This control is on every view, and every
+     view already registers jacs.js through DnnJsInclude at priority 100, so the
+     raw tag loaded it a SECOND time under a different casing
+     (tjc.Modules/Jacs vs tjc.modules/JACS). The browser treated those as two
+     separate resources: the file ran twice, whichever copy executed last won for
+     every function it defines, and the two URLs cached independently — so a
+     deployed change could appear on one and not the other. setActiveLink is
+     called inside document.ready below, by which point the DnnJsInclude copy has
+     executed. --%>
 <script>
     (function ($, Sys) {
         $(document).ready(function () {
