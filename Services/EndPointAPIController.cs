@@ -47,7 +47,7 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new AttorneyController();
-                attorneys = ctl.GetAttorneyDropDownItems(searchTerm);
+                attorneys = ctl.GetExtendedAttorneyDropDownItems(searchTerm);
                 return Request.CreateResponse(HttpStatusCode.OK, new AttorneyDropDownResult { data = attorneys, error = null });
             }
             catch (Exception ex)

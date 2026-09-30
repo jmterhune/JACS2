@@ -250,27 +250,42 @@ class CourtController {
                 },
                 beforeSend: xhr => this.setAjaxHeaders(xhr),
                 processResults: function (response) {
-                    if (response.data) {
-                        return {
-                            results: response.data.map(item => ({
-                                id: item.Key,
-                                text: item.Value
-                            }))
-                        };
-                    } else {
-                        return { results: null }
+                    const items = (response && Array.isArray(response.data)) ? response.data : [];
+                    const results = items.map(item => ({ id: item.Key, text: item.Value }));
+
+                    // The server caps a search at 50 matches. Say so rather than letting
+                    // a truncated list look complete — the full Bar is in this table, so
+                    // a common surname has far more matches than are shown.
+                    if (results.length >= 50) {
+                        results.push({
+                            id: '',
+                            text: 'Showing the first 50 matches — keep typing to narrow the search',
+                            disabled: true
+                        });
                     }
+                    return { results: results };
                 },
-                error: function () {
+                error: function (jqXHR, textStatus) {
+                    // Select2 aborts the in-flight request on every keystroke, so an
+                    // abort is normal typing, not a failure. 401s are handled by the
+                    // page's own login handling (same as the counties dropdown).
+                    if (textStatus === 'abort' || jqXHR.status === 0 || jqXHR.status === 401) return;
                     console.error('Failed to fetch attorney dropdown entries');
                     ShowNotification("Error", "Failed to retrieve attorney records. Make sure you are logged in and try again.", 'error');
                 },
                 cache: false
             },
             placeholder: placeholder,
-            minimumInputLength: 2,
+            // Three characters, not two: with ~106k attorneys a two-letter term matches
+            // thousands of rows and tells the user almost nothing.
+            minimumInputLength: 3,
             allowClear: true,
             theme: "bootstrap-5",
+            language: {
+                inputTooShort: () => 'Type at least 3 characters to search attorneys',
+                searching: () => 'Searching attorneys…',
+                noResults: () => 'No attorney matched that name or bar number'
+            }
         });
     }
 

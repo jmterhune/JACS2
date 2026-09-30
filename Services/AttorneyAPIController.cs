@@ -81,7 +81,11 @@ namespace tjc.Modules.jacs.Services
         }
 
         [HttpGet]
-        public HttpResponseMessage GetAttorneyDropDownItems()
+        /// <summary>
+        /// Attorney matches with id, bar number, name and label. Used by the calendar,
+        /// whose control is keyed by bar number and displays the combined label.
+        /// </summary>
+        public HttpResponseMessage GetExtendedAttorneyDropDownItems()
         {
             List<AttorneyDropDownItem> attorneys = new List<AttorneyDropDownItem>();
             var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
@@ -90,13 +94,38 @@ namespace tjc.Modules.jacs.Services
             try
             {
                 var ctl = new AttorneyController();
-                attorneys = ctl.GetAttorneyDropDownItems(searchTerm);
+                attorneys = ctl.GetExtendedAttorneyDropDownItems(searchTerm);
                 return Request.CreateResponse(HttpStatusCode.OK, new AttorneyDropDownResult { data = attorneys, error = null });
             }
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new AttorneyDropDownResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
+        /// Attorney matches as Key/Value pairs — Key is the attorney id, Value the name.
+        /// This is the shape the rest of the module's dropdowns use, and what the court
+        /// edit screen binds to for its default prosecuting/opposing attorneys.
+        /// </summary>
+        [HttpGet]
+        public HttpResponseMessage GetAttorneyDropDownItems()
+        {
+            List<KeyValuePair<long, string>> attorneys = new List<KeyValuePair<long, string>>();
+            var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+            string searchTerm = query.ContainsKey("q") ? query["q"].ToString() : "";
+
+            try
+            {
+                var ctl = new AttorneyController();
+                attorneys = ctl.GetAttorneyDropDownItems(searchTerm);
+                return Request.CreateResponse(HttpStatusCode.OK, new ListItemOptionResult { data = attorneys, error = null });
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ListItemOptionResult { data = attorneys, error = $"Failed to retrieve attorney dropdown items: {ex.Message}" });
             }
         }
 

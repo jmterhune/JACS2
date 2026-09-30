@@ -293,19 +293,68 @@ class CourtCalendarController {
     }
 
     fetchTemplateData() {
-        let template = {};
-        $('[name^="template["]').each(function () {
-            let el = $(this);
-            let key = el.attr('name').match(/template\[(.*?)\]/)[1];
+        // Build the UDF template payload:
+        //   {"userDefinedFields":[{fieldId, fieldName, fieldType, value}, ...]}
+        // Inputs are keyed by user_defined_fields id (name="template[<id>]") and
+        // carry field_name / field_type as data-* attributes (see
+        // populateCourtTemplateFields). Yes/No fields render two radios sharing one
+        // id, so dedupe by fieldId and keep the checked value.
+        const fieldsById = {};
+        $('#court_template_fields [name^="template["]').each(function () {
+            const el = $(this);
+            const fieldId = parseInt(el.attr('data-field-id'), 10);
+            if (isNaN(fieldId)) return;
+            if (!fieldsById[fieldId]) {
+                fieldsById[fieldId] = {
+                    fieldId: fieldId,
+                    fieldName: el.attr('data-field-name') || '',
+                    fieldType: el.attr('data-field-type') || '',
+                    value: ''
+                };
+            }
             if (el.is(':radio')) {
                 if (el.is(':checked')) {
-                    template[key] = el.val();
+                    fieldsById[fieldId].value = el.val();
                 }
             } else {
-                template[key] = el.val();
+                fieldsById[fieldId].value = el.val();
             }
         });
-        return JSON.stringify(template);
+        return JSON.stringify({ userDefinedFields: Object.values(fieldsById) });
+    }
+
+    // Normalise a stored event.template string into an array of
+    // {fieldId, fieldName, fieldType, value} regardless of which format it was
+    // saved in:
+    //   Current: {"userDefinedFields":[{fieldId, fieldName, fieldType, value}, ...]}
+    //   Legacy:  {"Field Name_|align_|type":"value", ...}
+    // Legacy entries have no fieldId (null) and recover the name/type from the key.
+    parseTemplateData(templateStr) {
+        if (!templateStr) return [];
+        let parsed;
+        try {
+            parsed = JSON.parse(templateStr);
+        } catch (e) {
+            return [];
+        }
+        if (parsed && Array.isArray(parsed.userDefinedFields)) {
+            return parsed.userDefinedFields.map(f => ({
+                fieldId: f.fieldId != null ? parseInt(f.fieldId, 10) : null,
+                fieldName: f.fieldName || '',
+                fieldType: f.fieldType || '',
+                value: f.value != null ? String(f.value) : ''
+            }));
+        }
+        // Legacy flat-dictionary format keyed by "name_|align_|type".
+        return Object.keys(parsed || {}).map(key => {
+            const parts = key.split('_|');
+            return {
+                fieldId: null,
+                fieldName: parts[0] || key,
+                fieldType: parts[2] || '',
+                value: parsed[key] != null ? String(parsed[key]) : ''
+            };
+        });
     }
 
     // Populate Control Methods
@@ -329,7 +378,7 @@ class CourtCalendarController {
                 load: (query, callback) => {
                     if (!query.length) return callback();
                     $.ajax({
-                        url: `${self.service.baseUrl}AttorneyAPI/GetAttorneyDropDownItems`,
+                        url: `${self.service.baseUrl}AttorneyAPI/GetExtendedAttorneyDropDownItems`,
                         type: 'GET',
                         data: { q: query },
                         dataType: 'json',
@@ -373,6 +422,21 @@ class CourtCalendarController {
      * @param {TomSelect} tomInstance  The TomSelect instance to update.
      * @param {string}    barNum       The bar number returned by the clerk.
      */
+    /**
+     * Add or remove the standard red-asterisk indicator on a label. The
+     * asterisk is rendered as <em>*</em>, styled red by the existing
+     * `label em { color: red }` rule in module.css.
+     *
+     * @param {string}  labelSelector  jQuery selector for the label element.
+     * @param {boolean} required       Whether to show the asterisk.
+     */
+    _toggleRequiredAsterisk(labelSelector, required) {
+        const $label = $(labelSelector);
+        if (!$label.length) return;
+        $label.find('em.req-mark').remove();
+        if (required) $label.append('<em class="req-mark">*</em>');
+    }
+
     loadAndSetAttorney(tomInstance, barNum) {
         if (!tomInstance || !barNum) {
             if (tomInstance) tomInstance.clear();
@@ -385,7 +449,7 @@ class CourtCalendarController {
         }
         // Otherwise fetch by bar number, add the option, then select it
         $.ajax({
-            url: `${this.service.baseUrl}AttorneyAPI/GetAttorneyDropDownItems`,
+            url: `${this.service.baseUrl}AttorneyAPI/GetExtendedAttorneyDropDownItems`,
             type: 'GET',
             data: { q: barNum },
             dataType: 'json',
@@ -463,6 +527,14 @@ class CourtCalendarController {
         $('#event_defendant').prop('required', this.courtData.defendant_required);
         $('#event_attorney').prop('required', this.courtData.plaintiff_attorney_required);
         $('#event_opposingAttorney').prop('required', this.courtData.defendant_attorney_required);
+
+        // Toggle a red asterisk on the matching labels so the user can see
+        // which fields the court requires. The asterisk markup is the same
+        // <em>*</em> pattern used elsewhere (styled red via label em { … }).
+        this._toggleRequiredAsterisk('.plaintiff-label',         !!this.courtData.plaintiff_required);
+        this._toggleRequiredAsterisk('.defendant-label',         !!this.courtData.defendant_required);
+        this._toggleRequiredAsterisk('#event_attorney_label',    !!this.courtData.plaintiff_attorney_required);
+        this._toggleRequiredAsterisk('#event_opposingAttorney_label', !!this.courtData.defendant_attorney_required);
 
         const format = this.courtData.case_num_format;
         if (!format) return;
@@ -623,11 +695,26 @@ class CourtCalendarController {
         container.empty();
         if (this.courtData && this.courtData.user_defined_fields) {
             this.courtData.user_defined_fields.forEach((field, index) => {
-                let key = `${field.field_name}_|${field.alignment}_|${field.field_type}`;
-                let sanitizedId = key.replace(/[^A-Za-z0-9-]/g, '');
+                // Events store UDF values keyed by the user_defined_fields id.
+                // field_name / field_type ride along as data-* attributes so
+                // fetchTemplateData can emit {fieldId, fieldName, fieldType, value}
+                // without parsing a composite key. (Legacy events used a
+                // "name_|align_|type" key — see parseTemplateData for the reader.)
+                const fieldId = field.id;
+                const sanitizedId = `udf_${fieldId}`;
+                // HTML-escape the field name for safe use inside a data-* attribute.
+                const escapedName = (field.field_name || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                const dataAttrs = `data-field-id="${fieldId}" data-field-name="${escapedName}" data-field-type="${field.field_type}"`;
                 let fieldHtml = '';
                 let requiredAttr = '';
                 let requiredLabel = '';
+                // The field's configured alignment is intentionally ignored — all
+                // UDF inputs render left-aligned (the default), so no text-align is
+                // emitted below.
                 if (field.field_type === 'yes_no') {
                     // The UDF admin enforces mutual exclusion between Required
                     // and "Yes Answer Required" — only one of them is set on a
@@ -643,15 +730,20 @@ class CourtCalendarController {
                     const errMsg = yesRequired
                         ? 'A Yes response is required for this field.'
                         : 'Please select Yes or No.';
+                    // Pre-check the matching radio when the UDF has a default_value
+                    // of "yes" or "no" (case-insensitive).
+                    const defaultLower = (field.default_value || '').toString().trim().toLowerCase();
+                    const yesChecked = defaultLower === 'yes' ? 'checked' : '';
+                    const noChecked  = defaultLower === 'no'  ? 'checked' : '';
                     fieldHtml = `
                         <div class="col-md-4 mb-3" data-udf-yes-required="${yesRequired}">
                             <label>${field.field_name}${requiredLabel}</label>
                             <div>
                                 <label>
-                                    <input type="radio" id="${sanitizedId}_yes" name="template[${key}]" value="yes" class="form-check-input" ${requiredAttr}>Yes
+                                    <input type="radio" id="${sanitizedId}_yes" name="template[${fieldId}]" ${dataAttrs} value="yes" class="form-check-input" ${yesChecked} ${requiredAttr}>Yes
                                 </label>
                                 <label>
-                                    <input type="radio" id="${sanitizedId}_no" name="template[${key}]" value="no" class="form-check-input" ${requiredAttr}>No
+                                    <input type="radio" id="${sanitizedId}_no" name="template[${fieldId}]" ${dataAttrs} value="no" class="form-check-input" ${noChecked} ${requiredAttr}>No
                                 </label>
                             </div>
                             <small class="udf-required-msg text-danger" style="display:none;">${errMsg}</small>
@@ -662,10 +754,28 @@ class CourtCalendarController {
                         requiredLabel = "<em>*</em>";
                     }
                     let type = field.field_type.toLowerCase() || 'text';
+                    // Pre-populate from the field definition's default_value.
+                    let defaultVal = field.default_value != null ? String(field.default_value) : '';
+                    if (type === 'date' && defaultVal) {
+                        // <input type=date> requires yyyy-MM-dd. Admins typically
+                        // enter MM/dd/yyyy ("01/22/2026"), so coerce that into
+                        // ISO format. Leave already-ISO values alone.
+                        const us = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(defaultVal);
+                        if (us) {
+                            defaultVal = `${us[3]}-${us[1].padStart(2, '0')}-${us[2].padStart(2, '0')}`;
+                        }
+                    }
+                    // HTML-escape the default so quotes/ampersands/etc. in the
+                    // value don't break the attribute.
+                    const escapedDefault = defaultVal
+                        .replace(/&/g, '&amp;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
                     fieldHtml = `
                         <div class="col-md-4 mb-3">
                             <label for="${sanitizedId}">${field.field_name}${requiredLabel}</label>
-                            <input type="${type}" class="form-control" name="template[${key}]" id="${sanitizedId}" ${requiredAttr}>
+                            <input type="${type}" class="form-control" name="template[${fieldId}]" ${dataAttrs} id="${sanitizedId}" value="${escapedDefault}" ${requiredAttr}>
                         </div>`;
                 }
                 container.append(fieldHtml);
@@ -728,11 +838,29 @@ class CourtCalendarController {
         });
         $('#timeslot_duration').on('change', this.handleChangeTimeslotDuration.bind(this));
         // Tab change: update save button text and trigger motion load
-        $('.nav-tabs a[data-toggle="tab"]').on('shown.bs.tab', (e) => {
+        $('.nav-tabs a[data-bs-toggle="tab"]').on('shown.bs.tab', (e) => {
             this.updateSaveButtonText();
         });
         $(document).on('shown.bs.tab', '#TimeslotModal .nav-tabs a', () => {
             this.updateSaveButtonText();
+        });
+        // Bound once here rather than in handleTimeslotModalShow. Binding it per
+        // modal-show stacked another copy on every open, so by the fifth open this
+        // body ran five times per tab switch. Delegated from document so it keeps
+        // working if the modal's contents are re-rendered.
+        $(document).on('shown.bs.tab', '#TimeslotModal .nav-tabs a', (e) => {
+            if (e.target.hash !== '#eventTab') return;
+
+            // Only repopulate when the dropdown is empty — otherwise this re-fires
+            // every time viewEvent programmatically activates the tab and wipes the
+            // value viewEvent just set. Restricted-motion changes already trigger
+            // populateMotion via the TomSelect onChange, so we don't lose that
+            // refresh path.
+            const sel = document.getElementById('event_motion');
+            if (sel && sel.options.length <= 1) {
+                this.populateMotionSelectExcludingRestricted();
+            }
+            $('#other_motion_row').toggle($('#event_motion').val() === '221');
         });
         $('#timeslot_startTime').on('change', this.handleStartTimeChange.bind(this));
         $('#timeslot_endTime').on('change', this.handleEndTimeChange.bind(this));
@@ -821,20 +949,8 @@ class CourtCalendarController {
         $('#rescheduleBtn').hide();
         $('.public_block').hide();
         $('.block_reason').hide();
-        $('.nav-tabs a').on('shown.bs.tab', (e) => {
-            if (e.target.hash === '#eventTab') {
-                // Only repopulate when the dropdown is empty — otherwise this
-                // re-fires every time viewEvent programmatically activates the
-                // tab and wipes the value viewEvent just set. Restricted-motion
-                // changes already trigger populateMotion via the TomSelect
-                // onChange, so we don't lose that refresh path.
-                const sel = document.getElementById('event_motion');
-                if (sel && sel.options.length <= 1) {
-                    this.populateMotionSelectExcludingRestricted();
-                }
-                $('#other_motion_row').toggle($('#event_motion').val() === '221');
-            }
-        });
+        // The #eventTab handler that used to be bound here now lives in
+        // bindEventHandlers, which runs once — see the note there.
         const startTime = $('#t_start').val();
         if (startTime) {
             const startDate = new Date(startTime);
@@ -1455,7 +1571,13 @@ class CourtCalendarController {
                     $('#TimeslotModalLabel').text(title);
                     this.loadEventsForTimeslot(timeslotId);
                     const $deleteBtn = $('#deleteTimeslotPaneBtn');
-                    if (response.hasEvents) {
+                    // Read-only users (set via Court Permissions) never see
+                    // the delete button — viewTimeslot is called every time
+                    // the modal opens, so without this guard it would
+                    // un-hide the button that init() hid at page load.
+                    if (!this.editable) {
+                        $deleteBtn.hide();
+                    } else if (response.hasEvents) {
                         $deleteBtn.hide();
                         $deleteBtn.attr('title', 'Cannot delete timeslot with scheduled hearings');
                     } else {
@@ -1715,6 +1837,14 @@ class CourtCalendarController {
                     this.clearEventForm();
 
                     $('#edit_eventId').val(event.id);
+                    // Hydrate the hidden clerk ids so the next save (Update)
+                    // round-trips the values the clerk assigned at create time.
+                    // clearEventForm wiped these and clerk_event_id/clerk_case_id
+                    // never go through any visible input, so without this they
+                    // submit as 0/empty and the clerk API call lands as
+                    // EventId=0, CaseId=null.
+                    $('#edit_clerkEventId').val(event.clerk_event_id || '');
+                    $('#edit_clerkCaseId').val(event.clerk_case_id || '');
                     // Motion options are populated from a court-scoped AJAX. Fire
                     // it here and defer the select-value assignment until it
                     // resolves — otherwise val() runs against an empty dropdown
@@ -1751,11 +1881,37 @@ class CourtCalendarController {
                     const parts = caseNum.split('-');
                     $('.case-num-part').each((index, el) => { $(el).val(parts[index] || ''); });
 
-                    const template = event.template ? JSON.parse(event.template) : {};
+                    // Index the saved UDF values by field id (current format) and
+                    // by field name (legacy fallback), then hydrate each rendered
+                    // input. parseTemplateData normalises both on-disk formats.
+                    const savedUdf = this.parseTemplateData(event.template);
+                    const savedById = {};
+                    const savedByName = {};
+                    savedUdf.forEach(entry => {
+                        if (entry.fieldId != null) savedById[entry.fieldId] = entry.value;
+                        if (entry.fieldName) savedByName[entry.fieldName] = entry.value;
+                    });
                     $('#court_template_fields [name^="template["]').each(function () {
                         const el = $(this);
-                        const key = el.attr('name').match(/template\[(.*?)\]/)[1];
-                        const value = template[key] || '';
+                        const fieldId = el.attr('data-field-id');
+                        const fieldName = el.attr('data-field-name');
+                        // Match on field id first (current format), then field name
+                        // (legacy events). Only hydrate when the event actually has
+                        // the value — otherwise leave whatever
+                        // populateCourtTemplateFields rendered (the field's
+                        // default_value). This handles fields added to the court
+                        // after the event was saved without wiping the default.
+                        let value;
+                        let hasSaved = false;
+                        if (fieldId != null && Object.prototype.hasOwnProperty.call(savedById, fieldId)) {
+                            value = savedById[fieldId];
+                            hasSaved = true;
+                        } else if (fieldName && Object.prototype.hasOwnProperty.call(savedByName, fieldName)) {
+                            value = savedByName[fieldName];
+                            hasSaved = true;
+                        }
+                        if (!hasSaved) return;
+                        value = value || '';
                         if (el.is(':radio') || el.is(':checkbox')) {
                             el.prop('checked', el.val() === value || (!!value && el.val() === '1'));
                         } else {
@@ -1768,7 +1924,8 @@ class CourtCalendarController {
                         // public + internal portals). Fall back to updated_by_name
                         // for legacy rows that pre-date the column.
                         $('#event_editedBy').text(event.owner_username || event.updated_by_name || '');
-                        $('#event_updatedAt').text(event.updated_at ? moment(event.updated_at).format('MM/DD/YYYY h:mm A') : '');
+                        $('#event_updatedAt').text(formatEasternDateTime(event.updated_at,
+                            { second: undefined, hour12: true }));
                         $('.edited-by').show();
                     }
 
@@ -1831,8 +1988,16 @@ class CourtCalendarController {
 
         const attorneySelectEl = document.getElementById('event_attorney');
         const oppSelectEl = document.getElementById('event_opposingAttorney');
-        const attorney_id = getAttorneyId(attorneyTom, attorneySelectEl);
-        const opp_attorney_id = getAttorneyId(opposingAttorneyTom, oppSelectEl);
+        // The server deserialises into EventViewModel.{attorney_id,opp_attorney_id}
+        // which are non-nullable `long`. Sending "" trips JSON.NET with
+        // "Error converting value to type Int64". Send 0 when there's no
+        // selection — the controller already treats 0 as null when persisting.
+        const toLong = v => {
+            const n = parseInt(v, 10);
+            return isNaN(n) ? 0 : n;
+        };
+        const attorney_id = toLong(getAttorneyId(attorneyTom, attorneySelectEl));
+        const opp_attorney_id = toLong(getAttorneyId(opposingAttorneyTom, oppSelectEl));
 
         // Bar numbers for sending to the clerk (the TomSelect value field)
         const attorney_bar_num = attorneyTom ? attorneyTom.getValue() : '';
@@ -1992,13 +2157,49 @@ class CourtCalendarController {
     validateEventForm() {
         let isValid = true;
         // Required fields per business rule: case number, event type, motion, courtroom.
-        // Attorney, plaintiff, and defendant are no longer required.
+        // Plaintiff / defendant / attorney / opposing-attorney requiredness is
+        // driven by per-court flags applied in populateEventDefaults; those
+        // checks run below based on the `required` attribute it set.
         const $motion = $('#event_motion');
         if (!$motion.val()) { $motion.addClass('is-invalid'); isValid = false; } else { $motion.removeClass('is-invalid'); }
         const $type = $('#event_type');
         if (!$type.val()) { $type.addClass('is-invalid'); isValid = false; } else { $type.removeClass('is-invalid'); }
         const $courtroom = $('#event_courtroom');
         if (!$courtroom.val()) { $courtroom.addClass('is-invalid'); isValid = false; } else { $courtroom.removeClass('is-invalid'); }
+
+        // Per-court required: plaintiff and defendant text inputs.
+        const $plaintiff = $('#event_plaintiff');
+        if ($plaintiff.prop('required') && !($plaintiff.val() || '').trim()) {
+            $plaintiff.addClass('is-invalid'); isValid = false;
+        } else { $plaintiff.removeClass('is-invalid'); }
+        const $defendant = $('#event_defendant');
+        if ($defendant.prop('required') && !($defendant.val() || '').trim()) {
+            $defendant.addClass('is-invalid'); isValid = false;
+        } else { $defendant.removeClass('is-invalid'); }
+
+        // Per-court required: attorney + opposing attorney TomSelects. The
+        // underlying <select> carries the `required` attribute; the visible
+        // widget is the .ts-wrapper sibling, so we mark that for the red
+        // border (see .ts-wrapper.is-invalid rule in module.css).
+        const checkTomSelectRequired = (selectId) => {
+            const $sel = $('#' + selectId);
+            if (!$sel.prop('required')) {
+                $sel.removeClass('is-invalid');
+                $sel.next('.ts-wrapper').removeClass('is-invalid');
+                return;
+            }
+            const val = $sel[0]?.tomselect?.getValue();
+            if (!val) {
+                $sel.addClass('is-invalid');
+                $sel.next('.ts-wrapper').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $sel.removeClass('is-invalid');
+                $sel.next('.ts-wrapper').removeClass('is-invalid');
+            }
+        };
+        checkTomSelectRequired('event_attorney');
+        checkTomSelectRequired('event_opposingAttorney');
         // Email format check is still enforced when a value is present.
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const $plaintiffEmail = $('#event_plaintiffEmail');
@@ -2235,11 +2436,22 @@ class CourtCalendarController {
         // Enable all clerk-populated fields now that a case has been chosen
         this._disableClerkFields(false);
 
+        // Some rows in the clerk DB carry the literal string "NULL" instead of
+        // a real SQL NULL — e.g. PetitionerEmail = 'NULL'. The `|| ''` short-
+        // circuit only catches falsy values, so without this helper "NULL"
+        // would land directly in the form inputs.
+        const clean = v => {
+            if (v == null) return '';
+            const s = String(v);
+            return s.trim().toUpperCase() === 'NULL' ? '' : s;
+        };
+
         // Populate the case number input fields from the clerk's case_number.
         // The clerk returns it as a raw string without hyphens (e.g. "412025CA000002AX").
         // We split it into segments matching the rendered inputs in order.
-        if (c.case_number) {
-            const parts = c.case_number.replace(/[-\s]/g, '');
+        const caseNumber = clean(c.case_number);
+        if (caseNumber) {
+            const parts = caseNumber.replace(/[-\s]/g, '');
             const segments = [
                 parts.substring(0, 2),   // multiple1: county (2)
                 parts.substring(2, 6),   // multiple2: year (4)
@@ -2256,27 +2468,32 @@ class CourtCalendarController {
             });
         }
 
-        $('#event_plaintiff').val(c.petitioner || '');
-        $('#event_plaintiffEmail').val(c.petitioner_email || '');
-        $('#event_defendant').val(c.respondent || '');
-        $('#event_defendantEmail').val(c.respondent_email || '');
-        $('#event_notes').val(c.notes || '');
+        $('#event_plaintiff').val(clean(c.petitioner));
+        $('#event_plaintiffEmail').val(clean(c.petitioner_email));
+        $('#event_defendant').val(clean(c.respondent));
+        $('#event_defendantEmail').val(clean(c.respondent_email));
+        $('#event_notes').val(clean(c.notes));
         $('#edit_clerkCaseId').val(c.clerk_case_id || '');
 
         // Value field is bar_num, so we can set directly from the clerk's bar number.
         // loadAndSetAttorney handles the case where the option isn't loaded yet.
         const attyTom = $('#event_attorney')[0]?.tomselect;
-        this.loadAndSetAttorney(attyTom, c.petitioner_atty_bar || null);
+        this.loadAndSetAttorney(attyTom, clean(c.petitioner_atty_bar) || null);
         const oppTom = $('#event_opposingAttorney')[0]?.tomselect;
-        this.loadAndSetAttorney(oppTom, c.respondent_atty_bar || null);
+        this.loadAndSetAttorney(oppTom, clean(c.respondent_atty_bar) || null);
     }
 
     showCaseSelectionModal(cases) {
+        const cleanCell = v => {
+            if (v == null) return '';
+            const s = String(v);
+            return s.trim().toUpperCase() === 'NULL' ? '' : s;
+        };
         const rows = cases.map((c, i) => `
         <tr style="cursor:pointer" data-idx="${i}">
-            <td>${c.case_number || ''}</td>
-            <td>${c.petitioner || ''}</td>
-            <td>${c.respondent || ''}</td>
+            <td>${cleanCell(c.case_number)}</td>
+            <td>${cleanCell(c.petitioner)}</td>
+            <td>${cleanCell(c.respondent)}</td>
         </tr>`).join('');
 
         Swal.fire({

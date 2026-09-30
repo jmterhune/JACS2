@@ -54,21 +54,84 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
-        public List<AttorneyDropDownItem> GetAttorneyDropDownItems(string term)
+        /// <summary>
+        /// The most matches a type-ahead will return. The attorneys table holds the whole
+        /// Florida Bar (~106k rows), so an unbounded search on a short term materialised
+        /// and serialised thousands of records — slow enough that the browser abandoned
+        /// the request on the next keystroke. Ordering and limiting in SQL lets the
+        /// engine stop early instead of sorting everything in memory.
+        /// </summary>
+        private const int DropDownResultLimit = 50;
+
+        /// <summary>
+        /// True when a search hit <see cref="DropDownResultLimit"/>, i.e. there are
+        /// probably more matches the caller is not seeing.
+        /// </summary>
+        internal static bool WasTruncated(int returnedCount) => returnedCount >= DropDownResultLimit;
+
+        private IEnumerable<Attorney> FindAttorneysForDropDown(IDataContext ctx, string term)
         {
-            IEnumerable<Attorney> t;
+            string search = (term ?? string.Empty).Trim();
+
+            // Search one column, not both with an OR. Bar numbers are numeric, so a term
+            // containing letters can never match bar_num and a digits-only term is not a
+            // name — and an OR across two columns stops SQL Server using either index,
+            // which is what left bar-number lookups scanning the whole table.
+            bool looksLikeBarNumber = search.Length > 0 && search.All(char.IsDigit);
+
+            string sql = looksLikeBarNumber
+                // Prefix match, so IX_attorneys_bar_num can seek rather than scan.
+                ? "SELECT TOP (" + DropDownResultLimit + ") id, name, bar_num " +
+                  "FROM attorneys WHERE bar_num LIKE @0 ORDER BY name"
+                // A leading wildcard cannot seek, but IX_attorneys_name is narrow and
+                // already in name order, so the engine stops as soon as it has enough.
+                : "SELECT TOP (" + DropDownResultLimit + ") id, name, bar_num " +
+                  "FROM attorneys WHERE name LIKE @0 ORDER BY name";
+
+            string pattern = looksLikeBarNumber ? search + "%" : "%" + search + "%";
+
+            return ctx.ExecuteQuery<Attorney>(System.Data.CommandType.Text, sql, pattern);
+        }
+
+        /// <summary>
+        /// Attorney matches carrying id, bar number, name and a combined label. Callers
+        /// that need more than a value and a caption use this one — the calendar keys its
+        /// control by bar number and still wants the id and the label.
+        /// </summary>
+        public List<AttorneyDropDownItem> GetExtendedAttorneyDropDownItems(string term)
+        {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var rep = ctx.GetRepository<Attorney>();
-                t = rep.Find("Where name like @0 OR bar_num like @1", string.Format("%{0}%",term), string.Format("{0}%", term));
+                return FindAttorneysForDropDown(ctx, term)
+                    .Select(a => new AttorneyDropDownItem
+                    {
+                        id = a.id,
+                        bar_num = a.bar_num,
+                        name = a.name,
+                        label = string.Format("{0} - {1}", a.name, a.bar_num)
+                    }).ToList();
             }
-            return t.Select(a => new AttorneyDropDownItem
+        }
+
+        /// <summary>
+        /// Attorney matches as plain id/name pairs, matching the Key/Value shape every
+        /// other dropdown in the module uses (see CountyController.GetCountyDropDownItems).
+        /// Key is the attorney id, which is what court_def_attorney_id / opp_attorney_id
+        /// store, so a caller can bind the selected value straight through.
+        /// </summary>
+        public List<KeyValuePair<long, string>> GetAttorneyDropDownItems(string term)
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                id = a.id,
-                bar_num = a.bar_num,
-                name = a.name,
-                label = string.Format("{0} - {1}", a.name, a.bar_num)
-            }).OrderBy(a => a.label).ToList();
+                // The bar number goes in the caption too: with the full Bar loaded there
+                // are many duplicate names, and the name alone gives no way to tell them
+                // apart once a row is selected.
+                return FindAttorneysForDropDown(ctx, term)
+                    .Select(a => new KeyValuePair<long, string>(
+                        a.id,
+                        string.IsNullOrWhiteSpace(a.bar_num) ? a.name : a.name + " - " + a.bar_num))
+                    .ToList();
+            }
         }
 
         public Attorney GetAttorney(long attorneyId)
