@@ -58,12 +58,12 @@ class RoleController {
                 }
             },
             columns: [
-                { data: "id", render: data => `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="role-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
-                { data: "id", render: data => `<button type="button" title="Edit Role" data-toggle="tooltip" data-id="${data}" class="role-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="role-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="Edit Role" data-bs-toggle="tooltip" data-id="${data}" class="role-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
                 { data: "id", render: data => `<a title="View Users in Role" href="${roleControllerInstance.userUrl}/rid/${data}" class="role-users btn-command"><i class="fas fa-users"></i></a>`, className: "command-item", orderable: false },
                 { data: "name", render: data => data || '' },
                 { data: "guard_name", render: data => data || '' },
-                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Role" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
+                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Role" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
             ],
             language: { emptyTable: "No Records Available.", zeroRecords: "No records match the search criteria you entered." },
             order: [[3, 'asc']],

@@ -60,13 +60,13 @@ class CountyController {
             columns: [
                 {
                     data: "id",
-                    render: data => `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="county-detail btn-command"><i class="fas fa-eye"></i></button>`,
+                    render: data => `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="county-detail btn-command"><i class="fas fa-eye"></i></button>`,
                     className: "command-item",
                     orderable: false
                 },
                 {
                     data: "id",
-                    render: data => `<button type="button" title="Edit County" data-toggle="tooltip" data-id="${data}" class="county-edit btn-command"><i class="fas fa-pencil"></i></button>`,
+                    render: data => `<button type="button" title="Edit County" data-bs-toggle="tooltip" data-id="${data}" class="county-edit btn-command"><i class="fas fa-pencil"></i></button>`,
                     className: "command-item",
                     orderable: false
                 },
@@ -84,7 +84,7 @@ class CountyController {
                 },
                 {
                     data: "id",
-                    render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete County" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '',
+                    render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete County" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '',
                     className: "command-item",
                     orderable: false
                 }

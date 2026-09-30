@@ -77,7 +77,7 @@ class CourtroomController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="courtroom-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="courtroom-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -85,7 +85,7 @@ class CourtroomController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit Courtroom" data-toggle="tooltip" data-id="${data}" class="courtroom-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit Courtroom" data-bs-toggle="tooltip" data-id="${data}" class="courtroom-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -94,7 +94,7 @@ class CourtroomController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="courtroom-xref btn-command" data-toggle="tooltip" aria-role="button" title="Manage Clerk References" data-id="${row.id}"><i class="fas fa-exchange-alt"></i></button>`;
+                            return `<button type="button" class="courtroom-xref btn-command" data-bs-toggle="tooltip" aria-role="button" title="Manage Clerk References" data-id="${row.id}"><i class="fas fa-exchange-alt"></i></button>`;
                         }
                         return '';
                     },
@@ -111,7 +111,7 @@ class CourtroomController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Courtroom" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Courtroom" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -575,7 +575,7 @@ class CourtroomController {
                         data: "courtroom_id",
                         render: function (data, type, row) {
                             if (courtroomControllerInstance.isAdmin) {
-                                return `<button type="button" class="delete-xref btn-command" data-toggle="tooltip" data-county-id="${row.county_id}" data-courtroom-id="${row.courtroom_id}"><i class="fas fa-trash"></i></button>`;
+                                return `<button type="button" class="delete-xref btn-command" data-bs-toggle="tooltip" data-county-id="${row.county_id}" data-courtroom-id="${row.courtroom_id}"><i class="fas fa-trash"></i></button>`;
                             }
                             return '';
                         },

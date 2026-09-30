@@ -78,7 +78,7 @@ class AttorneyController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="atty-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="atty-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -86,7 +86,7 @@ class AttorneyController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit Attorney" data-toggle="tooltip" data-id="${data}" class="atty-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit Attorney" data-bs-toggle="tooltip" data-id="${data}" class="atty-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -94,7 +94,7 @@ class AttorneyController {
                 {
                     data: "enabled",
                     render: function (data) {
-                        return data ? '<i title="Active" data-toggle="tooltip" class="text-success far fa-circle-check"></i>' : '<i title="Disabled" data-toggle="tooltip" class="text-danger fas fa-ban"></i>';
+                        return data ? '<i title="Active" data-bs-toggle="tooltip" class="text-success far fa-circle-check"></i>' : '<i title="Disabled" data-bs-toggle="tooltip" class="text-danger fas fa-ban"></i>';
                     },
                     className: "command-item"
                 },
@@ -107,14 +107,14 @@ class AttorneyController {
                 {
                     data: "bar_num",
                     render: function (data) {
-                        return `<a target="_blank" data-toggle="tooltip" href="https://www.floridabar.org/directories/find-mbr/?barNum=${data}" title="View Florida Bar Record (Opens in new Window)" class="bar_num-link">${data}</a>`;
+                        return `<a target="_blank" data-bs-toggle="tooltip" href="https://www.floridabar.org/directories/find-mbr/?barNum=${data}" title="View Florida Bar Record (Opens in new Window)" class="bar_num-link">${data}</a>`;
                     }
                 },
                 {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin === "True") {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Attorney" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Attorney" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -319,7 +319,7 @@ class AttorneyController {
         });
 
         $("#edit_new-email").on("click", function () {
-            $("#edit_email-list").append('<li><input type="text" class="form-control me-3 d-inline-block" value=""><a href="#" data-toggle="tooltip" class="delete-email" title="Delete Email Address" role="button" aria-disabled="true" aria-label="Delete Email Address"><i class="fas fa-trash"></i></a></li>');
+            $("#edit_email-list").append('<li><input type="text" class="form-control me-3 d-inline-block" value=""><a href="#" data-bs-toggle="tooltip" class="delete-email" title="Delete Email Address" role="button" aria-disabled="true" aria-label="Delete Email Address"><i class="fas fa-trash"></i></a></li>');
             setTimeout(() => {
                 const emails = $("#edit_email-list li input[type='text']").map(function () { return $(this).val().trim(); }).get();
                 if (emails.length > 0 && emails.every(e => e !== "")) {
@@ -449,7 +449,7 @@ class AttorneyController {
                 if (response.data) {
                     $("#edit_attyName").val(`${response.data.lastname}, ${response.data.firstname}`);
                     $("#edit_attyUserId").val(response.data.userid);
-                    $("#edit_email-list").html(`<li><input type="text" class="form-control me-3 d-inline-block" value="${response.data.email}"><a href="#" role="button" data-toggle="tooltip" class="delete-email" aria-disabled="true" aria-label="Delete Email Address" title="Delete Email Address"><i class="fas fa-trash"></i></a></li>`);
+                    $("#edit_email-list").html(`<li><input type="text" class="form-control me-3 d-inline-block" value="${response.data.email}"><a href="#" role="button" data-bs-toggle="tooltip" class="delete-email" aria-disabled="true" aria-label="Delete Email Address" title="Delete Email Address"><i class="fas fa-trash"></i></a></li>`);
                     $("#edit_attyName").removeClass("is-invalid");
                     $("#edit_attyName").next(".invalid-feedback").hide();
                     $("#edit_attyUserId").removeClass("is-invalid");
@@ -504,7 +504,7 @@ class AttorneyController {
                                 $("#edit_radio_enabled").prop('checked', false);
                             }
                             if (response.data.email_list?.length > 0) {
-                                $("#edit_email-list").html(response.data.email_list.map(email => `<li><input type="text" class="form-control me-3 d-inline-block" value="${email}"><a href="#" role="button" data-toggle="tooltip" class="delete-email" aria-disabled="true" aria-label="Delete Email Address" title="Delete Email Address"><i class="fas fa-trash"></i></a></li>`).join(''));
+                                $("#edit_email-list").html(response.data.email_list.map(email => `<li><input type="text" class="form-control me-3 d-inline-block" value="${email}"><a href="#" role="button" data-bs-toggle="tooltip" class="delete-email" aria-disabled="true" aria-label="Delete Email Address" title="Delete Email Address"><i class="fas fa-trash"></i></a></li>`).join(''));
                             }
                             $("#AttorneyEditModalLabel").html(`Edit Attorney: ${response.data.name}`);
                         } else {

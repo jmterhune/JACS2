@@ -57,10 +57,10 @@ class EventTypeController {
                 }
             },
             columns: [
-                { data: "id", render: data => `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="et-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
-                { data: "id", render: data => `<button type="button" title="Edit Event Type" data-toggle="tooltip" data-id="${data}" class="et-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="et-detail btn-command"><i class="fas fa-eye"></i></button>`, className: "command-item", orderable: false },
+                { data: "id", render: data => `<button type="button" title="Edit Event Type" data-bs-toggle="tooltip" data-id="${data}" class="et-edit btn-command"><i class="fas fa-pencil"></i></button>`, className: "command-item", orderable: false },
                 { data: "name", render: data => data || '' },
-                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Event Type" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
+                { data: "id", render: (data, type, row) => isAdmin ? `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Event Type" data-id="${row.id}"><i class="fas fa-trash"></i></button>` : '', className: "command-item", orderable: false }
             ],
             language: { emptyTable: "No Records Available.", zeroRecords: "No records match the search criteria you entered." },
             order: [[2, 'asc']],

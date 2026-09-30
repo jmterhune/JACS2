@@ -75,7 +75,7 @@ class UserController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="user-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="user-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -83,7 +83,7 @@ class UserController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit User" data-toggle="tooltip" data-id="${data}" class="user-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit User" data-bs-toggle="tooltip" data-id="${data}" class="user-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -98,7 +98,7 @@ class UserController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete User" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete User" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },

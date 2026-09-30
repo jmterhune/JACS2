@@ -220,3 +220,39 @@ function formatEasternDate(value) {
         return parsed.toLocaleDateString();
     }
 }
+
+// ---------------------------------------------------------------------------
+// Tooltips
+//
+// Bootstrap 5 does not build tooltips from markup — each one has to be
+// constructed. Most tooltip targets in this module are rendered by DataTables
+// and replaced on every draw (paging, searching, sorting), so the old
+// $('[data-bs-toggle="tooltip"]').tooltip() at page load covered only the rows
+// present at that moment and missed every row drawn afterwards. It also ran on
+// just two of the twenty screens that carry the attribute, so everywhere else
+// fell back to the browser's own title tooltip.
+//
+// This builds a tooltip the first time an element is hovered or focused,
+// delegated from document so markup created later is covered without any page
+// needing to re-scan. The instance is disposed once hidden, so a row removed by
+// a redraw cannot strand a tooltip on screen, and the element's title attribute
+// is restored for the next hover.
+// ---------------------------------------------------------------------------
+$(function () {
+    $(document).on('mouseenter focusin', '[data-bs-toggle="tooltip"]', function () {
+        if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) return;
+        if (bootstrap.Tooltip.getInstance(this)) return;
+
+        const tip = new bootstrap.Tooltip(this, { trigger: 'hover focus' });
+        this.addEventListener('hidden.bs.tooltip', () => tip.dispose(), { once: true });
+        tip.show();
+    });
+
+    // A row destroyed while its tooltip is open strands the tooltip: the element
+    // it was anchored to is gone, so hidden.bs.tooltip never fires and the
+    // dispose above never runs. Hovering a row icon and then paging or searching
+    // does exactly that, so clear any orphan on each DataTables draw.
+    $(document).on('draw.dt', function () {
+        document.querySelectorAll('.tooltip').forEach(tip => tip.remove());
+    });
+});

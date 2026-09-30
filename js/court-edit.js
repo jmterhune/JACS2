@@ -134,8 +134,8 @@ class CourtController {
         $("#switch_defendantAttorneyRequired").on("change", function () {
             $("#edit_defendantAttorneyRequired").val(this.checked ? "1" : "0");
         });
-
-        $('[data-toggle="tooltip"]').tooltip();
+        // Tooltips are built on demand by the delegated handler in jacs.js, which
+        // also covers rows DataTables draws after load. Nothing to do here.
     }
 
     initTemplatesTable() {
@@ -425,7 +425,7 @@ class CourtController {
             : `<input type="text" class="form-control date-input" value="${date}" disabled>`;
         const commandButtons = isAuto
             ? `<td>
-                    <a href="" class="btn btn-sm text-danger delete-template" title="Delete" data-toggle="tooltip"><i class="fas fa-trash"></i></a>
+                    <a href="" class="btn btn-sm text-danger delete-template" title="Delete" data-bs-toggle="tooltip"><i class="fas fa-trash"></i></a>
                 </td>`
             : "";
         const rowHtml = `

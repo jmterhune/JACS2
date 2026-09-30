@@ -61,15 +61,15 @@ class CourtController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<a href="${calendarUrl}/cid/${data}" title="View Calendar" data-toggle="tooltip" class="court-detail btn-command"><i class="fa-solid fa-calendar-days"></i></a>`;
+                        return `<a href="${calendarUrl}/cid/${data}" title="View Calendar" data-bs-toggle="tooltip" class="court-detail btn-command"><i class="fa-solid fa-calendar-days"></i></a>`;
                     },
                     className: "command-item",
                     orderable: false
                 },
                 {
                     data: "id",
-                    render: (data, type, row) => row.editable ? `<a href="${editUrl}/cid/${data}" title="Edit Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-pencil"></i></a>` :
-                        `<a href="${editUrl}/cid/${data}" title="View Court" data-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-search"></i></a>`,
+                    render: (data, type, row) => row.editable ? `<a href="${editUrl}/cid/${data}" title="Edit Court" data-bs-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-pencil"></i></a>` :
+                        `<a href="${editUrl}/cid/${data}" title="View Court" data-bs-toggle="tooltip" class="court-edit btn-command"><i class="fas fa-search"></i></a>`,
                     className: "command-item",
                     orderable: false
                 },
@@ -95,7 +95,7 @@ class CourtController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Court" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Court" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -134,7 +134,8 @@ class CourtController {
                 });
             });
         });
-        $('[data-toggle="tooltip"]').tooltip();
+        // Tooltips are built on demand by the delegated handler in jacs.js, which
+        // also covers rows DataTables draws after load. Nothing to do here.
     }
 
     DeleteCourt(courtId) {

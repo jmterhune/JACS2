@@ -158,7 +158,7 @@
                                         <div class="form-check form-switch">
                                             <input type="hidden" id="edit_allowWebScheduling" value="0">
                                             <input class="form-check-input" type="checkbox" id="switch_allowWebScheduling">
-                                            <label class="form-check-label" for="switch_allowWebScheduling">Allow Web Scheduling</label>&nbsp; <i class="fa-lg fa fa-question-circle text-primary" data-toggle="tooltip" data-placement="top" title="Disabled if there is no Judge attached to the court."></i>
+                                            <label class="form-check-label" for="switch_allowWebScheduling">Allow Web Scheduling</label>&nbsp; <i class="fa-lg fa fa-question-circle text-primary" data-bs-toggle="tooltip" data-placement="top" title="Disabled if there is no Judge attached to the court."></i>
                                         </div>
                                         <div class="form-check form-switch pt-4">
                                             <input type="hidden" id="edit_publicAvailableTimeslots" value="0">

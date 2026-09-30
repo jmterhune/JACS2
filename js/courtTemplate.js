@@ -71,7 +71,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="ct-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="ct-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -79,7 +79,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit Template" data-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit Template" data-bs-toggle="tooltip" data-id="${data}" class="ct-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -99,7 +99,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data, type, row) {
-                        return `<button type="button" title="Configure Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command">Configure <i class="fas fa-cog"></i></button>`;
+                        return `<button type="button" title="Configure Template" data-bs-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-config btn-command">Configure <i class="fas fa-cog"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -107,7 +107,7 @@ class CourtTemplateController {
                 {
                     data: "id",
                     render: function (data, type, row) {
-                        return `<button type="button" title="Copy Template" data-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-copy btn-command">Clone <i class="fas fa-copy"></i></button>`;
+                        return `<button type="button" title="Copy Template" data-bs-toggle="tooltip" data-id="${data}" data-court-id="${row.court_id}" class="ct-copy btn-command">Clone <i class="fas fa-copy"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -116,7 +116,7 @@ class CourtTemplateController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Template" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Template" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
