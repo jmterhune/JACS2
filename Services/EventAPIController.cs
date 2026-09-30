@@ -302,7 +302,20 @@ namespace tjc.Modules.jacs.Services
                             "Failed to authenticate with the county clerk API"));
                 }
 
-                var payload = new { CaseNumber = caseNum, CaseId = 0 };
+                // Spec 2.1 getCase. IsJudge is 1 because this is the internal site — every
+                // caller here is a judge or a JA. The clerk security-trims on that, so the
+                // flag has to be present; omitting it left the trimming undefined.
+                // BarNumber, RequestorEmail and UserCredentials are sent as JSON null:
+                // they identify an attorney requestor and do not apply to a judge or JA.
+                var payload = new
+                {
+                    CaseNumber = caseNum,
+                    CaseId = 0,
+                    BarNumber = (string)null,
+                    RequestorEmail = (string)null,
+                    UserCredentials = (string)null,
+                    IsJudge = 1
+                };
                 var externalResponse = await apiCtl.CallExternalApi(api, token, payload, HttpMethod.Post,
                     BuildLogContext(action: ApiEndpointType.GetCase.ToString()));
                 string responseBody = await externalResponse.Content.ReadAsStringAsync();

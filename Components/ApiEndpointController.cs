@@ -214,60 +214,23 @@ namespace tjc.Modules.jacs.Components
         }
 
         /// <summary>
-        /// The zone a zone-less clerk timestamp is expressed in. Spec 5.0 calls it "EST";
-        /// read as Eastern wall-clock time so it stays correct once daylight time starts.
+        /// Interprets a zone-less clerk timestamp. Spec 5.0 states the expiration is UTC,
+        /// so a bare reading is taken at face value as UTC — no offset is applied.
+        ///
+        /// This changed with spec 4.5.5: 4.5.4 described the value as "EST", which meant
+        /// shifting it by the Eastern offset. Reading a UTC value as Eastern would have put
+        /// the expiry four to five hours late, i.e. a token treated as live after the clerk
+        /// had stopped accepting it.
         /// </summary>
-        private static readonly TimeZoneInfo _clerkTimeZone = ResolveClerkTimeZone();
-
-        private static TimeZoneInfo ResolveClerkTimeZone()
+        private static DateTime ZonelessToUtc(DateTime wallClock)
         {
-            foreach (var id in new[] { "Eastern Standard Time", "America/New_York" })
-            {
-                try { return TimeZoneInfo.FindSystemTimeZoneById(id); }
-                catch { /* try the next spelling */ }
-            }
-
-            // Both web servers run in Eastern anyway, so this is a safe last resort.
-            return TimeZoneInfo.Local;
+            return DateTime.SpecifyKind(wallClock, DateTimeKind.Utc);
         }
 
         /// <summary>
-        /// Converts an Eastern wall-clock reading to UTC. During the two DST changeover
-        /// hours a wall-clock time is either ambiguous or never happened; both resolve to
-        /// the EARLIEST instant it could mean, so we never overstate the token's life.
-        /// </summary>
-        private static DateTime EasternToUtc(DateTime wallClock)
-        {
-            var local = DateTime.SpecifyKind(wallClock, DateTimeKind.Unspecified);
-            TimeSpan offset;
-
-            if (_clerkTimeZone.IsAmbiguousTime(local))
-            {
-                // The repeated hour when DST ends. The largest offset (daylight, -04:00)
-                // maps to the earlier UTC instant.
-                offset = TimeSpan.MinValue;
-                foreach (var candidate in _clerkTimeZone.GetAmbiguousTimeOffsets(local))
-                {
-                    if (candidate > offset)
-                        offset = candidate;
-                }
-            }
-            else if (_clerkTimeZone.IsInvalidTime(local))
-            {
-                // The skipped hour when DST starts — read it as daylight time.
-                offset = _clerkTimeZone.BaseUtcOffset + TimeSpan.FromHours(1);
-            }
-            else
-            {
-                offset = _clerkTimeZone.GetUtcOffset(local);
-            }
-
-            return DateTime.SpecifyKind(local - offset, DateTimeKind.Utc);
-        }
-
-        /// <summary>
-        /// True when a timestamp string names its own zone — a trailing Z, or a +/-HH:mm
-        /// (or +/-HHmm) offset. Anything else is a bare wall-clock reading.
+        /// True when a timestamp string names its own zone — a trailing Z, a "GMT"/"UTC"
+        /// suffix (the form spec 5.0 shows), or a +/-HH:mm (or +/-HHmm) offset. Anything
+        /// else is a bare reading, which spec 5.0 defines as UTC.
         /// </summary>
         private static bool HasExplicitZone(string value)
         {
@@ -277,6 +240,10 @@ namespace tjc.Modules.jacs.Components
 
             char last = s[s.Length - 1];
             if (last == 'Z' || last == 'z')
+                return true;
+
+            if (s.EndsWith("GMT", StringComparison.OrdinalIgnoreCase)
+                || s.EndsWith("UTC", StringComparison.OrdinalIgnoreCase))
                 return true;
 
             // An offset occupies the last 5-6 characters; a '-' any earlier than that is
@@ -375,16 +342,18 @@ namespace tjc.Modules.jacs.Components
         /// Reads the "expiration" value from an auth response data entry and returns it
         /// as UTC, whatever shape the clerk sent it in:
         ///
-        ///   "2026-09-16 13:29:44"        bare wall clock  -> read as Eastern
-        ///   "2026-09-16T13:29:44"        bare ISO         -> read as Eastern
-        ///   "2026-09-16T18:29:44Z"       UTC marker       -> used as-is
-        ///   "2026-09-16T14:29:44-04:00"  explicit offset  -> converted
+        ///   "2026-09-16 09:28:48"        bare             -> UTC per spec 5.0
+        ///   "2026-09-16T09:28:48"        bare ISO         -> UTC per spec 5.0
+        ///   "2026-09-16 09:28:48 GMT"    GMT/UTC suffix   -> used as-is
+        ///   "2026-09-16T09:28:48Z"       UTC marker       -> used as-is
+        ///   "2026-09-16T05:28:48-04:00"  explicit offset  -> converted
         ///   1789583384                   epoch seconds    -> converted
         ///   1789583384000                epoch millis     -> converted
         ///
-        /// Only a value that names its own zone is trusted to name it; everything else is
-        /// Eastern wall-clock per spec 5.0. Returns null when nothing can be made of it,
-        /// which the caller treats as "no expiration".
+        /// Spec 4.5.5 states the expiration is UTC, so a bare reading is taken at face
+        /// value rather than shifted. Spec 4.5.4 called it "EST"; reading a UTC value that
+        /// way put the expiry four to five hours late. Returns null when nothing can be
+        /// made of the value, which the caller treats as "no expiration".
         /// </summary>
         private static DateTime? ReadExpirationValue(JObject json)
         {
@@ -417,7 +386,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     case DateTimeKind.Utc: return dateValue;
                     case DateTimeKind.Local: return dateValue.ToUniversalTime();
-                    default: return EasternToUtc(dateValue);
+                    default: return ZonelessToUtc(dateValue);
                 }
             }
 
@@ -426,6 +395,19 @@ namespace tjc.Modules.jacs.Components
                 return null;
 
             raw = raw.Trim();
+
+            // Strip a trailing "GMT"/"UTC" before anything else. Both name UTC, which is
+            // what a bare value already means under spec 5.0, so removing the suffix lets
+            // the ordinary path handle it. Doing this by hand matters: .NET's parsers
+            // understand "GMT" but not "UTC", so an unstripped "UTC" matched no format at
+            // all and the whole value was discarded as unparseable.
+            if (raw.EndsWith("GMT", StringComparison.OrdinalIgnoreCase)
+                || raw.EndsWith("UTC", StringComparison.OrdinalIgnoreCase))
+            {
+                raw = raw.Substring(0, raw.Length - 3).TrimEnd();
+                if (raw.Length == 0)
+                    return null;
+            }
 
             // A string that names its own zone is authoritative about it.
             if (HasExplicitZone(raw))
@@ -438,7 +420,7 @@ namespace tjc.Modules.jacs.Components
                 }
             }
 
-            // No zone marker: an Eastern wall-clock reading. The documented shape is
+            // No zone marker: UTC per spec 5.0. The documented shape is
             // "yyyy-MM-dd HH:mm:ss"; the rest are accepted so a change of format on the
             // clerk's side doesn't silently cost us the expiration.
             string[] wallClockFormats =
@@ -459,7 +441,7 @@ namespace tjc.Modules.jacs.Components
                     System.Globalization.CultureInfo.InvariantCulture,
                     System.Globalization.DateTimeStyles.None, out parsed))
             {
-                return EasternToUtc(parsed);
+                return ZonelessToUtc(parsed);
             }
 
             // Last resort — let the framework have a go, then place the result.
@@ -470,7 +452,7 @@ namespace tjc.Modules.jacs.Components
                 {
                     case DateTimeKind.Utc: return parsed;
                     case DateTimeKind.Local: return parsed.ToUniversalTime();
-                    default: return EasternToUtc(parsed);
+                    default: return ZonelessToUtc(parsed);
                 }
             }
 

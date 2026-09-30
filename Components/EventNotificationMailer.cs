@@ -166,6 +166,16 @@ namespace tjc.Modules.jacs.Components
                 // ANY of that court's events or timeslots — creation,
                 // cancellation, future notice types alike. The flag is the
                 // single switch covering all of this court's notifications.
+                //
+                // Both outcomes are recorded, not just the suppression. A report of
+                // "we received a notice with the switch off" can then be settled from
+                // the event log — which court was resolved, what the flag read, and
+                // when — instead of reasoning backwards from the received message.
+                Exceptions.LogException(new Exception(
+                    $"EventNotificationMailer: {kind} notice for event {evt.id} — resolved court {court.id} " +
+                    $"('{court.description}'), email_confirmations={court.email_confirmations}. " +
+                    (court.email_confirmations ? "Proceeding." : "Suppressed, no email sent.")));
+
                 if (!court.email_confirmations) return;
 
                 var county = new CountyController().GetCounty(court.county_id);
