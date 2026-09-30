@@ -1325,7 +1325,12 @@ namespace tjc.Modules.jacs.Services
                 JudgeId        = clerkJudgeId,
                 EventType      = eventType,
                 OtherEventType = otherEventType,
-                EventDateTime  = timeslot?.start.ToString("yyyy-MM-dd HH:mm:ss"),
+                // ISO with a T separator, matching the public JacsAtty application.
+                // Spec 0 asks for a space ("yyyy-MM-dd HH:mm:ss"); we follow JacsAtty
+                // here by decision, so the clerk receives one date shape from both
+                // applications. The Action values below stay on the spec, because
+                // JacsAtty's "Schedule"/"Reschedule" are not in its allowed set at all.
+                EventDateTime  = timeslot?.start.ToString("yyyy-MM-ddTHH:mm:ss"),
                 Duration       = timeslot?.duration ?? 0,
                 CourtRoomId    = clerkCourtroomId,
                 UDF            = udf
