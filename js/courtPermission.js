@@ -70,7 +70,7 @@ class CourtPermissionController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="cp-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="cp-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -78,7 +78,7 @@ class CourtPermissionController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit Court Permission" data-toggle="tooltip" data-id="${data}" class="cp-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit Court Permission" data-bs-toggle="tooltip" data-id="${data}" class="cp-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -112,7 +112,7 @@ class CourtPermissionController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete Court Permission" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete Court Permission" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -390,21 +390,34 @@ class CourtPermissionController {
                             $(`input[name='cpActive'][value='${permission.active}']`).prop("checked", true);
                             $("#CourtPermissionEditModalLabel").html(`Edit Court Permission`);
                         } else {
+                            // The outer success callback is an old-style
+                            // `function(response){}`, so its `this` is the
+                            // jQuery AJAX context — not the controller.
+                            // Reference the controller singleton explicitly
+                            // here; otherwise `this.setAjaxHeaders` is
+                            // undefined and the synchronous TypeError thrown
+                            // during the inner $.ajax setup aborts this
+                            // success handler before the spinner gets hidden.
+                            // Endpoint names: server exposes
+                            // GetUserDropDownItems / GetJudgeDropDownItems.
+                            // Older code here used GetUsersForDropdown /
+                            // GetJudgesForDropdown which 404 silently, leaving
+                            // the User/Judge spans blank.
                             $.ajax({
-                                url: `${courtPermissionControllerInstance.service.baseUrl}CourtPermissionAPI/GetUsersForDropdown`,
+                                url: `${courtPermissionControllerInstance.service.baseUrl}CourtPermissionAPI/GetUserDropDownItems`,
                                 type: 'GET',
                                 dataType: 'json',
-                                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                                beforeSend: xhr => courtPermissionControllerInstance.setAjaxHeaders(xhr),
                                 success: function (users) {
                                     const user = users.find(u => u.Key === permission.user_id);
                                     $("#cpUserDisplayName").html(user ? user.Value : "Unknown");
                                 }
                             });
                             $.ajax({
-                                url: `${courtPermissionControllerInstance.service.baseUrl}CourtPermissionAPI/GetJudgesForDropdown`,
+                                url: `${courtPermissionControllerInstance.service.baseUrl}CourtPermissionAPI/GetJudgeDropDownItems`,
                                 type: 'GET',
                                 dataType: 'json',
-                                beforeSend: xhr => this.setAjaxHeaders(xhr),
+                                beforeSend: xhr => courtPermissionControllerInstance.setAjaxHeaders(xhr),
                                 success: function (judges) {
                                     const judge = judges.find(j => j.Key === permission.judge_id);
                                     $("#cpJudgeName").html(judge ? judge.Value : "Unknown");

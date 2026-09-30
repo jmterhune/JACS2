@@ -67,7 +67,7 @@ class UserDefinedFieldController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="View Details" data-toggle="tooltip" data-id="${data}" class="udf-detail btn-command"><i class="fas fa-eye"></i></button>`;
+                        return `<button type="button" title="View Details" data-bs-toggle="tooltip" data-id="${data}" class="udf-detail btn-command"><i class="fas fa-eye"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -75,7 +75,7 @@ class UserDefinedFieldController {
                 {
                     data: "id",
                     render: function (data) {
-                        return `<button type="button" title="Edit User Defined Field" data-toggle="tooltip" data-id="${data}" class="udf-edit btn-command"><i class="fas fa-pencil"></i></button>`;
+                        return `<button type="button" title="Edit User Defined Field" data-bs-toggle="tooltip" data-id="${data}" class="udf-edit btn-command"><i class="fas fa-pencil"></i></button>`;
                     },
                     className: "command-item",
                     orderable: false
@@ -123,12 +123,6 @@ class UserDefinedFieldController {
                     }
                 },
                 {
-                    data: "display_on_schedule",
-                    render: function (data) {
-                        return data == 1 ? 'Yes' : 'No';
-                    }
-                },
-                {
                     data: "use_in_attorany_scheduling",
                     render: function (data) {
                         return data == 1 ? 'Yes' : 'No';
@@ -138,7 +132,7 @@ class UserDefinedFieldController {
                     data: "id",
                     render: function (data, type, row) {
                         if (isAdmin) {
-                            return `<button type="button" class="delete btn-command" data-toggle="tooltip" aria-role="button" title="Delete User Defined Field" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
+                            return `<button type="button" class="delete btn-command" data-bs-toggle="tooltip" aria-role="button" title="Delete User Defined Field" data-id="${row.id}"><i class="fas fa-trash"></i></button>`;
                         }
                         return '';
                     },
@@ -253,7 +247,14 @@ class UserDefinedFieldController {
 
         $("#edit_fieldType").on("change", function () {
             const val = $(this).val();
-            $("#edit_defaultValue").prop('disabled', val === "yes_no");
+            // Yes/No fields have no meaningful "default value" concept (the
+            // choice always defaults to neither radio selected), so clear and
+            // disable the input whenever the type is set to yes_no.
+            if (val === "yes_no") {
+                $("#edit_defaultValue").val("").prop('disabled', true);
+            } else {
+                $("#edit_defaultValue").prop('disabled', false);
+            }
             userDefinedFieldControllerInstance.syncRequiredFlags();
         });
         // For yes_no fields, "Required" and "Yes Answer Required" are mutually
@@ -361,7 +362,9 @@ class UserDefinedFieldController {
     ClearEditForm() {
         $("#edit_fieldName").val("");
         $("#edit_fieldType").val("");
-        $("#edit_alignment").val("");
+        // Alignment defaults to "left" so a new field starts left-aligned
+        // rather than with a blank selection.
+        $("#edit_alignment").val("left");
         $("#edit_defaultValue").val("");
         $("#edit_required").prop("checked", false);
         $("#edit_yesAnswerRequired").prop("checked", false);
@@ -403,8 +406,15 @@ class UserDefinedFieldController {
                             $("#edit_hdCourtId").val(response.data.court_id);
                             $("#edit_fieldName").val(response.data.field_name);
                             $("#edit_fieldType").val(response.data.field_type);
-                            $("#edit_alignment").val(response.data.alignment);
-                            $("#edit_defaultValue").val(response.data.default_value);
+                            $("#edit_alignment").val(response.data.alignment || "left");
+                            // Yes/No fields can't carry a default value — clear
+                            // anything previously stored so re-saving leaves
+                            // the column empty.
+                            if (response.data.field_type === 'yes_no') {
+                                $("#edit_defaultValue").val("").prop('disabled', true);
+                            } else {
+                                $("#edit_defaultValue").val(response.data.default_value).prop('disabled', false);
+                            }
                             $("#edit_required").prop("checked", response.data.required == 1);
                             $("#edit_yesAnswerRequired").prop("checked", response.data.yes_answer_required == 1);
                             // Apply the mutual-exclusion / disable rules to the
