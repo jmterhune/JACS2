@@ -765,20 +765,37 @@
   </Target>
   <PropertyGroup>
     <DeploySite>D:\websites\apps.jud12.flcourts.org</DeploySite>
+    <!-- Where the binaries are copied FROM. Defaults to this build's output.
+         ThreatLocker holds a freshly built DLL until it is approved, so a copy
+         straight from $(TargetDir) can be denied. Deploying a second site by
+         pointing this at the first site's bin reads an already-approved file
+         instead, which needs no second approval:
+
+           /p:DeploySite=M:\Websites\Intranet.jud12.local
+           /p:DeployBinSource=D:\websites\apps.jud12.flcourts.org\bin\
+
+         The trailing slash is required. -->
+    <DeployBinSource Condition="'$(DeployBinSource)' == ''">$(TargetDir)</DeployBinSource>
   </PropertyGroup>
   <Target Name="DeployToSite" AfterTargets="Build" Condition="Exists('$(DeploySite)')">
     <ItemGroup>
-      <_DeployBin Include="$(TargetPath)" />
-      <_DeployBin Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+      <_DeployBin Include="$(DeployBinSource)$(TargetName).dll" Condition="Exists('$(DeployBinSource)$(TargetName).dll')" />
+      <_DeployBin Include="$(DeployBinSource)$(TargetName).pdb" Condition="Exists('$(DeployBinSource)$(TargetName).pdb')" />
       <!-- Bar import: WinSCPnet wraps the WinSCP.exe assistant process. Keep
            both — and the GenericParsing DLL — on the deploy list so they ship
            to the dev/test web roots alongside our DLL. -->
-      <_DeployBin Include="$(TargetDir)WinSCPnet.dll" Condition="Exists('$(TargetDir)WinSCPnet.dll')" />
-      <_DeployBin Include="$(TargetDir)WinSCP.exe" Condition="Exists('$(TargetDir)WinSCP.exe')" />
-      <_DeployBin Include="$(TargetDir)GenericParsing.dll" Condition="Exists('$(TargetDir)GenericParsing.dll')" />
+      <_DeployBin Include="$(DeployBinSource)WinSCPnet.dll" Condition="Exists('$(DeployBinSource)WinSCPnet.dll')" />
+      <_DeployBin Include="$(DeployBinSource)WinSCP.exe" Condition="Exists('$(DeployBinSource)WinSCP.exe')" />
+      <_DeployBin Include="$(DeployBinSource)GenericParsing.dll" Condition="Exists('$(DeployBinSource)GenericParsing.dll')" />
       <_DeployContent Include="**\*.ascx;**\*.dnn;**\*.css;**\*.js;**\*.html;**\*.htm;**\*.png;**\*.jpg;**\*.jpeg;**\*.gif;**\*.svg;**\*.ico;App_LocalResources\**\*.resx;ReleaseNotes.txt;License.txt" Exclude=".claude\**;.git\**;.vs\**;packages\**;node_modules\**;obj\**;bin\**;BuildScripts\**;backups\**" />
     </ItemGroup>
-    <Copy SourceFiles="@(_DeployBin)" DestinationFolder="$(DeploySite)\bin" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(_DeployContent)" DestinationFiles="@(_DeployContent->'$(DeploySite)\DesktopModules\tjc.modules\JACS\%(Identity)')" SkipUnchangedFiles="true" />
+    <!-- Retries give ThreatLocker time to be approved rather than failing at
+         once. This matters beyond convenience: a Copy that fails partway leaves
+         the destination deleted, which has twice left a site with no DLL at all
+         until the copy was re-run by hand. -->
+    <Copy SourceFiles="@(_DeployBin)" DestinationFolder="$(DeploySite)\bin" SkipUnchangedFiles="true"
+          Retries="5" RetryDelayMilliseconds="3000" />
+    <Copy SourceFiles="@(_DeployContent)" DestinationFiles="@(_DeployContent->'$(DeploySite)\DesktopModules\tjc.modules\JACS\%(Identity)')" SkipUnchangedFiles="true"
+          Retries="5" RetryDelayMilliseconds="3000" />
   </Target>
 </Project>
