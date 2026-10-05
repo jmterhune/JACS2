@@ -777,6 +777,11 @@
          The trailing slash is required. -->
     <DeployBinSource Condition="'$(DeployBinSource)' == ''">$(TargetDir)</DeployBinSource>
   </PropertyGroup>
+  <!-- ModulePackage.Targets pulls in MSBuild.Community.Tasks, which registers its
+       own Move task and so shadows the built-in one. That package is not vendored
+       in this repo, so the registration resolves to a missing assembly and any use
+       of Move fails to load. Bind the name back to the task MSBuild ships with. -->
+  <UsingTask TaskName="Move" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" />
   <Target Name="DeployToSite" AfterTargets="Build" Condition="Exists('$(DeploySite)')">
     <ItemGroup>
       <_DeployBin Include="$(DeployBinSource)$(TargetName).dll" Condition="Exists('$(DeployBinSource)$(TargetName).dll')" />
@@ -789,13 +794,35 @@
       <_DeployBin Include="$(DeployBinSource)GenericParsing.dll" Condition="Exists('$(DeployBinSource)GenericParsing.dll')" />
       <_DeployContent Include="**\*.ascx;**\*.dnn;**\*.css;**\*.js;**\*.html;**\*.htm;**\*.png;**\*.jpg;**\*.jpeg;**\*.gif;**\*.svg;**\*.ico;App_LocalResources\**\*.resx;ReleaseNotes.txt;License.txt" Exclude=".claude\**;.git\**;.vs\**;packages\**;node_modules\**;obj\**;bin\**;BuildScripts\**;backups\**" />
     </ItemGroup>
-    <!-- Retries give ThreatLocker time to be approved rather than failing at
-         once. This matters beyond convenience: a Copy that fails partway leaves
-         the destination deleted, which has twice left a site with no DLL at all
-         until the copy was re-run by hand. -->
-    <Copy SourceFiles="@(_DeployBin)" DestinationFolder="$(DeploySite)\bin" SkipUnchangedFiles="true"
-          Retries="5" RetryDelayMilliseconds="3000" />
+    <!-- The binaries deploy in two steps so that a denied read can never destroy
+         what is already serving. Step one copies to a .deploying sidecar: if
+         ThreatLocker refuses, the build fails here and the live assemblies are
+         untouched. Step two renames each sidecar over the real name — a rename
+         inside one folder, which cannot half-finish the way a copy can.
+
+         This replaces a single Copy straight onto the live files. That form
+         deletes the destination before writing it, so a refused read left the
+         site with no DLL at all: three times now, most recently on 2026-10-05.
+
+         Retries give ThreatLocker about a hundred seconds to be approved. The
+         previous budget was fifteen, which was not enough on 2026-10-05.
+
+         SkipUnchangedFiles is deliberately absent here. Staging every time means
+         a build always refreshes bin and so recycles the app pool — but a
+         rebuilt assembly carries a new timestamp anyway, so the old setting
+         almost never skipped it. The only case that changes is building twice
+         with no edit in between. -->
+    <Copy SourceFiles="@(_DeployBin)"
+          DestinationFiles="@(_DeployBin->'$(DeploySite)\bin\%(Filename)%(Extension).deploying')"
+          Retries="20" RetryDelayMilliseconds="5000" />
+    <Move SourceFiles="@(_DeployBin->'$(DeploySite)\bin\%(Filename)%(Extension).deploying')"
+          DestinationFiles="@(_DeployBin->'$(DeploySite)\bin\%(Filename)%(Extension)')"
+          OverwriteReadOnlyFiles="true" />
+    <!-- Markup and script copy straight across. ThreatLocker does not hold
+         non-executables, SkipUnchangedFiles keeps a build from rewriting a
+         hundred untouched files, and a missing .ascx breaks one page rather
+         than taking down the whole site the way a missing DLL does. -->
     <Copy SourceFiles="@(_DeployContent)" DestinationFiles="@(_DeployContent->'$(DeploySite)\DesktopModules\tjc.modules\JACS\%(Identity)')" SkipUnchangedFiles="true"
-          Retries="5" RetryDelayMilliseconds="3000" />
+          Retries="20" RetryDelayMilliseconds="5000" />
   </Target>
 </Project>
