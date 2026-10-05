@@ -278,9 +278,15 @@ class CourtroomController {
                     });
                     const lastCountyId = localStorage.getItem('jacs_lastXrefCountyId');
                     if (lastCountyId && $select.find(`option[value="${lastCountyId}"]`).length) {
-                        // Fire change so the dependent clerk-courtroom dropdown loads;
-                        // setting .val() alone does not trigger it.
-                        $select.val(lastCountyId).trigger('change');
+                        // Restore the selection only — deliberately no 'change'.
+                        // Firing it here loaded the clerk courtroom list during page
+                        // load, which is an auth + GetClerkCourtrooms round trip to
+                        // the clerk before any courtroom has been picked. On a county
+                        // with no auth endpoint that surfaced as a "This county has no
+                        // Auth Endpoint URL configured" warning on the courtroom list,
+                        // a page that has nothing to do with that county yet.
+                        // The list loads when the cross-reference modal opens instead.
+                        $select.val(lastCountyId);
                     }
                 } else {
                     ShowNotification("Warning", "No counties available.", 'warning');
@@ -543,6 +549,12 @@ class CourtroomController {
         $(progressId).show();
         $("#hdXrefCourtroomId").val(courtroomId);
 
+        // Armed here and consumed by the first draw below, so opening Manage Clerk
+        // References lands on the county this courtroom is already mapped in. Only
+        // the first draw: later ones follow a save or delete, and must not pull the
+        // select out from under whatever the user has since chosen.
+        this.preselectXrefCountyPending = true;
+
         if (courtroomId) {
             if (this.courtroomXrefTable) {
                 this.courtroomXrefTable.destroy();
@@ -615,6 +627,7 @@ class CourtroomController {
                 });
 
                 courtroomControllerInstance.DisableUsedCounties();
+                courtroomControllerInstance.PreselectXrefCounty();
             });
         }
         $(progressId).hide();
@@ -723,7 +736,17 @@ class CourtroomController {
         $("#xref_clerkCourtroom").val("").removeClass("is-invalid").prop("disabled", true);
         $("#xref_clerkCourtroom_error").hide();
         $("#hdXrefCourtroomId").val("");
-        if (lastCountyId) $("#xref_county").trigger("change");
+
+        // Reload the clerk list only while the cross-reference modal is actually
+        // open — that is, after a save, with the user still working in it. This
+        // method also runs from onModalClose for the courtroom detail and edit
+        // modals, where firing 'change' sent an auth + GetClerkCourtrooms request
+        // to the clerk merely for closing an unrelated dialog, raising the same
+        // "no Auth Endpoint URL configured" warning. Called directly rather than
+        // by trigger so jacs_lastXrefCountyId is not rewritten.
+        if (lastCountyId && $("#CourtroomXrefModal").hasClass("show")) {
+            this.populateXrefCourtrooms(parseInt(lastCountyId) || 0);
+        }
     }
 
     ClearXrefCourtroomHeader() {
@@ -760,6 +783,45 @@ class CourtroomController {
                 $(this).prop("disabled", usedCountyIds.has(val));
             }
         });
+    }
+
+    /// Points the county select at the county this courtroom is already mapped
+    /// in. Without this the select keeps jacs_lastXrefCountyId, which is global
+    /// rather than per-courtroom, so opening a Manatee courtroom showed whichever
+    /// county was used last. Courtrooms carry no county of their own — the only
+    /// one that means anything here is the county on its existing xref.
+    ///
+    /// Runs once per modal open, armed by GetCourtroomXrefs.
+    PreselectXrefCounty() {
+        if (!this.preselectXrefCountyPending) return;
+        this.preselectXrefCountyPending = false;
+
+        if (!this.courtroomXrefTable) return;
+
+        const $county = $("#xref_county");
+        const rows = this.courtroomXrefTable.rows().data();
+
+        // Mapped in several counties? No single right answer, so take the first
+        // row and let the user change it.
+        let countyId = (rows && rows.length > 0 && rows[0] && rows[0].county_id)
+            ? parseInt(rows[0].county_id)
+            : 0;
+
+        if (countyId && $county.find(`option[value="${countyId}"]`).length) {
+            $county.val(String(countyId));
+        } else {
+            // Not mapped yet, so this is an add: keep whatever the select already
+            // shows. The last-used county is a reasonable starting point.
+            countyId = parseInt($county.val()) || 0;
+        }
+
+        // Load the dependent dropdown here — opening this modal is the first point
+        // at which the clerk list is actually needed, and page load no longer
+        // fetches it. Called directly rather than by firing 'change', because that
+        // handler also rewrites jacs_lastXrefCountyId and this is the form filling
+        // itself in, not the user picking a county. A zero id is handled inside:
+        // the dropdown is cleared and left disabled, with no request sent.
+        this.populateXrefCourtrooms(countyId);
     }
 
     onModalClose(event) {
