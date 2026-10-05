@@ -1,0 +1,12 @@
+# Keep JavaScript at LF in the working tree as well as in the repository.
+#
+# core.autocrlf is true and there was no .gitattributes, so every blob is stored
+# LF but checkout rewrote scripts to CRLF. Deploys copy from the working tree,
+# which meant the bytes landing on a site depended on whether git had touched the
+# file since the last deploy rather than on its content: js/courtroom.js went out
+# LF, then a branch checkout flipped the working copy to CRLF and the same code
+# started reading as a difference against both sites.
+#
+# text keeps the index normalised to LF, so diffs are unaffected; eol=lf makes
+# checkout agree with it.
+*.js text eol=lf
