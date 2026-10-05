@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 namespace tjc.Modules.jacs.Components
 {
@@ -83,94 +84,167 @@ namespace tjc.Modules.jacs.Components
         /// Calls the county's auth endpoint (counties.auth_end_point_url) and returns
         /// the issued token together with its expiration. The auth endpoint is a
         /// property of the county — it is deliberately NOT an api_endpoints entry, so
-        /// it never goes through CallExternalApi.
+        /// it never goes through CallExternalApi. It therefore writes its own
+        /// api_log row, with the password and the issued token redacted.
         /// </summary>
         internal async Task<AuthTokenResult> GetJwtToken(County county)
         {
             if (county == null || string.IsNullOrWhiteSpace(county.auth_end_point_url))
             {
+                // Nothing was sent, so there is no API call to log — this is a
+                // configuration fault and belongs in the DNN event log alone.
                 Exceptions.LogException(new Exception(
                     $"No auth_end_point_url configured for county {county?.id}."));
                 return new AuthTokenResult { Error = "No Auth Endpoint URL is configured for this county." };
             }
 
-            // Contract: { "Username": "...", "Password": "..." } — PascalCase per the
-            // auth endpoint spec.
-            var authPayload = new
-            {
-                Username = county.user_name,
-                Password = county.password  // already decrypted in CountyController.GetCounty()
-            };
+            // Captured for the api_log row written in the finally below so that every
+            // exit path — including a thrown network error — leaves one record.
+            string body = null;
+            string errorText = null;
+            string issuedToken = null;
 
-            var content = new StringContent(JsonConvert.SerializeObject(authPayload), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(county.auth_end_point_url, content).ConfigureAwait(false);
-            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                // Failures come back as { "error": "Descriptive error message" }.
-                string apiError = null;
-                try { apiError = JObject.Parse(body)["error"]?.Value<string>(); }
-                catch { /* not JSON — fall back to the raw body below */ }
-
-                Exceptions.LogException(new Exception(
-                    $"Auth token request failed for county {county.id}. URL: {county.auth_end_point_url} | " +
-                    $"Status: HTTP {(int)response.StatusCode} {response.StatusCode} | " +
-                    $"Error: {(string.IsNullOrWhiteSpace(apiError) ? body : apiError)}"));
-                return new AuthTokenResult
-                {
-                    Error = string.IsNullOrWhiteSpace(apiError)
-                        ? $"The auth endpoint returned HTTP {(int)response.StatusCode} {response.StatusCode}."
-                        : apiError
-                };
-            }
-
-            JObject respJson;
             try
             {
-                respJson = JObject.Parse(body);
+                // Contract: { "Username": "...", "Password": "..." } — PascalCase per the
+                // auth endpoint spec.
+                var authPayload = new
+                {
+                    Username = county.user_name,
+                    Password = county.password  // already decrypted in CountyController.GetCounty()
+                };
+
+                var content = new StringContent(JsonConvert.SerializeObject(authPayload), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(county.auth_end_point_url, content).ConfigureAwait(false);
+                body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Failures come back as { "error": "Descriptive error message" }.
+                    string apiError = null;
+                    try { apiError = JObject.Parse(body)["error"]?.Value<string>(); }
+                    catch { /* not JSON — fall back to the raw body below */ }
+
+                    errorText = $"HTTP {(int)response.StatusCode} {response.StatusCode}: " +
+                                $"{(string.IsNullOrWhiteSpace(apiError) ? body : apiError)}";
+                    Exceptions.LogException(new Exception(
+                        $"Auth token request failed for county {county.id}. URL: {county.auth_end_point_url} | " +
+                        $"Status: HTTP {(int)response.StatusCode} {response.StatusCode} | " +
+                        $"Error: {(string.IsNullOrWhiteSpace(apiError) ? body : apiError)}"));
+                    return new AuthTokenResult
+                    {
+                        Error = string.IsNullOrWhiteSpace(apiError)
+                            ? $"The auth endpoint returned HTTP {(int)response.StatusCode} {response.StatusCode}."
+                            : apiError
+                    };
+                }
+
+                JObject respJson;
+                try
+                {
+                    respJson = JObject.Parse(body);
+                }
+                catch (Exception parseEx)
+                {
+                    errorText = "The auth endpoint returned a response that was not valid JSON.";
+                    Exceptions.LogException(new Exception(
+                        $"Auth token response for county {county.id} was not valid JSON: {body}", parseEx));
+                    return new AuthTokenResult { Error = errorText };
+                }
+
+                // A 200 can still carry an error message; treat that as a failure.
+                string responseError = respJson["error"]?.Value<string>();
+                if (!string.IsNullOrWhiteSpace(responseError))
+                {
+                    errorText = responseError;
+                    Exceptions.LogException(new Exception(
+                        $"Auth token request for county {county.id} returned HTTP {(int)response.StatusCode} " +
+                        $"but reported an error: {responseError}"));
+                    // Surface the endpoint's own wording — the admin UI shows this verbatim.
+                    return new AuthTokenResult { Error = responseError };
+                }
+
+                // Contract: { "data": [ { "token": "...", "expiration": "yyyy-MM-dd HH:mm:ss" } ], "error": "" }
+                // Only these two fields are read — any extras are ignored. "data" is an array
+                // per the spec; a bare object is accepted too rather than failing outright.
+                var entry = respJson["data"] as JObject
+                    ?? (respJson["data"] as JArray)?.FirstOrDefault() as JObject;
+
+                if (entry == null)
+                {
+                    errorText = "The auth endpoint response contained no token.";
+                    Exceptions.LogException(new Exception(
+                        $"Auth token response for county {county.id} contained no data entry: {body}"));
+                    return new AuthTokenResult { Error = errorText };
+                }
+
+                issuedToken = entry["token"]?.Value<string>();
+
+                // Prefer the token's own "exp" claim over the reported "expiration" string.
+                // Spec 5.0 labels that string EST, so while Florida is on EDT it reads an
+                // hour early and would send us re-authenticating on nearly every call.
+                return new AuthTokenResult
+                {
+                    Token = issuedToken,
+                    Expiration = ReadJwtExpiration(issuedToken) ?? ReadExpirationValue(entry)
+                };
             }
-            catch (Exception parseEx)
+            catch (Exception ex)
             {
-                Exceptions.LogException(new Exception(
-                    $"Auth token response for county {county.id} was not valid JSON: {body}", parseEx));
-                return new AuthTokenResult { Error = "The auth endpoint returned a response that was not valid JSON." };
+                // A thrown call (DNS, TLS, timeout) still gets a row, then propagates
+                // to the caller exactly as it did before.
+                errorText = ex.Message;
+                throw;
             }
-
-            // A 200 can still carry an error message; treat that as a failure.
-            string responseError = respJson["error"]?.Value<string>();
-            if (!string.IsNullOrWhiteSpace(responseError))
+            finally
             {
-                Exceptions.LogException(new Exception(
-                    $"Auth token request for county {county.id} returned HTTP {(int)response.StatusCode} " +
-                    $"but reported an error: {responseError}"));
-                // Surface the endpoint's own wording — the admin UI shows this verbatim.
-                return new AuthTokenResult { Error = responseError };
+                new ApiLogController().Log(
+                    apiEndpointUrl: county.auth_end_point_url,
+                    // The posted body carries the county's plaintext password, which is
+                    // encrypted at rest on the county record. Log the shape, never the secret.
+                    requestPayload: new { Username = county.user_name, Password = Redacted },
+                    responsePayload: RedactBearerTokens(body, issuedToken),
+                    // The failure branches fold the raw body into errorText, so this
+                    // column gets the same treatment rather than becoming a side door.
+                    error: RedactBearerTokens(errorText, issuedToken),
+                    // Test Auth can run against a county that has not been saved yet;
+                    // log that unattributed rather than against a nonexistent county 0.
+                    countyId: county.id > 0 ? county.id : (long?)null,
+                    action: AuthTokenAction,
+                    application: ApiLogApplication.JACS);
             }
+        }
 
-            // Contract: { "data": [ { "token": "...", "expiration": "yyyy-MM-dd HH:mm:ss" } ], "error": "" }
-            // Only these two fields are read — any extras are ignored. "data" is an array
-            // per the spec; a bare object is accepted too rather than failing outright.
-            var entry = respJson["data"] as JObject
-                ?? (respJson["data"] as JArray)?.FirstOrDefault() as JObject;
+        /// <summary>
+        /// api_log.action value for the county auth endpoint. It is deliberately not
+        /// an <see cref="ApiEndpointType"/> — the auth endpoint is a county property,
+        /// not an api_endpoints row — so the name is spelled out here. The log
+        /// viewer's action filter picks it up from the rows themselves once the
+        /// first one is written.
+        /// </summary>
+        internal const string AuthTokenAction = "AuthToken";
 
-            if (entry == null)
-            {
-                Exceptions.LogException(new Exception(
-                    $"Auth token response for county {county.id} contained no data entry: {body}"));
-                return new AuthTokenResult { Error = "The auth endpoint response contained no token." };
-            }
+        private const string Redacted = "***REDACTED***";
 
-            string issuedToken = entry["token"]?.Value<string>();
+        /// <summary>
+        /// Strips bearer tokens from an auth response before it reaches api_log. The
+        /// issued token is removed by value when one was parsed; the JWT-shaped
+        /// pattern is a backstop for bodies we could not parse, where a token can
+        /// still be sitting inside an error message.
+        ///
+        /// The token is a live credential for its full 60 minutes, and api_log keeps
+        /// history, so logging it verbatim would leave usable tokens lying in a table
+        /// far more people can read than can read the counties row it came from.
+        /// </summary>
+        private static string RedactBearerTokens(string body, string issuedToken)
+        {
+            if (string.IsNullOrEmpty(body))
+                return body;
 
-            // Prefer the token's own "exp" claim over the reported "expiration" string.
-            // Spec 5.0 labels that string EST, so while Florida is on EDT it reads an
-            // hour early and would send us re-authenticating on nearly every call.
-            return new AuthTokenResult
-            {
-                Token = issuedToken,
-                Expiration = ReadJwtExpiration(issuedToken) ?? ReadExpirationValue(entry)
-            };
+            if (!string.IsNullOrEmpty(issuedToken))
+                body = body.Replace(issuedToken, Redacted);
+
+            return Regex.Replace(body, @"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*", Redacted);
         }
 
         /// <summary>
@@ -700,10 +774,8 @@ namespace tjc.Modules.jacs.Components
             }
             finally
             {
-                // Only the event lifecycle and case/event read endpoints are
-                // logged. Cross-reference sync calls (GetClerkJudges,
-                // GetClerkCourtrooms) are operational plumbing and not worth
-                // persisting to api_log.
+                // Every configured endpoint type is logged, including the
+                // cross-reference sync calls (GetClerkJudges, GetClerkCourtrooms).
                 if (ShouldLog(api.type))
                 {
                     new ApiLogController().Log(
@@ -736,6 +808,11 @@ namespace tjc.Modules.jacs.Components
                 case ApiEndpointType.GetEvent:
                 case ApiEndpointType.RescheduleEvent:
                 case ApiEndpointType.UpdateEvent:
+                // Xref sync calls. These populate the judge and courtroom
+                // mappings, so when a mapping comes back empty the log is the
+                // only record of what the clerk actually returned.
+                case ApiEndpointType.GetClerkJudges:
+                case ApiEndpointType.GetClerkCourtrooms:
                     return true;
                 default:
                     return false;
