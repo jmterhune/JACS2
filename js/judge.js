@@ -412,6 +412,7 @@ class JudgeController {
 
                 if (items.length > 0) {
                     $clerkJudge.prop('disabled', false);
+                    this.SelectClosestClerkJudge();
                     return;
                 }
 
@@ -890,6 +891,80 @@ class JudgeController {
             $("#xrefJudgeHeader").show();  // in case it was hidden
         } else {
             this.ClearXrefJudgeHeader();
+        }
+    }
+
+    /// Reduces a judge name to the tokens worth matching on.
+    ///
+    /// Either system may write a name either way round — "Moss, Dann" or
+    /// "Dann Moss" — so anything before the first comma moves to the end and the
+    /// result is compared as a set, which makes ordering irrelevant. Honorifics,
+    /// suffixes and single-letter middle initials come and go between the two
+    /// systems, so they are dropped rather than left to spoil a match.
+    /// Apostrophes are removed without splitting the name, so O'Brien and OBrien
+    /// agree; hyphens do split it, so Smith-Jones matches either half.
+    static JudgeNameTokens(name) {
+        if (!name) return [];
+
+        let s = String(name).toUpperCase();
+        const comma = s.indexOf(',');
+        if (comma > -1) s = `${s.slice(comma + 1)} ${s.slice(0, comma)}`;
+
+        const ignored = new Set(['JUDGE', 'HON', 'HONORABLE', 'THE', 'JR', 'SR',
+                                 'II', 'III', 'IV', 'MR', 'MRS', 'MS', 'DR']);
+
+        return s.replace(/['’.]/g, '')
+                .replace(/[^A-Z\s]/g, ' ')
+                .split(/\s+/)
+                .filter(t => t.length > 1 && !ignored.has(t));
+    }
+
+    /// Preselects the clerk judge whose name best matches the judge being edited,
+    /// so changing the county lands on the obvious candidate instead of leaving
+    /// the user to search the clerk's whole list.
+    ///
+    /// Nothing is selected unless one candidate wins outright: at least two name
+    /// parts must match, and a tie selects nothing. A single shared surname is
+    /// deliberately not enough — two different judges named Smith would otherwise
+    /// produce a confident-looking guess. A wrong cross-reference saved without
+    /// the user noticing is worse than an empty field, and the list is still
+    /// there to pick from either way.
+    SelectClosestClerkJudge() {
+        const $clerkJudge = $("#xref_clerkJudge");
+        const target = JudgeController.JudgeNameTokens($("#xrefSelectedJudgeName").text());
+        if (target.length === 0) return;
+
+        const targetSet = new Set(target);
+        let bestValue = null;
+        let bestScore = 0;
+        let tied = false;
+
+        $clerkJudge.find("option").each(function () {
+            const value = $(this).val();
+            if (!value) return;   // the "Select Clerk Judge" placeholder
+
+            const tokens = JudgeController.JudgeNameTokens($(this).text());
+            if (tokens.length === 0) return;
+
+            const shared = tokens.filter(t => targetSet.has(t)).length;
+            if (shared === 0) return;
+
+            // An exact set match outranks every partial one, so a judge carrying
+            // an extra middle name cannot beat the one who matches outright.
+            const exact = shared === target.length && shared === tokens.length;
+            const score = shared + (exact ? 100 : 0);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestValue = value;
+                tied = false;
+            } else if (score === bestScore) {
+                tied = true;
+            }
+        });
+
+        if (bestValue !== null && !tied && bestScore >= 2) {
+            $clerkJudge.val(bestValue);
         }
     }
 
