@@ -369,9 +369,12 @@ class JudgeController {
                     });
                     const lastCountyId = localStorage.getItem('jacs_lastXrefCountyId');
                     if (lastCountyId && $select.find(`option[value="${lastCountyId}"]`).length) {
-                        // Fire change so the dependent clerk-judge dropdown loads;
-                        // setting .val() alone does not trigger it.
-                        $select.val(lastCountyId).trigger('change');
+                        // Restore the selection only — deliberately no 'change'.
+                        // Firing it here loaded the clerk judge list during page load,
+                        // an auth + GetClerkJudges round trip to the clerk before any
+                        // judge has been picked. The list loads when the
+                        // cross-reference modal opens instead.
+                        $select.val(lastCountyId);
                     }
                 } else {
                     ShowNotification("Warning", "No counties available.", 'warning');
@@ -670,6 +673,12 @@ class JudgeController {
         $(progressId).show();
         $("#hdXrefJudgeId").val(judgeId);
 
+        // Armed here and consumed by the first draw below, so opening Manage Clerk
+        // References lands on the county this judge is already mapped in. Only the
+        // first draw: later ones follow a save or delete, and must not pull the
+        // select out from under whatever the user has since chosen.
+        this.preselectXrefCountyPending = true;
+
         if (judgeId) {
             // Destroy previous instance if exists (prevents DataTable re-init errors)
             if (this.judgeXrefTable) {
@@ -748,6 +757,7 @@ class JudgeController {
                     });
                 });
                 judgeControllerInstance.DisableUsedCounties();
+                judgeControllerInstance.PreselectXrefCounty();
             });
         }
         $(progressId).hide();
@@ -856,7 +866,16 @@ class JudgeController {
         $("#xref_clerkJudge").val("").removeClass("is-invalid").prop("disabled", true);
         $("#xref_clerkJudge_error").hide();
         $("#hdXrefJudgeId").val("");
-        if (lastCountyId) $("#xref_county").trigger("change");
+
+        // Reload the clerk list only while the cross-reference modal is actually
+        // open — that is, after a save, with the user still working in it. This
+        // method also runs from onModalClose for the other judge modals, where
+        // firing 'change' sent an auth + GetClerkJudges request to the clerk merely
+        // for closing an unrelated dialog. Called directly rather than by trigger so
+        // jacs_lastXrefCountyId is not rewritten.
+        if (lastCountyId && $("#JudgeXrefModal").hasClass("show")) {
+            this.populateXrefJudges(parseInt(lastCountyId) || 0);
+        }
     }
 
     ClearXrefJudgeHeader() {
@@ -872,6 +891,44 @@ class JudgeController {
         } else {
             this.ClearXrefJudgeHeader();
         }
+    }
+
+    /// Points the county select at the county this judge is already mapped in.
+    /// Without this the select keeps jacs_lastXrefCountyId, which is shared with
+    /// the courtroom screen and is not per-judge, so opening a Sarasota judge
+    /// showed whichever county was last used anywhere in the module.
+    ///
+    /// Runs once per modal open, armed by GetJudgeXrefs.
+    PreselectXrefCounty() {
+        if (!this.preselectXrefCountyPending) return;
+        this.preselectXrefCountyPending = false;
+
+        if (!this.judgeXrefTable) return;
+
+        const $county = $("#xref_county");
+        const rows = this.judgeXrefTable.rows().data();
+
+        // Mapped in several counties? No single right answer, so take the first
+        // row and let the user change it.
+        let countyId = (rows && rows.length > 0 && rows[0] && rows[0].county_id)
+            ? parseInt(rows[0].county_id)
+            : 0;
+
+        if (countyId && $county.find(`option[value="${countyId}"]`).length) {
+            $county.val(String(countyId));
+        } else {
+            // Not mapped yet, so this is an add: keep whatever the select already
+            // shows. The last-used county is a reasonable starting point.
+            countyId = parseInt($county.val()) || 0;
+        }
+
+        // Load the dependent dropdown here — opening this modal is the first point
+        // at which the clerk list is actually needed, and page load no longer
+        // fetches it. Called directly rather than by firing 'change', because that
+        // handler also rewrites jacs_lastXrefCountyId and this is the form filling
+        // itself in, not the user picking a county. A zero id is handled inside:
+        // the dropdown is cleared and left disabled, with no request sent.
+        this.populateXrefJudges(countyId);
     }
 
     DisableUsedCounties() {
