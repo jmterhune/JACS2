@@ -1,0 +1,47 @@
+.configProtectionPanel .body { padding: 20px 30px; }
+
+.configProtectionPanel .cp-warning {
+    border-left: 4px solid #e8a317;
+    background: #fff8e5;
+    color: #4a3b00;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+}
+
+.configProtectionPanel .cp-warning ul { margin: 6px 0 0 18px; list-style: disc; }
+
+.configProtectionPanel .cp-error { color: #b00020; margin-bottom: 15px; }
+
+.configProtectionPanel .cp-table { width: 100%; border-collapse: collapse; }
+
+.configProtectionPanel .cp-table th,
+.configProtectionPanel .cp-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.configProtectionPanel .cp-name { font-weight: bold; }
+.configProtectionPanel .cp-actions { text-align: right; white-space: nowrap; }
+
+.configProtectionPanel .cp-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.configProtectionPanel .cp-encrypted { background: #d9f2e0; color: #0b5d27; }
+.configProtectionPanel .cp-plain { background: #ffe3e0; color: #8a1c10; }
+.configProtectionPanel .cp-unknown { background: #eee; color: #555; }
+
+@media (prefers-color-scheme: dark) {
+    .configProtectionPanel .cp-warning { background: #3a3000; color: #f3e3a3; }
+    .configProtectionPanel .cp-table th,
+    .configProtectionPanel .cp-table td { border-bottom-color: #444; }
+    .configProtectionPanel .cp-encrypted { background: #12391f; color: #9be3b2; }
+    .configProtectionPanel .cp-plain { background: #4a1914; color: #ffb4a9; }
+    .configProtectionPanel .cp-unknown { background: #333; color: #ccc; }
+}
