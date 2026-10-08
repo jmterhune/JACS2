@@ -16,7 +16,9 @@ $stage = Join-Path ([IO.Path]::GetTempPath()) ("ConfigEncryption_" + [guid]::New
 New-Item -ItemType Directory -Path $stage | Out-Null
 try {
     Compress-Archive -Path "$root\admin\personaBar\*" -DestinationPath "$stage\PersonaBarResources.zip"
-    Copy-Item "$root\bin\$Configuration\net48\Tjc.Modules.ConfigEncryption.dll" $stage
+    # The manifest's <path>bin</path> makes the installer look in a bin\ folder inside the zip.
+    New-Item -ItemType Directory -Path "$stage\bin" | Out-Null
+    Copy-Item "$root\bin\$Configuration\net48\Tjc.Modules.ConfigEncryption.dll" "$stage\bin"
     Copy-Item "$root\ConfigEncryption.dnn" $stage
 
     $installDir = Join-Path $root "install"
