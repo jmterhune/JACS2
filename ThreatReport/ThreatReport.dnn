@@ -53,8 +53,8 @@
 										<controlKey>Edit</controlKey>
 										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Edit.ascx</controlSrc>
 										<supportsPartialRendering>False</supportsPartialRendering>
-										<controlTitle>Report an Incident</controlTitle>
-										<controlType>Edit</controlType>
+										<controlTitle>Add Threat</controlTitle>
+										<controlType>View</controlType>
 										<iconFile />
 										<helpUrl />
 										<supportsPopUps>False</supportsPopUps>
