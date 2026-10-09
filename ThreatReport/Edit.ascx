@@ -473,9 +473,6 @@
                 $('#<%=txtVoice.ClientID%>').val('');
                 $('#<%=txtPhonePerson.ClientID%>').val('');
             });
-            $("#upload-wrapper").click(function (evt) {
-                $("#files-overlay").show();
-            });
             $("#<%=cmdAddFile.ClientID%>").click(function (evt) {
                 var incidentId = "<%=hdIncidentId.Value.ToString()%>";
                 var upload = $("#<%=uplFiles.ClientID%>");
@@ -518,6 +515,11 @@
                         $(".info").html('');
                     }, 1000);
                 };
+                options.complete = function () {
+                    // allow choosing the same file again
+                    fileUpload.value = "";
+                };
+                $("#files-overlay").show();
                 $.ajax(options);
                 evt.preventDefault();
             });
@@ -540,8 +542,8 @@
     };
 
     function check_extension(filename) {
-        var re = /\..+$/;
-        var ext = filename.match(re);
+        var re = /\.[^.\\\/]+$/;
+        var ext = (filename.match(re) || [""])[0].toLowerCase();
         var submitEl = document.getElementById('<%=cmdAddFile.ClientID%>');
         if (extensionHash[ext]) {
             $(".info").html("");
@@ -549,6 +551,7 @@
             submitEl.disabled = false;
             return true;
         } else {
+            $("#files-overlay").hide();
             $(".info").html("<span class='text-danger'>Invalid File Type, please choose a document with a pdf, jpg, or jpeg extension!</span>");
             submitEl.disabled = true;
             return false;
