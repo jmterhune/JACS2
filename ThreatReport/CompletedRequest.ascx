@@ -7,7 +7,7 @@
 
 
 <p>
-            <asp:HyperLink ID="lnkReport" Visible="false" runat="server" CssClass="btn btn-primary btn-lg" ToolTip="Report an Incident"><i class="fa fa-search" aria-hidden="true"></i>&nbsp;View Incidents</asp:HyperLink>
+            <asp:HyperLink ID="lnkReport" Visible="false" runat="server" CssClass="btn btn-primary btn-lg" ToolTip="Back to the Incident List"><i class="fa fa-list" aria-hidden="true"></i>&nbsp;Back to Incident List</asp:HyperLink>
 
     <asp:HyperLink ID="lnkHome" runat="server" CssClass="btn btn-tertiary btn-lg" ToolTip="Return to Home Page"><i class="fa fa-link" aria-hidden="true"></i>&nbsp;Return to Home Page</asp:HyperLink>
 </p>
