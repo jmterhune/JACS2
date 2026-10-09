@@ -1,6 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.ThreatReport.View" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
+<p>
+    <asp:HyperLink ID="lnkEdit" Visible="false" runat="server" CssClass="btn btn-danger"><i class="fa fa-exclamation" aria-hidden="true"></i>&nbsp; Report an Incident</asp:HyperLink></p>
 <asp:Repeater ID="rptIncidentList" runat="server">
     <HeaderTemplate>
         <table class="table table-striped" id="incidents">

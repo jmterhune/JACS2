@@ -11,6 +11,7 @@
 */
 using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
+using System.Data;
 using System.Collections.Generic;
 
 
@@ -70,6 +71,26 @@ namespace tjc.Modules.ThreatReport.Components
                 t = rep.GetById(attachmentId);
             }
             return t;
+        }
+
+        public void SaveFileData(int attachmentId, byte[] data, string contentType)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                ctx.Execute(CommandType.Text,
+                    "UPDATE tjc_threat_attachment SET FileData = @0, ContentType = @1 WHERE AttachmentID = @2",
+                    data, contentType, attachmentId);
+            }
+        }
+
+        /// <summary>Returns the stored file bytes, or null when the file has not been stored in the database.</summary>
+        public byte[] GetFileData(int attachmentId)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                return ctx.ExecuteSingleOrDefault<byte[]>(CommandType.Text,
+                    "SELECT FileData FROM tjc_threat_attachment WHERE AttachmentID = @0", attachmentId);
+            }
         }
 
         public void UpdateAttachment(Attachment t)

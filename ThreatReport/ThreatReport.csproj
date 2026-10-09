@@ -96,9 +96,30 @@
     <Compile Include="Components\Incident.cs" />
     <Compile Include="Components\Attachment.cs" />
     <Compile Include="Components\AttachmentController.cs" />
+    <Compile Include="Components\AttachmentFiles.cs" />
     <Compile Include="Components\PersonController.cs" />
     <Compile Include="Components\IncidentController.cs" />
     <Compile Include="Components\Person.cs" />
+    <Compile Include="Edit.ascx.cs">
+      <DependentUpon>Edit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Edit.ascx.designer.cs">
+      <DependentUpon>Edit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="CompletedRequest.ascx.cs">
+      <DependentUpon>CompletedRequest.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CompletedRequest.ascx.designer.cs">
+      <DependentUpon>CompletedRequest.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="attachment.ashx.cs">
+      <DependentUpon>attachment.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="upload.ashx.cs">
+      <DependentUpon>upload.ashx</DependentUpon>
+    </Compile>
     <Compile Include="ViewThreat.ascx.cs">
       <DependentUpon>ViewThreat.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -120,6 +141,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ViewThreat.ascx" />
+    <Content Include="Edit.ascx" />
+    <Content Include="CompletedRequest.ascx" />
+    <Content Include="attachment.ashx" />
+    <Content Include="upload.ashx" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />

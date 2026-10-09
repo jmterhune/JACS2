@@ -50,6 +50,13 @@ namespace tjc.Modules.ThreatReport
                         return;
                     }
 
+                    // Anyone with edit permission on the module can report an incident (set in DNN).
+                    if (IsEditable)
+                    {
+                        lnkEdit.NavigateUrl = EditUrl();
+                        lnkEdit.Visible = true;
+                    }
+
                     IncidentController ctl = new IncidentController(_hostSettings);
                     rptIncidentList.DataSource = ctl.GetIncidents().Where(x => x.Location != null);
                     rptIncidentList.DataBind();

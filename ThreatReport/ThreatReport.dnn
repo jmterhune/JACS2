@@ -1,8 +1,8 @@
 <dotnetnuke type="Package" version="5.0">
 	<packages>
-		<package name="ThreatReport" type="Module" version="1.0.0">
+		<package name="ThreatReport" type="Module" version="1.1.0">
 			<friendlyName>Threat Report</friendlyName>
-			<description>12th Judicial Circuit Court Threat module — view-only (intranet)</description>
+			<description>12th Judicial Circuit Court Threat module — intranet (view and report incidents)</description>
 			<iconFile>/Images/icon_extensions_32px.png</iconFile>
 			<owner>
 				<name>12th Judicial Circuit Court</name>
@@ -43,6 +43,28 @@
 										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/ViewThreat.ascx</controlSrc>
 										<supportsPartialRendering>False</supportsPartialRendering>
 										<controlTitle>Incident Report</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>Edit</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Edit.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Report an Incident</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>complete</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/CompletedRequest.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident Reported</controlTitle>
 										<controlType>View</controlType>
 										<iconFile />
 										<helpUrl />
