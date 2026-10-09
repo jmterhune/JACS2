@@ -76,6 +76,50 @@
 						</moduleDefinitions>
 					</desktopModule>
 				</component>
+				<component type="Assembly">
+					<assemblies>
+						<basePath>bin</basePath>
+						<assembly>
+							<path>bin</path>
+							<name>tjc.Modules.ThreatReport.dll</name>
+						</assembly>
+					</assemblies>
+				</component>
+				<component type="File">
+					<files>
+						<basePath>DesktopModules\tjc.Modules\ThreatReport</basePath>
+						<file>
+							<name>CompletedRequest.ascx</name>
+						</file>
+						<file>
+							<name>Edit.ascx</name>
+						</file>
+						<file>
+							<name>View.ascx</name>
+						</file>
+						<file>
+							<name>ViewThreat.ascx</name>
+						</file>
+						<file>
+							<name>attachment.ashx</name>
+						</file>
+						<file>
+							<name>upload.ashx</name>
+						</file>
+						<file>
+							<name>module.css</name>
+						</file>
+						<file>
+							<name>License.txt</name>
+						</file>
+						<file>
+							<name>ReleaseNotes.txt</name>
+						</file>
+						<file>
+							<name>ThreatReport.dnn</name>
+						</file>
+					</files>
+				</component>
 			</components>
 		</package>
 	</packages>
