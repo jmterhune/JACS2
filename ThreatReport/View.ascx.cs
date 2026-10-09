@@ -66,31 +66,20 @@ namespace tjc.Modules.ThreatReport
             }
         }
 
-        private string NotificationRole
-        {
-            get
-            {
-                if (Settings.Contains("ViewerRole") && !string.IsNullOrWhiteSpace(Settings["ViewerRole"].ToString()))
-                {
-                    return Settings["ViewerRole"].ToString();
-                }
-                return IncidentNotificationController.DefaultRoleName;
-            }
-        }
-
         // Receiving notifications means being in the role on the jud12 site (where the external form
-        // sends from) and/or the local role of the same name; both are managed together here.
+        // sends from) and/or the local role; both are managed together here. Each site's role has its
+        // own name, set in the module settings.
         private bool IsReceiving(IncidentNotificationController ctl, SubscriptionInfo jud12)
         {
             return jud12.State == SubscriptionState.Subscribed
-                || ctl.IsInLocalRole(PortalId, UserId, NotificationRole);
+                || ctl.IsInLocalRole(PortalId, UserId, LocalNotificationRole);
         }
 
         private void RefreshNotifyButton()
         {
             if (UserId <= 0) return;
             var ctl = new IncidentNotificationController(_hostSettings);
-            SubscriptionInfo jud12 = ctl.GetSubscription(UserInfo.Username, UserInfo.Email, NotificationRole);
+            SubscriptionInfo jud12 = ctl.GetSubscription(UserInfo.Username, UserInfo.Email, Jud12NotificationRole);
             cmdNotify.Text = IsReceiving(ctl, jud12) ? "Stop Receiving Incident Report Notifications" : "Receive Incident Report Notifications";
             cmdNotify.Visible = true;
         }
@@ -100,15 +89,14 @@ namespace tjc.Modules.ThreatReport
             try
             {
                 var ctl = new IncidentNotificationController(_hostSettings);
-                string role = NotificationRole;
-                SubscriptionInfo jud12 = ctl.GetSubscription(UserInfo.Username, UserInfo.Email, role);
+                SubscriptionInfo jud12 = ctl.GetSubscription(UserInfo.Username, UserInfo.Email, Jud12NotificationRole);
                 var message = DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess;
                 string text;
 
                 if (IsReceiving(ctl, jud12))
                 {
                     if (jud12.State == SubscriptionState.Subscribed) ctl.Unsubscribe(jud12);
-                    ctl.SetLocalRole(PortalId, UserId, role, false);
+                    ctl.SetLocalRole(PortalId, UserId, LocalNotificationRole, false);
                     text = "You will no longer receive incident report notifications.";
                 }
                 else
@@ -119,7 +107,7 @@ namespace tjc.Modules.ThreatReport
                         ctl.Subscribe(jud12, UserId);
                         addedJud12 = true;
                     }
-                    bool addedLocal = ctl.SetLocalRole(PortalId, UserId, role, true);
+                    bool addedLocal = ctl.SetLocalRole(PortalId, UserId, LocalNotificationRole, true);
                     if (addedJud12 || addedLocal)
                     {
                         text = "You will now receive incident report notifications.";
@@ -131,7 +119,7 @@ namespace tjc.Modules.ThreatReport
                     else
                     {
                         message = DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning;
-                        text = "Could not add you to \"" + role + "\": there is no matching role or account.";
+                        text = "Could not add you: there is no \"" + LocalNotificationRole + "\" role here and no matching \"" + Jud12NotificationRole + "\" account on the jud12 site.";
                     }
                 }
 

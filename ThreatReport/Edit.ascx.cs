@@ -176,17 +176,11 @@ namespace tjc.Modules.ThreatReport
             {
                 string subject = "12th Judicial Circuit Incident Report";
                 string from = "noreply.threat@jud12.flcourts.org";
-                string viewerRole = IncidentNotificationController.DefaultRoleName;
-                if (Settings.Contains("ViewerRole") && !string.IsNullOrWhiteSpace(Settings["ViewerRole"].ToString()))
-                {
-                    viewerRole = Settings["ViewerRole"].ToString();
-                }
-
-                // Recipients are the members of the role on the jud12 site plus the members of the local
-                // role, each address once. Only @jud12.flcourts.org addresses can open the intranet, so
+                // Recipients are the members of the Jud12 role on the jud12 site plus the members of the local
+                // role (both names are module settings), each address once. Only @jud12.flcourts.org addresses can open the intranet, so
                 // they get the link to the incident on this site; anyone else gets the text without it.
                 string href = EditUrl("id", incident.IncidentID.ToString(), "incident");
-                var emails = new IncidentNotificationController(_hostSettings).GetNotificationEmails(PortalId, viewerRole);
+                var emails = new IncidentNotificationController(_hostSettings).GetNotificationEmails(PortalId, LocalNotificationRole, Jud12NotificationRole);
                 var internalEmails = emails.Where(e => e.EndsWith("@" + OrgEmailDomain, StringComparison.OrdinalIgnoreCase)).ToList();
                 var otherEmails = emails.Except(internalEmails, StringComparer.OrdinalIgnoreCase).ToList();
                 SendBulkMessage(from, subject, BuildEmailBody(incident, people, href), internalEmails);

@@ -17,6 +17,28 @@ namespace tjc.Modules.ThreatReport
 {
     public class ThreatReportModuleBase : PortalModuleBase
     {
+        /// <summary>Role on this (intranet) site whose members are notified. Setting "ViewerRole".</summary>
+        public string LocalNotificationRole
+        {
+            get { return GetRoleSetting("ViewerRole", "Incident Viewer"); }
+        }
+
+        /// <summary>Role on the jud12 (external) site whose members are notified. Setting "Jud12Role".</summary>
+        public string Jud12NotificationRole
+        {
+            get { return GetRoleSetting("Jud12Role", "Incident Reporter"); }
+        }
+
+        private string GetRoleSetting(string key, string fallback)
+        {
+            if (Settings != null && Settings.Contains(key) && Settings[key] != null)
+            {
+                string value = Settings[key].ToString().Trim();
+                if (value.Length > 0) return value;
+            }
+            return fallback;
+        }
+
         public int IncidentID
         {
             get

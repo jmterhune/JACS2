@@ -121,6 +121,13 @@
     <Compile Include="upload.ashx.cs">
       <DependentUpon>upload.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Settings.ascx.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Settings.ascx.designer.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ViewThreat.ascx.cs">
       <DependentUpon>ViewThreat.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -128,6 +135,7 @@
     <Compile Include="ViewThreat.ascx.designer.cs">
       <DependentUpon>ViewThreat.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ThreatReportModuleSettingsBase.cs" />
     <Compile Include="ThreatReportModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -142,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ViewThreat.ascx" />
+    <Content Include="Settings.ascx" />
     <Content Include="Edit.ascx" />
     <Content Include="CompletedRequest.ascx" />
     <Content Include="attachment.ashx" />

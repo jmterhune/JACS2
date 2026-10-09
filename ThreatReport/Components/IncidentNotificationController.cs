@@ -38,8 +38,7 @@ namespace tjc.Modules.ThreatReport.Components
     class IncidentNotificationController
     {
         private const string CONN_JUD12 = "Jud12";
-        public const string DefaultRoleName = "Incident Reporter";
-
+        
         private readonly IHostSettings _hostSettings;
 
         public IncidentNotificationController(IHostSettings hostSettings)
@@ -140,12 +139,12 @@ namespace tjc.Modules.ThreatReport.Components
 
         // ---- the intranet site's own role of the same name -------------------------------------------
 
-        /// <summary>Everyone who should be notified: members of the role on the jud12 site plus members of the
-        /// local (intranet) role, with duplicate addresses removed.</summary>
-        public List<string> GetNotificationEmails(int portalId, string roleName)
+        /// <summary>Everyone who should be notified: members of <paramref name="jud12Role"/> on the jud12 site plus
+        /// members of <paramref name="localRole"/> on this (intranet) site, with duplicate addresses removed.</summary>
+        public List<string> GetNotificationEmails(int portalId, string localRole, string jud12Role)
         {
-            var emails = new List<string>(GetSubscriberEmails(roleName));
-            foreach (UserInfo user in RoleController.Instance.GetUsersByRole(portalId, roleName))
+            var emails = new List<string>(GetSubscriberEmails(jud12Role));
+            foreach (UserInfo user in RoleController.Instance.GetUsersByRole(portalId, localRole))
             {
                 if (!string.IsNullOrWhiteSpace(user.Email)) emails.Add(user.Email.Trim());
             }

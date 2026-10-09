@@ -71,6 +71,17 @@
 										<supportsPopUps>False</supportsPopUps>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
+									<moduleControl>
+										<controlKey>Settings</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Settings.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Threat Report Settings</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
 								</moduleControls>
 							</moduleDefinition>
 						</moduleDefinitions>
