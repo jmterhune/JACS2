@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>Tjc.Modules.ConfigEncryption</RootNamespace>
+    <AssemblyName>Tjc.Modules.ConfigEncryption</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Version>1.0.0</Version>
+    <!-- DNN site whose bin folder supplies the DotNetNuke / Persona Bar / Web API references. Override with /p:DnnBin=... -->
+    <DnnBin Condition="'$(DnnBin)' == ''">D:\websites\apps.jud12.flcourts.org\bin</DnnBin>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="DotNetNuke"><HintPath>$(DnnBin)\DotNetNuke.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="DotNetNuke.Web"><HintPath>$(DnnBin)\DotNetNuke.Web.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="Dnn.PersonaBar.Library"><HintPath>$(DnnBin)\Dnn.PersonaBar.Library.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="DotNetNuke.Instrumentation"><HintPath>$(DnnBin)\DotNetNuke.Instrumentation.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="System.Web.Http"><HintPath>$(DnnBin)\System.Web.Http.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="System.Net.Http.Formatting"><HintPath>$(DnnBin)\System.Net.Http.Formatting.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+</Project>

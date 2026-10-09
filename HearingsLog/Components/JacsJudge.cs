@@ -13,6 +13,8 @@ namespace tjc.Modules.HearingLog.Components
         public string JudgeID { get; set; }
         public string County { get; set; }
         public string JudgeName { get; set; }
+        [IgnoreColumn]
+        public string JudgeListName { get { return $"{JudgeName} ({JudgeID})"; } }
     }
     internal class UserJacsJudge : JacsJudge
     {

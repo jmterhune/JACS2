@@ -35,7 +35,7 @@ namespace tjc.Modules.CDSPAdmin.Views
 
         private void BindList()
         {
-            var ctl = new SubmissionController();
+            var ctl = new SubmissionController(_hostSettings);
             rptSubmissions.DataSource = ctl.GetAll()
                 .OrderByDescending(s => s.CreatedDate)
                 .ToList();

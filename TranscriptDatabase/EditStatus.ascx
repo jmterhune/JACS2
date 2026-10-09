@@ -52,7 +52,7 @@
                         <button id="cmdFiled" type="button" class="btn btn-primary"><i class="fas fa-folder-open me-1"></i>Transcript Filed</button>
                     </div>
                     <asp:Literal ID="ltPageMessage" runat="server" />
-                    <div id="updateDueDate" class="alert alert-warning form-group date-panel" style="display: none">
+                    <div id="updateDueDate" class="alert alert-warning date-panel mb-3" style="display: none">
                         <label for="txtDueDate">Enter Due Date<em>*</em></label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtDueDateUpdate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="duedate" CssClass="label label-danger"
@@ -67,7 +67,7 @@
                         </div>
 
                     </div>
-                    <div id="updateTrascriptFiled" class="alert alert-warning form-group date-panel" style="display: none">
+                    <div id="updateTrascriptFiled" class="alert alert-warning date-panel mb-3" style="display: none">
                         <label for="txtTranscriptFiledUpdate">Enter File Date</label>
                         <asp:TextBox AutoCompleteType="Disabled" ID="txtTranscriptFiledUpdate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
                         <asp:CustomValidator ID="valTranscriptFiledIsDate" runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="transcriptfiled" CssClass="label label-danger"
@@ -279,7 +279,7 @@
                             </h2>
                             <div id="commentSection" class="accordion-collapse collapse" aria-labelledby="commentsHeading" data-bs-parent="#accordionSection">
                                 <div class="accordion-body">
-                                    <div class="form-group row mb-2">
+                                    <div class="row mb-2">
                                         <div class="col-12">
                                             <asp:TextBox runat="server" ID="txtComments" CssClass="form-control" TextMode="MultiLine" Rows="4" />
                                         </div>
@@ -467,10 +467,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="AddEventModalLabel">Add / Edit Event</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-3">
                                             <label for="txtHearingDate">Hearing Date</label>
                                             <asp:TextBox AutoCompleteType="Disabled" ID="txtHearingDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
@@ -498,7 +498,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-3">
                                             <label for="txtEstimagedPages">Estimated Pages</label>
                                             <asp:TextBox AutoCompleteType="Disabled" ID="txtEstimagedPages" ClientIDMode="Static" TextMode="Number" min="0" step="1" runat="server" CssClass="form-control" MaxLength="7"></asp:TextBox>
@@ -649,10 +649,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="UploadModalLabel">Upload Files</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="txtUploadeTitle">File Description<em>*</em></label>
                                         <asp:TextBox AutoCompleteType="Disabled" ID="txtUploadeTitle" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="150"></asp:TextBox>
                                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="upload" CssClass="label label-danger"
@@ -686,16 +686,16 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="FileSelectionModalLabel">Create Acknowledgement</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <label for="txtReason">Reason</label>
                                         <asp:TextBox ID="txtReason" ClientIDMode="Static" runat="server" MaxLength="300" CssClass="form-control"></asp:TextBox>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="drpFormType">Form</label>
                                                 <select id="drpFormType" class="form-control">
                                                 </select>
@@ -705,7 +705,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="txtSubmittedDate">Submitted Date</label>
                                                 <asp:TextBox ID="txtSubmittedDate" ClientIDMode="Static" runat="server" MaxLength="15" CssClass="form-control date-picker"></asp:TextBox>
                                             </div>
@@ -717,15 +717,15 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
-                                            <div class="form-group">
-                                                <div class="form-group">
+                                            <div class="mb-3">
+                                                <div class="mb-3">
                                                     <label for="txtCurrentDueDate">Current Due Date</label>
                                                     <asp:TextBox ID="txtCurrentDueDate" ReadOnly="true" ClientIDMode="Static" runat="server" MaxLength="15" CssClass="form-control"></asp:TextBox>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="form-group">
+                                            <div class="mb-3">
                                                 <label for="txtRequestedDueDate">Requested Due Date</label>
                                                 <asp:TextBox ID="txtRequestedDueDate" ClientIDMode="Static" ReadOnly="true" runat="server" MaxLength="15" CssClass="form-control"></asp:TextBox>
                                             </div>
@@ -1424,9 +1424,9 @@
     }
     function ToggleEventForm(toggleValue) {
         if (toggleValue) {
-            $('#AddEventModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('AddEventModal')).show();
         } else {
-            $('#AddEventModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('AddEventModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }
@@ -1434,9 +1434,9 @@
     }
     function ToggleUploadForm(toggleValue) {
         if (toggleValue) {
-            $('#UploadModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('UploadModal')).show();
         } else {
-            $('#UploadModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('UploadModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }
@@ -1444,9 +1444,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#AddEventModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('AddEventModal')).show();
         } else {
-            $('#AddEventModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('AddEventModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }
@@ -1454,9 +1454,9 @@
     }
     function ToggleFileForm(toggleValue) {
         if (toggleValue) {
-            $('#FileSelectionModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('FileSelectionModal')).show();
         } else {
-            $('#FileSelectionModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('FileSelectionModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

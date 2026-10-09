@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,12 @@ namespace tjc.Modules.Reports.Components
     internal class ReportController
     {
         private const string CONN_JACS_DESOTO = "JacsDesoto";
+        private readonly IHostSettings _hostSettings;
+
+        public ReportController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         /// <summary>
         /// Returns Birthday Report rows for the given month and county.
@@ -32,7 +39,7 @@ namespace tjc.Modules.Reports.Components
         /// </summary>
         public IEnumerable<BirthDayEmployees> GetBirthDates(int month, int countyId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<BirthDayEmployees>(
                     System.Data.CommandType.StoredProcedure,
@@ -44,7 +51,7 @@ namespace tjc.Modules.Reports.Components
         /// <summary>Lookup list for the Birthday Report's County dropdown.</summary>
         public IEnumerable<CountyLookup> GetCounties()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<CountyLookup>()
                     .Get()
@@ -54,28 +61,28 @@ namespace tjc.Modules.Reports.Components
         }
         public IEnumerable<ServiceAwardEmployees> GetServiceDates(int month, int reportType, int year)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<ServiceAwardEmployees>(System.Data.CommandType.StoredProcedure, "tjc_employee_monthly_service_report", month, reportType, year);
             }
         }
         public IEnumerable<TerminatedEmployees> GetTerminationDates(DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<TerminatedEmployees>(System.Data.CommandType.StoredProcedure, "tjc_employee_terminated_employees_report", startDate,endDate);
             }
         }
         public IEnumerable<JacsJudge> GetJacsJudges(string county)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS_DESOTO))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JACS_DESOTO))
             {
                 return ctx.ExecuteQuery<JacsJudge>(System.Data.CommandType.StoredProcedure, "tjc_get_judges", county);
             }
         }
         public IEnumerable<WeekdayHearing> GetWeekdayHearingCounts(string county,DateTime startDate,DateTime endDate,string judgeId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JACS_DESOTO))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JACS_DESOTO))
             {
                 return ctx.ExecuteQuery<WeekdayHearing>(System.Data.CommandType.StoredProcedure, "jacs.tjc_get_most_popular_day_schedule", county,startDate,endDate,judgeId);
             }
@@ -96,7 +103,7 @@ namespace tjc.Modules.Reports.Components
         /// rows so we default to all participants and let the view sort. </summary>
         public IEnumerable<DropParticipantRow> GetDropParticipants(bool includeInactive = true)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var sql = @"SELECT FirstName, LastName, DropEntryDate, DropExitDate,
                                    TerminationDate, DropLeavePayout, JobTitle, IsActive
@@ -130,7 +137,7 @@ namespace tjc.Modules.Reports.Components
         /// canonical "they're a certified interpreter" signal.</summary>
         public IEnumerable<SeniorityRow> GetCertifiedInterpreterSeniority(bool includeInactive = false)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var sql = @"SELECT e.EmployeeId, e.FirstName, e.LastName, e.JobTitle,
                                    c.ClassName, g.GroupName AS DepartmentName,
@@ -153,7 +160,7 @@ namespace tjc.Modules.Reports.Components
         /// (case-insensitive).</summary>
         private IEnumerable<SeniorityRow> GetSeniorityRoster(string rolePattern, bool includeInactive)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var tokens = (rolePattern ?? string.Empty).Split('|');
                 // Build a WHERE that matches if ANY of the tokens appears in

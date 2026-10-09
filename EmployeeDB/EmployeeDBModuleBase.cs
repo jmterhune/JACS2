@@ -1,4 +1,5 @@
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +10,16 @@ namespace tjc.Modules.EmployeeDB
     public class EmployeeDBModuleBase : PortalModuleBase
     {
         protected readonly INavigationManager _navigationManager;
+        protected readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
 
         public EmployeeDBModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
-            JavaScript.RequestRegistration(CommonJs.jQuery);
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
         }
 
         public string ReportUrl
@@ -73,43 +78,6 @@ namespace tjc.Modules.EmployeeDB
         }
 
         public string HomeUrl { get { return _navigationManager.NavigateURL(); } }
-
-        #region SWN credentials
-
-        public string SwnTestUsername
-        {
-            get { return Settings.Contains("Swn_TestUsername") ? Settings["Swn_TestUsername"].ToString() : ""; }
-        }
-
-        public string SwnTestPassword
-        {
-            get { return Settings.Contains("Swn_TestPassword") ? Settings["Swn_TestPassword"].ToString() : ""; }
-        }
-
-        public string SwnLiveUsername
-        {
-            get { return Settings.Contains("Swn_LiveUsername") ? Settings["Swn_LiveUsername"].ToString() : ""; }
-        }
-
-        public string SwnLivePassword
-        {
-            get { return Settings.Contains("Swn_LivePassword") ? Settings["Swn_LivePassword"].ToString() : ""; }
-        }
-
-        public bool SwnUseLive
-        {
-            get
-            {
-                if (!Settings.Contains("Swn_UseLive")) return false;
-                bool result;
-                return bool.TryParse(Settings["Swn_UseLive"].ToString(), out result) && result;
-            }
-        }
-
-        public string SwnUsername { get { return SwnUseLive ? SwnLiveUsername : SwnTestUsername; } }
-        public string SwnPassword { get { return SwnUseLive ? SwnLivePassword : SwnTestPassword; } }
-
-        #endregion
 
         #region Helpdesk-notify email
 

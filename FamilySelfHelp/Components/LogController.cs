@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,16 @@ namespace tjc.Modules.FamilySelfHelp.Components
 {
     internal class LogController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public LogController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public Log CreateLog(Log t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
 
         public void DeleteLog(Log t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public IEnumerable<Log> GetLogs()
         {
             IEnumerable<Log> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public IEnumerable<Log> GetLogsByClient(long clientId)
         {
             IEnumerable<Log> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 t = rep.Find("Where ClientId = @0",clientId);
@@ -66,7 +74,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public Log GetLog(long logId)
         {
             Log t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 t = rep.GetById(logId);
@@ -76,7 +84,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
 
         public void UpdateLog(Log t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 rep.Update(t);
@@ -84,42 +92,42 @@ namespace tjc.Modules.FamilySelfHelp.Components
         }
         public IEnumerable<Report> GetReport(DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
               return  ctx.ExecuteQuery<Report>(System.Data.CommandType.StoredProcedure, "tjc_shc_stat_report", startDate,endDate,string.Empty);
             }
         }
         public IEnumerable<Report> GetReport(DateTime startDate, DateTime endDate,string division)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Report>(System.Data.CommandType.StoredProcedure, "tjc_shc_stat_report", startDate, endDate,division);
             }
         }
         public IEnumerable<Report> GetCaseTypeReport(DateTime startDate, DateTime endDate, string division)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Report>(System.Data.CommandType.StoredProcedure, "tjc_shc_case_type_stat_report", startDate, endDate, division);
             }
         }
         public IEnumerable<Report> GetCaseTypeReport(DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Report>(System.Data.CommandType.StoredProcedure, "tjc_shc_case_type_stat_report", startDate, endDate, string.Empty);
             }
         }
         public IEnumerable<Report> GetServiceReport(DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Report>(System.Data.CommandType.StoredProcedure, "tjc_shc_service_stat_report", startDate, endDate, string.Empty);
             }
         }
         public IEnumerable<Report> GetServiceReport(DateTime startDate, DateTime endDate, string division)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Report>(System.Data.CommandType.StoredProcedure, "tjc_shc_service_stat_report", startDate, endDate, division);
             }
@@ -127,7 +135,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public void CreateCaseTypesByLog(IEnumerable<CaseType> caseTypes,long logid)
         {
             DeleteCaseTypesByLog(logid);
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 foreach (CaseType caseType in caseTypes)
                 {
@@ -137,14 +145,14 @@ namespace tjc.Modules.FamilySelfHelp.Components
         }
         public IEnumerable<CaseType> GetCaseTypesByLog(long logid)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<CaseType>(System.Data.CommandType.Text, "Select * from tjc_shc_case_types Where LogID=@0",logid);
             }
         }
         public void DeleteCaseTypesByLog(long logId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                  ctx.Execute(System.Data.CommandType.Text,"Delete from tjc_shc_case_types Where LogID=@0", logId);
             }
@@ -153,7 +161,7 @@ namespace tjc.Modules.FamilySelfHelp.Components
         public void CreateServicesByLog(IEnumerable<Service> services, long logid)
         {
             DeleteServicesByLog(logid);
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 foreach (Service service in services)
                 {
@@ -163,14 +171,14 @@ namespace tjc.Modules.FamilySelfHelp.Components
         }
         public IEnumerable<Service> GetServicesByLog(long logid)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Service>(System.Data.CommandType.Text,"Select * from tjc_shc_services Where LogID=@0", logid);
             }
         }
         public void DeleteServicesByLog(long logId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.Text, "Delete from tjc_shc_services Where LogID=@0", logId);
             }

@@ -194,7 +194,7 @@
     <fieldset class="mb-3">
         <legend class="h5">Manager Access</legend>
         <div class="form-check"><input type="checkbox" name="ManagerBlog" id="mgrBlog" class="form-check-input" /><label class="form-check-label" for="mgrBlog">Manager&#39;s Blog and Manager&#39;s Guide</label></div>
-        <div class="form-check"><input type="checkbox" name="AddToSupervisorDropdown" id="mgrSupervisor" class="form-check-input" /><label class="form-check-label" for="mgrSupervisor">Add to supervisor drop-down menu on database</label></div>
+        <div class="form-check"><input type="checkbox" name="AddToSupervisorDropdown" id="mgrSupervisor" class="form-check-input" /><label class="form-check-label" for="mgrSupervisor">Add to supervisor drop-down menu on database (added automatically on submit)</label></div>
         <div class="form-check"><input type="checkbox" name="WorkCellphoneSetup" id="mgrCell" class="form-check-input" /><label class="form-check-label" for="mgrCell">Work cellphone set up</label></div>
     </fieldset>
 

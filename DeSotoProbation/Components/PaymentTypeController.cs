@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.DeSoto.Probation.Components
     internal class PaymentTypeController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public PaymentTypeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreatePaymentType(PaymentType t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<PaymentType>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
 
         public void DeletePaymentType(PaymentType t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<PaymentType>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public IEnumerable<PaymentType> GetPaymentTypees()
         {
             IEnumerable<PaymentType> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<PaymentType>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public bool PaymentTypeExists(int paymentTypeId)
         {
             PaymentType t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<PaymentType>();
                 t = rep.GetById(paymentTypeId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public PaymentType GetPaymentType(int paymentTypeId)
         {
             PaymentType t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<PaymentType>();
                 t = rep.GetById(paymentTypeId);
@@ -74,7 +82,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         }
         public void UpdatePaymentType(PaymentType t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<PaymentType>();
                 rep.Update(t);

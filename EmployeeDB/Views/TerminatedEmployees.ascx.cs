@@ -12,8 +12,14 @@ namespace tjc.Modules.EmployeeDB.Views
 {
     public partial class TerminatedEmployees : EmployeeDBModuleBase
     {
-        private readonly EmployeeReportController _reports = new EmployeeReportController();
-        private readonly GroupController _groups = new GroupController();
+        private readonly EmployeeReportController _reports;
+        private readonly GroupController _groups;
+
+        public TerminatedEmployees()
+        {
+            _reports = new EmployeeReportController(_hostSettings);
+            _groups = new GroupController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {

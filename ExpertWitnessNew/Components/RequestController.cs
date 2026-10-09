@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,16 @@ namespace tjc.Modules.ExpertWitness.Components
 {
     internal class RequestController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RequestController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateRequest(Request t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void DeleteRequest(Request t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<Request> GetRequests()
         {
             IEnumerable<Request> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<RequestListItem> GetRequestListItems()
         {
             IEnumerable<RequestListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestListItem>();
                 t = rep.Get().OrderByDescending(x=> x.RequestID);
@@ -65,7 +73,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public RequestListItem GetRequestListItem(int requestId)
         {
             RequestListItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestListItem>();
                 t = rep.GetById(requestId);
@@ -75,7 +83,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public Request GetRequest(int requestId)
         {
             Request t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 t = rep.GetById(requestId);
@@ -85,7 +93,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void UpdateRequest(Request t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 rep.Update(t);

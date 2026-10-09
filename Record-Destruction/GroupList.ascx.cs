@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,17 +42,19 @@ namespace tjc.Modules.RecordDestruction
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public GroupList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         private void BindList()
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             rptGroups.DataSource = ctl.GetGroups().OrderBy(x=>x.GroupName);
             rptGroups.DataBind();
         }
@@ -65,7 +68,7 @@ namespace tjc.Modules.RecordDestruction
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }

@@ -3,6 +3,7 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,21 @@ namespace tjc.Modules.CDSPAdmin.Components.Controllers
     public class SubmissionController
     {
         private const string CONN_JUD12 = "Jud12";
+        private readonly IHostSettings _hostSettings;
+
+        public SubmissionController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        private IDataContext GetContext()
+        {
+            return DataContext.Instance(_hostSettings, CONN_JUD12);
+        }
 
         public IEnumerable<SubmissionInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<SubmissionInfo>();
                 return rep.Get();
@@ -33,7 +45,7 @@ namespace tjc.Modules.CDSPAdmin.Components.Controllers
 
         public SubmissionInfo GetSubmission(int submissionId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<SubmissionInfo>();
                 return rep.GetById(submissionId);
@@ -46,7 +58,7 @@ namespace tjc.Modules.CDSPAdmin.Components.Controllers
         /// </summary>
         public void SetCompleted(int submissionId, bool completed, int userId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = GetContext())
             {
                 ctx.Execute(CommandType.Text,
                     "UPDATE tjc_cdsp_submission SET Completed = @0, LastModifiedDate = @1, LastModifiedById = @2 WHERE SubmissionID = @3",

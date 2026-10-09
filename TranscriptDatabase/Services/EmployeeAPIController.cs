@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Security.Roles;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +17,8 @@ namespace tjc.Modules.TranscriptDatabase.Services
     [DnnAuthorize]
     public class EmployeeController : DnnApiController
     {
-       
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage GetEmployeeDropDown(int employeeType)
@@ -22,7 +26,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             IEnumerable<DropDownViewModel> empDropdownItem = Enumerable.Empty<DropDownViewModel>();
             try
             {
-                var ctl = new Components.EmployeeController();
+                var ctl = new Components.EmployeeController(_hostSettings);
                 EmployeeTypes employeeTypeValue=(EmployeeTypes)employeeType;
                 empDropdownItem = ctl.GetEmployeeDropDownByType(employeeTypeValue);
                 return Request.CreateResponse(new DropDownResult { data = empDropdownItem, error = null });
@@ -40,7 +44,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             IEnumerable<DropDownViewModel> empDropdownItem = Enumerable.Empty<DropDownViewModel>();
             try
             {
-                var ctl = new Components.EmployeeController();
+                var ctl = new Components.EmployeeController(_hostSettings);
                var users= RoleController.Instance.GetUsersByRole(PortalSettings.PortalId, roleName);
                 List<DropDownViewModel> reporters= new List<DropDownViewModel>();
                 foreach (var user in users) { 

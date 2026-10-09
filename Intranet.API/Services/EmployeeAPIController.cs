@@ -1,5 +1,8 @@
-﻿using DotNetNuke.Security;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,11 +17,13 @@ namespace tjc.Intranet.API.Services
     [DnnModuleAuthorize(AccessLevel = SecurityAccessLevel.View)]
     public class EmployeeController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         [ActionName("me")]
         public HttpResponseMessage GetEmployeePersonalDataByEmail(string emailAddress)
         {
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             ViewModels.Employee.EmployeeViewModel employeeData = new ViewModels.Employee.EmployeeViewModel(ctl.GetEmployeePersonalInfo(emailAddress));
             if (employeeData == null) { employeeData = new ViewModels.Employee.EmployeeViewModel(); }
             return Request.CreateResponse(employeeData);
@@ -28,7 +33,7 @@ namespace tjc.Intranet.API.Services
         public HttpResponseMessage GetEmergencyContacts(long employeeId)
         {
             List<ViewModels.Employee.EmergencyContactViewModel> contacts = new List<ViewModels.Employee.EmergencyContactViewModel>();
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             contacts = ctl.GetEmergencyContacts(employeeId).Select(contact => new ViewModels.Employee.EmergencyContactViewModel(contact)).ToList();
             return Request.CreateResponse(contacts);
         }
@@ -37,7 +42,7 @@ namespace tjc.Intranet.API.Services
         public HttpResponseMessage GetEmployeePhones(long employeeId)
         {
             List<ViewModels.Employee.PhoneViewModel> phones = new List<ViewModels.Employee.PhoneViewModel>();
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             phones = ctl.GetEmployeePhones(employeeId).Select(phone => new ViewModels.Employee.PhoneViewModel(phone)).ToList();
             return Request.CreateResponse(phones);
         }
@@ -45,7 +50,7 @@ namespace tjc.Intranet.API.Services
         [ActionName("update-personal")]
         public HttpResponseMessage UpdatePersonalData(EmployeeViewModel employee)
         {
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             try
             {
                 Employee emp = ctl.GetEmployeeById(employee.EmployeeId);
@@ -72,7 +77,7 @@ namespace tjc.Intranet.API.Services
         [ActionName("update-phones")]
         public HttpResponseMessage UpdatePhones(IEnumerable<PhoneViewModel> phones)
         {
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             IEnumerable<long> oldPhonesList = ctl.GetEmployeePhones(phones.First().EmployeeId).Select(p => p.PhoneId);
             IEnumerable<long> newPhoneList = phones.Where(p => p.PhoneId > 0).Select(p => p.PhoneId);
             IEnumerable<long> missingPhoneIds = oldPhonesList.Where(p => newPhoneList.All(p2 => p2 != p));
@@ -96,7 +101,7 @@ namespace tjc.Intranet.API.Services
         [ActionName("update-contacts")]
         public HttpResponseMessage UpdateEmergencyContact(IEnumerable<EmergencyContactViewModel> contacts)
         {
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             IEnumerable<long> oldContactList = ctl.GetEmergencyContacts(contacts.First().EmployeeId).Select(c => c.ContactId);
             IEnumerable<long> newContactList = contacts.Where(c => c.ContactId > 0).Select(c => c.ContactId);
             IEnumerable<long> missingContactIds = oldContactList.Where(c => newContactList.All(c2 => c2 != c));
@@ -119,7 +124,7 @@ namespace tjc.Intranet.API.Services
 
         private Phone MapPhone(PhoneViewModel phone)
         {
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             Phone p;
             if (phone.PhoneId == 0)
             {
@@ -146,7 +151,7 @@ namespace tjc.Intranet.API.Services
         }
         private EmergencyContact MapEmergencyContacts(EmergencyContactViewModel contact)
         {
-            var ctl = new Components.Employee.EmployeeController();
+            var ctl = new Components.Employee.EmployeeController(_hostSettings);
             EmergencyContact c;
             if (contact.ContactId == 0)
             {

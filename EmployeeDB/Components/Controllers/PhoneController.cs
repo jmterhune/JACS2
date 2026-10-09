@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class PhoneController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public PhoneController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public PhoneInfo GetById(long id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 return rep.GetById(id);
@@ -21,7 +29,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<PhoneInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 return rep.Get();
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 rep.Insert(item);
@@ -62,7 +70,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 rep.Update(item);
@@ -74,7 +82,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var item = GetById(id);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<PhoneInfo>();
                     rep.Delete(item);
@@ -84,7 +92,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<PhoneInfo> GetForEmployee(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 return rep.Find("WHERE EmployeeId = @0", employeeId);
@@ -93,7 +101,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<PhoneInfo> GetWorkPhonesForEmployee(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 return rep.Find("WHERE EmployeeId = @0 AND PhoneType LIKE 'Work%'", employeeId);
@@ -102,7 +110,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void DeleteForEmployee(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "DELETE FROM tjc_employee_phone WHERE EmployeeId = @0",

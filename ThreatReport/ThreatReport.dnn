@@ -1,9 +1,9 @@
 <dotnetnuke type="Package" version="5.0">
 	<packages>
-		<package name="ThreatReport" type="Module" version="1.0.0">
+		<package name="ThreatReport" type="Module" version="1.2.0">
 			<friendlyName>Threat Report</friendlyName>
-			<description>12th Judicial Circuit Court Threat module — view-only (intranet)</description>
-			<iconFile>/Images/icon_extensions_32px.png</iconFile>
+			<description>12th Judicial Circuit Court Threat module — intranet (incident list for the Incident Viewer role, and a separate submit-incident module)</description>
+			<iconFile>~/Icons/Sigma/Source_32X32_Standard.png</iconFile>
 			<owner>
 				<name>12th Judicial Circuit Court</name>
 				<organization>12th Judicial Circuit Court</organization>
@@ -13,7 +13,7 @@
 			<license src="License.txt"></license>
 
 			<releaseNotes src="ReleaseNotes.txt"></releaseNotes>
-			<components>
+						<components>
 
 				<component type="Module">
 					<desktopModule>
@@ -49,10 +49,77 @@
 										<supportsPopUps>False</supportsPopUps>
 										<viewOrder>0</viewOrder>
 									</moduleControl>
+									<moduleControl>
+										<controlKey>Settings</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Settings.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident Access and Notification Settings</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+								</moduleControls>
+							</moduleDefinition>
+							<moduleDefinition>
+								<friendlyName>Report Incident</friendlyName>
+								<definitionName>Threat Report</definitionName>
+								<defaultCacheTime>0</defaultCacheTime>
+								<moduleControls>
+									<moduleControl>
+										<controlKey />
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Edit.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Report an Incident</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>complete</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/CompletedRequest.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident Reported</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>Settings</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/ThreatReport/Settings.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Incident Access and Notification Settings</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
 								</moduleControls>
 							</moduleDefinition>
 						</moduleDefinitions>
 					</desktopModule>
+				</component>
+				<component type="Assembly">
+					<assemblies>
+						<assembly>
+							<path>bin</path>
+							<name>tjc.Modules.ThreatReport.dll</name>
+						</assembly>
+					</assemblies>
+				</component>
+				<component type="ResourceFile">
+					<resourceFiles>
+						<basePath>DesktopModules\tjc.Modules\ThreatReport</basePath>
+						<resourceFile>
+							<name>Resources.zip</name>
+						</resourceFile>
+					</resourceFiles>
 				</component>
 			</components>
 		</package>

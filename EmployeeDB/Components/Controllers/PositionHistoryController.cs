@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class PositionHistoryController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public PositionHistoryController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public PositionHistoryInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PositionHistoryInfo>();
                 return rep.GetById(id);
@@ -21,7 +29,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<PositionHistoryInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PositionHistoryInfo>();
                 return rep.Get();
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PositionHistoryInfo>();
                 rep.Insert(item);
@@ -61,7 +69,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PositionHistoryInfo>();
                 rep.Update(item);
@@ -73,7 +81,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var item = GetById(id);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<PositionHistoryInfo>();
                     rep.Delete(item);
@@ -83,7 +91,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<PositionHistoryInfo> GetForSsn(string ssn)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PositionHistoryInfo>();
                 return rep.Find("WHERE SocialSecurityNumber = @0 ORDER BY StartDate DESC", ssn);

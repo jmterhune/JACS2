@@ -1,0 +1,13 @@
+<h3>File Manager (Intranet)</h3>
+<p class="Contributor">
+	Joe Terhune <br />
+	<a href="mailto:jterhune@jud12.flcourts.org">jterhune@jud12.flcourts.org</a><br />
+</p>
+<hr/>
+<div class="License">
+	<h3>About File Manager</h3>
+	<p class="Owner">
+		<b>Version 00.00.01</b><br /><br />
+	</p>
+	<p>Lists and serves the files of one share on the public site (jud12.flcourts.org) through its signed FileManager API. Access is controlled by the module's standard DNN view permissions.</p>
+</div>

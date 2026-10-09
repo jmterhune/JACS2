@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,15 +41,17 @@ namespace tjc.Modules.MediationStatistics
     public partial class AttorneyList : MediationStatisticsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #region Methods
         public AttorneyList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindList()
         {
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             rptAttorney.DataSource = ctl.GetAttorneys();
             rptAttorney.DataBind();
         }
@@ -76,7 +79,7 @@ namespace tjc.Modules.MediationStatistics
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.jQuery);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
                     BindList();
                 }
             }
@@ -87,7 +90,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             Attorney attorney = new Attorney();
             bool isNew = true;
             if (hdAttorneyId.Value != "")
@@ -130,7 +133,7 @@ namespace tjc.Modules.MediationStatistics
         protected void rptAttorney_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int attorneyId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             if (e.CommandName == "delete")
             {
 

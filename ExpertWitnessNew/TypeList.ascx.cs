@@ -17,10 +17,12 @@ namespace tjc.Modules.ExpertWitness
     public partial class TypeList : ExpertWitnessModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
 
         public TypeList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -33,7 +35,7 @@ namespace tjc.Modules.ExpertWitness
                     return;
                 }
                 // jQuery for DataTables; antiforgery token so the Web API accepts our calls.
-                JavaScript.RequestRegistration(CommonJs.jQuery);
+                _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
                 ServicesFramework.Instance.RequestAjaxAntiForgerySupport();
             }
             catch (Exception exc)

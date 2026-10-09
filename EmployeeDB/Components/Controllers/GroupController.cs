@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
     /// </summary>
     public class GroupController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public GroupController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public IEnumerable<GroupInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupInfo>();
                 return rep.Get();
@@ -27,19 +35,10 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public GroupInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupInfo>();
                 return rep.GetById(id);
-            }
-        }
-
-        public IEnumerable<GroupInfo> GetSwnGroups()
-        {
-            using (IDataContext ctx = DataContext.Instance())
-            {
-                var rep = ctx.GetRepository<GroupInfo>();
-                return rep.Find("WHERE IsSwnGroup = 1");
             }
         }
 
@@ -50,7 +49,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedByID = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedByID = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupInfo>();
                 rep.Insert(item);
@@ -76,7 +75,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedByID = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupInfo>();
                 rep.Update(item);
@@ -88,7 +87,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// to refuse a delete cleanly with an explanation.</summary>
         public int CountDependents(int groupId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var inEmployees = ctx.ExecuteScalar<int>(CommandType.Text,
                     "SELECT COUNT(*) FROM tjc_employee WHERE DepartmentId = @0", groupId);
@@ -102,7 +101,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         {
             var item = GetById(id);
             if (item == null) return;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<GroupInfo>();
                 rep.Delete(item);

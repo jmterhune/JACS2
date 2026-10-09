@@ -13,7 +13,7 @@
     </asp:LinkButton>
 </asp:Panel>
 <asp:Panel ID="pnlForm" runat="server">
-    <div class="form-group row">
+    <div class="row mb-3">
         <div class="col-4">
             <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name<em>*</em>" ToolTip="Required" />
             <asp:TextBox runat="server" CssClass="form-control form-control-sm" MaxLength="50" ID="txtLastName" />
@@ -36,7 +36,7 @@
             <asp:RegularExpressionValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ValidationExpression="^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" ErrorMessage="Invalid email address" ControlToValidate="txtEmail" runat="server" />
         </div>
     </div>
-    <div class="form-group row">
+    <div class="row mb-3">
         <div class="col-3">
             <asp:Label runat="server" AssociatedControlID="txtPhone" Text="Phone" />
             <asp:TextBox runat="server" CssClass="form-control  form-control-sm phone" MaxLength="50" ID="txtPhone" />
@@ -67,7 +67,7 @@
             <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ID="valTimeSpent" runat="server" ControlToValidate="txtTimeSpent" ErrorMessage="Required"></asp:RequiredFieldValidator>
         </div>
     </div>
-    <div class="form-group row">
+    <div class="row mb-3">
         <div class="col-3">
             <asp:Label runat="server" AssociatedControlID="rblHasAppointment" Text="Has Appointment<em>*</em>" ToolTip="Required" />
             <asp:RadioButtonList ID="rblHasAppointment" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="form-control radio-button-list" runat="server">
@@ -90,7 +90,7 @@
             <asp:TextBox runat="server" CssClass="form-control" MaxLength="250" ID="txtCaseNumber" />
         </div>
     </div>
-    <div class="row form-group">
+    <div class="row mb-3">
         <div class="col-4">
             <fieldset class="fieldset-bordered d-block mb-2">
                 <legend>How did they come to us?<em>*</em></legend>

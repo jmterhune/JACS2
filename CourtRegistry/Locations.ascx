@@ -25,7 +25,7 @@
             <a class="nav-link" href="<%=UpdateJacCodeUrl%>">Update JAC</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#locations" data-toggle="tab">Locations</a>
+            <a class="nav-link" href="#locations" data-bs-toggle="tab">Locations</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=CaseTypeListUrl%>">Case Types</a>
@@ -35,7 +35,7 @@
         <div id="locations" class="tab-pane active">
             <asp:UpdatePanel ID="pnlLocations" runat="server" RenderMode="Block">
                 <ContentTemplate>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#locationModal" onclick="ClearForm()"><i class="fas fa-plus"></i>&nbsp;Add Location</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#locationModal" onclick="ClearForm()"><i class="fas fa-plus"></i>&nbsp;Add Location</button>
 <asp:Literal ID="ltModalScript" runat="server" EnableViewState="false" />
                     <asp:Repeater ID="rptLocations" runat="server" OnItemCommand="rptLocations_ItemCommand">
                         <HeaderTemplate>
@@ -75,18 +75,18 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="locationModalLabel">Add / Edit Location</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <asp:HiddenField ID="hdLocationID" runat="server" />
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-12">
                                             <asp:Label runat="server" AssociatedControlID="txtLocationName" Text="Location Name" />
                                             <asp:TextBox runat="server" CssClass="form-control" ID="txtLocationName" />
                                             <asp:RequiredFieldValidator runat="server" ControlToValidate="txtLocationName" ValidationGroup="loc" Display="Dynamic" CssClass="label label-danger" ErrorMessage="Name is Required" />
                                         </div>
                                     </div>
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <asp:Label runat="server" AssociatedControlID="txtAbbreviation" Text="Abbreviation" />
                                             <asp:TextBox runat="server" CssClass="form-control" ID="txtAbbreviation" MaxLength="10" />
@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <asp:Button Text="Save" ID="cmdSave" runat="server" CssClass="btn btn-primary" ValidationGroup="loc" OnClick="cmdSave_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>

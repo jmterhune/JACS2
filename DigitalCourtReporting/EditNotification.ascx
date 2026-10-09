@@ -172,7 +172,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="txtAccountingNotes">Notes</label>
             <asp:TextBox ID="txtAccountingNotes" ClientIDMode="Static" TextMode="MultiLine" ReadOnly="true" CssClass="form-control-plaintext border rounded p-1" runat="server" />
         </div>
@@ -234,7 +234,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="txtNotesDCR">Notes:</label>
                 <asp:TextBox ID="txtNotesDCR" ClientIDMode="Static" TextMode="MultiLine" ReadOnly="true" CssClass="ms-2 form-control-plaintext rounded border p-1" runat="server" />
             </div>
@@ -242,7 +242,7 @@
     </fieldset>
     <fieldset class="outline-fieldset">
         <legend>Court Administration Call Back Information</legend>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-md-6">
                 <label for="rblNotification">Notification</label>
                 <asp:RadioButtonList ID="rblNotification" ClientIDMode="Static" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="form-control radio-button-list" CausesValidation="false">
@@ -264,7 +264,7 @@
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtDatePickedUp" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="25"></asp:TextBox>
             </div>
         </div>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-md-4"   runat="server" id="dvCalledPerson">
                 <label for="txtCalledPerson">Person Spoke With<em class="call-req text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtCalledPerson" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
@@ -288,7 +288,7 @@
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtRecipient" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="txtCourtAdminNotes">Notes</label>
             <asp:TextBox AutoCompleteType="Disabled" ID="txtCourtAdminNotes" ClientIDMode="Static" runat="server" CssClass="form-control" TextMode="MultiLine"></asp:TextBox>
         </div>

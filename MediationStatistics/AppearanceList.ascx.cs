@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,16 +41,18 @@ namespace tjc.Modules.MediationStatistics
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public AppearanceList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindList()
         {
-            var ctl = new AppearanceController();
+            var ctl = new AppearanceController(_hostSettings);
             rptAppearance.DataSource = ctl.GetAppearances();
             rptAppearance.DataBind();
         }
@@ -72,7 +75,7 @@ namespace tjc.Modules.MediationStatistics
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }
@@ -83,7 +86,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new AppearanceController();
+            var ctl = new AppearanceController(_hostSettings);
             Appearance appearance = new Appearance();
             bool isNew = true;
             if (hdAppearanceId.Value != "")
@@ -118,7 +121,7 @@ namespace tjc.Modules.MediationStatistics
         protected void rptAppearance_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int appearanceId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new AppearanceController();
+            var ctl = new AppearanceController(_hostSettings);
             if (e.CommandName == "delete")
             {
 

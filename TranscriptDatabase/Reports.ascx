@@ -24,7 +24,7 @@
             <a class="nav-link" href="<%=HearingListUrl%>">Hearing Types</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#reports" data-toggle="tab">Reporting</a>
+            <a class="nav-link" href="#reports" data-bs-toggle="tab">Reporting</a>
         </li>        <li class="nav-item">
     <a class="nav-link" href="https://jud12fl.sharepoint.com/sites/CourtReporting">Team Site</a>
 </li>
@@ -155,7 +155,7 @@
             displayStart: currentPage * pageSize,
         });
         designationTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 var designationId = $(this).data("designationId");

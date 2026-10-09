@@ -11,6 +11,8 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Abstractions.Logging;
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -39,18 +41,22 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
+        private readonly IEventLogger _eventLogger;
 
         #endregion
         #region Methods
         public DesignationList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _eventLogger = DependencyProvider.GetRequiredService<IEventLogger>();
         }
         private void BindDropDowns()
         {
-            var hCtl = new HearingTypeController();
-            var jCtl = new EmployeeController();
-            var oCtl = new OfficeController();
+            var hCtl = new HearingTypeController(_hostSettings);
+            var jCtl = new EmployeeController(_hostSettings);
+            var oCtl = new OfficeController(_hostSettings);
             drpOffice.DataTextField = "Description";
             drpOffice.DataValueField = "OfficeID";
             drpOffice.DataSource = oCtl.GetOffices().OrderBy(x => x.Description);
@@ -59,7 +65,7 @@ namespace tjc.Modules.TranscriptDatabase
             drpHearingType.DataValueField = "HearingTypeName";
             drpHearingType.DataSource = hCtl.GetHearingTypes().OrderBy(x => x.HearingTypeName);
             drpHearingType.DataBind();
-            var ctl = new ListController();
+            var ctl = new ListController(_eventLogger, _hostSettings);
             IEnumerable<ListEntryInfo> states = ctl.GetListEntryInfoItems("Region", "Country.US");
             drpState.DataSource = states;
             drpState.DataTextField = "Text";
@@ -71,7 +77,7 @@ namespace tjc.Modules.TranscriptDatabase
         {
             try
             {
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                 if (!Page.IsPostBack)
                 {
                     BindDropDowns();

@@ -10,7 +10,9 @@
 '
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using tjc.Modules.ThreatReport.Components;
@@ -18,17 +20,31 @@ using tjc.Modules.ThreatReport.Components;
 namespace tjc.Modules.ThreatReport
 {
     /// <summary>
-    /// View-only list of incidents for the intranet site. Permissions are controlled via
-    /// DNN; this module never accepts input or sends mail.
+    /// View-only list of incidents for the intranet site, limited to the Incident Viewer role.
+    /// Submitting an incident is a separate module (Edit.ascx).
     /// </summary>
     public partial class View : ThreatReportModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!Page.IsPostBack)
                 {
+                    // Only members of the Incident Viewer role (and administrators) see the list.
+                    if (!CanViewIncidents)
+                    {
+                        DenyAccess("view incidents");
+                        return;
+                    }
+
                     // If the request carries an "id" query parameter (e.g. a link from the
                     // internet site's email of the form [IntranetAppUrl]/id/N), forward to
                     // the detail control instead of rendering the list. This is what makes
@@ -41,7 +57,15 @@ namespace tjc.Modules.ThreatReport
                         return;
                     }
 
-                    IncidentController ctl = new IncidentController();
+                    // Submitting is a separate module on its own page (setting EditTabID).
+                    string submitUrl = ResolveSettingUrl("EditTabID");
+                    if (submitUrl.Length > 0 && CanSubmitIncidents)
+                    {
+                        lnkEdit.NavigateUrl = submitUrl;
+                        lnkEdit.Visible = true;
+                    }
+
+                    IncidentController ctl = new IncidentController(_hostSettings);
                     rptIncidentList.DataSource = ctl.GetIncidents().Where(x => x.Location != null);
                     rptIncidentList.DataBind();
                 }

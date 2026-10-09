@@ -22,10 +22,12 @@ namespace tjc.Modules.MediationStatistics
     public class MediationStatisticsModuleBase : PortalModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         public MediationStatisticsModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
         public bool IsAdmin
         {

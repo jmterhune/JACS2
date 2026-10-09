@@ -1,4 +1,5 @@
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,11 +11,15 @@ namespace tjc.Modules.JudicialReferral
     public class JudicialReferralModuleBase : PortalModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        protected readonly IHostSettings _hostSettings;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
 
         public JudicialReferralModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -30,10 +35,15 @@ namespace tjc.Modules.JudicialReferral
             Page.ClientScript.RegisterClientScriptInclude(GetType(), "SessionMonitorScript", ResolveUrl("~/DesktopModules/tjc.modules/JudicialReferral/Scripts/session-monitor.js"));
 
             double timeoutMinutes = System.Web.Security.FormsAuthentication.Timeout.TotalMinutes;
+            // Log off through the Home tab (/Home/ctl/Logoff), not the current
+            // one. Building this from the current tab produced a bare
+            // /ctl/Logoff when the module sat at the site root, which isn't a
+            // valid logoff URL; anchoring to Home also makes Home the page
+            // DNN returns to after clearing the auth cookie.
             string logoffUrl;
             try
             {
-                logoffUrl = _navigationManager.NavigateURL(TabId, "Logoff");
+                logoffUrl = _navigationManager.NavigateURL(PortalSettings.HomeTabId, "Logoff");
             }
             catch
             {
@@ -41,18 +51,31 @@ namespace tjc.Modules.JudicialReferral
             }
             if (string.IsNullOrEmpty(logoffUrl))
             {
-                // Fallback: append /ctl/Logoff to the current page path. DNN's URL
-                // provider handles this at any depth.
-                string current = Request.Url.AbsolutePath.TrimEnd('/');
-                logoffUrl = current + "/ctl/Logoff";
+                logoffUrl = "/Home/ctl/Logoff";
+            }
+
+            // How much life the auth ticket actually has left. The client
+            // can't infer this from the timeout alone: ASP.NET reissues a
+            // sliding-expiration cookie only once a request arrives past the
+            // halfway point of the window, so a page load in the first half
+            // does NOT extend the session. A client-side "now + timeout"
+            // clock would then warn after the session had already died.
+            // Sent as remaining seconds rather than an absolute time so
+            // client/server clock skew can't distort it.
+            int secondsRemaining = 0;
+            var formsIdentity = Context.User.Identity as System.Web.Security.FormsIdentity;
+            if (formsIdentity != null && formsIdentity.Ticket != null)
+            {
+                TimeSpan remaining = formsIdentity.Ticket.Expiration - DateTime.Now;
+                if (remaining > TimeSpan.Zero) secondsRemaining = (int)remaining.TotalSeconds;
             }
 
             string init =
                 "(function(){function go(){if(window.SessionMonitor){SessionMonitor.init({" +
                 "timeoutMinutes:" + timeoutMinutes.ToString("0") + "," +
-                "warningMinutes:5," +
-                "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'," +
-                "keepAliveUrl:'/'" +
+                "secondsRemaining:" + secondsRemaining + "," +
+                "warningMinutes:20," +
+                "logoffUrl:'" + logoffUrl.Replace("\\", "\\\\").Replace("'", "\\'") + "'" +
                 "});}else{setTimeout(go,200);}}go();})();";
 
             ScriptManager.RegisterStartupScript(this, GetType(), "SessionMonitorInit", init, true);
@@ -135,5 +158,15 @@ namespace tjc.Modules.JudicialReferral
         public bool IsCounselAdmin { get { return UserId > 0 && UserInfo.IsInRole(CounselAdminRole); } }
 
         public string HomeUrl { get { return _navigationManager.NavigateURL(); } }
+
+        /// <summary>
+        /// Trim and cap a string to the given DB column length so PetaPoco
+        /// inserts/updates never overflow the underlying nvarchar column.
+        /// </summary>
+        protected static string Trunc(string value, int max)
+        {
+            value = (value ?? string.Empty).Trim();
+            return value.Length > max ? value.Substring(0, max) : value;
+        }
     }
 }

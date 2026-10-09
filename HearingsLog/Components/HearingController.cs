@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,16 @@ namespace tjc.Modules.HearingLog.Components
 {
     internal class HearingController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public HearingController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateHearing(HearingLog t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingLog>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.HearingLog.Components
 
         public void DeleteHearing(HearingLog t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingLog>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<HearingLog> GetHearings()
         {
             IEnumerable<HearingLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingLog>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.HearingLog.Components
         public HearingLog GetHearing(int logId)
         {
             HearingLog t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingLog>();
                 t = rep.GetById(logId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.HearingLog.Components
 
         public void UpdateHearing(HearingLog t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HearingLog>();
                 rep.Update(t);
@@ -74,7 +82,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<HearingLog> GetHearingLogPaged(int userId,int status,DateTime startDate,DateTime endDate, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<HearingLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged", userId, status,startDate,endDate, rowOffset, pageSize, sortOrder, sortDesc);
@@ -84,7 +92,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<HearingLog> GetHearingLogPaged(int userId, int status, DateTime startDate, DateTime endDate, string searchText, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<HearingLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged_search", userId, status, startDate,endDate,searchText, rowOffset, pageSize, sortOrder, sortDesc);
@@ -95,7 +103,7 @@ namespace tjc.Modules.HearingLog.Components
         public int GetHearingLogCount(int userId, int status, DateTime startDate, DateTime endDate)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count", userId, status,startDate,endDate);
             }
@@ -104,7 +112,7 @@ namespace tjc.Modules.HearingLog.Components
         public int GetHearingLogCount(int userId, int status, DateTime startDate, DateTime endDate, string searchText)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count_search", userId, status, startDate,endDate,searchText);
             }
@@ -112,7 +120,7 @@ namespace tjc.Modules.HearingLog.Components
         }
         public void ImportHearings(int userId, DateTime startDate, DateTime endDate)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_hearing_import_jacs_hearings", userId, startDate,endDate);
             }
@@ -122,7 +130,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<HearingLog> GetHearingLogPaged(int userId, int status, DateTime startDate, DateTime endDate, string searchText,int judgeUserId, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<HearingLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<HearingLog>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_paged_chief_judge", userId, status, startDate,endDate, searchText,judgeUserId, rowOffset, pageSize, sortOrder, sortDesc);
@@ -132,7 +140,7 @@ namespace tjc.Modules.HearingLog.Components
         public int GetHearingLogCount(int userId, int status, DateTime startDate, DateTime endDate, string searchText,int judgeUserId)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_hearing_get_log_count_chief_judge", userId, status, startDate,endDate, searchText,judgeUserId);

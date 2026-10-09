@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.CourtCounsel.Components.Models;
@@ -6,9 +7,16 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 {
     internal class RequestorController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RequestorController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateRequestor(RequestorInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestorInfo>();
                 rep.Insert(t);
@@ -23,7 +31,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void DeleteRequestor(RequestorInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestorInfo>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<RequestorInfo> GetRequestors()
         {
             IEnumerable<RequestorInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestorInfo>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<RequestorInfo> GetActiveRequestors()
         {
             IEnumerable<RequestorInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestorInfo>();
                 t = rep.Find("WHERE IsActive = 1");
@@ -55,7 +63,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public RequestorInfo GetRequestor(int requestorId)
         {
             RequestorInfo t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestorInfo>();
                 t = rep.GetById(requestorId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void UpdateRequestor(RequestorInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestorInfo>();
                 rep.Update(t);

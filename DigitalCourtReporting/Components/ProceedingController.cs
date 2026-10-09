@@ -1,13 +1,21 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 namespace tjc.Modules.DigitalCourtReporting.Components
 {
     internal class ProceedingController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ProceedingController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateProceeding(Proceeding t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Proceeding>();
                 int userId = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo().UserID;
@@ -25,7 +33,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void DeleteProceeding(Proceeding t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Proceeding>();
                 rep.Delete(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<Proceeding> GetProceedings()
         {
             IEnumerable<Proceeding> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Proceeding>();
                 t = rep.Get();
@@ -46,7 +54,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         {
             IEnumerable<ProceedingListItem> t;
             string query = string.Empty;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ProceedingListItem>();
                 switch (listType)
@@ -114,7 +122,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public Proceeding GetProceeding(int proceedingId)
         {
             Proceeding t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Proceeding>();
                 t = rep.GetById(proceedingId);
@@ -124,7 +132,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public ProceedingListItem GetProceedingListItem(int proceedingId)
         {
             ProceedingListItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ProceedingListItem>();
                 t = rep.GetById(proceedingId);
@@ -133,7 +141,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void UpdateProceeding(Proceeding t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Proceeding>();
                 int userId = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo().UserID;
@@ -145,7 +153,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<ProceedingListItem> GetProceedingsPaged(int listType, int searchType, string searchText, int countyId, int rowOffset, int pageSize, string SortOrder, string sortDesc)
         {
             IEnumerable<ProceedingListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<ProceedingListItem>(System.Data.CommandType.StoredProcedure, "tjc_dcr_get_proceeding_list_paged", listType, searchType, searchText, countyId, rowOffset, pageSize, SortOrder, sortDesc);
@@ -154,7 +162,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void DeleteCompletedRecords(int proceedingId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = string.Format("DELETE FROM tjc_dcr_accounting WHERE ProceedingID = {0}", proceedingId);
                 ctx.Execute(System.Data.CommandType.Text, sql);
@@ -168,7 +176,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public int GetProceedingsCount(int listType, int searchType, string searchText, int countyId)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_dcr_get_proceeding_list_count", listType, searchType, searchText, countyId);
             }

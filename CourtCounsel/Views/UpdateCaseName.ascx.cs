@@ -37,7 +37,7 @@ namespace tjc.Modules.CourtCounsel.Views
             if (string.IsNullOrEmpty(caseNumber))
                 return;
 
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             var results = ctrl.GetHistoryByCaseNumber(caseNumber).ToList();
 
             if (results.Any())
@@ -63,7 +63,7 @@ namespace tjc.Modules.CourtCounsel.Views
             if (string.IsNullOrEmpty(caseNumber) || string.IsNullOrEmpty(newName))
                 return;
 
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             ctrl.UpdateCaseName(caseNumber, newName);
 
             // Rebind to show updated names

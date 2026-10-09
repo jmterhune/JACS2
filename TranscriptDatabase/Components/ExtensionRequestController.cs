@@ -1,12 +1,20 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class ExtensionRequestController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ExtensionRequestController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateExtensionRequest(ExtensionRequest t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExtensionRequest>();
                 rep.Insert(t);
@@ -19,7 +27,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteExtensionRequest(ExtensionRequest t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExtensionRequest>();
                 rep.Delete(t);
@@ -28,7 +36,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<ExtensionRequest> GetExtensionRequests()
         {
             IEnumerable<ExtensionRequest> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExtensionRequest>();
                 t = rep.Get();
@@ -38,7 +46,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<ExtensionRequest> GetExtensionRequestsByDesignation(int designationId)
         {
             IEnumerable<ExtensionRequest> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExtensionRequest>();
                 t = rep.Find("Where DesignationID = @0",designationId);
@@ -48,7 +56,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public ExtensionRequest GetExtensionRequest(int extensionrequestId)
         {
             ExtensionRequest t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExtensionRequest>();
                 t = rep.GetById(extensionrequestId);
@@ -58,7 +66,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         
         public void UpdateExtensionRequest(ExtensionRequest t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExtensionRequest>();
                 rep.Update(t);

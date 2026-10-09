@@ -10,9 +10,11 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Data;
 using System.Linq;
@@ -39,15 +41,24 @@ namespace tjc.Modules.PretrialServices.Sarasota
     /// -----------------------------------------------------------------------------
     public partial class View : PretrialServicesModuleBase
     {
-        private DefendantInProgramController ctl = new DefendantInProgramController();
+        private readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
+        private readonly DefendantInProgramController ctl;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            ctl = new DefendantInProgramController(_hostSettings);
+        }
         #region Events
 
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                JavaScript.RequestRegistration(CommonJs.jQueryUI);
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.jQueryUI);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
 
                 if (!Page.IsPostBack)
                 {
@@ -270,7 +281,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         protected void cmdUpdate_Click(object sender, EventArgs e)
         {
             IntakeLogItem intakeLogItem = new IntakeLogItem();
-            var iCtl = new IntakeLogItemController();
+            var iCtl = new IntakeLogItemController(_hostSettings);
             bool isNew = true;
             if (hdLogId.Value != "")
             {
@@ -314,7 +325,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
                 ltMessage.Visible = true;
                 if (hdLogId.Value != "")
                 {
-                    var iCtl = new IntakeLogItemController();
+                    var iCtl = new IntakeLogItemController(_hostSettings);
                     iCtl.DeleteIntakeLogItem(Convert.ToInt32(hdLogId.Value));
                     ClearInakeLog();
                     ltMessage.Text = string.Format(ltMessage.Text, "success", "thumbs-up", "Record Deleted Successfully");
@@ -396,7 +407,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         }
         private void FillIntakeLog()
         {
-            var iCtl = new IntakeLogItemController();
+            var iCtl = new IntakeLogItemController(_hostSettings);
             IntakeLogItem intake = iCtl.GetIntakeLogItemByDate(IntakeDate);
             if (intake != null)
             {

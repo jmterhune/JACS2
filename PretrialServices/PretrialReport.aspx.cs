@@ -1,7 +1,10 @@
-﻿using DotNetNuke.Common.Utilities;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,6 +37,10 @@ namespace tjc.Modules.PretrialServices
         private string beginningDate = "";
         private string enddingDate = "";
         private Font captionFont = new Font(Font.FontFamily.HELVETICA, 5, Font.ITALIC, new BaseColor(0, 183, 183));
+        // Plain ASPX page (not a DNN module control), so there is no PortalModuleBase.DependencyProvider
+        // to resolve services from (Globals.DependencyProvider/GetCurrentServiceProvider are internal to
+        // DotNetNuke.dll). Resolve IHostSettings from the per-request DI scope instead.
+        private IHostSettings HostSettings => System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
         private void AddBlankCells(PdfPTable table, int count, int colspan = 1)
         {
             for (int i = 0; i < count; i++)
@@ -861,7 +868,7 @@ namespace tjc.Modules.PretrialServices
         }
         public void WriteDaily(ref Document doc, DateTime Indate)
         {
-            var ctl = new DefendantInProgramController();
+            var ctl = new DefendantInProgramController(HostSettings);
             IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramForReport(CountyId, Indate);
 
             Paragraph pDates = new Paragraph(reportTitle + Environment.NewLine + "For " + beginningDate + " to " + enddingDate + Environment.NewLine + " ", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD));
@@ -933,12 +940,11 @@ namespace tjc.Modules.PretrialServices
             if (Request.QueryString["indate"] != null)
                 reportDate = DateTime.Parse(Request.QueryString["indate"]);
 
-            var cCtl = new Globals.CountyController();
+            var cCtl = new Globals.CountyController(HostSettings);
             Globals.County county = cCtl.GetCounty(CountyId);
             if (ModuleId > 0)
             {
-                var mCtl = new ModuleController();
-                ModuleInfo moduleInfo = mCtl.GetModule(ModuleId);
+                ModuleInfo moduleInfo = ModuleController.Instance.GetModule(ModuleId, Null.NullInteger, false);
                 if (moduleInfo.TabModuleSettings.Contains("ReportDirectory"))
                 {
                     ReportRootUrl = moduleInfo.TabModuleSettings["ReportDirectory"].ToString();

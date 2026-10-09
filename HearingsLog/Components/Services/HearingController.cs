@@ -1,7 +1,10 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +15,7 @@ namespace tjc.Modules.HearingLog.Components.Services
 {
     public class HearingController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
 
         [HttpPut]
         [ValidateAntiForgeryToken]
@@ -19,7 +23,7 @@ namespace tjc.Modules.HearingLog.Components.Services
         [ActionName("update-hearing")]
         public HttpResponseMessage UpdateHearingLog(LogItemViewModel hearingViewItem)
         {
-            var ctl = new Components.HearingController();
+            var ctl = new Components.HearingController(_hostSettings);
             try
             {
                 var query = Request.GetQueryNameValuePairs()
@@ -51,7 +55,7 @@ namespace tjc.Modules.HearingLog.Components.Services
                 {
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var jaJudge = jCtl.GetJaJudgeRef(user.UserID);
                         if (jaJudge != null)
                         {
@@ -77,7 +81,7 @@ namespace tjc.Modules.HearingLog.Components.Services
         [ActionName("add-hearing")]
         public HttpResponseMessage AddHearingLog(LogItemViewModel hearingViewItem)
         {
-            var ctl = new Components.HearingController();
+            var ctl = new Components.HearingController(_hostSettings);
             try
             {
                 var query = Request.GetQueryNameValuePairs()
@@ -116,7 +120,7 @@ namespace tjc.Modules.HearingLog.Components.Services
                 {
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var jaJudge = jCtl.GetJaJudgeRef(user.UserID);
                         if (jaJudge != null)
                         {
@@ -142,7 +146,7 @@ namespace tjc.Modules.HearingLog.Components.Services
         [ActionName("exclude-hearings")]
         public HttpResponseMessage ExcludeHearings(string logIds)
         {
-            var ctl = new Components.HearingController();
+            var ctl = new Components.HearingController(_hostSettings);
             try
             {
                 var query = Request.GetQueryNameValuePairs()
@@ -168,7 +172,7 @@ namespace tjc.Modules.HearingLog.Components.Services
                 {
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var jaJudge = jCtl.GetJaJudgeRef(user.UserID);
                         if (jaJudge != null)
                         {
@@ -196,7 +200,7 @@ namespace tjc.Modules.HearingLog.Components.Services
         [ActionName("toggle-excluded")]
         public HttpResponseMessage UpdateExcludedStatus(int logId)
         {
-            var ctl = new Components.HearingController();
+            var ctl = new Components.HearingController(_hostSettings);
             try
             {
                 var query = Request.GetQueryNameValuePairs()
@@ -220,7 +224,7 @@ namespace tjc.Modules.HearingLog.Components.Services
                 {
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var jaJudge = jCtl.GetJaJudgeRef(user.UserID);
                         if (jaJudge != null)
                         {
@@ -245,7 +249,7 @@ namespace tjc.Modules.HearingLog.Components.Services
         [ActionName("import-hearings")]
         public HttpResponseMessage ImportHearings()
         {
-            var ctl = new Components.HearingController();
+            var ctl = new Components.HearingController(_hostSettings);
             try
             {
                 var query = Request.GetQueryNameValuePairs().ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
@@ -260,7 +264,7 @@ namespace tjc.Modules.HearingLog.Components.Services
                     UserId = user.UserID;
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var jaJudge = jCtl.GetJaJudgeRef(user.UserID);
                         if (jaJudge != null)
                         {
@@ -310,13 +314,13 @@ namespace tjc.Modules.HearingLog.Components.Services
                     userId = user.UserID;
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var ja = jCtl.GetJaJudgeRef(user.UserID);
                         if (ja != null)
                             userId = ja.JudgeUserID;
                     }
                 }
-                var ctl = new Components.HearingController();
+                var ctl = new Components.HearingController(_hostSettings);
                 if (selectedJudge >= 0)
                 {
                     filteredCount = ctl.GetHearingLogCount(userId, status, startDate, endDate, searchText, selectedJudge);
@@ -384,13 +388,13 @@ namespace tjc.Modules.HearingLog.Components.Services
                     userId = user.UserID;
                     if (user.IsInRole(jaRole))
                     {
-                        var jCtl = new JudgeController();
+                        var jCtl = new JudgeController(_hostSettings);
                         var ja = jCtl.GetJaJudgeRef(user.UserID);
                         if (ja != null)
                             userId = ja.JudgeUserID;
                     }
                 }
-                var ctl = new Components.CourtCounselController();
+                var ctl = new Components.CourtCounselController(_hostSettings);
                 if (selectedJudge >= 0)
                 {
                     filteredCount = ctl.GetCourtCounselLogCount(startDate, endDate, searchText, selectedJudge);

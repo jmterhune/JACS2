@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,9 +7,16 @@ namespace tjc.Modules.ProSeLog.Components
 {
     internal class HistoryController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public HistoryController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateHistory(History t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<History>();
                 rep.Insert(t);
@@ -23,7 +31,7 @@ namespace tjc.Modules.ProSeLog.Components
 
         public void DeleteHistory(History t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<History>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.ProSeLog.Components
         public IEnumerable<History> GetHistorys()
         {
             IEnumerable<History> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<History>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.ProSeLog.Components
         public History GetHistory(int historyId)
         {
             History t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<History>();
                 t = rep.GetById(historyId);
@@ -54,7 +62,7 @@ namespace tjc.Modules.ProSeLog.Components
 
         public void UpdateHistory(History t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<History>();
                 rep.Update(t);
@@ -64,7 +72,7 @@ namespace tjc.Modules.ProSeLog.Components
         public IEnumerable<HistoryListItem> GetHistoryListItems()
         {
             IEnumerable<HistoryListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 t = rep.Get();
@@ -74,7 +82,7 @@ namespace tjc.Modules.ProSeLog.Components
         public IEnumerable<HistoryListItem> GetStats(int month, int year, int countyId)
         {
             IEnumerable<HistoryListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 if (countyId == 0)
@@ -88,7 +96,7 @@ namespace tjc.Modules.ProSeLog.Components
         {
             IEnumerable<HistoryListItem> t;
             casenumber = string.Format("%{0}%", casenumber.Trim());
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 if (countyId > 0)
@@ -102,7 +110,7 @@ namespace tjc.Modules.ProSeLog.Components
         {
             IEnumerable<HistoryListItem> t;
             petitioner = string.Format("%{0}%", petitioner.Trim());
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 if (countyId > 0)
@@ -117,7 +125,7 @@ namespace tjc.Modules.ProSeLog.Components
         {
             IEnumerable<HistoryListItem> t;
             respondent = string.Format("%{0}%", respondent.Trim());
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 if (countyId > 0)
@@ -131,7 +139,7 @@ namespace tjc.Modules.ProSeLog.Components
         {
             IEnumerable<HistoryListItem> t;
             casename = string.Format("%{0}%", casename.Trim());
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 if (countyId > 0)
@@ -144,7 +152,7 @@ namespace tjc.Modules.ProSeLog.Components
         public HistoryListItem GetHistoryListItem(int historyId)
         {
             HistoryListItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryListItem>();
                 t = rep.GetById(historyId);

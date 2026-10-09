@@ -1,0 +1,23 @@
+.command-item {
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.arbitrators-list .badge {
+    color: #fff;
+}
+
+.white-space-pre {
+    white-space: pre-wrap;
+}
+
+table.layout {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+table.layout td {
+    padding: 8px 6px;
+    vertical-align: top;
+}

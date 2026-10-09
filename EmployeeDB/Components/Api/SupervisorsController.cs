@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net;
@@ -30,8 +33,15 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class SupervisorsController : DnnApiController
     {
-        private readonly SupervisorController _supervisors = new SupervisorController();
-        private readonly EmployeeController   _employees   = new EmployeeController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly SupervisorController _supervisors;
+        private readonly EmployeeController   _employees;
+
+        public SupervisorsController()
+        {
+            _supervisors = new SupervisorController(_hostSettings);
+            _employees = new EmployeeController(_hostSettings);
+        }
 
         /// <summary>True for HR Admins (configurable via the HrAdminRole
         /// module setting, default "HR Admin") plus site admins and super

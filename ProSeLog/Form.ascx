@@ -7,7 +7,7 @@
             <a class="nav-link" href="<%=LogListUrl %>"><i class="fas fa-search"></i>&nbsp;Search</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#formEntry" data-toggle="tab">Data Entry</a>
+            <a class="nav-link" href="#formEntry" data-bs-toggle="tab">Data Entry</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=StatsUrl %>">Monthly Stats</a>
@@ -16,7 +16,7 @@
     <div class="tab-content">
         <div id="form" class="tab-pane active">
             <asp:Literal ID="ltMessage" runat="server" />
-            <div class="row form-group">
+            <div class="row mb-3">
                 <div class="col-auto">
                     <asp:Label runat="server" AssociatedControlID="drpMonths" Text="Month / Year" />
                     <div class="input-group">
@@ -37,7 +37,7 @@
                     <asp:TextBox ID="txtCaseName" runat="server" MaxLength="50" CssClass="form-control" placeholder="Party One v. Party Two" ClientIDMode="Static"></asp:TextBox>
                 </div>
             </div>
-            <div class="row form-group">
+            <div class="row mb-3">
                 <div class="col-5">
                     <asp:Label runat="server" AssociatedControlID="drpCountyLetter" Text="Case Number<em>*</em>" ToolTip="required" />
                     <div class="input-group">
@@ -52,9 +52,7 @@
                         <asp:TextBox ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-type" placeholder="CT" ClientIDMode="Static"></asp:TextBox>
                         <asp:TextBox ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="25" CssClass="form-control upperCase case-sequence" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
                         <asp:TextBox ID="txtDefendantSuffix" title="Defendant Suffix" runat="server" MaxLength="10" CssClass="form-control upperCase" ClientIDMode="Static"></asp:TextBox>
-                        <div class="input-group-append">
-                            <small class="input-group-text form-control" title="County-Year-Case Type-Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
-                        </div>
+                        <small class="input-group-text form-control" title="County-Year-Case Type-Case Sequence">(Format: C-YYYY-CT-<span id="caseFormat">000000</span>)</small>
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="drpCountyLetter"
                             Display="Dynamic" SetFocusOnError="true" CssClass="label label-danger" ErrorMessage="County is Required" />
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCaseYear"
@@ -77,7 +75,7 @@
                     </asp:DropDownList>
                 </div>
             </div>
-            <div class="row form-group">
+            <div class="row mb-3">
                 <div class="col-auto">
                     <asp:Label runat="server" AssociatedControlID="drpCaseType" Text="Case Type" />
                     <asp:DropDownList ID="drpCaseType" runat="server" AppendDataBoundItems="true" CssClass="form-control"
@@ -120,7 +118,7 @@
                         <asp:CheckBox ID="chkAppointedPro" runat="server" Text="Appointed Professional" /></li>
                 </ul>
             </fieldset>
-            <div class="row form-group">
+            <div class="row mb-3">
                 <div class="col-auto">
                     <asp:Label runat="server" AssociatedControlID="txtResolutionDate" Text="Resolution Date" />
                     <asp:TextBox runat="server" ID="txtResolutionDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />

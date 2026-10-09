@@ -1,8 +1,12 @@
-﻿using DotNetNuke.Common.Utilities;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Caching;
 namespace tjc.Modules.TranscriptDatabase.Components
 {
@@ -97,7 +101,8 @@ namespace tjc.Modules.TranscriptDatabase.Components
         {
             get
             {
-                var ctl = new EventController();
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new EventController(hostSettings);
                 return ctl.GetEventListItemsByDesignation(DesignationID);
             }
         }

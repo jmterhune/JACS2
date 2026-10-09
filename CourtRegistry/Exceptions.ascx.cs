@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -43,17 +44,19 @@ namespace tjc.Modules.CourtRegistry
     {
         #region Methods
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public JacExceptions()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindDropDowns()
         {
             // Bind dropdowns here if needed
-            var ctl = new JacCodeController();
-            var ctlP = new ApplicationController();
-            var ctlC = new CaseTypeController();
-            var ctlL = new LocationController();
+            var ctl = new JacCodeController(_hostSettings);
+            var ctlP = new ApplicationController(_hostSettings);
+            var ctlC = new CaseTypeController(_hostSettings);
+            var ctlL = new LocationController(_hostSettings);
             drpPeriod.DataTextField = "PeriodYear";
             drpPeriod.DataValueField = "ApplicationYear";
             drpPeriod.DataSource = ctlP.GetApplicationPeriods().OrderByDescending(x => x.PeriodYear);
@@ -73,7 +76,7 @@ namespace tjc.Modules.CourtRegistry
         }
         private void BindDropDowns(int categorId)
         {
-            var ctl = new JacCodeController();
+            var ctl = new JacCodeController(_hostSettings);
             drpCode.DataTextField = "JacCodeListName";
             drpCode.DataValueField = "JacCodeID";
             drpCode.Items.Clear();
@@ -83,7 +86,7 @@ namespace tjc.Modules.CourtRegistry
         }
         private void BindList()
         {
-            var ctl = new JacCodeController();
+            var ctl = new JacCodeController(_hostSettings);
             if (drpPeriod.Items.Count > 0)
             {
                 int year = int.Parse(drpPeriod.SelectedValue);
@@ -99,8 +102,8 @@ namespace tjc.Modules.CourtRegistry
         }
         private void AddJacCodes(int jacCodeId,int year)
         {
-            var ctl = new LocationController();
-            var ctlJac = new JacCodeController();
+            var ctl = new LocationController(_hostSettings);
+            var ctlJac = new JacCodeController(_hostSettings);
 
             if (drpLocation.SelectedIndex == 0)
             {
@@ -159,7 +162,7 @@ namespace tjc.Modules.CourtRegistry
         {
             try
             {                    
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                 if (!Page.IsPostBack)
                 {
                     BindDropDowns();
@@ -201,7 +204,7 @@ namespace tjc.Modules.CourtRegistry
             string year = drpPeriod.SelectedValue;
             if (int.TryParse(year, out int appYear) && appYear > 0)
             {
-                var ctl = new JacCodeController();
+                var ctl = new JacCodeController(_hostSettings);
                 ctl.ClearExceptions(appYear);
                 BindList();
             }
@@ -239,7 +242,7 @@ namespace tjc.Modules.CourtRegistry
                 int jacCodeId = int.Parse(keys[0]);
                 int applicationYear = int.Parse(keys[2]);
                 int locationId = int.Parse(keys[1]);
-                var ctl = new JacCodeController();
+                var ctl = new JacCodeController(_hostSettings);
                 ctl.DeleteException(jacCodeId, locationId, applicationYear);
                 BindList();
             }

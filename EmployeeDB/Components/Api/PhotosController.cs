@@ -1,6 +1,9 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Services.FileSystem;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -30,6 +33,8 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     public class PhotosController : DnnApiController
     {
         private const string PhotoFolderPath = "Employee-Photos";
+
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
 
         /// <summary>Resize uploaded employee photos so the long edge (height)
         /// fits this many pixels. Smaller uploads are left alone — no upscaling.
@@ -83,7 +88,7 @@ namespace tjc.Modules.EmployeeDB.Components.Api
                 // {employeeId}-{LastName}-{FirstName}.{ext}. Falls back to the
                 // upload's original filename if the employee row can't be
                 // resolved (shouldn't happen — employeeId was already validated).
-                var savedName = BuildPhotoFileName(employeeId, processed.Extension) ?? fileName;
+                var savedName = BuildPhotoFileName(employeeId, processed.Extension, _hostSettings) ?? fileName;
 
                 IFileInfo file;
                 using (var saveStream = new MemoryStream(processed.Bytes, writable: false))
@@ -95,7 +100,7 @@ namespace tjc.Modules.EmployeeDB.Components.Api
 
                 // Stamp the new FileId onto the employee row (single-column UPDATE,
                 // doesn't disturb anything else on the page).
-                new EmployeeController().SetFileId(employeeId, file.FileId, UserInfo.UserID);
+                new EmployeeController(_hostSettings).SetFileId(employeeId, file.FileId, UserInfo.UserID);
 
                 // Best-effort helpdesk notification — wraps any mail / lookup
                 // failure so the photo save still returns 200 even if the
@@ -128,7 +133,7 @@ namespace tjc.Modules.EmployeeDB.Components.Api
             try
             {
                 if (id <= 0) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Employee id required");
-                new EmployeeController().SetFileId(id, null, UserInfo.UserID);
+                new EmployeeController(_hostSettings).SetFileId(id, null, UserInfo.UserID);
                 return Request.CreateResponse(HttpStatusCode.NoContent);
             }
             catch (Exception ex)
@@ -283,11 +288,11 @@ namespace tjc.Modules.EmployeeDB.Components.Api
         /// to a single underscore so the format's "-" separators stay
         /// unambiguous. Returns null if the employee row can't be loaded —
         /// the caller falls back to the original upload filename.</summary>
-        private static string BuildPhotoFileName(int employeeId, string extension)
+        private static string BuildPhotoFileName(int employeeId, string extension, IHostSettings hostSettings)
         {
             try
             {
-                var emp = new EmployeeController().GetEmployee(employeeId);
+                var emp = new EmployeeController(hostSettings).GetEmployee(employeeId);
                 if (emp == null) return null;
                 var last = SanitizeForFilename(emp.LastName);
                 var first = SanitizeForFilename(emp.FirstName);
@@ -320,7 +325,7 @@ namespace tjc.Modules.EmployeeDB.Components.Api
         {
             if (!NotifyOnSave()) return;
 
-            var emp = new EmployeeController().GetEmployee(employeeId);
+            var emp = new EmployeeController(_hostSettings).GetEmployee(employeeId);
             if (emp == null) return; // shouldn't happen — Upload validated the id
             var displayName = (emp.DisplayName ?? string.Empty).Trim();
             if (string.IsNullOrEmpty(displayName))

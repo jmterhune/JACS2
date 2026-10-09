@@ -1,5 +1,8 @@
-﻿using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +17,7 @@ namespace tjc.Intranet.API.Services.Mediation
     [DnnAuthorize]
     public class CaseListItemController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
 
         [HttpGet]
         public HttpResponseMessage GetCaseListItems(int count)
@@ -44,7 +48,7 @@ namespace tjc.Intranet.API.Services.Mediation
             }
             try
             {
-                var ctl = new Components.Mediation.CaseListItemController();
+                var ctl = new Components.Mediation.CaseListItemController(_hostSettings);
                 filteredCount = ctl.GetCaseListCount(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName);
                 if (count == 0) { recordCount = filteredCount; }
                 caselistItems = ctl.GetCaseListPaged(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName, recordOffset, pageSize, sortColumn, sortDirection).Select(caselistItem => new CaseListItemViewModel(caselistItem)).ToList();
@@ -62,7 +66,7 @@ namespace tjc.Intranet.API.Services.Mediation
         {
             try
             {
-                var ctl = new Components.Mediation.CaseListItemController();
+                var ctl = new Components.Mediation.CaseListItemController(_hostSettings);
                 ctl.DeleteCase(caseId);
                 return Request.CreateResponse(HttpStatusCode.OK, "");
             }

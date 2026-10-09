@@ -1,0 +1,24 @@
+<h3>Arbitrators (Internal Review)</h3>
+<p class="Contributor">
+	Joe Terhune <br />
+	<a href="mailto:jterhune@jud12.flcourts.org">jterhune@jud12.flcourts.org</a><br />
+	<a href=https://www.jud12.flcourts.org>https://www.jud12.flcourts.org</a><br />
+</p>
+<hr/>
+<div class="License">
+	<h3>About Arbitrators</h3>
+	<p class="Owner">
+		<b>Version 00.00.01</b><br /><br />
+	</p>
+	<p>Internal review sister to the public-facing Arbitrators module on jud12.flcourts.org. Reviewers open a
+	specific application from the link in the notification email (the "aid" query parameter), view the
+	applicant's details and uploaded documents, and approve or deny the application. The applicant is emailed
+	the result.</p>
+
+	<h4>Features</h4>
+	<ul>
+		<li>Application list (DataTables): filter by status, magnifier opens the review view.</li>
+		<li>Review view: applicant details, attachments (Training Certificate, Bar Card), Approve / Deny with review notes.</li>
+		<li>Approval/denial emails the applicant automatically.</li>
+	</ul>
+</div>

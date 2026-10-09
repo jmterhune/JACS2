@@ -1,8 +1,11 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Mail;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +18,8 @@ namespace tjc.Modules.DigitalCourtReporting.Services
 {
     public class ProceedingListItemController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage GetProceedingListItems(int count)
@@ -45,7 +50,7 @@ namespace tjc.Modules.DigitalCourtReporting.Services
 
             try
             {
-                var ctl = new ProceedingController();
+                var ctl = new ProceedingController(_hostSettings);
                 filteredCount = ctl.GetProceedingsCount(listTypeId, searchTypeId, searchText, countyId);
                 if (count == 0) { recordCount = filteredCount; }
                 proceedinglistItems = ctl.GetProceedingsPaged(listTypeId, searchTypeId, searchText, countyId, recordOffset, pageSize, sortColumn, sortDirection).Select(proceedingListItem => new ProceedingListItemViewModel(proceedingListItem)).ToList();
@@ -65,7 +70,7 @@ namespace tjc.Modules.DigitalCourtReporting.Services
         {
             try
             {
-                var ctl = new ProceedingController();
+                var ctl = new ProceedingController(_hostSettings);
                 ctl.DeleteProceeding(proceedingId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }

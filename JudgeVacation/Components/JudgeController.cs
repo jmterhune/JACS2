@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.JudgeVacation.Components
 {
     internal class JudgeVacationController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public JudgeVacationController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateJudgeVacation(JudgeVacation t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<JudgeVacation>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.JudgeVacation.Components
 
         public void DeleteJudgeVacation(JudgeVacation t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<JudgeVacation>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<JudgeVacation> GetJudgeVacations()
         {
             IEnumerable<JudgeVacation> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<JudgeVacation>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<JudgeVacation> GetJudgeVacations(int judgeId,int year)
         {
             IEnumerable<JudgeVacation> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<JudgeVacation>();
                 t = rep.Find("WHERE JudgeID=@0 AND YEAR(StartDate)=@1",judgeId,year);
@@ -66,7 +74,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public JudgeVacation GetJudgeVacation(int calendarId)
         {
             JudgeVacation t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<JudgeVacation>();
                 t = rep.GetById(calendarId);
@@ -76,7 +84,7 @@ namespace tjc.Modules.JudgeVacation.Components
 
         public void UpdateJudgeVacation(JudgeVacation t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<JudgeVacation>();
                 rep.Update(t);
@@ -85,7 +93,7 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<JudgeVacationReport> GetVacationReport(DateTime startDate,DateTime endDate)
         {
             IEnumerable<JudgeVacationReport> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<JudgeVacationReport>(System.Data.CommandType.StoredProcedure, "tjc_vacation_judge_report", startDate,endDate);
             }
@@ -94,12 +102,12 @@ namespace tjc.Modules.JudgeVacation.Components
         public IEnumerable<JudgeVacationReport> GetVacationReportByJudge(DateTime startDate, DateTime endDate,int judgeId)
         {
             IEnumerable<JudgeVacationReport> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<JudgeVacationReport>(System.Data.CommandType.StoredProcedure, "tjc_vacation_report_by_judge", startDate, endDate,judgeId);
             }
             return t;
         }
-      
+
     }
 }

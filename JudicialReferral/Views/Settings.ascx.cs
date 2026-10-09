@@ -61,7 +61,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void BindRoleDropDowns()
         {
-            var roleCtrl = new RoleController();
+            var roleCtrl = RoleController.Instance;
             var roles = roleCtrl.GetRoles(PortalId)
                                 .Cast<RoleInfo>()
                                 .OrderBy(r => r.RoleName)

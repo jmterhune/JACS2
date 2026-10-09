@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.DeSoto.Probation.Components
     internal class ProbationClassController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public ProbationClassController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateProbationClass(ProbationClass t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ProbationClass>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
 
         public void DeleteProbationClass(ProbationClass t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ProbationClass>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public IEnumerable<ProbationClass> GetProbationClasses()
         {
             IEnumerable<ProbationClass> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ProbationClass>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public bool ProbationClassExists(int classId)
         {
             ProbationClass t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ProbationClass>();
                 t = rep.GetById(classId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public ProbationClass GetProbationClass(int classId)
         {
             ProbationClass t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ProbationClass>();
                 t = rep.GetById(classId);
@@ -74,7 +82,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         }
         public void UpdateProbationClass(ProbationClass t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ProbationClass>();
                 rep.Update(t);

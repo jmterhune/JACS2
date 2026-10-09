@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Framework.JavaScriptLibraries;
@@ -45,15 +46,17 @@ namespace tjc.Modules.TranscriptDatabase
     public partial class NameList : TranscriptDatabaseModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #region Methods
         public NameList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindList()
         {
-            var ctl = new EmployeeController();
+            var ctl = new EmployeeController(_hostSettings);
             rptName.DataSource = ctl.GetEmployees();
             rptName.DataBind();
         }
@@ -74,7 +77,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     var employeeTypes = Enumerations.GetValues<EmployeeTypes>();
                     foreach (EmployeeTypes employeeType in employeeTypes)
                     {
@@ -105,7 +108,7 @@ namespace tjc.Modules.TranscriptDatabase
         protected void rptName_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int nameId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new EmployeeController();
+            var ctl = new EmployeeController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteEmployee(nameId);
@@ -132,7 +135,7 @@ namespace tjc.Modules.TranscriptDatabase
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new EmployeeController();
+            var ctl = new EmployeeController(_hostSettings);
             Employee name = new Employee();
             bool isNew = true;
             if (hdNameId.Value != "")

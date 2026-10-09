@@ -18,13 +18,13 @@
 
 <div class="tabs mt-3">
     <ul class="nav nav-tabs">
-        <li class="nav-item active"><a class="nav-link" href="#pane-casetypes" data-toggle="tab">Case Types</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pane-attorneys" data-toggle="tab">Attorneys</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pane-counties" data-toggle="tab">Counties</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pane-phases" data-toggle="tab">Phases</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pane-requestors" data-toggle="tab">Requestors</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pane-actions" data-toggle="tab">Actions</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pane-timespent" data-toggle="tab">Time Spent</a></li>
+        <li class="nav-item active"><a class="nav-link active" href="#pane-casetypes">Case Types</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pane-attorneys">Attorneys</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pane-counties">Counties</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pane-phases">Phases</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pane-requestors">Requestors</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pane-actions">Actions</a></li>
+        <li class="nav-item"><a class="nav-link" href="#pane-timespent">Time Spent</a></li>
     </ul>
 
     <div class="tab-content">
@@ -473,10 +473,14 @@
 
     InitAdminTables();
 
-    // Porto's tab behavior is reset on every UpdatePanel partial postback (it re-reads the
-    // hard-coded .nav-item.active from markup, which always points at Case Types). Persist
-    // the user's chosen tab in sessionStorage so it survives script re-execution in DNN's
-    // partial-postback response, and re-apply it after each async response.
+    // These tabs are driven entirely by our own JS rather than Bootstrap's data-api.
+    // Under Porto 8 / Bootstrap 5 the old data-toggle="tab" markup is not recognized
+    // (BS5 needs data-bs-toggle), so BS never deactivated the previously-active pane —
+    // leaving two panes visible at once. DNN's UpdatePanel partial postbacks also re-run
+    // this script and reset the markup's hard-coded active tab back to Case Types. We take
+    // full manual control: ActivateAdminTab() always clears every active tab/pane before
+    // activating the chosen one, guaranteeing exactly one pane is ever shown. The chosen
+    // tab is persisted in sessionStorage so it survives partial postbacks and refreshes.
     var ADMIN_TAB_KEY = "ccAdminActiveTab";
     function GetActiveAdminTab() {
         try { return sessionStorage.getItem(ADMIN_TAB_KEY) || "#pane-casetypes"; }
@@ -486,34 +490,48 @@
         try { sessionStorage.setItem(ADMIN_TAB_KEY, href); } catch (e) { }
     }
 
+    function ActivateAdminTab(href) {
+        if (!href) return;
+        var link = document.querySelector('.tabs .nav-tabs .nav-link[href="' + href + '"]');
+        var pane = document.querySelector('.tabs .tab-content > ' + href);
+        if (!link || !pane) return;
+
+        // Clear ALL active state first — this is what prevents the double-pane bug.
+        var links = document.querySelectorAll('.tabs .nav-tabs .nav-link');
+        for (var i = 0; i < links.length; i++) {
+            links[i].classList.remove('active');
+            var oldLi = links[i].closest('.nav-item');
+            if (oldLi) oldLi.classList.remove('active');
+        }
+        var panes = document.querySelectorAll('.tabs .tab-content > .tab-pane');
+        for (var j = 0; j < panes.length; j++) {
+            panes[j].classList.remove('active', 'show');
+        }
+
+        // Activate the chosen tab + pane.
+        link.classList.add('active');
+        var li = link.closest('.nav-item');
+        if (li) li.classList.add('active');
+        pane.classList.add('active');
+    }
+
     (function ($) {
         // Delegated click handler — safe to re-bind on each script evaluation because
         // jQuery de-duplicates identical selector+namespaced events.
-        $(document).off("click.adminTab").on("click.adminTab", ".tabs .nav-link[data-toggle=tab], .tabs .nav-link[data-bs-toggle=tab]", function () {
+        $(document).off("click.adminTab").on("click.adminTab", ".tabs .nav-tabs .nav-link", function (e) {
+            e.preventDefault();
             var href = this.getAttribute("href");
-            if (href) { SetActiveAdminTab(href); }
+            if (!href) return;
+            SetActiveAdminTab(href);
+            ActivateAdminTab(href);
         });
     })(jQuery);
 
     function RestoreActiveTab() {
-        var href = GetActiveAdminTab();
-        if (!href) return;
-        var link = document.querySelector('.tabs .nav-link[href="' + href + '"]');
-        var pane = document.querySelector(href);
-        if (!link || !pane) return;
-        if (pane.classList.contains("active")) return; // already correct
-
-        var tabs = document.querySelectorAll(".tabs .nav-item.active");
-        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
-        var panes = document.querySelectorAll(".tabs .tab-pane.active");
-        for (var j = 0; j < panes.length; j++) panes[j].classList.remove("active");
-
-        var li = link.closest(".nav-item");
-        if (li) li.classList.add("active");
-        pane.classList.add("active");
+        ActivateAdminTab(GetActiveAdminTab());
     }
 
-    // Also restore on fresh page load (covers full refreshes where the user last had a non-default tab open).
+    // Restore on fresh page load (covers full refreshes where the user last had a non-default tab open).
     jQuery(document).ready(RestoreActiveTab);
 
     if (typeof Sys !== 'undefined') {

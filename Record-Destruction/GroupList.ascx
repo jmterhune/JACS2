@@ -10,7 +10,7 @@
             <a class="nav-link" href="<%=SearchLogUrl %>">Search Log</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#groups" data-toggle="tab">Departments</a>
+            <a class="nav-link" href="#groups" data-bs-toggle="tab">Departments</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=RecordTypeListUrl %>">Record Types</a>

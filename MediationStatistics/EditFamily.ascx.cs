@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
@@ -42,6 +43,7 @@ namespace tjc.Modules.MediationStatistics
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private int _regionId = Null.NullInteger;
         private readonly GroupType _caseTypeGroup = GroupType.Family;
         private Case _currentCase;
@@ -70,7 +72,7 @@ namespace tjc.Modules.MediationStatistics
                     return ViewState["RegionName"].ToString();
                 else
                 {
-                    var ctl = new RegionController();
+                    var ctl = new RegionController(_hostSettings);
                     Region region = ctl.GetRegion(_regionId);
                     if (region != null)
                         return region.Description;
@@ -90,7 +92,7 @@ namespace tjc.Modules.MediationStatistics
                     return ViewState["GroupName"].ToString();
                 else
                 {
-                    var ctl = new GroupController();
+                    var ctl = new GroupController(_hostSettings);
                     Group group = ctl.GetGroup((int)_caseTypeGroup);
                     if (group != null)
                         return group.Description;
@@ -107,6 +109,7 @@ namespace tjc.Modules.MediationStatistics
         public EditFamily()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         public string GetAgreementType(string agreementType)
         {
@@ -136,7 +139,7 @@ namespace tjc.Modules.MediationStatistics
         public string GetAppearanceItems(string eventId)
         {
             string returnValue = "";
-            var ctl = new AppearanceController();
+            var ctl = new AppearanceController(_hostSettings);
             IEnumerable<Appearance> appearances = ctl.GetEventAppearances(Int32.Parse(eventId));
             foreach (Appearance appearance in appearances)
             {
@@ -235,7 +238,7 @@ namespace tjc.Modules.MediationStatistics
         private void PopulateSessionInformation()
         {
             ClearSession();
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             Session session = _currentCase.GetCurrentSession(CurrentSessionIndex);
             {
                 hdSessionId.Value = session.SessionId.ToString();
@@ -340,7 +343,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void InitializeDropDowns()
         {
-            var ctlGroup = new GroupController();
+            var ctlGroup = new GroupController(_hostSettings);
             List<CaseType> lstCaseTypes = ctlGroup.GetCaseTypesByGroup((int)_caseTypeGroup).ToList();
             foreach (var c in lstCaseTypes)
             {
@@ -377,7 +380,7 @@ namespace tjc.Modules.MediationStatistics
                 LastModifiedById = UserId,
                 LastModifiedDate = DateTime.Now
             };
-            var ctl = new SessionController();
+            var ctl = new SessionController(_hostSettings);
             ctl.CreateSession(newSession);
             _currentCase.CaseSessions.Append(newSession);
             CurrentSessionIndex = _currentCase.CaseSessions.Count() > 0 ? _currentCase.CaseSessions.Count() - 1 : 0;
@@ -437,7 +440,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void FillCase()
         {
-            var ctl = new CaseController();
+            var ctl = new CaseController(_hostSettings);
             _currentCase.LastModifiedDate = DateTime.Now;
             _currentCase.p1_business = txtBusinessName.Text;
             _currentCase.p1_FirstName = txtFirstName.Text;
@@ -462,7 +465,7 @@ namespace tjc.Modules.MediationStatistics
             {
                 ctl.UpdateCase(_currentCase);
             }
-            var ctlSession = new SessionController();
+            var ctlSession = new SessionController(_hostSettings);
             Session session = new Session();
             if (CurrentSessionIndex == Null.NullInteger)
             {
@@ -542,7 +545,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private void DeleteSession()
         {
-            var ctl = new SessionController();
+            var ctl = new SessionController(_hostSettings);
             ctl.DeleteSession(_currentCase.GetCurrentSession(CurrentSessionIndex));
             CurrentSessionIndex = 0;
             if (_currentCase.CaseSessions.Count() <= 1)
@@ -554,7 +557,7 @@ namespace tjc.Modules.MediationStatistics
         {
             string caseNumber = Helper.GetCaseFormatted(txtCaseYear.Text.Trim(), txtCaseType.Text.Trim(), txtCaseSequence.Text.Trim(), txtSuffix.Text.Trim());
             string cdspNumber = Helper.GetCDSPFormatted(drpCDSPType.SelectedValue, txtCDSPYear.Text, txtCDSPNumber.Text, drpCountyLetter.SelectedValue);
-            var ctl = new CaseController();
+            var ctl = new CaseController(_hostSettings);
             if (string.IsNullOrEmpty(caseNumber) & string.IsNullOrEmpty(cdspNumber))
                 return;
             var result = ctl.GetExistingCase(caseNumber, cdspNumber);
@@ -588,7 +591,7 @@ namespace tjc.Modules.MediationStatistics
         }
         private string GetMediatorName(int mediatorId)
         {
-            var ctl = new MediatorController();
+            var ctl = new MediatorController(_hostSettings);
             Mediator mediator = ctl.GetMediator(mediatorId);
             return mediator.MediatorName;
         }
@@ -603,7 +606,7 @@ namespace tjc.Modules.MediationStatistics
                     _regionId = RegionID;
                 if (SessionIndex > 0)
                     CurrentSessionIndex = SessionIndex;
-                var tc = new CaseController();
+                var tc = new CaseController(_hostSettings);
                 _currentCase = tc.GetCase(CaseID);
                 if (_currentCase != null && _currentCase.RegionId.HasValue)
                 {
@@ -646,7 +649,7 @@ namespace tjc.Modules.MediationStatistics
                 chkAdjournedTimeRemaining.LabelAttributes.Add("class", "form-check-label");
                 if (!Page.IsPostBack)
                 {
-                    var aCtl = new GroupController();
+                    var aCtl = new GroupController(_hostSettings);
                     IEnumerable<Appearance> appearances = aCtl.GetAppearancesByGroup((int)_caseTypeGroup);
                     cblAppearanceRecord.DataSource = appearances;
                     cblAppearanceRecord.DataBind();
@@ -689,7 +692,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdDelete_Click(object sender, EventArgs e)
         {
-            var ctl = new CaseController();
+            var ctl = new CaseController(_hostSettings);
             ctl.DeleteCase(CaseID);
             Response.Redirect(_navigationManager.NavigateURL());
         }
@@ -739,7 +742,7 @@ namespace tjc.Modules.MediationStatistics
         {
             if (e.CommandName.ToLower() == "delete")
             {
-                var ctl = new EventController();
+                var ctl = new EventController(_hostSettings);
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 ctl.DeleteEvent(eventId);
                 PopulateEventInformation();
@@ -749,7 +752,7 @@ namespace tjc.Modules.MediationStatistics
             if (e.CommandName == "edit")
             {
                 ClearEventForm();
-                var ctl = new EventController();
+                var ctl = new EventController(_hostSettings);
                 Int32.TryParse(e.CommandArgument.ToString(), out int eventId);
                 Event evt = ctl.GetEvent(eventId);
                 hdEventId.Value = eventId.ToString();
@@ -811,7 +814,7 @@ namespace tjc.Modules.MediationStatistics
             var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
 
             FillCase();
-            var ctl = new EventController();
+            var ctl = new EventController(_hostSettings);
             if (string.IsNullOrEmpty(hdEventId.Value))
             {
                 Event newEvent = new Event

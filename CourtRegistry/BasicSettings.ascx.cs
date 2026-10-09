@@ -3,8 +3,9 @@
 '  All rights reserved.
 */
 
-using DotNetNuke.Common;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -15,15 +16,22 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class BasicSettings : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public BasicSettings()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
                 if (!Page.IsPostBack)
                 {
-                    lnkCancel.NavigateUrl = Globals.NavigateURL();
+                    lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                     PopulateMonths();
-                    var ctl = new SettingController();
+                    var ctl = new SettingController(_hostSettings);
                     var setting = ctl.GetSettings().FirstOrDefault();
                     if (setting != null)
                     {
@@ -82,7 +90,7 @@ namespace tjc.Modules.CourtRegistry
         {
             try
             {
-                var ctl = new SettingController();
+                var ctl = new SettingController(_hostSettings);
                 var setting = ctl.GetSettings().FirstOrDefault();
                 int.TryParse(drpMonth.SelectedValue, out int month);
                 int.TryParse(drpDay.SelectedValue, out int day);

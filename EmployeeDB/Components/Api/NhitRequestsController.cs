@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net;
@@ -26,8 +29,17 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     {
         private const string DefaultHelpdeskEmail = "helpdesk@jud12.flcourts.org";
 
-        private readonly NhitRequestController _requests = new NhitRequestController();
-        private readonly NhitItemController _items = new NhitItemController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly NhitRequestController _requests;
+        private readonly NhitItemController _items;
+        private readonly SupervisorController _supervisors;
+
+        public NhitRequestsController()
+        {
+            _requests = new NhitRequestController(_hostSettings);
+            _items = new NhitItemController(_hostSettings);
+            _supervisors = new SupervisorController(_hostSettings);
+        }
 
         public class SubmitResult
         {
@@ -35,6 +47,9 @@ namespace tjc.Modules.EmployeeDB.Components.Api
             public bool EmailSuccess { get; set; }
             public string EmailMessage { get; set; }
             public string EmailSentTo { get; set; }
+            /// <summary>Outcome of the "Add to supervisor drop-down" checkbox,
+            /// if it was checked. Null when the checkbox wasn't checked.</summary>
+            public string SupervisorMessage { get; set; }
         }
 
         [HttpPost]
@@ -47,10 +62,25 @@ namespace tjc.Modules.EmployeeDB.Components.Api
 
             try
             {
+                var userId = UserInfo == null ? -1 : UserInfo.UserID;
+
                 // 1) Persist the request snapshot first so even if PDF build
                 //    or email send fails we still have a DB record of what
                 //    was submitted (the form fields aren't lost).
-                _requests.Create(item, UserInfo == null ? -1 : UserInfo.UserID);
+                _requests.Create(item, userId);
+
+                // 1b) "Add to supervisor drop-down" used to be just a
+                //     checklist line on the PDF for whoever read it — now it
+                //     actually adds the new hire to tjc_supervisor. Runs
+                //     after the request row is saved (so a failure here
+                //     never costs us the submission), and never throws past
+                //     this point — worst case the HR user sees the message
+                //     and adds the supervisor manually from the admin tab.
+                string supervisorMessage = null;
+                if (item.AddToSupervisorDropdown)
+                {
+                    supervisorMessage = TryAddSupervisor(item.EmployeeId, userId);
+                }
 
                 // 2) Build the PDF using the catalog as it stands NOW. Items
                 //    that have since been deactivated still appear if they
@@ -72,7 +102,8 @@ namespace tjc.Modules.EmployeeDB.Components.Api
                     NhitRequestId = item.NhitRequestId,
                     EmailSuccess = sendResult.Success,
                     EmailMessage = sendResult.Success ? "Worksheet sent to " + to : sendResult.ErrorMessage,
-                    EmailSentTo = to
+                    EmailSentTo = to,
+                    SupervisorMessage = supervisorMessage
                 };
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
@@ -143,6 +174,33 @@ namespace tjc.Modules.EmployeeDB.Components.Api
             if (UserInfo != null && !string.IsNullOrWhiteSpace(UserInfo.Email))
                 return UserInfo.Email;
             return HelpdeskEmail();
+        }
+
+        /// <summary>Adds the new hire to the <c>tjc_supervisor</c> roster when
+        /// the worksheet is linked to an employee record (arrived via
+        /// ?EmployeeId=N — see NewHireITWorksheet.ascx.cs::BuildPreload).
+        /// Mirrors the dedupe rule used by <see cref="SupervisorsController.Post"/>:
+        /// a no-op (with an explanatory message) if the employee is already
+        /// on the roster, active or not. Never throws — this is a convenience
+        /// on top of the worksheet submission, not a required step, so any
+        /// failure just falls back to the manual "Supervisors" admin tab.</summary>
+        private string TryAddSupervisor(int? employeeId, int userId)
+        {
+            if (!employeeId.HasValue || employeeId.Value <= 0)
+                return "Could not add to the Supervisor drop-down: this worksheet isn't linked to an employee record.";
+
+            try
+            {
+                if (_supervisors.GetByEmployeeId(employeeId.Value) != null)
+                    return "This employee is already on the Supervisor drop-down list.";
+
+                _supervisors.Create(new SupervisorInfo { EmployeeId = employeeId.Value, IsActive = true }, userId);
+                return "Added to the Supervisor drop-down list.";
+            }
+            catch (Exception ex)
+            {
+                return "Could not add to the Supervisor drop-down: " + ex.Message;
+            }
         }
     }
 }

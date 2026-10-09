@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Common.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using tjc.Modules.PretrialServices.Sarasota.Components;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
@@ -31,6 +34,10 @@ namespace tjc.Modules.PretrialServices.Sarasota
         private string beginningDate = "";
         private string enddingDate = "";
         private Font captionFont = new Font(Font.FontFamily.HELVETICA, 5, Font.ITALIC, new BaseColor(0, 183, 183));
+        // Plain ASPX page (not a DNN module control), so there is no PortalModuleBase.DependencyProvider
+        // to resolve services from (Globals.DependencyProvider/GetCurrentServiceProvider are internal to
+        // DotNetNuke.dll). Resolve IHostSettings from the per-request DI scope instead.
+        private IHostSettings HostSettings => System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
         private void AddBlankCells(PdfPTable table, int count, int colspan = 1)
         {
             for (int i = 0; i < count; i++)
@@ -123,7 +130,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             table.AddCell(new Phrase(string.Format("# Ordered {0} to PTR ", Environment.NewLine), boldFont));
             table.AddCell(new Phrase(string.Format("# Indigent {0} Int / Assessed ", Environment.NewLine), boldFont));
             table.DefaultCell.BackgroundColor = BaseColor.WHITE;
-            var ctl = new IntakeLogItemController();
+            var ctl = new IntakeLogItemController(HostSettings);
             IntakeLogItem intakeLogItem = ctl.GetIntakeLogItemByDate(inDate);
             if (intakeLogItem != null)
             {
@@ -227,7 +234,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
             bool isFcNonDangerous = false;
             bool isMcDangerous = false;
             bool isMcNonDangerous = false;
-            var ctl = new DefendantInProgramController();
+            var ctl = new DefendantInProgramController(HostSettings);
             IEnumerable<DefendantInProgram> defendantsInProgram = ctl.GetDefendantsInProgramByDate(InDate);
 
             defendantCount = defendantsInProgram.Count();
@@ -958,8 +965,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
 
             if (ModuleId > 0)
             {
-                var mCtl = new ModuleController();
-                ModuleInfo moduleInfo = mCtl.GetModule(ModuleId);
+                ModuleInfo moduleInfo = ModuleController.Instance.GetModule(ModuleId, Null.NullInteger, false);
                 if (moduleInfo.TabModuleSettings.Contains("ReportDirectory"))
                 {
                     ReportRootUrl = moduleInfo.TabModuleSettings["ReportDirectory"].ToString();

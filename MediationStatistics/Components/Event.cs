@@ -10,7 +10,10 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Web.Caching;
@@ -65,7 +68,8 @@ namespace tjc.Modules.MediationStatistics.Components
         {
             get
             {
-                var ctl = new AppearanceController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new AppearanceController(hostSettings);
                 return ctl.GetEventAppearances(EventId);
             }
         }
@@ -75,7 +79,8 @@ namespace tjc.Modules.MediationStatistics.Components
             get
             {
                 string mediatorName = string.Empty;
-                var ctl = new MediatorController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new MediatorController(hostSettings);
                 Mediator mediator = ctl.GetMediator(MediatorId);
                 if (mediator != null)
                     return mediator.MediatorName;

@@ -31,5 +31,13 @@ namespace tjc.Modules.ThreatReport.Components
         public string FileName { get; set; }
 
         public DateTime UploadedDate { get; set; }
+
+        public string ContentType { get; set; }
+
+        // The file bytes live in the FileData column of the shared jud12 database. Ignored by the
+        // repository so listing attachments does not load every blob; use
+        // AttachmentController.GetFileData / SaveFileData instead.
+        [IgnoreColumn]
+        public byte[] FileData { get; set; }
     }
 }

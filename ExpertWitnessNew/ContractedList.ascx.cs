@@ -10,7 +10,9 @@
 '
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,13 @@ namespace tjc.Modules.ExpertWitness
     /// </summary>
     public partial class ContractedList : ExpertWitnessModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ContractedList()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -42,9 +51,9 @@ namespace tjc.Modules.ExpertWitness
 
         private void BindList()
         {
-            var eCtl = new ExpertController();
-            var lCtl = new LocationController();
-            var tCtl = new TypeController();
+            var eCtl = new ExpertController(_hostSettings);
+            var lCtl = new LocationController(_hostSettings);
+            var tCtl = new TypeController(_hostSettings);
 
             var counties = lCtl.GetLocations().OrderBy(l => l.LocationName).ToList();
             var categories = tCtl.GetTypes().OrderBy(t => t.TypeName).ToList();

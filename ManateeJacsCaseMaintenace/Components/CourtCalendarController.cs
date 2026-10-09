@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,17 @@ namespace tjc.Modules.JacsCaseMaint.Components
     internal class CourtCalendarController
     {
         private const string CONN_INTRANET = "jacsManatee";
+        private readonly IHostSettings _hostSettings;
+
+        public CourtCalendarController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<CourtCalendar> GetCourtCalendars(string year, string caseType, string sequence)
         {
             IEnumerable<CourtCalendar> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 string caseNumber = string.Format("%{0}%{1}%{2}%", year, caseType, sequence);
                 var rep = ctx.GetRepository<CourtCalendar>();
@@ -35,7 +42,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public CourtCalendar GetCourtCalendar(string courtCode,DateTime calDate,string timeFrom,int timeSlotNum)
         {
             CourtCalendar t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<CourtCalendar>();
                 t = rep.Find("Where COURTCODE=@0 And CALDATE=@1 And TIMEFROM=@2 And TIMESLOTNUM=@3", courtCode,calDate,timeFrom,timeSlotNum).FirstOrDefault();
@@ -51,7 +58,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
 
         public void DeleteReferral(CourtCalendar t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<CourtCalendar>();
                 rep.Delete(t);

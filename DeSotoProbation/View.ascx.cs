@@ -10,12 +10,15 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Web.UI.WebControls;
 using tjc.Modules.DeSoto.Probation.Components;
@@ -37,12 +40,21 @@ namespace tjc.Modules.DeSoto.Probation
     /// -----------------------------------------------------------------------------
     public partial class View : DeSotoProbationModuleBase, IActionable
     {
+        private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
+
+        public View()
+        {
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                var tc = new ItemController();
-                rptItemList.DataSource = tc.GetItems(ModuleId);
+                var tc = new DefendantController(_hostSettings);
+                rptItemList.DataSource = tc.GetDefendantes();
                 rptItemList.DataBind();
             }
             catch (Exception exc) //Module failed to load
@@ -65,10 +77,10 @@ namespace tjc.Modules.DeSoto.Probation
                 if (IsEditable && lnkDelete != null && lnkEdit != null && pnlAdminControls != null)
                 {
                     pnlAdminControls.Visible = true;
-                    lnkDelete.CommandArgument = t.ItemId.ToString();
+                    lnkDelete.CommandArgument = t.DefendantID.ToString();
                     lnkDelete.Enabled = lnkDelete.Visible = lnkEdit.Enabled = lnkEdit.Visible = true;
 
-                    lnkEdit.NavigateUrl = EditUrl(string.Empty, string.Empty, "Edit", "tid=" + t.ItemId);
+                    lnkEdit.NavigateUrl = EditUrl(string.Empty, string.Empty, "Edit", "tid=" + t.DefendantID);
 
                     ClientAPI.AddButtonConfirm(lnkDelete, Localization.GetString("ConfirmDelete", LocalResourceFile));
                 }
@@ -89,10 +101,10 @@ namespace tjc.Modules.DeSoto.Probation
 
             if (e.CommandName == "Delete")
             {
-                var tc = new ItemController();
-                tc.DeleteItem(Convert.ToInt32(e.CommandArgument), ModuleId);
+                var tc = new DefendantController(_hostSettings);
+                tc.DeleteDefendant(Convert.ToInt32(e.CommandArgument));
             }
-            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL());
+            Response.Redirect(_navigationManager.NavigateURL());
         }
 
         public ModuleActionCollection ModuleActions

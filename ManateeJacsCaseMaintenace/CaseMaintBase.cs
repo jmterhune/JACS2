@@ -10,13 +10,22 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.JacsCaseMaint
 {
     public class CaseMaintBase : PortalModuleBase
     {
+        protected readonly IHostSettings _hostSettings;
+
+        public CaseMaintBase()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         public int ItemId
         {
             get

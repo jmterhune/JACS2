@@ -40,6 +40,7 @@ namespace tjc.Modules.JudicialReferral.Components.Models
         public bool CounselAssistance { get; set; }  // bit
         public string JudgeMotions { get; set; }  // nvarchar(2000)
         public int SelectedDivision { get; set; }  // int
+        public string Notes { get; set; }  // nvarchar(2000) - JA/staff notes, sent to Court Counsel on pickup
 
         // Criminal
         public bool StatusOrderCriminal { get; set; }  // bit

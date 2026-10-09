@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,17 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     internal class ApplicationController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ApplicationController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         private const string CONN_JUD12 = "Jud12"; //Connection
         public void CreateApplication(Application t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Application>();
                 rep.Insert(t);
@@ -37,7 +45,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteApplication(Application t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Application>();
                 rep.Delete(t);
@@ -47,7 +55,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<Application> GetApplications()
         {
             IEnumerable<Application> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Application>();
                 t = rep.Get();
@@ -58,7 +66,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public Application GetApplication(int applicationId)
         {
             Application t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Application>();
                 t = rep.GetById(applicationId);
@@ -68,7 +76,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateApplication(Application t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Application>();
                 rep.Update(t);
@@ -77,7 +85,7 @@ namespace tjc.Modules.CourtRegistry.Components
         //Application Periods
         public void CreateApplicationPeriod(ApplicationPeriod t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 rep.Insert(t);
@@ -92,7 +100,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteApplicationPeriod(ApplicationPeriod t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 rep.Delete(t);
@@ -102,7 +110,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<ApplicationPeriod> GetApplicationPeriods()
         {
             IEnumerable<ApplicationPeriod> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 t = rep.Get();
@@ -113,7 +121,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public ApplicationPeriod GetApplicationPeriod(int applicationYear)
         {
             ApplicationPeriod t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 t = rep.GetById(applicationYear);
@@ -123,7 +131,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateApplicationPeriod(ApplicationPeriod t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationPeriod>();
                 rep.Update(t);
@@ -138,7 +146,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         internal int GetApplicationListCount(int applicationId, int periodYear, string firstName, string lastName, int statusId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteScalar<int>(System.Data.CommandType.Text,
                     @"SELECT COUNT(*)
@@ -179,7 +187,7 @@ namespace tjc.Modules.CourtRegistry.Components
                            ORDER BY {sortCol} {sortDir}
                            OFFSET @5 ROWS FETCH NEXT @6 ROWS ONLY";
 
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<ApplicationListItem>(System.Data.CommandType.Text, sql,
                     applicationId, periodYear, firstName, lastName, statusId, recordOffset, pageSize);
@@ -188,7 +196,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public IEnumerable<ApplicationJacCodeDetail> GetApplicationJacCodes(int applicationId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<ApplicationJacCodeDetail>(System.Data.CommandType.Text,
                     @"SELECT ajc.JacCodeID, ajc.LocationID, ajc.ApplicationID, ajc.Status,
@@ -204,7 +212,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public ApplicationJacCode GetApplicationJacCode(int jacCodeId, int locationId, int applicationId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<ApplicationJacCode>();
                 return rep.Find("WHERE JacCodeID = @0 AND LocationID = @1 AND ApplicationID = @2", jacCodeId, locationId, applicationId).FirstOrDefault();
@@ -213,7 +221,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateApplicationJacCode(ApplicationJacCode item)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "UPDATE tjc_car_application_by_jac_code SET Status = @0 WHERE JacCodeID = @1 AND LocationID = @2 AND ApplicationID = @3",
@@ -223,7 +231,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteApplicationJacCode(ApplicationJacCode item)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "DELETE FROM tjc_car_application_by_jac_code WHERE JacCodeID = @0 AND LocationID = @1 AND ApplicationID = @2",
@@ -233,7 +241,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public IEnumerable<ApplicationJacCode> GetApplicationJacCodesRaw(int applicationId, int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<ApplicationJacCode>(System.Data.CommandType.Text,
                     @"SELECT ajc.JacCodeID, ajc.LocationID, ajc.ApplicationID, ajc.Status
@@ -245,7 +253,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public IEnumerable<JacCodeCount> GetJacCodeCounts(int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<JacCodeCount>(System.Data.CommandType.Text,
                     @"SELECT ct.CaseTypeName, jc.JacCodeID, jc.Category, l.LocationName, ajc.Status, COUNT(*) AS Cnt
@@ -262,7 +270,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public IEnumerable<JacCodeYearLocation> GetJacCodesByYear(int year, int attorneyId)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 if (attorneyId > 0)
                 {
@@ -286,7 +294,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public int GetMaxApplicationYear()
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteScalar<int>(System.Data.CommandType.Text, "SELECT ISNULL(MAX([Year]), 0) FROM tjc_car_applications");
             }
@@ -294,7 +302,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public IEnumerable<JacExportRow> GetJacExport(int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<JacExportRow>(System.Data.CommandType.Text,
                     @"SELECT DISTINCT a.AttorneyID, atty.BarNumber, atty.FirstName, atty.LastName, atty.Email,
@@ -314,7 +322,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void MarkApplicationExported(int applicationId, DateTime exportDate)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "UPDATE tjc_car_applications SET Exported = 1, ExportDate = @0 WHERE ApplicationID = @1",
@@ -324,7 +332,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UndoExport(int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     @"UPDATE tjc_car_applications SET Exported = 0

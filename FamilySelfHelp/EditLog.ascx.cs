@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Log.EventLog;
@@ -42,11 +43,13 @@ namespace tjc.Modules.FamilySelfHelp
     public partial class EditLog : FamilySelfHelpModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private ModuleSecurity modSecurty;
 
         public EditLog()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -76,8 +79,8 @@ namespace tjc.Modules.FamilySelfHelp
                         lnkMerge.Visible = true;
                     if (LogId > 0)
                     {
-                        var ctl = new Components.LogController();
-                        var cCtl = new ClientController();
+                        var ctl = new Components.LogController(_hostSettings);
+                        var cCtl = new ClientController(_hostSettings);
                         Log log = ctl.GetLog(LogId);
                         Client client = cCtl.GetClient(log.ClientId);
                         txtLastName.Text = client.LastName;
@@ -109,7 +112,7 @@ namespace tjc.Modules.FamilySelfHelp
                     }
                     else if (ClientId > 0)
                     {
-                        var cCtl = new ClientController();
+                        var cCtl = new ClientController(_hostSettings);
                         Client client = cCtl.GetClient(ClientId);
                         txtLastName.Text = client.LastName;
                         txtFirstName.Text = client.FirstName;
@@ -129,7 +132,7 @@ namespace tjc.Modules.FamilySelfHelp
         protected void cmdUpdateExisting_Click(object sender, EventArgs e)
         {
             long.TryParse(hdClientId.Value, out long clientId);
-            var ctl = new Components.LogController();
+            var ctl = new Components.LogController(_hostSettings);
             var log = ctl.CreateLog(GetNewLog(clientId));
             SetCaseTypes(log.LogId);
             SetServicesProvided(log.LogId);
@@ -204,7 +207,7 @@ namespace tjc.Modules.FamilySelfHelp
             }
             else if (ClientId > 0)
             {
-                var ctl = new Components.LogController();
+                var ctl = new Components.LogController(_hostSettings);
                 Log log = GetNewLog(ClientId);
                 ctl.CreateLog(log);
                 SetServicesProvided(log.LogId);
@@ -219,8 +222,8 @@ namespace tjc.Modules.FamilySelfHelp
         #region Methods
         private void CheckClient()
         {
-            var ctl = new ClientController();
-            var lCtl = new Components.LogController();
+            var ctl = new ClientController(_hostSettings);
+            var lCtl = new Components.LogController(_hostSettings);
             IEnumerable<Client> clients = ctl.GetExistingClient(txtLastName.Text.Trim(), txtFirstName.Text.Trim());
             if (clients.Count() > 0)
             {
@@ -240,8 +243,8 @@ namespace tjc.Modules.FamilySelfHelp
         }
         private void BindForm()
         {
-            var ctl = new Components.LogController();
-            var ctlC = new ClientController();
+            var ctl = new Components.LogController(_hostSettings);
+            var ctlC = new ClientController(_hostSettings);
             if (ClientId > 0)
             {
                 Client client = ctlC.GetClient(ClientId);
@@ -361,7 +364,7 @@ namespace tjc.Modules.FamilySelfHelp
                 }
 
             }
-            var ctl = new Components.LogController();
+            var ctl = new Components.LogController(_hostSettings);
             ctl.CreateServicesByLog(services, logId);
         }
         private void SetCaseTypes(long logId)
@@ -380,7 +383,7 @@ namespace tjc.Modules.FamilySelfHelp
                 }
 
             }
-            var ctl = new Components.LogController();
+            var ctl = new Components.LogController(_hostSettings);
             ctl.CreateCaseTypesByLog(caseTypes, logId);
         }
         private void PopulateServicesProvided(IEnumerable<Components.Service> services)
@@ -424,8 +427,8 @@ namespace tjc.Modules.FamilySelfHelp
         }
         private void UpdateLog()
         {
-            var ctl = new Components.LogController();
-            var ctlC = new Components.ClientController();
+            var ctl = new Components.LogController(_hostSettings);
+            var ctlC = new Components.ClientController(_hostSettings);
             Log log = ctl.GetLog(LogId);
             Client client = log.ClientInfo;
             client.LastName = txtLastName.Text.Trim();

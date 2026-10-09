@@ -1,13 +1,21 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.MediationStatistics.Components
 {
     internal class AttorneyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttorneyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Insert(t);
@@ -22,7 +30,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Delete(t);
@@ -32,7 +40,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Attorney> GetAttorneys()
         {
             IEnumerable<Attorney> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.Get();
@@ -43,7 +51,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public Attorney GetAttorney(int attorneyId)
         {
             Attorney t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.GetById(attorneyId);
@@ -53,7 +61,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void UpdateAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Update(t);

@@ -26,6 +26,7 @@ $folderMap = @{
     "EmployeeDB"                = "EmployeeDB"
     "ExpertWitness"             = "ExpertWitness"
     "FamilySelfHelp"            = "FamilySelfHelp"
+    "FileManager"               = "FileManager"
     "HearingsLog"               = "HearingsLog"
     "JudgeVacation"             = "JudgeVacation"
     "JudicialReferral"          = "JudicialReferral"

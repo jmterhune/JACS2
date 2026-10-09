@@ -20,7 +20,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
             {
                 if (FileID > 0)
                 {
-                    var ctl = new FileManager();
+                    var ctl = FileManager.Instance;
                     var file = ctl.GetFile(FileID);
                     if (file != null)
                         return string.Format("/Portals/{0}/{1}",PortalSettings.Current.PortalId, file.RelativePath);

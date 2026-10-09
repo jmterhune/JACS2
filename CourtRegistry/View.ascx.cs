@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Web.UI.WebControls;
 using tjc.Modules.CourtRegistry.Components;
@@ -32,9 +34,16 @@ namespace tjc.Modules.CourtRegistry
     /// -----------------------------------------------------------------------------
     public partial class View : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         private void BindLists()
         {
-            var ctl = new ApplicationController();
+            var ctl = new ApplicationController(_hostSettings);
             drpYear.DataTextField = "PeriodYear";
             drpYear.DataValueField = "ApplicationYear";
             drpYear.DataSource = ctl.GetApplicationPeriods();

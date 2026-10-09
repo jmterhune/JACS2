@@ -12,6 +12,8 @@
 
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Linq;
+using System.Web;
 using DotNetNuke.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Web.UI.WebControls;
@@ -56,7 +58,7 @@ namespace tjc.Modules.JacsCaseMaint
        
         private void BindAttorneyList()
         {
-            var tc = new ExcludedAttorneysController();
+            var tc = new ExcludedAttorneysController(_hostSettings);
             rptAttorneyList.DataSource = tc.GetAttorneyView();
             rptAttorneyList.DataBind();
         }
@@ -65,7 +67,7 @@ namespace tjc.Modules.JacsCaseMaint
         {
             if (e.CommandName == "delete")
             {
-                var tc = new ExcludedAttorneysController();
+                var tc = new ExcludedAttorneysController(_hostSettings);
                 tc.DeleteAttorney(Convert.ToInt32(e.CommandArgument.ToString()));
                 Response.Redirect(_navigationManager.NavigateURL(),true);
             }
@@ -74,9 +76,95 @@ namespace tjc.Modules.JacsCaseMaint
         protected void cmdSave_Click(object sender, EventArgs e)
         {
             ExcludedAttorney excludedAttorney=new ExcludedAttorney { barnumber=txtBarNumber.Text.PadLeft(7,'0')};
-            var ctl = new ExcludedAttorneysController();
+            var ctl = new ExcludedAttorneysController(_hostSettings);
             ctl.CreateAttorney(excludedAttorney);
             BindAttorneyList();
         }
+
+        #region Attorney Status tab
+        private const string TAB_SEARCH = "search";
+
+        public string CurrentSearch
+        {
+            get { return ViewState["CurrentSearch"] as string ?? string.Empty; }
+            set { ViewState["CurrentSearch"] = value; }
+        }
+
+        private void BindSearchResults()
+        {
+            hdnActiveTab.Value = TAB_SEARCH;
+            if (string.IsNullOrEmpty(CurrentSearch))
+            {
+                rptSearchResults.Visible = false;
+                pnlNoResults.Visible = false;
+                return;
+            }
+            var ctl = new AttorneyController(_hostSettings);
+            var attorneys = ctl.GetAttorneyByBarNumber(CurrentSearch).ToList();
+            rptSearchResults.DataSource = attorneys;
+            rptSearchResults.DataBind();
+            rptSearchResults.Visible = attorneys.Count > 0;
+            pnlNoResults.Visible = attorneys.Count == 0;
+            litNoResultsBarNumber.Text = HttpUtility.HtmlEncode(CurrentSearch);
+        }
+
+        protected void rptSearchResults_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                var chk = (CheckBox)e.Item.FindControl("chkActive");
+                var attorney = (Attorney)e.Item.DataItem;
+                chk.InputAttributes["class"] = "form-check-input";
+                chk.InputAttributes["role"] = "switch";
+                chk.InputAttributes["aria-label"] = string.Format("Active status for {0}", attorney.BARNUM);
+                chk.InputAttributes["title"] = attorney.IsActive ? "Active - click to deactivate" : "Inactive - click to activate";
+            }
+        }
+
+        protected void chkActive_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var chk = (CheckBox)sender;
+                var item = (RepeaterItem)chk.NamingContainer;
+                var barNumber = ((HiddenField)item.FindControl("hdnBarNumber")).Value;
+
+                var ctl = new AttorneyController(_hostSettings);
+                ctl.SetActive(barNumber, chk.Checked);
+
+                ShowToast(string.Format("Bar number {0} set to {1}.", AttorneyController.PadBarNumber(barNumber), chk.Checked ? "active (Y)" : "inactive (N)"), "success");
+                BindSearchResults();
+                // ACTIVE is also displayed on the excluded list
+                BindAttorneyList();
+            }
+            catch (Exception exc)
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
+        }
+
+        protected void cmdSearch_Click(object sender, EventArgs e)
+        {
+            var search = txtSearchBarNumber.Text.Trim();
+            CurrentSearch = search.Length == 0 ? string.Empty : AttorneyController.PadBarNumber(search);
+            txtSearchBarNumber.Text = CurrentSearch;
+            BindSearchResults();
+        }
+
+        protected void cmdClear_Click(object sender, EventArgs e)
+        {
+            txtSearchBarNumber.Text = string.Empty;
+            CurrentSearch = string.Empty;
+            BindSearchResults();
+        }
+
+        private void ShowToast(string message, string type)
+        {
+            var script = string.Format(
+                "document.addEventListener('DOMContentLoaded', function () {{ if (window.Noty) {{ new Noty({{ text: '{0}', type: '{1}', theme: 'bootstrap-v4', timeout: 3000, layout: 'topRight' }}).show(); }} }});",
+                HttpUtility.JavaScriptStringEncode(message), type);
+            Page.ClientScript.RegisterStartupScript(GetType(), "AttorneyStatusToast", script, true);
+        }
+        #endregion
     }
 }

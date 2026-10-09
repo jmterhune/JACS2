@@ -9,7 +9,7 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#caseSearch" data-toggle="tab">Add / Search Cases</a>
+            <a class="nav-link" href="#caseSearch" data-bs-toggle="tab">Add / Search Cases</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ReportUrl%>">Reports</a>
@@ -31,7 +31,7 @@
 
                         <fieldset class="outline-fieldset">
                             <legend>Case Style Options</legend>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="drpRegion" Text="Region" />
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <asp:Label runat="server" AssociatedControlID="txtCaseYear" Text="Case Number" />
@@ -60,9 +60,7 @@
                                             <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseType" title="Case Type" runat="server" MaxLength="2" CssClass="form-control upperCase case-code-field" placeholder="CC" ClientIDMode="Static"></asp:TextBox>
                                             <asp:TextBox AutoCompleteType="Disabled" ID="txtCaseSequence" title="Case Sequence" runat="server" MaxLength="6" CssClass="form-control upperCase" placeholder="000000" ClientIDMode="Static"></asp:TextBox>
                                             <asp:TextBox AutoCompleteType="Disabled" ID="txtSuffix" title="Suffix" runat="server" MaxLength="4" CssClass="form-control upperCase case-code-field" ClientIDMode="Static"></asp:TextBox>
-                                            <div class="input-group-append">
-                                                <small class="input-group-text form-control" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
-                                            </div>
+                                            <small class="input-group-text form-control" title="Year - Case Type - Case Sequence - Suffix">(Format: YYYY-CC-000000-NC)</small>
                                         </div>
 
                                     </div>
@@ -83,9 +81,7 @@
                                                 <asp:ListItem Text="S" Value="S" title="Sarasota"></asp:ListItem>
                                                 <asp:ListItem Text="V" Value="V" title="Venice"></asp:ListItem>
                                             </asp:DropDownList>
-                                            <div class="input-group-append">
-                                                <small class="input-group-text form-control" title="Type - Year - Number - Location">(Format: CDSP-YYYY-000-C)</small>
-                                            </div>
+                                            <small class="input-group-text form-control" title="Type - Year - Number - Location">(Format: CDSP-YYYY-000-C)</small>
                                         </div>
 
                                     </div>
@@ -98,7 +94,7 @@
                         </fieldset>
                         <fieldset class="outline-fieldset">
                             <legend>Other Search Options</legend>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <asp:Label runat="server" AssociatedControlID="txtLastName" Text="Last Name" />
@@ -225,7 +221,7 @@
                 {
                     data: "comments", render: function (data, type, row, meta) {
                         if (isAdmin == "true")
-                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-html="true" title="' + data + '" data-toggle="tooltip" ></i>';
+                            return data == '' ? '' : '<i class="fas fa-comment-alt" data-bs-html="true" title="' + data + '" data-bs-toggle="tooltip" ></i>';
                         return '';
                     }, className: "command-item", orderable: false
                 },
@@ -249,7 +245,7 @@
             displayStart: currentPage * pageSize,
         });
         caseTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $(".confirm").on("click", function (e) {
                 e.preventDefault();
                 var caseid = $(this).data("caseid");

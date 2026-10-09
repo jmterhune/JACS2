@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,12 +37,14 @@ namespace tjc.Modules.DigitalCourtReporting
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #endregion
 
         #region Methods
         public EditNotification()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         #endregion
 
@@ -58,7 +61,7 @@ namespace tjc.Modules.DigitalCourtReporting
                         lnkCancel.NavigateUrl = string.Format("{0}/searchText/{1}/cid/{2}", NotificationUrl, SearchText, CountyId);
                         if (ProceedingId != Null.NullInteger)
                         {
-                            var ctl = new ProceedingController();
+                            var ctl = new ProceedingController(_hostSettings);
                             ProceedingListItem proceeding = ctl.GetProceedingListItem(ProceedingId);
 
                             {
@@ -94,7 +97,7 @@ namespace tjc.Modules.DigitalCourtReporting
                                 txtProceddingType.Text = proceeding.ProceedingType;
                                 ltNotes.Text = proceeding.Instructions;
                                 txtCityStateZip.Text = string.Format("{0}, {1} {2}", proceeding.City, proceeding.State, proceeding.Zip);
-                                var aCtl = new AccountController();
+                                var aCtl = new AccountController(_hostSettings);
                                 Account account = aCtl.GetAccountByProceeding(proceeding.ProceedingID);
                                 if (account != null)
                                 {
@@ -106,7 +109,7 @@ namespace tjc.Modules.DigitalCourtReporting
                                 }
                                 else
                                     fsAccounting.Visible = false;
-                                var adCtl = new AudioController();
+                                var adCtl = new AudioController(_hostSettings);
                                 Audio audio = adCtl.GetAudiosByProceeding(proceeding.ProceedingID).FirstOrDefault();
                                 if (audio != null)
                                 {
@@ -123,7 +126,7 @@ namespace tjc.Modules.DigitalCourtReporting
                                 }
                                 else
                                     fsDCR.Visible = false;
-                                var nCtl = new NotificationController();
+                                var nCtl = new NotificationController(_hostSettings);
                                 Notification notification = nCtl.GetNotificationByProceeding(proceeding.ProceedingID);
                                 if (notification != null)
                                 {
@@ -153,8 +156,8 @@ namespace tjc.Modules.DigitalCourtReporting
         {
             try
             {
-                var ctl = new NotificationController();
-                var pCtl = new ProceedingController();
+                var ctl = new NotificationController(_hostSettings);
+                var pCtl = new ProceedingController(_hostSettings);
                 Notification notification = ctl.GetNotificationByProceeding(ProceedingId);
                 Proceeding proceeding = pCtl.GetProceeding(ProceedingId);
                 if (proceeding != null)

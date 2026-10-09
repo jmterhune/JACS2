@@ -40,7 +40,11 @@ td .updated {
 
 .command-item {
     cursor: pointer;
-    width: 16px;
+    white-space: nowrap;
+}
+/* Space out adjacent action icons (e.g. compare + delete) in a command cell. */
+.command-item a + a {
+    margin-left: 0.85rem;
 }
 
 label em {
@@ -444,4 +448,37 @@ table#tblApplications tbody tr.last-viewed {
 
 #Application table.jacList td.jac-cells .badge.aspNetDisabled input[type="checkbox"]:checked::after {
     border-color: #000 !important;
+}
+
+/* Code Comparison view (compare control key): inline Bootstrap criteria row
+   + bordered results grid. */
+.compareCriteria .form-select {
+    width: auto;
+}
+.compareCriteria .compare-attorney {
+    min-width: 260px;
+}
+.compareResults {
+    border-collapse: collapse;
+}
+.compareResults td, .compareResults th {
+    border: solid 1px #333;
+    text-align: center;
+}
+/* Beat Porto/Bootstrap `thead th { text-align: left }` so county + year
+   headings stay centered over their columns. */
+.compareResults thead th {
+    text-align: center !important;
+}
+
+/* Previous Year JAC Codes modal: force readable dark-on-light so the table
+   isn't washed out by inherited #Application / skin text colors. */
+#prevYearJacModal .modal-content {
+    background-color: #fff;
+    color: #212529;
+}
+#prevYearJacModal .table.prevYearJac,
+#prevYearJacModal .table.prevYearJac th,
+#prevYearJacModal .table.prevYearJac td {
+    color: #212529;
 }

@@ -1,0 +1,85 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="Arbitrators" type="Module" version="00.00.01">
+      <friendlyName>Arbitrator Applications</friendlyName>
+      <description>Internal review module for arbitrator applications submitted through the public Arbitrators module on jud12.flcourts.org (tjc_arbitrators_applications / tjc_arbitrators_attachments, via the Jud12 connection). Reviewers open a specific application from the link in the applicant-submitted notification email, then approve or deny it; the applicant is emailed the result.</description>
+      <iconFile>~/Images/icon_extensions_32px.png</iconFile>
+      <owner>
+        <name>12th Judicial Circuit</name>
+        <organization>12th Judicial Circuit</organization>
+        <url>https://www.jud12.flcourts.org</url>
+        <email>jterhune@jud12.flcourts.org</email>
+      </owner>
+      <license src="License.txt"></license>
+      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="CoreVersion">09.08.00</dependency>
+      </dependencies>
+      <components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/tjc.modules/Arbitrators</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>Arbitrators</moduleName>
+            <foldername>tjc.modules/Arbitrators</foldername>
+            <businessControllerClass />
+            <supportedFeatures />
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>Arbitrator Applications</friendlyName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/tjc.modules/Arbitrators/Views/List.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle />
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>detail</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/Arbitrators/Views/Detail.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Review Application</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Settings</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/Arbitrators/Views/Settings.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Arbitrators Settings</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <name>tjc.Modules.Arbitrators.dll</name>
+              <path>bin</path>
+            </assembly>
+          </assemblies>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

@@ -1,0 +1,37 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.CaseListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:CaseListViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding HeadingText}" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+        <DataGrid ItemsSource="{Binding Results}" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Case Name" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding PartyName}" HorizontalContentAlignment="Left"
+                                    Command="{Binding DataContext.OpenCaseCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Cursor="Hand" Foreground="#0d6efd" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Case Number" Width="160">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding CaseNumber}" HorizontalContentAlignment="Left"
+                                    Command="{Binding DataContext.OpenCaseCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Cursor="Hand" Foreground="#0d6efd" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Case Type" Binding="{Binding CaseType}" Width="120" />
+                <DataGridTextColumn Header="Attorney" Binding="{Binding Responsible}" Width="150" />
+                <DataGridTextColumn Header="Status" Binding="{Binding DisplayStatus}" Width="140" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

@@ -17,7 +17,12 @@ namespace tjc.Modules.JudicialReferral.Views
 {
     public partial class View : JudicialReferralModuleBase
     {
-        private readonly JudgeReferralController ctl = new JudgeReferralController();
+        private readonly JudgeReferralController ctl;
+
+        public View()
+        {
+            ctl = new JudgeReferralController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,7 +53,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void PopulateJudgeList()
         {
-            var rCtl = new RoleController();
+            var rCtl = RoleController.Instance;
             var judgeList = rCtl.GetUsersByRole(PortalId, JudgeRole);
             var judges = new List<UserInfo>();
             foreach (UserInfo j in judgeList)
@@ -88,7 +93,7 @@ namespace tjc.Modules.JudicialReferral.Views
             // Populate JudgeName
             foreach (var r in list)
             {
-                var judgeUser = UserController.GetUserById(PortalId, r.JudgeId);
+                var judgeUser = UserController.GetUserById(_hostSettings, PortalId, r.JudgeId);
                 if (judgeUser != null)
                     r.JudgeName = judgeUser.DisplayName;
             }

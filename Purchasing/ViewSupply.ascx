@@ -121,7 +121,7 @@
             });
         });
         $(".datepicker").datepicker();
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
 
     });
 </script>

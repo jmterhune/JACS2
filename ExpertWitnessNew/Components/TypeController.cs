@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.ExpertWitness.Components;
@@ -17,9 +18,16 @@ namespace tjc.Modules.ExpertWitness.Components
 {
     internal class TypeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public TypeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateType(Type t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Type>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void DeleteType(Type t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Type>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<Type> GetTypes()
         {
             IEnumerable<Type> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Type>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public Type GetType(int typeId)
         {
             Type t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Type>();
                 t = rep.GetById(typeId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void UpdateType(Type t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Type>();
                 rep.Update(t);

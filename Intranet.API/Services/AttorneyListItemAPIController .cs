@@ -1,5 +1,8 @@
-﻿using DotNetNuke.Services.Exceptions;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +16,8 @@ namespace tjc.Intranet.API.Services.Mediation
     [DnnAuthorize]
     public class AttorneyListItemController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         public HttpResponseMessage GetAttorneyListItems(int count)
         {
@@ -36,7 +41,7 @@ namespace tjc.Intranet.API.Services.Mediation
             }
             try
             {
-                var ctl = new Components.Mediation.AttorneyListItemController();
+                var ctl = new Components.Mediation.AttorneyListItemController(_hostSettings);
                 filteredCount = ctl.GetAttorneyListCount(firstName, lastName, firm);
                 if (count == 0) { recordCount = filteredCount; }
                 attorneylistItems = ctl.GetAttorneyListPaged(firstName, lastName, firm, recordOffset, pageSize, sortColumn, sortDirection).Select(attorneylistItem => new AttorneyListItemViewModel(attorneylistItem)).ToList();
@@ -80,7 +85,7 @@ namespace tjc.Intranet.API.Services.Mediation
         [HttpPost]
         public HttpResponseMessage CreateAttorney(AttorneyListItemViewModel attorneyViewItem)
         {
-            var ctl = new Components.Mediation.AttorneyListItemController();
+            var ctl = new Components.Mediation.AttorneyListItemController(_hostSettings);
             AttorneyListItem attorney = new AttorneyListItem { Email = attorneyViewItem.Email, FirstName = attorneyViewItem.FirstName, LastName = attorneyViewItem.LastName, Phone = attorneyViewItem.Phone,Extension=attorneyViewItem.Extension, Address=attorneyViewItem.Address, City=attorneyViewItem.City, Firm=attorneyViewItem.Firm, State=attorneyViewItem.State, Zip=attorneyViewItem.Zip };
             try
             {

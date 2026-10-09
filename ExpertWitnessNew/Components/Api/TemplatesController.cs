@@ -3,8 +3,11 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +26,13 @@ namespace tjc.Modules.ExpertWitness.Components.Api
     [ValidateAntiForgeryToken]
     public class TemplatesController : DnnApiController
     {
-        private readonly TemplateController _ctrl = new TemplateController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly TemplateController _ctrl;
+
+        public TemplatesController()
+        {
+            _ctrl = new TemplateController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("All")]

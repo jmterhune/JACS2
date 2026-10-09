@@ -1,0 +1,153 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.EditHistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:EditHistoryViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="GroupedStatusNames" Source="{Binding StatusNameChoices}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Group" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <Style TargetType="Label">
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="Padding" Value="4" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+        <Style TargetType="DatePicker">
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="900">
+            <TextBlock Text="Data Entry" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+
+            <ItemsControl ItemsSource="{Binding ValidationErrors}" Margin="0,0,0,10">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Foreground="Red" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding SaveMessage}" Foreground="Green" FontWeight="Bold" Margin="0,0,0,10" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!-- Row 0 -->
+                <StackPanel Grid.Row="0" Grid.Column="0">
+                    <Label Content="Action Date *" />
+                    <DatePicker SelectedDate="{Binding DateReceived}" />
+                    <TextBlock Text="(future dates will be set to inactive)" FontStyle="Italic" Foreground="Gray" Margin="0,-8,0,10" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2">
+                    <Label Content="Case Number *" />
+                    <UniformGrid Columns="5">
+                        <ComboBox ItemsSource="{x:Static vm:EditHistoryViewModel.CountyLetters}" SelectedValuePath="Letter"
+                                  SelectedValue="{Binding CountyLetter}" Margin="0,0,2,10" />
+                        <TextBox Text="{Binding CaseYear, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" Margin="0,0,2,10" />
+                        <TextBox Text="{Binding CaseTypeCode, UpdateSourceTrigger=PropertyChanged}" MaxLength="2" Margin="0,0,2,10" />
+                        <TextBox Text="{Binding CaseSequence, UpdateSourceTrigger=PropertyChanged}" MaxLength="6" Margin="0,0,2,10" />
+                        <TextBox Text="{Binding DefendantSuffix, UpdateSourceTrigger=PropertyChanged}" MaxLength="10" Margin="0,0,0,10"
+                                 Visibility="{Binding ShowDefendantSuffix, Converter={StaticResource BoolToVis}}" />
+                    </UniformGrid>
+                    <TextBlock Margin="0,-8,0,10">
+                        <Run Text="Format: " /><Run Text="{Binding CaseNumberPreview, Mode=OneWay}" FontWeight="Bold" />
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="4">
+                    <Label Content="Case Name *" />
+                    <TextBox Text="{Binding CaseName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" />
+                </StackPanel>
+
+                <!-- Row 1 -->
+                <StackPanel Grid.Row="1" Grid.Column="0">
+                    <Label Content="Case Type *" />
+                    <ComboBox ItemsSource="{Binding CaseTypes}" SelectedItem="{Binding SelectedCaseType}" DisplayMemberPath="CaseType" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2">
+                    <Label Content="Requested By *" />
+                    <ComboBox ItemsSource="{Binding Requestors}" SelectedItem="{Binding SelectedRequestor}" DisplayMemberPath="RequestorName" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="4">
+                    <Label Content="Responsible / Attorney *" />
+                    <ComboBox ItemsSource="{Binding Attorneys}" SelectedItem="{Binding SelectedAttorney}" DisplayMemberPath="AttorneyName" />
+                </StackPanel>
+
+                <!-- Row 2 -->
+                <StackPanel Grid.Row="2" Grid.Column="0">
+                    <Label Content="Motion Filed *" />
+                    <DatePicker SelectedDate="{Binding MotionFiled}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="2">
+                    <Label Content="County *" />
+                    <ComboBox ItemsSource="{Binding Counties}" SelectedItem="{Binding SelectedCounty}" DisplayMemberPath="County" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="4">
+                    <Label Content="Action Taken" />
+                    <ComboBox ItemsSource="{Binding Actions}" SelectedItem="{Binding SelectedAction}" DisplayMemberPath="Action" />
+                </StackPanel>
+
+                <!-- Row 3 -->
+                <StackPanel Grid.Row="3" Grid.Column="0">
+                    <Label Content="Date Completed" />
+                    <DatePicker SelectedDate="{Binding DateCompleted}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="2">
+                    <Label Content="Time Spent" />
+                    <ComboBox ItemsSource="{Binding TimeSpents}" SelectedItem="{Binding SelectedTimeSpent}" DisplayMemberPath="TimeSpan" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="4">
+                    <Label Content="Status" />
+                    <ComboBox ItemsSource="{Binding Source={StaticResource GroupedStatusNames}}"
+                              SelectedValuePath="Text" SelectedValue="{Binding SelectedStatusName}" DisplayMemberPath="Text">
+                        <ComboBox.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Background="#e9ecef" Padding="4,2" />
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ComboBox.GroupStyle>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <Label Content="Comments" />
+            <TextBox Text="{Binding Comments, UpdateSourceTrigger=PropertyChanged}" MaxLength="8000"
+                     AcceptsReturn="True" TextWrapping="Wrap" Height="90" VerticalScrollBarVisibility="Auto" />
+
+            <StackPanel Visibility="{Binding ShowFutureActionPanel, Converter={StaticResource BoolToVis}}" Margin="0,10,0,0">
+                <Label Content="Future Action Date" />
+                <DatePicker SelectedDate="{Binding FutureAction}" MaxWidth="280" HorizontalAlignment="Left" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                <Button Content="Save" Command="{Binding SaveCommand}" Padding="16,6" Margin="0,0,8,0" />
+                <Button Content="Return to List" Command="{Binding CancelCommand}" Padding="16,6" Margin="0,0,8,0" />
+                <Button Content="Delete" Command="{Binding DeleteCommand}" Padding="16,6" Background="#dc3545" Foreground="White"
+                        Visibility="{Binding CanDelete, Converter={StaticResource BoolToVis}}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

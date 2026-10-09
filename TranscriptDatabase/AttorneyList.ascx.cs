@@ -11,6 +11,8 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Abstractions.Logging;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Framework.JavaScriptLibraries;
@@ -48,23 +50,27 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
+        private readonly IEventLogger _eventLogger;
 
         #endregion
         #region Methods
         public AttorneyList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _eventLogger = DependencyProvider.GetRequiredService<IEventLogger>();
         }
         private void BindDropDowns()
         {
-            var ctl = new ListController();
+            var ctl = new ListController(_eventLogger, _hostSettings);
             IEnumerable<ListEntryInfo> states = ctl.GetListEntryInfoItems("Region", "Country.US");
             drpState.DataSource = states;
             drpState.DataTextField = "Text";
             drpState.DataValueField = "Value";
             drpState.DataBind();
 
-            var lCtl = new OfficeController();
+            var lCtl = new OfficeController(_hostSettings);
             IEnumerable<Office> offices=lCtl.GetOffices();
             drpOffice.DataSource = offices;
             drpOffice.DataTextField = "Description";
@@ -73,7 +79,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         private void BindList()
         {
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             rptAttorney.DataSource = ctl.GetAttorneys();
             rptAttorney.DataBind();
         }
@@ -99,7 +105,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                     BindDropDowns();
                 }
@@ -125,7 +131,7 @@ namespace tjc.Modules.TranscriptDatabase
         protected void rptAttorney_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int attorneyId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteAttorney(attorneyId);
@@ -157,7 +163,7 @@ namespace tjc.Modules.TranscriptDatabase
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             Attorney attorney = new Attorney();
             bool isNew = true;
             if (hdAttorneyId.Value != "")

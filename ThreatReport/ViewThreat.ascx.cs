@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -35,9 +36,11 @@ namespace tjc.Modules.ThreatReport
     public partial class ViewThreat : ThreatReportModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public ViewThreat()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
 
@@ -48,22 +51,25 @@ namespace tjc.Modules.ThreatReport
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
-                    string href = _navigationManager.NavigateURL();
-                    if (Settings.Contains("ViewTabID"))
+                    if (!CanViewIncidents)
                     {
-                        string setting = Settings["ViewTabID"].ToString();
-                        if (setting.Length > 0)
-                        {
-                            href = setting;
-                        }
+                        DenyAccess("view incidents");
+                        return;
+                    }
+
+                    string href = _navigationManager.NavigateURL();
+                    string listUrl = ResolveSettingUrl("ViewTabID");
+                    if (listUrl.Length > 0)
+                    {
+                        href = listUrl;
                     }
                     lnkReturn.NavigateUrl = href;
 
                     if (!DotNetNuke.Common.Utilities.Null.IsNull(IncidentID))
                     {
-                        IncidentController ctlI = new IncidentController();
-                        PersonController ctlP = new PersonController();
-                        AttachmentController ctlA = new AttachmentController();
+                        IncidentController ctlI = new IncidentController(_hostSettings);
+                        PersonController ctlP = new PersonController(_hostSettings);
+                        AttachmentController ctlA = new AttachmentController(_hostSettings);
                         Incident incident = ctlI.GetIncident(IncidentID);
                         rptPersonsInvolved.DataSource = ctlP.GetPersons(IncidentID);
                         rptPersonsInvolved.DataBind();

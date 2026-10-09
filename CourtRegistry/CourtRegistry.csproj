@@ -63,6 +63,8 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
@@ -170,9 +172,7 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\intranet-new\bin\PetaPoco.dll</HintPath>
+    <Reference Include="PetaPoco, Version=6.0.683.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using DotNetNuke.Services.Mail;
 using iText.Kernel.Geom;
@@ -21,10 +22,17 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     internal class AttorneyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public AttorneyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         private const string CONN_JUD12 = "Jud12"; //Connection
         public void CreateAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Insert(t);
@@ -37,7 +45,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public void DeleteAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Delete(t);
@@ -46,7 +54,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<Attorney> GetAttornies()
         {
             IEnumerable<Attorney> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.Get();
@@ -56,7 +64,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public Attorney GetAttorney(int attorneyId)
         {
             Attorney t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 t = rep.GetById(attorneyId);
@@ -66,7 +74,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<Attorney> GetAttorneys(bool showAll, int year)
         {
             IEnumerable<Attorney> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 if (showAll)
@@ -78,7 +86,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public IEnumerable<Attorney> GetAttorneysByApplicationYear(int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<Attorney>(System.Data.CommandType.Text,
                     @"SELECT DISTINCT atty.*
@@ -91,7 +99,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public void UpdateAttorney(Attorney t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attorney>();
                 rep.Update(t);
@@ -99,7 +107,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public IEnumerable<RegistryListItem> GetAttorneyRegistry(int locationId, int year, int caseTypeId, int jacCode)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<RegistryListItem>(System.Data.CommandType.Text,
                     @"SELECT DISTINCT atty.*
@@ -118,7 +126,7 @@ namespace tjc.Modules.CourtRegistry.Components
         }
         public IEnumerable<JacCode> GetAttorneyJacCode(int attorneyId, int locationId, int year)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<JacCode>(System.Data.CommandType.Text,
                     @"SELECT DISTINCT jc.*
@@ -142,7 +150,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         internal int GetAttorneyListCount(int barNumber, string firstName, string lastName, string email, string lawFirm)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteScalar<int>(System.Data.CommandType.Text,
                     @"SELECT COUNT(*)
@@ -171,7 +179,7 @@ namespace tjc.Modules.CourtRegistry.Components
                             ORDER BY {sortCol} {sortDir}
                             OFFSET @5 ROWS FETCH NEXT @6 ROWS ONLY";
 
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 return ctx.ExecuteQuery<Attorney>(System.Data.CommandType.Text, sql,
                     barNumber, firstName, lastName, email, lawFirm, recordOffset, pageSize);

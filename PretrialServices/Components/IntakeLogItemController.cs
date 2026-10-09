@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,16 @@ namespace tjc.Modules.PretrialServices.Components
 {
     internal class IntakeLogItemController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public IntakeLogItemController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateIntakeLogItem(IntakeLogItem t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 rep.Insert(t);
@@ -24,7 +32,7 @@ namespace tjc.Modules.PretrialServices.Components
 
         public void DeleteIntakeLogItem(IntakeLogItem t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 rep.Delete(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.PretrialServices.Components
         public IEnumerable<IntakeLogItem> GetIntakeLogItems()
         {
             IEnumerable<IntakeLogItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.PretrialServices.Components
         public IEnumerable<IntakeLogItem> GetIntakeLogItemsByCounty(int countyId)
         {
             IEnumerable<IntakeLogItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 t = rep.Find("Where CountyId = @0",countyId);
@@ -54,7 +62,7 @@ namespace tjc.Modules.PretrialServices.Components
         public IntakeLogItem GetIntakeLogItemByDate( DateTime intakeDate)
         {
             IntakeLogItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 t = rep.Find("Where IntakeDate = @0", intakeDate).FirstOrDefault();
@@ -64,7 +72,7 @@ namespace tjc.Modules.PretrialServices.Components
         public IntakeLogItem GetIntakeLogItemByCountyAndDate(int countyId,DateTime intakeDate)
         {
             IntakeLogItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 t = rep.Find("Where CountyId = @0 And IntakeDate = @1",countyId, intakeDate).FirstOrDefault();
@@ -74,7 +82,7 @@ namespace tjc.Modules.PretrialServices.Components
         public IntakeLogItem GetIntakeLogItem(long logId)
         {
             IntakeLogItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 t = rep.GetById(logId);
@@ -84,7 +92,7 @@ namespace tjc.Modules.PretrialServices.Components
 
         public void UpdateIntakeLogItem(IntakeLogItem t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<IntakeLogItem>();
                 rep.Update(t);

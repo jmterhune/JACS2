@@ -10,7 +10,7 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#caseType" data-toggle="tab">Search</a>
+            <a class="nav-link" href="#caseType" data-bs-toggle="tab">Search</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=FormUrl %>">Data Entry</a>
@@ -22,7 +22,7 @@
     <div class="tab-content">
         <div id="logList" class="tab-pane active">
             <section class="call-to-action call-to-action-default mb-lg rounded p-3">
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtPetitioner" Text="Petitioner" ToolTip="Search By Petitioner" />
                         <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtPetitioner" />
@@ -44,7 +44,7 @@
                         </asp:DropDownList>
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtCaseName" Text="Case Name" ToolTip="Search By Case Name" />
                         <asp:TextBox runat="server" CssClass="form-control" MaxLength="50" ID="txtCaseName" />

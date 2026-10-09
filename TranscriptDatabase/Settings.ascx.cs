@@ -52,7 +52,7 @@ namespace tjc.Modules.TranscriptDatabase
             {
                 if (Page.IsPostBack == false)
                 {
-                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var ctl = DotNetNuke.Security.Roles.RoleController.Instance;
                     var listroles = ctl.GetRoles(PortalId);
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
                     {
@@ -93,7 +93,7 @@ namespace tjc.Modules.TranscriptDatabase
                 string CourtReporterRole = drpCourtReporterRole.SelectedValue;
                 string AdminRole = drpAdminRole.SelectedValue;
                 string CourtReporterIntakeRole = drpCourtReporterIntake.SelectedValue;
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
                 if (!string.IsNullOrEmpty(AdminRole.Trim()))
                     modules.UpdateModuleSetting(ModuleId, "AdminRole", AdminRole.Trim());
                 if (!string.IsNullOrEmpty(CourtReporterRole.Trim()))

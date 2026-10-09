@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,9 +7,16 @@ namespace tjc.Modules.ProSeLog.Components
 {
     internal class CaseTypeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CaseTypeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateCaseType(CaseType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Insert(t);
@@ -23,7 +31,7 @@ namespace tjc.Modules.ProSeLog.Components
 
         public void DeleteCaseType(CaseType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.ProSeLog.Components
         public IEnumerable<CaseType> GetCaseTypes()
         {
             IEnumerable<CaseType> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.ProSeLog.Components
         public CaseType GetCaseType(int caseTypeId)
         {
             CaseType t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.GetById(caseTypeId);
@@ -54,7 +62,7 @@ namespace tjc.Modules.ProSeLog.Components
 
         public void UpdateCaseType(CaseType t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Update(t);
@@ -64,7 +72,7 @@ namespace tjc.Modules.ProSeLog.Components
         {
             IEnumerable<CaseNumber> t;
             caseNumber = string.Format("%{0}%", caseNumber);
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CaseNumber>();
                 t = rep.Find("Where TEXT LIKE @0", caseNumber).Take(10);

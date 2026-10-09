@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.CourtCounsel.Components.Models;
@@ -6,9 +7,16 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 {
     internal class PhaseController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public PhaseController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreatePhase(PhaseInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhaseInfo>();
                 rep.Insert(t);
@@ -23,7 +31,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void DeletePhase(PhaseInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhaseInfo>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<PhaseInfo> GetPhases()
         {
             IEnumerable<PhaseInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhaseInfo>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public PhaseInfo GetPhase(int phaseId)
         {
             PhaseInfo t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhaseInfo>();
                 t = rep.GetById(phaseId);
@@ -54,7 +62,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void UpdatePhase(PhaseInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<PhaseInfo>();
                 rep.Update(t);

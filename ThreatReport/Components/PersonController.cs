@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -18,10 +19,16 @@ namespace tjc.Modules.ThreatReport.Components
     class PersonController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public PersonController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public void CreatePerson(Person t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Person>();
                 rep.Insert(t);
@@ -36,7 +43,7 @@ namespace tjc.Modules.ThreatReport.Components
 
         public void DeletePerson(Person t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Person>();
                 rep.Delete(t);
@@ -46,7 +53,7 @@ namespace tjc.Modules.ThreatReport.Components
         public IEnumerable<Person> GetPersons(int id)
         {
             IEnumerable<Person> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Person>();
                 t = rep.Find("Where IncidentID=@0", id);
@@ -57,7 +64,7 @@ namespace tjc.Modules.ThreatReport.Components
         public Person GetPerson(int personId)
         {
             Person t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Person>();
                 t = rep.GetById(personId);
@@ -67,7 +74,7 @@ namespace tjc.Modules.ThreatReport.Components
 
         public void UpdatePerson(Person t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Person>();
                 rep.Update(t);

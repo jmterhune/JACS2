@@ -28,7 +28,7 @@
             <a class="nav-link" href="<%=JacCodeListUrl%>">JAC Codes</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#updateJac" data-toggle="tab">Update JAC</a>
+            <a class="nav-link" href="#updateJac" data-bs-toggle="tab">Update JAC</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=LocationListUrl%>">Locations</a>
@@ -43,7 +43,7 @@
                 <ContentTemplate>
                     <asp:Literal ID="ltMessage" runat="server" />
                     <div class="alert alert-info"><i class="fas fa-info-circle"></i>&nbsp;Enter JAC codes that need to be updated, added, or removed. Once you are confident in your changes, click the Update button to apply them.</div>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" onclick="ClearForm()"><i class="fas fa-plus"></i>&nbsp;Add Pending Update</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal" onclick="ClearForm()"><i class="fas fa-plus"></i>&nbsp;Add Pending Update</button>
 <asp:Literal ID="ltModalScript" runat="server" EnableViewState="false" />
                     <asp:Repeater ID="rptUpdates" runat="server" OnItemCommand="rptUpdates_ItemCommand">
                         <HeaderTemplate>
@@ -86,11 +86,11 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="updateModalLabel">Add / Edit Pending JAC Code Update</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <asp:HiddenField ID="hdJacCodeID" runat="server" />
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <asp:Label runat="server" AssociatedControlID="txtJacCodeID" Text="JAC Code" />
                                             <asp:TextBox runat="server" CssClass="form-control" ID="txtJacCodeID" />
@@ -101,13 +101,13 @@
                                             <asp:DropDownList runat="server" ID="drpCaseType" CssClass="form-control" />
                                         </div>
                                     </div>
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-12">
                                             <asp:Label runat="server" AssociatedControlID="txtCategory" Text="Category" />
                                             <asp:TextBox runat="server" CssClass="form-control" ID="txtCategory" />
                                         </div>
                                     </div>
-                                    <div class="row form-group">
+                                    <div class="row mb-3">
                                         <div class="col-md-12">
                                             <asp:Label runat="server" AssociatedControlID="drpUpdateType" Text="Update Type" />
                                             <asp:DropDownList runat="server" ID="drpUpdateType" CssClass="form-control">
@@ -122,7 +122,7 @@
                                 </div>
                                 <div class="modal-footer justify-content-between">
                                     <asp:Button Text="Save" ID="cmdSave" runat="server" CssClass="btn btn-primary" ValidationGroup="upd" OnClick="cmdSave_Click" />
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>

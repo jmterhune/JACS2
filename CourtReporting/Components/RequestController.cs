@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,17 @@ namespace tjc.Modules.CourtReporting.Components
 {
    internal class RequestController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RequestController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public Request CreateRequest(RequestInfo ri)
         {
             Request r = new Request { Address = ri.Address, Jurisdiction = ri.Jurisdiction, TranscriptionList = ri.TranscriptionList, DeliveryMethod = ri.DeliveryMethod, Location = ri.Location, CA = ri.CA, CaseName = ri.CaseName, CaseNumber = ri.CaseNumber, City = ri.City, Email = ri.Email, Fax = ri.Fax, Instructions = ri.Instructions, IsInquiry = ri.IsInquiry, Involvement = ri.Involvement, Judge = ri.Judge, LawFirm = ri.LawFirm, OrderStatus = ri.OrderStatus, PaymentRequired = ri.PaymentRequired, Phone = ri.Phone, PaymentType = ri.PaymentType, FirstName = ri.FirstName, LastName = ri.LastName, RequestedDate = ri.RequestedDate, State = ri.State, Zip = ri.Zip, UserId = ri.UserId, Guid = Guid.NewGuid(), TotalAmount = ri.TotalAmount };
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 rep.Insert(r);
@@ -27,7 +35,7 @@ namespace tjc.Modules.CourtReporting.Components
 
         public void DeleteRequest(Request r)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 rep.Delete(r);
@@ -36,7 +44,7 @@ namespace tjc.Modules.CourtReporting.Components
         public Request GetRequest(int requestId)
         {
             Request r;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 r = rep.GetById(requestId);
@@ -46,7 +54,7 @@ namespace tjc.Modules.CourtReporting.Components
         public IEnumerable<Request> GetRequests()
         {
             IEnumerable<Request> r;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 r = rep.Get();
@@ -57,7 +65,7 @@ namespace tjc.Modules.CourtReporting.Components
         public Request GetRequestByOrderReference(Guid orderReference)
         {
             Request r;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 // r = rep.Get().AsQueryable().Where(x => x.Guid == orderReference).FirstOrDefault();
@@ -67,7 +75,7 @@ namespace tjc.Modules.CourtReporting.Components
         }
         public void UpdateRequest(Request r)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Request>();
                 rep.Update(r);

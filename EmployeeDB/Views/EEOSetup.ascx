@@ -43,10 +43,10 @@
     <div class="tabs">
         <ul class="nav nav-tabs" id="eeoTabs" role="tablist">
             <li class="nav-item active">
-                <a class="nav-link active" href="#pane-eeo-list" data-bs-toggle="tab" data-toggle="tab">EEO List</a>
+                <a class="nav-link active" href="#pane-eeo-list" data-bs-toggle="tab">EEO List</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#pane-eeo-review" data-bs-toggle="tab" data-toggle="tab">Review This Year's EEO Data</a>
+                <a class="nav-link" href="#pane-eeo-review" data-bs-toggle="tab">Review This Year's EEO Data</a>
             </li>
         </ul>
 

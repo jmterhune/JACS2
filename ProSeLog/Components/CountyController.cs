@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,17 @@ namespace tjc.Modules.ProSeLog.Components
 {
     internal class CountyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CountyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public IEnumerable<County> GetCounties()
         {
             IEnumerable<County> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.Get().OrderBy(x=>x.CountyName);
@@ -31,7 +39,7 @@ namespace tjc.Modules.ProSeLog.Components
         public County GetCounty(int countyId)
         {
             County t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<County>();
                 t = rep.GetById(countyId);

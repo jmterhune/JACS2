@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 
@@ -6,9 +7,16 @@ namespace tjc.Modules.CourtReporting.Components
 {
     internal class TransactionController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public TransactionController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateTransaction(Transaction a)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Transaction>();
                 rep.Insert(a);
@@ -22,7 +30,7 @@ namespace tjc.Modules.CourtReporting.Components
         }
         public void DeleteTransaction(Transaction a)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Transaction>();
                 rep.Delete(a);
@@ -31,7 +39,7 @@ namespace tjc.Modules.CourtReporting.Components
         public Transaction GetTransaction(int transactionId)
         {
             Transaction a;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Transaction>();
                 a = rep.GetById(transactionId);
@@ -41,7 +49,7 @@ namespace tjc.Modules.CourtReporting.Components
         public IEnumerable<Transaction> GetTransactions()
         {
             IEnumerable<Transaction> a;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Transaction>();
                 a = rep.Get();
@@ -51,7 +59,7 @@ namespace tjc.Modules.CourtReporting.Components
         public IEnumerable<Transaction> GetTransactionsByDateRange(DateTime start, DateTime end)
         {
             IEnumerable<Transaction> a;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Transaction>();
                 a = rep.Find("Where PaymentDate Between @0 And @1", start, end);
@@ -61,7 +69,7 @@ namespace tjc.Modules.CourtReporting.Components
         }
         internal void UpdateTransaction(Transaction a)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Transaction>();
                 rep.Update(a);

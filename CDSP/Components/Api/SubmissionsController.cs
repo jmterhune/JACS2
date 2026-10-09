@@ -3,8 +3,11 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -25,7 +28,13 @@ namespace tjc.Modules.CDSPAdmin.Components.Api
     [ValidateAntiForgeryToken]
     public class SubmissionsController : DnnApiController
     {
-        private readonly SubmissionController _ctrl = new SubmissionController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly SubmissionController _ctrl;
+
+        public SubmissionsController()
+        {
+            _ctrl = new SubmissionController(_hostSettings);
+        }
 
         /// <summary>Returns the submission's detail as a ready-to-inject HTML
         /// fragment (server-encoded) plus its id/completed state for the modal.</summary>

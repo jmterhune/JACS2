@@ -121,7 +121,7 @@
             Page_ClientValidate("Form");
         }
         if (Page_IsValid) {
-            $('#modFormOrder').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modFormOrder')).hide();
         }
     }
 </script>

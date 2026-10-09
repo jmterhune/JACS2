@@ -55,7 +55,7 @@ namespace tjc.Modules.CourtCounsel.Views
         {
             drpRequestedBy.Items.Clear();
             drpRequestedBy.Items.Add(new ListItem("-- All --", ""));
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             foreach (var name in ctrl.GetDistinctRequestedBy())
             {
                 drpRequestedBy.Items.Add(new ListItem(name, name));
@@ -82,7 +82,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindAttorneyCheckBoxList()
         {
-            var ctrl = new AttorneyController();
+            var ctrl = new AttorneyController(_hostSettings);
             var attorneys = ctrl.GetAttorneys().ToList();
             var active = attorneys.Where(a => a.IsActive == true).OrderBy(a => a.AttorneyName).ToList();
             var inactive = attorneys.Where(a => a.IsActive != true).OrderBy(a => a.AttorneyName).ToList();
@@ -115,7 +115,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindSheet()
         {
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             var selected = GetSelectedAttorneys();
             int pageSize = PageSize;
 
@@ -202,7 +202,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void cmdExport_Click(object sender, EventArgs e)
         {
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
             var selected = GetSelectedAttorneys();
             var rows = ctrl.GetHistoryForExport(
                 selected.Any() ? selected : null,

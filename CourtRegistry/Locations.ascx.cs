@@ -3,7 +3,9 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Web.UI.WebControls;
@@ -13,9 +15,16 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class Locations : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public Locations()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         private void BindList()
         {
-            var ctl = new LocationController();
+            var ctl = new LocationController(_hostSettings);
             rptLocations.DataSource = ctl.GetLocations().OrderBy(l => l.LocationName);
             rptLocations.DataBind();
         }
@@ -36,7 +45,7 @@ namespace tjc.Modules.CourtRegistry
         protected void rptLocations_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int.TryParse(e.CommandArgument.ToString(), out int locationId);
-            var ctl = new LocationController();
+            var ctl = new LocationController(_hostSettings);
             if (e.CommandName == "delete" && locationId > 0)
             {
                 ctl.DeleteLocation(locationId);
@@ -58,7 +67,7 @@ namespace tjc.Modules.CourtRegistry
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new LocationController();
+            var ctl = new LocationController(_hostSettings);
             int.TryParse(txtCountyNumber.Text, out int countyNumber);
             if (int.TryParse(hdLocationID.Value, out int locationId) && locationId > 0)
             {

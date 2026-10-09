@@ -52,7 +52,7 @@ namespace tjc.Modules.ProSeLog
             {
                 if (Page.IsPostBack == false)
                 {
-                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var ctl = DotNetNuke.Security.Roles.RoleController.Instance;
                     var listroles = ctl.GetRoles(PortalId);
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
                     {
@@ -78,7 +78,7 @@ namespace tjc.Modules.ProSeLog
         {
             try
             {
-                ModuleController objModules = new ModuleController();
+                var objModules = ModuleController.Instance;
                 string AdminRole = drpAdminRole.SelectedValue;
                 if (!string.IsNullOrEmpty(AdminRole.Trim()))
                     objModules.UpdateTabModuleSetting(TabModuleId, "AdminRole", AdminRole.Trim());

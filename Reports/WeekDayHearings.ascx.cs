@@ -14,6 +14,7 @@ using DotNetNuke.Services.Exceptions;
 using System;
 using System.Web.UI.WebControls;
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using Microsoft.Extensions.DependencyInjection;
 
 using tjc.Modules.Reports.Components;
@@ -38,9 +39,11 @@ namespace tjc.Modules.Reports
     public partial class WeekDayHearings : ReportsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public WeekDayHearings()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -82,7 +85,7 @@ namespace tjc.Modules.Reports
             if (DateTime.TryParse(txtStartDate.Text.Trim(), out DateTime startDate) && DateTime.TryParse(txtEndDate.Text.Trim(), out DateTime endDate) && drpCounty.SelectedIndex>0 && drpJudges.SelectedIndex>0)
             {
 
-                var ctl = new ReportController();
+                var ctl = new ReportController(_hostSettings);
                 IEnumerable<WeekdayHearing> weekdayHearings = ctl.GetWeekdayHearingCounts(drpCounty.SelectedValue, startDate, endDate, drpJudges.SelectedValue);
                 grdReport.DataSource = weekdayHearings;
                 grdReport.DataBind();
@@ -96,7 +99,7 @@ namespace tjc.Modules.Reports
 
         protected void drpCounty_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var ctl = new ReportController();
+            var ctl = new ReportController(_hostSettings);
             drpJudges.DataSource = ctl.GetJacsJudges(drpCounty.SelectedValue);
             drpJudges.DataBind();
             drpJudges.Items.Insert(0, new ListItem("< Select Judge>", ""));

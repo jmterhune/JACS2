@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -16,10 +17,17 @@ namespace tjc.Intranet.API.Components.FamilySelfHelp
 {
     internal class ClientController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ClientController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public IEnumerable<ClientName> GetClientNames(string name)
         {
             IEnumerable<ClientName> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = "SELECT  [LastName] + ', ' + [FirstName] As 'Text', ClientId as 'Value' FROM tjc_shc_Client WHERE ([LastName] + ', ' + [FirstName] ) LIKE @0 ORDER BY [LastName], [FirstName]";
                t= ctx.ExecuteQuery<ClientName>(System.Data.CommandType.Text,sql,string.Format("%{0}%",name));

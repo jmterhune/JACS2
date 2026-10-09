@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,20 @@ namespace tjc.Modules.ExpertWitness.Components
 {
     internal class RequestedTemplateController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RequestedTemplateController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateRequestedTemplate(RequestCart t)
         {
             // Stamp every cart row. The cart is rebuilt (delete+reinsert) on each
             // interaction, so this also acts as a "last touched" time: an active
             // session keeps refreshing it, only abandoned carts age out.
             t.CreatedDate = DateTime.Now;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 rep.Insert(t);
@@ -39,7 +47,7 @@ namespace tjc.Modules.ExpertWitness.Components
         {
             if (days < 1) days = 7;
             DateTime cutoff = DateTime.Now.AddDays(-days);
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<RequestCart>().Delete("WHERE CreatedDate IS NULL OR CreatedDate < @0", cutoff);
             }
@@ -53,7 +61,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void DeleteRequestedTemplate(RequestCart t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 rep.Delete(t);
@@ -64,7 +72,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<RequestCart> GetRequestedTemplates()
         {
             IEnumerable<RequestCart> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 t = rep.Get();
@@ -74,7 +82,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<RequestCart> GetRequestedTemplates(Guid guid)
         {
             IEnumerable<RequestCart> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 t = rep.Find("Where Guid=@0",guid);
@@ -85,7 +93,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<RequestCart> GetRequestedTemplatesByGuidByStatus(Guid guid,int status)
         {
             IEnumerable<RequestCart> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 t = rep.Find("Where Guid=@0 AND Status=@1",guid,status);
@@ -95,7 +103,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public RequestCart GetRequestedTemplatesByExpertByGuidBySequence(int expertId,Guid guid, int sequence)
         {
             RequestCart t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 t = rep.Find("Where Guid=@0 AND Sequence=@1 AND ExpertID=@2",guid, sequence, expertId).FirstOrDefault();
@@ -104,14 +112,14 @@ namespace tjc.Modules.ExpertWitness.Components
         }
         public IEnumerable<RequestedTemplate> GetRequestedTemplatesByGuid(Guid guid)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<RequestedTemplate>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_requested_template_by_guid", guid);
             }
         }
         public IEnumerable<RequestedTemplate> GetRequestedTemplatesByTemplateByLocationBySequence(int templateId,int locationId, int sequence)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<RequestedTemplate>(System.Data.CommandType.StoredProcedure, "tjc_expert_requested_template_by_template_by_location_by_sequence", templateId,locationId,sequence);
             }
@@ -119,7 +127,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<RequestCart> GetRequestedTemplatesByGuidBySequence(Guid guid, int sequence)
         {
             IEnumerable<RequestCart> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 t = rep.Find("Where Guid=@0 AND Sequence=@1", guid, sequence);
@@ -129,7 +137,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public RequestCart GetRequestedTemplate(int requestId)
         {
             RequestCart t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 t = rep.GetById(requestId);
@@ -139,7 +147,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void UpdateRequestedTemplate(RequestCart t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<RequestCart>();
                 rep.Update(t);
@@ -147,14 +155,14 @@ namespace tjc.Modules.ExpertWitness.Components
         }
         public void DeleteRequestTemplatesByGuid(Guid guid)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_delete_request_template_by_guid", guid);
             }
         }
         public IEnumerable<RequestedTemplate> GetTemporaryRequestedTemplates(int templateid,int sequence,int locationId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
               return  ctx.ExecuteQuery<RequestedTemplate>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_requested_template_temp", templateid,sequence,locationId);
             }

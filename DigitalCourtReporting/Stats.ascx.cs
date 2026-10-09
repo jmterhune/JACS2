@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -37,18 +38,20 @@ namespace tjc.Modules.DigitalCourtReporting
     {
         #region Properties
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #endregion
 
-        #region Methods  
+        #region Methods
         public Stats()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void CreateStatTable(DateTime startDate, DateTime endDate, int countyId)
         {
             List<StatsInfo> stats = new List<StatsInfo>();
 
-            var ctl = new StatsController();
+            var ctl = new StatsController(_hostSettings);
             IEnumerable<StatRecord> excludedRecords = ctl.ExcludedSum(startDate, endDate, countyId);
             if (excludedRecords.Count() > 0)
             {

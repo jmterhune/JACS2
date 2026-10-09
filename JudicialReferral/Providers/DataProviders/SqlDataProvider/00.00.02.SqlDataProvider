@@ -1,0 +1,14 @@
+/* JudicialReferral Module - Version 00.00.02 */
+/* Adds a Notes column to tjc_jr_referrals so JAs can record notes on a referral. */
+/* The notes are copied into the Court Counsel log entry's comments when the      */
+/* referral is picked up by Court Counsel (Views/EditLogEntry).                    */
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.columns
+    WHERE Name = N'Notes'
+      AND Object_ID = Object_ID(N'{databaseOwner}{objectQualifier}tjc_jr_referrals')
+)
+BEGIN
+    ALTER TABLE {databaseOwner}[{objectQualifier}tjc_jr_referrals] ADD Notes nvarchar(2000) NULL
+END
+GO

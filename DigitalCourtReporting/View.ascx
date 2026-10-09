@@ -12,7 +12,7 @@
 
 <div class="btn-group float-end" id="SearchForm" role="group" aria-label="Search">
     <div class="btn-group" role="group">
-        <button id="btnSearchType" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <button id="btnSearchType" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             Search Type
         </button>
         <ul class="dropdown-menu" aria-labelledby="btnSearchType">
@@ -237,7 +237,7 @@
 
         });
         proceedingTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $(".delete").on("click", function (e) {
                 e.preventDefault();
                 proceedingId = $(this).data("id");

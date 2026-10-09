@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Framework.JavaScriptLibraries;
@@ -43,21 +44,23 @@ namespace tjc.Modules.TranscriptDatabase
     public partial class EditStatus : TranscriptDatabaseModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #region Methods
         public EditStatus()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private string AttorneyList()
         {
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             IEnumerable<AttorneyViewModel> attorneys = ctl.GetDesignationAttorneys(DesignationId);
 
             return string.Join(";", attorneys.Select(x => x.ListName));
         }
         private void UpdateDueDate(Designation designation)
         {
-            var ctl = new CalendarController();
+            var ctl = new CalendarController(_hostSettings);
             Components.Calendar calendarEvent = ctl.GetCalendarByDesignation(DesignationId);
 
             if (calendarEvent != null)
@@ -71,7 +74,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         private Components.Calendar CreateCalendarDueDate(EventTypes eventTypeId, bool requestOutstanding, Designation designation)
         {
-            var ctl = new CalendarController();
+            var ctl = new CalendarController(_hostSettings);
             Components.Calendar calendar = new Components.Calendar();
             {
 
@@ -95,12 +98,12 @@ namespace tjc.Modules.TranscriptDatabase
         }
         private void PopulateForm()
         {
-            var aCtl = new AttachmentController();
-            var vCtl = new EventController();
-            var eCtl = new ExtensionRequestController();
-            var cCtl = new CalendarController();
+            var aCtl = new AttachmentController(_hostSettings);
+            var vCtl = new EventController(_hostSettings);
+            var eCtl = new ExtensionRequestController(_hostSettings);
+            var cCtl = new CalendarController(_hostSettings);
             hdDesignationId.Value = DesignationId.ToString();
-            var ctl = new Components.DesignationController();
+            var ctl = new Components.DesignationController(_hostSettings);
             Designation designation = ctl.GetDesignation(DesignationId);
             if (designation != null)
             {
@@ -216,7 +219,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         private void BindDropDowns()
         {
-            var ctl = new HearingTypeController();
+            var ctl = new HearingTypeController(_hostSettings);
             drpHearingType.DataValueField = "HearingTypeName";
             drpHearingType.DataTextField = "HearingTypeName";
             drpHearingType.DataSource = ctl.GetHearingTypes().OrderBy(x => x.HearingTypeName);
@@ -282,7 +285,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     if (ErrorMessage != string.Empty)
                         ltPageMessage.Text = string.Format(MessageFormat, ErrorMessage, "alert alert-danger", "fas fa-circle-exclamation");
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     lnkEdit.NavigateUrl = EditUrl("did", DesignationId.ToString());
                     PopulateForm();
                 }
@@ -295,14 +298,14 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void cmdDelete_Click(object sender, EventArgs e)
         {
-            var ctl = new DesignationController();
+            var ctl = new DesignationController(_hostSettings);
             ctl.DeleteDesignation(DesignationId);
             Response.Redirect(_navigationManager.NavigateURL());
         }
         protected void rptAttachments_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             Int32.TryParse(e.CommandArgument.ToString(), out int attachmentId);
-            var ctl = new AttachmentController();
+            var ctl = new AttachmentController(_hostSettings);
             Attachment attachment = ctl.GetAttachment(attachmentId);
             switch (e.CommandName.ToLower())
             {
@@ -335,13 +338,13 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void cmdRefreshExtensions_Click(object sender, EventArgs e)
         {
-            BindExtensionRequests(new ExtensionRequestController());
+            BindExtensionRequests(new ExtensionRequestController(_hostSettings));
         }
         protected void rptExtensions_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctl = new DesignationController();
-            var cCtl = new CalendarController();
-            var eCtl = new ExtensionRequestController();
+            var ctl = new DesignationController(_hostSettings);
+            var cCtl = new CalendarController(_hostSettings);
+            var eCtl = new ExtensionRequestController(_hostSettings);
 
             Designation designation = ctl.GetDesignation(DesignationId);
             Components.Calendar calendarEvent = cCtl.GetCalendarByDesignation(DesignationId);
@@ -439,7 +442,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void rptEvent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctl = new EventController();
+            var ctl = new EventController(_hostSettings);
             int eventId = Int32.Parse(e.CommandArgument.ToString());
             if (e.CommandName.ToLower() == "complete")
             {
@@ -550,7 +553,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void cmdSaveFile_Click(object sender, EventArgs e)
         {
-            var ctl = new AttachmentController();
+            var ctl = new AttachmentController(_hostSettings);
             try
             {
                 if (!string.IsNullOrEmpty(hdFileId.Value))
@@ -604,7 +607,7 @@ namespace tjc.Modules.TranscriptDatabase
             try
             {
                 bool hasDate = DateTime.TryParse(txtTranscriptFiledUpdate.Text, out DateTime filedDate);
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 Designation designation = ctl.GetDesignation(DesignationId);
                 if (hasDate)
                 {
@@ -622,7 +625,7 @@ namespace tjc.Modules.TranscriptDatabase
                     ctl.UpdateDesignation(designation);
                     txtTranscriptFiledDate.Text = string.Empty;
                 }
-                var cCtl = new CalendarController();
+                var cCtl = new CalendarController(_hostSettings);
                 Components.Calendar calendarEvent = cCtl.GetCalendarByDesignation(DesignationId);
                 if (calendarEvent != null)
                 {
@@ -630,7 +633,7 @@ namespace tjc.Modules.TranscriptDatabase
                         calendarEvent.EventTypeID = (int)EventTypes.transcriptFiled;
                     else
                     {
-                        var eCtl = new ExtensionRequestController();
+                        var eCtl = new ExtensionRequestController(_hostSettings);
                         calendarEvent.EventTypeID = (int)EventTypes.dueDate;
                         IEnumerable<ExtensionRequest> extensions = eCtl.GetExtensionRequestsByDesignation(DesignationId);
                         if (extensions.Count() > 0)
@@ -656,7 +659,7 @@ namespace tjc.Modules.TranscriptDatabase
             {
                 if (DateTime.TryParse(txtDueDateUpdate.Text, out DateTime dueDate))
                 {
-                    var ctl = new DesignationController();
+                    var ctl = new DesignationController(_hostSettings);
                     Designation designation = ctl.GetDesignation(DesignationId);
                     if (!designation.DueDate.HasValue || dueDate != designation.DueDate.Value)
                     {
@@ -675,7 +678,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void cmdSaveComment_Click(object sender, EventArgs e)
         {
-            var ctl = new DesignationController();
+            var ctl = new DesignationController(_hostSettings);
             Designation designation = ctl.GetDesignation(DesignationId);
             if (designation != null)
             {
@@ -703,7 +706,7 @@ namespace tjc.Modules.TranscriptDatabase
                 bool hasEditReturnDate = DateTime.TryParse(txtEditReturned.Text, out DateTime editReturnDate);
                 bool hasProofSentDate = DateTime.TryParse(txtProofSent.Text, out DateTime proofSentDate);
                 bool hasProofReturnDate = DateTime.TryParse(txtProofReturned.Text, out DateTime proofReturnDate);
-                var ctl = new EventController();
+                var ctl = new EventController(_hostSettings);
                 int oldCourtReporterId = 0;
                 Int32.TryParse(hdSequence.Value, out int eventSequence);
                 if (eventSequence <= 0)
@@ -872,7 +875,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void chkAcknowledgementFiled_CheckedChanged(object sender, EventArgs e)
         {
-            var ctl = new DesignationController();
+            var ctl = new DesignationController(_hostSettings);
             Designation designation = ctl.GetDesignation(DesignationId);
             designation.AcknowledgmentFiled = chkAcknowledgementFiled.Checked;
             ctl.UpdateDesignation(designation);

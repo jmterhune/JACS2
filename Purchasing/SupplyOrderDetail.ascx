@@ -33,7 +33,7 @@
                 </asp:DropDownList>
             </div>
         </fieldset>
-        <button type="button" id="btnAddSupply" role="button" data-toggle="modal" class="btn btn-success mt-3 mb-3" data-target="#modSupplyOrder"><i class="fas fa-plus"></i>&nbsp;Add Supply to Order</button>
+        <button type="button" id="btnAddSupply" role="button" data-bs-toggle="modal" class="btn btn-success mt-3 mb-3" data-bs-target="#modSupplyOrder"><i class="fas fa-plus"></i>&nbsp;Add Supply to Order</button>
         <div class="bg-light ps-3 pe-3 rounded">
             <asp:HiddenField ClientIDMode="Static" ID="hdAttachmentIds" runat="server" />
             <asp:Repeater ID="rptSupplies" runat="server" OnItemCommand="rptSupplies_ItemCommand" OnItemDataBound="rptSupplies_ItemDataBound">
@@ -78,7 +78,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="lblSupplyOrder">Add one or more Supply Items to the order</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <fieldset id="Supply-item" class="row g-3">
@@ -140,7 +140,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <asp:LinkButton ID="cmdAddSupply" ClientIDMode="Static" runat="server" OnClientClick="CloseModal()" ValidationGroup="Supply" CssClass="btn btn-primary" Text="Add Supply Items" OnClick="cmdAddSupply_Click" />
-                        <button id="lnkCancelLine" data-dismiss="modal" class="btn btn-secondary">Cancel Supply</button>
+                        <button id="lnkCancelLine" data-bs-dismiss="modal" class="btn btn-secondary">Cancel Supply</button>
                     </div>
                 </div>
             </div>
@@ -188,7 +188,7 @@
         }
         $("#lnkCancelLine").on("click", function (e) {
             e.preventDefault();
-            $('#modSupplyOrder').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modSupplyOrder')).hide();
             ClearForm();
         });
         var myModalEl = document.getElementById('modSupplyOrder')
@@ -202,7 +202,7 @@
             Page_ClientValidate("Supply");
         }
         if (Page_IsValid) {
-            $('#modSupplyOrder').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modSupplyOrder')).hide();
         }
     }
     function ClearForm() {

@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,16 @@ namespace tjc.Modules.ThreatReport.Components
     class IncidentController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public IncidentController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public void CreateIncident(Incident t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Incident>();
                 rep.Insert(t);
@@ -36,7 +43,7 @@ namespace tjc.Modules.ThreatReport.Components
 
         public void DeleteIncident(Incident t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Incident>();
                 rep.Delete(t);
@@ -46,7 +53,7 @@ namespace tjc.Modules.ThreatReport.Components
         public IEnumerable<Incident> GetIncidents()
         {
             IEnumerable<Incident> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Incident>();
                 t = rep.Get().OrderByDescending(i => i.IncidentID);
@@ -57,7 +64,7 @@ namespace tjc.Modules.ThreatReport.Components
         public IEnumerable<Attachment> GetIncidentAttachments(int incidentID)
         {
             IEnumerable<Attachment> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Attachment>();
                 t = rep.Find("Where IncidentID = @0", incidentID);
@@ -67,7 +74,7 @@ namespace tjc.Modules.ThreatReport.Components
         public IEnumerable<Person> GetInvolvedPersons(int incidentID)
         {
             IEnumerable<Person> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Person>();
                 t = rep.Find("Where IncidentID = @0", incidentID);
@@ -77,7 +84,7 @@ namespace tjc.Modules.ThreatReport.Components
         public Incident GetIncident(int incidentId)
         {
             Incident t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Incident>();
                 t = rep.GetById(incidentId);
@@ -87,7 +94,7 @@ namespace tjc.Modules.ThreatReport.Components
 
         public void UpdateIncident(Incident t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Incident>();
                 rep.Update(t);

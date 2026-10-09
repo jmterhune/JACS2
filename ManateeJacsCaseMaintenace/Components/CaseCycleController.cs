@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,17 @@ namespace tjc.Modules.JacsCaseMaint.Components
     {
 
         private const string CONN_INTRANET = "jacsManatee";
+        private readonly IHostSettings _hostSettings;
+
+        public CaseCycleController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<CaseCycle> GetCaseCyles(string year,string caseType, string sequence)
         {
             IEnumerable<CaseCycle> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 string casenumber = string.Format("%{0}%{1}%{2}%", year, caseType, sequence);
                 var rep = ctx.GetRepository<CaseCycle>();
@@ -35,7 +42,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public CaseCycle GetCaseCycleByCaseId(int caseId)
         {
             CaseCycle t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<CaseCycle>();
                 t = rep.Find("Where FLRC_Id=@0",caseId).FirstOrDefault();
@@ -45,7 +52,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public CaseCycle GetCaseCycle(int caseCycleId)
         {
             CaseCycle t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<CaseCycle>();
                 t = rep.GetById(caseCycleId);
@@ -60,7 +67,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
 
         public void DeleteCaseCycle(CaseCycle t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<CaseCycle>();
                 rep.Delete(t);

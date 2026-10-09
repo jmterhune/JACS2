@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,16 +41,18 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public OfficeList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindList()
         {
-            var ctl = new OfficeController();
+            var ctl = new OfficeController(_hostSettings);
             rptOffice.DataSource = ctl.GetOffices();
             rptOffice.DataBind();
         }
@@ -68,7 +71,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                     var deliveryTypes = Enumerations.GetValues<DeliveryTypes>();
                     foreach (DeliveryTypes deliveryType in deliveryTypes)
@@ -99,7 +102,7 @@ namespace tjc.Modules.TranscriptDatabase
         protected void rptOffices_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int officeId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new OfficeController();
+            var ctl = new OfficeController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteOffice(officeId);
@@ -124,7 +127,7 @@ namespace tjc.Modules.TranscriptDatabase
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new OfficeController();
+            var ctl = new OfficeController(_hostSettings);
             Office office = new Office();
             bool isNew = true;
             if (hdOfficeId.Value != "")

@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,7 @@ namespace tjc.Modules.MediationStatistics
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
 
@@ -47,10 +49,11 @@ namespace tjc.Modules.MediationStatistics
         public RegionList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindList()
         {
-            var ctl = new RegionController();
+            var ctl = new RegionController(_hostSettings);
             rptRegion.DataSource = ctl.GetRegions();
             rptRegion.DataBind();
         }
@@ -73,7 +76,7 @@ namespace tjc.Modules.MediationStatistics
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }
@@ -84,7 +87,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new RegionController();
+            var ctl = new RegionController(_hostSettings);
             Region region = new Region();
             bool isNew = true;
             if (hdRegionId.Value != "")
@@ -119,7 +122,7 @@ namespace tjc.Modules.MediationStatistics
         protected void rptRegion_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int regionId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new RegionController();
+            var ctl = new RegionController(_hostSettings);
             if (e.CommandName == "delete")
             {
 

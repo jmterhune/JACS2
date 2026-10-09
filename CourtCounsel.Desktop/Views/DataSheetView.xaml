@@ -1,0 +1,76 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.DataSheetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:DataSheetViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Data Sheet" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <Expander Header="Attorneys" Margin="0,0,0,8">
+                <ItemsControl ItemsSource="{Binding AttorneyChecks}" MaxHeight="150">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding DisplayName}" IsChecked="{Binding IsChecked}" Margin="0,0,16,4" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Expander>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="Date Received From" />
+                    <DatePicker SelectedDate="{Binding DateReceivedFrom}" Width="140" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="Requested By" />
+                    <ComboBox ItemsSource="{Binding RequestedByOptions}" SelectedItem="{Binding SelectedRequestedBy}" Width="160" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="Status" />
+                    <ComboBox ItemsSource="{x:Static vm:DataSheetViewModel.CompletedFilterOptions}" SelectedValuePath="Value" SelectedValue="{Binding CompletedFilter}"
+                              DisplayMemberPath="Text" Width="200" />
+                </StackPanel>
+                <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
+                    <Button Content="Filter" Command="{Binding FilterCommand}" Padding="14,4" Margin="0,0,8,0" />
+                    <Button Content="Clear" Command="{Binding ClearCommand}" Padding="14,4" Margin="0,0,8,0" />
+                    <Button Content="Export to Excel" Command="{Binding ExportCommand}" Padding="14,4" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,10,0,0">
+            <Button Content="First" Command="{Binding FirstPageCommand}" Padding="10,4" Margin="0,0,4,0" />
+            <Button Content="Prev" Command="{Binding PrevPageCommand}" Padding="10,4" Margin="0,0,4,0" />
+            <Button Content="Next" Command="{Binding NextPageCommand}" Padding="10,4" Margin="0,0,4,0" />
+            <Button Content="Last" Command="{Binding LastPageCommand}" Padding="10,4" Margin="0,0,16,0" />
+            <TextBlock Text="{Binding PageInfo}" VerticalAlignment="Center" Margin="0,0,16,0" />
+            <TextBlock Text="{Binding TotalInfo}" VerticalAlignment="Center" Margin="0,0,16,0" />
+            <Label Content="Rows per page:" VerticalAlignment="Center" />
+            <ComboBox ItemsSource="{x:Static vm:DataSheetViewModel.PageSizeOptions}" SelectedItem="{Binding PageSize}" Width="70" />
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Case Name" Binding="{Binding PartyName}" Width="180" />
+                <DataGridTextColumn Header="Case Type" Binding="{Binding CaseType}" Width="110" />
+                <DataGridTextColumn Header="Case Number" Binding="{Binding CaseNumber}" Width="150" />
+                <DataGridTextColumn Header="Date Received" Binding="{Binding DateReceived, StringFormat=d}" Width="100" />
+                <DataGridTextColumn Header="Motion Filed" Binding="{Binding MotionFiled, StringFormat=d}" Width="100" />
+                <DataGridTextColumn Header="Requested By" Binding="{Binding RequestedBy}" Width="110" />
+                <DataGridTextColumn Header="Responsible" Binding="{Binding Responsible}" Width="120" />
+                <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="130" />
+                <DataGridTextColumn Header="Completed" Binding="{Binding DateCompleted, StringFormat=d}" Width="100" />
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

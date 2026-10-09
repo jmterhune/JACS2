@@ -151,7 +151,7 @@
                 deletedText: "Expert deleted.",
                 confirmText: "Are you sure you wish to delete this expert?",
                 rowHtml: function (x) {
-                    var cmt = x.Comments ? '<a data-bs-html="true" data-toggle="tooltip" title="<strong>Comments:</strong><p>' + ew.esc(x.Comments) + '</p>"><i class="fas fa-comment-alt"></i></a>' : "";
+                    var cmt = x.Comments ? '<a data-bs-html="true" data-bs-toggle="tooltip" title="<strong>Comments:</strong><p>' + ew.esc(x.Comments) + '</p>"><i class="fas fa-comment-alt"></i></a>' : "";
                     return '<tr data-id="' + x.ExpertID + '">' +
                         '<td class="command-item"><a href="#" class="text-primary ew-expert-edit" title="Edit"><i class="fas fa-edit"></i></a></td>' +
                         '<td>' + x.ExpertID + '</td>' +

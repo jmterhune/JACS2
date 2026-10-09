@@ -1,0 +1,22 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.AdminView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:AdminViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <Grid>
+        <TextBlock Text="You do not have permission to view this page." FontSize="16" Foreground="#dc3545"
+                   Visibility="{Binding IsAuthorized, Converter={StaticResource InverseBoolToVis}}" />
+
+        <TabControl Visibility="{Binding IsAuthorized, Converter={StaticResource BoolToVis}}">
+            <TabItem Header="Case Types" Content="{Binding CaseTypesTab}" />
+            <TabItem Header="Attorneys" Content="{Binding AttorneysTab}" />
+            <TabItem Header="Counties" Content="{Binding CountiesTab}" />
+            <TabItem Header="Phases" Content="{Binding PhasesTab}" />
+            <TabItem Header="Requestors" Content="{Binding RequestorsTab}" />
+            <TabItem Header="Actions" Content="{Binding ActionsTab}" />
+            <TabItem Header="Time Spent" Content="{Binding TimeSpentTab}" />
+        </TabControl>
+    </Grid>
+</UserControl>

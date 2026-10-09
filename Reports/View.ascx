@@ -58,6 +58,7 @@
             <div class="input-group"> <asp:TextBox runat="server" ID="txtYear" CssClass="form-control" aria-label="Year" TextMode="Number" Width="70" /></div>
             <div id="swServiceMonth" class="input-group">
                 <asp:DropDownList ID="drpServiceMonth" runat="server"  CssClass="form-control" aria-label="Select Month" ClientIDMode="Static">
+                    <asp:ListItem Text="All Year" Value="0" />
                     <asp:ListItem Text="January" Value="1" />
                     <asp:ListItem Text="February" Value="2" />
                     <asp:ListItem Text="March" Value="3" />
@@ -125,12 +126,128 @@
     <asp:Literal ID="ltReportTitle" runat="server" />
 </h2>
 <asp:HiddenField  id="hdTitle" runat="server" Value="Employee Reports" ClientIDMode="Static" />
-<asp:GridView ID="grdReport" GridLines="None" OnRowDataBound="OnRowDataBound" CssClass="table table-striped" runat="server" AutoGenerateColumns="true" AllowSorting="true" AllowPaging="false"></asp:GridView>
+<asp:GridView ID="grdReport" GridLines="None" OnRowDataBound="OnRowDataBound" CssClass="table table-striped" runat="server" AutoGenerateColumns="true" AllowSorting="false" AllowPaging="false" ClientIDMode="Static"></asp:GridView>
 <asp:HyperLink CssClass="btn btn-primary" ID="lnkReport" runat="server" Text="Return to Report List" /> 
+<%-- Client-side grid enhancement (sort / filter / export) via DataTables.
+     Libraries are the site-wide copies under /Resources/Libraries/DataTables.
+     Load order matters: core -> BS5 styling -> jszip + pdfmake (the export
+     dependencies) -> Buttons core -> Buttons BS5 -> Buttons HTML5 (excel/pdf). --%>
+<link rel="stylesheet" href="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="/Resources/Libraries/DataTables/buttons.bootstrap5.min.css" />
+<script src="/Resources/Libraries/DataTables/dataTables.js"></script>
+<script src="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js"></script>
+<script src="/Resources/Libraries/DataTables/jszip.min.js"></script>
+<script src="/Resources/Libraries/DataTables/pdfmake.min.js"></script>
+<script src="/Resources/Libraries/DataTables/vfs_fonts.js"></script>
+<script src="/Resources/Libraries/DataTables/dataTables.buttons.min.js"></script>
+<script src="/Resources/Libraries/DataTables/buttons.bootstrap5.min.js"></script>
+<script src="/Resources/Libraries/DataTables/buttons.html5.min.js"></script>
 <script>
     $(function () {
         var title = $("#hdTitle").val();
         $(".page-top-info h1").html(title);
+
+        var grid = document.getElementById("grdReport");
+        if (!grid || !$.fn || !$.fn.dataTable) return;
+        var $grid = $(grid);
+        // Only enhance a populated grid (header + at least one data row). An
+        // empty report renders no <table>, so this no-ops there too.
+        if ($grid.find("thead th").length === 0 || $grid.find("tbody tr").length === 0) return;
+        if ($.fn.dataTable.isDataTable(grid)) return;
+
+        // Date columns must sort chronologically, not as text ("12/01/2019"
+        // would otherwise sort before "01/05/2020"). A column qualifies when
+        // every non-empty cell looks like "MM/dd/yyyy" or "Month dd" (the
+        // Service/Termination and Birthday formats). We attach epoch-ms sort
+        // data and leave the displayed text alone so exports stay friendly.
+        var dateRe = /^(\d{1,2}\/\d{1,2}\/\d{4}|[A-Za-z]+ \d{1,2})$/;
+        var columnDefs = [];
+        var colCount = $grid.find("thead th").length;
+        for (var c = 0; c < colCount; c++) {
+            var seen = 0, allDates = true;
+            $grid.find("tbody tr").each(function () {
+                var txt = $.trim($(this).children().eq(c).text());
+                if (txt === "") return;
+                seen++;
+                if (!dateRe.test(txt) || isNaN(Date.parse(txt))) allDates = false;
+            });
+            if (seen > 0 && allDates) {
+                columnDefs.push({
+                    targets: c,
+                    render: function (data, type) {
+                        if (type === "sort" || type === "type") {
+                            var t = Date.parse(data);
+                            return isNaN(t) ? 0 : t;
+                        }
+                        return data;
+                    }
+                });
+            }
+        }
+
+        // The Service report's first column is "State or County" (rendered as
+        // a multi-line header). Find it so we can offer a dropdown filter; the
+        // other reports have no such column and simply skip it.
+        var stateCountyCol = -1;
+        $grid.find("thead th").each(function (i) {
+            var h = $(this).text().toLowerCase();
+            if (stateCountyCol === -1 && (h.indexOf("county") !== -1 || h.indexOf("state") !== -1)) {
+                stateCountyCol = i;
+            }
+        });
+
+        // Flatten the multi-line "State<br>or<br>County" / "Years<br>of<br>Service"
+        // headers to clean single-line text for the Excel / PDF exports.
+        var exportOptions = {
+            columns: ":visible",
+            format: {
+                header: function (data) {
+                    return $("<div>").html(String(data).replace(/<br\s*\/?>/gi, " ")).text().replace(/\s+/g, " ").trim();
+                }
+            }
+        };
+        var docTitle = function () { return $("#hdTitle").val() || "Employee Report"; };
+
+        $grid.DataTable({
+            paging: false,   // match the old GridView (AllowPaging=false): show every row
+            order: [],       // keep the server ORDER BY (LastName, FirstName)
+            columnDefs: columnDefs,
+            layout: {
+                topStart: {
+                    buttons: [{
+                        extend: "collection",
+                        text: '<i class="fas fa-download"></i> Export',
+                        buttons: [
+                            { extend: "excelHtml5", text: '<i class="fas fa-file-excel"></i> Excel', title: docTitle, exportOptions: exportOptions },
+                            { extend: "pdfHtml5", text: '<i class="fas fa-file-pdf"></i> PDF', orientation: "landscape", pageSize: "LETTER", title: docTitle, exportOptions: exportOptions }
+                        ]
+                    }]
+                },
+                topEnd: "search"
+            },
+            initComplete: function () {
+                if (stateCountyCol < 0) return;
+                var dt = this.api();
+                var column = dt.column(stateCountyCol);
+                var $wrap = $('<label class="dt-sc-filter"><span class="dt-sc-filter-label">State / County:</span></label>');
+                var $select = $('<select class="form-select form-select-sm"><option value="">All</option></select>');
+                var values = {};
+                column.data().each(function (d) {
+                    var v = $.trim($("<div>").html(d == null ? "" : String(d)).text());
+                    if (v !== "") values[v] = true;
+                });
+                Object.keys(values).sort().forEach(function (v) {
+                    $select.append($("<option>").val(v).text(v));
+                });
+                $select.on("change", function () {
+                    var val = $(this).val();
+                    column.search(val ? "^" + $.fn.dataTable.util.escapeRegex(val) + "$" : "", { regex: true, smart: false }).draw();
+                });
+                $wrap.append($select);
+                var $btns = $(dt.buttons().container());
+                if ($btns.length) { $btns.parent().append($wrap); }
+                else { $(dt.table().container()).prepend($wrap); }
+            }
+        });
     });
-   
 </script>

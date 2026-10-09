@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Entities.Modules;
+﻿using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using System;
 using System.Collections;
@@ -36,16 +37,19 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
         }
         private int InsertFile(HttpPostedFile file)
         {
-            ModuleController moduleController = new ModuleController();
-            ModuleInfo modCtl = moduleController.GetModule(_moduleId);
+            // ModuleController.Instance returns IModuleController, which only exposes the
+            // (moduleId, tabId, ignoreCache) overload of GetModule. The concrete ModuleController's
+            // single-arg GetModule(moduleId) is just a thin wrapper around that overload using
+            // Null.NullInteger for tabId, so this reproduces the exact same lookup.
+            ModuleInfo modCtl = ModuleController.Instance.GetModule(_moduleId, Null.NullInteger, false);
             Hashtable setting = modCtl.ModuleSettings;
             string uploadFolder = "Transcript-Forms";
             if (setting.Contains("UploadFormFolder"))
             {
                 uploadFolder = setting["UploadFormFolder"].ToString();
             }
-            DotNetNuke.Services.FileSystem.FolderManager objFolder = new DotNetNuke.Services.FileSystem.FolderManager();
-            DotNetNuke.Services.FileSystem.FileManager objFile = new DotNetNuke.Services.FileSystem.FileManager();
+            DotNetNuke.Services.FileSystem.IFolderManager objFolder = DotNetNuke.Services.FileSystem.FolderManager.Instance;
+            DotNetNuke.Services.FileSystem.IFileManager objFile = DotNetNuke.Services.FileSystem.FileManager.Instance;
             DotNetNuke.Services.FileSystem.IFolderInfo folderInfo = null;
             if (objFolder.FolderExists(_portalId, uploadFolder) == false)
             {

@@ -45,7 +45,7 @@
                     CssClass="label label-danger" ErrorMessage="Please Select a Delivery Location" />
             </div>
         </fieldset>
-        <button type="button" id="btnAddSupply" role="button" data-toggle="modal" class="btn btn-success" data-target="#modSupplyOrder"><i class="fas fa-plus" aria-hidden="true"></i>&nbsp;Add Supply to Order</button>
+        <button type="button" id="btnAddSupply" role="button" data-bs-toggle="modal" class="btn btn-success" data-bs-target="#modSupplyOrder"><i class="fas fa-plus" aria-hidden="true"></i>&nbsp;Add Supply to Order</button>
 
         <div class="bg-light ps-3 pe-3 rounded">
             <asp:HiddenField ClientIDMode="Static" ID="hdAttachmentIds" runat="server" />
@@ -94,7 +94,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="lblSupplyOrder">Add one or more Supply Items to the order</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <fieldset id="Supply-item" class="row g-3">
@@ -118,10 +118,11 @@
                                 <datalist id="storeList">
                                     <option value="Amazon">
                                     <option value="Office Depot">
+                                         <option value="Other Vendor">
                                 </datalist>
                                 <asp:RequiredFieldValidator runat="server" Display="Dynamic" ValidationGroup="Supply" ControlToValidate="txtStore"
                                     CssClass="label label-danger" ErrorMessage="Store is Required" />
-                                <div class="form-text">Select from list or type</div>
+                                <div class="form-text">Select from list or type into the field</div>
                             </div>
                             <div class="col-md-8">
                                 <asp:Label runat="server" CssClass="form-label" AssociatedControlID="txtLink" Text="Paste Hyperlink to Item" />
@@ -175,7 +176,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <asp:LinkButton ID="cmdAddSupply" ClientIDMode="Static" runat="server" OnClientClick="CloseModal()" ValidationGroup="Supply" CssClass="btn btn-primary" Text="Add Supply Items" OnClick="cmdAddSupply_Click" />
-                        <asp:HyperLink ID="lnkCancelLine" data-dismiss="modal" runat="server" CssClass="btn btn-secondary" Text="Cancel Supply" />
+                        <asp:HyperLink ID="lnkCancelLine" data-bs-dismiss="modal" runat="server" CssClass="btn btn-secondary" Text="Cancel Supply" />
                     </div>
                 </div>
             </div>
@@ -183,7 +184,9 @@
 
         <hr />
         <p class="mt-3">
-            <asp:Button ID="cmdSave" Enabled="false" ClientIDMode="Static" runat="server" ValidationGroup="Order" CssClass="btn btn-primary" Text="Submit Order" OnClick="cmdSave_Click" />
+            <span id="cmdSaveWrap" class="d-inline-block">
+                <asp:Button ID="cmdSave" Enabled="false" ClientIDMode="Static" runat="server" ValidationGroup="Order" CssClass="btn btn-primary" Text="Submit Order" OnClick="cmdSave_Click" />
+            </span>
             <asp:HyperLink ID="cmdCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" />
         </p>
     </div>
@@ -220,6 +223,17 @@
                     if (m && typeof __doPostBack === 'function') __doPostBack(m[1], m[2]);
                 }
             });
+        });
+        $("#cmdSaveWrap").on("click", function (e) {
+            if ($('#cmdSave').prop("disabled")) {
+                e.preventDefault();
+                e.stopPropagation();
+                Swal.fire({
+                    title: 'Add a Supply Item', icon: 'warning',
+                    text: 'You must click "Add Supply to Order" to add at least one supply order line before you can submit the order.'
+                });
+                return false;
+            }
         });
         $("#cmdSave").on("click", function (e) {
             if ($('#cmdSave').val() == "Please Wait") {
@@ -308,7 +322,7 @@
             Page_ClientValidate("Supply");
         }
         if (Page_IsValid) {
-            $('#modSupplyOrder').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modSupplyOrder')).hide();
         }
     }
     function DeleteAttachment(fileId) {

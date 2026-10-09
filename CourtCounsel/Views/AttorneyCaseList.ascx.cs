@@ -43,7 +43,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
                 if (!string.IsNullOrEmpty(attorneyName))
                 {
-                    var ctrl = new HistoryController();
+                    var ctrl = new HistoryController(_hostSettings);
                     var results = ctrl.SearchByAttorney(attorneyName, statusFilter).ToList();
                     rptAttorneyCaseList.DataSource = results;
                     rptAttorneyCaseList.DataBind();

@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +24,15 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class MembershipsController : DnnApiController
     {
-        private readonly GroupController _groups = new GroupController();
-        private readonly GroupMembershipController _memberships = new GroupMembershipController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly GroupController _groups;
+        private readonly GroupMembershipController _memberships;
+
+        public MembershipsController()
+        {
+            _groups = new GroupController(_hostSettings);
+            _memberships = new GroupMembershipController(_hostSettings);
+        }
 
         public class MembershipState
         {

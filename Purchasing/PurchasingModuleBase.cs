@@ -11,12 +11,19 @@
 */
 
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Framework.JavaScriptLibraries;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.Purchasing
 {
     public class PurchasingModuleBase : PortalModuleBase
     {
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
+        public PurchasingModuleBase()
+        {
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+        }
         public int CurrentOrderId
         {
             get

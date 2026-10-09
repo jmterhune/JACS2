@@ -134,16 +134,6 @@
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
-                    <controlKey>SwnList</controlKey>
-                    <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/SwnList.ascx</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>SWN List</controlTitle>
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
                     <controlKey>SelectUser</controlKey>
                     <controlSrc>DesktopModules/tjc.modules/EmployeeDB/Views/SelectUserId.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>

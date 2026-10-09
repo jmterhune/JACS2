@@ -21,7 +21,7 @@
             <a class="nav-link" href="<%=FormListUrl%>">Forms</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#hearings" data-toggle="tab">Hearing Types</a>
+            <a class="nav-link" href="#hearings" data-bs-toggle="tab">Hearing Types</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ReportListUrl%>">Reporting</a>
@@ -75,10 +75,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditHearingTypeModalLabel">Add / Edit Hearing Type</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtHearingType" Text="Hearing Type" />
                                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtHearingType" />
                                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="hearing" CssClass="label label-danger"
@@ -155,9 +155,9 @@
         });
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditHearingTypeModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditHearingTypeModal')).show();
         } else {
-            $('#EditHearingTypeModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditHearingTypeModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

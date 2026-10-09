@@ -19,7 +19,7 @@
             <a class="nav-link" href="<%=DepartmentListUrl %>">Departments</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#recordTypes" data-toggle="tab">Record Types</a>
+            <a class="nav-link" href="#recordTypes" data-bs-toggle="tab">Record Types</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=RetentionPeriodListUrl %>">Retention Periods</a>
@@ -76,10 +76,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditRecordTypeModalLabel">Add / Edit Record Types</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtRecordType" Text="Record Type" />
                                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtRecordType" />
                                     </div>
@@ -149,9 +149,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditRecordTypeModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditRecordTypeModal')).show();
         } else {
-            $('#EditRecordTypeModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditRecordTypeModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

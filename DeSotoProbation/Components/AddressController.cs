@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,16 @@ namespace tjc.Modules.DeSoto.Probation.Components
     internal class AddressController
     {
         private const string CONN_JUD12 = "Jud12"; //Connection
+        private readonly IHostSettings _hostSettings;
+
+        public AddressController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateAddress(Address t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Address>();
                 rep.Insert(t);
@@ -35,7 +43,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
 
         public void DeleteAddress(Address t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Address>();
                 rep.Delete(t);
@@ -45,7 +53,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public IEnumerable<Address> GetAddresses()
         {
             IEnumerable<Address> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Address>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public bool AddressExists(int addressId)
         {
             Address t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Address>();
                 t = rep.GetById(addressId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         public Address GetAddress(int addressId)
         {
             Address t;
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Address>();
                 t = rep.GetById(addressId);
@@ -74,7 +82,7 @@ namespace tjc.Modules.DeSoto.Probation.Components
         }
         public void UpdateAddress(Address t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Address>();
                 rep.Update(t);

@@ -37,7 +37,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindAttorneyDropDown()
         {
-            var ctrl = new AttorneyController();
+            var ctrl = new AttorneyController(_hostSettings);
             var attorneys = ctrl.GetAttorneys().ToList();
 
             var active = attorneys.Where(a => a.IsActive == true).OrderBy(a => a.AttorneyName).ToList();

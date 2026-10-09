@@ -20,11 +20,13 @@ namespace tjc.Modules.CourtRegistry
 {
     public class CourtRegistryModuleBase : PortalModuleBase
     {
-        private readonly INavigationManager _navigationManager;
+        protected readonly INavigationManager _navigationManager;
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         public CourtRegistryModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
         }
         public string ApproverUsername
         {
@@ -101,6 +103,7 @@ namespace tjc.Modules.CourtRegistry
         public string UpdateJacCodeUrl { get { return EditUrl("manage-codes"); } }
         public string LocationListUrl { get { return EditUrl("locations"); } }
         public string CaseTypeListUrl { get { return EditUrl("case-types"); } }
+        public string CompareUrl { get { return EditUrl("compare"); } }
 
     }
 }

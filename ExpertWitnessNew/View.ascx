@@ -20,7 +20,7 @@
             </ProgressTemplate>
         </asp:UpdateProgress>
         <asp:PlaceHolder ID="plhMessage" runat="server" EnableViewState="false"></asp:PlaceHolder>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-auto">
                 <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number<em>*</em>" ToolTip="required" />
                 <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCaseNumber" />

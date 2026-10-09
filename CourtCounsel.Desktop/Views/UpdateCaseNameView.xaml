@@ -1,0 +1,37 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.UpdateCaseNameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:UpdateCaseNameViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+        <TextBlock Text="Update Case Name" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+        <TextBlock Text="Renames the party name on every log entry for a case number." Foreground="Gray" Margin="0,0,0,12" />
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBox Text="{Binding CaseNumberInput, UpdateSourceTrigger=PropertyChanged}" Width="220" Padding="4" Margin="0,0,8,0" />
+            <Button Content="Find" Command="{Binding FindCommand}" Padding="14,4" />
+        </StackPanel>
+
+        <TextBlock Text="{Binding Message}" Foreground="#dc3545" Margin="0,0,0,12"
+                   Visibility="{Binding HasResults, Converter={StaticResource InverseBoolToVis}}" />
+
+        <StackPanel Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
+            <DataGrid ItemsSource="{Binding Results}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                      MaxHeight="220" GridLinesVisibility="Horizontal" Margin="0,0,0,12">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Case Number" Binding="{Binding CaseNumber}" Width="160" />
+                    <DataGridTextColumn Header="Party Name" Binding="{Binding PartyName}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Label Content="New Case Name" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding NewCaseName, UpdateSourceTrigger=PropertyChanged}" Width="260" Padding="4" Margin="0,0,8,0" />
+                <Button Content="Update" Command="{Binding UpdateCommand}" Padding="14,4" />
+            </StackPanel>
+            <TextBlock Text="{Binding Message}" Foreground="Green" FontWeight="Bold" Margin="0,10,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
