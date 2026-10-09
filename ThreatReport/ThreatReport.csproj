@@ -97,6 +97,7 @@
     <Compile Include="Components\Attachment.cs" />
     <Compile Include="Components\AttachmentController.cs" />
     <Compile Include="Components\AttachmentFiles.cs" />
+    <Compile Include="Components\IncidentNotificationController.cs" />
     <Compile Include="Components\PersonController.cs" />
     <Compile Include="Components\IncidentController.cs" />
     <Compile Include="Components\Person.cs" />

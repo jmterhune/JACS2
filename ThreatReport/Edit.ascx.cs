@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -167,28 +168,29 @@ namespace tjc.Modules.ThreatReport
             }
         }
 
+        private const string OrgEmailDomain = "jud12.flcourts.org";
+
         private void SendEmails(Incident incident, List<Person> people)
         {
             try
             {
                 string subject = "12th Judicial Circuit Incident Report";
                 string from = "noreply.threat@jud12.flcourts.org";
-                string viewerRole = "Incident Reporters";
+                string viewerRole = IncidentNotificationController.DefaultRoleName;
                 if (Settings.Contains("ViewerRole") && !string.IsNullOrWhiteSpace(Settings["ViewerRole"].ToString()))
                 {
                     viewerRole = Settings["ViewerRole"].ToString();
                 }
 
-                // Recipients are the intranet users in the viewer role, so link to the incident on this site.
+                // Recipients are the members of the role on the jud12 site plus the members of the local
+                // role, each address once. Only @jud12.flcourts.org addresses can open the intranet, so
+                // they get the link to the incident on this site; anyone else gets the text without it.
                 string href = EditUrl("id", incident.IncidentID.ToString(), "incident");
-                string message = BuildEmailBody(incident, people, href);
-
-                var emails = new List<string>();
-                foreach (var user in DotNetNuke.Security.Roles.RoleController.Instance.GetUsersByRole(PortalId, viewerRole))
-                {
-                    if (!string.IsNullOrWhiteSpace(user.Email)) emails.Add(user.Email);
-                }
-                SendBulkMessage(from, subject, message, emails);
+                var emails = new IncidentNotificationController(_hostSettings).GetNotificationEmails(PortalId, viewerRole);
+                var internalEmails = emails.Where(e => e.EndsWith("@" + OrgEmailDomain, StringComparison.OrdinalIgnoreCase)).ToList();
+                var otherEmails = emails.Except(internalEmails, StringComparer.OrdinalIgnoreCase).ToList();
+                SendBulkMessage(from, subject, BuildEmailBody(incident, people, href), internalEmails);
+                SendBulkMessage(from, subject, BuildEmailBody(incident, people, null), otherEmails);
             }
             catch (Exception exc)
             {
@@ -208,15 +210,22 @@ namespace tjc.Modules.ThreatReport
                     sb.Append("\t").Append("-").Append(person.FirstName);
                     sb.Append(" ").Append(person.LastName).Append(Environment.NewLine);
                 }
-                sb.Append(Environment.NewLine);
-                sb.Append("You may access details at the following URL: ");
-                sb.Append(Environment.NewLine);
-                sb.Append(href);
+                if (!string.IsNullOrEmpty(href))
+                {
+                    sb.Append(Environment.NewLine);
+                    sb.Append("You may access details at the following URL: ");
+                    sb.Append(Environment.NewLine);
+                    sb.Append(href);
+                }
             }
             else
             {
-                sb.Append("An incident report has been filed at ").Append(incident.Location).Append(". You may access detail at the following URL: ");
-                sb.Append(href);
+                sb.Append("An incident report has been filed at ").Append(incident.Location).Append(".");
+                if (!string.IsNullOrEmpty(href))
+                {
+                    sb.Append(" You may access detail at the following URL: ");
+                    sb.Append(href);
+                }
             }
             return sb.ToString();
         }

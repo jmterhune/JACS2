@@ -2,7 +2,8 @@
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 
 <p>
-    <asp:HyperLink ID="lnkEdit" Visible="false" runat="server" CssClass="btn btn-danger"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp; Add Threat</asp:HyperLink></p>
+    <asp:HyperLink ID="lnkEdit" Visible="false" runat="server" CssClass="btn btn-danger"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp; Add Threat</asp:HyperLink>
+    <asp:Button ID="cmdNotify" Visible="false" runat="server" CssClass="btn btn-secondary" CausesValidation="false" OnClick="cmdNotify_Click" /></p>
 <asp:Repeater ID="rptIncidentList" runat="server">
     <HeaderTemplate>
         <table class="table table-striped" id="incidents">
