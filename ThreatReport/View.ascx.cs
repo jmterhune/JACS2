@@ -20,8 +20,8 @@ using tjc.Modules.ThreatReport.Components;
 namespace tjc.Modules.ThreatReport
 {
     /// <summary>
-    /// View-only list of incidents for the intranet site. Permissions are controlled via
-    /// DNN; this module never accepts input or sends mail.
+    /// View-only list of incidents for the intranet site, limited to the Incident Viewer role.
+    /// Submitting an incident is a separate module (Edit.ascx).
     /// </summary>
     public partial class View : ThreatReportModuleBase
     {
@@ -38,6 +38,13 @@ namespace tjc.Modules.ThreatReport
             {
                 if (!Page.IsPostBack)
                 {
+                    // Only members of the Incident Viewer role (and administrators) see the list.
+                    if (!CanViewIncidents)
+                    {
+                        DenyAccess("view incidents");
+                        return;
+                    }
+
                     // If the request carries an "id" query parameter (e.g. a link from the
                     // internet site's email of the form [IntranetAppUrl]/id/N), forward to
                     // the detail control instead of rendering the list. This is what makes
@@ -50,10 +57,13 @@ namespace tjc.Modules.ThreatReport
                         return;
                     }
 
-                    // Anyone who can view the list can add a threat.
-                    lnkEdit.NavigateUrl = EditUrl();
-                    lnkEdit.Visible = true;
-                    RefreshNotifyButton();
+                    // Submitting is a separate module on its own page (setting EditTabID).
+                    string submitUrl = ResolveSettingUrl("EditTabID");
+                    if (submitUrl.Length > 0 && CanSubmitIncidents)
+                    {
+                        lnkEdit.NavigateUrl = submitUrl;
+                        lnkEdit.Visible = true;
+                    }
 
                     IncidentController ctl = new IncidentController(_hostSettings);
                     rptIncidentList.DataSource = ctl.GetIncidents().Where(x => x.Location != null);
@@ -61,72 +71,6 @@ namespace tjc.Modules.ThreatReport
                 }
             }
             catch (Exception exc) //Module failed to load
-            {
-                Exceptions.ProcessModuleLoadException(this, exc);
-            }
-        }
-
-        // Receiving notifications means being in the role on the jud12 site (where the external form
-        // sends from) and/or the local role; both are managed together here. Each site's role has its
-        // own name, set in the module settings.
-        private bool IsReceiving(IncidentNotificationController ctl, SubscriptionInfo jud12)
-        {
-            return jud12.State == SubscriptionState.Subscribed
-                || ctl.IsInLocalRole(PortalId, UserId, LocalNotificationRole);
-        }
-
-        private void RefreshNotifyButton()
-        {
-            if (UserId <= 0) return;
-            var ctl = new IncidentNotificationController(_hostSettings);
-            SubscriptionInfo jud12 = ctl.GetSubscription(UserInfo.Username, UserInfo.Email, Jud12NotificationRole);
-            cmdNotify.Text = IsReceiving(ctl, jud12) ? "Stop Receiving Incident Report Notifications" : "Receive Incident Report Notifications";
-            cmdNotify.Visible = true;
-        }
-
-        protected void cmdNotify_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var ctl = new IncidentNotificationController(_hostSettings);
-                SubscriptionInfo jud12 = ctl.GetSubscription(UserInfo.Username, UserInfo.Email, Jud12NotificationRole);
-                var message = DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.GreenSuccess;
-                string text;
-
-                if (IsReceiving(ctl, jud12))
-                {
-                    if (jud12.State == SubscriptionState.Subscribed) ctl.Unsubscribe(jud12);
-                    ctl.SetLocalRole(PortalId, UserId, LocalNotificationRole, false);
-                    text = "You will no longer receive incident report notifications.";
-                }
-                else
-                {
-                    bool addedJud12 = false;
-                    if (jud12.State == SubscriptionState.NotSubscribed)
-                    {
-                        ctl.Subscribe(jud12, UserId);
-                        addedJud12 = true;
-                    }
-                    bool addedLocal = ctl.SetLocalRole(PortalId, UserId, LocalNotificationRole, true);
-                    if (addedJud12 || addedLocal)
-                    {
-                        text = "You will now receive incident report notifications.";
-                        if (!addedJud12 && jud12.State == SubscriptionState.Ambiguous)
-                        {
-                            text += " Your email matches more than one account on the jud12 site, so only the intranet role was updated.";
-                        }
-                    }
-                    else
-                    {
-                        message = DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning;
-                        text = "Could not add you: there is no \"" + LocalNotificationRole + "\" role here and no matching \"" + Jud12NotificationRole + "\" account on the jud12 site.";
-                    }
-                }
-
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, text, message);
-                RefreshNotifyButton();
-            }
-            catch (Exception exc)
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }

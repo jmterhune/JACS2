@@ -587,6 +587,7 @@
     function DeleteFile(fileId) {
         var data = new FormData();
         data.append("fileId", fileId);
+        data.append("moduleId", <%=ModuleId%>);
         var options = {};
         options.url = "<%=TemplateSourceDirectory%>/upload.ashx";
         options.type = "POST";

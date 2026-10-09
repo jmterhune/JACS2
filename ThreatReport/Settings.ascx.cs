@@ -5,18 +5,27 @@ using System;
 namespace tjc.Modules.ThreatReport
 {
     /// <summary>
-    /// Module settings: the names of the notification role on this site and on the jud12 site.
+    /// Module settings shared by the incident list and the submit-incident modules: the role names that
+    /// control access and notifications, and the pages the two modules link to.
     /// </summary>
     public partial class Settings : ThreatReportModuleSettingsBase
     {
+        private static readonly string[] Keys = { "ViewerRole", "JudgesRole", "Jud12Role", "ViewTabID", "EditTabID" };
+
+        private System.Web.UI.WebControls.TextBox[] Boxes
+        {
+            get { return new[] { txtViewerRole, txtJudgesRole, txtJud12Role, txtViewTab, txtEditTab }; }
+        }
+
         public override void LoadSettings()
         {
             try
             {
-                if (!Page.IsPostBack)
+                if (Page.IsPostBack) return;
+                var boxes = Boxes;
+                for (int i = 0; i < Keys.Length; i++)
                 {
-                    if (Settings.Contains("ViewerRole")) txtViewerRole.Text = Settings["ViewerRole"].ToString();
-                    if (Settings.Contains("Jud12Role")) txtJud12Role.Text = Settings["Jud12Role"].ToString();
+                    if (Settings.Contains(Keys[i])) boxes[i].Text = Settings[Keys[i]].ToString();
                 }
             }
             catch (Exception exc)
@@ -30,8 +39,11 @@ namespace tjc.Modules.ThreatReport
             try
             {
                 var modules = ModuleController.Instance;
-                modules.UpdateTabModuleSetting(TabModuleId, "ViewerRole", txtViewerRole.Text.Trim());
-                modules.UpdateTabModuleSetting(TabModuleId, "Jud12Role", txtJud12Role.Text.Trim());
+                var boxes = Boxes;
+                for (int i = 0; i < Keys.Length; i++)
+                {
+                    modules.UpdateTabModuleSetting(TabModuleId, Keys[i], boxes[i].Text.Trim());
+                }
             }
             catch (Exception exc)
             {

@@ -1,4 +1,7 @@
 ﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -26,6 +29,28 @@ namespace tjc.Modules.ThreatReport
                     //Response.End() raises a ThreadAbortException by design, which the catch at the
                     //bottom then swallowed on every request; CompleteRequest ends the request without
                     //aborting the thread, so the return below is what actually exits
+                    response.Flush();
+                    context.ApplicationInstance.CompleteRequest();
+                    return;
+                }
+
+                // Only members of the Incident Viewer role (as set on the module that links here) may open files.
+                UserInfo user = UserController.Instance.GetCurrentUserInfo();
+                if (user == null || user.UserID <= 0)
+                {
+                    response.StatusCode = 401;
+                    response.Write("You must be signed in.");
+                    response.Flush();
+                    context.ApplicationInstance.CompleteRequest();
+                    return;
+                }
+                int moduleId;
+                int.TryParse(context.Request.QueryString["mid"], out moduleId);
+                ModuleInfo module = moduleId > 0 ? ModuleController.Instance.GetModule(moduleId, Null.NullInteger, false) : null;
+                if (module == null || !IncidentAccess.CanView(user, module.PortalID, module.TabModuleSettings))
+                {
+                    response.StatusCode = 403;
+                    response.Write("You do not have permission to view this file.");
                     response.Flush();
                     context.ApplicationInstance.CompleteRequest();
                     return;

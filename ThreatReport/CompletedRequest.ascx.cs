@@ -10,9 +10,7 @@
 ' 
 */
 
-using DotNetNuke.Abstractions;
 using DotNetNuke.Services.Exceptions;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.ThreatReport
@@ -39,14 +37,14 @@ namespace tjc.Modules.ThreatReport
 
                 if (!IsPostBack)
                 {
-                    // This control is shown on the same page as the incident list, so the plain
-                    // page URL is the list unless a ViewTabID setting points somewhere else.
-                    lnkReport.NavigateUrl = DependencyProvider.GetRequiredService<INavigationManager>().NavigateURL();
-                    if (Settings.Contains("ViewTabID") && !string.IsNullOrWhiteSpace(Settings["ViewTabID"].ToString()))
+                    // The list is a different module on another page (setting ViewTabID); only people who can
+                    // open it get the link.
+                    string listUrl = ResolveSettingUrl("ViewTabID");
+                    if (listUrl.Length > 0 && CanViewIncidents)
                     {
-                        lnkReport.NavigateUrl = Settings["ViewTabID"].ToString();
+                        lnkReport.NavigateUrl = listUrl;
+                        lnkReport.Visible = true;
                     }
-                    lnkReport.Visible = true;
                     if (!DotNetNuke.Common.Utilities.Null.IsNull(IncidentID))
                     {
                         string str = "<br />Your Incident identification number is <strong>" + IncidentID.ToString() + "</strong>.";

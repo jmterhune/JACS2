@@ -1,5 +1,8 @@
 ﻿using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Extensions;
+using DotNetNuke.Common.Utilities;
+using DotNetNuke.Entities.Modules;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -31,6 +34,16 @@ namespace tjc.Modules.ThreatReport
             if (!context.Request.IsAuthenticated)
             {
                 context.Response.Write(Json(0, "File Rejected. You must be Logged in to Upload Files"));
+                return;
+            }
+
+            // Submitting is limited to the Incident Viewer and Judges roles (names come from the module's settings).
+            int moduleId;
+            int.TryParse(context.Request.Params["moduleId"], out moduleId);
+            ModuleInfo module = moduleId > 0 ? ModuleController.Instance.GetModule(moduleId, Null.NullInteger, false) : null;
+            if (module == null || !IncidentAccess.CanSubmit(UserController.Instance.GetCurrentUserInfo(), module.PortalID, module.TabModuleSettings))
+            {
+                context.Response.Write(Json(0, "File Rejected. You do not have permission to submit incidents."));
                 return;
             }
 

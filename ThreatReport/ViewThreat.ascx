@@ -226,7 +226,7 @@
                     </ul>
                 </FooterTemplate>
                 <ItemTemplate>
-                    <li class="attachment"><a href='<%# TemplateSourceDirectory + "/attachment.ashx?id=" + Eval("AttachmentID") %>' target="_blank" rel="noopener"><%#Eval("FileName") %></a></li>
+                    <li class="attachment"><a href='<%# TemplateSourceDirectory + "/attachment.ashx?id=" + Eval("AttachmentID") + "&mid=" + ModuleId %>' target="_blank" rel="noopener"><%#Eval("FileName") %></a></li>
                 </ItemTemplate>
             </asp:Repeater>
         </div>

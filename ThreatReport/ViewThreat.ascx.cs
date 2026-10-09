@@ -51,14 +51,17 @@ namespace tjc.Modules.ThreatReport
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
-                    string href = _navigationManager.NavigateURL();
-                    if (Settings.Contains("ViewTabID"))
+                    if (!CanViewIncidents)
                     {
-                        string setting = Settings["ViewTabID"].ToString();
-                        if (setting.Length > 0)
-                        {
-                            href = setting;
-                        }
+                        DenyAccess("view incidents");
+                        return;
+                    }
+
+                    string href = _navigationManager.NavigateURL();
+                    string listUrl = ResolveSettingUrl("ViewTabID");
+                    if (listUrl.Length > 0)
+                    {
+                        href = listUrl;
                     }
                     lnkReturn.NavigateUrl = href;
 

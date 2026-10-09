@@ -10,7 +10,13 @@ namespace tjc.Modules.ThreatReport
     {
         protected global::System.Web.UI.WebControls.Label lblViewerRole;
         protected global::System.Web.UI.WebControls.TextBox txtViewerRole;
+        protected global::System.Web.UI.WebControls.Label lblJudgesRole;
+        protected global::System.Web.UI.WebControls.TextBox txtJudgesRole;
         protected global::System.Web.UI.WebControls.Label lblJud12Role;
         protected global::System.Web.UI.WebControls.TextBox txtJud12Role;
+        protected global::System.Web.UI.WebControls.Label lblViewTab;
+        protected global::System.Web.UI.WebControls.TextBox txtViewTab;
+        protected global::System.Web.UI.WebControls.Label lblEditTab;
+        protected global::System.Web.UI.WebControls.TextBox txtEditTab;
     }
 }

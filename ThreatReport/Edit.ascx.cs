@@ -76,6 +76,11 @@ namespace tjc.Modules.ThreatReport
             try
             {
                 //Implement your edit logic for your module
+                if (!CanSubmitIncidents)
+                {
+                    DenyAccess("submit incidents");
+                    return;
+                }
                 if (!Page.IsPostBack)
                 {
 
@@ -113,6 +118,7 @@ namespace tjc.Modules.ThreatReport
                 var t = new Incident();
                 var tc = new IncidentController(_hostSettings);
                 var pc = new PersonController(_hostSettings);
+                if (!CanSubmitIncidents) return;
                 DateTime incidentDate = DateTime.Now;
                 DateTime reportedDate = DateTime.Now;
                 DateTime reportedLeoDate = DateTime.Now;
@@ -179,7 +185,7 @@ namespace tjc.Modules.ThreatReport
                 // Recipients are the members of the Jud12 role on the jud12 site plus the members of the local
                 // role (both names are module settings), each address once. Only @jud12.flcourts.org addresses can open the intranet, so
                 // they get the link to the incident on this site; anyone else gets the text without it.
-                string href = EditUrl("id", incident.IncidentID.ToString(), "incident");
+                string href = ListIncidentUrl(incident.IncidentID);
                 var emails = new IncidentNotificationController(_hostSettings).GetNotificationEmails(PortalId, LocalNotificationRole, Jud12NotificationRole);
                 var internalEmails = emails.Where(e => e.EndsWith("@" + OrgEmailDomain, StringComparison.OrdinalIgnoreCase)).ToList();
                 var otherEmails = emails.Except(internalEmails, StringComparer.OrdinalIgnoreCase).ToList();
