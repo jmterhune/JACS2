@@ -315,7 +315,8 @@ namespace tjc.Modules.jacs.Services
                 // an attorney requestor and do not apply to a judge or JA.
                 var payload = new
                 {
-                    CaseNumber = caseNum,
+                    // Clerk API uses the Uniform Case Number (UCN): no dashes, uppercase.
+                    CaseNumber = ApiEndpointController.ToUniformCaseNumber(caseNum),
                     CaseId = (long?)null,
                     BarNumber = (string)null,
                     RequestorEmail = (string)null,

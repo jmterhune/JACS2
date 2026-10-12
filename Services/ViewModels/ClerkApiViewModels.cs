@@ -64,7 +64,7 @@ namespace tjc.Modules.jacs.Services.ViewModels
     /// Raw clerk JSON array element:
     /// {
     ///   "CaseId": 12345,
-    ///   "CaseNumber": "58-2025-SC-006484-XXXA-SC",
+    ///   "CaseNumber": "582025SC006484XXXASC",
     ///   "Notes": "case Notes",
     ///   "Petitioner": "Smith, John",
     ///   "PetitionerAttyBar": "0001587",
@@ -77,6 +77,9 @@ namespace tjc.Modules.jacs.Services.ViewModels
     /// }
     /// Property names are normalised to snake_case for consistency with the rest
     /// of the API.  The JsonProperty attributes map from the clerk's PascalCase.
+    /// CaseNumber is a Uniform Case Number (UCN): letters and digits only, uppercase,
+    /// no dashes (county code + year + case type + sequence + any defendant/division
+    /// suffixes) — the same shape the clerk receives from both JACS applications.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class ClerkCaseResult
@@ -159,17 +162,31 @@ namespace tjc.Modules.jacs.Services.ViewModels
         public ClerkCaseResult ToViewModel() => new ClerkCaseResult
         {
             ClerkCaseId = CaseId,
-            CaseNumber = CaseNumber,
-            Notes = Notes,
-            Petitioner = Petitioner,
-            PetitionerAttyBar = PetitionerAttyBar,
-            PetitionerEmail = PetitionerEmail,
-            Respondent = Respondent,
-            RespondentAttyBar = RespondentAttyBar,
-            RespondentEmail = RespondentEmail,
-            Telephone = Telephone,
+            CaseNumber = Scrub(CaseNumber),
+            Notes = Scrub(Notes),
+            Petitioner = Scrub(Petitioner),
+            PetitionerAttyBar = Scrub(PetitionerAttyBar),
+            PetitionerEmail = Scrub(PetitionerEmail),
+            Respondent = Scrub(Respondent),
+            RespondentAttyBar = Scrub(RespondentAttyBar),
+            RespondentEmail = Scrub(RespondentEmail),
+            Telephone = Scrub(Telephone),
             Status = Status
         };
+
+        /// <summary>
+        /// Some upstream clerk rows carry the literal string "NULL" instead of
+        /// a real SQL NULL. Normalise that to an empty string here so every
+        /// downstream consumer (UI, exports, logs) sees clean data without
+        /// needing its own defensive check.
+        /// </summary>
+        private static string Scrub(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+            return string.Equals(value.Trim(), "NULL", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : value;
+        }
     }
     /// <summary>
     /// Request body for SearchCaseNumberDetails — typed model required so DNN's

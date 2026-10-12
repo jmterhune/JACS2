@@ -192,8 +192,9 @@ namespace tjc.Modules.jacs.Components
             catch (Exception ex)
             {
                 // A thrown call (DNS, TLS, timeout) still gets a row, then propagates
-                // to the caller exactly as it did before.
-                errorText = ex.Message;
+                // to the caller exactly as it did before. The chain is flattened so
+                // the row names the cause rather than just "an error occurred".
+                errorText = DescribeException(ex);
                 throw;
             }
             finally
@@ -236,6 +237,33 @@ namespace tjc.Modules.jacs.Components
         /// history, so logging it verbatim would leave usable tokens lying in a table
         /// far more people can read than can read the counties row it came from.
         /// </summary>
+        /// <summary>
+        /// Flattens an exception chain to one line for a log row or an admin-facing
+        /// message. A transport failure arrives as "An error occurred while sending
+        /// the request", which says nothing about the cause; the cause — an
+        /// unresolved host, a refused connection, a TLS failure — sits in the
+        /// innermost exception. Reporting only the outer message hides the single
+        /// detail worth having, so the innermost is appended when it differs.
+        ///
+        /// On 2026-10-05 this was the difference between "auth failed" and "the
+        /// remote name could not be resolved", which named the real problem: the
+        /// web server had no DNS for the county's endpoint, so no request was ever
+        /// sent and the credentials were never in question.
+        /// </summary>
+        internal static string DescribeException(Exception ex)
+        {
+            if (ex == null)
+                return null;
+
+            var innermost = ex;
+            while (innermost.InnerException != null)
+                innermost = innermost.InnerException;
+
+            return string.Equals(innermost.Message, ex.Message, StringComparison.Ordinal)
+                ? ex.Message
+                : $"{ex.Message} — {innermost.Message}";
+        }
+
         private static string RedactBearerTokens(string body, string issuedToken)
         {
             if (string.IsNullOrEmpty(body))
@@ -547,6 +575,26 @@ namespace tjc.Modules.jacs.Components
         }
 
         /// <summary>
+        /// The Uniform Case Number (UCN) as the clerk expects it: letters and digits
+        /// only, uppercase, with any dashes/hyphens stripped (county code + year + case
+        /// type + sequence, plus any defendant/division suffixes). The public JacsAtty
+        /// application normalises the same way, so the clerk receives one shape from both.
+        /// Used only at the clerk API boundary; the local/display format keeps its dashes.
+        /// </summary>
+        internal static string ToUniformCaseNumber(string caseNumber)
+        {
+            if (string.IsNullOrWhiteSpace(caseNumber)) return string.Empty;
+
+            var builder = new System.Text.StringBuilder(caseNumber.Length);
+            foreach (var character in caseNumber)
+            {
+                if (char.IsLetterOrDigit(character)) builder.Append(character);
+            }
+
+            return builder.Length == 0 ? caseNumber.Trim() : builder.ToString().ToUpperInvariant();
+        }
+
+        /// <summary>
         /// The UDF object as JSON null when it carries nothing, rather than an empty
         /// "UDF": {}. Same reasoning as <see cref="NullIfBlank"/>.
         /// </summary>
@@ -768,7 +816,7 @@ namespace tjc.Modules.jacs.Components
             }
             catch (Exception ex)
             {
-                errorText = ex.Message;
+                errorText = DescribeException(ex);
                 Exceptions.LogException(new Exception($"Error in CallExternalApi → URL: {api.end_point_url}", ex));
                 throw;
             }
