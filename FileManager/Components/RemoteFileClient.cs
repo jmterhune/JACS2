@@ -96,7 +96,11 @@ namespace tjc.Modules.FileManager.Components
             using (HttpRequestMessage request = Build("list", share, null))
             using (HttpResponseMessage response = Http.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult())
             {
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(Describe(request, response));
+                }
+
                 string json = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
                 RemoteListing listing = JsonConvert.DeserializeObject<RemoteListing>(json) ?? new RemoteListing();
                 HttpRuntime.Cache.Insert(cacheKey, listing, null, DateTime.UtcNow.AddSeconds(ListingCacheSeconds),
@@ -115,6 +119,22 @@ namespace tjc.Modules.FileManager.Components
             {
                 return Http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false).GetAwaiter().GetResult();
             }
+        }
+
+        /// <summary>
+        /// Says what answered and how, for the log: the URL called (no signature headers, no secret),
+        /// the status, and the response headers that identify the responding server. A 404 from the
+        /// real API, from the wrong host, or from a proxy in front of it all look alike without this.
+        /// </summary>
+        public static string Describe(HttpRequestMessage request, HttpResponseMessage response)
+        {
+            string server = response.Headers.Server.ToString();
+            string via = string.Join(",", response.Headers.Via);
+            string contentType = response.Content != null && response.Content.Headers.ContentType != null
+                ? response.Content.Headers.ContentType.ToString() : "none";
+            return string.Format("FileManager remote call failed: {0} {1} from {2} (Server: {3}; Via: {4}; Content-Type: {5})",
+                (int)response.StatusCode, response.ReasonPhrase, request.RequestUri.GetLeftPart(UriPartial.Path) + request.RequestUri.Query,
+                server.Length == 0 ? "none" : server, via.Length == 0 ? "none" : via, contentType);
         }
 
         private HttpRequestMessage Build(string action, string share, string path)
