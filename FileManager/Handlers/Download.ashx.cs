@@ -3,12 +3,14 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Logging;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Portals;
 using DotNetNuke.Entities.Users;
-using DotNetNuke.Instrumentation;
 using DotNetNuke.Security.Permissions;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Net.Mime;
@@ -25,7 +27,6 @@ namespace tjc.Modules.FileManager.Handlers
     /// </summary>
     public class Download : IHttpHandler
     {
-        private static readonly ILog Logger = LoggerSource.Instance.GetLogger(typeof(Download));
         private const int BufferSize = 81920;
 
         public void ProcessRequest(HttpContext context)
@@ -52,22 +53,25 @@ namespace tjc.Modules.FileManager.Handlers
                 return;
             }
 
+            UserInfo user = UserController.Instance.GetCurrentUserInfo();
+            string share = Convert.ToString(module.ModuleSettings["ShareKey"]);
+            string detail = string.Format("user={0} module={1} share={2} path={3}", user.Username ?? "(anonymous)", moduleId, share, path);
+            IEventLogger eventLogger = context.GetScope().ServiceProvider.GetRequiredService<IEventLogger>();
+
             if (!ModulePermissionController.CanViewModule(module))
             {
+                // Audit refusals too: these files are sensitive, so attempts matter.
+                eventLogger.AddLog("FileManager download denied", detail, portal, user.UserID, EventLogType.ADMIN_ALERT);
                 Fail(response, 403);
                 return;
             }
 
-            string share = Convert.ToString(module.ModuleSettings["ShareKey"]);
             var client = new RemoteFileClient();
             if (string.IsNullOrWhiteSpace(share) || !client.IsConfigured)
             {
                 Fail(response, 404);
                 return;
             }
-
-            UserInfo user = UserController.Instance.GetCurrentUserInfo();
-            Logger.InfoFormat("FileManager download: user={0} module={1} share={2} path={3}", user.Username, moduleId, share, path);
 
             try
             {
@@ -79,6 +83,8 @@ namespace tjc.Modules.FileManager.Handlers
                         return;
                     }
 
+                    // Admin Logs, not log4net: the site's log4net level drops anything below Error.
+                    eventLogger.AddLog("FileManager download", detail, portal, user.UserID, EventLogType.ADMIN_ALERT);
                     Stream(remote, path, response);
                 }
             }
