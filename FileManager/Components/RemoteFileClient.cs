@@ -24,6 +24,8 @@ namespace tjc.Modules.FileManager.Components
 
     public class RemoteListing
     {
+        /// <summary>The share folder's own name. Older public builds don't send it.</summary>
+        public string Root { get; set; }
         public List<string> Directories { get; set; } = new List<string>();
         public List<RemoteFileEntry> Files { get; set; } = new List<RemoteFileEntry>();
     }

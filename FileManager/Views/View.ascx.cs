@@ -22,6 +22,7 @@ namespace tjc.Modules.FileManager.Views
     public partial class View : PortalModuleBase, IActionable
     {
         private const string DownloadHandler = "~/DesktopModules/tjc.modules/FileManager/Handlers/Download.ashx";
+        private const string ImagesPath = "~/DesktopModules/tjc.modules/FileManager/images/";
 
         public ModuleActionCollection ModuleActions
         {
@@ -63,7 +64,11 @@ namespace tjc.Modules.FileManager.Views
                     return;
                 }
 
-                BuildTree(listing);
+                // The setting overrides the folder's own name; the share key is the last resort.
+                string rootLabel = Convert.ToString(Settings["RootLabel"]);
+                if (string.IsNullOrWhiteSpace(rootLabel)) rootLabel = listing.Root;
+                if (string.IsNullOrWhiteSpace(rootLabel)) rootLabel = share;
+                BuildTree(listing, rootLabel.Trim());
             }
             catch (Exception exc)
             {
@@ -77,41 +82,66 @@ namespace tjc.Modules.FileManager.Views
             lblMessage.Visible = true;
         }
 
-        private void BuildTree(RemoteListing listing)
+        private void BuildTree(RemoteListing listing, string rootLabel)
         {
+            string folderIcon = ResolveUrl(ImagesPath + "folder.gif");
+
+            // Like the public module: one root folder, open, with everything else closed beneath it.
+            var root = new TreeNode(rootLabel) { SelectAction = TreeNodeSelectAction.Expand, ImageUrl = folderIcon, Expanded = true };
+            tvFiles.Nodes.Add(root);
+
             // The API lists a folder before its contents, so a folder's parent node already exists.
             var folderNodes = new Dictionary<string, TreeNode>(StringComparer.OrdinalIgnoreCase);
 
             foreach (string folder in listing.Directories)
             {
-                var node = new TreeNode(LastSegment(folder)) { SelectAction = TreeNodeSelectAction.Expand };
+                var node = new TreeNode(LastSegment(folder))
+                {
+                    SelectAction = TreeNodeSelectAction.Expand,
+                    ImageUrl = folderIcon,
+                    Expanded = false
+                };
                 folderNodes[folder] = node;
-                AddNode(ParentOf(folder), folderNodes, node);
+                ParentNode(ParentOf(folder), folderNodes, root).ChildNodes.Add(node);
             }
 
             string handler = ResolveUrl(DownloadHandler);
+            var iconByExtension = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (RemoteFileEntry file in listing.Files)
             {
-                var node = new TreeNode(LastSegment(file.Path))
+                string name = LastSegment(file.Path);
+                var node = new TreeNode(name)
                 {
                     NavigateUrl = handler + "?tabid=" + TabId + "&mid=" + ModuleId + "&p=" + Server.UrlEncode(file.Path),
+                    ImageUrl = FileIcon(name, iconByExtension),
                     ToolTip = string.Format("{0:N0} KB, modified {1:d}", Math.Max(1, (file.Size + 1023) / 1024), file.Modified.ToLocalTime())
                 };
-                AddNode(ParentOf(file.Path), folderNodes, node);
+                ParentNode(ParentOf(file.Path), folderNodes, root).ChildNodes.Add(node);
             }
         }
 
-        private void AddNode(string parentPath, Dictionary<string, TreeNode> folderNodes, TreeNode node)
+        private static TreeNode ParentNode(string parentPath, Dictionary<string, TreeNode> folderNodes, TreeNode root)
         {
             TreeNode parent;
-            if (parentPath.Length > 0 && folderNodes.TryGetValue(parentPath, out parent))
+            return parentPath.Length > 0 && folderNodes.TryGetValue(parentPath, out parent) ? parent : root;
+        }
+
+        /// <summary>The module's icon for the file's extension (e.g. images/icons/pdf.gif), or the generic file icon.</summary>
+        private string FileIcon(string fileName, Dictionary<string, string> cache)
+        {
+            string ext = System.IO.Path.GetExtension(fileName).TrimStart('.');
+            string url;
+            if (cache.TryGetValue(ext, out url))
             {
-                parent.ChildNodes.Add(node);
+                return url;
             }
-            else
-            {
-                tvFiles.Nodes.Add(node);
-            }
+
+            string icon = ImagesPath + "icons/" + ext.ToLowerInvariant() + ".gif";
+            url = ext.Length > 0 && ext.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) < 0 && System.IO.File.Exists(Server.MapPath(icon))
+                ? ResolveUrl(icon)
+                : ResolveUrl(ImagesPath + "icons/file.gif");
+            cache[ext] = url;
+            return url;
         }
 
         private static string ParentOf(string path)

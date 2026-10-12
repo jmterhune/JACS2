@@ -130,6 +130,7 @@
     <Content Include="Views\Settings.ascx" />
     <Content Include="Handlers\Download.ashx" />
     <Content Include="module.css" />
+    <Content Include="images\**\*.gif" />
     <Content Include="License.txt" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="FileManager.dnn" />
@@ -163,6 +164,7 @@
       <DeployContent Include="Views\*.ascx" />
       <DeployContent Include="Handlers\*.ashx" />
       <DeployContent Include="*.css" />
+      <DeployContent Include="images\**\*.gif" />
       <DeployContent Include="$(DNNFileName).dnn" />
       <DeployContent Include="License.txt" />
       <DeployContent Include="ReleaseNotes.txt" />

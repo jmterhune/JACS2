@@ -10,6 +10,10 @@
             ValidationExpression="^[A-Za-z0-9_\-]+$" ErrorMessage="Use letters, numbers, - and _ only." CssClass="dnnFormMessage dnnFormError" Display="Dynamic" />
     </div>
     <div class="dnnFormItem">
+        <dnn:Label ID="lblRootLabel" runat="server" Text="Root folder name" HelpText="Shown as the top folder in the tree. Leave blank to use the shared folder's own name." />
+        <asp:TextBox ID="txtRootLabel" runat="server" MaxLength="100" />
+    </div>
+    <div class="dnnFormItem">
         <asp:Label ID="lblStatus" runat="server" CssClass="dnnFormMessage" />
     </div>
 </fieldset>

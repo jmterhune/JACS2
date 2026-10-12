@@ -20,6 +20,8 @@ namespace tjc.Modules.FileManager.Views
 
                 if (Settings.Contains("ShareKey"))
                     txtShareKey.Text = Settings["ShareKey"].ToString();
+                if (Settings.Contains("RootLabel"))
+                    txtRootLabel.Text = Settings["RootLabel"].ToString();
 
                 // Report only whether the connection to the public site is configured, never its values.
                 lblStatus.Text = new RemoteFileClient().IsConfigured
@@ -40,6 +42,7 @@ namespace tjc.Modules.FileManager.Views
                 if (!Page.IsValid) return;
 
                 ModuleController.Instance.UpdateModuleSetting(ModuleId, "ShareKey", txtShareKey.Text.Trim());
+                ModuleController.Instance.UpdateModuleSetting(ModuleId, "RootLabel", txtRootLabel.Text.Trim());
             }
             catch (Exception exc)
             {

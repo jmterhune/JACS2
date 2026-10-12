@@ -28,6 +28,16 @@ namespace tjc.Modules.FileManager.Views {
         protected global::System.Web.UI.WebControls.RegularExpressionValidator valShareKey;
 
         /// <summary>
+        /// lblRootLabel control.
+        /// </summary>
+        protected global::System.Web.UI.UserControl lblRootLabel;
+
+        /// <summary>
+        /// txtRootLabel control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtRootLabel;
+
+        /// <summary>
         /// lblStatus control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Label lblStatus;
