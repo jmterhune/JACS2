@@ -56,6 +56,10 @@ To add an event, use the Court's Calendar tool. </div>
                     <li class="nav-item">
                         <a href="#" id="removeFilters" class="nav-link" style="display:none"><i class="fa fa-eraser"></i>Remove Filters</a>
                     </li>
+                    <li class="nav-item filter-search-item">
+                        <label for="eventSearch">Search:</label>
+                        <input type="search" id="eventSearch" class="form-control form-control-sm filter-search" />
+                    </li>
                 </ul>
             </div>
         </nav>

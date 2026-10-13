@@ -78,6 +78,11 @@ class EventController {
         this.table = $("#tblEvent").DataTable({
             serverSide: true,
             processing: true,
+            // Replace the default "Processing..." text with a Bootstrap progress
+            // bar shown whenever the table loads — search, filter, sort or paging.
+            language: {
+                processing: '<div class="progress jacs-loading" role="progressbar" aria-label="Loading results"><div class="progress-bar progress-bar-striped progress-bar-animated"></div></div>'
+            },
             ajax: {
                 url: listUrl,
                 type: "GET",
@@ -167,7 +172,7 @@ class EventController {
     }
 
     toggleRemoveFilters() {
-        const hasFilter = !!$("#courtFilter").val() || !!$("#courtroomFilter").val() || !!$("#statusFilter").val();
+        const hasFilter = !!$("#courtFilter").val() || !!$("#courtroomFilter").val() || !!$("#statusFilter").val() || !!$("#eventSearch").val();
         $("#removeFilters").toggle(hasFilter);
     }
 
@@ -177,7 +182,20 @@ class EventController {
             this.toggleRemoveFilters();
         });
 
+        // Server-side search wired to the search box that now sits inline with the
+        // Court/Courtroom/Status filters; debounced so we don't fire on every keystroke.
+        let searchTimer;
+        $("#eventSearch").on("input", () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                this.table.search($("#eventSearch").val()).draw();
+                this.toggleRemoveFilters();
+            }, 400);
+        });
+
         $("#removeFilters").on("click", () => {
+            $("#eventSearch").val("");
+            this.table.search("");
             $("#courtFilter").val("").trigger("change");
             $("#courtroomFilter").val("").trigger("change");
             $("#statusFilter").val("").trigger("change");

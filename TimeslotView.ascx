@@ -43,6 +43,10 @@
                     <li class="nav-item">
                         <a href="#" id="removeFilters" class="nav-link" style="display: none"><i class="fa fa-eraser"></i>Remove Filters</a>
                     </li>
+                    <li class="nav-item filter-search-item">
+                        <label for="timeslotSearch">Search:</label>
+                        <input type="search" id="timeslotSearch" class="form-control form-control-sm filter-search" />
+                    </li>
                 </ul>
             </div>
         </nav>

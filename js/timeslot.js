@@ -154,6 +154,8 @@ class TimeslotController {
             pageLength: this.pageSize,
             lengthMenu: [25, 50, 100, 200, 300],
             layout: {
+                topStart: null,
+                topEnd: null,
                 bottomStart: {
                     pageLength: {
                         menu: [25, 50, 100, 200, 300]
@@ -167,7 +169,7 @@ class TimeslotController {
     }
 
     toggleRemoveFilters() {
-        const hasFilter = !!$("#courtFilter").val() || !!this.startDate || !!this.endDate;
+        const hasFilter = !!$("#courtFilter").val() || !!this.startDate || !!this.endDate || !!$("#timeslotSearch").val();
         $("#removeFilters").toggle(hasFilter);
     }
 
@@ -177,9 +179,22 @@ class TimeslotController {
             this.toggleRemoveFilters();
         });
 
+        // Server-side search wired to the search box on the filter line (mirrors
+        // the Events list); debounced to avoid a request on every keystroke.
+        let searchTimer;
+        $("#timeslotSearch").on("input", () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                this.table.search($("#timeslotSearch").val()).draw();
+                this.toggleRemoveFilters();
+            }, 400);
+        });
+
         $("#removeFilters").on("click", () => {
             $("#courtFilter").val("").trigger("change");
             $('#dateRange').val('');
+            $("#timeslotSearch").val("");
+            this.table.search("");
             this.startDate = '';
             this.endDate = '';
             this.toggleRemoveFilters();
