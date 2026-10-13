@@ -102,18 +102,11 @@ namespace tjc.Modules.jacs.Handlers
             desc.AppendLine($"Plaintiff Email: {evt.plaintiff_email}");
             desc.AppendLine($"Defendant Email: {evt.defendant_email}");
 
-            if (!string.IsNullOrEmpty(evt.template))
+            // UserDefinedFieldTemplate.Parse understands both the current
+            // {"userDefinedFields":[...]} format and the legacy composite-key format.
+            foreach (var entry in UserDefinedFieldTemplate.Parse(evt.template))
             {
-                try
-                {
-                    var customFields = JsonConvert.DeserializeObject<Dictionary<string, string>>(evt.template);
-                    foreach (var kvp in customFields)
-                    {
-                        string key = kvp.Key.Split(new[] { "_|" }, StringSplitOptions.None)[0];
-                        desc.AppendLine($"{key}: {kvp.Value}");
-                    }
-                }
-                catch { }
+                desc.AppendLine($"{entry.FieldName}: {entry.Value}");
             }
 
             desc.AppendLine($"Notes: {evt.notes}");
