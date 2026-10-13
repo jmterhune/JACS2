@@ -39,6 +39,9 @@ namespace tjc.Modules.jacs.Components
         Unknown = 0,
         [Description("JACS")]
         JACS = 1,
+        // The public-site JacsAtty module and SubscriberForms' clerk user-key lookups.
+        [Description("JACS Attorney")]
+        JacsAtty = 2,
         // Add additional applications here as they begin using the api_log table.
     }
 
