@@ -27,7 +27,6 @@
                     <th>Required</th>
                     <th>Yes Answer Required</th>
                     <th>Display on Docket</th>
-                    <th>Display on Schedule</th>
                     <th>Use in Attorney Scheduling</th>
                     <th></th>
                 </tr>
@@ -78,10 +77,6 @@
                         <tr>
                             <td><strong>Display on Docket:</strong></td>
                             <td><span id="displayOnDocket"></span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Display on Schedule:</strong></td>
-                            <td><span id="displayOnSchedule"></span></td>
                         </tr>
                         <tr>
                             <td><strong>Use in Attorney Scheduling:</strong></td>
@@ -137,7 +132,7 @@
                             <div class="col-md-6">
                                 <label>Alignment</label>
                                 <select id="edit_alignment" class="form-control">
-                                    <option value="left">Left</option>
+                                    <option selected="selected" value="left">Left</option>
                                     <option value="center">Center</option>
                                     <option value="right">Right</option>
                                 </select>
@@ -164,10 +159,6 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>Display on Schedule</label>
-                                <input type="checkbox" id="edit_displayOnSchedule">
-                            </div>
                             <div class="col-md-4">
                                 <label>Use in Attorney Scheduling</label>
                                 <input type="checkbox" id="edit_useInAttorneyScheduling">
