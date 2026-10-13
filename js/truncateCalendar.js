@@ -80,10 +80,33 @@ class CourtTruncateController {
                                 window.location.href = this.cancelUrl;
                             });
                         } else {
+                            // Build a per-event failure list (HTML) when the
+                            // server returned any. Hearings that the clerk
+                            // refused to cancel stay scheduled, so the user
+                            // needs to know exactly which ones to retry.
+                            const failures = Array.isArray(response.failures) ? response.failures : [];
+                            const escape = s => $('<div>').text(s == null ? '' : s).html();
+                            let html = '<p>' + escape(response.message || 'One or more hearings could not be cancelled.') + '</p>';
+                            if (failures.length) {
+                                html += '<div class="text-start mt-2" style="max-height:300px;overflow:auto;">';
+                                html += '<table class="table table-sm table-striped mb-0"><thead><tr>'
+                                    + '<th>Case</th><th>Event ID</th><th>Clerk ID</th><th>Error</th>'
+                                    + '</tr></thead><tbody>';
+                                failures.forEach(f => {
+                                    html += '<tr>'
+                                        + '<td>' + escape(f.case_num) + '</td>'
+                                        + '<td>' + escape(f.event_id) + '</td>'
+                                        + '<td>' + escape(f.clerk_event_id) + '</td>'
+                                        + '<td>' + escape(f.error) + '</td>'
+                                        + '</tr>';
+                                });
+                                html += '</tbody></table></div>';
+                            }
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error',
-                                text: response.message
+                                title: 'Truncate finished with errors',
+                                html: html,
+                                width: failures.length ? 700 : undefined
                             });
                         }
                     },

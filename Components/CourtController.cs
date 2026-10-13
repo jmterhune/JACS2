@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using tjc.Modules.jacs.Services.ViewModels;
 
 namespace tjc.Modules.jacs.Components
@@ -332,7 +333,20 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteScalar<DateTime?>(System.Data.CommandType.Text, query, courtId);
             }
         }
-        public TruncateResponse TruncateTimeslots(long courtId, DateTime startDate, string filter)
+        /// <summary>
+        /// Truncates the court calendar from <paramref name="startDate"/> forward,
+        /// optionally cancelling each affected event on the clerk side first.
+        /// For filters that retain events ("hearings" / "both") the events are
+        /// untouched. For filters that retain blocked timeslots ("templates" /
+        /// "both") template timeslots and their events are processed.
+        ///
+        /// On clerk-cancel failure for an event we leave both the event AND
+        /// its timeslot in place so the user can retry — this matches the
+        /// "leave local status unchanged" recovery policy. Per-event failures
+        /// are collected into the returned TruncateResponse so the UI can
+        /// surface a list of hearings that still need attention.
+        /// </summary>
+        public async Task<TruncateResponse> TruncateTimeslots(long courtId, DateTime startDate, string filter, int? userIdForLog = null)
         {
             var timeslotSQL = "select [timeslots].* from [timeslots] inner join [court_timeslots] on [court_timeslots].[timeslot_id] = [timeslots].[id] where [court_timeslots].[court_id] = @0 and [start] >= @1";
             bool handleEvents = false;
@@ -357,33 +371,102 @@ namespace tjc.Modules.jacs.Components
                 default:
                     break;
             }
-            bool success = true;
-            string error = string.Empty;
+
+            var failures = new List<CancelFailureItem>();
+            int cancelledCount = 0;
+            int deletedTimeslotCount = 0;
+
+            // Materialise the timeslot list up front so we're not holding a
+            // DAL2 IDataContext open across the async clerk calls below.
+            List<Timeslot> timeslots;
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))
             {
-                var timeslots = ctx.ExecuteQuery<Timeslot>(CommandType.Text, timeslotSQL, courtId, startDate);
-                foreach (var timeslot in timeslots)
+                timeslots = ctx.ExecuteQuery<Timeslot>(CommandType.Text, timeslotSQL, courtId, startDate).ToList();
+            }
+
+            ClerkEventService.ClerkContext clerkCtx = null;
+            ClerkEventService clerkSvc = null;
+            if (handleEvents)
+            {
+                clerkSvc = new ClerkEventService();
+                try
                 {
-                    if (handleEvents)
+                    clerkCtx = await clerkSvc.ResolveContextByCourtAsync(courtId);
+                }
+                catch (Exception cfgEx)
+                {
+                    Exceptions.LogException(cfgEx);
+                    return new TruncateResponse
                     {
-                        var ctlEvent = new EventController();
-                        var events = ctlEvent.GetEventsByTimeslot(timeslot.id);
-                        foreach (var ev in events)
-                        {
-                            // in clerk interface, when truncating timeslots, we cancel events then delete the timeslot
-                            ev.status_id = 1;// cancelled
-                            ev.updated_at = DateTime.Now;
-                            ev.cancellation_reason = "Calendar Truncated.";
-                            // if(!ClerkAPI.CancelEvent(ev.clerkeventId){success=false; error+="Clerk event number " + ev.clerkeventId + " could not be cancelled" + environment.newline; }
-                        }
-                    }
-                    var ctl = new TimeslotController();
-                    timeslot.deleted_at = DateTime.Now;
-                    timeslot.updated_at = DateTime.Now;
-                    ctl.UpdateTimeslot(timeslot);
+                        Success = false,
+                        Error = $"Clerk API configuration error: {cfgEx.Message}. No timeslots were truncated."
+                    };
                 }
             }
-            return new TruncateResponse { Success = success, Error = error };
+
+            var eventCtl = new EventController();
+            var tsCtl = new TimeslotController();
+            const string truncateReason = "Calendar truncated.";
+
+            foreach (var timeslot in timeslots)
+            {
+                bool timeslotSafeToDelete = true;
+
+                if (handleEvents)
+                {
+                    var events = eventCtl.GetEventsByTimeslot(timeslot.id).ToList();
+                    foreach (var ev in events)
+                    {
+                        var result = await clerkSvc.CancelEventAsync(clerkCtx, ev, truncateReason, userIdForLog);
+                        if (result.Success)
+                        {
+                            cancelledCount++;
+                        }
+                        else
+                        {
+                            timeslotSafeToDelete = false;
+                            failures.Add(new CancelFailureItem
+                            {
+                                EventId = ev.id,
+                                ClerkEventId = ev.clerk_event_id,
+                                CaseNum = ev.case_num,
+                                Error = result.Error ?? "Unknown clerk error."
+                            });
+                        }
+                    }
+                }
+
+                if (timeslotSafeToDelete)
+                {
+                    timeslot.deleted_at = DateTime.Now;
+                    timeslot.updated_at = DateTime.Now;
+                    tsCtl.UpdateTimeslot(timeslot);
+                    deletedTimeslotCount++;
+                }
+            }
+
+            string summary;
+            if (failures.Count == 0)
+            {
+                summary = handleEvents
+                    ? $"Truncate complete. {cancelledCount} hearing(s) cancelled, {deletedTimeslotCount} timeslot(s) removed."
+                    : $"Truncate complete. {deletedTimeslotCount} timeslot(s) removed.";
+            }
+            else
+            {
+                summary = $"Truncate finished with {failures.Count} hearing(s) that could not be cancelled on the clerk side. "
+                        + $"{cancelledCount} hearing(s) were cancelled and {deletedTimeslotCount} timeslot(s) were removed. "
+                        + "The failed hearings are still scheduled — please retry or contact the clerk.";
+            }
+
+            return new TruncateResponse
+            {
+                Success = failures.Count == 0,
+                Error = summary,
+                Failures = failures,
+                CancelledCount = cancelledCount,
+                DeletedTimeslotCount = deletedTimeslotCount,
+            };
         }
         public ExtendResponse AutoExtendCalendar(ExtendRequest request, Court court)
         {

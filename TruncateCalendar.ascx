@@ -25,7 +25,7 @@
                             <asp:Literal ID="ltLastTimeslot" runat="server" ClientIDMode="Static" />
                         </div>
                         <div class="col-auto">
-                            <label for="truncateDate">Truncate Date</label>
+                            <label for="txtTruncateDate">Truncate Date</label>
                             <asp:TextBox ID="txtTruncateDate" runat="server" CssClass="form-control datepicker" required="required" ClientIDMode="Static" />
                         </div>
                     </div>

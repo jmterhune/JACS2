@@ -106,6 +106,14 @@ namespace tjc.Modules.jacs.Components
     {
         public bool Success { get; set; }
         public string Error { get; set; }
+        /// <summary>
+        /// Per-event clerk-cancel failures. Empty when every affected event
+        /// was successfully cancelled on the clerk (or when the filter didn't
+        /// touch events at all).
+        /// </summary>
+        public List<CancelFailureItem> Failures { get; set; } = new List<CancelFailureItem>();
+        public int CancelledCount { get; set; }
+        public int DeletedTimeslotCount { get; set; }
     }
     public class TruncateRequest
     {

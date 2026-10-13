@@ -494,18 +494,31 @@ namespace tjc.Modules.jacs.Services
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public HttpResponseMessage TruncateTimeslots(TruncateRequest request)
+        public async System.Threading.Tasks.Task<HttpResponseMessage> TruncateTimeslots(TruncateRequest request)
         {
             try
             {
                 var courtCtl = new CourtController();
-                var response = courtCtl.TruncateTimeslots(request.CourtId, request.StartDate, request.Filter);
+                int? userIdForLog = UserInfo != null && UserInfo.UserID > 0 ? (int?)UserInfo.UserID : null;
+                var response = await courtCtl.TruncateTimeslots(request.CourtId, request.StartDate, request.Filter, userIdForLog);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = response.Success, message = response.Error });
+                // Return the structured failure list alongside the summary so
+                // truncateCalendar.js can render a per-event list when the
+                // clerk rejected one or more cancels.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = response.Success,
+                    message = response.Error,
+                    failures = response.Failures,
+                    cancelled_count = response.CancelledCount,
+                    deleted_timeslot_count = response.DeletedTimeslotCount,
+                });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    new { success = false, message = ex.Message });
             }
         }
 
