@@ -377,6 +377,52 @@ namespace tjc.Modules.jacs.Components
                 return ctx.ExecuteQuery<Event>(System.Data.CommandType.Text, query, timeslotId);
             }
         }
+
+        /// <summary>
+        /// Batch-fetches events for a set of timeslot ids and returns them grouped
+        /// by timeslot_id. Used by the docket print handler to avoid one
+        /// GetEventsByTimeslot call per timeslot (the N+1 it replaces was the
+        /// biggest single contributor to docket print latency). Two queries:
+        /// one for the timeslot_events linkage, one for the events themselves.
+        /// </summary>
+        public Dictionary<long, List<Event>> GetEventsByTimeslotIds(IEnumerable<long> timeslotIds)
+        {
+            var ids = timeslotIds?.Distinct().ToList() ?? new List<long>();
+            var result = new Dictionary<long, List<Event>>();
+            foreach (var id in ids) result[id] = new List<Event>();
+            if (ids.Count == 0) return result;
+
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                var links = ctx.ExecuteQuery<TimeslotEventLink>(
+                    System.Data.CommandType.Text,
+                    "SELECT event_id, timeslot_id FROM [timeslot_events] WHERE timeslot_id IN (@0) AND [deleted_at] IS NULL",
+                    ids).ToList();
+
+                if (links.Count == 0) return result;
+
+                var eventIds = links.Select(l => l.event_id).Distinct().ToList();
+                var events = ctx.ExecuteQuery<Event>(
+                    System.Data.CommandType.Text,
+                    "SELECT * FROM [events] WHERE id IN (@0)",
+                    eventIds).ToDictionary(e => e.id);
+
+                foreach (var link in links)
+                {
+                    if (events.TryGetValue(link.event_id, out var evt))
+                    {
+                        result[link.timeslot_id].Add(evt);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private class TimeslotEventLink
+        {
+            public long event_id { get; set; }
+            public long timeslot_id { get; set; }
+        }
         public IEnumerable<EventListItem> GetEventListItemsByTimeslot(long timeslotId)
         {
             using (IDataContext ctx = DataContext.Instance(CONN_JACS))

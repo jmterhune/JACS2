@@ -68,38 +68,87 @@ namespace tjc.Modules.jacs.Handlers
 
                 var hearings = new Dictionary<DateTime, List<Dictionary<string, object>>>();
                 var period = toDate.HasValue ? GetDateRange(fromDate, toDate.Value) : new List<DateTime> { fromDate };
+
+                // ---- Bulk preload (eliminates the N+1 patterns that made the
+                // docket print DB-bound: one timeslot fetch + one event fetch +
+                // pre-indexed motion/attorney/courtroom/UDF lookups). ----
                 var holidayCtl = new HolidayController();
                 var timeslotCtl = new TimeslotController();
                 var eventCtl = new EventController();
-                var courtTimeslotCtl = new CourtTimeslotController();
                 var attorneyCtl = new AttorneyController();
+                var motionCtl = new MotionController();
+                var courtroomCtl = new CourtroomController();
+                var userDefinedFieldsCtl = new UserDefinedFieldController();
+
+                DateTime rangeStart = fromDate.Date;
+                DateTime rangeEnd = (toDate ?? fromDate).Date.AddDays(1);
+
+                // 1. All timeslots for the court within the date range, in one query.
+                var allTimeslots = timeslotCtl.GetTimeslotsByCourtId(courtId, rangeStart, rangeEnd).ToList();
+                if (courtroomId != 0)
+                {
+                    allTimeslots = allTimeslots.Where(ts => ts.courtroom_id == courtroomId).ToList();
+                }
+
+                // 1b. Holidays once, indexed by date.
+                var holidayByDate = holidayCtl.GetHolidays()
+                    .GroupBy(h => h.date.Date)
+                    .ToDictionary(g => g.Key, g => g.First());
+
+                // 2. Batched events for every timeslot in scope, grouped by timeslot id.
+                var eventsByTimeslot = eventCtl.GetEventsByTimeslotIds(allTimeslots.Select(ts => ts.id));
+
+                // 3. Pre-index motions / attorneys / courtrooms for the events + timeslots.
+                var allEvents = eventsByTimeslot.SelectMany(kvp => kvp.Value).ToList();
+                var motionDict = motionCtl.GetMotions().ToDictionary(m => m.id, m => m);
+                var attorneyIds = new HashSet<long>(allEvents
+                    .Select(e => e.attorney_id ?? 0)
+                    .Concat(allEvents.Select(e => e.opp_attorney_id ?? 0))
+                    .Where(id => id > 0));
+                var attorneyDict = attorneyCtl.GetAttorneys()
+                    .Where(a => attorneyIds.Contains(a.id))
+                    .ToDictionary(a => a.id, a => a);
+                var courtroomIds = new HashSet<long>(allTimeslots
+                    .Select(ts => ts.courtroom_id ?? 0)
+                    .Where(id => id > 0));
+                var courtroomDict = courtroomCtl.GetCourtrooms()
+                    .Where(c => courtroomIds.Contains(c.id))
+                    .ToDictionary(c => c.id, c => c);
+
+                // 4. UDFs once, indexed by id (current template format) and by
+                //    field_name (legacy template format) for fast lookup in AddHearingsTable.
+                var udfById = new Dictionary<long, UserDefinedField>();
+                var udfByName = new Dictionary<string, UserDefinedField>(StringComparer.OrdinalIgnoreCase);
+                foreach (var u in userDefinedFieldsCtl.GetUserDefinedFieldsByCourtId(courtId))
+                {
+                    udfById[u.id] = u;
+                    if (!string.IsNullOrEmpty(u.field_name) && !udfByName.ContainsKey(u.field_name))
+                        udfByName[u.field_name] = u;
+                }
+
+                // ---- Walk the date range using only in-memory lookups. ----
+                var timeslotsByDate = allTimeslots
+                    .GroupBy(ts => ts.start.Date)
+                    .ToDictionary(g => g.Key, g => g.OrderBy(ts => ts.start).ToList());
 
                 foreach (var date in period.Where(d => d.DayOfWeek != DayOfWeek.Saturday && d.DayOfWeek != DayOfWeek.Sunday))
                 {
-                    var timeslots = courtTimeslotCtl.GetCourtTimeslotsByCourtId(courtId)
-                        .Select(ct => ct.Timeslot ?? new Timeslot())
-                        .Where(ts => ts.start.Date == date.Date)
-                        .ToList();
+                    if (!timeslotsByDate.TryGetValue(date.Date, out var timeslots)) continue;
 
-                    if (courtroomId != 0)
-                    {
-                        timeslots = timeslots.Where(ts => ts.courtroom_id == courtroomId).ToList();
-                    }
-
-                    timeslots = timeslots.OrderBy(ts => ts.start).ToList();
-
-                    var holiday = holidayCtl.GetHolidays().FirstOrDefault(h => h.date.Date == date.Date);
-
+                    holidayByDate.TryGetValue(date.Date, out var holiday);
                     var dayHearings = new List<Dictionary<string, object>>();
 
                     foreach (var ts in timeslots)
                     {
-                        var events = eventCtl.GetEventsByTimeslot(ts.id);
+                        var events = eventsByTimeslot.TryGetValue(ts.id, out var evtList)
+                            ? evtList
+                            : new List<Event>();
+
                         if (!events.Any())
                         {
                             if (ts.blocked)
                             {
-                                var desc = holiday is Holiday hol ? hol.name : ts.description ?? "Blocked";
+                                var desc = holiday != null ? holiday.name : ts.description ?? "Blocked";
                                 dayHearings.Add(new Dictionary<string, object>
                                 {
                                     { "start_time", ts.start.ToString("h:mm tt") },
@@ -111,37 +160,49 @@ namespace tjc.Modules.jacs.Handlers
                                     { "block_description", desc }
                                 });
                             }
-                            else
-                            {
-                                // Skip empty timeslots
-                                continue;
-                            }
+                            // Skip empty non-blocked timeslots.
+                            continue;
                         }
-                        else
+
+                        string courtroomName = (ts.courtroom_id.HasValue
+                                && courtroomDict.TryGetValue(ts.courtroom_id.Value, out var croom))
+                            ? (croom.description ?? "Unknown")
+                            : "Unknown";
+
+                        foreach (var evt in events)
                         {
-                            foreach (var evt in events)
+                            Attorney att = null, opp = null;
+                            if (evt.attorney_id.HasValue) attorneyDict.TryGetValue(evt.attorney_id.Value, out att);
+                            if (evt.opp_attorney_id.HasValue) attorneyDict.TryGetValue(evt.opp_attorney_id.Value, out opp);
+
+                            string motionDesc;
+                            if (evt.motion_id == 221)
+                                motionDesc = evt.custom_motion;
+                            else if (evt.motion_id.HasValue && motionDict.TryGetValue(evt.motion_id.Value, out var mot))
+                                motionDesc = mot.description ?? "Unknown";
+                            else
+                                motionDesc = "Unknown";
+
+                            dayHearings.Add(new Dictionary<string, object>
                             {
-                                dayHearings.Add(new Dictionary<string, object>
-                                {
-                                    { "start_time", ts.start.ToString("h:mm tt") },
-                                    { "end_time", ts.end.ToString("h:mm tt") },
-                                    { "blocked", ts.blocked },
-                                    { "public_block", ts.public_block },
-                                    { "block_description", ts.description },
-                                    { "duration", ts.duration + " min" },
-                                    { "case_num", evt.case_num },
-                                    { "motion", evt.motion_id == 221 ? evt.custom_motion : evt.Motion?.description ?? "Unknown" },
-                                    { "attorney", evt.attorney_id.HasValue ? evt.attorney_name : "Unknown" },
-                                    { "opp_attorney", evt.opp_attorney_id.HasValue ? evt.opp_attorney_name : "Unknown" },
-                                    { "attorney_phone", evt.attorney_id.HasValue ? attorneyCtl.GetAttorney(evt.attorney_id.Value)?.phone ?? "" : "" },
-                                    { "opp_attorney_phone", evt.opp_attorney_id.HasValue ? attorneyCtl.GetAttorney(evt.opp_attorney_id.Value)?.phone ?? "" : "" },
-                                    { "plaintiff", evt.plaintiff },
-                                    { "defendant", evt.defendant },
-                                    { "notes", evt.notes },
-                                    { "courtroom", ts.Courtroom?.description ?? "Unknown" },
-                                    { "template", evt.template ?? "" }
-                                });
-                            }
+                                { "start_time", ts.start.ToString("h:mm tt") },
+                                { "end_time", ts.end.ToString("h:mm tt") },
+                                { "blocked", ts.blocked },
+                                { "public_block", ts.public_block },
+                                { "block_description", ts.description },
+                                { "duration", ts.duration + " min" },
+                                { "case_num", evt.case_num },
+                                { "motion", motionDesc },
+                                { "attorney", att != null ? att.name : "Unknown" },
+                                { "opp_attorney", opp != null ? opp.name : "Unknown" },
+                                { "attorney_phone", att?.phone ?? "" },
+                                { "opp_attorney_phone", opp?.phone ?? "" },
+                                { "plaintiff", evt.plaintiff },
+                                { "defendant", evt.defendant },
+                                { "notes", evt.notes },
+                                { "courtroom", courtroomName },
+                                { "template", evt.template ?? "" }
+                            });
                         }
                     }
                     if (dayHearings.Count > 0)
@@ -202,12 +263,12 @@ namespace tjc.Modules.jacs.Handlers
                                 {
                                     body.Append(CreateParagraph(cat, true, null, 14));
                                     var catHearings = dayHearings.Where(h => h.ContainsKey("courtroom") && h["courtroom"].ToString() == cat).ToList();
-                                    AddHearingsTable(body, catHearings, courtId);
+                                    AddHearingsTable(body, catHearings, udfById, udfByName);
                                 }
                             }
                             else
                             {
-                                AddHearingsTable(body, dayHearings, courtId);
+                                AddHearingsTable(body, dayHearings, udfById, udfByName);
                             }
 
                             SectionProperties sectionProps = new SectionProperties();
@@ -238,9 +299,8 @@ namespace tjc.Modules.jacs.Handlers
             }
         }
 
-        private void AddHearingsTable(Body body, List<Dictionary<string, object>> hearings, long courtId)
+        private void AddHearingsTable(Body body, List<Dictionary<string, object>> hearings, Dictionary<long, UserDefinedField> udfById, Dictionary<string, UserDefinedField> udfByName)
         {
-            var userDefinedFieldsCtl = new UserDefinedFieldController();
             Table outerTable = new Table();
             TableProperties outerProps = new TableProperties(
                 new TableBorders(
@@ -421,61 +481,57 @@ namespace tjc.Modules.jacs.Handlers
                     string template = h["template"].ToString();
                     if (!string.IsNullOrEmpty(template))
                     {
-                        JObject json = JObject.Parse(template);
-                        int i = 0;
-                        var udfs = json.Properties()
-                            .Where(p => !string.IsNullOrEmpty(p.Name))
-                            .Select(p => new { Label = CleanLabel(p.Name), Value = p.Value.ToString(), OriginalName = p.Name })
-                            .ToList();
-
-                        foreach (var udf in udfs)
+                        // Resolve each saved UDF value to its definition. Current events
+                        // key by field id; legacy events have no id, so fall back to the
+                        // field name (then its digit-stripped base, matching the old
+                        // "\d+$" fallback). Resolving up front lets us know the total
+                        // displayable count without rerunning the lookup per row.
+                        var resolved = UserDefinedFieldTemplate.Parse(template).Select(u =>
                         {
-                            string field_name = udf.Label;
-                            var display_on_docket = userDefinedFieldsCtl.GetUserDefinedFields()
-                                .Where(u => u.court_id == courtId)
-                                .Where(u => new[] { field_name, Regex.Replace(field_name, @"\d+$", "") }.Contains(u.field_name))
-                                .Select(u => new { u.display_on_docket, u.field_type })
-                                .FirstOrDefault();
-
-                            if (display_on_docket != null && display_on_docket.display_on_docket == 1)
+                            UserDefinedField match = null;
+                            if (u.FieldId.HasValue)
+                                udfById.TryGetValue(u.FieldId.Value, out match);
+                            if (match == null && !string.IsNullOrEmpty(u.FieldName)
+                                && !udfByName.TryGetValue(u.FieldName, out match))
                             {
-                                string cleaned_key = CleanLabel(udf.OriginalName);
-                                cleaned_key = Regex.Replace(cleaned_key, @"[^\w\s:,\']", "");
-                                if (!string.IsNullOrEmpty(cleaned_key) && !string.IsNullOrEmpty(udf.Value))
-                                {
-                                    if (i % 3 == 0)
-                                    {
-                                        TableRow udfRow = new TableRow();
-                                        innerTable.Append(udfRow);
-                                    }
+                                var stripped = Regex.Replace(u.FieldName, @"\d+$", "");
+                                udfByName.TryGetValue(stripped, out match);
+                            }
+                            return new { Udf = u, Match = match };
+                        }).ToList();
 
-                                    string defined_data_value = display_on_docket.field_type == "DATE" &&
-                                        DateTime.TryParse(udf.Value, out DateTime dateValue)
-                                        ? dateValue.ToString("MM-dd-yyyy")
-                                        : udf.Value;
+                        int displayableCount = resolved.Count(r => r.Match != null && r.Match.display_on_docket == 1);
 
-                                    TableRow currentRow = innerTable.Descendants<TableRow>().Last();
-                                    currentRow.Append(new TableCell(CreateLabeledParagraph(cleaned_key, defined_data_value, JustificationValues.Left)));
+                        int i = 0;
+                        foreach (var r in resolved)
+                        {
+                            if (r.Match == null || r.Match.display_on_docket != 1) continue;
 
-                                    i++;
-                                    if (i % 3 == 0 && i < udfs.Count(p =>
-                                    {
-                                        var field = CleanLabel(p.OriginalName);
-                                        var check = userDefinedFieldsCtl.GetUserDefinedFields()
-                                            .Where(u => u.court_id == courtId)
-                                            .Where(u => new[] { field, Regex.Replace(field, @"\d+$", "") }.Contains(u.field_name))
-                                            .Select(u => u.display_on_docket)
-                                            .FirstOrDefault();
-                                        return check == 1;
-                                    }))
-                                    {
-                                        TableRow blankRow = new TableRow();
-                                        TableCell blankMerged = new TableCell(CreateParagraph(""));
-                                        blankMerged.Append(new TableCellProperties(new GridSpan { Val = 3 }));
-                                        blankRow.Append(blankMerged);
-                                        innerTable.Append(blankRow);
-                                    }
-                                }
+                            string cleaned_key = Regex.Replace(r.Udf.FieldName ?? string.Empty, @"[^\w\s:,\']", "");
+                            if (string.IsNullOrEmpty(cleaned_key) || string.IsNullOrEmpty(r.Udf.Value)) continue;
+
+                            if (i % 3 == 0)
+                            {
+                                TableRow udfRow = new TableRow();
+                                innerTable.Append(udfRow);
+                            }
+
+                            string defined_data_value = r.Match.field_type == "DATE" &&
+                                DateTime.TryParse(r.Udf.Value, out DateTime dateValue)
+                                ? dateValue.ToString("MM-dd-yyyy")
+                                : r.Udf.Value;
+
+                            TableRow currentRow = innerTable.Descendants<TableRow>().Last();
+                            currentRow.Append(new TableCell(CreateLabeledParagraph(cleaned_key, defined_data_value, JustificationValues.Left)));
+
+                            i++;
+                            if (i % 3 == 0 && i < displayableCount)
+                            {
+                                TableRow blankRow = new TableRow();
+                                TableCell blankMerged = new TableCell(CreateParagraph(""));
+                                blankMerged.Append(new TableCellProperties(new GridSpan { Val = 3 }));
+                                blankRow.Append(blankMerged);
+                                innerTable.Append(blankRow);
                             }
                         }
                     }
@@ -483,7 +539,7 @@ namespace tjc.Modules.jacs.Handlers
                     if (!string.IsNullOrEmpty(h["notes"].ToString()))
                     {
                         TableRow notesRow = new TableRow();
-                        TableCell notesCell = new TableCell(CreateLabeledParagraph("Notes", CleanString(h["notes"].ToString()), JustificationValues.Left));
+                        TableCell notesCell = new TableCell(CreateLabeledMultilineParagraph("Notes", CleanNotes(h["notes"].ToString()), JustificationValues.Left));
                         notesCell.Append(new TableCellProperties(new GridSpan { Val = 3 }));
                         notesRow.Append(notesCell);
                         innerTable.Append(notesRow);
@@ -537,15 +593,61 @@ namespace tjc.Modules.jacs.Handlers
             );
             para.Append(paraProps);
 
-            Run labelRun = new Run(new Text(label + ": "));
+            Run labelRun = new Run(new Text(label + ":"));
             labelRun.PrependChild(new RunProperties(new Bold()));
             para.Append(labelRun);
 
-            Run valueRun = new Run(new Text(" " + value));
+            // Space="preserve" so the gap after the colon survives Word's default
+            // whitespace trimming (otherwise labels render as "Case:value").
+            Run valueRun = new Run(new Text(" " + value) { Space = SpaceProcessingModeValues.Preserve });
             if (fontSize != 11)
             {
                 RunProperties valueProps = new RunProperties(new FontSize { Val = (fontSize * 2).ToString() });
                 valueRun.PrependChild(valueProps);
+            }
+            para.Append(valueRun);
+
+            return para;
+        }
+
+        // Notes are free-form, multi-line text. Unlike the short docket fields,
+        // they must keep their line breaks (and characters like # : [ ] that the
+        // aggressive CleanString strips) so they render the same as the form's
+        // notes textarea. Here we only drop XML-invalid control chars, keeping
+        // tab/CR/LF and all printable text.
+        private string CleanNotes(string input)
+        {
+            return string.IsNullOrEmpty(input) ? input : Regex.Replace(input, @"[\x00-\x08\x0B\x0C\x0E-\x1F]", "");
+        }
+
+        // Like CreateLabeledParagraph, but renders embedded line breaks in the
+        // value as Word <w:br/> elements so multi-line notes wrap as authored.
+        private Paragraph CreateLabeledMultilineParagraph(string label, string value, JustificationValues? alignment, double fontSize = 11)
+        {
+            if (!alignment.HasValue) alignment = JustificationValues.Left;
+
+            Paragraph para = new Paragraph();
+            para.Append(new ParagraphProperties(
+                new Justification { Val = alignment },
+                new SpacingBetweenLines { Line = "240", LineRule = LineSpacingRuleValues.Auto, Before = "0", After = "0" }
+            ));
+
+            Run labelRun = new Run(new Text(label + ": "));
+            labelRun.PrependChild(new RunProperties(new Bold()));
+            para.Append(labelRun);
+
+            Run valueRun = new Run();
+            if (fontSize != 11)
+                valueRun.PrependChild(new RunProperties(new FontSize { Val = (fontSize * 2).ToString() }));
+
+            // Normalise CRLF/CR to LF, then emit each line with a <w:br/> between
+            // them. Space is preserved so leading/trailing spaces aren't trimmed.
+            string[] lines = (value ?? string.Empty).Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (i > 0) valueRun.Append(new Break());
+                string lineText = (i == 0 ? " " : string.Empty) + lines[i];
+                valueRun.Append(new Text(lineText) { Space = SpaceProcessingModeValues.Preserve });
             }
             para.Append(valueRun);
 
@@ -595,12 +697,6 @@ namespace tjc.Modules.jacs.Handlers
         private string CleanString(string input)
         {
             return string.IsNullOrEmpty(input) ? input : Regex.Replace(input, @"[^A-Za-z0-9\-\.\@\/ ]", "");
-        }
-        private string CleanLabel(string label)
-        {
-            int underscoreIndex = label.IndexOf('_');
-            string cleanedKey = underscoreIndex >= 0 ? label.Substring(0, underscoreIndex) : label;
-            return cleanedKey;
         }
         private string FormatPhone(string phone)
         {
