@@ -302,9 +302,10 @@ namespace tjc.Modules.jacs.Services
                             "Failed to authenticate with the county clerk API"));
                 }
 
-                // Spec 2.1 getCase. IsJudge is 1 because this is the internal site — every
+                // Spec 2.1 getCase. IsJudge is true because this is the internal site — every
                 // caller here is a judge or a JA. The clerk security-trims on that, so the
-                // flag has to be present; omitting it left the trimming undefined.
+                // flag has to be present; omitting it left the trimming undefined. Sent as a
+                // JSON boolean, not 1/0, the same as the public JacsAtty application.
                 //
                 // CaseId is null: this lookup only runs while creating an event, which is
                 // exactly the case spec 2.1 describes as "CaseId will be null when creating
@@ -321,7 +322,7 @@ namespace tjc.Modules.jacs.Services
                     BarNumber = (string)null,
                     RequestorEmail = (string)null,
                     UserCredentials = (string)null,
-                    IsJudge = 1
+                    IsJudge = true
                 };
                 var externalResponse = await apiCtl.CallExternalApi(api, token, payload, HttpMethod.Post,
                     BuildLogContext(action: ApiEndpointType.GetCase.ToString()));
