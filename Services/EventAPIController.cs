@@ -494,12 +494,12 @@ namespace tjc.Modules.jacs.Services
                         {
                             CaseId         = evt.clerk_case_id > 0 ? (long?)evt.clerk_case_id : null,
                             JudgeId        = clerkEventData.JudgeId,
-                            // "Schedule"/"Reschedule" match the public JacsAtty app. Spec 0
-                            // lists only New/Update/Modify/Cancel, so both applications now
-                            // send values the contract does not define — chosen deliberately
-                            // for consistency between the two. Worth confirming the clerk
-                            // does not validate this field against that list.
-                            Action         = "Schedule",
+                            // Spec 0's allowed set is New (createEvent), Update
+                            // (updateEvent), Modify (rescheduleEvent, on the NewEvent
+                            // object only) and Cancel (cancelEvent). An earlier round
+                            // had both applications on "Schedule"/"Reschedule", which
+                            // the contract does not define; both are back on the spec.
+                            Action         = "New",
                             EventType      = ApiEndpointController.NullIfBlank(clerkEventData.EventType),
                             OtherEventType = ApiEndpointController.NullIfBlank(clerkEventData.OtherEventType),
                             EventDateTime  = clerkEventData.EventDateTime,
@@ -832,7 +832,9 @@ namespace tjc.Modules.jacs.Services
                             EventId        = eventToReschedule.clerk_event_id, 
                             CaseId         = eventToReschedule.clerk_case_id > 0 ? (long?)eventToReschedule.clerk_case_id : null,
                             JudgeId        = clerkNew.JudgeId,
-                            Action         = "Reschedule",   // JacsAtty's value; spec 0 says "Modify"
+                            // Spec 0's value for rescheduleEvent, and it belongs on
+                            // NewEvent only — CurrentEvent below carries no Action.
+                            Action         = "Modify",
                             EventType      = ApiEndpointController.NullIfBlank(clerkNew.EventType),
                             OtherEventType = ApiEndpointController.NullIfBlank(clerkNew.OtherEventType),
                             EventDateTime  = clerkNew.EventDateTime,
@@ -1335,8 +1337,8 @@ namespace tjc.Modules.jacs.Services
                 // ISO with a T separator, matching the public JacsAtty application.
                 // Spec 0 asks for a space ("yyyy-MM-dd HH:mm:ss"); we follow JacsAtty
                 // here by decision, so the clerk receives one date shape from both
-                // applications. The Action values below stay on the spec, because
-                // JacsAtty's "Schedule"/"Reschedule" are not in its allowed set at all.
+                // applications. The Action values are a separate matter and are on
+                // the spec in both applications: New / Update / Modify / Cancel.
                 EventDateTime  = timeslot?.start.ToString("yyyy-MM-ddTHH:mm:ss"),
                 Duration       = timeslot?.duration ?? 0,
                 CourtRoomId    = clerkCourtroomId,

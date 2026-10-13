@@ -27,7 +27,6 @@ namespace tjc.Modules.jacs.Components
     }
     public enum ApiEndpointType
     {
-       
         [Description("Create Event")]
         AddEvent = 2,
         [Description("Reschedule Event")]

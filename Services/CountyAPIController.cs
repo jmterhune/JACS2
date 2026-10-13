@@ -224,8 +224,11 @@ namespace tjc.Modules.jacs.Services
             catch (Exception ex)
             {
                 Exceptions.LogException(ex);
+                // Flattened: a failure to reach the endpoint at all surfaces as
+                // "An error occurred while sending the request", and the admin
+                // standing on the County page needs the cause underneath it.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError,
-                    new { status = 500, message = ex.Message });
+                    new { status = 500, message = ApiEndpointController.DescribeException(ex) });
             }
         }
 
