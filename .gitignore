@@ -31,12 +31,8 @@
 *.exe
 *.txt
 *.cache
-/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-/obj/Debug/JACS.csproj.AssemblyReference.cache
-/obj/Debug/JACS.csproj.CoreCompileInputs.cache
-/obj/Debug/JACS.csproj.FileListAbsolute.txt
-/obj/Debug/tjc.Modules.JACS.dll
-/obj/Debug/tjc.Modules.JACS.pdb
+/obj
+/backups
 /node_modules/@fullcalendar/adaptive/README.md
 /node_modules/@fullcalendar/adaptive/package.json
 /node_modules/@fullcalendar/adaptive/LICENSE.md
@@ -48,3 +44,4 @@
 /node_modules
 /package-lock.json
 /package.json
+/.vs/
