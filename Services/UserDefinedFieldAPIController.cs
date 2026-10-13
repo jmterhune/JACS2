@@ -177,6 +177,10 @@ namespace tjc.Modules.jacs.Services
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new { status = 404, message = "User defined field not found." });
                 }
+                // The update replaces the whole row, so carry over the columns the edit
+                // form does not send; otherwise each save would reset them.
+                udf.display_on_schedule = existingUdf.display_on_schedule;
+                udf.created_at = existingUdf.created_at;
                 udf.updated_at = DateTime.Now;
                 ctl.UpdateUserDefinedField(udf);
                 return Request.CreateResponse(HttpStatusCode.OK, new { status = 200, message = "User defined field updated successfully" });
@@ -198,8 +202,10 @@ namespace tjc.Modules.jacs.Services
                 case 6: return "required";
                 case 7: return "yes_answer_required";
                 case 8: return "display_on_docket";
-                case 9: return "display_on_schedule";
-                case 10: return "use_in_attorany_scheduling";
+                // Column 9 has been "Use in Attorney Scheduling" since Display on
+                // Schedule left the table. The name is 26 characters, so it needs
+                // tjc_jacs_get_udf_paged's widened @sortOrder (Database/JACS2/00.00.03.sql).
+                case 9: return "use_in_attorany_scheduling";
                 default: return "field_name";
             }
         }

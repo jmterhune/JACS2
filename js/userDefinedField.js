@@ -354,7 +354,6 @@ class UserDefinedFieldController {
         $("#required").html("");
         $("#yesAnswerRequired").html("");
         $("#displayOnDocket").html("");
-        $("#displayOnSchedule").html("");
         $("#useInAttorneyScheduling").html("");
         $("#hdUserDefinedFieldId").val("");
     }
@@ -371,7 +370,6 @@ class UserDefinedFieldController {
         // Reset enable/disable state so the next open starts clean
         this.syncRequiredFlags();
         $("#edit_displayOnDocket").prop("checked", false);
-        $("#edit_displayOnSchedule").prop("checked", false);
         $("#edit_useInAttorneyScheduling").prop("checked", false);
         $("#edit_hdUserDefinedFieldId").val("");
     }
@@ -422,7 +420,6 @@ class UserDefinedFieldController {
                             // current state on open.
                             userDefinedFieldControllerInstance.syncRequiredFlags();
                             $("#edit_displayOnDocket").prop("checked", response.data.display_on_docket == 1);
-                            $("#edit_displayOnSchedule").prop("checked", response.data.display_on_schedule == 1);
                             $("#edit_useInAttorneyScheduling").prop("checked", response.data.use_in_attorany_scheduling == 1);
                             $("#UserDefinedFieldEditModalLabel").html(`Edit User Defined Field: ${response.data.field_name}`);
                         } else {
@@ -433,7 +430,6 @@ class UserDefinedFieldController {
                             $("#required").html(response.data.required == 1 ? "Yes" : "No");
                             $("#yesAnswerRequired").html(response.data.yes_answer_required == 1 ? "Yes" : "No");
                             $("#displayOnDocket").html(response.data.display_on_docket == 1 ? "Yes" : "No");
-                            $("#displayOnSchedule").html(response.data.display_on_schedule == 1 ? "Yes" : "No");
                             $("#useInAttorneyScheduling").html(response.data.use_in_attorany_scheduling == 1 ? "Yes" : "No");
                             $("#hdUserDefinedFieldId").val(response.data.id);
                         }
@@ -477,7 +473,6 @@ class UserDefinedFieldController {
                 required: $("#edit_required").prop("checked") ? 1 : 0,
                 yes_answer_required: $("#edit_yesAnswerRequired").prop("checked") ? 1 : 0,
                 display_on_docket: $("#edit_displayOnDocket").prop("checked") ? 1 : 0,
-                display_on_schedule: $("#edit_displayOnSchedule").prop("checked") ? 1 : 0,
                 use_in_attorany_scheduling: $("#edit_useInAttorneyScheduling").prop("checked") ? 1 : 0
             };
             $.ajax({
@@ -530,7 +525,6 @@ class UserDefinedFieldController {
                 required: $("#edit_required").prop("checked") ? 1 : 0,
                 yes_answer_required: $("#edit_yesAnswerRequired").prop("checked") ? 1 : 0,
                 display_on_docket: $("#edit_displayOnDocket").prop("checked") ? 1 : 0,
-                display_on_schedule: $("#edit_displayOnSchedule").prop("checked") ? 1 : 0,
                 use_in_attorany_scheduling: $("#edit_useInAttorneyScheduling").prop("checked") ? 1 : 0
             };
             $.ajax({

@@ -30,3 +30,4 @@ applied through the version being installed.
 | Script | Applies to | Summary |
 | --- | --- | --- |
 | `00.00.02.sql` | module 00.00.02 | Indexes for the attorney type-ahead and the timeslot/court join paths |
+| `00.00.03.sql` | module 00.00.03 | Widen `tjc_jacs_get_udf_paged` `@sortOrder` so the User Defined Fields page can sort by Use in Attorney Scheduling |
