@@ -58,6 +58,22 @@ namespace tjc.Modules.jacs.Components
             }
             return t;
         }
+
+        /// <summary>
+        /// Returns every non-blank email address in the emails table. Used by
+        /// the bar-member import to pre-build an in-memory dedup set so the
+        /// per-row "is this address already on file?" check is O(1) instead of
+        /// one SELECT per CSV row.
+        /// </summary>
+        public IEnumerable<string> GetAllEmailAddresses()
+        {
+            using (IDataContext ctx = DataContext.Instance(CONN_JACS))
+            {
+                return ctx.ExecuteQuery<string>(
+                    System.Data.CommandType.Text,
+                    "SELECT email FROM emails WHERE email IS NOT NULL AND LTRIM(RTRIM(email)) <> ''");
+            }
+        }
         public Email GetEmail(int emailId)
         {
             Email t;
