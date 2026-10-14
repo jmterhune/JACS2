@@ -73,6 +73,16 @@ namespace tjc.Modules.jacs.Components
         {
             string search = (term ?? string.Empty).Trim();
 
+            // Bar numbers are stored with leading zeros stripped (BarMemberFile.
+            // NormalizeBarNum), but callers pass them through exactly as the clerk
+            // supplies them — "0472840" for a row stored as "472840". Normalise a
+            // numeric term the same way the write side does, or the prefix match
+            // finds nothing and the caller reports an attorney who is in fact on file.
+            if (search.Length > 0 && search.All(char.IsDigit))
+            {
+                search = BarMemberFile.NormalizeBarNum(search);
+            }
+
             // Search one column, not both with an OR. Bar numbers are numeric, so a term
             // containing letters can never match bar_num and a digits-only term is not a
             // name — and an OR across two columns stops SQL Server using either index,
@@ -163,8 +173,10 @@ namespace tjc.Modules.jacs.Components
         {
             if (string.IsNullOrWhiteSpace(barNumber)) return null;
 
-            string normalized = barNumber.Trim().TrimStart('0');
-            if (string.IsNullOrEmpty(normalized)) normalized = barNumber.Trim();
+            // One definition of "normalised", shared with the importer and the
+            // dropdown search, so a row written here is findable by the other two.
+            string normalized = BarMemberFile.NormalizeBarNum(barNumber);
+            if (string.IsNullOrEmpty(normalized)) return null;
 
             Attorney existing = GetAttorneyByBarNumber(normalized);
             if (existing != null) return existing;

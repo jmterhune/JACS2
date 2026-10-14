@@ -437,25 +437,37 @@ class CourtCalendarController {
         if (required) $label.append('<em class="req-mark">*</em>');
     }
 
+    /**
+     * Bar numbers are stored with leading zeros stripped, while the clerk supplies
+     * them padded — "0472840" for a row held as "472840". Comparing the two raw
+     * reported attorneys as missing when they were on file all along.
+     */
+    _normalizeBarNum(value) {
+        const trimmed = String(value === null || value === undefined ? '' : value).trim();
+        const stripped = trimmed.replace(/^0+/, '');
+        return stripped.length ? stripped : trimmed;
+    }
+
     loadAndSetAttorney(tomInstance, barNum) {
         if (!tomInstance || !barNum) {
             if (tomInstance) tomInstance.clear();
             return;
         }
+        const wanted = this._normalizeBarNum(barNum);
         // If the option is already loaded just select it
-        if (tomInstance.options[barNum]) {
-            tomInstance.setValue(barNum);
+        if (tomInstance.options[wanted]) {
+            tomInstance.setValue(wanted);
             return;
         }
         // Otherwise fetch by bar number, add the option, then select it
         $.ajax({
             url: `${this.service.baseUrl}AttorneyAPI/GetExtendedAttorneyDropDownItems`,
             type: 'GET',
-            data: { q: barNum },
+            data: { q: wanted },
             dataType: 'json',
             beforeSend: xhr => this.setAjaxHeaders(xhr),
             success: response => {
-                const match = (response.data || []).find(a => a.bar_num === barNum);
+                const match = (response.data || []).find(a => this._normalizeBarNum(a.bar_num) === wanted);
                 if (match) {
                     tomInstance.addOption({
                         value: match.bar_num,
