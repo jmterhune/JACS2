@@ -1284,7 +1284,11 @@ namespace tjc.Modules.jacs.Services
             var judgeXref = judge != null
                 ? judgeCtl.GetJudgeXref(judge.id, countyId).FirstOrDefault()
                 : null;
-            long clerkJudgeId = judgeXref?.clerk_judge_id ?? 0;
+            // Null rather than 0 when the judge has no clerk cross-reference: 0 is a
+            // real id to anything matching on it, null says the mapping is absent.
+            long? clerkJudgeId = judgeXref != null && judgeXref.clerk_judge_id > 0
+                ? (long?)judgeXref.clerk_judge_id
+                : null;
 
             // Timeslot — use override when provided (reschedule), otherwise load from event
             Timeslot timeslot = overrideTimeslot;
@@ -1295,11 +1299,14 @@ namespace tjc.Modules.jacs.Services
             }
 
             // Courtroom xref
-            long clerkCourtroomId = 0;
+            // Same reasoning as the judge above: null when unmapped, never 0.
+            long? clerkCourtroomId = null;
             if (timeslot?.courtroom_id != null)
             {
                 var courtroomXref = courtroomCtl.GetCourtroomXref(timeslot.courtroom_id.Value, countyId).FirstOrDefault();
-                clerkCourtroomId = courtroomXref?.clerk_courtroom_id ?? 0;
+                clerkCourtroomId = courtroomXref != null && courtroomXref.clerk_courtroom_id > 0
+                    ? (long?)courtroomXref.clerk_courtroom_id
+                    : null;
             }
 
             // Motion → EventType string: just use the motion description directly.
@@ -1334,12 +1341,11 @@ namespace tjc.Modules.jacs.Services
                 JudgeId        = clerkJudgeId,
                 EventType      = eventType,
                 OtherEventType = otherEventType,
-                // ISO with a T separator, matching the public JacsAtty application.
-                // Spec 0 asks for a space ("yyyy-MM-dd HH:mm:ss"); we follow JacsAtty
-                // here by decision, so the clerk receives one date shape from both
-                // applications. The Action values are a separate matter and are on
-                // the spec in both applications: New / Update / Modify / Cancel.
-                EventDateTime  = timeslot?.start.ToString("yyyy-MM-ddTHH:mm:ss"),
+                // Spec 4.6.0 section 0.0: every datetime in a clerk request is
+                // "yyyy-MM-dd HH:mm:ss" — 24-hour clock, space separator. An earlier
+                // round used a T separator here and in JacsAtty; both are back on the
+                // spec, as the Action values are (New / Update / Modify / Cancel).
+                EventDateTime  = timeslot?.start.ToString("yyyy-MM-dd HH:mm:ss"),
                 Duration       = timeslot?.duration ?? 0,
                 CourtRoomId    = clerkCourtroomId,
                 UDF            = udf
@@ -1349,12 +1355,18 @@ namespace tjc.Modules.jacs.Services
         /// <summary>Flattened clerk event fields shared by Create, Update, and Reschedule payloads.</summary>
         private class ClerkEventPayload
         {
-            public long JudgeId { get; set; }
+            /// <summary>
+            /// Nullable because a judge or courtroom may have no clerk
+            /// cross-reference for the county. Null says "not mapped"; zero used to
+            /// be sent instead, which is a real id to anything matching on it and
+            /// could silently attach a hearing to the wrong judge or courtroom.
+            /// </summary>
+            public long? JudgeId { get; set; }
             public string EventType { get; set; }
             public string OtherEventType { get; set; }
             public string EventDateTime { get; set; }
             public int Duration { get; set; }
-            public long CourtRoomId { get; set; }
+            public long? CourtRoomId { get; set; }
             public Dictionary<string, string> UDF { get; set; }
         }
 
