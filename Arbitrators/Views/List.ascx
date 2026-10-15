@@ -48,6 +48,9 @@
             <tr>
                 <td class="command-item">
                     <a href='<%# DetailUrl((int)Eval("ArbitratorApplicationID")) %>' title="Review Application"><i class="fas fa-search"></i></a>
+                    <% if (CanEditRecords) { %>
+                    <a href='<%# EditArbitratorUrl((int)Eval("ArbitratorApplicationID")) %>' title="Edit Record" aria-label="Edit Record"><i class="fas fa-edit"></i></a>
+                    <% } %>
                 </td>
                 <td><%# Eval("ArbitratorApplicationID") %></td>
                 <td><a href='<%# DetailUrl((int)Eval("ArbitratorApplicationID")) %>'><%# Server.HtmlEncode(Convert.ToString(Eval("FullName"))) %></a></td>

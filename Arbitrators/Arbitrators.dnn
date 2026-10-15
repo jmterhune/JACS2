@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="Arbitrators" type="Module" version="00.00.01">
+    <package name="Arbitrators" type="Module" version="00.00.02">
       <friendlyName>Arbitrator Applications</friendlyName>
       <description>Internal review module for arbitrator applications submitted through the public Arbitrators module on jud12.flcourts.org (tjc_arbitrators_applications / tjc_arbitrators_attachments, via the Jud12 connection). Reviewers open a specific application from the link in the applicant-submitted notification email, then approve or deny it; the applicant is emailed the result.</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
@@ -51,6 +51,16 @@
                     <controlSrc>DesktopModules/tjc.modules/Arbitrators/Views/Detail.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>Review Application</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>editarbitrator</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/Arbitrators/Views/EditArbitrator.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Edit Arbitrator</controlTitle>
                     <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />

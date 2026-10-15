@@ -53,10 +53,13 @@ namespace tjc.Modules.Arbitrators.Views
                 return;
             }
 
-            bool canReview = IsEditable;
+            // Approve/deny (which emails the applicant) only applies to a pending application; the record itself is edited from the list.
+            bool pending = app.Status == ApplicationStatus.Pending;
+            bool canReview = IsEditable && pending;
             cmdApprove.Visible = canReview;
             cmdDeny.Visible = canReview;
             txtStatusNotes.Enabled = canReview;
+            pnlAlreadyReviewed.Visible = !pending;
 
             ltHeading.Text = string.Format("<h2>{0} Arbitrator Application #{1} <span class=\"badge {2}\">{3}</span></h2>",
                 System.Web.HttpUtility.HtmlEncode(app.FullName), app.ArbitratorApplicationID, StatusBadgeClass(app.Status), app.Status);
@@ -77,8 +80,11 @@ namespace tjc.Modules.Arbitrators.Views
             chkBarMember.Checked = app.FloridaBarMember;
             chkCertifiedMediator.Checked = app.CertifiedMediator;
             chkCompletedTraining.Checked = app.CompletedArbitrationTraining;
+            MakeReadOnly(chkBarMember);
+            MakeReadOnly(chkCertifiedMediator);
+            MakeReadOnly(chkCompletedTraining);
 
-            ltExperience.Text = System.Web.HttpUtility.HtmlEncode(app.ExperienceStatement).Replace("\n", "<br />");
+            ltExperience.Text = System.Web.HttpUtility.HtmlEncode(app.ExperienceStatement ?? string.Empty).Replace("\n", "<br />");
 
             ltSigned.Text = string.Format("{0} ({1:MM/dd/yyyy})", System.Web.HttpUtility.HtmlEncode(app.SignedName), app.SignatureDate);
             ltSubmitted.Text = app.CreatedOnDate.ToString("MM/dd/yyyy h:mm tt");
@@ -91,6 +97,20 @@ namespace tjc.Modules.Arbitrators.Views
             rptAttachments.DataBind();
             rptAttachments.Visible = attachments.Count > 0;
             ltNoAttachments.Visible = attachments.Count == 0;
+        }
+
+        /// <summary>
+        /// Keeps a checkbox visually normal (not the grayed-out ASP.NET
+        /// disabled style) while blocking the user from toggling it - these
+        /// reflect what the applicant submitted and are never editable here.
+        /// </summary>
+        private static void MakeReadOnly(System.Web.UI.WebControls.CheckBox chk)
+        {
+            // asp:CheckBox renders <span class="form-check"><input/><label/></span>; Bootstrap 5 needs these on the inner elements.
+            chk.InputAttributes["class"] = "form-check-input";
+            chk.LabelAttributes["class"] = "form-check-label";
+            chk.InputAttributes["onclick"] = "return false;";
+            chk.InputAttributes["onkeydown"] = "return false;";
         }
 
         private void ShowNotFound()
@@ -114,7 +134,7 @@ namespace tjc.Modules.Arbitrators.Views
             if (!IsEditable) return;
 
             var app = _appCtl.GetApplication(ArbitratorApplicationId);
-            if (app == null) return;
+            if (app == null || app.Status != ApplicationStatus.Pending) return;
 
             app.Status = newStatus;
             app.StatusNotes = txtStatusNotes.Text;

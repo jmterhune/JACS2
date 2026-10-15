@@ -7,6 +7,7 @@ using DotNetNuke.Abstractions;
 using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
+using DotNetNuke.Security.Permissions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -69,6 +70,15 @@ namespace tjc.Modules.Arbitrators
         }
 
         public string ListUrl { get { return _navigationManager.NavigateURL(); } }
+
+        /// <summary>True when the current user may edit this module's content (not tied to DNN's Edit mode).</summary>
+        public bool CanEditRecords { get { return ModulePermissionController.CanEditModuleContent(ModuleConfiguration); } }
+
+        public string EditArbitratorUrl(int arbitratorApplicationId)
+        {
+            // A plain URL (not EditUrl, which can return a javascript popup call that breaks the list link's href).
+            return _navigationManager.NavigateURL(TabId, "editarbitrator", "mid=" + ModuleId, "aid=" + arbitratorApplicationId);
+        }
         public string DetailUrl(int arbitratorApplicationId)
         {
             return EditUrl("aid", arbitratorApplicationId.ToString(), "detail");

@@ -11,6 +11,31 @@
     white-space: pre-wrap;
 }
 
+/* Application detail (Detail.ascx): read-only display fields */
+#ArbitratorDetail .detail-label {
+    font-weight: bold;
+}
+
+#ArbitratorDetail .detail-value {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 6px 10px;
+    min-height: 2.25rem;
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+}
+
+/* Readonly checkboxes: keep the normal (non-disabled) look so the label
+   stays legible, but block the user from toggling them - these reflect
+   what the applicant submitted. */
+#ArbitratorDetail .readonly-checkbox input[type="checkbox"] {
+    cursor: default;
+}
+
+#ArbitratorDetail .readonly-checkbox label {
+    cursor: default;
+}
+
 table.layout {
     border-collapse: separate;
     border-spacing: 0;
@@ -20,4 +45,20 @@ table.layout {
 table.layout td {
     padding: 8px 6px;
     vertical-align: top;
+}
+
+/* Bootstrap form-check spacing for the detail and edit checkboxes (the DNN skin adds its own checkbox CSS). */
+#ArbitratorDetail .form-check,
+#ArbitratorEdit .form-check {
+    padding-left: 1.5rem;
+    margin-bottom: 0.25rem;
+    margin-right: 1.5rem;
+}
+#ArbitratorDetail .form-check-input,
+#ArbitratorEdit .form-check-input {
+    margin-left: -1.5rem;
+}
+#ArbitratorDetail .form-check-label,
+#ArbitratorEdit .form-check-label {
+    font-weight: normal;
 }

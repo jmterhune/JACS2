@@ -122,6 +122,13 @@
     <Compile Include="Views\Detail.ascx.designer.cs">
       <DependentUpon>Detail.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditArbitrator.ascx.cs">
+      <DependentUpon>EditArbitrator.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EditArbitrator.ascx.designer.cs">
+      <DependentUpon>EditArbitrator.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings.ascx.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -133,6 +140,7 @@
   <ItemGroup>
     <Content Include="Views\List.ascx" />
     <Content Include="Views\Detail.ascx" />
+    <Content Include="Views\EditArbitrator.ascx" />
     <Content Include="Views\Settings.ascx" />
     <Content Include="Handlers\AttachmentViewer.ashx" />
     <Content Include="module.css" />

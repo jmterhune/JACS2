@@ -22,6 +22,8 @@ namespace tjc.Modules.Arbitrators.Views
 
         protected global::System.Web.UI.WebControls.Literal ltHeading;
 
+        protected global::System.Web.UI.WebControls.Panel pnlAlreadyReviewed;
+
         protected global::System.Web.UI.WebControls.Literal ltAddress;
 
         protected global::System.Web.UI.WebControls.Literal ltPhone;

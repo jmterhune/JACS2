@@ -15,61 +15,63 @@
     <asp:Panel ID="pnlApplication" runat="server">
         <asp:Literal ID="ltHeading" runat="server" />
 
+        <asp:Panel ID="pnlAlreadyReviewed" runat="server" Visible="false" CssClass="alert alert-info">
+            This application is not pending, so it cannot be approved or denied here. To change the record or its status, use the edit icon on the list.
+        </asp:Panel>
+
         <div class="row mb-3">
             <div class="col-12 col-lg-4">
-                <label>Address</label>
-                <p><asp:Literal ID="ltAddress" runat="server" /></p>
+                <label class="detail-label">Address</label>
+                <p class="detail-value"><asp:Literal ID="ltAddress" runat="server" /></p>
             </div>
             <div class="col-12 col-lg-4">
-                <label>Phone / Fax</label>
-                <p><asp:Literal ID="ltPhone" runat="server" /></p>
+                <label class="detail-label">Phone / Fax</label>
+                <p class="detail-value"><asp:Literal ID="ltPhone" runat="server" /></p>
             </div>
             <div class="col-12 col-lg-4">
-                <label>Email</label>
-                <p><asp:HyperLink ID="lnkEmail" runat="server" /></p>
+                <label class="detail-label">Email</label>
+                <p class="detail-value"><asp:HyperLink ID="lnkEmail" runat="server" /></p>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-12 col-lg-6">
-                <label>Website</label>
-                <p><asp:Literal ID="ltWebsite" runat="server" /></p>
+                <label class="detail-label">Website</label>
+                <p class="detail-value"><asp:Literal ID="ltWebsite" runat="server" /></p>
             </div>
             <div class="col-12 col-lg-6">
-                <label>Preferred Areas</label>
-                <p><asp:Literal ID="ltPreferredAreas" runat="server" /></p>
+                <label class="detail-label">Preferred Areas</label>
+                <p class="detail-value"><asp:Literal ID="ltPreferredAreas" runat="server" /></p>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-12">
-                <asp:CheckBox ID="chkBarMember" runat="server" Text="Florida Bar Member" Enabled="false" />
-                &nbsp;&nbsp;
-                <asp:CheckBox ID="chkCertifiedMediator" runat="server" Text="Certified Mediator" Enabled="false" />
-                &nbsp;&nbsp;
-                <asp:CheckBox ID="chkCompletedTraining" runat="server" Text="Completed Arbitration Training" Enabled="false" />
+                <asp:CheckBox ID="chkBarMember" runat="server" Text="Florida Bar Member" CssClass="form-check form-check-inline readonly-checkbox" />
+                <asp:CheckBox ID="chkCertifiedMediator" runat="server" Text="Certified Mediator" CssClass="form-check form-check-inline readonly-checkbox" />
+                <asp:CheckBox ID="chkCompletedTraining" runat="server" Text="Completed Arbitration Training" CssClass="form-check form-check-inline readonly-checkbox" />
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-12">
-                <label>Experience Statement</label>
-                <p class="white-space-pre"><asp:Literal ID="ltExperience" runat="server" /></p>
+                <label class="detail-label">Experience Statement</label>
+                <p class="detail-value white-space-pre"><asp:Literal ID="ltExperience" runat="server" /></p>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-12 col-lg-4">
-                <label>Signed</label>
-                <p><asp:Literal ID="ltSigned" runat="server" /></p>
+                <label class="detail-label">Signed</label>
+                <p class="detail-value"><asp:Literal ID="ltSigned" runat="server" /></p>
             </div>
             <div class="col-12 col-lg-4">
-                <label>Submitted</label>
-                <p><asp:Literal ID="ltSubmitted" runat="server" /></p>
+                <label class="detail-label">Submitted</label>
+                <p class="detail-value"><asp:Literal ID="ltSubmitted" runat="server" /></p>
             </div>
             <div class="col-12 col-lg-4">
-                <label>Submitted From IP</label>
-                <p><asp:Literal ID="ltSubmittedIP" runat="server" /></p>
+                <label class="detail-label">Submitted From IP</label>
+                <p class="detail-value"><asp:Literal ID="ltSubmittedIP" runat="server" /></p>
             </div>
         </div>
 
