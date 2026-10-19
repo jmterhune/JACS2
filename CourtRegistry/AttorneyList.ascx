@@ -8,6 +8,9 @@
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
         </li>
         <li class="nav-item">
@@ -333,7 +336,7 @@
                 var attorneyId = $(this).data("attorneyid");
                 Registry.confirm({
                     title: 'Delete Attorney?',
-                    text: 'This action cannot be undone.',
+                    text: 'This permanently deletes all of this attorney\'s information, along with all of their applications, JAC code records and registry records. This action cannot be undone.',
                     icon: 'warning',
                     confirmText: 'Yes, delete',
                     confirmColor: '#d33'

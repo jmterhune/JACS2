@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Application.ascx.cs" Inherits="tjc.Modules.CourtRegistry.Application" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Application.ascx.cs" Inherits="tjc.Modules.CourtRegistry.Application" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%-- SweetAlert2 + Noty for confirms / toast notifications --%>
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
@@ -8,6 +8,7 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 <div id="Application">
     <asp:Literal ID="ltHeading" runat="server"></asp:Literal>
+    <asp:Literal ID="ltWithdrawalBanner" runat="server"></asp:Literal>
     <table role="presentation" class="layout p-2 mb-2">
         <tbody>
             <tr>

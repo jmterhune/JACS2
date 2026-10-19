@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UpdateJacCodes.ascx.cs" Inherits="tjc.Modules.CourtRegistry.UpdateJacCodes" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UpdateJacCodes.ascx.cs" Inherits="tjc.Modules.CourtRegistry.UpdateJacCodes" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%-- SweetAlert2 + Noty for confirms / toast notifications --%>
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/sweetalert/sweetalert2.min.css" />
@@ -11,6 +11,9 @@
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>

@@ -81,6 +81,7 @@ namespace tjc.Modules.CourtRegistry
                         var attorney = aCtl.GetAttorney(application.AttorneyID);
                         PopulateApplication(application);
                         PopulateAttorney(attorney);
+                        ShowWithdrawalBanner(application.AttorneyID);
                         BuildPrevYearJacModal(application);
                     }
                     else
@@ -135,6 +136,28 @@ namespace tjc.Modules.CourtRegistry
             }
             sb.Append("</tbody></table>");
             ltPrevYearJac.Text = sb.ToString();
+        }
+
+        /// <summary>
+        /// Flags an application whose attorney has asked to come off the registry, so
+        /// nobody approves case categories for someone on their way out without seeing it.
+        /// </summary>
+        private void ShowWithdrawalBanner(int attorneyId)
+        {
+            var ctl = new WithdrawalController(_hostSettings);
+            WithdrawalListItem pending = ctl.GetPendingForAttorney(attorneyId);
+            if (pending == null)
+            {
+                return;
+            }
+            ltWithdrawalBanner.Text = string.Format(
+                "<div class='alert alert-warning'><strong><i class='fas fa-sign-out-alt'></i>&nbsp;This attorney asked to be removed from the registry on {0}.</strong> "
+                + "The request is waiting for review on the <a href='{1}'>Withdrawals</a> screen.{2}</div>",
+                pending.DateRequested.ToShortDateString(),
+                WithdrawalListUrl,
+                string.IsNullOrEmpty(pending.Reason)
+                    ? string.Empty
+                    : "<br />Reason given: " + System.Web.HttpUtility.HtmlEncode(pending.Reason));
         }
 
         private void PopulateAttorney(Attorney atty)

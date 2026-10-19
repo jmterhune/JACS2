@@ -104,6 +104,7 @@ namespace tjc.Modules.CourtRegistry
         public string LocationListUrl { get { return EditUrl("locations"); } }
         public string CaseTypeListUrl { get { return EditUrl("case-types"); } }
         public string CompareUrl { get { return EditUrl("compare"); } }
+        public string WithdrawalListUrl { get { return EditUrl("withdrawals"); } }
 
     }
 }

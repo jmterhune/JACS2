@@ -8,6 +8,9 @@
             <a class="nav-link" href="#applications" data-bs-toggle="tab">Applications</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
         </li>
         <li class="nav-item">
@@ -231,7 +234,7 @@
                 var applicationId = $(this).data("applicationid");
                 Registry.confirm({
                     title: 'Delete Application?',
-                    text: 'This action cannot be undone.',
+                    text: 'This also deletes the application\'s JAC code and registry records. This action cannot be undone.',
                     icon: 'warning',
                     confirmText: 'Yes, delete',
                     confirmColor: '#d33'

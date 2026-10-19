@@ -1,9 +1,12 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="JacCodes.ascx.cs" Inherits="tjc.Modules.CourtRegistry.JacCodes" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="JacCodes.ascx.cs" Inherits="tjc.Modules.CourtRegistry.JacCodes" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>

@@ -273,3 +273,51 @@ ALTER TABLE [dbo].[tjc_car_jac_codes] CHECK CONSTRAINT [FK_tjc_car_jac_codes_tjc
 GO
 
 
+
+/****** Object:  Table [dbo].[tjc_car_withdrawal_requests]    Script Date: 10/19/2026 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[tjc_car_withdrawal_requests](
+	[WithdrawalId] [int] IDENTITY(1,1) NOT NULL,
+	[AttorneyId] [int] NOT NULL,
+	[ApplicationId] [int] NULL,
+	[Year] [int] NULL,
+	[Status] [int] NOT NULL,
+	[Reason] [nvarchar](max) NULL,
+	[Signature] [nvarchar](50) NULL,
+	[Acknowledged] [bit] NOT NULL,
+	[DateRequested] [datetime] NOT NULL,
+	[DateCancelled] [datetime] NULL,
+	[DateReviewed] [datetime] NULL,
+	[ReviewedByUserId] [int] NULL,
+	[ReviewNote] [nvarchar](max) NULL,
+	[EffectiveDate] [datetime] NULL,
+ CONSTRAINT [PK_tjc_car_withdrawal_requests] PRIMARY KEY CLUSTERED 
+(
+	[WithdrawalId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[tjc_car_withdrawal_requests] ADD  CONSTRAINT [DF_tjc_car_withdrawal_requests_Status]  DEFAULT ((0)) FOR [Status]
+GO
+
+ALTER TABLE [dbo].[tjc_car_withdrawal_requests] ADD  CONSTRAINT [DF_tjc_car_withdrawal_requests_Acknowledged]  DEFAULT ((0)) FOR [Acknowledged]
+GO
+
+ALTER TABLE [dbo].[tjc_car_withdrawal_requests] ADD  CONSTRAINT [DF_tjc_car_withdrawal_requests_DateRequested]  DEFAULT (getdate()) FOR [DateRequested]
+GO
+
+/* One open request per attorney at a time. Status: 0 Pending, 1 Approved, 2 Denied, 3 Cancelled. */
+CREATE UNIQUE NONCLUSTERED INDEX [UX_tjc_car_withdrawal_requests_OpenPerAttorney]
+	ON [dbo].[tjc_car_withdrawal_requests] ([AttorneyId] ASC)
+	WHERE [Status] = 0
+GO
+
+CREATE NONCLUSTERED INDEX [IX_tjc_car_withdrawal_requests_Status]
+	ON [dbo].[tjc_car_withdrawal_requests] ([Status] ASC, [DateRequested] DESC)
+GO

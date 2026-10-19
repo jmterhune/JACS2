@@ -1,8 +1,11 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BasicSettings.ascx.cs" Inherits="tjc.Modules.CourtRegistry.BasicSettings" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BasicSettings.ascx.cs" Inherits="tjc.Modules.CourtRegistry.BasicSettings" %>
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>

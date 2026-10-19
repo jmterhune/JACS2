@@ -1,4 +1,4 @@
-<dotnetnuke type="Package" version="5.0">
+﻿<dotnetnuke type="Package" version="5.0">
   <packages>
     <package name="CourtRegistry" type="Module" version="00.00.01">
       <friendlyName>Court Registry</friendlyName>
@@ -83,6 +83,16 @@
                     <controlSrc>DesktopModules/tjc.modules/CourtRegistry/Application.ascx</controlSrc>
                     <supportsPartialRendering>False</supportsPartialRendering>
                     <controlTitle>View Application</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>withdrawals</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/CourtRegistry/Withdrawals.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Registry Withdrawals</controlTitle>
                     <controlType>View</controlType>
                     <iconFile />
                     <helpUrl />

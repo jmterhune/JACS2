@@ -145,6 +145,7 @@ namespace tjc.Modules.CourtRegistry
                         ? applicationPeriod.ModificationDeadline.Value.ToString("MM/dd/yyyy")
                         : string.Empty;
                     chkAcceptingApplications.Checked = applicationPeriod.AcceptingNewApplications;
+                    ltModalTitle.Text = "Modify Fiscal Year";
                     ltModalScript.Text = "<script>(function(){function s(){if(typeof bootstrap!=='undefined'&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('addRecord')).show();}else if(typeof jQuery!=='undefined'){jQuery('#addRecord').modal('show');}}if(document.readyState!=='loading'){s();}else{document.addEventListener('DOMContentLoaded',s);}})();</script>";
                 }
             }
@@ -172,6 +173,7 @@ namespace tjc.Modules.CourtRegistry
                 });
             }
             ClearForm();
+            ltModalTitle.Text = "Add Fiscal Year";
             BindLists();
         }
 

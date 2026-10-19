@@ -94,7 +94,8 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title" id="addRecordModalLabel">Add Fiscal Year</h4>
+                                    <h4 class="modal-title" id="addRecordModalLabel">
+                                        <asp:Literal ID="ltModalTitle" runat="server" Text="Add Fiscal Year" /></h4>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -117,7 +118,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer justify-content-between">
-                                    <asp:Button Text="Add Record" ID="cmdAddRecord" runat="server" CssClass="btn btn-primary" ValidationGroup="new" OnClick="cmdAddRecord_Click" />
+                                    <asp:Button Text="Save Record" ID="cmdAddRecord" runat="server" CssClass="btn btn-primary" ValidationGroup="new" OnClick="cmdAddRecord_Click" />
                                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
@@ -229,6 +230,15 @@
     (function ($, Sys) {
         $(document).ready(function () {
             PageInit();
+            /* "Add New Record" opens the modal client-side with no postback, so the
+               heading and fields still hold whatever the last edit put there. Reset
+               them here; the server sets "Modify Fiscal Year" when a row is edited. */
+            $(document).on('click', '#cmdNew', function () {
+                $('#addRecordModalLabel').text('Add Fiscal Year');
+                $('#<%= txtYearPeriodEnds.ClientID %>').val('');
+                $('#<%= txtModificationDeadline.ClientID %>').val('');
+                $('#chkAcceptingApplications').prop('checked', false);
+            });
         });
         if (Sys && Sys.WebForms) {
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {

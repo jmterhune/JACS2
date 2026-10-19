@@ -34,6 +34,8 @@ namespace tjc.Modules.CourtRegistry
 
         protected global::System.Web.UI.WebControls.Literal ltModalScript;
 
+        protected global::System.Web.UI.WebControls.Literal ltModalTitle;
+
         /// <summary>
         /// rptYears control.
         /// </summary>
