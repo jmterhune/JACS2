@@ -1,0 +1,29 @@
+<h3>Transcriptionist (intranet)</h3>
+<p class="Contributor">
+	jud12 <br />
+	<a href="mailto:webhelp@jud12.flcourts.org">webhelp@jud12.flcourts.org</a><br />
+	<a href=http://www.jud12.flcourts.org/>http://www.jud12.flcourts.org/</a>
+</p>
+<hr/>
+<div class="License">
+	<h3>About the Transcriptionist Admin module</h3>
+	<p class="Owner">
+		<b>Version 1.0.0</b><br /><br />
+	</p>
+	<p>Management side of the Court Approved Transcriptionist application. Moved here from the public (jud12) site, which keeps the applicant form and the directory.</p>
+
+	<h4>Features</h4>
+	<ul>
+		<li>Dashboard with this year's application counts and the latest pending applications</li>
+		<li>Searchable list of all applications</li>
+		<li>Application detail, edit (including experience records), approve, reject and delete</li>
+		<li>Approve / reject emails to the applicant</li>
+		<li>Link to the public application page, set in the module settings</li>
+	</ul>
+
+	<h4>Notes</h4>
+	<ul>
+		<li>Reads and writes the jud12 site's database through the Jud12 connection string.</li>
+		<li>Uploaded documents live on the jud12 site; they are linked from there and cannot be added or removed here.</li>
+	</ul>
+</div>

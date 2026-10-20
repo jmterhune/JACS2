@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranscriptDatabase", "Trans
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreatReport", "ThreatReport\ThreatReport.csproj", "{86FBB0EF-13DE-4A1F-9C24-33B73F3FE37D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcriptionist", "Transcriptionist\Transcriptionist.csproj", "{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocketInmateCompare", "DocketInmateCompare\DocketInmateCompare.csproj", "{DEB010CE-73A5-4DAD-9902-9A0B70B91CA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourtCounsel", "CourtCounsel\CourtCounsel.csproj", "{B8E3A1D2-4C5F-6789-0ABC-DEF123456789}"
@@ -347,6 +349,18 @@ Global
 		{86FBB0EF-13DE-4A1F-9C24-33B73F3FE37D}.Release|x64.Build.0 = Release|Any CPU
 		{86FBB0EF-13DE-4A1F-9C24-33B73F3FE37D}.Release|x86.ActiveCfg = Release|Any CPU
 		{86FBB0EF-13DE-4A1F-9C24-33B73F3FE37D}.Release|x86.Build.0 = Release|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Debug|x64.Build.0 = Debug|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Debug|x86.Build.0 = Debug|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Release|x64.ActiveCfg = Release|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Release|x64.Build.0 = Release|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Release|x86.ActiveCfg = Release|Any CPU
+		{C4E2A8F1-6B3D-4D7A-9E15-3A8F0B7D2C64}.Release|x86.Build.0 = Release|Any CPU
 		{DEB010CE-73A5-4DAD-9902-9A0B70B91CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEB010CE-73A5-4DAD-9902-9A0B70B91CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEB010CE-73A5-4DAD-9902-9A0B70B91CA1}.Debug|x64.ActiveCfg = Debug|Any CPU
