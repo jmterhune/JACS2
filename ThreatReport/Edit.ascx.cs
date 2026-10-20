@@ -94,7 +94,9 @@ namespace tjc.Modules.ThreatReport
 
                     t = new Incident()
                     {
-                        CreatedByUserID = UserId,
+                        // This site's user ids are not the jud12 site's, and nothing reads CreatedByUserID:
+                        // incidents are tied to their submitter by CreatedByEmail. 0 matches no jud12 user.
+                        CreatedByUserID = 0,
                         CreatedByEmail = UserInfo.Email,
                         DateOfIncident = DateTime.Now,
                         DateReported = DateTime.Now,
@@ -146,7 +148,7 @@ namespace tjc.Modules.ThreatReport
                 t.ActionTaken = txtActionTaken.Text.Trim();
                 t.IsCourtEmployee = chkCourtEmployee.Checked;
                 t.WasTargetNotified = chkTargetNotified.Checked;
-                t.CreatedByUserID = UserId;
+                t.CreatedByUserID = 0; // see the note where the incident is first created
                 t.CreatedByEmail = UserInfo.Email;
                 t.DateOfIncident = incidentDate;
                 t.ReporterPhone = txtPersonReportingPhone.Text.Trim();
