@@ -71,6 +71,11 @@ namespace tjc.Modules.ThreatReport
                         PersonController ctlP = new PersonController(_hostSettings);
                         AttachmentController ctlA = new AttachmentController(_hostSettings);
                         Incident incident = ctlI.GetIncident(IncidentID);
+                        if (!CanViewIncident(incident))
+                        {
+                            DenyAccess("view this incident");
+                            return;
+                        }
                         rptPersonsInvolved.DataSource = ctlP.GetPersons(IncidentID);
                         rptPersonsInvolved.DataBind();
                         rptAttachments.DataSource = ctlA.GetAttachments(IncidentID);

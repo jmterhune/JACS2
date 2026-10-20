@@ -136,7 +136,9 @@
     <Compile Include="ViewThreat.ascx.designer.cs">
       <DependentUpon>ViewThreat.ascx</DependentUpon>
     </Compile>
-    <Compile Include="ThreatReportModuleSettingsBase.cs" />
+    <Compile Include="ThreatReportModuleSettingsBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ThreatReportModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

@@ -95,6 +95,7 @@ namespace tjc.Modules.ThreatReport
                     t = new Incident()
                     {
                         CreatedByUserID = UserId,
+                        CreatedByEmail = UserInfo.Email,
                         DateOfIncident = DateTime.Now,
                         DateReported = DateTime.Now,
                         DateReportedLEO = DateTime.Now,
@@ -146,6 +147,7 @@ namespace tjc.Modules.ThreatReport
                 t.IsCourtEmployee = chkCourtEmployee.Checked;
                 t.WasTargetNotified = chkTargetNotified.Checked;
                 t.CreatedByUserID = UserId;
+                t.CreatedByEmail = UserInfo.Email;
                 t.DateOfIncident = incidentDate;
                 t.ReporterPhone = txtPersonReportingPhone.Text.Trim();
                 t.ReporterExt = txtPersonReportingExtension.Text.Trim();

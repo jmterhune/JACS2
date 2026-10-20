@@ -5,12 +5,12 @@
     <div class="dnnFormItem">
         <asp:Label ID="lblViewerRole" runat="server" AssociatedControlID="txtViewerRole" Text="Incident Viewer Role" />
         <asp:TextBox ID="txtViewerRole" runat="server" />
-        <div class="dnnFormMessage">Role on this site that can view the incident list and details, and can submit incidents. Members are also emailed new incidents. Blank = Incident Viewer.</div>
+        <div class="dnnFormMessage">Role on this site whose members can view ALL incidents, submit incidents, and are emailed new ones. Everyone else who is signed in sees only their own submissions. Blank = Incident Viewer.</div>
     </div>
     <div class="dnnFormItem">
-        <asp:Label ID="lblJudgesRole" runat="server" AssociatedControlID="txtJudgesRole" Text="Judges Role" />
-        <asp:TextBox ID="txtJudgesRole" runat="server" />
-        <div class="dnnFormMessage">Role on this site that can also submit incidents (but not view them). Blank = Judges.</div>
+        <asp:Label ID="lblSubmitterRoles" runat="server" AssociatedControlID="txtSubmitterRoles" Text="Submitter Roles" />
+        <asp:TextBox ID="txtSubmitterRoles" runat="server" />
+        <div class="dnnFormMessage">Roles on this site (separate several with commas) whose members can submit incidents. They see only their own submissions. Blank = Judges,Judicial Assistant.</div>
     </div>
     <div class="dnnFormItem">
         <asp:Label ID="lblJud12Role" runat="server" AssociatedControlID="txtJud12Role" Text="Jud12 Site Notification Role" />

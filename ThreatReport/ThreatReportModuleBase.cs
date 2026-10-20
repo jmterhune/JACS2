@@ -35,9 +35,20 @@ namespace tjc.Modules.ThreatReport
             get { return IncidentAccess.GetSetting(Settings, "Jud12Role", "Incident Reporter"); }
         }
 
+        internal IncidentScope ViewScope
+        {
+            get { return IncidentAccess.GetScope(UserInfo, PortalId, Settings); }
+        }
+
+        /// <summary>True for any signed-in user: viewer-role members see every incident, others only their own.</summary>
         public bool CanViewIncidents
         {
-            get { return IncidentAccess.CanView(UserInfo, PortalId, Settings); }
+            get { return ViewScope != IncidentScope.None; }
+        }
+
+        internal bool CanViewIncident(Incident incident)
+        {
+            return IncidentAccess.CanViewIncident(ViewScope, UserInfo, incident);
         }
 
         public bool CanSubmitIncidents

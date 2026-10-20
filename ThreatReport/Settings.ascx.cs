@@ -10,11 +10,11 @@ namespace tjc.Modules.ThreatReport
     /// </summary>
     public partial class Settings : ThreatReportModuleSettingsBase
     {
-        private static readonly string[] Keys = { "ViewerRole", "JudgesRole", "Jud12Role", "ViewTabID", "EditTabID" };
+        private static readonly string[] Keys = { "ViewerRole", "SubmitterRoles", "Jud12Role", "ViewTabID", "EditTabID" };
 
         private System.Web.UI.WebControls.TextBox[] Boxes
         {
-            get { return new[] { txtViewerRole, txtJudgesRole, txtJud12Role, txtViewTab, txtEditTab }; }
+            get { return new[] { txtViewerRole, txtSubmitterRoles, txtJud12Role, txtViewTab, txtEditTab }; }
         }
 
         public override void LoadSettings()

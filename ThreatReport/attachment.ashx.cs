@@ -66,6 +66,17 @@ namespace tjc.Modules.ThreatReport
                     return;
                 }
 
+                // Viewer-role members open any file; everyone else only files on incidents they submitted.
+                Incident incident = new IncidentController(context.GetScope().ServiceProvider.GetRequiredService<IHostSettings>()).GetIncident(attachment.IncidentID);
+                if (!IncidentAccess.CanViewIncident(IncidentAccess.GetScope(user, module.PortalID, module.TabModuleSettings), user, incident))
+                {
+                    response.StatusCode = 403;
+                    response.Write("You do not have permission to view this file.");
+                    response.Flush();
+                    context.ApplicationInstance.CompleteRequest();
+                    return;
+                }
+
                 // The file bytes are stored in the shared database by the external site. Attachments
                 // uploaded before that change only exist on the external server's disk; send the
                 // browser to the external copy for those.

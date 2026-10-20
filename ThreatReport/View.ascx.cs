@@ -66,7 +66,13 @@ namespace tjc.Modules.ThreatReport
                     }
 
                     IncidentController ctl = new IncidentController(_hostSettings);
-                    rptIncidentList.DataSource = ctl.GetIncidents().Where(x => x.Location != null);
+                    // Members of the viewer role see every incident; everyone else sees the ones they submitted.
+                    var shown = ctl.GetIncidents().Where(x => x.Location != null);
+                    if (ViewScope != IncidentScope.All)
+                    {
+                        shown = shown.Where(x => IncidentAccess.Owns(UserInfo, x));
+                    }
+                    rptIncidentList.DataSource = shown;
                     rptIncidentList.DataBind();
                 }
             }
