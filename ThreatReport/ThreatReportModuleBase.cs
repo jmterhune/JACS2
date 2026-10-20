@@ -23,13 +23,13 @@ namespace tjc.Modules.ThreatReport
 {
     public class ThreatReportModuleBase : PortalModuleBase
     {
-        /// <summary>Role on this (intranet) site that may view the incidents; also notified of new ones. Setting "ViewerRole".</summary>
+        /// <summary>Role on this (intranet) site whose members may view every incident. Setting "ViewerRole".</summary>
         public string LocalNotificationRole
         {
             get { return IncidentAccess.ViewerRole(Settings); }
         }
 
-        /// <summary>Role on the jud12 (external) site whose members are also notified. Setting "Jud12Role".</summary>
+        /// <summary>Role on the jud12 (external) site whose members are emailed new incidents. Setting "Jud12Role".</summary>
         public string Jud12NotificationRole
         {
             get { return IncidentAccess.GetSetting(Settings, "Jud12Role", "Incident Reporter"); }

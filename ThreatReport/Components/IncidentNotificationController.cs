@@ -1,9 +1,5 @@
 using DotNetNuke.Abstractions.Application;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.Data;
-using DotNetNuke.Entities.Users;
-using DotNetNuke.Security.Roles;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -11,10 +7,9 @@ using System.Linq;
 namespace tjc.Modules.ThreatReport.Components
 {
     /// <summary>
-    /// Incident notification recipients are the members of the "Incident Reporter" role on the jud12
-    /// (external) DNN site, whose database this module already reads through the Jud12 connection.
-    /// The intranet site has its own users and roles, so membership is read from and changed in the
-    /// jud12 site's Users, Roles and UserRoles tables rather than the intranet's.
+    /// Incident notification recipients are the members of a role on the jud12 (external) DNN site, whose
+    /// database this module already reads through the Jud12 connection. The intranet site has its own users and
+    /// roles, so the members are read from the jud12 site's Users, Roles and UserRoles tables.
     /// </summary>
     class IncidentNotificationController
     {
@@ -53,21 +48,5 @@ namespace tjc.Modules.ThreatReport.Components
             }
         }
 
-        // ---- the intranet site's own role of the same name -------------------------------------------
-
-        /// <summary>Everyone who should be notified: members of <paramref name="jud12Role"/> on the jud12 site plus
-        /// members of <paramref name="localRole"/> on this (intranet) site, with duplicate addresses removed.</summary>
-        public List<string> GetNotificationEmails(int portalId, string localRole, string jud12Role)
-        {
-            var emails = new List<string>(GetSubscriberEmails(jud12Role));
-            foreach (UserInfo user in RoleController.Instance.GetUsersByRole(portalId, localRole))
-            {
-                if (!string.IsNullOrWhiteSpace(user.Email)) emails.Add(user.Email.Trim());
-            }
-            return emails.Select(e => e.Trim())
-                         .Where(e => e.Length > 0)
-                         .Distinct(StringComparer.OrdinalIgnoreCase)
-                         .ToList();
-        }
     }
 }
