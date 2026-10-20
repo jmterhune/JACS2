@@ -2,8 +2,6 @@
 using DotNetNuke.Entities.Users;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace tjc.Modules.ThreatReport.Components
 {
@@ -19,14 +17,13 @@ namespace tjc.Modules.ThreatReport.Components
 
     /// <summary>
     /// Members of the viewer role (setting ViewerRole, default Incident Viewer) see every incident; any other
-    /// signed-in user sees only the incidents they submitted, matched on the creator's email. Viewers and the
-    /// submitter roles (setting SubmitterRoles, a comma-separated list, default Judges and Judicial Assistant)
-    /// can submit. Administrators and host users can do everything.
+    /// signed-in user sees only the incidents they submitted, matched on the creator's email. Anyone signed in can
+    /// submit: who can reach the submit page is set with the DNN page and module permissions.
+    /// Administrators and host users see everything.
     /// </summary>
     static class IncidentAccess
     {
         public const string DefaultViewerRole = "Incident Viewer";
-        public const string DefaultSubmitterRoles = "Judges,Judicial Assistant";
 
         public static string GetSetting(Hashtable settings, string key, string fallback)
         {
@@ -41,16 +38,6 @@ namespace tjc.Modules.ThreatReport.Components
         public static string ViewerRole(Hashtable settings)
         {
             return GetSetting(settings, "ViewerRole", DefaultViewerRole);
-        }
-
-        public static List<string> SubmitterRoles(Hashtable settings)
-        {
-            // JudgesRole is the name this setting had before it became a list.
-            string value = GetSetting(settings, "SubmitterRoles", GetSetting(settings, "JudgesRole", DefaultSubmitterRoles));
-            return value.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(r => r.Trim())
-                        .Where(r => r.Length > 0)
-                        .ToList();
         }
 
         public static bool IsAdministrator(UserInfo user, int portalId)
@@ -74,11 +61,10 @@ namespace tjc.Modules.ThreatReport.Components
             return GetScope(user, portalId, settings) != IncidentScope.None;
         }
 
+        /// <summary>Any signed-in user. DNN permissions on the submit page decide who can actually get to it.</summary>
         public static bool CanSubmit(UserInfo user, int portalId, Hashtable settings)
         {
-            if (user == null || user.UserID <= 0) return false;
-            if (GetScope(user, portalId, settings) == IncidentScope.All) return true;
-            return SubmitterRoles(settings).Any(r => user.IsInRole(r));
+            return user != null && user.UserID > 0;
         }
 
         public static bool Owns(UserInfo user, Incident incident)

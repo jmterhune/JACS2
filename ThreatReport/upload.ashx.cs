@@ -37,11 +37,14 @@ namespace tjc.Modules.ThreatReport
                 return;
             }
 
-            // Submitting is limited to the Incident Viewer and Judges roles (names come from the module's settings).
+            // Who can reach the submit page is set with DNN permissions, so any signed-in user may submit here.
+            // Files can only be added to, or removed from, an incident the user submitted themselves
+            // (the blank incident the form creates when it opens already carries their email).
             int moduleId;
             int.TryParse(context.Request.Params["moduleId"], out moduleId);
             ModuleInfo module = moduleId > 0 ? ModuleController.Instance.GetModule(moduleId, Null.NullInteger, false) : null;
-            if (module == null || !IncidentAccess.CanSubmit(UserController.Instance.GetCurrentUserInfo(), module.PortalID, module.TabModuleSettings))
+            UserInfo user = UserController.Instance.GetCurrentUserInfo();
+            if (module == null || !IncidentAccess.CanSubmit(user, module.PortalID, module.TabModuleSettings))
             {
                 context.Response.Write(Json(0, "File Rejected. You do not have permission to submit incidents."));
                 return;
@@ -49,6 +52,7 @@ namespace tjc.Modules.ThreatReport
 
             var hostSettings = context.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
             var ctl = new AttachmentController(hostSettings);
+            var incidents = new IncidentController(hostSettings);
             try
             {
                 if (context.Request.Files.Count > 0)
@@ -59,8 +63,14 @@ namespace tjc.Modules.ThreatReport
                         context.Response.Write(Json(0, "File Rejected. Missing incident."));
                         return;
                     }
+                    Incident target = incidents.GetIncident(incidentId);
+                    if (target != null && !IncidentAccess.Owns(user, target) && !IncidentAccess.IsAdministrator(user, module.PortalID))
+                    {
+                        context.Response.Write(Json(0, "File Rejected. This incident was submitted by someone else."));
+                        return;
+                    }
                     string error;
-                    int fileId = Insert(ctl, new IncidentController(hostSettings), context.Request.Files[0], incidentId, out error);
+                    int fileId = Insert(ctl, incidents, context.Request.Files[0], incidentId, out error);
                     context.Response.Write(Json(fileId, error));
                 }
                 else
@@ -69,6 +79,14 @@ namespace tjc.Modules.ThreatReport
                     if (!int.TryParse(context.Request.Params["fileId"], out fileId) || fileId <= 0)
                     {
                         context.Response.Write(Json(0, "Missing file id."));
+                        return;
+                    }
+                    Attachment existing = ctl.GetAttachment(fileId);
+                    Incident owner = existing == null ? null : incidents.GetIncident(existing.IncidentID);
+                    if (existing == null || owner == null
+                        || (!IncidentAccess.Owns(user, owner) && !IncidentAccess.IsAdministrator(user, module.PortalID)))
+                    {
+                        context.Response.Write(Json(0, "File not found, or it belongs to an incident submitted by someone else."));
                         return;
                     }
                     ctl.DeleteAttachment(fileId);

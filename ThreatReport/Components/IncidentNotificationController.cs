@@ -27,6 +27,16 @@ namespace tjc.Modules.ThreatReport.Components
             _hostSettings = hostSettings;
         }
 
+        /// <summary>Names of the roles that exist on the jud12 site, for the settings dropdown.</summary>
+        public List<string> GetRoleNames()
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                return ctx.ExecuteQuery<string>(CommandType.Text,
+                    "SELECT RoleName FROM Roles ORDER BY RoleName").ToList();
+            }
+        }
+
         /// <summary>Distinct email addresses of the active members of the role on the jud12 site.</summary>
         public List<string> GetSubscriberEmails(string roleName)
         {
