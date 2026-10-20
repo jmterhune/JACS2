@@ -77,19 +77,11 @@ namespace tjc.Modules.ThreatReport
                     return;
                 }
 
-                // The file bytes are stored in the shared database by the external site. Attachments
-                // uploaded before that change only exist on the external server's disk; send the
-                // browser to the external copy for those.
+                // The file bytes are stored in the shared database.
                 byte[] data = ctl.GetFileData(id);
                 DateTime lastModified = attachment.UploadedDate;
                 if (data == null)
                 {
-                    if (!string.IsNullOrEmpty(attachment.URL) && attachment.URL.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                    {
-                        response.Redirect(attachment.URL, false);
-                        context.ApplicationInstance.CompleteRequest();
-                        return;
-                    }
                     response.StatusCode = 404;
                     response.Write("The requested file is not stored in the database.");
                     response.Flush();

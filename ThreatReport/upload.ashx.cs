@@ -138,7 +138,6 @@ namespace tjc.Modules.ThreatReport
             {
                 UploadedDate = DateTime.Now,
                 IncidentID = incidentId,
-                Path = "",
                 ContentType = AttachmentFiles.GetContentType(filename),
             };
             ctl.CreateAttachment(attachment);
@@ -147,8 +146,6 @@ namespace tjc.Modules.ThreatReport
             {
                 // Same stored-name convention as the external site: incident_attachment_filename.
                 attachment.FileName = incidentId + "_" + fileId + "_" + filename.Replace(" ", "_");
-                // Links from other sites go through this site's own handler, which reads the database.
-                attachment.URL = "/DesktopModules/tjc.Modules/ThreatReport/attachment.ashx?id=" + fileId;
                 ctl.UpdateAttachment(attachment);
                 ctl.SaveFileData(fileId, data, attachment.ContentType);
             }

@@ -24,10 +24,6 @@ namespace tjc.Modules.ThreatReport.Components
 
         public int IncidentID { get; set; }
 
-        public string Path { get; set; }
-
-        public string URL { get; set; }
-
         public string FileName { get; set; }
 
         public DateTime UploadedDate { get; set; }
