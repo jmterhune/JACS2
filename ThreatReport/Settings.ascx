@@ -15,7 +15,12 @@
     <div class="dnnFormItem">
         <asp:Label ID="lblViewTab" runat="server" AssociatedControlID="txtViewTab" Text="Incident List Page" />
         <asp:TextBox ID="txtViewTab" runat="server" />
-        <div class="dnnFormMessage">Tab ID or URL of the page with the incident list. Used for the links in emails and the confirmation page, and by the detail page's return link.</div>
+        <div class="dnnFormMessage">Tab ID or URL of the page with the incident list. Used for the link in emails to @jud12.flcourts.org addresses, the confirmation page's link, and the detail page's return link.</div>
+    </div>
+    <div class="dnnFormItem">
+        <asp:Label ID="lblExternalUrl" runat="server" AssociatedControlID="txtExternalUrl" Text="External Incident Link" />
+        <asp:TextBox ID="txtExternalUrl" runat="server" />
+        <div class="dnnFormMessage">Link to an incident on the jud12 (external) site, with the incident number replaced by {id}. Open an incident on that site, copy its address, and put {id} where its number is. Used for the link in emails to everyone who is not an @jud12.flcourts.org address. Blank = no link for them.</div>
     </div>
     <div class="dnnFormItem">
         <asp:Label ID="lblEditTab" runat="server" AssociatedControlID="txtEditTab" Text="Submit Incident Page" />

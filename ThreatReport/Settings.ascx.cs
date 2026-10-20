@@ -46,6 +46,7 @@ namespace tjc.Modules.ThreatReport
                 {
                     if (Settings.Contains("ViewTabID")) txtViewTab.Text = Settings["ViewTabID"].ToString();
                     if (Settings.Contains("EditTabID")) txtEditTab.Text = Settings["EditTabID"].ToString();
+                    if (Settings.Contains("ExternalIncidentUrl")) txtExternalUrl.Text = Settings["ExternalIncidentUrl"].ToString();
                 }
             }
             catch (Exception exc)
@@ -83,6 +84,7 @@ namespace tjc.Modules.ThreatReport
                 modules.UpdateTabModuleSetting(TabModuleId, "Jud12Role", ddlJud12Role.SelectedValue);
                 modules.UpdateTabModuleSetting(TabModuleId, "ViewTabID", txtViewTab.Text.Trim());
                 modules.UpdateTabModuleSetting(TabModuleId, "EditTabID", txtEditTab.Text.Trim());
+                modules.UpdateTabModuleSetting(TabModuleId, "ExternalIncidentUrl", txtExternalUrl.Text.Trim());
             }
             catch (Exception exc)
             {

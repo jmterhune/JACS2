@@ -188,14 +188,19 @@ namespace tjc.Modules.ThreatReport
                 string from = "noreply.threat@jud12.flcourts.org";
                 // Recipients are the members of the selected role on the jud12 site, each address once. This
                 // site's own Incident Viewer role is not emailed: the same people are kept in the jud12 role.
-                // Only @jud12.flcourts.org addresses can open the intranet, so they get the link to the
-                // incident on this site; anyone else gets the text without it.
-                string href = ListIncidentUrl(incident.IncidentID);
-                var emails = new IncidentNotificationController(_hostSettings).GetSubscriberEmails(Jud12NotificationRole);
+                // Addresses ending in @jud12.flcourts.org can open the intranet, so they get the link to the
+                // incident on this site (the Incident List Page setting). Everyone else gets the link to the
+                // incident on the jud12 (external) site (the External Incident Link setting). A link whose
+                // setting is blank is left out of the email.
+                string internalHref = ListIncidentUrl(incident.IncidentID);
+                string externalHref = ExternalIncidentUrl(incident.IncidentID);
+                var emails = new IncidentNotificationController(_hostSettings).GetSubscriberEmails(Jud12NotificationRole)
+                    .Where(e => !string.IsNullOrWhiteSpace(e)).Select(e => e.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var internalEmails = emails.Where(e => e.EndsWith("@" + OrgEmailDomain, StringComparison.OrdinalIgnoreCase)).ToList();
                 var otherEmails = emails.Except(internalEmails, StringComparer.OrdinalIgnoreCase).ToList();
-                SendBulkMessage(from, subject, BuildEmailBody(incident, people, href), internalEmails);
-                SendBulkMessage(from, subject, BuildEmailBody(incident, people, null), otherEmails);
+                SendBulkMessage(from, subject, BuildEmailBody(incident, people, internalHref), internalEmails);
+                SendBulkMessage(from, subject, BuildEmailBody(incident, people, externalHref), otherEmails);
             }
             catch (Exception exc)
             {

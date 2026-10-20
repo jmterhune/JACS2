@@ -71,6 +71,19 @@ namespace tjc.Modules.ThreatReport
         }
 
         /// <summary>
+        /// Link to one incident on the jud12 (external) site, from the ExternalIncidentUrl setting: the address of an
+        /// incident there with its number replaced by {id}. Null when the setting is blank.
+        /// </summary>
+        protected string ExternalIncidentUrl(int incidentId)
+        {
+            string template = IncidentAccess.GetSetting(Settings, "ExternalIncidentUrl", "");
+            if (template.Length == 0) return null;
+            return template.Contains("{id}")
+                ? template.Replace("{id}", incidentId.ToString())
+                : template.TrimEnd('/') + "/id/" + incidentId;
+        }
+
+        /// <summary>
         /// Link to one incident on the incident list page (setting ViewTabID), or null when that page is not set.
         /// The list module forwards a bare id to its detail view.
         /// </summary>

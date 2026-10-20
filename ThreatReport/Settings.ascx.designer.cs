@@ -16,5 +16,7 @@ namespace tjc.Modules.ThreatReport
         protected global::System.Web.UI.WebControls.TextBox txtViewTab;
         protected global::System.Web.UI.WebControls.Label lblEditTab;
         protected global::System.Web.UI.WebControls.TextBox txtEditTab;
+        protected global::System.Web.UI.WebControls.Label lblExternalUrl;
+        protected global::System.Web.UI.WebControls.TextBox txtExternalUrl;
     }
 }
