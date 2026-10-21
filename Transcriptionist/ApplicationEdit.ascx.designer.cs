@@ -15,40 +15,58 @@ namespace tjc.Modules.Transcriptionist
     {
 
         /// <summary>
-        /// pnlForm control.
+        /// pnlNotFound control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel pnlForm;
+        protected global::System.Web.UI.WebControls.Panel pnlNotFound;
 
         /// <summary>
-        /// lblStatusBadge control.
+        /// lnkNotFoundBack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblStatusBadge;
+        protected global::System.Web.UI.WebControls.HyperLink lnkNotFoundBack;
 
         /// <summary>
-        /// pnlRejectionReason control.
+        /// pnlEdit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlRejectionReason;
+        protected global::System.Web.UI.WebControls.Panel pnlEdit;
 
         /// <summary>
-        /// lblRejectionReason control.
+        /// ltHeading control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRejectionReason;
+        protected global::System.Web.UI.WebControls.Literal ltHeading;
+
+        /// <summary>
+        /// pnlErrors control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlErrors;
+
+        /// <summary>
+        /// ltErrors control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltErrors;
 
         /// <summary>
         /// txtFirstName control.
@@ -186,15 +204,6 @@ namespace tjc.Modules.Transcriptionist
         protected global::System.Web.UI.WebControls.TextBox txtMonthsExperience;
 
         /// <summary>
-        /// valExperience control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valExperience;
-
-        /// <summary>
         /// txtSoftwareExperience control.
         /// </summary>
         /// <remarks>
@@ -249,6 +258,24 @@ namespace tjc.Modules.Transcriptionist
         protected global::System.Web.UI.WebControls.Label lblNoAttachments;
 
         /// <summary>
+        /// ddlStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+
+        /// <summary>
+        /// txtRejectionReason control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRejectionReason;
+
+        /// <summary>
         /// btnSave control.
         /// </summary>
         /// <remarks>
@@ -256,24 +283,6 @@ namespace tjc.Modules.Transcriptionist
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSave;
-
-        /// <summary>
-        /// btnApprove control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnApprove;
-
-        /// <summary>
-        /// btnReject control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReject;
 
         /// <summary>
         /// btnDelete control.
@@ -292,14 +301,5 @@ namespace tjc.Modules.Transcriptionist
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkList;
-
-        /// <summary>
-        /// hdRejectionReason control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdRejectionReason;
     }
 }

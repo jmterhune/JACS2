@@ -151,6 +151,7 @@
     <Content Include="ApplicationList.ascx" />
     <Content Include="Handlers\ExperienceApi.ashx" />
     <Content Include="License.txt" />
+    <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Settings.ascx" />
     <Content Include="View.ascx" />

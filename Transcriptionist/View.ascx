@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h2 class="mb-0">Transcriptionist Admin Dashboard</h2>
         <asp:HyperLink ID="lnkExternal" runat="server" Visible="false" Target="_blank" rel="noopener noreferrer" CssClass="btn btn-outline-primary">
-            <i class="fa fa-external-link me-2" aria-hidden="true"></i>Public Application Page
+            <i class="fa fa-external-link me-2" aria-hidden="true"></i>Public Transcriptionist List
         </asp:HyperLink>
     </div>
 

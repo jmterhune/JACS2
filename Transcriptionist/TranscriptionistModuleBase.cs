@@ -14,6 +14,10 @@ namespace tjc.Modules.Transcriptionist
     {
         public const string ExternalAppUrlSetting = "ExternalAppUrl";
 
+        // The *ByUserID columns are shared with the jud12 site, whose user ids mean different people than
+        // this site's, so the staff user's id is not written. 0 marks "changed on the intranet".
+        protected const int IntranetUserId = 0;
+
         protected readonly IHostSettings _hostSettings;
 
         public TranscriptionistModuleBase()
@@ -77,6 +81,12 @@ namespace tjc.Modules.Transcriptionist
             return url == null
                 ? name
                 : $"<a href=\"{HttpUtility.HtmlAttributeEncode(url)}\" target=\"_blank\" rel=\"noopener noreferrer\">{name}</a>";
+        }
+
+        // Column sizes in tjc_cat_applications; a longer value would make the update fail.
+        protected static string Limit(string value, int max)
+        {
+            return value.Length > max ? value.Substring(0, max) : value;
         }
 
         #region Permission Checks

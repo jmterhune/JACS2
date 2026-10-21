@@ -7,16 +7,17 @@
 <dnn:dnnjsinclude runat="server" filepath="~/Resources/Libraries/noty/noty.min.js" />
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Libraries/noty/noty.min.css" />
 
-<asp:UpdatePanel ID="pnlForm" runat="server" UpdateMode="Conditional">
-    <ContentTemplate>
+<div id="TranscriptionistEdit" class="container-fluid">
+    <asp:Panel ID="pnlNotFound" runat="server" Visible="false" CssClass="alert alert-danger">
+        Unable to find the requested application. <asp:HyperLink runat="server" ID="lnkNotFoundBack" Text="Return to List" />
+    </asp:Panel>
 
-        <div class="mb-3">
-            <span>Status: </span>
-            <asp:Label ID="lblStatusBadge" runat="server" CssClass="badge bg-secondary" />
-        </div>
-        <div class="alert alert-warning" id="pnlRejectionReason" runat="server" visible="false">
-            <strong>Rejection Reason:</strong> <asp:Label ID="lblRejectionReason" runat="server" />
-        </div>
+    <asp:Panel ID="pnlEdit" runat="server">
+        <asp:Literal ID="ltHeading" runat="server" />
+
+        <asp:Panel ID="pnlErrors" runat="server" Visible="false" CssClass="alert alert-danger" role="alert">
+            <asp:Literal ID="ltErrors" runat="server" />
+        </asp:Panel>
 
         <!-- Personal Information -->
         <h3>Personal Information</h3>
@@ -48,7 +49,6 @@
             <div class="col-md-4">
                 <label>Email Address <span class="text-danger">*</span></label>
                 <asp:TextBox ID="txtEmailAddress" MaxLength="100" runat="server" CssClass="form-control" />
-                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtEmailAddress" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" CssClass="label label-danger" ErrorMessage="Invalid Email" Display="Dynamic" />
             </div>
             <div class="col-md-4">
                 <label>Residence Phone <span class="text-danger">*</span></label>
@@ -96,7 +96,6 @@
                 <asp:TextBox ID="txtMonthsExperience" MaxLength="2" runat="server" CssClass="form-control" TextMode="Number" />
             </div>
         </div>
-        <asp:CustomValidator ID="valExperience" runat="server" OnServerValidate="valExperience_ServerValidate" CssClass="label label-danger" ErrorMessage="Please enter experience in years or months." Display="Dynamic" />
         <div class="mb-3">
             <label>Software Experience <span class="text-danger">*</span></label>
             <asp:TextBox ID="txtSoftwareExperience" TextMode="MultiLine" MaxLength="2000" runat="server" CssClass="form-control character-limit" data-max="2000" Rows="3" />
@@ -174,17 +173,32 @@
         <asp:Label ID="lblNoAttachments" runat="server" Text="No files uploaded." Visible="false" CssClass="d-block text-muted mb-2" />
         <div class="text-muted small">Documents are uploaded and removed by the applicant on the public site.</div>
 
+        <!-- Status -->
+        <hr />
+        <div class="row mb-3">
+            <div class="col-12 col-lg-3">
+                <label for="<%=ddlStatus.ClientID %>" class="form-label">Status</label>
+                <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
+                    <asp:ListItem Text="Pending" Value="Pending" />
+                    <asp:ListItem Text="Approved" Value="Approved" />
+                    <asp:ListItem Text="Rejected" Value="Rejected" />
+                </asp:DropDownList>
+                <small class="text-muted">Only Approved applications appear on the public list. No email is sent from this page; to approve or reject a pending application and email the applicant, use the detail page.</small>
+            </div>
+            <div class="col-12 col-lg-9">
+                <label for="<%=txtRejectionReason.ClientID %>" class="form-label">Rejection Reason <small class="text-muted">(required when the status is Rejected)</small></label>
+                <asp:TextBox ID="txtRejectionReason" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" MaxLength="4000" />
+            </div>
+        </div>
+
         <!-- Actions -->
         <div class="mt-4">
             <asp:Button ID="btnSave" runat="server" Text="Save Changes" CssClass="btn btn-primary" OnClick="btnSave_Click" />
-            <asp:Button ID="btnApprove" runat="server" Text="Approve" CausesValidation="false" CssClass="btn btn-success" OnClick="btnApprove_Click" OnClientClick="confirmApproveApplication(); return false;" Visible="false" />
-            <asp:Button ID="btnReject" runat="server" Text="Reject" CausesValidation="false" CssClass="btn btn-warning" OnClick="btnReject_Click" OnClientClick="confirmRejectApplication(); return false;" Visible="false" />
             <asp:Button ID="btnDelete" runat="server" Text="Delete Application" CausesValidation="false" CssClass="btn btn-danger" OnClick="btnDelete_Click" OnClientClick="confirmDeleteApplication(); return false;" />
             <asp:HyperLink runat="server" ID="lnkList" CssClass="btn btn-outline-secondary">Cancel</asp:HyperLink>
-            <asp:HiddenField ID="hdRejectionReason" runat="server" ClientIDMode="Static" />
         </div>
-    </ContentTemplate>
-</asp:UpdatePanel>
+    </asp:Panel>
+</div>
 
 <script type="text/javascript">
     var apiUrl = '<%= ResolveUrl("Handlers/ExperienceApi.ashx") %>';
@@ -346,48 +360,6 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 __doPostBack('<%= btnDelete.UniqueID %>', '');
-            }
-        });
-    }
-
-    // Reject Application button: capture a required reason via Swal, stash it in a
-    // hidden field, then gate the server postback behind confirmation.
-    function confirmRejectApplication() {
-        Swal.fire({
-            title: 'Reject Application',
-            text: 'Please provide a reason for rejecting this application.',
-            input: 'textarea',
-            inputPlaceholder: 'Reason for rejection...',
-            inputAttributes: { 'aria-label': 'Rejection reason' },
-            showCancelButton: true,
-            confirmButtonText: 'Reject Application',
-            confirmButtonColor: '#d33',
-            preConfirm: (value) => {
-                if (!value || !value.trim()) {
-                    Swal.showValidationMessage('A rejection reason is required.');
-                }
-                return value;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('hdRejectionReason').value = result.value;
-                __doPostBack('<%= btnReject.UniqueID %>', '');
-            }
-        });
-    }
-
-    // Approve Application button: confirm before gating the server postback.
-    function confirmApproveApplication() {
-        Swal.fire({
-            title: 'Approve Application?',
-            text: 'This will approve the application and notify the applicant by email.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#198754',
-            confirmButtonText: 'Yes, approve it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                __doPostBack('<%= btnApprove.UniqueID %>', '');
             }
         });
     }

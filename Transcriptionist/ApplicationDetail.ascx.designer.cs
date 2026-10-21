@@ -15,166 +15,229 @@ namespace tjc.Modules.Transcriptionist
     {
 
         /// <summary>
-        /// lblFirstName control.
+        /// pnlNotFound control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblFirstName;
+        protected global::System.Web.UI.WebControls.Panel pnlNotFound;
 
         /// <summary>
-        /// lblMiddleName control.
+        /// lnkNotFoundBack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMiddleName;
+        protected global::System.Web.UI.WebControls.HyperLink lnkNotFoundBack;
 
         /// <summary>
-        /// lblLastName control.
+        /// pnlApplication control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLastName;
+        protected global::System.Web.UI.WebControls.Panel pnlApplication;
 
         /// <summary>
-        /// lblHomeAddress control.
+        /// ltHeading control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblHomeAddress;
+        protected global::System.Web.UI.WebControls.Literal ltHeading;
 
         /// <summary>
-        /// lblCounty control.
+        /// pnlAlreadyReviewed control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCounty;
+        protected global::System.Web.UI.WebControls.Panel pnlAlreadyReviewed;
 
         /// <summary>
-        /// lblEmailAddress control.
+        /// pnlErrors control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmailAddress;
+        protected global::System.Web.UI.WebControls.Panel pnlErrors;
 
         /// <summary>
-        /// lblResidencePhone control.
+        /// ltErrors control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblResidencePhone;
+        protected global::System.Web.UI.WebControls.Literal ltErrors;
 
         /// <summary>
-        /// lblCellPhone control.
+        /// ltFirstName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCellPhone;
+        protected global::System.Web.UI.WebControls.Literal ltFirstName;
 
         /// <summary>
-        /// lblEmployer control.
+        /// ltMiddleName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmployer;
+        protected global::System.Web.UI.WebControls.Literal ltMiddleName;
 
         /// <summary>
-        /// lblOfficePhone control.
+        /// ltLastName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblOfficePhone;
+        protected global::System.Web.UI.WebControls.Literal ltLastName;
 
         /// <summary>
-        /// lblEmployerAddress control.
+        /// ltHomeAddress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEmployerAddress;
+        protected global::System.Web.UI.WebControls.Literal ltHomeAddress;
 
         /// <summary>
-        /// lblTranscriptionTraining control.
+        /// ltCounty control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTranscriptionTraining;
+        protected global::System.Web.UI.WebControls.Literal ltCounty;
 
         /// <summary>
-        /// lblCertifications control.
+        /// lnkEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCertifications;
+        protected global::System.Web.UI.WebControls.HyperLink lnkEmail;
 
         /// <summary>
-        /// lblMonthsExperience control.
+        /// ltResidencePhone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMonthsExperience;
+        protected global::System.Web.UI.WebControls.Literal ltResidencePhone;
 
         /// <summary>
-        /// lblSoftwareExperience control.
+        /// ltCellPhone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSoftwareExperience;
+        protected global::System.Web.UI.WebControls.Literal ltCellPhone;
 
         /// <summary>
-        /// lblTurnAroundTime control.
+        /// ltEmployer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTurnAroundTime;
+        protected global::System.Web.UI.WebControls.Literal ltEmployer;
 
         /// <summary>
-        /// lblRuleFamiliarity control.
+        /// ltOfficePhone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRuleFamiliarity;
+        protected global::System.Web.UI.WebControls.Literal ltOfficePhone;
 
         /// <summary>
-        /// lblJacsVendor control.
+        /// ltEmployerAddress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblJacsVendor;
+        protected global::System.Web.UI.WebControls.Literal ltEmployerAddress;
+
+        /// <summary>
+        /// ltTranscriptionTraining control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltTranscriptionTraining;
+
+        /// <summary>
+        /// ltCertifications control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltCertifications;
+
+        /// <summary>
+        /// ltMonthsExperience control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltMonthsExperience;
+
+        /// <summary>
+        /// ltTurnAroundTime control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltTurnAroundTime;
+
+        /// <summary>
+        /// ltSoftwareExperience control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltSoftwareExperience;
+
+        /// <summary>
+        /// ltRuleFamiliarity control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltRuleFamiliarity;
+
+        /// <summary>
+        /// chkJacsVendor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkJacsVendor;
 
         /// <summary>
         /// rptExperiences control.
@@ -184,6 +247,15 @@ namespace tjc.Modules.Transcriptionist
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptExperiences;
+
+        /// <summary>
+        /// lblNoExperience control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblNoExperience;
 
         /// <summary>
         /// rptAttachments control.
@@ -213,22 +285,22 @@ namespace tjc.Modules.Transcriptionist
         protected global::System.Web.UI.WebControls.Label lblNoExternalUrl;
 
         /// <summary>
-        /// lblCreatedDate control.
+        /// ltSubmitted control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCreatedDate;
+        protected global::System.Web.UI.WebControls.Literal ltSubmitted;
 
         /// <summary>
-        /// lblStatus control.
+        /// ltStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblStatus;
+        protected global::System.Web.UI.WebControls.Literal ltStatus;
 
         /// <summary>
         /// pnlRejectionReason control.
@@ -237,16 +309,52 @@ namespace tjc.Modules.Transcriptionist
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlRejectionReason;
+        protected global::System.Web.UI.WebControls.Panel pnlRejectionReason;
 
         /// <summary>
-        /// lblRejectionReason control.
+        /// ltRejectionReason control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRejectionReason;
+        protected global::System.Web.UI.WebControls.Literal ltRejectionReason;
+
+        /// <summary>
+        /// pnlReview control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlReview;
+
+        /// <summary>
+        /// txtReviewNotes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtReviewNotes;
+
+        /// <summary>
+        /// cmdApprove control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton cmdApprove;
+
+        /// <summary>
+        /// cmdReject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton cmdReject;
 
         /// <summary>
         /// lnkEdit control.

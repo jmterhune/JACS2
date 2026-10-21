@@ -18,7 +18,7 @@
 		<li>Searchable list of all applications</li>
 		<li>Application detail, edit (including experience records), approve, reject and delete</li>
 		<li>Approve / reject emails to the applicant</li>
-		<li>Link to the public application page, set in the module settings</li>
+		<li>Link to the public Transcriptionist list, set in the module settings</li>
 	</ul>
 
 	<h4>Notes</h4>

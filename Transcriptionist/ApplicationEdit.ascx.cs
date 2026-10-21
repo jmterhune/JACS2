@@ -1,18 +1,20 @@
 using DotNetNuke.Services.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
 using tjc.Modules.Transcriptionist.Components;
 
 namespace tjc.Modules.Transcriptionist
 {
-    /// <summary>Edit, approve, reject or delete one application. Experience records are handled by Handlers/ExperienceApi.ashx.</summary>
+    /// <summary>
+    /// Edits the content of an application (contact details, qualifications, experience records, status) or deletes it.
+    /// Approving or rejecting a pending application, which emails the applicant, stays on the detail page; this page
+    /// sends no email. Experience records are handled by Handlers/ExperienceApi.ashx.
+    /// </summary>
     public partial class ApplicationEdit : TranscriptionistModuleBase
     {
-        // The *ByUserID columns are shared with the jud12 site, whose user ids mean different people than
-        // this site's, so the staff user's id is not written. 0 marks "changed on the intranet".
-        private const int IntranetUserId = 0;
+        private static readonly Regex EmailPattern = new Regex(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$", RegexOptions.Compiled);
 
         private Application _app;
 
@@ -27,29 +29,21 @@ namespace tjc.Modules.Transcriptionist
 
                 if (RedirectIfNoAccess()) return;
 
-                if (TranscriptionistID > 0)
+                lnkList.NavigateUrl = EditUrl("list");
+                lnkNotFoundBack.NavigateUrl = EditUrl("list");
+
+                _app = TranscriptionistID > 0 ? new ApplicationController(_hostSettings).GetApplication(TranscriptionistID) : null;
+                if (_app == null)
                 {
-                    _app = new ApplicationController(_hostSettings).GetApplication(TranscriptionistID);
-                    if (_app == null)
-                    {
-                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "Application not found.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                        pnlForm.Visible = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    Response.Redirect(EditUrl("list"), true);
+                    pnlEdit.Visible = false;
+                    pnlNotFound.Visible = true;
                     return;
                 }
 
                 if (!IsPostBack)
                 {
-                    lnkList.NavigateUrl = EditUrl("list");
                     PopulateFields();
                     BindAttachments();
-                    btnApprove.Visible = _app.Status != "Approved";
-                    btnReject.Visible = _app.Status != "Rejected";
                 }
             }
             catch (Exception exc)
@@ -60,6 +54,8 @@ namespace tjc.Modules.Transcriptionist
 
         private void PopulateFields()
         {
+            ltHeading.Text = $"<h2>Edit Transcriptionist Application #{_app.TranscriptionistID} <span class=\"badge {StatusBadgeClass(_app.Status)}\">{_app.Status}</span></h2>";
+
             txtFirstName.Text = _app.FirstName;
             txtMiddleName.Text = _app.MiddleName;
             txtLastName.Text = _app.LastName;
@@ -83,10 +79,8 @@ namespace tjc.Modules.Transcriptionist
             txtRuleFamiliarity.Text = _app.RuleFamiliarity;
             chkJacsVendor.Checked = _app.JacsVendor ?? false;
 
-            lblStatusBadge.Text = _app.Status;
-            lblStatusBadge.CssClass = "badge " + (_app.Status == "Approved" ? "bg-success" : _app.Status == "Rejected" ? "bg-danger" : "bg-secondary");
-            pnlRejectionReason.Visible = _app.Status == "Rejected";
-            lblRejectionReason.Text = System.Web.HttpUtility.HtmlEncode(_app.RejectionReason ?? "");
+            ddlStatus.SelectedValue = _app.Status;
+            txtRejectionReason.Text = _app.RejectionReason;
         }
 
         private void BindAttachments()
@@ -100,43 +94,29 @@ namespace tjc.Modules.Transcriptionist
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            if (!Page.IsValid) return;
-
-            UpdateApplication();
-            Response.Redirect(EditUrl("list"), true);
-        }
-
-        protected void btnApprove_Click(object sender, EventArgs e)
-        {
-            UpdateApplication();
-            _app.ApprovedDate = DateTime.UtcNow;
-            _app.ApprovedByUserID = IntranetUserId;
-            _app.RejectedDate = null;
-            _app.RejectedByUserID = null;
-            _app.RejectionReason = null;
-            new ApplicationController(_hostSettings).UpdateApplication(_app);
-            SendStatusEmail(approved: true);
-            Response.Redirect(EditUrl("list"), true);
-        }
-
-        protected void btnReject_Click(object sender, EventArgs e)
-        {
-            string reason = hdRejectionReason.Value.Trim();
-            if (reason.Length == 0)
+            try
             {
-                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "A rejection reason is required.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
-                return;
-            }
+                var errors = Validate();
+                if (errors.Count > 0)
+                {
+                    ltErrors.Text = "<ul class=\"mb-0\"><li>" + string.Join("</li><li>", errors) + "</li></ul>";
+                    pnlErrors.Visible = true;
+                    return;
+                }
 
-            UpdateApplication();
-            _app.RejectedDate = DateTime.UtcNow;
-            _app.RejectedByUserID = IntranetUserId;
-            _app.RejectionReason = Limit(reason, 4000);
-            _app.ApprovedDate = null;
-            _app.ApprovedByUserID = null;
-            new ApplicationController(_hostSettings).UpdateApplication(_app);
-            SendStatusEmail(approved: false);
-            Response.Redirect(EditUrl("list"), true);
+                ApplyFields();
+                ApplyStatus();
+                new ApplicationController(_hostSettings).UpdateApplication(_app);
+                Response.Redirect(EditUrl("list"), true);
+            }
+            catch (System.Threading.ThreadAbortException)
+            {
+                throw;
+            }
+            catch (Exception exc)
+            {
+                Exceptions.ProcessModuleLoadException(this, exc);
+            }
         }
 
         protected void btnDelete_Click(object sender, EventArgs e)
@@ -145,44 +125,26 @@ namespace tjc.Modules.Transcriptionist
             Response.Redirect(EditUrl("list"), true);
         }
 
-        private void SendStatusEmail(bool approved)
+        private List<string> Validate()
         {
-            if (string.IsNullOrWhiteSpace(_app.EmailAddress)) return;
+            var errors = new List<string>();
+            if (string.IsNullOrWhiteSpace(txtFirstName.Text)) errors.Add("First Name is required.");
+            if (string.IsNullOrWhiteSpace(txtLastName.Text)) errors.Add("Last Name is required.");
 
-            string subject = approved
-                ? "Your Transcriptionist Application Has Been Approved"
-                : "Your Transcriptionist Application Has Been Rejected";
+            string email = txtEmailAddress.Text.Trim();
+            if (email.Length > 0 && !EmailPattern.IsMatch(email))
+                errors.Add("Email Address is not a valid email address.");
 
-            string firstName = System.Web.HttpUtility.HtmlEncode(_app.FirstName);
-            string body = approved
-                ? $"Dear {firstName},<br /><br />Congratulations! Your application to become a court-approved transcriptionist for the 12th Judicial Circuit has been approved.<br /><br />Thank you."
-                : $"Dear {firstName},<br /><br />We regret to inform you that your application to become a court-approved transcriptionist for the 12th Judicial Circuit has been rejected.<br /><br /><strong>Reason:</strong> {System.Web.HttpUtility.HtmlEncode(_app.RejectionReason)}<br /><br />If you have questions, please contact our office.<br /><br />Thank you.";
+            if (string.IsNullOrWhiteSpace(txtYearsExperience.Text) && string.IsNullOrWhiteSpace(txtMonthsExperience.Text))
+                errors.Add("Enter the experience in years or months.");
 
-            string toAddress = _app.EmailAddress;
+            if (ddlStatus.SelectedValue == "Rejected" && string.IsNullOrWhiteSpace(txtRejectionReason.Text))
+                errors.Add("A rejection reason is required when the status is Rejected.");
 
-            // Fire-and-forget: an unreachable/slow SMTP server must never block this postback.
-            // A synchronous SendEmail call here can stall the SmtpClient for its full connect
-            // timeout, and under load that stalls the whole worker process's thread pool.
-            Task.Run(() =>
-            {
-                try
-                {
-                    DotNetNuke.Services.Mail.Mail.SendEmail("webhelp@jud12.flcourts.org", toAddress, subject, body);
-                }
-                catch
-                {
-                    // Notification failure must not affect the approve/reject action itself.
-                }
-            });
+            return errors;
         }
 
-        // Column sizes in tjc_cat_applications; a longer value would make the update fail.
-        private static string Limit(string value, int max)
-        {
-            return value.Length > max ? value.Substring(0, max) : value;
-        }
-
-        private void UpdateApplication()
+        private void ApplyFields()
         {
             _app.FirstName = Limit(txtFirstName.Text.Trim(), 50);
             _app.MiddleName = Limit(txtMiddleName.Text.Trim(), 50);
@@ -206,13 +168,47 @@ namespace tjc.Modules.Transcriptionist
             _app.MonthsExperience = (years * 12) + months;
             _app.LastModifiedDate = DateTime.UtcNow;
             _app.LastModifiedByUserID = IntranetUserId;
-
-            new ApplicationController(_hostSettings).UpdateApplication(_app);
         }
 
-        protected void valExperience_ServerValidate(object source, ServerValidateEventArgs args)
+        // Status is kept as dates on the record; moving to another status stamps its date and clears the others.
+        private void ApplyStatus()
         {
-            args.IsValid = !string.IsNullOrEmpty(txtYearsExperience.Text.Trim()) || !string.IsNullOrEmpty(txtMonthsExperience.Text.Trim());
+            string selected = ddlStatus.SelectedValue;
+            string reason = Limit(txtRejectionReason.Text.Trim(), 4000);
+
+            if (selected == _app.Status)
+            {
+                if (selected == "Rejected") _app.RejectionReason = reason;
+                return;
+            }
+
+            _app.ApprovedDate = null;
+            _app.ApprovedByUserID = null;
+            _app.RejectedDate = null;
+            _app.RejectedByUserID = null;
+            _app.RejectionReason = null;
+
+            if (selected == "Approved")
+            {
+                _app.ApprovedDate = DateTime.UtcNow;
+                _app.ApprovedByUserID = IntranetUserId;
+            }
+            else if (selected == "Rejected")
+            {
+                _app.RejectedDate = DateTime.UtcNow;
+                _app.RejectedByUserID = IntranetUserId;
+                _app.RejectionReason = reason;
+            }
+        }
+
+        private static string StatusBadgeClass(string status)
+        {
+            switch (status)
+            {
+                case "Approved": return "bg-success";
+                case "Rejected": return "bg-danger";
+                default: return "bg-secondary";
+            }
         }
     }
 }

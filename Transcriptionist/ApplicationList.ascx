@@ -52,7 +52,7 @@
                 Back to Dashboard
             </asp:HyperLink>
             <asp:HyperLink ID="lnkExternal" runat="server" Visible="false" Target="_blank" rel="noopener noreferrer" CssClass="btn btn-outline-primary mt-3">
-                <i class="fa fa-external-link me-2" aria-hidden="true"></i>Public Application Page
+                <i class="fa fa-external-link me-2" aria-hidden="true"></i>Public Transcriptionist List
             </asp:HyperLink>
         </div>
     </div>
