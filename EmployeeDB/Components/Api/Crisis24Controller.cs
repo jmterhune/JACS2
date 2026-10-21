@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using System.Web.Http;
+using tjc.Modules.EmployeeDB.Components.Controllers;
 using tjc.Modules.EmployeeDB.Components.Helpers;
 
 namespace tjc.Modules.EmployeeDB.Components.Api
@@ -168,6 +169,13 @@ namespace tjc.Modules.EmployeeDB.Components.Api
                 }
 
                 var upload = Crisis24Uploader.Upload(file.Content, file.FileName);
+
+                // Only a real, successful upload moves the "last export"
+                // watermark forward — Preview() never calls this, so
+                // previewing the file doesn't cause already-reported
+                // terminations to drop off the next real transmission.
+                new Crisis24ExportLogController(_hostSettings)
+                    .RecordExport(file.FileName, file.RowCount, UserInfo.UserID);
 
                 var sb = new StringBuilder();
                 sb.Append("<p><strong>")

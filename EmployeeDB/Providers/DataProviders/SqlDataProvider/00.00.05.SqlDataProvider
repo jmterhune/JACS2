@@ -1,0 +1,45 @@
+/***********************************************************************
+ * EmployeeDB 0.0.5 install script
+ *
+ * Registers the Crisis24 Person/HR feed export as a DNN scheduled task
+ * (Components/ScheduledTasks/Crisis24ExportSchedule.cs) so it runs
+ * automatically once a month instead of only via the manual
+ * "Crisis24 Export" button on EmployeeList.
+ *
+ *   TimeLapse / TimeLapseMeasurement = 1 / 'mo' — DNN's scheduler has no
+ *   dedicated "monthly" job type; 'mo' is the literal interval-unit code
+ *   the Host > Schedule UI itself uses (confirmed against this site's own
+ *   Dnn.TaskScheduler bundle), alongside 's'/'m'/'h'/'d'/'w'/'y'.
+ *
+ *   CatchUpEnabled = true — if the server was down at the scheduled time,
+ *   run as soon as it's back rather than silently skipping a whole month;
+ *   this exports the CURRENT roster regardless of when it actually runs,
+ *   so there's no stale-data risk in catching up late.
+ *
+ *   Enabled = true on every environment, including dev/test where
+ *   Crisis24FTP is still a placeholder — Crisis24ExportSchedule.DoWork()
+ *   checks Crisis24Uploader.IsConfigured itself and logs a clean skip
+ *   instead of erroring when it isn't configured, so this is safe to
+ *   leave on everywhere.
+ ***********************************************************************/
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM   {databaseOwner}{objectQualifier}Schedule
+    WHERE  TypeFullName = 'tjc.Modules.EmployeeDB.Components.ScheduledTasks.Crisis24ExportSchedule, tjc.Modules.EmployeeDB')
+BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}Schedule
+           (TypeFullName, TimeLapse, TimeLapseMeasurement, RetryTimeLapse, RetryTimeLapseMeasurement,
+            RetainHistoryNum, AttachToEvent, CatchUpEnabled, Enabled, ObjectDependencies, Servers,
+            CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate, FriendlyName)
+    VALUES
+           ('tjc.Modules.EmployeeDB.Components.ScheduledTasks.Crisis24ExportSchedule, tjc.Modules.EmployeeDB',
+            1, 'mo',
+            1, 'd',
+            12,
+            '', 1, 1,
+            '', '',
+            NULL, GETDATE(), NULL, GETDATE(),
+            'Crisis24 Person/HR Feed Export')
+END
+GO

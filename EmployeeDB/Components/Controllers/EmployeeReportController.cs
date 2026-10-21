@@ -47,16 +47,38 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
-        /// <summary>Active roster for the Crisis24 Person/HR feed — see
-        /// Components\Helpers\Crisis24ExportBuilder.cs.</summary>
-        public IEnumerable<EmployeeInfo> GetActiveEmployeesForExport()
+        /// <summary>Roster for the Crisis24 Person/HR feed — every active
+        /// employee, plus only the inactive ones terminated since
+        /// <paramref name="inactiveSinceDate"/> (the last successful export —
+        /// see Crisis24ExportLogController). An inactive employee already
+        /// reported once drops off the feed on the next run rather than being
+        /// resent every time; <paramref name="inactiveSinceDate"/> null (no
+        /// export has ever succeeded) includes every inactive employee that
+        /// has a termination date, to seed Crisis24 with a baseline. An
+        /// inactive employee with no termination date at all never qualifies
+        /// — there's no "since" to compare, so they're left off entirely.
+        /// See Components\Helpers\Crisis24ExportBuilder.cs, which maps
+        /// IsActive onto the feed's Status column ("A"/"I").
+        ///
+        /// Also called from the monthly Crisis24ExportSchedule task, which
+        /// has no HttpContext to resolve an IHostSettings from, so
+        /// _hostSettings can be null there — fall back to the classic no-arg
+        /// overload rather than risk passing null into
+        /// DataContext.Instance(IHostSettings).</summary>
+        public IEnumerable<EmployeeInfo> GetAllEmployeesForExport(DateTime? inactiveSinceDate)
         {
-            using (IDataContext ctx = DataContext.Instance(_hostSettings))
+            using (IDataContext ctx = _hostSettings != null ? DataContext.Instance(_hostSettings) : DataContext.Instance())
             {
+                // ISNULL(@0, '19000101') makes a null cutoff (first-ever
+                // export) match every real termination date, rather than
+                // "TerminationDate > NULL" silently excluding everyone.
                 string sql = @"SELECT * FROM tjc_employee
-                               WHERE IsActive = 1 AND IsEmployee = 1
+                               WHERE IsEmployee = 1
+                                 AND (IsActive = 1
+                                      OR (TerminationDate IS NOT NULL
+                                          AND TerminationDate > ISNULL(@0, '19000101')))
                                ORDER BY LastName, FirstName";
-                return ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, sql);
+                return ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, sql, (object)inactiveSinceDate ?? DBNull.Value);
             }
         }
 

@@ -20,22 +20,34 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
     ///
     ///   Unique Identifier | Legal First Name | Legal Last Name
     ///   Primary Email | Organization Identifier | Status
-    ///   Email 2 | Email 3 | Phone1 | Phone2 | Phone3
+    ///   Email 2 | Email 3 | Phone1 | Phone1 Type | Phone2 | Phone2 Type
+    ///   | Phone3 | Phone3 Type
     ///
     /// Spec rules honoured here:
-    ///  - Full file on each transmission; every active employee appears once.
+    ///  - Full file on each transmission, but inactive employees only ride
+    ///    along once: an inactive employee appears only if their
+    ///    TerminationDate falls after the last successful export (tracked in
+    ///    tjc_crisis24_export_log via Crisis24ExportLogController). Once
+    ///    Crisis24 has been told someone left, they drop off the feed for
+    ///    good rather than being resent every transmission.
     ///  - Unique Identifier appears exactly one time per file (EmployeeId is
     ///    the PK, so uniqueness is guaranteed by the DB).
     ///  - Blank legal first/last name is replaced with "." per the guide's
     ///    placeholder recommendation.
-    ///  - A missing primary email becomes "{EmployeeId}@noemail.com" — the
-    ///    guide requires a unique, distinct address for every person, and a
-    ///    record without one fails ingestion outright.
+    ///  - A missing OR invalid-format primary email becomes
+    ///    "{EmployeeId}@noemail.com" — the guide requires a unique, distinct,
+    ///    deliverable address for every person, and a record without one
+    ///    fails ingestion outright. Email 2 has no such fallback: an
+    ///    invalid-format personal email is just left blank.
     ///  - Phone values are normalised to E.164 (+1XXXXXXXXXX) so they're
-    ///    usable by Crisis24 messaging.
-    ///  - Status is "A" for every row. Only active employees are exported;
-    ///    Crisis24 was not asked to receive "T" (terminated) rows, so
-    ///    departed staff simply stop appearing on the feed.
+    ///    usable by Crisis24 messaging. Each phone column is paired with a
+    ///    "PhoneN Type" column carrying that number's tjc_employee_phone
+    ///    PhoneType (Mobile, Work, Home, etc.) — Crisis24 uses this to decide
+    ///    whether a number can receive SMS.
+    ///  - Status is "A" for an active employee (IsActive = 1) or "I" for an
+    ///    inactive one — Crisis24 was not asked to receive "T" (terminated)
+    ///    rows specifically, so inactive staff stay on the feed as "I"
+    ///    rather than dropping off it.
     /// </summary>
     public static class Crisis24ExportBuilder
     {
@@ -51,8 +63,11 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
             "Email 2",
             "Email 3",
             "Phone1",
+            "Phone1 Type",
             "Phone2",
-            "Phone3"
+            "Phone2 Type",
+            "Phone3",
+            "Phone3 Type"
         };
 
         /// <summary>Crisis24 accepts up to three phone columns on this feed.</summary>
@@ -79,8 +94,9 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
 
         public static Result Build(IHostSettings hostSettings)
         {
+            var lastExportDate = new Crisis24ExportLogController(hostSettings).GetLastSuccessfulExportDate();
             var employees = new EmployeeReportController(hostSettings)
-                .GetActiveEmployeesForExport()
+                .GetAllEmployeesForExport(lastExportDate)
                 .ToList();
             var phoneCtrl = new PhoneController(hostSettings);
             var orgId = OrganizationId;
@@ -101,8 +117,9 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
 
                 // Don't repeat the primary address in Email 2 — that happens
                 // when an employee has no work email and the personal one was
-                // promoted to primary.
-                var secondary = Clean(emp.PersonalEmail);
+                // promoted to primary. An invalid-format personal email has
+                // no fallback to fall back TO, so it's just left blank.
+                var secondary = CleanEmail(emp.PersonalEmail);
                 if (secondary.Equals(primary, StringComparison.OrdinalIgnoreCase))
                     secondary = string.Empty;
 
@@ -113,14 +130,17 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
                     NameOrPlaceholder(emp.LastName),
                     primary,
                     orgId,
-                    "A",
+                    emp.IsActive.GetValueOrDefault() ? "A" : "I",
                     secondary,
                     string.Empty  // Email 3 — not tracked in tjc_employee.
                 };
 
                 var phones = SelectPhones(phoneCtrl.GetForEmployee(emp.EmployeeId));
                 for (int i = 0; i < PhoneColumns; i++)
-                    row.Add(i < phones.Count ? phones[i] : string.Empty);
+                {
+                    row.Add(i < phones.Count ? phones[i].Number : string.Empty);
+                    row.Add(i < phones.Count ? phones[i].Type : string.Empty);
+                }
 
                 sb.Append(string.Join(",", row.Select(Csv))).Append("\r\n");
                 rowCount++;
@@ -200,8 +220,8 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
         /// <summary>
         /// The guide requires a unique, distinct primary email per person and
         /// fails the whole record without one, so employees with no work email
-        /// fall back to their personal address and then to the recommended
-        /// uniqueID@noemail.com convention.
+        /// (or an invalid-format one) fall back to their personal address and
+        /// then to the recommended uniqueID@noemail.com convention.
         ///
         /// <paramref name="used"/> carries the addresses already emitted in
         /// this file; a collision falls through to the synthetic address rather
@@ -211,7 +231,7 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
         {
             var synthetic = emp.EmployeeId.ToString(CultureInfo.InvariantCulture) + "@noemail.com";
 
-            foreach (var candidate in new[] { Clean(emp.Email), Clean(emp.PersonalEmail), synthetic })
+            foreach (var candidate in new[] { CleanEmail(emp.Email), CleanEmail(emp.PersonalEmail), synthetic })
             {
                 if (candidate.Length == 0) continue;
                 if (used.Add(candidate)) return candidate;
@@ -227,7 +247,7 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
         }
 
         /// <summary>
-        /// Picks up to three phone numbers for the feed.
+        /// Picks up to three phone numbers (with their PhoneType) for the feed.
         ///
         /// The candidate set is the phones flagged for emergency-notification
         /// call or text (the SwnCall / SwnText columns on tjc_employee_phone —
@@ -238,9 +258,9 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
         /// Duplicate numbers are collapsed — Crisis24 gains nothing from the
         /// same E.164 value in two columns.
         /// </summary>
-        private static List<string> SelectPhones(IEnumerable<PhoneInfo> phones)
+        private static List<(string Number, string Type)> SelectPhones(IEnumerable<PhoneInfo> phones)
         {
-            var picked = new List<string>();
+            var picked = new List<(string Number, string Type)>();
             if (phones == null) return picked;
 
             var candidates = phones
@@ -253,8 +273,8 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
             {
                 var e164 = ToE164(p.PhoneNumber);
                 if (e164.Length == 0) continue;
-                if (picked.Contains(e164)) continue;
-                picked.Add(e164);
+                if (picked.Any(x => x.Number == e164)) continue;
+                picked.Add((e164, Clean(p.PhoneType)));
                 if (picked.Count == PhoneColumns) break;
             }
             return picked;
@@ -300,6 +320,32 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
         {
             if (string.IsNullOrEmpty(value)) return string.Empty;
             return value.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ").Trim();
+        }
+
+        /// <summary>
+        /// Cleans an email field and returns it only if it's a validly-formed
+        /// address; otherwise returns an empty string so the caller treats it
+        /// exactly like a missing value (Primary Email falls through to the
+        /// next candidate, Email 2 just ends up blank). A malformed address
+        /// is worse than an empty column — Crisis24 would try to send to it.
+        /// </summary>
+        private static string CleanEmail(string value)
+        {
+            var clean = Clean(value);
+            if (clean.Length == 0) return string.Empty;
+
+            try
+            {
+                // System.Net.Mail.MailAddress is the standard pragmatic
+                // "is this shaped like an email" check .NET offers; it also
+                // rejects things like "not-an-email" or "user@" outright.
+                var addr = new System.Net.Mail.MailAddress(clean);
+                return addr.Address.Equals(clean, StringComparison.OrdinalIgnoreCase) ? clean : string.Empty;
+            }
+            catch (FormatException)
+            {
+                return string.Empty;
+            }
         }
 
         /// <summary>RFC 4180 field encoding for the comma-delimited file.</summary>

@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="EmployeeDB" type="Module" version="00.00.04">
+    <package name="EmployeeDB" type="Module" version="00.00.06">
       <friendlyName>EmployeeDB</friendlyName>
       <description>Employee Database module</description>
       <iconFile>~/Images/icon_extensions_32px.png</iconFile>
@@ -41,10 +41,20 @@
               <name>00.00.04.SqlDataProvider</name>
               <version>00.00.04</version>
             </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.05.SqlDataProvider</name>
+              <version>00.00.05</version>
+            </script>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.06.SqlDataProvider</name>
+              <version>00.00.06</version>
+            </script>
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>Uninstall.SqlDataProvider</name>
-              <version>00.00.04</version>
+              <version>00.00.06</version>
             </script>
           </scripts>
         </component>

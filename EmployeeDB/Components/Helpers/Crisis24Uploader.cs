@@ -101,7 +101,20 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
 
                     session.Open(target.SessionOptions);
 
-                    var options = new TransferOptions { TransferMode = TransferMode.Binary };
+                    // Crisis24's SFTP server rejects the post-upload SETSTAT
+                    // call WinSCP issues by default to preserve the local
+                    // timestamp and set permissions ("SETSTAT unsupported",
+                    // error code 8). The transfer itself succeeds regardless,
+                    // but WinSCP reports the SETSTAT failure as an overall
+                    // error unless these are turned off — FilePermissions
+                    // null (the default) already skips setting permissions;
+                    // PreserveTimestamp must be explicitly disabled too.
+                    var options = new TransferOptions
+                    {
+                        TransferMode = TransferMode.Binary,
+                        PreserveTimestamp = false,
+                        FilePermissions = null
+                    };
                     var transfer = session.PutFiles(localPath, remotePath, false, options);
                     // Check() rethrows the underlying failure with WinSCP's
                     // own message, which is far more actionable than a bare

@@ -90,9 +90,14 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
         }
 
+        /// <summary>Also called from the monthly Crisis24ExportSchedule task,
+        /// which has no HttpContext to resolve an IHostSettings from, so
+        /// _hostSettings can be null there — fall back to the classic no-arg
+        /// overload rather than risk passing null into
+        /// DataContext.Instance(IHostSettings).</summary>
         public IEnumerable<PhoneInfo> GetForEmployee(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance(_hostSettings))
+            using (IDataContext ctx = _hostSettings != null ? DataContext.Instance(_hostSettings) : DataContext.Instance())
             {
                 var rep = ctx.GetRepository<PhoneInfo>();
                 return rep.Find("WHERE EmployeeId = @0", employeeId);

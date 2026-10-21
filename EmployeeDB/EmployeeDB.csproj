@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Base Classes -->
+    <Compile Include="Components\ScheduledTasks\Crisis24ExportSchedule.cs" />
     <Compile Include="EmployeeDBModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -174,6 +175,7 @@
     <Compile Include="Components\Controllers\NhitItemController.cs" />
     <Compile Include="Components\Controllers\NhitProfileController.cs" />
     <Compile Include="Components\Controllers\NhitRequestController.cs" />
+    <Compile Include="Components\Controllers\Crisis24ExportLogController.cs" />
     <Compile Include="Components\FeatureController.cs" />
     <!-- Helpers -->
     <Compile Include="Components\Helpers\ModelNormalizer.cs" />
