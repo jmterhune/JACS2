@@ -16,7 +16,7 @@
             <a class="nav-link" href="<%=RegionListUrl %>">Regions</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#groups" data-toggle="tab">Case Type Groups</a>
+            <a class="nav-link" href="#groups" data-bs-toggle="tab">Case Type Groups</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=CaseTypeListUrl %>">Case Types</a>
@@ -82,10 +82,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditGroupModalLabel">Add / Edit Case Type Group</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body groups">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtGroup" Text="Group" />
                                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtGroup" />
                                     </div>
@@ -156,9 +156,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditGroupModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditGroupModal')).show();
         } else {
-            $('#EditGroupModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditGroupModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

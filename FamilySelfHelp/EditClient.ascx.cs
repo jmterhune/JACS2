@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Log.EventLog;
@@ -39,11 +40,13 @@ namespace tjc.Modules.FamilySelfHelp
     public partial class EditClient : FamilySelfHelpModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private ModuleSecurity modSecurty;
 
         public EditClient()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -69,7 +72,7 @@ namespace tjc.Modules.FamilySelfHelp
                         lnkReports.Visible = true;
                     if(modSecurty.HasMergePermission)
                         lnkMerge.Visible = true;
-                    var tc = new ClientController();
+                    var tc = new ClientController(_hostSettings);
                     if (ClientId > 0)
                     {
                         Components.Client client = tc.GetClient(ClientId);
@@ -97,7 +100,7 @@ namespace tjc.Modules.FamilySelfHelp
         protected void cmdSubmit_Click(object sender, EventArgs e)
         {
             var t = new Client();
-            var tc = new ClientController();
+            var tc = new ClientController(_hostSettings);
             if (ClientId > 0)
             {
                 t=tc.GetClient(ClientId);
@@ -128,8 +131,8 @@ namespace tjc.Modules.FamilySelfHelp
         protected void cmdDelete_Click(object sender, EventArgs e)
         {
             var t = new Client();
-            var tc = new ClientController();
-            var lc=new Components.LogController();
+            var tc = new ClientController(_hostSettings);
+            var lc=new Components.LogController(_hostSettings);
             if (ClientId > 0)
             {
                 lc.GetLogsByClient(ClientId);

@@ -6,7 +6,7 @@
             <asp:HyperLink ID="lnkHearingLog" CssClass="nav-link" runat="server" Text="Hearing Log" ToolTip="Select to View the 60 Day Hearing Log" />
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#" data-toggle="tab">Court Counsel Log</a>
+            <a class="nav-link" href="#" data-bs-toggle="tab">Court Counsel Log</a>
         </li>
     </ul>
     <div class="tab-content">
@@ -45,7 +45,7 @@
                 </div>
                 <div id="statusOptionContainer" class="text-end">
                     <div class="dropdown ms-2 d-inline-block">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             Hidden Columns
                         <span class="caret"></span>
                         </button>
@@ -218,7 +218,7 @@
             fixedHeader: true,
         });
         hearingTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $('#process-overlay').hide();
         });
         $.fn.dataTable.ext.errMode = () => ShowAlert('Error Loading Data', 'Error while loading the table data. Please refresh');

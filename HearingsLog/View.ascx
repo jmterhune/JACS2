@@ -4,7 +4,7 @@
 <div class="tabs tabs-center">
     <ul class="nav nav-tabs justify-content-center">
         <li class="nav-item active">
-            <a class="nav-link" href="#" data-toggle="tab">Hearing Log</a>
+            <a class="nav-link" href="#" data-bs-toggle="tab">Hearing Log</a>
         </li>
         <li class="nav-item">
             <asp:HyperLink ID="lnkCourtCounsel" CssClass="nav-link" runat="server" Text="Court Counsel Log" ToolTip="Select to View the Court Counsel Log" />
@@ -26,7 +26,7 @@
                             <asp:TextBox ID="txtEndDate" ClientIDMode="Static" runat="server" Width="150" CssClass="form-control date-picker" MaxLength="15" aria-label="End Date"></asp:TextBox>
                         </div>
                         <div class="col-auto">
-                            <button id="btnImport" class="btn btn-tertiary ms-2 me-2" data-toggle="modal" data-target="#importModal">
+                            <button id="btnImport" class="btn btn-tertiary ms-2 me-2" data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="fa-solid fa-file-import" aria-hidden="true"></i>&nbsp;Import Hearings
                             </button>
                         </div>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <asp:Literal ID="ltMessage" runat="server"></asp:Literal>
-                <button id="btnAdd" class="btn btn-primary me-3" data-toggle="modal" data-target="#logModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Hearing</button>
+                <button id="btnAdd" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#logModal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Hearing</button>
                 <div id="statusOptionContainer" class="text-end">
                     <div class="d-inline-block">
                         <input type="radio" class="btn-check" name="statusOptions" value="0" id="newOption" autocomplete="off" checked>
@@ -65,7 +65,7 @@
                         <label class="btn btn-secondary mt-2" for="excludedOption">Excluded</label>
                     </div>
                     <div class="dropdown ms-2 d-inline-block">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="columnVisibility" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             Hidden Columns
                         <span class="caret"></span>
                         </button>
@@ -170,9 +170,9 @@
                             <th>Drafted By</th>
                             <th>Judge</th>
                             <th>
-                                <abbr title="Court Notes" data-toggle="tooltip">CN</abbr></th>
+                                <abbr title="Court Notes" data-bs-toggle="tooltip">CN</abbr></th>
                             <th>
-                                <abbr title="Delay Reason" data-toggle="tooltip">DR</abbr></th>
+                                <abbr title="Delay Reason" data-bs-toggle="tooltip">DR</abbr></th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -183,7 +183,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="logModalLabel">Edit Hearing Log Item</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -258,7 +258,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="importModalLabel">Import Hearings from JACS</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -276,7 +276,7 @@
                             <button id="cmdImport" class="btn btn-tertiary">
                                 <i class="fa-solid fa-file-import" aria-hidden="true"></i>&nbsp;Start Import
                             </button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -375,7 +375,7 @@
                 [
                     {
                         data: "logid", render: function (data, type, row, meta) {
-                            return `<a title="View Record" data-id="${row.logid}" data-judgeid="${row.judgeid}" data-draftedby="${row.draftedby}" data-delayreason="${row.delayreason}" data-courtnotes="${row.courtnotes}"  data-motiontitle="${row.motiontitle}" data-din="${row.din}" data-casenumber="${row.casenumber}" data-casename="${row.casename}" data-county="${row.county}" data-hearingdate="${row.hearingdate}"  data-ordersigned="${row.ordersigned}" onclick="ViewRecord(event,this)" data-toggle="tooltip" class="search-link"><i class="fas fa-search" aria-hidden="true"></i></a>`;
+                            return `<a title="View Record" data-id="${row.logid}" data-judgeid="${row.judgeid}" data-draftedby="${row.draftedby}" data-delayreason="${row.delayreason}" data-courtnotes="${row.courtnotes}"  data-motiontitle="${row.motiontitle}" data-din="${row.din}" data-casenumber="${row.casenumber}" data-casename="${row.casename}" data-county="${row.county}" data-hearingdate="${row.hearingdate}"  data-ordersigned="${row.ordersigned}" onclick="ViewRecord(event,this)" data-bs-toggle="tooltip" class="search-link"><i class="fas fa-search" aria-hidden="true"></i></a>`;
                         }, className: "command-item", orderable: false
                     },
                     { data: "ordersigned" },
@@ -390,18 +390,18 @@
                     { data: "judgeid" },
                     {
                         data: "courtnotes", render: function (data, type, row, meta) {
-                            return data == null ? '' : `<a data-bs-html="true" title="<strong>Court Notes:</strong><p>${data}</p>" data-toggle="tooltip"><i class="fas fa-comment-alt" aria-hidden="true"></i></a>`;
+                            return data == null ? '' : `<a data-bs-html="true" title="<strong>Court Notes:</strong><p>${data}</p>" data-bs-toggle="tooltip"><i class="fas fa-comment-alt" aria-hidden="true"></i></a>`;
 
                         }, className: "command-item", orderable: false
                     },
                     {
                         data: "delayreason", render: function (data, type, row, meta) {
-                            return data == null ? '' : `<a data-bs-html="true"  title="<strong>Delay Reason:</strong><p>${data}</p>" data-toggle="tooltip"><i class="fas fa-comment-alt" aria-hidden="true"></i></a>`;
+                            return data == null ? '' : `<a data-bs-html="true"  title="<strong>Delay Reason:</strong><p>${data}</p>" data-bs-toggle="tooltip"><i class="fas fa-comment-alt" aria-hidden="true"></i></a>`;
                         }, className: "command-item", orderable: false
                     },
                     {
                         data: "logid", render: function (data, type, row, meta) {
-                            return statusValue == 0 ? `<input type="checkbox" class="check-exclude" name="check-${row.logid}" value="${row.logid}" title="Exclude Log Item" data-toggle="tooltip">` : statusValue == 2 ? `<input type="checkbox" class="check-exclude" name="check-${row.logid}" value="${row.logid}" title="Include Log Item" data-toggle="tooltip">` : '';
+                            return statusValue == 0 ? `<input type="checkbox" class="check-exclude" name="check-${row.logid}" value="${row.logid}" title="Exclude Log Item" data-bs-toggle="tooltip">` : statusValue == 2 ? `<input type="checkbox" class="check-exclude" name="check-${row.logid}" value="${row.logid}" title="Include Log Item" data-bs-toggle="tooltip">` : '';
                         }, className: "command-item", orderable: false
                     },
                 ],
@@ -418,7 +418,7 @@
             fixedHeader: true
         });
         hearingTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $('#process-overlay').hide();
             $('.check-exclude').on("click", function (e) {
                 if ($(this).is(':checked') && $('#dvExclude').is(":hidden"))

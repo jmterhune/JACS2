@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Security.Roles;
@@ -29,6 +30,7 @@ namespace tjc.Modules.JudgeVacation
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private int _judgeId = 0;
         private int _vacationSum = 0;
         #endregion
@@ -36,6 +38,7 @@ namespace tjc.Modules.JudgeVacation
         public Reports()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void PopulateJudgeList()
         {
@@ -56,7 +59,7 @@ namespace tjc.Modules.JudgeVacation
         {
             bool hasStartDate = DateTime.TryParse(StartDatePicker.Text, out DateTime startDate);
             bool hasEndDate = DateTime.TryParse(EndDatePicker.Text, out DateTime endDate);
-            var ctl = new JudgeVacationController();
+            var ctl = new JudgeVacationController(_hostSettings);
 
             if (!hasStartDate)
                 startDate = new DateTime(DateTime.Now.Year, 1, 1);
@@ -71,7 +74,7 @@ namespace tjc.Modules.JudgeVacation
             {
                 reportList = ctl.GetVacationReport(startDate, endDate);
             }
-            var hCtl = new HolidayController();
+            var hCtl = new HolidayController(_hostSettings);
             var holidays = hCtl.GetReportHolidays(startDate.Year - 1, endDate.Year + 1);
 
             foreach (var r in reportList)

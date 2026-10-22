@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class EventController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EventController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateEvent(Event t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Event>();
                 rep.Insert(t);
@@ -22,7 +30,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteEvent(Event t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Event>();
                 rep.Delete(t);
@@ -31,7 +39,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Event> GetEvents(int designationId)
         {
             IEnumerable<Event> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Event>();
                 t = rep.Find("Where DesignationID = @0",designationId);
@@ -42,7 +50,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<EventViewModel> GetEventViewModels(int designationId)
         {
             IEnumerable<EventViewModel> t = Enumerable.Empty<EventViewModel>();
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Event>();
                IEnumerable<Event> events = GetEvents(designationId);
@@ -56,7 +64,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Event GetEvent(int eventId)
         {
             Event t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Event>();
                 t = rep.GetById(eventId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateEvent(Event t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Event>();
                 rep.Update(t);
@@ -74,7 +82,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<EventListItem> GetEventListItemsByDesignation(int designationId)
         {
             IEnumerable<EventListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EventListItem>();
                 t = rep.Find("Where DesignationID = @0", designationId);
@@ -84,7 +92,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public EventListItem GetEventListItem(int eventId)
         {
             EventListItem t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EventListItem>();
                 t = rep.GetById(eventId) ;
@@ -100,7 +108,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         //    int endDayofWeek = (int)monthEnds.DayOfWeek;
         //    monthEnds = monthEnds.AddDays(6 - endDayofWeek);
         //    IEnumerable<Calendar> calendarEvents = new List<Calendar>();
-        //    using (IDataContext ctx = DataContext.Instance())
+        //    using (IDataContext ctx = DataContext.Instance(_hostSettings))
         //    {
         //        var rep = ctx.GetRepository<Calendar>();
         //        if (userIds == null || userIds.Count == 1)

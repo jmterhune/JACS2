@@ -19,7 +19,7 @@ This is the C# / DAL2 rewrite of the legacy VB EmployeeDB DNN module. Use this f
 ## Tech stack — what we use here vs. what the legacy module used
 
 - **DAL2 (PetaPoco)** — replaced LINQ-to-SQL DBML. Every controller follows the `DataContext.Instance() + GetRepository<T>()` pattern. Stored procs / functions from the legacy module were rewritten as inline SQL.
-- **WCF Service Reference** — SWN (SendWordNow) integration is a *generated* `UsersClient` proxy (svcutil from the cached WSDL at `D:\websites\Intranet\App_WebReferences\swn\`), wrapped by `Components/SWN/SWNServiceRequests.cs`. All 11 methods ported from `AWS.SWN`.
+- **Crisis24 Person/HR feed** — replaced the Send Word Now (SWN) web service on 2026-09-09. `Components/Helpers/Crisis24ExportBuilder.cs` builds the CSV, `Components/Helpers/Crisis24Uploader.cs` pushes it over SFTP via WinSCPnet, and `Components/Api/Crisis24Controller.cs` exposes POST `Crisis24/Export` (**Crisis24 Export** button — builds + uploads, no download) and GET `Crisis24/Preview` (**Preview Crisis24 File** button — same builder, same filename, same `Crisis24Uploader.Encode`, downloaded instead of sent; works with no SFTP config, used to get the layout approved by Crisis24). Configured with web.config appSettings (`Crisis24FTP` plus optional overrides), NOT module settings. The retired SWN client, its generated WCF proxy and the `SwnList` view are parked in `_Retired-SWN/` and are out of the build.
 - **DataTables.js** for grids (Telerik RadGrid is gone). Buttons extension powers the export on `DetailsList.ascx`.
 - **Bootstrap modal-xl + iframe** for `EditEmployee` (replaces the legacy popup window).
 - **`postMessage` channel** between the iframe and parent for save/delete/cancel handoff — code-behind reads `?modal=1` from querystring (`InModal` property) and emits the right exit script.
@@ -28,9 +28,9 @@ This is the C# / DAL2 rewrite of the legacy VB EmployeeDB DNN module. Use this f
 
 - **New DB:** `intranet.jud12.local` on `CAM-4HQ8144`
 - **Old DB (migrated FROM):** `intranet_613` (legacy `Emp_*` tables) — same server, cross-DB references work
-- **Tables consumed:** `tjc_employee`, `tjc_employee_class`, `tjc_employee_eeo`, `tjc_employee_emergency_contact`, `tjc_employee_group_membership`, `tjc_employee_job_group`, `tjc_employee_office_location`, `tjc_employee_phone`, `tjc_employee_position_history`, `tjc_employee_race`, `tjc_employee_service_history`, `tjc_employee_swn_interface_log`
+- **Tables consumed:** `tjc_employee`, `tjc_employee_class`, `tjc_employee_eeo`, `tjc_employee_emergency_contact`, `tjc_employee_group_membership`, `tjc_employee_job_group`, `tjc_employee_office_location`, `tjc_employee_phone`, `tjc_employee_position_history`, `tjc_employee_race`, `tjc_employee_service_history` (`tjc_employee_swn_interface_log` is no longer read — the SWN client that wrote it is retired)
 - **Lookups (read-only):** `tjc_gl_group`, `tjc_gl_counties`
-- **Views:** `tjc_employee_list`, `tjc_employee_phone_list`, `tjc_employee_eeo_list`, `tjc_employee_swn_interface_log_list`
+- **Views:** `tjc_employee_list`, `tjc_employee_phone_list`, `tjc_employee_eeo_list`
 - **Module-owned NEW table:** `tjc_employee_assigned_item` — created by `Providers/DataProviders/SqlDataProvider/00.00.01.SqlDataProvider`. The other tables already exist; do NOT generate CREATE TABLE for them.
 - **Audit columns on every writable table:** `CreatedDate`, `CreatedById`, `LastModifiedDate`, `LastModifiedById`. Every Insert/Update sets `*Date = DateTime.Now` and `*ById = UserId`.
 
@@ -67,27 +67,27 @@ Phone migration mapping: `PhoneHome → 'Home'`, `PhoneCell → 'Mobile'`, `Phon
 ```
 EmployeeDB/
 ├─ EmployeeDB.csproj             (auto-deploys to dev on build)
-├─ EmployeeDB.dnn                (manifest — 11 moduleControls)
+├─ EmployeeDB.dnn                (manifest — 10 moduleControls)
 ├─ EmployeeDBModuleBase.cs       (PortalModuleBase + ReportUrl, EmployeeId from QS, role helpers, _navigationManager)
 ├─ Components/
 │  ├─ Models/        (16 PetaPoco entity classes — [TableName], [PrimaryKey], [Cacheable] on lookups)
 │  ├─ Controllers/   (17 controllers — Employee, JobClass, JobGroup, Race, OfficeLocation, Phone,
 │  │                  EmergencyContact, GroupMembership, PositionHistory, ServiceHistory, Eeo,
-│  │                  AssignedItem, Group (RO), County (RO), EmployeeReport, SwnInterfaceLog)
+│  │                  AssignedItem, Group (RO), County (RO), EmployeeReport)
 │  ├─ FeatureController.cs       (IPortable, ISearchable, IUpgradeable)
-│  └─ SWN/                       (Contact, Phone, CustomAuthorization, ClientFactory, SWNServiceRequests, SWNResponse, SWNResponseMessage)
-├─ Service References/swn/       (generated UsersClient proxy — DO NOT hand-edit; regenerate via svcutil)
-├─ Views/                        (11 .ascx — see below)
+│  └─ Helpers/Crisis24*.cs       (Person/HR feed CSV builder + SFTP uploader)
+├─ _Retired-SWN/                 (the removed Send Word Now client, WCF proxy and SwnList view — kept for reference, excluded from the build and from DeployToSite)
+├─ Views/                        (10 .ascx — see below)
 ├─ App_LocalResources/           (one .resx per view)
 ├─ Migrations/migrate-employeedb.sql  (intranet_613 → intranet.jud12.local — already run)
 └─ Providers/DataProviders/SqlDataProvider/  (only creates tjc_employee_assigned_item)
 ```
 
-### Views (11)
+### Views (10)
 
 | View | Role |
 |---|---|
-| `EmployeeList.ascx` | Main admin landing — tabs: Employees / JobGroups / Classes / Races / OfficeLocations / Details + SWN buttons |
+| `EmployeeList.ascx` | Main admin landing — tabs: Employees / JobGroups / Classes / Races / OfficeLocations / Details + Crisis24 Export button |
 | `EditEmployee.ascx` | Tabbed edit form (Bootstrap nav-tabs): Details / Groups / Employment History / Photo / Phones / Emergency Contacts / Access. Renders inside an XL modal+iframe when launched from `EmployeeList` (`?modal=1`) |
 | `Directory.ascx` | Searchable list with tooltip popup |
 | `DetailsList.ascx` | 28-column list with DataTables Buttons export |
@@ -96,7 +96,6 @@ EmployeeDB/
 | `Settings.ascx` | Stores `Employee_ReportUrl` |
 | `Birthdays.ascx` | HTML report with DataTables (replaces Crystal Reports) |
 | `TerminatedEmployees.ascx` | Date range report |
-| `SwnList.ascx` | Pipe-delimited export download |
 | `SelectUserId.ascx` | DNN user picker popup |
 
 ## Conventions you MUST follow in this module
@@ -136,7 +135,7 @@ $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere
 - **Build is clean** — `System.IdentityModel` reference + `using System.Web.Caching;` already added for `[Cacheable]` models.
 - **EmployeeList iframe modal:** working (Edit buttons populate via client-side JS, Save closes modal via `postMessage`).
 - **Settings:** load and save correctly (read from merged `Settings`, write via `UpdateModuleSetting`).
-- **SWN proxy regenerates** from the cached WSDL if you ever need to refresh — see `Service References/swn/`.
+- **Crisis24 export** needs the `Crisis24FTP` appSetting in the site web.config. As of 2026-09-09 dev holds a PLACEHOLDER value (`sftp://USERNAME@HOST.crisis24.com/inbound/`) because Crisis24 has not supplied the host/account yet; `Crisis24Uploader.IsConfigured` treats placeholder markers (USERNAME, HOST.CRISIS24.COM, EXAMPLE.COM, CHANGEME, TODO) as unconfigured, so the button reports a clean "not set up yet" message instead of hanging on a connect timeout. WinSCPnet.dll + WinSCP.exe must be present in the site bin.
 
 ## Reference patterns in sibling modules
 
@@ -158,5 +157,5 @@ Useful first steps for the new session:
 1. `Read EmployeeDB/CLAUDE.md` (this file) for context.
 2. Skim `EmployeeDB/EmployeeDB.dnn` to confirm module controls.
 3. If touching the DB schema, remember the `tjc_employee_assigned_item` install script lives at `Providers/DataProviders/SqlDataProvider/00.00.01.SqlDataProvider`.
-4. If touching SWN, the runtime client lives in `Components/SWN/`; the generated proxy lives in `Service References/swn/` and shouldn't be hand-edited.
+4. If touching the Crisis24 feed, read the column rules in the header comment of `Components/Helpers/Crisis24ExportBuilder.cs` first — they come straight from the Crisis24 Person Implementation Guide (rev 2024-04-23), and a record missing a required field fails ingestion silently on their side.
 5. If touching `EmployeeList` Edit buttons, do NOT convert them back to `LinkButton` — see convention #2 above.

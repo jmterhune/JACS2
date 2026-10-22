@@ -9,7 +9,7 @@
             <a class="nav-link" href="<%=CalendartUrl%>">Calendar</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#attorneys" data-toggle="tab">Attorneys</a>
+            <a class="nav-link" href="#attorneys" data-bs-toggle="tab">Attorneys</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=NamesListUrl%>">Names</a>
@@ -82,10 +82,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditAttorneyModalLabel">Add / Edit Attorney</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class="row">
                                             <div class="col-4">
                                                 <asp:Label runat="server" AssociatedControlID="txtFirstName" Text="First Name" />
@@ -216,9 +216,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditAttorneyModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditAttorneyModal')).show();
         } else {
-            $('#EditAttorneyModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditAttorneyModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

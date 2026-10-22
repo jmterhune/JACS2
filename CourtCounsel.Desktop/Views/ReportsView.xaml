@@ -1,0 +1,114 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:ReportsViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Reports" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" />
+
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="Start Date" />
+                    <DatePicker SelectedDate="{Binding StartDate}" Width="140" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="End Date" />
+                    <DatePicker SelectedDate="{Binding EndDate}" Width="140" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="County" />
+                    <ComboBox ItemsSource="{Binding Counties}" SelectedItem="{Binding SelectedCounty}" DisplayMemberPath="County" Width="160" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="Requestor" />
+                    <ComboBox ItemsSource="{Binding Requestors}" SelectedItem="{Binding SelectedRequestor}" DisplayMemberPath="RequestorName" Width="160" />
+                </StackPanel>
+                <StackPanel Margin="0,0,16,0">
+                    <Label Content="Extended Status" />
+                    <ComboBox ItemsSource="{x:Static vm:ReportsViewModel.ExtendedStatusOptions}" SelectedValuePath="Value" SelectedValue="{Binding ExtendedStatus}"
+                              DisplayMemberPath="Text" Width="160" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <TextBlock Text="Status:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0" />
+                <RadioButton Content="Active" GroupName="ReportStatus" Margin="0,0,10,0"
+                             IsChecked="{Binding StatusFilter, Converter={StaticResource EqualsToBoolean}, ConverterParameter=Active}" />
+                <RadioButton Content="Inactive" GroupName="ReportStatus" Margin="0,0,10,0"
+                             IsChecked="{Binding StatusFilter, Converter={StaticResource EqualsToBoolean}, ConverterParameter=Inactive}" />
+                <RadioButton Content="Not Completed" GroupName="ReportStatus" Margin="0,0,10,0"
+                             IsChecked="{Binding StatusFilter, Converter={StaticResource EqualsToBoolean}, ConverterParameter=NotCompleted}" />
+                <RadioButton Content="Completed" GroupName="ReportStatus" Margin="0,0,10,0"
+                             IsChecked="{Binding StatusFilter, Converter={StaticResource EqualsToBoolean}, ConverterParameter=Completed}" />
+                <RadioButton Content="All" GroupName="ReportStatus"
+                             IsChecked="{Binding IsAllStatusSelected}" />
+            </StackPanel>
+
+            <Expander Header="Attorneys" Margin="0,0,0,8">
+                <ItemsControl ItemsSource="{Binding AttorneyChecks}" MaxHeight="150">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding DisplayName}" IsChecked="{Binding IsChecked}" Margin="0,0,16,4" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Expander>
+
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Content="Show Detail" IsChecked="{Binding ShowDetail}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                <Button Content="Submit" Command="{Binding SubmitCommand}" Padding="14,4" Margin="0,0,8,0" />
+                <Button Content="Reset" Command="{Binding ResetCommand}" Padding="14,4" />
+            </StackPanel>
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="No records found for the selected filters." Foreground="Gray" Margin="0,8,0,0"
+                           Visibility="{Binding ShowNoResultsMessage, Converter={StaticResource BoolToVis}}" />
+                <ItemsControl ItemsSource="{Binding ReportGroups}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#dee2e6" BorderThickness="0,0,0,1" Padding="0,8">
+                                <StackPanel>
+                                    <TextBlock FontWeight="Bold">
+                                        <Run Text="{Binding CaseTypeName, Mode=OneWay}" /><Run Text=" — " /><Run Text="{Binding Count, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Rows}" Margin="16,4,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="140" />
+                                                        <ColumnDefinition Width="220" />
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding CaseNumber}" />
+                                                    <TextBlock Grid.Column="1" Text="{Binding PartyName}" />
+                                                    <TextBlock Grid.Column="2" Text="{Binding DateReceived, StringFormat=d}" />
+                                                    <TextBlock Grid.Column="3" Text="{Binding Responsible}" />
+                                                    <TextBlock Grid.Column="4" Text="{Binding DisplayStatus}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="{Binding GeneratedMessage}" Margin="0,12,0,0" FontStyle="Italic" Foreground="Gray"
+                           Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}" />
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

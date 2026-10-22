@@ -43,7 +43,7 @@
                     CssClass="label label-danger" ErrorMessage="Please Select a Delivery Location" />
             </div>
         </fieldset>
-        <button type="button" id="btnAddForm" role="button" data-toggle="modal" class="btn btn-success" data-target="#modFormOrder"><i class="fas fa-plus" aria-hidden="true"></i>&nbsp;Add Form to Order</button>
+        <button type="button" id="btnAddForm" role="button" data-bs-toggle="modal" class="btn btn-success" data-bs-target="#modFormOrder"><i class="fas fa-plus" aria-hidden="true"></i>&nbsp;Add Form to Order</button>
         <div class="bg-light ps-3 pe-3 rounded">
             <asp:HiddenField ClientIDMode="Static" ID="hdAttachmentIds" runat="server" />
             <asp:Repeater ID="rptForms" runat="server" OnItemCommand="rptForms_ItemCommand" OnItemDataBound="rptForms_ItemDataBound">
@@ -99,7 +99,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="lblFormOrder">Add one or more forms to the order</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <fieldset id="Form-item-form" class="row g-3">
@@ -189,7 +189,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <asp:LinkButton ID="cmdAddForm" ClientIDMode="Static" runat="server" OnClientClick="CloseModal()" ValidationGroup="Form" CssClass="btn btn-primary" Text="Save Form" OnClick="cmdAddForm_Click" />
-                        <asp:HyperLink ID="lnkCancelLine" data-dismiss="modal" runat="server" CssClass="btn btn-secondary" Text="Cancel Form" />
+                        <asp:HyperLink ID="lnkCancelLine" data-bs-dismiss="modal" runat="server" CssClass="btn btn-secondary" Text="Cancel Form" />
                     </div>
                 </div>
             </div>
@@ -325,7 +325,7 @@
             Page_ClientValidate("Form");
         }
         if (Page_IsValid) {
-            $('#modFormOrder').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modFormOrder')).hide();
         }
     }
     function DeleteAttachment(fileId) {

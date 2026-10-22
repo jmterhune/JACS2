@@ -1,0 +1,107 @@
+<dotnetnuke type="Package" version="5.0">
+	<packages>
+		<package name="Transcriptionist" type="Module" version="1.0.0">
+			<friendlyName>Transcriptionist Admin</friendlyName>
+			<description>12th Judicial Circuit Court Approved Transcriptionist application management - intranet (dashboard, application list, review, approve and reject)</description>
+			<iconFile>~/Icons/Sigma/Source_32X32_Standard.png</iconFile>
+			<owner>
+				<name>12th Judicial Circuit Court</name>
+				<organization>12th Judicial Circuit Court</organization>
+				<url>http://www.jud12.flcourts.org/</url>
+				<email>jterhune@flcourts.org</email>
+			</owner>
+			<license src="License.txt"></license>
+			<releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+			<components>
+				<component type="Module">
+					<desktopModule>
+						<moduleName>Transcriptionist Admin</moduleName>
+						<foldername>tjc.Modules/Transcriptionist</foldername>
+						<businessControllerClass />
+						<supportedFeatures />
+						<moduleDefinitions>
+							<moduleDefinition>
+								<friendlyName>Transcriptionist Admin</friendlyName>
+								<definitionName>Transcriptionist Admin</definitionName>
+								<defaultCacheTime>0</defaultCacheTime>
+								<moduleControls>
+									<moduleControl>
+										<controlKey />
+										<controlSrc>DesktopModules/tjc.Modules/Transcriptionist/View.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Transcriptionist Admin Dashboard</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>list</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/Transcriptionist/ApplicationList.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Transcriptionist Applications</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>detail</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/Transcriptionist/ApplicationDetail.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Transcriptionist Application</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>edit</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/Transcriptionist/ApplicationEdit.ascx</controlSrc>
+										<supportsPartialRendering>True</supportsPartialRendering>
+										<controlTitle>Edit Transcriptionist Application</controlTitle>
+										<controlType>View</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+									<moduleControl>
+										<controlKey>Settings</controlKey>
+										<controlSrc>DesktopModules/tjc.Modules/Transcriptionist/Settings.ascx</controlSrc>
+										<supportsPartialRendering>False</supportsPartialRendering>
+										<controlTitle>Transcriptionist Admin Settings</controlTitle>
+										<controlType>Edit</controlType>
+										<iconFile />
+										<helpUrl />
+										<supportsPopUps>False</supportsPopUps>
+										<viewOrder>0</viewOrder>
+									</moduleControl>
+								</moduleControls>
+							</moduleDefinition>
+						</moduleDefinitions>
+					</desktopModule>
+				</component>
+				<component type="Assembly">
+					<assemblies>
+						<assembly>
+							<path>bin</path>
+							<name>tjc.Modules.Transcriptionist.dll</name>
+						</assembly>
+					</assemblies>
+				</component>
+				<component type="ResourceFile">
+					<resourceFiles>
+						<basePath>DesktopModules\tjc.Modules\Transcriptionist</basePath>
+						<resourceFile>
+							<name>Resources.zip</name>
+						</resourceFile>
+					</resourceFiles>
+				</component>
+			</components>
+		</package>
+	</packages>
+</dotnetnuke>

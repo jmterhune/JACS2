@@ -1,7 +1,11 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.Caching;
 namespace tjc.Modules.DigitalCourtReporting.Components
 {
@@ -44,7 +48,12 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         {
             get
             {
-                var ctl = new NotificationController();
+                // Proceeding is a PetaPoco entity hydrated with a parameterless constructor, so IHostSettings
+                // can't be constructor-injected here like it is in the module code-behinds. Resolve it from the
+                // per-request DI scope DNN attaches to HttpContext.Current (DotNetNuke.HttpModules.DependencyInjection.
+                // ServiceRequestScopeModule) instead. This property is not currently called anywhere in this project.
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new NotificationController(hostSettings);
                 return ctl.GetNotificationsByProceeding(ProceedingID);
             }
         }

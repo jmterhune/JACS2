@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -17,16 +18,26 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
     /// </summary>
     public class SupervisorController
     {
-        /// <summary>Roster join used by both the admin tab grid and the
-        /// EditEmployee dropdown. Returns one row per supervisor with the
-        /// employee's name, the row's IsActive flag, and a count of how
-        /// many <c>tjc_employee</c> rows currently point at this
-        /// supervisor — that count powers the "Assignees" column on the
-        /// admin tab (clickable to open a modal listing the names).
+        private readonly IHostSettings _hostSettings;
+
+        public SupervisorController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        /// <summary>Roster join used by the Supervisors admin tab grid.
+        /// Returns one row per supervisor with the employee's name, the
+        /// count of <c>tjc_employee</c> rows currently pointing at this
+        /// supervisor (powers the "Assignees" column, clickable to open a
+        /// modal listing the names), and both IsActive flags: the row's own
+        /// <c>tjc_supervisor.IsActive</c> and <c>IsEmployeeActive</c>
+        /// (<c>tjc_employee.IsActive</c>). The admin tab's Active column is
+        /// read-only and displays <c>IsEmployeeActive</c> — an employee's
+        /// active status is managed on EditEmployee, not toggled here.
         /// Sorted by name.</summary>
         public IEnumerable<SupervisorRow> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var sql = @"SELECT s.SupervisorId, s.EmployeeId,
                                    e.FirstName, e.LastName,
@@ -52,7 +63,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// supervisor" is part of the picture HR needs.</summary>
         public IEnumerable<EmployeeInfo> GetAssignees(int supervisorEmployeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text,
                     @"SELECT *
@@ -66,7 +77,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public SupervisorInfo GetById(int supervisorId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupervisorInfo>();
                 return rep.GetById(supervisorId);
@@ -75,7 +86,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public SupervisorInfo GetByEmployeeId(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupervisorInfo>();
                 return rep.Find("WHERE EmployeeId = @0", employeeId).FirstOrDefault();
@@ -89,7 +100,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupervisorInfo>();
                 rep.Insert(item);
@@ -116,7 +127,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupervisorInfo>();
                 rep.Update(item);
@@ -129,7 +140,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// failing with an obscure FK / orphaning the references.</summary>
         public int CountAssignedEmployees(int employeeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteScalar<int>(CommandType.Text,
                     "SELECT COUNT(*) FROM tjc_employee WHERE SupervisorId = @0",
@@ -141,7 +152,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         {
             var item = GetById(supervisorId);
             if (item == null) return;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<SupervisorInfo>();
                 rep.Delete(item);

@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.CourtCounsel.Components.Models;
@@ -6,9 +7,16 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 {
     internal class CountyController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CountyController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateCounty(CountyInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CountyInfo>();
                 rep.Insert(t);
@@ -23,7 +31,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void DeleteCounty(CountyInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CountyInfo>();
                 rep.Delete(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<CountyInfo> GetCounties()
         {
             IEnumerable<CountyInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CountyInfo>();
                 t = rep.Get();
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public CountyInfo GetCounty(int countyId)
         {
             CountyInfo t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CountyInfo>();
                 t = rep.GetById(countyId);
@@ -54,7 +62,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void UpdateCounty(CountyInfo t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CountyInfo>();
                 rep.Update(t);

@@ -4,6 +4,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +18,15 @@ namespace tjc.Modules.CDSPAdmin
     public class CDSPModuleBase : PortalModuleBase
     {
         protected readonly INavigationManager _navigationManager;
+        protected readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
 
         public CDSPModuleBase()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
-            JavaScript.RequestRegistration(CommonJs.jQuery);
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+            _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
         }
 
         /// <summary>URL of the module's default view (the submission list).</summary>

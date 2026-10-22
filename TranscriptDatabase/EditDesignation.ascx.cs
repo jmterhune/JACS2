@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -39,11 +40,12 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Properties
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public string AttorneyArray;
         public string AttorneyList()
         {
             string attorneyList = string.Empty;
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             string attorneyIds = string.Empty;
             IEnumerable<AttorneyViewModel> attorneys = ctl.GetDesignationAttorneys(DesignationId);
             foreach (AttorneyViewModel attorney in attorneys)
@@ -60,10 +62,11 @@ namespace tjc.Modules.TranscriptDatabase
         public EditDesignation()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void UpdateDueDate(Designation designation)
         {
-            var ctl = new CalendarController();
+            var ctl = new CalendarController(_hostSettings);
             Components.Calendar calendarEvent = ctl.GetCalendarByDesignation(DesignationId);
 
             if (calendarEvent != null)
@@ -82,7 +85,7 @@ namespace tjc.Modules.TranscriptDatabase
 
         private Components.Calendar CreateCalendarDueDate(EventTypes eventTypeId, bool requestOutstanding, Designation designation)
         {
-            var ctl = new CalendarController();
+            var ctl = new CalendarController(_hostSettings);
             Components.Calendar calendar = new Components.Calendar();
             {
                 var withBlock = calendar;
@@ -116,7 +119,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     lnkCancel.NavigateUrl = _navigationManager.NavigateURL();
                     PopulateForm();  
                     AttorneyArray = AttorneyList();
@@ -132,7 +135,7 @@ namespace tjc.Modules.TranscriptDatabase
         {
             
             hdDesignationId.Value = DesignationId.ToString();
-            var ctl = new Components.DesignationController();
+            var ctl = new Components.DesignationController(_hostSettings);
             Designation designation = ctl.GetDesignation(DesignationId);
             if (designation.ServiceDate.HasValue)
                 txtServiceDate.Text = designation.ServiceDate.Value.ToShortDateString();
@@ -160,7 +163,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void cmdUpdate_Click(object sender, EventArgs e)
         {
-            var ctl = new DesignationController();
+            var ctl = new DesignationController(_hostSettings);
             var attorneys = hdAttorneyIds.Value.Split(',');
             Designation designation = ctl.GetDesignation(DesignationId);
             if (!string.IsNullOrEmpty(txtServiceDate.Text))
@@ -197,7 +200,7 @@ namespace tjc.Modules.TranscriptDatabase
         }
         protected void cmdDelete_Click(object sender, EventArgs e)
         {
-            var ctl = new DesignationController();
+            var ctl = new DesignationController(_hostSettings);
             ctl.DeleteDesignation(DesignationId);
             Response.Redirect(_navigationManager.NavigateURL());
         }

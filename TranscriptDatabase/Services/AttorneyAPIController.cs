@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Services.Authentication;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Services.Authentication;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +17,8 @@ namespace tjc.Modules.TranscriptDatabase.Services
     [DnnAuthorize]
     public class AttorneyController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage GetDesignationAttorneys(int designationId)
@@ -21,7 +26,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             IEnumerable<AttorneyViewModel> attorneys = Enumerable.Empty<AttorneyViewModel>();
             try
             {
-                var ctl = new Components.AttorneyController();
+                var ctl = new Components.AttorneyController(_hostSettings);
                 attorneys = ctl.GetDesignationAttorneys(designationId);
                 return Request.CreateResponse(new AttorneyResult { data = attorneys, error = null });
             }
@@ -38,7 +43,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             IEnumerable<DropDownViewModel> attorneys = Enumerable.Empty<DropDownViewModel>();
             try
             {
-                var ctl = new Components.AttorneyController();
+                var ctl = new Components.AttorneyController(_hostSettings);
                 attorneys = ctl.GetAttorneyDropDownList();
                 return Request.CreateResponse(new DropDownResult { data = attorneys, error = null });
             }
@@ -55,7 +60,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
             IEnumerable<DropDownViewModel> empDropdownItem = Enumerable.Empty<DropDownViewModel>();
             try
             {
-                var ctl = new Components.EmployeeController();
+                var ctl = new Components.EmployeeController(_hostSettings);
                 empDropdownItem = ctl.GetEmployeeDropDownByType( EmployeeTypes.Judge);
                 return Request.CreateResponse(new DropDownResult { data = empDropdownItem, error = null });
             }
@@ -72,7 +77,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         {
             try
             {
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 ctl.DeleteDesignationAttorney(designationId, attorneyId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -87,7 +92,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         [ActionName("CreateAttorney")]
         public HttpResponseMessage CreateAttorney(AttorneyViewModel attorneyViewModel)
         {
-            var ctl = new Components.AttorneyController();
+            var ctl = new Components.AttorneyController(_hostSettings);
             Attorney attorney = new Attorney
             {
                 Address2 = attorneyViewModel.Address2,
@@ -110,7 +115,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
                 bool result = attorney.AttorneyID > 0;
                 if (result)
                 {
-                    var dCtl = new DesignationController();
+                    var dCtl = new DesignationController(_hostSettings);
                     attorneyViewModel.ListName = attorney.ListName;
                     attorneyViewModel.OfficeName = attorney.OfficeName;
                     attorneyViewModel.AttorneyId=attorney.AttorneyID;

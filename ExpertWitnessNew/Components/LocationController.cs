@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using tjc.Modules.ExpertWitness.Components;
@@ -17,9 +18,16 @@ namespace tjc.Modules.ExpertWitness.Components
 {
     internal class LocationController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public LocationController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateLocation(Location t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Location>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void DeleteLocation(Location t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Location>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<Location> GetLocations()
         {
             IEnumerable<Location> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Location>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public Location GetLocation(int locationId)
         {
             Location t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Location>();
                 t = rep.GetById(locationId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void UpdateLocation(Location t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Location>();
                 rep.Update(t);

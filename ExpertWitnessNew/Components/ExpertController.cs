@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -16,9 +17,16 @@ namespace tjc.Modules.ExpertWitness.Components
 {
     internal class ExpertController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ExpertController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateExpert(Expert t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Expert>();
                 rep.Insert(t);
@@ -33,7 +41,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void DeleteExpert(Expert t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Expert>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<Expert> GetExperts()
         {
             IEnumerable<Expert> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Expert>();
                 t = rep.Get();
@@ -53,7 +61,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public IEnumerable<ExpertRequestListItem> GetExpertRequestListItems(int requestId)
         {
             IEnumerable<ExpertRequestListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<ExpertRequestListItem>();
                 t = rep.Find("Where RequestID=@0",requestId);
@@ -64,7 +72,7 @@ namespace tjc.Modules.ExpertWitness.Components
         public Expert GetExpert(int expertId)
         {
             Expert t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Expert>();
                 t = rep.GetById(expertId);
@@ -74,7 +82,7 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public void UpdateExpert(Expert t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Expert>();
                 rep.Update(t);
@@ -82,14 +90,14 @@ namespace tjc.Modules.ExpertWitness.Components
         }
         public IEnumerable<Location> GetExpertLocationLocations(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Location>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_expert_location_locations",expertId);
             }
         }
         public void DeleteExpertLocations(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                  ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_delete_expert_locations", expertId);
             }
@@ -97,14 +105,14 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public IEnumerable<Type> GetExpertTypeTypes(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Type>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_expert_type_types",expertId);
             }
         }
         public IEnumerable<ExpertTemplate> GetExpertTemplates(int templateId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<ExpertTemplate>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_expert_templates",  templateId);
             }
@@ -112,28 +120,28 @@ namespace tjc.Modules.ExpertWitness.Components
 
         public ExpertTemplate GetExpertTemplate(int expertId,int templateId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteSingleOrDefault<ExpertTemplate>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_expert_template", expertId,templateId);
             }
         }
         public void DeleteExpertTypes(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_delete_expert_types", expertId);
             }
         }
         public IEnumerable<Template> GetExpertTemplateTemplates(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<Template>(System.Data.CommandType.StoredProcedure, "tjc_expert_get_expert_template_templates", expertId);
             }
         }
         public void DeleteExpertTemplates(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_delete_expert_templates", expertId);
             }
@@ -142,7 +150,7 @@ namespace tjc.Modules.ExpertWitness.Components
         // expert, so these must be removed before the expert row itself.
         public void DeleteExpertRequests(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<ExpertRequest>().Delete("WHERE ExpertID = @0", expertId);
             }
@@ -151,42 +159,42 @@ namespace tjc.Modules.ExpertWitness.Components
         // without this an expert delete leaves orphaned cart rows behind.
         public void DeleteExpertCart(int expertId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<RequestCart>().Delete("WHERE ExpertID = @0", expertId);
             }
         }
         public void CreateExpertTemplate(int expertId,int templateId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_create_expert_template", expertId,templateId);
             }
         }
         public void UpdateExpertTemplate(ExpertTemplate t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_update_expert_template_position", t.ExpertID, t.TemplateID, t.Position);
             }
         }
         public void CreateExpertType(int expertId, int typeId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_create_expert_type", expertId, typeId);
             }
         }
         public void CreateExpertLocation(int expertId, int locationId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_create_expert_location", expertId, locationId);
             }
         }
         public void CreateExpertRequest(int expertId,int requestId, int sequence)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_expert_create_expert_request", expertId, requestId,sequence);
             }

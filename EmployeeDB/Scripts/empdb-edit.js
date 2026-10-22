@@ -109,13 +109,6 @@
             opts.body = JSON.stringify(body);
         }
         return fetch(url, opts).then(function (resp) {
-            // PhonesController attaches X-Swn-Warning when the per-row SWN
-            // sync fails after a successful DB write. Surface it as a Noty
-            // warning toast so the user knows SWN is out of sync — the local
-            // save still went through.
-            var swnWarning = resp.headers.get("X-Swn-Warning");
-            if (swnWarning) empdb.notifyError("SWN sync warning: " + swnWarning);
-
             if (resp.status === 204) return null;
             var ct = resp.headers.get("Content-Type") || "";
             var parse = ct.indexOf("application/json") >= 0 ? resp.json() : resp.text();
@@ -225,7 +218,9 @@
     /* ------------------------------------------------------------------
      *  Phones tab
      *
-     *  SWN allowance enforced here AND on the server (PhonesController):
+     *  Mass-notification allowance enforced here AND on the server
+     *  (PhonesController). The Swn* column names predate Crisis24 and are
+     *  still the per-phone "use for mass notification" markers:
      *   - Max 5 phones per employee with SwnCall checked  (5 voice slots)
      *   - Max 3 phones per employee with SwnText checked  (5 SMS/email slots
      *     minus 2 email addresses on the Details tab)
@@ -238,11 +233,11 @@
         // an extra API round-trip for every save.
         var rowsCache = [];
 
-        // Phone types that may receive SMS in SWN. Anything else gets the
+        // Phone types that may receive SMS. Anything else gets the
         // SwnText checkbox disabled & unchecked the moment the user picks it.
         var SMS_TYPES = { "Mobile": true, "Work Cell": true };
-        var MAX_SWN_CALL = 5;
-        var MAX_SWN_TEXT = 3;
+        var MAX_CALL_PHONES = 5;
+        var MAX_TEXT_PHONES = 3;
 
         function fmtBool(v) { return v ? '<i class="fas fa-check text-success"></i>' : ""; }
         function esc(s) {
@@ -303,7 +298,7 @@
             };
         }
 
-        // Disable / uncheck the SWN Text checkbox when the selected PhoneType
+        // Disable / uncheck the Text checkbox when the selected PhoneType
         // can't receive SMS. Called on PhoneType change AND from fillForm so
         // that opening an Edit on a non-mobile phone shows the box disabled.
         function syncSmsAvailability() {
@@ -341,15 +336,15 @@
             syncSmsAvailability();
         }
 
-        // Returns an error string if the proposed save violates SWN allowance,
+        // Returns an error string if the proposed save violates the allowance,
         // or null if the row is OK to send. Counts other rows from rowsCache,
         // skipping the row currently being edited (matched by PhoneId).
-        function validateSwnLimits(data) {
+        function validateNotificationLimits(data) {
             // SwnText only allowed for Mobile / Work Cell. UI prevents the
             // checkbox being ticked, but the user could still toggle it via
             // dev tools, so re-check here defensively.
             if (data.SwnText && !SMS_TYPES[data.PhoneType]) {
-                return "SWN Text is only allowed for Mobile or Work Cell phones.";
+                return "Text is only allowed for Mobile or Work Cell phones.";
             }
 
             var callCount = data.SwnCall ? 1 : 0;
@@ -362,11 +357,11 @@
                 if (r.SwnCall) callCount++;
                 if (r.SwnText) textCount++;
             }
-            if (callCount > MAX_SWN_CALL) {
-                return "An employee can have at most " + MAX_SWN_CALL + " phones with SWN Call checked.";
+            if (callCount > MAX_CALL_PHONES) {
+                return "An employee can have at most " + MAX_CALL_PHONES + " phones with Call checked.";
             }
-            if (textCount > MAX_SWN_TEXT) {
-                return "An employee can have at most " + MAX_SWN_TEXT + " phones with SWN Text checked (the two email addresses count toward the SWN 5-text/email limit).";
+            if (textCount > MAX_TEXT_PHONES) {
+                return "An employee can have at most " + MAX_TEXT_PHONES + " phones with Text checked (the two email addresses count toward the 5-text/email limit).";
             }
             return null;
         }
@@ -416,8 +411,8 @@
                 var data = readForm();
                 if (!data.PhoneType) { empdb.notifyError("Phone Type is required."); return; }
                 if (!data.PhoneNumber) { empdb.notifyError("Phone Number is required."); return; }
-                var swnError = validateSwnLimits(data);
-                if (swnError) { empdb.notifyError(swnError); return; }
+                var limitError = validateNotificationLimits(data);
+                if (limitError) { empdb.notifyError(limitError); return; }
                 var p = data.PhoneId > 0
                     ? empdb.api.put("Phones/" + data.PhoneId, data)
                     : empdb.api.post("Phones", data);

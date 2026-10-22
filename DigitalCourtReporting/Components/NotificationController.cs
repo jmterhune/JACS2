@@ -1,13 +1,21 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
 namespace tjc.Modules.DigitalCourtReporting.Components
 {
     internal class NotificationController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public NotificationController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateNotification(Notification t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 rep.Insert(t);
@@ -20,7 +28,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void DeleteNotification(Notification t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 rep.Delete(t);
@@ -29,7 +37,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<Notification> GetNotifications()
         {
             IEnumerable<Notification> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 t = rep.Get();
@@ -39,7 +47,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public Notification GetNotification(int notificationId)
         {
             Notification t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 t = rep.GetById(notificationId);
@@ -49,7 +57,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public IEnumerable<Notification> GetNotificationsByProceeding(int proceedingId)
         {
             IEnumerable<Notification> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 t = rep.Find("Where ProceedingID=@0", proceedingId);
@@ -59,7 +67,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         public Notification GetNotificationByProceeding(int proceedingId)
         {
             Notification t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 t = rep.Find("Where ProceedingID=@0",proceedingId).FirstOrDefault();
@@ -68,7 +76,7 @@ namespace tjc.Modules.DigitalCourtReporting.Components
         }
         public void UpdateNotification(Notification t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Notification>();
                 rep.Update(t);

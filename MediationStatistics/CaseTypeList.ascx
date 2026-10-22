@@ -19,7 +19,7 @@
             <a class="nav-link" href="<%=GroupListUrl %>">Case Type Groups</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#caseTypes" data-toggle="tab">Case Types</a>
+            <a class="nav-link" href="#caseTypes" data-bs-toggle="tab">Case Types</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=AppearanceListUrl %>">Appearance Values</a>
@@ -79,10 +79,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditCaseTypeModalLabel">Add / Edit Case Type</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtCaseType" Text="Case Type" />
                                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtCaseType" />
                                     </div>
@@ -160,9 +160,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditCaseTypeModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditCaseTypeModal')).show();
         } else {
-            $('#EditCaseTypeModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditCaseTypeModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

@@ -1,5 +1,12 @@
 .form-control{min-width:8rem !important;}
 
+/* Custom "State / County" dropdown filter injected into the report
+   DataTable's top toolbar (Service report only). Width / spacing live here
+   as a named class rather than inline styles or utility classes. */
+.dt-sc-filter { display: inline-flex; align-items: center; gap: .4rem; margin-left: .75rem; }
+.dt-sc-filter .dt-sc-filter-label { font-weight: 600; }
+.dt-sc-filter .form-select { width: auto; min-width: 11rem; }
+
 /* Color-coded status legend + matching row-tint styles used by the
    seniority reports (currently Trial Court Staff Attorney; can be
    shared by JA / Interpreter reports later by adding their .row-* rules).

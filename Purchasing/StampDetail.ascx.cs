@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
@@ -38,10 +39,12 @@ namespace tjc.Modules.Purchasing
     public partial class StampDetail : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         public StampDetail()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
 
         }
         protected void Page_Load(object sender, EventArgs e)
@@ -56,8 +59,8 @@ namespace tjc.Modules.Purchasing
                         return;
                     }
                     cmdCancel.NavigateUrl = EditUrl("list");
-                    var ctl = new StampOrderController();
-                    var aCtl = new AttachmentController();
+                    var ctl = new StampOrderController(_hostSettings);
+                    var aCtl = new AttachmentController(_hostSettings);
                     var objOrder = ctl.GetStampOrder(CurrentOrderId);
                     if (objOrder != null)
                     {
@@ -94,7 +97,7 @@ namespace tjc.Modules.Purchasing
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new StampOrderController();
+            var ctl = new StampOrderController(_hostSettings);
             var order = ctl.GetStampOrder(CurrentOrderId);
             order.RequestedName = txtRequestor.Text;
             order.ConsumerName = txtConsumerName.Text;
@@ -121,7 +124,7 @@ namespace tjc.Modules.Purchasing
 
         protected void cmdReject_Click(object sender, EventArgs e)
         {
-            var ctl = new StampOrderController();
+            var ctl = new StampOrderController(_hostSettings);
             var order = ctl.GetStampOrder(CurrentOrderId);
             order.Status = OrderStatus.rejected;
             try
@@ -199,13 +202,13 @@ namespace tjc.Modules.Purchasing
         {
             string currentProtocol = Request.IsSecureConnection ? "https://" : "http://";
             string attachementList = string.Empty;
-            FileManager objFile = new FileManager();
+            var objFile = FileManager.Instance;
             int attachmentCount = 0;
             foreach (StampOrderAttachment f in attachments)
             {
                 var file = objFile.GetFile(f.FileID);
                 if (file != null)
-                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' target='_blank' title='{4}'>attachment #{5}</a></li>", currentProtocol, PortalAlias.HTTPAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
+                    attachementList += string.Format("<li><a href='{0}{1}/portals/{2}/{3}' target='_blank' title='{4}'>attachment #{5}</a></li>", currentProtocol, ((IPortalAliasInfo)PortalAlias).HttpAlias, PortalId, file.RelativePath, file.FileName, ++attachmentCount);
             }
             return string.Format("<h3 class='mb-1'>Attachments</h3><ul class='list'>{0}</ul>", attachementList);
         }

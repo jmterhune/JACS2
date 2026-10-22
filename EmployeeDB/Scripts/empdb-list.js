@@ -418,7 +418,7 @@
         modalId: "DepartmentEditModal",
         addBtnId: "#empdbDepartmentAdd",
         saveBtnId: "#empdbDepartmentSave",
-        colCount: 4,
+        colCount: 3,
         stateKey: "empdb-tblDepartments-v1",
         editClass: "empdb-department-edit",
         delClass: "empdb-department-delete",
@@ -432,20 +432,17 @@
             return '<tr data-id="' + g.GroupID + '">' +
                 '<td class="command-icon"><a href="#" class="text-primary empdb-department-edit" title="Edit"><i class="fas fa-edit"></i></a></td>' +
                 '<td>' + esc(g.GroupName) + '</td>' +
-                '<td class="text-center">' + (g.IsSwnGroup ? '<i class="fas fa-check text-success"></i>' : '') + '</td>' +
                 '<td class="command-icon"><a href="#" class="text-danger empdb-department-delete" title="Delete"><i class="fas fa-trash"></i></a></td>' +
             '</tr>';
         },
         fillForm: function ($m, g) {
             $m.find('[name="GroupID"]').val(g ? g.GroupID : 0);
             $m.find('[name="GroupName"]').val(g ? g.GroupName || "" : "");
-            $m.find('[name="IsSwnGroup"]').prop('checked', !!(g && g.IsSwnGroup));
         },
         readForm: function ($m) {
             return {
                 GroupID: parseInt($m.find('[name="GroupID"]').val(), 10) || 0,
-                GroupName: $m.find('[name="GroupName"]').val() || "",
-                IsSwnGroup: $m.find('[name="IsSwnGroup"]').is(':checked')
+                GroupName: $m.find('[name="GroupName"]').val() || ""
             };
         },
         validate: function (data) {
@@ -462,14 +459,19 @@
         departments: departments
     };
 
-    /* ---------------- SWN actions (Sync / AddAllGroups / Show Missing) ----
-       AJAX-driven against Components/Api/SwnController.cs. The previous
-       postback handlers polluted the URL (DNN's BreadCrumb skin object
-       blew up trying to int.Parse a stray /GroupId/0 segment) AND offered
-       no progress feedback during the Sync's long run. Each button shows
-       the full-screen busy overlay during the call, then displays the
-       server's response via SweetAlert. */
-    var swn = (function () {
+    /* ---------------- Crisis24 Person/HR feed export ----------------------
+       AJAX-driven against Components/Api/Crisis24Controller.cs. The endpoint
+       builds the CSV and pushes it to the Crisis24 SFTP site server-side —
+       there's no download, so the roster never touches the workstation.
+
+       This replaces the four Send Word Now buttons (Sync / Add Missing /
+       Show Missing / Export) that used to live here; Crisis24 is a one-way
+       file drop with no contact API to reconcile against.
+
+       Building the file plus the SFTP handshake takes a while on a ~600-row
+       roster, so the button raises the full-screen busy overlay for the
+       duration and then reports the result via SweetAlert. */
+    var crisis24 = (function () {
         function showBusy(text) {
             var $o = $("#empdbBusyOverlay");
             if (!$o.length) return;
@@ -485,8 +487,8 @@
         function showResult(payload) {
             // Server returns { Success, Title, Html }. The Html is already
             // safe HTML (entity-encoded server-side) so we pass it as-is.
-            var icon = payload && payload.Success ? "success" : "info";
-            var title = (payload && payload.Title) || "SWN";
+            var icon = payload && payload.Success ? "success" : "error";
+            var title = (payload && payload.Title) || "Crisis24 Export";
             var html = (payload && payload.Html) || "";
             if (window.Swal && window.Swal.fire) {
                 window.Swal.fire({
@@ -502,128 +504,113 @@
             }
         }
 
-        function call(method, action, busyText) {
-            showBusy(busyText);
-            var p = method === "POST"
-                ? empdb.api.post("Swn/" + action, {})
-                : empdb.api.get("Swn/" + action);
-            return p.then(function (r) {
+        function runExport() {
+            showBusy("Sending the Crisis24 export…");
+            return empdb.api.post("Crisis24/Export", {}).then(function (r) {
                 hideBusy();
                 showResult(r);
             }).catch(function (err) {
                 hideBusy();
-                empdb.notifyError((busyText || action) + " failed: " + err.message);
+                empdb.notifyError("Crisis24 export failed: " + err.message);
+            });
+        }
+
+        // Preview — downloads the exact file the export would transmit,
+        // without sending it. We can't just window.location to the endpoint:
+        // DnnApiController's [DnnModuleAuthorize] checks the ModuleId / TabId
+        // headers that empdb.api injects on every fetch, and a plain
+        // navigation sends none of them. So pull it via fetch (which sends the
+        // auth headers) and trigger the download from a Blob URL.
+        function runPreview() {
+            var ctx = empdb.getContext();
+            showBusy("Building the Crisis24 file…");
+            return fetch("/DesktopModules/EmployeeDB/API/Crisis24/Preview", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "ModuleId": ctx.moduleId,
+                    "TabId": ctx.tabId,
+                    "RequestVerificationToken": ctx.verificationToken,
+                    "Accept": "text/csv"
+                }
+            }).then(function (resp) {
+                if (!resp.ok) {
+                    return resp.text().then(function (t) {
+                        throw new Error(t || (resp.status + " " + resp.statusText));
+                    });
+                }
+                // Use the server's filename so the downloaded copy carries the
+                // same name the SFTP upload would land under.
+                var fileName = "crisis24.csv";
+                var cd = resp.headers.get("Content-Disposition") || "";
+                var match = cd.match(/filename\*?=(?:UTF-\d['']*)?["']?([^"';]+)["']?/i);
+                if (match) fileName = decodeURIComponent(match[1].trim());
+                var rows = resp.headers.get("X-Crisis24-Rows");
+                return resp.blob().then(function (blob) {
+                    return { blob: blob, fileName: fileName, rows: rows };
+                });
+            }).then(function (out) {
+                hideBusy();
+                var url = URL.createObjectURL(out.blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = out.fileName;
+                a.style.display = "none";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                // Revoke after a tick so Chrome has time to commit the download.
+                setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+                empdb.notifySuccess(out.rows
+                    ? out.fileName + " downloaded (" + out.rows + " employee records). Nothing was sent to Crisis24."
+                    : out.fileName + " downloaded. Nothing was sent to Crisis24.");
+            }).catch(function (err) {
+                hideBusy();
+                empdb.notifyError("Preview failed: " + err.message);
             });
         }
 
         function init() {
-            $(document).on("click", "#empdbSwnMissing", function (e) {
+            $(document).on("click", "#empdbCrisis24Preview", function (e) {
                 e.preventDefault();
-                call("GET", "MissingContacts", "Looking up missing SWN contacts…");
+                runPreview();
             });
 
-            // Add Missing — only adds the active employees that don't have
-            // an SWN contact yet. Confirms first because it does mutate SWN.
-            $(document).on("click", "#empdbSwnAddMissing", function (e) {
+            // Confirm first: this transmits the whole active roster to an
+            // outside vendor, and Crisis24 treats each file as authoritative
+            // for their person database.
+            $(document).on("click", "#empdbCrisis24Export", function (e) {
                 e.preventDefault();
                 if (window.Swal && window.Swal.fire) {
                     window.Swal.fire({
-                        title: "Add missing employees to SWN?",
-                        text: "This will create an SWN contact for every active employee that doesn't already have one. Existing contacts are not modified.",
-                        icon: "question",
-                        showCancelButton: true,
-                        confirmButtonText: "Yes, add missing",
-                        cancelButtonText: "Cancel"
-                    }).then(function (r) {
-                        if (r.isConfirmed) call("POST", "AddMissing", "Adding missing employees to SWN…");
-                    });
-                } else {
-                    call("POST", "AddMissing", "Adding missing employees to SWN…");
-                }
-            });
-
-            $(document).on("click", "#empdbSwnSync", function (e) {
-                e.preventDefault();
-                if (window.Swal && window.Swal.fire) {
-                    window.Swal.fire({
-                        title: "Run full SWN Sync?",
-                        text: "This will push every active employee into SWN and may take several minutes. Don't close the page while it runs.",
+                        title: "Send the Crisis24 export?",
+                        text: "This builds the Person/HR feed for every active employee and uploads it to the Crisis24 SFTP site. Don't close the page while it runs.",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonText: "Yes, run sync",
+                        confirmButtonText: "Yes, send it",
                         cancelButtonText: "Cancel"
                     }).then(function (r) {
-                        if (r.isConfirmed) call("POST", "Sync", "Syncing employees with SWN…");
+                        if (r.isConfirmed) runExport();
                     });
                 } else {
-                    call("POST", "Sync", "Syncing employees with SWN…");
+                    runExport();
                 }
-            });
-
-            // SWN Export — pipe-delimited contact file for SWN bulk upload.
-            // We can't just window.location to the endpoint: DnnApiController's
-            // [DnnModuleAuthorize] checks the ModuleId / TabId headers that
-            // empdb.api injects on every fetch, and a plain navigation sends
-            // none of them. Pull the file via fetch (which sends the auth
-            // headers) and trigger the download client-side via a Blob URL.
-            $(document).on("click", "#empdbSwnExport", function (e) {
-                e.preventDefault();
-                var ctx = empdb.getContext();
-                showBusy("Generating SWN export…");
-                fetch("/DesktopModules/EmployeeDB/API/Swn/Export", {
-                    method: "GET",
-                    credentials: "same-origin",
-                    headers: {
-                        "ModuleId": ctx.moduleId,
-                        "TabId": ctx.tabId,
-                        "RequestVerificationToken": ctx.verificationToken,
-                        "Accept": "text/plain"
-                    }
-                }).then(function (resp) {
-                    if (!resp.ok) {
-                        return resp.text().then(function (t) {
-                            throw new Error(t || (resp.status + " " + resp.statusText));
-                        });
-                    }
-                    // Pull the suggested filename out of Content-Disposition
-                    // so the user gets the timestamped name the server sends.
-                    var fileName = "SWN_Export.txt";
-                    var cd = resp.headers.get("Content-Disposition") || "";
-                    var match = cd.match(/filename\*?=(?:UTF-\d['']*)?["']?([^"';]+)["']?/i);
-                    if (match) fileName = decodeURIComponent(match[1].trim());
-                    return resp.blob().then(function (blob) {
-                        return { blob: blob, fileName: fileName };
-                    });
-                }).then(function (out) {
-                    hideBusy();
-                    var url = URL.createObjectURL(out.blob);
-                    var a = document.createElement("a");
-                    a.href = url;
-                    a.download = out.fileName;
-                    a.style.display = "none";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    // Revoke after a tick so Chrome has time to commit the download.
-                    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-                    empdb.notifySuccess("SWN export downloaded.");
-                }).catch(function (err) {
-                    hideBusy();
-                    empdb.notifyError("Export failed: " + err.message);
-                });
             });
         }
 
         return { init: init };
     })();
-    empdb.swn = swn;
+    empdb.crisis24 = crisis24;
 
     /* ---------------- Supervisors (HR admins only) ----------------
        Different shape from the makeAdminTab pattern: there's no modal
        form — the user picks a target via the typeahead and the click
        itself does the POST. The roster table below lets the user
-       toggle Active (PUT) and Delete (refused with 409 if the
-       supervisor is still assigned to any employee). */
+       Delete (refused with 409 if the supervisor is still assigned to
+       any employee). Active is read-only here — it reflects the
+       supervisor's own tjc_employee.IsActive status (IsEmployeeActive),
+       not the tjc_supervisor.IsActive row flag, so there's nothing to
+       toggle: an employee's active status is managed on EditEmployee. */
     var supervisors = (function () {
         var $tbody;
         var $searchInput;
@@ -660,7 +647,12 @@
             // s: { SupervisorId, EmployeeId, FirstName, LastName, IsActive,
             //      IsEmployeeActive, AssigneeCount, DisplayName }
             var name = s.DisplayName || (esc(s.LastName) + ", " + esc(s.FirstName));
-            var checked = s.IsActive ? "checked" : "";
+            // Read-only: reflects the supervisor's own employee record
+            // (IsEmployeeActive), not the separate tjc_supervisor.IsActive
+            // row flag — there's no toggle for it on this tab anymore.
+            var activeHtml = s.IsEmployeeActive
+                ? '<span class="badge bg-success">Active</span>'
+                : '<span class="badge bg-secondary">Inactive</span>';
             var count   = (typeof s.AssigneeCount === "number") ? s.AssigneeCount : 0;
             // Dim the icon + count when nobody's assigned — clicking still
             // opens the modal (it'll just show "No employees assigned") but
@@ -678,10 +670,7 @@
                 +           '&nbsp;<span class="badge ' + badgeClass + '">' + count + '</span>'
                 +        '</a>'
                 +    '</td>'
-                +    '<td class="text-center">'
-                +        '<input type="checkbox" class="form-check-input empdb-supervisor-active" '
-                +              'data-id="' + s.SupervisorId + '" ' + checked + ' />'
-                +    '</td>'
+                +    '<td class="text-center">' + activeHtml + '</td>'
                 +    '<td class="command-icon">'
                 +        '<a href="#" class="text-danger empdb-supervisor-delete" title="Delete">'
                 +            '<i class="fas fa-trash"></i>'
@@ -794,18 +783,6 @@
                 });
         }
 
-        function toggleActive(supervisorId, makeActive) {
-            return empdb.api.put("Supervisors/" + supervisorId, { IsActive: makeActive })
-                .then(function () {
-                    empdb.notifySuccess(makeActive ? "Marked active." : "Marked inactive.");
-                })
-                .catch(function (err) {
-                    empdb.notifyError("Update failed: " + err.message);
-                    // Roll the checkbox back to match server state.
-                    reload();
-                });
-        }
-
         function deleteSupervisor(supervisorId) {
             return empdb.confirmDelete("Remove this supervisor from the list?")
                 .then(function (ok) {
@@ -863,14 +840,6 @@
                 openAssigneesModal(id, name);
             });
 
-            // Active toggle (PUT).
-            $tbody.on("change", ".empdb-supervisor-active", function () {
-                var id = parseInt($(this).data("id"), 10);
-                if (!id) return;
-                var makeActive = $(this).is(":checked");
-                toggleActive(id, makeActive);
-            });
-
             // Trash (DELETE).
             $tbody.on("click", ".empdb-supervisor-delete", function (e) {
                 e.preventDefault();
@@ -886,9 +855,9 @@
     })();
 
     $(function () {
-        // SWN buttons live on EmployeeList; init unconditionally — the
-        // handlers themselves no-op on pages without the buttons.
-        swn.init();
+        // The Crisis24 Export button lives on EmployeeList; init
+        // unconditionally — the handler no-ops on pages without the button.
+        crisis24.init();
 
         // Only initialise the admin-tab tables on the EmployeeList page
         // (the Edit page doesn't ship these tables, so guard against

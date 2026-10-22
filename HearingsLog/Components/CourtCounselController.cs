@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,17 @@ namespace tjc.Modules.HearingLog.Components
 {
     internal class CourtCounselController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CourtCounselController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<CourtCounselLog> GetCourtCounselLogs()
         {
             IEnumerable<CourtCounselLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CourtCounselLog>();
                 t = rep.Get();
@@ -32,7 +39,7 @@ namespace tjc.Modules.HearingLog.Components
         public CourtCounselLog GetCourtCounselLog(int logId)
         {
             CourtCounselLog t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<CourtCounselLog>();
                 t = rep.GetById(logId);
@@ -44,7 +51,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<CourtCounselLog> GetCourtCounselLogPaged(int userId, DateTime startDate, DateTime endDate, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<CourtCounselLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<CourtCounselLog>(System.Data.CommandType.StoredProcedure, "tjc_court_counsel_get_log_paged", userId, startDate, endDate, rowOffset, pageSize, sortOrder, sortDesc);
@@ -54,7 +61,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<CourtCounselLog> GetCourtCounselLogPaged(int userId, DateTime startDate, DateTime endDate, string searchText, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<CourtCounselLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<CourtCounselLog>(System.Data.CommandType.StoredProcedure, "tjc_court_counsel_get_log_paged_search", userId, startDate, endDate, searchText, rowOffset, pageSize, sortOrder, sortDesc);
@@ -65,7 +72,7 @@ namespace tjc.Modules.HearingLog.Components
         public int GetCourtCounselLogCount(int userId, DateTime startDate, DateTime endDate)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_court_counsel_get_log_count", userId, startDate, endDate);
             }
@@ -74,7 +81,7 @@ namespace tjc.Modules.HearingLog.Components
         public int GetCourtCounselLogCount(int userId, DateTime startDate, DateTime endDate, string searchText)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_court_counsel_get_log_count_search", userId, startDate, endDate, searchText);
             }
@@ -85,7 +92,7 @@ namespace tjc.Modules.HearingLog.Components
         public IEnumerable<CourtCounselLog> GetCourtCounselLogPaged(DateTime startDate, DateTime endDate, string searchText, int judgeUserId, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<CourtCounselLog> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteQuery<CourtCounselLog>(System.Data.CommandType.StoredProcedure, "tjc_court_counsel_get_log_paged_chief_judge",  startDate, endDate, searchText, judgeUserId, rowOffset, pageSize, sortOrder, sortDesc);
@@ -95,7 +102,7 @@ namespace tjc.Modules.HearingLog.Components
         public int GetCourtCounselLogCount(DateTime startDate, DateTime endDate, string searchText, int judgeUserId)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
 
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_court_counsel_get_log_count_chief_judge",  startDate, endDate, searchText, judgeUserId);

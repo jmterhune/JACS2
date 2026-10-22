@@ -14,6 +14,7 @@ using DotNetNuke.Services.Exceptions;
 using System;
 using System.Web.UI.WebControls;
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using Microsoft.Extensions.DependencyInjection;
 
 using tjc.Modules.Reports.Components;
@@ -37,9 +38,11 @@ namespace tjc.Modules.Reports
     public partial class View : ReportsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public View()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -56,8 +59,7 @@ namespace tjc.Modules.Reports
                 if (ReportId > 0)
                 {
                     pnlReportList.Visible = false;
-                    DotNetNuke.Framework.CDefault myPage = new DotNetNuke.Framework.CDefault();
-                    myPage = (CDefault)this.Page;
+                    DotNetNuke.Framework.CDefault myPage = (CDefault)this.Page;
 
                     lnkReport.NavigateUrl = _navigationManager.NavigateURL();
                     if (ReportId == 1)
@@ -115,7 +117,7 @@ namespace tjc.Modules.Reports
             ltReportTitle.Text = string.Format("{0} Birthday Report {1}",
                 drpBirthMonth.SelectedItem.Text, countyTitle);
 
-            var ctl = new ReportController();
+            var ctl = new ReportController(_hostSettings);
             grdReport.DataSource = ctl.GetBirthDates(month, countyId);
             grdReport.DataBind();
             // HeaderRow is null when the bound source had zero rows (no
@@ -132,7 +134,7 @@ namespace tjc.Modules.Reports
         /// the dropdown is never completely empty on bind failure.</summary>
         private void BindCounties()
         {
-            var ctl = new ReportController();
+            var ctl = new ReportController(_hostSettings);
             foreach (var c in ctl.GetCounties())
             {
                 drpCounty.Items.Add(new ListItem(c.CountyName, c.CountyId.ToString()));
@@ -250,7 +252,7 @@ namespace tjc.Modules.Reports
             int month = Convert.ToInt32(drpServiceMonth.SelectedValue);
             Int32.TryParse(txtYear.Text, out int textYear);
             int year = textYear > 0 ? textYear : DateTime.Now.Year;
-            var ctl = new ReportController();
+            var ctl = new ReportController(_hostSettings);
             string reportTitle;
             if (reportType == 1)
             {
@@ -281,7 +283,7 @@ namespace tjc.Modules.Reports
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
             string reportTitle = "Termination Report";
-            var ctl = new ReportController();
+            var ctl = new ReportController(_hostSettings);
 
             ltReportTitle.Text = reportTitle;
             grdReport.DataSource = ctl.GetTerminationDates(startDate, endDate);

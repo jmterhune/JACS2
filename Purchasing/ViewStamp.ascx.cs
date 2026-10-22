@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -22,9 +23,11 @@ namespace tjc.Modules.Purchasing
     public partial class ViewStamp : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public ViewStamp()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -57,7 +60,7 @@ namespace tjc.Modules.Purchasing
         {
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
-            var ctl = new StampOrderController();
+            var ctl = new StampOrderController(_hostSettings);
             var orders = ctl.GetOrders(startDate, endDate.AddDays(1));
             if (chkShowCompleted.Checked)
             {
@@ -77,7 +80,7 @@ namespace tjc.Modules.Purchasing
         protected void rptOrders_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int orderId = int.Parse(e.CommandArgument.ToString());
-            var ctl = new StampOrderController();
+            var ctl = new StampOrderController(_hostSettings);
 
             if (e.CommandName == "toggle")
             {

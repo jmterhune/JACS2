@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Report.ascx.cs" Inherits="tjc.Modules.MediationStatistics.Report" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <div id="report-form">
-    <div class="row form-group">
+    <div class="row mb-3">
         <div class="col-auto">
             <asp:Label runat="server" AssociatedControlID="txtStartDate" Text="Start Date" />
             <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtStartDate" MaxLength="15" ClientIDMode="Static" CssClass="form-control datepicker" />
@@ -222,7 +222,7 @@
 </div>
 <div id="MediatorStats" runat="server" visible="false">
     <hr />
-    <div class="row form-group">
+    <div class="row mb-3">
         <div class="col-auto">
             <asp:Label runat="server" ID="lblMediatoryType" AssociatedControlID="drpMediatorType" Text="Mediator Type" Visible="false" />
             <asp:DropDownList ID="drpMediatorType" runat="server" CssClass="form-control" Visible="false" ClientIDMode="Static">

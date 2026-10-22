@@ -12,10 +12,18 @@ namespace tjc.Modules.EmployeeDB.Views
 {
     public partial class Birthdays : EmployeeDBModuleBase
     {
-        private readonly EmployeeReportController _reports = new EmployeeReportController();
-        private readonly CountyController _counties = new CountyController();
-        private readonly GroupController _groups = new GroupController();
-        private readonly OfficeLocationController _locations = new OfficeLocationController();
+        private readonly EmployeeReportController _reports;
+        private readonly CountyController _counties;
+        private readonly GroupController _groups;
+        private readonly OfficeLocationController _locations;
+
+        public Birthdays()
+        {
+            _reports = new EmployeeReportController(_hostSettings);
+            _counties = new CountyController(_hostSettings);
+            _groups = new GroupController(_hostSettings);
+            _locations = new OfficeLocationController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {

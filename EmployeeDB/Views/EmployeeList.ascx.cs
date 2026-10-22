@@ -27,7 +27,7 @@ namespace tjc.Modules.EmployeeDB.Views
             {
                 if (_locationNameCache == null)
                 {
-                    _locationNameCache = new OfficeLocationController()
+                    _locationNameCache = new OfficeLocationController(_hostSettings)
                         .GetAll()
                         .ToDictionary(l => l.OfficeLocationId, l => l.Description);
                 }
@@ -44,7 +44,7 @@ namespace tjc.Modules.EmployeeDB.Views
             {
                 if (_departmentNameCache == null)
                 {
-                    _departmentNameCache = new GroupController()
+                    _departmentNameCache = new GroupController(_hostSettings)
                         .GetAll()
                         .ToDictionary(g => g.GroupID, g => g.GroupName);
                 }
@@ -162,7 +162,7 @@ namespace tjc.Modules.EmployeeDB.Views
             // data layer, so non-employee rows never reach this list. Active
             // vs. inactive filtering is done client-side via the toggle at
             // the bottom of the Employees tab (DataTables custom filter).
-            var ctrl = new EmployeeController();
+            var ctrl = new EmployeeController(_hostSettings);
             rptEmployees.DataSource = ctrl.GetAll()
                                           .OrderBy(x => x.LastName)
                                           .ThenBy(x => x.FirstName)
@@ -181,11 +181,11 @@ namespace tjc.Modules.EmployeeDB.Views
         //   Components/Api/LocationsController.cs
         //   Components/Api/DepartmentsController.cs
 
-        // SWN Sync / Add All Groups / Show Missing SWN Contacts are all
-        // driven from the JS layer now via Components/Api/SwnController.cs.
-        // The original postback handlers were removed because the Web Forms
-        // postback was leaving the URL in a state DNN's BreadCrumb skin
-        // object couldn't parse (e.g. /GroupId/0). See Scripts/empdb-list.js#swn.
+        // Crisis24 Export is driven from the JS layer via
+        // Components/Api/Crisis24Controller.cs — see Scripts/empdb-list.js.
+        // It has no postback handler on purpose: the Web Forms postback used
+        // by the old Send Word Now buttons left the URL in a state DNN's
+        // BreadCrumb skin object couldn't parse (e.g. /GroupId/0).
 
         #region Helpers
 

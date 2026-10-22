@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -16,10 +17,17 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     internal class CaseTypeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public CaseTypeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         private const string CONN_JUD12 = "Jud12"; //Connection
         public void CreateCaseType(CaseType t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteCaseType(CaseType t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<CaseType> GetCaseTypes()
         {
             IEnumerable<CaseType> t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public CaseType GetCaseType(int caseTypeId)
         {
             CaseType t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 t = rep.GetById(caseTypeId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateCaseType(CaseType t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<CaseType>();
                 rep.Update(t);

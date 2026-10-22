@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
     /// </summary>
     public class NhitItemController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public NhitItemController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public NhitItemInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitItemInfo>().GetById(id);
             }
@@ -25,7 +33,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// <summary>Active items only, ordered by category then sort order.</summary>
         public IEnumerable<NhitItemInfo> GetActive()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitItemInfo>()
                     .Find("WHERE IsActive = 1 ORDER BY Category, SortOrder, Name");
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// <summary>Includes inactive — for the Manage Items admin screen.</summary>
         public IEnumerable<NhitItemInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitItemInfo>()
                     .Find("ORDER BY Category, SortOrder, Name");
@@ -44,7 +52,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<NhitItemInfo> GetByCategory(string category)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitItemInfo>()
                     .Find("WHERE Category = @0 AND IsActive = 1 ORDER BY SortOrder, Name", category);
@@ -61,7 +69,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             // form immediately — admin can deactivate later if needed.
             // (DB DEFAULT also sets it, but DAL2's Insert serialises every
             // property regardless of default, so we set it here too.)
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitItemInfo>().Insert(item);
             }
@@ -86,7 +94,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             }
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitItemInfo>().Update(item);
             }
@@ -109,7 +117,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         {
             var item = GetById(id);
             if (item == null) return;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitItemInfo>().Delete(item);
             }

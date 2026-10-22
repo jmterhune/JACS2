@@ -18,8 +18,14 @@ namespace tjc.Modules.JudicialReferral.Views
 {
     public partial class Review : JudicialReferralModuleBase
     {
-        private readonly JudgeReferralController ctl = new JudgeReferralController();
-        private readonly AttachmentController attCtl = new AttachmentController();
+        private readonly JudgeReferralController ctl;
+        private readonly AttachmentController attCtl;
+
+        public Review()
+        {
+            ctl = new JudgeReferralController(_hostSettings);
+            attCtl = new AttachmentController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -40,7 +46,7 @@ namespace tjc.Modules.JudicialReferral.Views
 
         private void PopulateJudgeList()
         {
-            var rCtl = new RoleController();
+            var rCtl = RoleController.Instance;
             var judgeList = rCtl.GetUsersByRole(PortalId, JudgeRole);
             var judges = new List<UserInfo>();
             foreach (UserInfo j in judgeList) judges.Add(j);
@@ -86,6 +92,7 @@ namespace tjc.Modules.JudicialReferral.Views
             if (objReferral.MotionDate.HasValue)
                 txtMotionDate.Text = objReferral.MotionDate.Value.ToString("yyyy-MM-dd");
             txtMotionTitle.Text = objReferral.MotionTitle;
+            txtNotes.Text = objReferral.Notes;
             if (objReferral.JudgeId>0)
                 drpJudge.SelectedValue = objReferral.JudgeId.ToString();
 
@@ -229,6 +236,7 @@ namespace tjc.Modules.JudicialReferral.Views
                 objReferral.MotionDate = parsed;
 
             objReferral.MotionTitle = txtMotionTitle.Text;
+            objReferral.Notes = Trunc(txtNotes.Text, 2000);
             if (!string.IsNullOrEmpty(drpJudge.SelectedValue))
                 objReferral.JudgeId = int.Parse(drpJudge.SelectedValue);
 

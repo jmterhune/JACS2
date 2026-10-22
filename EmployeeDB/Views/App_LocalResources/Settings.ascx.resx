@@ -23,5 +23,5 @@
   <data name="plReportUrl.Text"><value>Report Module Tab ID</value></data>
   <data name="plReportUrl.Help"><value>Tab ID where the report module lives.</value></data>
   <data name="plHrAdminRole.Text"><value>HR Admin Role</value></data>
-  <data name="plHrAdminRole.Help"><value>Role name whose members see the Employees admin tabs and SWN sync buttons.</value></data>
+  <data name="plHrAdminRole.Help"><value>Role name whose members see the Employees admin tabs and the Crisis24 export.</value></data>
 </root>

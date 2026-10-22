@@ -45,14 +45,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindCaseTypes()
         {
-            var ctrl = new CaseTypeController();
+            var ctrl = new CaseTypeController(_hostSettings);
             rptCaseTypes.DataSource = ctrl.GetCaseTypes().OrderBy(c => c.CaseType).ToList();
             rptCaseTypes.DataBind();
         }
 
         protected void cmdSaveCaseType_Click(object sender, EventArgs e)
         {
-            var ctrl = new CaseTypeController();
+            var ctrl = new CaseTypeController(_hostSettings);
             var id = Convert.ToInt32(hdCaseTypeId.Value);
 
             if (id > 0)
@@ -77,7 +77,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptCaseTypes_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new CaseTypeController();
+            var ctrl = new CaseTypeController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")
@@ -114,14 +114,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindAttorneys()
         {
-            var ctrl = new AttorneyController();
+            var ctrl = new AttorneyController(_hostSettings);
             rptAttorneys.DataSource = ctrl.GetAttorneys().OrderBy(a => a.AttorneyName).ToList();
             rptAttorneys.DataBind();
         }
 
         protected void cmdSaveAttorney_Click(object sender, EventArgs e)
         {
-            var ctrl = new AttorneyController();
+            var ctrl = new AttorneyController(_hostSettings);
             var id = Convert.ToInt32(hdAttorneyId.Value);
 
             if (id > 0)
@@ -152,7 +152,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptAttorneys_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new AttorneyController();
+            var ctrl = new AttorneyController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")
@@ -179,14 +179,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindCounties()
         {
-            var ctrl = new CountyController();
+            var ctrl = new CountyController(_hostSettings);
             rptCounties.DataSource = ctrl.GetCounties().OrderBy(c => c.County).ToList();
             rptCounties.DataBind();
         }
 
         protected void cmdSaveCounty_Click(object sender, EventArgs e)
         {
-            var ctrl = new CountyController();
+            var ctrl = new CountyController(_hostSettings);
             var id = Convert.ToInt32(hdCountyId.Value);
 
             if (id > 0)
@@ -211,7 +211,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptCounties_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new CountyController();
+            var ctrl = new CountyController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")
@@ -237,14 +237,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindPhases()
         {
-            var ctrl = new PhaseController();
+            var ctrl = new PhaseController(_hostSettings);
             rptPhases.DataSource = ctrl.GetPhases().OrderBy(p => p.Phase).ToList();
             rptPhases.DataBind();
         }
 
         protected void cmdSavePhase_Click(object sender, EventArgs e)
         {
-            var ctrl = new PhaseController();
+            var ctrl = new PhaseController(_hostSettings);
             var id = Convert.ToInt32(hdPhaseId.Value);
 
             if (id > 0)
@@ -269,7 +269,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptPhases_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new PhaseController();
+            var ctrl = new PhaseController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")
@@ -295,14 +295,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindRequestors()
         {
-            var ctrl = new RequestorController();
+            var ctrl = new RequestorController(_hostSettings);
             rptRequestors.DataSource = ctrl.GetRequestors().OrderBy(r => r.RequestorName).ToList();
             rptRequestors.DataBind();
         }
 
         protected void cmdSaveRequestor_Click(object sender, EventArgs e)
         {
-            var ctrl = new RequestorController();
+            var ctrl = new RequestorController(_hostSettings);
             var id = Convert.ToInt32(hdRequestorId.Value);
 
             if (id > 0)
@@ -333,7 +333,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptRequestors_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new RequestorController();
+            var ctrl = new RequestorController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")
@@ -360,14 +360,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindActions()
         {
-            var ctrl = new ActionTakenController();
+            var ctrl = new ActionTakenController(_hostSettings);
             rptActions.DataSource = ctrl.GetActions().OrderBy(a => a.Action).ToList();
             rptActions.DataBind();
         }
 
         protected void cmdSaveAction_Click(object sender, EventArgs e)
         {
-            var ctrl = new ActionTakenController();
+            var ctrl = new ActionTakenController(_hostSettings);
             var id = Convert.ToInt32(hdActionId.Value);
 
             if (id > 0)
@@ -392,7 +392,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptActions_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new ActionTakenController();
+            var ctrl = new ActionTakenController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")
@@ -418,14 +418,14 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindTimeSpent()
         {
-            var ctrl = new TimeSpentController();
+            var ctrl = new TimeSpentController(_hostSettings);
             rptTimeSpent.DataSource = ctrl.GetTimeSpents().OrderBy(t => t.TimeSpan).ToList();
             rptTimeSpent.DataBind();
         }
 
         protected void cmdSaveTimeSpent_Click(object sender, EventArgs e)
         {
-            var ctrl = new TimeSpentController();
+            var ctrl = new TimeSpentController(_hostSettings);
             var id = Convert.ToInt32(hdTimeSpentId.Value);
 
             if (id > 0)
@@ -456,7 +456,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         protected void rptTimeSpent_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            var ctrl = new TimeSpentController();
+            var ctrl = new TimeSpentController(_hostSettings);
             var id = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "EditItem")

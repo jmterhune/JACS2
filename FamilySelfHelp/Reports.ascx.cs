@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,18 +38,22 @@ namespace tjc.Modules.FamilySelfHelp
     public partial class Reports : FamilySelfHelpModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
+        private readonly IJavaScriptLibraryHelper _jsLibraryHelper;
         private ModuleSecurity modSecurty;
 
         public Reports()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
 
                 if (!IsPostBack)
                 {
@@ -85,7 +90,7 @@ namespace tjc.Modules.FamilySelfHelp
             DateTime.TryParse(txtStartDate.Text, out startdate);
             DateTime.TryParse(txtEndDate.Text, out enddate);
 
-            var ctl = new Components.LogController();
+            var ctl = new Components.LogController(_hostSettings);
 
             IEnumerable<Log> lstLog;
             IEnumerable<Report> lstCaseTypeReport;

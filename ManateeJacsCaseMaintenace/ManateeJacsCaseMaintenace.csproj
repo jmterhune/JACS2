@@ -74,8 +74,9 @@
       <HintPath>..\..\Intranet-new\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, PublicKeyToken=null">
-      <Private>False</Private>
+    <Reference Include="PetaPoco, Version=6.0.683.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\websites\apps.jud12.flcourts.org\bin\PetaPoco.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -93,6 +94,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Attorney.cs" />
+    <Compile Include="Components\AttorneyController.cs" />
     <Compile Include="Components\ExcludedAttorneysController.cs" />
     <Compile Include="Components\CourtCalendarController.cs" />
     <Compile Include="Components\CaseCycleController.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="Components\CaseCycle.cs" />
     <Compile Include="Components\CaseController.cs" />
     <Compile Include="Components\ExcludedAttorneys.cs" />
+    <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Components\InterfaceMessageController.cs" />
     <Compile Include="Components\InterfaceMessage.cs" />
     <Compile Include="CaseMaintBase.cs">

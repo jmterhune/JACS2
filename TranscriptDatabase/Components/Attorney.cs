@@ -10,7 +10,11 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+using System.Web;
 using System.Web.Caching;
 
 namespace tjc.Modules.TranscriptDatabase.Components
@@ -44,7 +48,8 @@ namespace tjc.Modules.TranscriptDatabase.Components
         {
             get
             {
-                var ctl = new OfficeController(); Office office = ctl.GetOffice(OfficeID);
+                var hostSettings = HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new OfficeController(hostSettings); Office office = ctl.GetOffice(OfficeID);
                 if (office != null)
                     return office.Description;
                 return "";

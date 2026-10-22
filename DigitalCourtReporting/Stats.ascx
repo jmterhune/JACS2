@@ -13,9 +13,7 @@
 </div>
 <div class="btn-group" id="SearchCriteria" role="group" aria-label="Search">
     <div id="swSearchCriteria" class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text bg-dark text-white text-nowrap">Statistics Criteria:</span>
-        </div>
+        <span class="input-group-text bg-dark text-white text-nowrap">Statistics Criteria:</span>
         <asp:TextBox AutoCompleteType="Disabled" ID="txtCriteriaStartDate" ClientIDMode="Static" placeholder="mm/dd/yyy" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
         <asp:TextBox AutoCompleteType="Disabled" ID="txtCriteriaEndDate" ClientIDMode="Static" placeholder="mm/dd/yyy" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
         <asp:DropDownList runat="server" ID="drpCriteriaCounty" CssClass="form-control" AppendDataBoundItems="true" ClientIDMode="Static">

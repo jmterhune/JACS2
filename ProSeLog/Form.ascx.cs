@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
@@ -44,12 +45,14 @@ namespace tjc.Modules.ProSeLog
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public Form()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private string GetCaseNumber()
         {
@@ -57,9 +60,9 @@ namespace tjc.Modules.ProSeLog
         }
         private void PopulateDropDowns()
         {
-            var cCtl=new CaseTypeController();
-            var lCtl=new CountyController();
-            var tCtl=new ContactController();
+            var cCtl=new CaseTypeController(_hostSettings);
+            var lCtl=new CountyController(_hostSettings);
+            var tCtl=new ContactController(_hostSettings);
             drpCaseType.DataSource = cCtl.GetCaseTypes();
             drpCaseType.DataBind();
             drpInitialContact.DataSource=tCtl.GetContacts();
@@ -96,7 +99,7 @@ namespace tjc.Modules.ProSeLog
                     drpYear.SelectedValue = DateTime.Now.Year.ToString();
                     if (HistoryId > 0)
                     {
-                        var ctl = new HistoryController();
+                        var ctl = new HistoryController(_hostSettings);
                         History history = ctl.GetHistory(HistoryId);
                         if (history != null)
                         {
@@ -173,7 +176,7 @@ namespace tjc.Modules.ProSeLog
         }
         protected void cmdUpdate_Click(object sender, EventArgs e)
         {
-            var ctl = new HistoryController();
+            var ctl = new HistoryController(_hostSettings);
             History history = new History();
             if (HistoryId <= 0 | IsCopy)
             {

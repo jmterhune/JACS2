@@ -1,13 +1,21 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.MediationStatistics.Components
 {
     internal class RegionController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public RegionController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateRegion(Region t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Region>();
                 rep.Insert(t);
@@ -22,7 +30,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteRegion(Region t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Region>();
                 rep.Delete(t);
@@ -32,7 +40,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Region> GetRegions()
         {
             IEnumerable<Region> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Region>();
                 t = rep.Get();
@@ -43,7 +51,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public Region GetRegion(int regionId)
         {
             Region t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Region>();
                 t = rep.GetById(regionId);
@@ -53,7 +61,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void UpdateRegion(Region t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Region>();
                 rep.Update(t);

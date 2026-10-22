@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Security;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +18,8 @@ namespace tjc.Intranet.API.Services.Mediation
 
     public class MediatorListItemController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         public HttpResponseMessage GetMediatorListItems(int count)
         {
@@ -37,7 +42,7 @@ namespace tjc.Intranet.API.Services.Mediation
             }
             try
             {
-                var ctl = new Components.Mediation.MediatorListItemController();
+                var ctl = new Components.Mediation.MediatorListItemController(_hostSettings);
                 filteredCount = ctl.GetMediatorListCount(firstName, lastName);
                 if (count == 0) { recordCount = filteredCount; }
                 mediatorlistItems = ctl.GetMediatorListPaged(firstName, lastName, recordOffset, pageSize, sortColumn, sortDirection).Select(mediatorlistItem => new MediatorListItemViewModel(mediatorlistItem)).ToList();
@@ -53,7 +58,7 @@ namespace tjc.Intranet.API.Services.Mediation
         [ActionName("add-mediator")]
         public HttpResponseMessage CreateMediator(MediatorListItemViewModel mediatorViewItem)
         {
-            var ctl = new Components.Mediation.MediatorListItemController();
+            var ctl = new Components.Mediation.MediatorListItemController(_hostSettings);
             MediatorListItem mediator = new MediatorListItem { Email = mediatorViewItem.Email, FirstName = mediatorViewItem.FirstName, LastName = mediatorViewItem.LastName, Phone = mediatorViewItem.Phone };
             try
             {

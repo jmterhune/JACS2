@@ -30,7 +30,7 @@ namespace tjc.Modules.CourtCounsel.Views
             // If we arrived via a LogId link but no case number, look it up
             if (string.IsNullOrEmpty(_caseNumber) && LogId > 0)
             {
-                var ctrl = new HistoryController();
+                var ctrl = new HistoryController(_hostSettings);
                 var item = ctrl.GetHistory(LogId);
                 if (item != null)
                     _caseNumber = item.CaseNumber;
@@ -44,7 +44,7 @@ namespace tjc.Modules.CourtCounsel.Views
 
         private void BindData()
         {
-            var ctrl = new HistoryController();
+            var ctrl = new HistoryController(_hostSettings);
 
             litCaseNumber.Text = _caseNumber;
 
@@ -70,7 +70,7 @@ namespace tjc.Modules.CourtCounsel.Views
             if (e.CommandName == "delete")
             {
                 var logId = Convert.ToInt32(e.CommandArgument);
-                var ctrl = new HistoryController();
+                var ctrl = new HistoryController(_hostSettings);
                 ctrl.DeleteHistory(logId);
                 BindData();
             }

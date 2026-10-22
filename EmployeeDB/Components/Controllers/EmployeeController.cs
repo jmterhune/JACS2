@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,16 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 {
     public class EmployeeController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public EmployeeController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public EmployeeInfo GetEmployee(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 return rep.GetById(id);
@@ -24,7 +32,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         //
         // tjc_employee can carry non-employee rows (legacy vendor / contractor
         // records, terminated user shells, etc.). All employee-facing views,
-        // dropdowns, and SWN sync feeds want actual employees only — this
+        // dropdowns, and the Crisis24 feed want actual employees only — this
         // restriction is enforced in the data layer so every caller benefits
         // without each having to remember the flag.
         //
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EmployeeInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 return rep.Find("WHERE IsEmployee = 1");
@@ -44,7 +52,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<EmployeeInfo> GetActive()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 return rep.Find("WHERE IsActive = 1 AND IsEmployee = 1");
@@ -54,7 +62,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         public IEnumerable<EmployeeInfo> Search(string firstName, string lastName, int? departmentId, int? countyId)
         {
             IEnumerable<EmployeeInfo> items;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 // Search is always scoped to actual employees.
                 var conditions = new List<string> { "IsEmployee = 1" };
@@ -98,7 +106,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             item.CreatedById = userId;
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 rep.Insert(item);
@@ -120,7 +128,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
             item.LastModifiedDate = DateTime.Now;
             item.LastModifiedById = userId;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 rep.Update(item);
@@ -132,7 +140,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var nowIsActive = item.IsActive == true;
             if (beforeIsActive == true && !nowIsActive)
             {
-                new SupervisorController().DeactivateForEmployee(item.EmployeeId, userId);
+                new SupervisorController(_hostSettings).DeactivateForEmployee(item.EmployeeId, userId);
             }
         }
 
@@ -141,7 +149,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             var item = GetEmployee(id);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<EmployeeInfo>();
                     rep.Delete(item);
@@ -151,7 +159,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void ChangeStatus(int employeeId, bool active, int userId = -1)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "UPDATE tjc_employee SET IsActive = @0, LastModifiedDate = @1, LastModifiedById = @2 WHERE EmployeeId = @3",
@@ -161,7 +169,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public void SetUserId(int employeeId, int userId, int actorId = -1)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "UPDATE tjc_employee SET UserId = @0, LastModifiedDate = @1, LastModifiedById = @2 WHERE EmployeeId = @3",
@@ -174,7 +182,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// the FileId pointer (or clear it back to NULL).</summary>
         public void SetFileId(int employeeId, int? fileId, int actorId = -1)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(CommandType.Text,
                     "UPDATE tjc_employee SET FileId = @0, LastModifiedDate = @1, LastModifiedById = @2 WHERE EmployeeId = @3",
@@ -185,8 +193,11 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// <summary>Returns the supervisor roster for the EditEmployee
         /// dropdown — one row per <c>tjc_supervisor</c> entry, joined to
         /// <c>tjc_employee</c> for name display. Each row carries the
-        /// supervisor's <c>IsActive</c> flag so the dropdown can render
-        /// Active / Inactive groups (inactive ones disabled).
+        /// supervisor's own <c>tjc_employee.IsActive</c> flag (not the
+        /// <c>tjc_supervisor.IsActive</c> row flag, which only drives the
+        /// Supervisors admin tab) so the dropdown's Active / Inactive
+        /// grouping always matches the supervisor's current employment
+        /// status (inactive ones disabled).
         ///
         /// Earlier revisions of this method matched on
         /// <c>Position LIKE '%Supervisor%'</c> or "is already someone's
@@ -194,13 +205,14 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
         /// managed via the Supervisors admin tab on EmployeeList.</summary>
         public IEnumerable<SupervisorRow> GetSupervisors()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
-                var sql = @"SELECT e.EmployeeId, e.FirstName, e.LastName, s.IsActive
+                var sql = @"SELECT e.EmployeeId, e.FirstName, e.LastName,
+                                   ISNULL(e.IsActive, 0) AS IsActive
                             FROM tjc_employee e
                             INNER JOIN tjc_supervisor s ON s.EmployeeId = e.EmployeeId
                             WHERE e.IsEmployee = 1
-                            ORDER BY s.IsActive DESC, e.LastName, e.FirstName";
+                            ORDER BY IsActive DESC, e.LastName, e.FirstName";
                 return ctx.ExecuteQuery<SupervisorRow>(CommandType.Text, sql);
             }
         }
@@ -217,7 +229,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             // an unbounded SELECT.
             if (limit <= 0) limit = 20;
             if (limit > 100) limit = 100;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var sql = "SELECT TOP " + limit + " * FROM tjc_employee "
                         + "WHERE IsEmployee = 1 "
@@ -230,7 +242,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public EmployeeInfo GetByUserId(int userId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<EmployeeInfo>();
                 return rep.Find("WHERE UserId = @0", userId).FirstOrDefault();

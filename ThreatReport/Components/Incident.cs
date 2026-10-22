@@ -53,6 +53,10 @@ namespace tjc.Modules.ThreatReport.Components
 
         public int CreatedByUserID { get; set; }
 
+        // Email of the user who submitted the incident. The external and intranet sites have separate
+        // user ids, so the email is what ties an incident to its submitter on both.
+        public string CreatedByEmail { get; set; }
+
         public DateTime DateOfIncident { get; set; }
 
         public DateTime DateReported { get; set; }

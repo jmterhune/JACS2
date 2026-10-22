@@ -10,8 +10,10 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using iText.Html2pdf;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,6 +39,13 @@ namespace tjc.Modules.CourtRegistry
     /// -----------------------------------------------------------------------------
     public partial class LocationList : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public LocationList()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Methods
         private void BindData()
         {
@@ -48,7 +57,7 @@ namespace tjc.Modules.CourtRegistry
                 ltSubHead.Text = string.Format("<h4 class='text-center'>Filtered for {0} Case Type</h4>", drpCategory.SelectedItem.Text);
             if (drpYear.Items.Count > 0)
                 _year = Int32.Parse(drpYear.SelectedValue);
-            var ctl = new AttorneyController();
+            var ctl = new AttorneyController(_hostSettings);
             IEnumerable<RegistryListItem> registryList = new List<RegistryListItem>();
             Int32.TryParse(drpJacCode.SelectedValue, out int jacCode);
             Int32.TryParse(drpCategory.SelectedValue, out int caseTypeId);
@@ -64,9 +73,9 @@ namespace tjc.Modules.CourtRegistry
         }
         private void BindDropdownLists()
         {
-            var cCtl = new CaseTypeController();
+            var cCtl = new CaseTypeController(_hostSettings);
             IEnumerable<CaseType> categories = cCtl.GetCaseTypes().OrderBy(c => c.CaseTypeName);
-            var jCtl = new JacCodeController();
+            var jCtl = new JacCodeController(_hostSettings);
 
             IEnumerable<JacCode> jacCodes = jCtl.GetJacCodes().OrderBy(x => x.JacCodeID);
             foreach (CaseType c in categories)
@@ -78,7 +87,7 @@ namespace tjc.Modules.CourtRegistry
             drpJacCode.Items.Insert(0, new ListItem("ALL", ""));
             if (drpYear.Items.Count <= 0)
             {
-                var pCtl = new ApplicationController();
+                var pCtl = new ApplicationController(_hostSettings);
                 var periods = pCtl.GetApplicationPeriods().OrderByDescending(p => p.ApplicationYear).ToList();
                 foreach (var p in periods)
                     drpYear.Items.Add(new ListItem(p.PeriodYear, p.ApplicationYear.ToString()));
@@ -87,14 +96,14 @@ namespace tjc.Modules.CourtRegistry
         private void BindDropdownLists(int casetypeId)
         {
             drpJacCode.Items.Clear();
-            var jCtl = new JacCodeController();
+            var jCtl = new JacCodeController(_hostSettings);
             IEnumerable<JacCode> jacCodes = jCtl.GetJacCodesByCaseType(casetypeId).OrderBy(x => x.JacCodeID);
             foreach (var j in jacCodes)
                 drpJacCode.Items.Add(new ListItem(string.Format("{0} ({1})", j.JacCodeID, j.Category), j.JacCodeID.ToString()));
             drpJacCode.Items.Insert(0, new ListItem("ALL", ""));
             if (drpYear.Items.Count <= 0)
             {
-                var pCtl = new ApplicationController();
+                var pCtl = new ApplicationController(_hostSettings);
                 var periods = pCtl.GetApplicationPeriods().OrderByDescending(p => p.ApplicationYear).ToList();
                 foreach (var p in periods)
                     drpYear.Items.Add(new ListItem(p.PeriodYear, p.ApplicationYear.ToString()));
@@ -110,7 +119,7 @@ namespace tjc.Modules.CourtRegistry
                 if (!IsPostBack)
                 {
                     // Populate dropdowns first
-                    var ctl = new LocationController();
+                    var ctl = new LocationController(_hostSettings);
                     foreach (Location location in ctl.GetLocations())
                         drpLocations.Items.Add(new ListItem(location.LocationName, location.LocationID.ToString()));
                     drpLocations.Items.Insert(0, new ListItem("All Locations", "0"));
@@ -123,7 +132,7 @@ namespace tjc.Modules.CourtRegistry
                     }
                     else
                     {
-                        var sCtl = new SettingController();
+                        var sCtl = new SettingController(_hostSettings);
                         Setting setting = sCtl.GetSettings().FirstOrDefault();
                         if (setting != null && setting.BeginFiscalYearMonth > 0 && setting.BeginFiscalYearDay > 0)
                         {
@@ -181,7 +190,7 @@ namespace tjc.Modules.CourtRegistry
             {
                 var rptJacCodes = (Repeater)item.FindControl("rptJacCodes");
                 RegistryListItem registryItem = (RegistryListItem)item.DataItem;
-                var ctl = new AttorneyController();
+                var ctl = new AttorneyController(_hostSettings);
                 IEnumerable<JacCode> jacCodes = ctl.GetAttorneyJacCode(registryItem.AttorneyID, _locationId, _year);
                 if (Int32.TryParse(drpJacCode.SelectedValue, out int jacCodeId))
                     jacCodes = jacCodes.Where(j => j.JacCodeID == jacCodeId);

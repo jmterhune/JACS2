@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,16 @@ namespace tjc.Modules.RecordDestruction.Components
 {
     internal class LogController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public LogController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateLog(Log t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.RecordDestruction.Components
 
         public void DeleteLog(Log t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 rep.Delete(t);
@@ -43,7 +51,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public IEnumerable<Log> GetLogs()
         {
             IEnumerable<Log> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 t = rep.Get();
@@ -53,7 +61,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public Log GetLog(int logId)
         {
             Log t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 t = rep.GetById(logId);
@@ -63,7 +71,7 @@ namespace tjc.Modules.RecordDestruction.Components
 
         public void UpdateLog(Log t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Log>();
                 rep.Update(t);
@@ -72,7 +80,7 @@ namespace tjc.Modules.RecordDestruction.Components
         public IEnumerable<LogListItem> GetLogListItems()
         {
             IEnumerable<LogListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<LogListItem>();
                 t = rep.Get();

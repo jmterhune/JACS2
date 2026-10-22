@@ -25,31 +25,6 @@ namespace tjc.Modules.EmployeeDB.Views
         protected global::System.Web.UI.WebControls.DropDownList drpHrAdminRole;
 
         /// <summary>
-        /// txtSwnTestUsername control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtSwnTestUsername;
-
-        /// <summary>
-        /// txtSwnTestPassword control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtSwnTestPassword;
-
-        /// <summary>
-        /// txtSwnLiveUsername control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtSwnLiveUsername;
-
-        /// <summary>
-        /// txtSwnLivePassword control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtSwnLivePassword;
-
-        /// <summary>
-        /// chkSwnUseLive control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.CheckBox chkSwnUseLive;
-
-        /// <summary>
         /// chkNotifyOnSave control.
         /// </summary>
         protected global::System.Web.UI.WebControls.CheckBox chkNotifyOnSave;

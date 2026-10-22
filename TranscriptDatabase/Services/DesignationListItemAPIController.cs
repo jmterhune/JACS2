@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Entities.Users;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Entities.Users;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +17,8 @@ namespace tjc.Modules.TranscriptDatabase.Services
     [DnnAuthorize]
     public class DesignationListItemController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         public HttpResponseMessage GetDesignationListItems(int count)
         {
@@ -42,7 +47,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
 
             try
             {
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 filteredCount = ctl.GetDesignationListCount(firstName, lastName, caseNumber, county, archived);
                 if (count == 0) { recordCount = filteredCount; }
                 caselistItems = ctl.GetDesignationListPaged(firstName, lastName, caseNumber, county, archived, recordOffset, pageSize, sortColumn, sortDirection)
@@ -65,7 +70,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
 
             try
             {
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 IEnumerable<NameMatchViewModel> matchingNames = ctl.GetMatchingNames(lastName);
                 return Request.CreateResponse(new MatchingNameResult { data = matchingNames, error = null });
             }
@@ -82,7 +87,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         {
             try
             {
-                var ctl = new Components.DesignationController();
+                var ctl = new Components.DesignationController(_hostSettings);
                 var attorneys = designationViewModel.Attorneys.Split(',');
                 DateTime dueDate = DateTime.Now.AddDays(30);
                 if (DateTime.TryParse(designationViewModel.ReceiptDate, out DateTime receiptdate))
@@ -135,7 +140,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         {
             try
             {
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 ctl.DeleteDesignation(designationId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -152,7 +157,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         {
             try
             {
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 ctl.ToggleArchiveStatus(designationId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -169,7 +174,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
         {
             try
             {
-                var ctl = new DesignationController();
+                var ctl = new DesignationController(_hostSettings);
                 ctl.ToggleAcknowledgmentStatus(designationId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -245,7 +250,7 @@ namespace tjc.Modules.TranscriptDatabase.Services
 
         private void AddDueDate(Designation designation)
         {
-            var ctl = new CalendarController();
+            var ctl = new CalendarController(_hostSettings);
             Components.Calendar calendar = new Components.Calendar
             {
                 CreatedByUserID = designation.CreatedByUserID,

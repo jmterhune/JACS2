@@ -4,6 +4,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -17,10 +18,12 @@ namespace tjc.Modules.Reports.EmployeeReports
     public partial class JaSeniorityReport : ReportsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         public JaSeniorityReport()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -46,7 +49,7 @@ namespace tjc.Modules.Reports.EmployeeReports
             // includeInactive=true so terminated JAs are listed for historical
             // reference. The row-data-bound handler tints them red so they
             // remain visually distinct from active rows.
-            var data = new ReportController().GetJudicialAssistantSeniority(includeInactive: true);
+            var data = new ReportController(_hostSettings).GetJudicialAssistantSeniority(includeInactive: true);
             var sort = ViewState["SortExpression"] as string ?? "Status";
             var dir  = ViewState["SortDirection"]  as string ?? "ASC";
 

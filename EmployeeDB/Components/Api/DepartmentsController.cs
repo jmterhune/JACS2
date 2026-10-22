@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net;
@@ -26,7 +29,13 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class DepartmentsController : DnnApiController
     {
-        private readonly GroupController _groups = new GroupController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly GroupController _groups;
+
+        public DepartmentsController()
+        {
+            _groups = new GroupController(_hostSettings);
+        }
 
         private bool IsSiteAdmin
         {
@@ -93,6 +102,12 @@ namespace tjc.Modules.EmployeeDB.Components.Api
             try
             {
                 item.GroupID = id;
+                // IsSwnGroup lost its editor when the Send Word Now export was
+                // retired, so the posted body never carries it. Carry the
+                // stored value forward rather than letting the model default
+                // silently clear the column on every department save.
+                var stored = _groups.GetById(id);
+                if (stored != null) item.IsSwnGroup = stored.IsSwnGroup;
                 _groups.Update(item, UserInfo.UserID);
                 return Request.CreateResponse(HttpStatusCode.OK, item);
             }

@@ -53,6 +53,13 @@
                     </div>
                 </div>
 
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="<%=txtNotes.ClientID %>">Notes</label>
+                        <asp:TextBox ID="txtNotes" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4" />
+                    </div>
+                </div>
+
                 <div>
                     <h5><asp:Literal ID="ltAttachments" runat="server" Text="Attachments"></asp:Literal></h5>
                     <asp:Repeater ID="rptFiles" runat="server">
@@ -77,7 +84,7 @@
     <asp:Panel ID="pnlJudge" runat="server" ClientIDMode="Static">
         <hr />
         <h3>Motion Type</h3>
-                <div class="form-inline">
+                <div>
                     <asp:RadioButtonList ID="rblDivisions" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal" CssClass="division">
                         <asp:ListItem Text="Criminal" Value="0" />
                         <asp:ListItem Text="Civil" Value="1" />
@@ -90,7 +97,7 @@
                     <ul class="list-unstyled radio-button">
                         <li>
                             <asp:RadioButton ID="chkStatusOrder" GroupName="criminal" runat="server" Text="Status Order from 2d DCA/Supreme Court" ClientIDMode="Static" />
-                            <label class="ml-3">Date Filed:</label>
+                            <label class="ms-3">Date Filed:</label>
                             <asp:TextBox runat="server" ID="txtStatusOrderFiled" CssClass="form-control d-inline-block w-auto" TextMode="SingleLine" type="date" ClientIDMode="Static" />
                             <asp:CustomValidator ID="valStatusOrderFiled" CssClass="text-danger" runat="server" ErrorMessage="Date Filed is Required"
                                 ClientValidationFunction="ValidateStatusOrderFiled" Display="Dynamic"></asp:CustomValidator>
@@ -100,14 +107,14 @@
                         </li>
                         <li >
                             <asp:RadioButton ID="chkMotionCorrect" GroupName="criminal" runat="server" Text="<strong>3.800(b) Motion</strong> <small class='text-muted'>(rule in 60 days or deemed denied)</small>" ClientIDMode="Static" />
-                            <label class="ml-3">Date Filed:</label>
+                            <label class="ms-3">Date Filed:</label>
                             <asp:TextBox runat="server" ID="txtMotionCorrectFiled" CssClass="form-control d-inline-block w-auto" TextMode="SingleLine" type="date" ClientIDMode="Static" />
                             <asp:CustomValidator ID="valMotionCorrectFiled" CssClass="text-danger" runat="server" ErrorMessage="Date Filed is Required"
                                 ClientValidationFunction="ValidateMotionCorrectFiled" Display="Dynamic"></asp:CustomValidator>
                         </li>
                         <li>
                             <asp:RadioButton ID="chkMotionDirected" GroupName="criminal" runat="server" Text="Handled directly by the judge:" ClientIDMode="Static" />
-                            <asp:RadioButtonList ID="clsMotionList" runat="server" RepeatColumns="2" RepeatDirection="Vertical" RepeatLayout="Table" CssClass="motion-list ml-4">
+                            <asp:RadioButtonList ID="clsMotionList" runat="server" RepeatColumns="2" RepeatDirection="Vertical" RepeatLayout="Table" CssClass="motion-list ms-4">
                                 <asp:ListItem Text="Motion to modify or reduce sentence" />
                                 <asp:ListItem Text="Motion to modify probation" />
                                 <asp:ListItem Text="Speedy trial matters" />
@@ -204,7 +211,7 @@
                     </li>
                     <li>
                         <asp:RadioButton ID="chkYes" GroupName="response" runat="server" Text="I seek Court Counsel's assistance in the above titled motion. See below:" />
-                        <asp:RadioButtonList ID="clsResponse" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="ml-4 list-group list-unstyled">
+                        <asp:RadioButtonList ID="clsResponse" runat="server" RepeatDirection="Vertical" RepeatLayout="UnorderedList" CssClass="ms-4 list-group list-unstyled">
                             <asp:ListItem Text="The State/Petitioner should be ordered to respond to the Motion." />
                             <asp:ListItem Text="The Motion should be granted." />
                             <asp:ListItem Text="The Motion should be denied." />

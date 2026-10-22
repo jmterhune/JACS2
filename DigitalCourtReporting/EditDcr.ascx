@@ -173,13 +173,13 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="txtAccountingNotes">Notes</label>
             <asp:TextBox ID="txtAccountingNotes" ClientIDMode="Static" TextMode="MultiLine" ReadOnly="true" CssClass="form-control-plaintext border rounded p-1" runat="server" />
         </div>
     </fieldset>    <fieldset class="outline-fieldset" id="fsDCR" runat="server">
         <legend>DCR Information</legend>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-md-4" runat="server" id="dvCourOrderAttach">
                 <label for="rblCourOrderAttach">Juv. Court Order Attached<em class="text-danger">*</em></label>
                 <asp:RadioButtonList ID="rblCourOrderAttach" ClientIDMode="Static" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="radio-button-list">
@@ -209,7 +209,7 @@
                     ErrorMessage="CD Type is Required" ControlToValidate="rblCDType" runat="server" />
             </div>
         </div>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-md-4">
                 <label for="txtReceivedBy">Processed By<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtProcessedBy" ClientIDMode="Static" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
@@ -229,7 +229,7 @@
                     ErrorMessage="Date Burned is Required" ControlToValidate="txtDateBurned" runat="server" />
             </div>
         </div>
-        <div class="row form-group">
+        <div class="row mb-3">
             <div class="col-md-4">
                 <label for="txtTotalMinutes">Total Minutes Burned<em class="text-danger">*</em></label>
                 <asp:TextBox AutoCompleteType="Disabled" ID="txtTotalMinutes" ClientIDMode="Static" TextMode="Number" min="0" step="1" runat="server" CssClass="form-control"></asp:TextBox>
@@ -243,7 +243,7 @@
                     ErrorMessage="Number of CDs is Required" ControlToValidate="txtCdsProvided" runat="server" />
             </div>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <label for="txtDCRNotes">Notes</label>
             <asp:TextBox textmode="MultiLine" ID="txtDCRNotes" ClientIDMode="Static" runat="server" CssClass="form-control"></asp:TextBox>
         </div>

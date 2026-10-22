@@ -63,6 +63,8 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.Web, Version=9.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DotNetNuke.WebUtility, Version=4.2.1.783, Culture=neutral, processorArchitecture=MSIL">
@@ -170,9 +172,7 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PetaPoco, Version=6.0.524.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\intranet-new\bin\PetaPoco.dll</HintPath>
+    <Reference Include="PetaPoco, Version=6.0.683.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -256,6 +256,8 @@
     <Compile Include="Components\Application.cs" />
     <Compile Include="Components\Setting.cs" />
     <Compile Include="Components\SettingController.cs" />
+    <Compile Include="Components\Withdrawal.cs" />
+    <Compile Include="Components\WithdrawalController.cs" />
     <Compile Include="CourtRegistryModuleBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -352,6 +354,13 @@
     <Compile Include="Locations.ascx.designer.cs">
       <DependentUpon>Locations.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Withdrawals.ascx.cs">
+      <DependentUpon>Withdrawals.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Withdrawals.ascx.designer.cs">
+      <DependentUpon>Withdrawals.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UpdateJacCodes.ascx.cs">
       <DependentUpon>UpdateJacCodes.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -377,6 +386,7 @@
     <Content Include="Settings.ascx" />
     <Content Include="LocationList.ascx" />
     <Content Include="UpdateJacCodes.ascx" />
+    <Content Include="Withdrawals.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CourtRegistry.dnn" />

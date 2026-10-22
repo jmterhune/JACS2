@@ -10,7 +10,7 @@
             <a class="nav-link" href="<%=AttorneyListUrl %>">Attorneys</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#mediators" data-toggle="tab">Mediators</a>
+            <a class="nav-link" href="#mediators" data-bs-toggle="tab">Mediators</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=RegionListUrl %>">Regions</a>
@@ -81,7 +81,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditMediatorModalLabel">Add / Edit Mediator</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row g-3">
@@ -194,9 +194,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditMediatorModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditMediatorModal')).show();
         } else {
-            $('#EditMediatorModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditMediatorModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

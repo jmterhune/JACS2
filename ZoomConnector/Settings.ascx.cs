@@ -64,7 +64,7 @@ namespace tjc.Modules.ZoomConnector
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
 
                 modules.UpdateTabModuleSetting(TabModuleId, "ManateeIPs", txtManatee.Text.Trim());
                 modules.UpdateTabModuleSetting(TabModuleId, "SarasotaIPs", txtSarasota.Text.Trim());

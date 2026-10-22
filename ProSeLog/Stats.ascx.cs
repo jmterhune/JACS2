@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +36,13 @@ namespace tjc.Modules.ProSeLog
     /// -----------------------------------------------------------------------------
     public partial class Stats : ProSeLogModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public Stats()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Events
 
 
@@ -48,7 +57,7 @@ namespace tjc.Modules.ProSeLog
                         lnkManage.Visible = true;
                         lnkManage.NavigateUrl = CaseTypeListUrl;
                     }
-                    var ctl = new CountyController();
+                    var ctl = new CountyController(_hostSettings);
                     drpCounty.DataSource = ctl.GetCounties();
                     drpCounty.DataBind();
                     for (var i = 1; i <= 12; i++)
@@ -73,10 +82,10 @@ namespace tjc.Modules.ProSeLog
         }
         protected void cmdSubmit_Click(object sender, EventArgs e)
         {
-            var ctl = new HistoryController();
+            var ctl = new HistoryController(_hostSettings);
             IEnumerable<HistoryListItem> histories = ctl.GetStats(Int32.Parse(drpMonths.SelectedValue), Int32.Parse(drpYear.SelectedValue), Int32.Parse(drpCounty.SelectedValue));
             List<Stat> colstats = new List<Stat>();
-            var cCtl = new ContactController();
+            var cCtl = new ContactController(_hostSettings);
             IEnumerable<Contact> contacts = cCtl.GetContacts();
             foreach (Contact contact in contacts)
             {

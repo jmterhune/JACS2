@@ -70,7 +70,7 @@ namespace tjc.Modules.PretrialServices.Sarasota
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
                 //tab module settings
                 modules.UpdateTabModuleSetting(TabModuleId, "ReportUrl", txtReportUrl.Text);
             }

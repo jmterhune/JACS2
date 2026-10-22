@@ -89,7 +89,7 @@ namespace tjc.Modules.Purchasing
         {
             try
             {
-                var objModules = new DotNetNuke.Entities.Modules.ModuleController();
+                var objModules = DotNetNuke.Entities.Modules.ModuleController.Instance;
                 // the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
                 objModules.UpdateModuleSetting(ModuleId, "Emails", txtEmails.Text);
                 objModules.UpdateModuleSetting(ModuleId, "AdminRole", txtAdminRole.Text);

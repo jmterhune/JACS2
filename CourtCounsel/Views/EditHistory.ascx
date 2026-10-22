@@ -240,6 +240,12 @@
 
         InitCaseNumberWidget();
 
+        // Report why a save stalled instead of leaving the button stuck on
+        // "Saving…" with nothing in the console.
+        if (window.SaveWatchdog) {
+            SaveWatchdog.watch({ buttonId: '<%= cmdSave.ClientID %>', timeoutSeconds: 10 });
+        }
+
         // Scroll the Comments textarea to the bottom so the most recent
         // entries are visible without manual scrolling.
         var $comments = $('#<%= txtComments.ClientID %>');

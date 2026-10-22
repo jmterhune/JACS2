@@ -1,0 +1,51 @@
+<div class="socialpanelheader" id="configProtection-headerPanel">
+    <h3 data-bind="html: resx.ConfigProtection" class="title-small"></h3>
+</div>
+<div class="socialpanelbody configProtectionPanel" id="configProtection-bodyPanel">
+    <div class="body">
+        <div class="cp-warning">
+            <strong data-bind="html: resx.WarningTitle"></strong>
+            <ul>
+                <li data-bind="html: resx.WarningRestart"></li>
+                <li data-bind="html: resx.WarningKey"></li>
+                <li data-bind="html: resx.WarningDnn"></li>
+                <li data-bind="html: resx.WarningBackup"></li>
+            </ul>
+        </div>
+
+        <div class="cp-error" data-bind="visible: loadError, text: loadError"></div>
+
+        <table class="cp-table">
+            <thead>
+                <tr>
+                    <th data-bind="html: resx.ColSection"></th>
+                    <th data-bind="html: resx.ColItems"></th>
+                    <th data-bind="html: resx.ColStatus"></th>
+                    <th data-bind="html: resx.ColProvider"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: sections">
+                <tr>
+                    <td class="cp-name" data-bind="text: Name"></td>
+                    <td data-bind="text: ItemCount"></td>
+                    <td>
+                        <span class="cp-badge cp-encrypted" data-bind="visible: IsProtected, html: $root.resx.StatusEncrypted"></span>
+                        <span class="cp-badge cp-plain" data-bind="visible: !IsProtected && !Error, html: $root.resx.StatusPlain"></span>
+                        <span class="cp-badge cp-unknown" data-bind="visible: Error, attr: { title: Error }, html: $root.resx.StatusError"></span>
+                    </td>
+                    <td>
+                        <span data-bind="visible: IsProtected, text: Provider"></span>
+                        <select aria-label="Provider" data-bind="visible: !IsProtected && !Error, options: $root.providers, value: selectedProvider"></select>
+                    </td>
+                    <td class="cp-actions">
+                        <button class="dnn-ui-common-button" role="primary"
+                                data-bind="visible: !IsProtected && !Error, click: $root.encrypt, html: $root.resx.cmdEncrypt"></button>
+                        <button class="dnn-ui-common-button" role="secondary"
+                                data-bind="visible: IsProtected, click: $root.decrypt, html: $root.resx.cmdDecrypt"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

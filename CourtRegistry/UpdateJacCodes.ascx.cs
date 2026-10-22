@@ -3,7 +3,9 @@
 '  All rights reserved.
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,13 @@ namespace tjc.Modules.CourtRegistry
 {
     public partial class UpdateJacCodes : CourtRegistryModuleBase
     {
+        private readonly IHostSettings _hostSettings;
         private List<CaseType> _caseTypes;
+
+        public UpdateJacCodes()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +42,7 @@ namespace tjc.Modules.CourtRegistry
 
         private void BindCaseTypes()
         {
-            var ctl = new CaseTypeController();
+            var ctl = new CaseTypeController(_hostSettings);
             var caseTypes = ctl.GetCaseTypes().OrderBy(c => c.CaseTypeName).ToList();
             drpCaseType.Items.Clear();
             drpCaseType.Items.Add(new ListItem("-- Select --", ""));
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtRegistry
 
         private void BindList()
         {
-            var ctl = new JacCodeController();
+            var ctl = new JacCodeController(_hostSettings);
             rptUpdates.DataSource = ctl.GetJacCodeUpdates().OrderBy(u => u.JacCodeID);
             rptUpdates.DataBind();
         }
@@ -68,7 +76,7 @@ namespace tjc.Modules.CourtRegistry
             int.TryParse(caseTypeId.ToString(), out int id);
             if (_caseTypes == null)
             {
-                var ctl = new CaseTypeController();
+                var ctl = new CaseTypeController(_hostSettings);
                 _caseTypes = ctl.GetCaseTypes().ToList();
             }
             var match = _caseTypes.FirstOrDefault(c => c.CaseTypeID == id);
@@ -78,7 +86,7 @@ namespace tjc.Modules.CourtRegistry
         protected void rptUpdates_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int.TryParse(e.CommandArgument.ToString(), out int jacCodeId);
-            var ctl = new JacCodeController();
+            var ctl = new JacCodeController(_hostSettings);
             if (e.CommandName == "delete" && jacCodeId > 0)
             {
                 ctl.DeleteJacCodeUpdate(jacCodeId);
@@ -105,7 +113,7 @@ namespace tjc.Modules.CourtRegistry
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new JacCodeController();
+            var ctl = new JacCodeController(_hostSettings);
             int.TryParse(txtJacCodeID.Text, out int jacCodeId);
             int.TryParse(drpCaseType.SelectedValue, out int caseTypeId);
             int.TryParse(drpUpdateType.SelectedValue, out int updateType);
@@ -135,7 +143,7 @@ namespace tjc.Modules.CourtRegistry
 
         protected void cmdApply_Click(object sender, EventArgs e)
         {
-            var ctl = new JacCodeController();
+            var ctl = new JacCodeController(_hostSettings);
             var updates = ctl.GetJacCodeUpdates().ToList();
             var errors = new List<string>();
 

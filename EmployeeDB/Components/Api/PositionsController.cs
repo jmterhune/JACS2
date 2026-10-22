@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -16,8 +19,15 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class PositionsController : DnnApiController
     {
-        private readonly PositionHistoryController _positions = new PositionHistoryController();
-        private readonly EmployeeController _employees = new EmployeeController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly PositionHistoryController _positions;
+        private readonly EmployeeController _employees;
+
+        public PositionsController()
+        {
+            _positions = new PositionHistoryController(_hostSettings);
+            _employees = new EmployeeController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("ForEmployee")]

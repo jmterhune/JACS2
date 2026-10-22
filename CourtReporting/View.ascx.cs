@@ -10,12 +10,15 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using DotNetNuke.UI.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Web.UI.WebControls;
 using tjc.Modules.CourtReporting.Components;
@@ -37,11 +40,20 @@ namespace tjc.Modules.CourtReporting
     /// -----------------------------------------------------------------------------
     public partial class View : CourtReportingModuleBase, IActionable
     {
+        private readonly IHostSettings _hostSettings;
+        private readonly INavigationManager _navigationManager;
+
+        public View()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
-                var tc = new AccountController();
+                var tc = new AccountController(_hostSettings);
                 rptItemList.DataSource = tc.GetAccounts();
                 rptItemList.DataBind();
             }
@@ -89,10 +101,10 @@ namespace tjc.Modules.CourtReporting
 
             if (e.CommandName == "Delete")
             {
-                var tc = new AccountController();
+                var tc = new AccountController(_hostSettings);
                 tc.DeleteAccount(Convert.ToInt32(e.CommandArgument));
             }
-            Response.Redirect(DotNetNuke.Common.Globals.NavigateURL());
+            Response.Redirect(_navigationManager.NavigateURL());
         }
 
         public ModuleActionCollection ModuleActions

@@ -15,7 +15,7 @@
             <a class="nav-link" href="<%=NamesListUrl%>">Names</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#offices" data-toggle="tab">Offices</a>
+            <a class="nav-link" href="#offices" data-bs-toggle="tab">Offices</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=FormListUrl%>">Forms</a>
@@ -77,10 +77,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditOfficeModalLabel">Add / Edit Office</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class="row">
                                             <div class="col">
                                                 <asp:Label runat="server" AssociatedControlID="txtDescription" Text="Office Description" />
@@ -173,9 +173,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditOfficeModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditOfficeModal')).show();
         } else {
-            $('#EditOfficeModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditOfficeModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,7 @@ namespace tjc.Modules.RecordDestruction
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public string DepartmentFilterHtml
         {
             get
@@ -57,7 +59,7 @@ namespace tjc.Modules.RecordDestruction
         {
             string filterHtml = "";
             filterHtml = "<label class='me-2'>Filter by Department<select id='drpfilter' class='form-control form-control-sm d-inline-block w-auto ms-2' aria-controls='tblLogItem'><option>All</option>";
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
 
             IEnumerable<Group> departments = ctl.GetGroups().OrderBy(x=>x.GroupName);
             foreach (Group department in departments)
@@ -70,11 +72,12 @@ namespace tjc.Modules.RecordDestruction
         public LogItemList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         private void BindList()
         {
-            var ctl = new LogController();
+            var ctl = new LogController(_hostSettings);
             rptLogItems.DataSource = ctl.GetLogListItems();
             rptLogItems.DataBind();
         }
@@ -92,7 +95,7 @@ namespace tjc.Modules.RecordDestruction
                     }
 
                     DepartmentFilterHtml = GetDepartmentFilterHtml();
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }

@@ -13,7 +13,7 @@
     </div>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Filter Records">
         <div id="dateFilter" class="input-group me-3" role="group" aria-label="Date group">
-            <button id="btnSearchType" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button id="btnSearchType" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 Search Type
             </button>
             <ul class="dropdown-menu" aria-labelledby="btnSearchType">
@@ -48,7 +48,7 @@
         </div>
 
         <div id="report" class="input-group" role="group" aria-label="Report Group">
-            <button id="btnReportType" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button id="btnReportType" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 Report Type
             </button>
             <ul class="dropdown-menu" aria-labelledby="btnReportType">
@@ -84,31 +84,31 @@
                                 <th>Defendant</th>
                                 <th>Case Number</th>
                                 <th>Charges</th>
-                                <th><abbr title="Most Serious Offense" data-toggle="tooltip">MSO</abbr></th>
+                                <th><abbr title="Most Serious Offense" data-bs-toggle="tooltip">MSO</abbr></th>
                                 <th class="text-center">Indigent</th>
                                 <th class="text-center">
-                                    <abbr title="Felony Conviction Dangerous" data-toggle="tooltip">FCD</abbr></th>
+                                    <abbr title="Felony Conviction Dangerous" data-bs-toggle="tooltip">FCD</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Felony Conviction Non-Dangerous" data-toggle="tooltip">FCND</abbr></th>
+                                    <abbr title="Felony Conviction Non-Dangerous" data-bs-toggle="tooltip">FCND</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Misdemeanor Conviction Dangerous" data-toggle="tooltip">MCD</abbr></th>
+                                    <abbr title="Misdemeanor Conviction Dangerous" data-bs-toggle="tooltip">MCD</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Misdemeanor Conviction Non-Dangerous" data-toggle="tooltip">MCND</abbr></th>
+                                    <abbr title="Misdemeanor Conviction Non-Dangerous" data-bs-toggle="tooltip">MCND</abbr></th>
                                 
                                 <th>
-                                    <abbr title="Failure to Appear" data-toggle="tooltip">FTA</abbr>
+                                    <abbr title="Failure to Appear" data-bs-toggle="tooltip">FTA</abbr>
                                     Date</th>
-                                <th class="text-center"><abbr title="Court Appearances" data-toggle="tooltip">CA</abbr></th>
+                                <th class="text-center"><abbr title="Court Appearances" data-bs-toggle="tooltip">CA</abbr></th>
                                 <th class="text-center">
-                                    <abbr title="Bench Warrant Ordered" data-toggle="tooltip">BWO</abbr>?</th>
+                                    <abbr title="Bench Warrant Ordered" data-bs-toggle="tooltip">BWO</abbr>?</th>
                                 <th class="text-center">
-                                    <abbr title="Bond Paid" data-toggle="tooltip">BP</abbr>?</th>
+                                    <abbr title="Bond Paid" data-bs-toggle="tooltip">BP</abbr>?</th>
                                 <th class="text-center">Compliance</th>
 
                                 <th class="text-center">Revoked?</th>
                                 <th>Completion</th>
                                 <th class="text-center">Days
-                                    <abbr title="Supervised Release" data-toggle="tooltip">SPR</abbr></th>
+                                    <abbr title="Supervised Release" data-bs-toggle="tooltip">SPR</abbr></th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -154,10 +154,10 @@
                 <h4>Week End Intake Log</h4>
                 <asp:Literal ID="ltMessage" runat="server" Visible="false">
                     <div class="alert alert-{0} alert-dismissible fade show" role="alert"><i class="fa fa-{1}"></i>&nbsp;{2} 
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 </asp:Literal>
-                <div class="form-group row">
+                <div class="row mb-3">
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtInterviewed" Text="Interviewed" />
                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="Number" MaxLength="10" ID="txtInterviewed" />
@@ -172,7 +172,7 @@
                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="Number" MaxLength="10" ID="txtPtrRecommended" />
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                     <div class="col-4">
                         <asp:Label runat="server" AssociatedControlID="txtPtrOrdered" Text="PTR Ordered" />
                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" TextMode="Number" MaxLength="10" ID="txtPtrOrdered" />
@@ -206,7 +206,7 @@
                             <asp:Button OnClientClick="DismissModal()" CausesValidation="False" CssClass="btn-close me-2" aria-hidden="true" ID="cmdClose2" runat="server" Text="&times;" OnClick="cmdClose_Click" />
                         </div>
                         <div class="modal-body">
-                            <div class="form-group row">
+                            <div class="row mb-3">
                                 <div class="col-6">
                                     <asp:Label runat="server" AssociatedControlID="txtName" Text="Defendant Name<em>*</em>" ToolTip="required" />
                                     <asp:TextBox runat="server" CssClass="form-control" MaxLength="100" ID="txtName" />
@@ -222,7 +222,7 @@
                                     <asp:TextBox runat="server" CssClass="form-control datepicker completion-date" MaxLength="50" ID="txtCompletionDate" />
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="row mb-3">
                                 <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtCaseNumber" Text="Case Number<em>*</em>" ToolTip="required" />
                                     <asp:TextBox runat="server" CssClass="form-control" MaxLength="200" ID="txtCaseNumber" ClientIDMode="Static" />
@@ -245,7 +245,7 @@
                                     </asp:DropDownList>
                                 </div>
                             </div>
-                            <div class="row form-group">
+                            <div class="row mb-3">
                                 <div class="col-12 mb-2">
                                     <asp:Label runat="server" AssociatedControlID="txtCharges" Text="Arrest Charges<em>*</em>" />
                                     <asp:TextBox runat="server" TextMode="MultiLine" Rows="2" CssClass="form-control" ID="txtCharges" />
@@ -255,7 +255,7 @@
                                 <div class="col-6">
                                     <fieldset class="form-fieldset">
                                         <legend>Felony Convictions</legend>
-                                        <div class="form-group row">
+                                        <div class="row mb-3">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtfcDanger" Text="Dangerous" />
                                                 <asp:TextBox runat="server" TextMode="Number" CssClass="form-control" ID="txtfcDanger" />
@@ -270,7 +270,7 @@
                                 <div class="col-6">
                                     <fieldset class="form-fieldset">
                                         <legend>Misdemeanor Convictions</legend>
-                                        <div class="form-group row">
+                                        <div class="row mb-3">
                                             <div class="col-6">
                                                 <asp:Label runat="server" AssociatedControlID="txtmcDanger" Text="Dangerous" />
                                                 <asp:TextBox runat="server" TextMode="Number" CssClass="form-control" ID="txtmcDanger" />
@@ -283,7 +283,7 @@
                                     </fieldset>
                                 </div>
                             </div>
-                            <div class="form-group mt-3">
+                            <div class="mt-3">
                                 <div class="row">
                                     <div class="col-4">
                                         <asp:Label runat="server" AssociatedControlID="drpMostSeriosOffense" Text="Most Serious Offense<em>*</em>" />
@@ -393,7 +393,7 @@
     }(jQuery, window.Sys));
 
     function PageInit() {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
         $("#dialog").dialog({
             autoOpen: false,
             modal: true
@@ -492,20 +492,20 @@
         $("#current-intake-date").text("Selected Intake Date: " + month + "/" + day + "/" + year);
     }
     function DismissModal() {
-        $('#EditDefendantsInProgramModal').modal('hide');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('EditDefendantsInProgramModal')).hide();
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditDefendantsInProgramModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditDefendantsInProgramModal')).show();
         } else {
             if (typeof (Page_ClientValidate) == 'function') {
                 Page_ClientValidate();
             }
 
             if (Page_IsValid) {
-                $('#EditDefendantsInProgramModal').modal('hide');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('EditDefendantsInProgramModal')).hide();
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
             }

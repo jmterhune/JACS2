@@ -1,4 +1,5 @@
 ﻿using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,18 +27,20 @@ namespace tjc.Modules.JudgeVacation
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public Holidays()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void PopulateYears()
         {
             drpYear.DataTextField = "Years";
             drpYear.DataValueField = "Years";
-            var ctl = new HolidayController();
+            var ctl = new HolidayController(_hostSettings);
             var years = ctl.GetYearsAvailable();
             if (years.Where(x => x.Years == DateTime.Now.Year).Count() <= 0)
             {
@@ -49,7 +52,7 @@ namespace tjc.Modules.JudgeVacation
 
         private void BindData()
         {
-            var ctl=new HolidayController();
+            var ctl=new HolidayController(_hostSettings);
             rptHolidays.DataSource = ctl.GetHolidays(CurrentYear);
             rptHolidays.DataBind();
         }
@@ -83,7 +86,7 @@ namespace tjc.Modules.JudgeVacation
             if (e.CommandName == "delete")
             {
                 int ID = int.Parse(e.CommandArgument.ToString());
-                var ctl = new HolidayController();
+                var ctl = new HolidayController(_hostSettings);
                 ctl.DeleteHoliday(ID);
                 BindData();
             }
@@ -97,7 +100,7 @@ namespace tjc.Modules.JudgeVacation
                 HolidayDate = DateTime.Parse(HolidayDatePicker.Text),
                 Description = txtDescription.Text
             };
-            var ctl = new HolidayController();
+            var ctl = new HolidayController(_hostSettings);
 
             ctl.CreateHoliday(objHoliday);
             Response.Redirect(EditUrl("holiday"));

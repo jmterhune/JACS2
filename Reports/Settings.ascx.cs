@@ -80,7 +80,7 @@ namespace tjc.Modules.Reports
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
 
                 //the following are two sample Module Settings, using the text boxes that are commented out in the ASCX file.
                 //module settings

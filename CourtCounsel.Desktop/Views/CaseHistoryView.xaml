@@ -1,0 +1,58 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.CaseHistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:CaseHistoryViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <TextBlock FontSize="20" FontWeight="Bold">
+                <Run Text="Case " /><Run Text="{Binding CaseNumber, Mode=OneWay}" />
+            </TextBlock>
+            <ItemsControl ItemsSource="{Binding PartyNames}" Margin="0,4,0,8">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#e9ecef" CornerRadius="4" Padding="6,2" Margin="0,0,4,4">
+                            <TextBlock Text="{Binding}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Add New Log Entry" Command="{Binding AddNewCommand}" HorizontalAlignment="Left" Padding="10,4" />
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding HistoryRows}" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Action Date" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding DateReceived, StringFormat=d}" HorizontalContentAlignment="Left"
+                                    Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Cursor="Hand" Foreground="#0d6efd" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Action Taken" Binding="{Binding Action}" Width="160" />
+                <DataGridTextColumn Header="Responsible" Binding="{Binding Responsible}" Width="150" />
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" Width="160" />
+                <DataGridTextColumn Header="Date Completed" Binding="{Binding DateCompleted, StringFormat=d}" Width="120" />
+                <DataGridTemplateColumn Header="" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete"
+                                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}" Padding="6,2" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

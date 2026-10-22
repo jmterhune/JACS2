@@ -22,6 +22,7 @@
       <InstallInclude Include="**\*.htm" Exclude="packages\**" />
       <InstallInclude Include="**\*.resx" Exclude="packages\**" />
       <InstallInclude Include="**\*.aspx" Exclude="packages\**" />
+      <InstallInclude Include="**\*.ashx" Exclude="packages\**" />
       <InstallInclude Include="**\*.js" Exclude="packages\**" />
       <InstallInclude Include="**\*.txt"  Exclude="**\obj\**;**\_ReSharper*\**;packages\**;**\.git\**;" />
       <InstallInclude Include="**\images\**" Exclude="packages\**" />
@@ -38,6 +39,7 @@
       <SourceInclude Include="**\*.resx" />
       <SourceInclude Include="**\*.xml" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;" />
       <SourceInclude Include="**\*.aspx" />
+      <SourceInclude Include="**\*.ashx" />
       <SourceInclude Include="**\*.js" />
       <SourceInclude Include="**\*.txt" Exclude="**\obj\**;**\_ReSharper*\**;**\.git\**;" />
       <SourceInclude Include="**\images\**" />

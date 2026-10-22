@@ -52,7 +52,7 @@ namespace tjc.Modules.RecordDestruction
             {
                 if (Page.IsPostBack == false)
                 {
-                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var ctl = DotNetNuke.Security.Roles.RoleController.Instance;
                     var listroles = ctl.GetRoles(PortalId);
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
                     {
@@ -82,7 +82,7 @@ namespace tjc.Modules.RecordDestruction
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
 
                 modules.UpdateModuleSetting(ModuleId, "AdminRole", drpAdminRole.SelectedValue);
                 modules.UpdateModuleSetting(ModuleId, "AttachmentFolderName", txtAttachmentFolderName.Text);

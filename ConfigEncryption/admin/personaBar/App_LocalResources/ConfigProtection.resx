@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="nav_ConfigProtection.Text" xml:space="preserve"><value>Config Encryption</value></data>
+  <data name="ConfigProtection.Text" xml:space="preserve"><value>Config Encryption</value></data>
+  <data name="WarningTitle.Text" xml:space="preserve"><value>Read before changing anything</value></data>
+  <data name="WarningRestart.Text" xml:space="preserve"><value>Saving web.config restarts the site, so users will be signed out and the first page load will be slow.</value></data>
+  <data name="WarningKey.Text" xml:space="preserve"><value>The default RSA provider keeps its key in this server's machine key container. The file can only be decrypted on this server unless the key is exported to the others (aspnet_regiis -px / -pi). The DataProtection provider is tied to this machine outright.</value></data>
+  <data name="WarningDnn.Text" xml:space="preserve"><value>DNN's installer and upgrade routines edit web.config as plain XML, so decrypt both sections before upgrading DNN or installing extensions that change them.</value></data>
+  <data name="WarningBackup.Text" xml:space="preserve"><value>Each change first copies web.config to App_Data\ConfigBackups. That copy holds the plain text values from before an encryption, so delete it once you have confirmed the site still works.</value></data>
+  <data name="ColSection.Text" xml:space="preserve"><value>Section</value></data>
+  <data name="ColItems.Text" xml:space="preserve"><value>Entries</value></data>
+  <data name="ColStatus.Text" xml:space="preserve"><value>Status</value></data>
+  <data name="ColProvider.Text" xml:space="preserve"><value>Provider</value></data>
+  <data name="StatusEncrypted.Text" xml:space="preserve"><value>Encrypted</value></data>
+  <data name="StatusPlain.Text" xml:space="preserve"><value>Plain text</value></data>
+  <data name="StatusError.Text" xml:space="preserve"><value>Unreadable</value></data>
+  <data name="cmdEncrypt.Text" xml:space="preserve"><value>Encrypt</value></data>
+  <data name="cmdDecrypt.Text" xml:space="preserve"><value>Decrypt</value></data>
+  <data name="EncryptConfirm.Text" xml:space="preserve"><value>Encrypt the {0} section of web.config? The site will restart.</value></data>
+  <data name="DecryptConfirm.Text" xml:space="preserve"><value>Decrypt the {0} section of web.config? Its values will be stored as plain text and the site will restart.</value></data>
+  <data name="ConfirmButton.Text" xml:space="preserve"><value>Yes</value></data>
+  <data name="CancelButton.Text" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Success.Text" xml:space="preserve"><value>web.config was updated.</value></data>
+  <data name="ERROR_Generic.Text" xml:space="preserve"><value>The change could not be made. See the DNN event log for details.</value></data>
+  <data name="ERROR_Load.Text" xml:space="preserve"><value>Could not read the web.config sections.</value></data>
+</root>

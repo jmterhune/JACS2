@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 
@@ -16,10 +17,17 @@ namespace tjc.Modules.CourtRegistry.Components
 {
     internal class SettingController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public SettingController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         private const string CONN_JUD12 = "Jud12"; //Connection
         public void CreateSetting(Setting t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Setting>();
                 rep.Insert(t);
@@ -34,7 +42,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void DeleteSetting(Setting t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Setting>();
                 rep.Delete(t);
@@ -44,7 +52,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public IEnumerable<Setting> GetSettings()
         {
             IEnumerable<Setting> t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Setting>();
                 t = rep.Get();
@@ -55,7 +63,7 @@ namespace tjc.Modules.CourtRegistry.Components
         public Setting GetSetting(int settingId)
         {
             Setting t;
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Setting>();
                 t = rep.GetById(settingId);
@@ -65,7 +73,7 @@ namespace tjc.Modules.CourtRegistry.Components
 
         public void UpdateSetting(Setting t)
         {
-            using (IDataContext ctx =DataContext.Instance(CONN_JUD12))
+            using (IDataContext ctx =DataContext.Instance(_hostSettings, CONN_JUD12))
             {
                 var rep = ctx.GetRepository<Setting>();
                 rep.Update(t);

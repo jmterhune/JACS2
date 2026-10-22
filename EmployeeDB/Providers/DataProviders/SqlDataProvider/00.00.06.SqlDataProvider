@@ -1,0 +1,35 @@
+/***********************************************************************
+ * EmployeeDB 0.0.6 install script
+ *
+ * tjc_crisis24_export_log — one row per successful Crisis24 Person/HR
+ * feed transmission (Components/Controllers/Crisis24ExportLogController.cs,
+ * written to by the manual "Crisis24 Export" button and the monthly
+ * Crisis24ExportSchedule task alike; never by Preview, and never on a
+ * failed upload).
+ *
+ * MAX(CreatedDate) WHERE Success = 1 is the "last successful export"
+ * watermark Crisis24ExportBuilder uses to decide which inactive employees
+ * still need to go out: only those terminated AFTER that watermark are
+ * included, so someone already reported as inactive on a prior
+ * transmission doesn't get resent on every one after it.
+ ***********************************************************************/
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.objects
+    WHERE object_id = OBJECT_ID('{databaseOwner}{objectQualifier}tjc_crisis24_export_log')
+      AND type = 'U')
+BEGIN
+    CREATE TABLE {databaseOwner}{objectQualifier}tjc_crisis24_export_log (
+        ExportLogId      INT IDENTITY(1, 1) NOT NULL,
+        FileName         NVARCHAR(100) NOT NULL,
+        RecordCount      INT NOT NULL,
+        Success          BIT NOT NULL CONSTRAINT DF_tjc_crisis24_export_log_Success DEFAULT (1),
+        CreatedDate      DATETIME NOT NULL CONSTRAINT DF_tjc_crisis24_export_log_CreatedDate DEFAULT (GETDATE()),
+        CreatedById      INT NOT NULL CONSTRAINT DF_tjc_crisis24_export_log_CreatedById DEFAULT (-1),
+        LastModifiedDate DATETIME NOT NULL CONSTRAINT DF_tjc_crisis24_export_log_LastModifiedDate DEFAULT (GETDATE()),
+        LastModifiedById INT NOT NULL CONSTRAINT DF_tjc_crisis24_export_log_LastModifiedById DEFAULT (-1),
+        CONSTRAINT PK_tjc_crisis24_export_log PRIMARY KEY CLUSTERED (ExportLogId)
+    );
+END
+GO

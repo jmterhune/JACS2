@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,13 @@ namespace tjc.Modules.ProSeLog
     /// -----------------------------------------------------------------------------
     public partial class Case : ProSeLogModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public Case()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Events
 
 
@@ -47,7 +56,7 @@ namespace tjc.Modules.ProSeLog
                         lnkManage.Visible = true;
                         lnkManage.NavigateUrl = CaseTypeListUrl;
                     }
-                    var ctl = new HistoryController();
+                    var ctl = new HistoryController(_hostSettings);
                     IEnumerable<HistoryListItem> histories = ctl.GetHistoryListItemsByCaseNumber(CaseNumber, 0);
                     HistoryListItem history = histories.FirstOrDefault();
                     if (history != null)

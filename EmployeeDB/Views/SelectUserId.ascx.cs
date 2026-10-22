@@ -13,7 +13,12 @@ namespace tjc.Modules.EmployeeDB.Views
 {
     public partial class SelectUserId : EmployeeDBModuleBase
     {
-        private readonly EmployeeController _employees = new EmployeeController();
+        private readonly EmployeeController _employees;
+
+        public SelectUserId()
+        {
+            _employees = new EmployeeController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {

@@ -4,6 +4,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -22,10 +23,12 @@ namespace tjc.Modules.Reports.EmployeeReports
     public partial class DropParticipantsReport : ReportsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         public DropParticipantsReport()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -52,7 +55,7 @@ namespace tjc.Modules.Reports.EmployeeReports
         /// <summary>Re-bind the grid honoring the current sort column / direction.</summary>
         private void BindData()
         {
-            var data = new ReportController().GetDropParticipants(includeInactive: true);
+            var data = new ReportController(_hostSettings).GetDropParticipants(includeInactive: true);
             var sort = ViewState["SortExpression"] as string ?? "Status";
             var dir  = ViewState["SortDirection"]  as string ?? "ASC";
 

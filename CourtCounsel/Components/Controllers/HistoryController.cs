@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,17 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
     internal class HistoryController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public HistoryController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public HistoryInfo GetHistory(int logId)
         {
             HistoryInfo t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryInfo>();
                 t = rep.GetById(logId);
@@ -35,7 +43,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<HistoryInfo> GetAllHistory()
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryInfo>();
                 t = rep.Get();
@@ -46,7 +54,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<HistoryInfo> GetHistoryByCaseNumber(string caseNumber, string caseName = "")
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryInfo>();
                 if (!string.IsNullOrEmpty(caseName))
@@ -60,7 +68,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<HistoryInfo> SearchByCaseName(string partyName)
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<HistoryInfo>(
                     System.Data.CommandType.Text,
@@ -77,7 +85,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<HistoryInfo> SearchByCaseNumber(string partial)
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<HistoryInfo>(
                     System.Data.CommandType.Text,
@@ -90,7 +98,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<HistoryInfo> SearchByAttorney(string attorney, string statusFilter)
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 // Match the VB stored procedure logic exactly.
                 // Status codes: A=Active, I=Inactive(Pending), C=Complete
@@ -141,7 +149,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<HistoryInfo> GetOverdueHistory(DateTime cutoffDate)
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryInfo>();
                 t = rep.Find("WHERE DateDue < @0 AND DateCompleted IS NULL", cutoffDate);
@@ -152,7 +160,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public IEnumerable<string> GetPartyNamesByCaseNumber(string caseNumber)
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<HistoryInfo>(
                     System.Data.CommandType.Text,
@@ -165,7 +173,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public void CreateHistory(HistoryInfo item)
         {
             item.LastModifiedDate = DateTime.Now;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryInfo>();
                 rep.Insert(item);
@@ -175,7 +183,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         public void UpdateHistory(HistoryInfo item)
         {
             item.LastModifiedDate = DateTime.Now;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<HistoryInfo>();
                 rep.Update(item);
@@ -187,7 +195,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             var item = GetHistory(logId);
             if (item != null)
             {
-                using (IDataContext ctx = DataContext.Instance())
+                using (IDataContext ctx = DataContext.Instance(_hostSettings))
                 {
                     var rep = ctx.GetRepository<HistoryInfo>();
                     rep.Delete(item);
@@ -197,7 +205,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
 
         public void UpdateCaseName(string caseNumber, string newName)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.Text,
                     "UPDATE tjc_cc_history SET PartyName = @0, LastModifiedDate = GETDATE() WHERE CaseNumber = @1",
@@ -209,7 +217,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             string statusFilter, string extendedStatus, string attorney, string county, string requestor)
         {
             IEnumerable<HistoryInfo> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var conditions = new List<string>();
                 var args = new List<object>();
@@ -285,7 +293,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         /// </summary>
         public IEnumerable<string> GetDistinctRequestedBy()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<string>(CommandType.Text,
                     "SELECT DISTINCT RequestedBy FROM tjc_cc_history " +
@@ -347,7 +355,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
             string where = BuildDataSheetWhere(attorneys, dateReceivedFrom, requestedBy, excludeCompleted, args);
             string sql = "SELECT * FROM tjc_cc_history" + where + " ORDER BY DateReceived DESC, logId DESC";
 
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.ExecuteQuery<HistoryInfo>(CommandType.Text, sql, args.ToArray()).ToList();
             }
@@ -377,7 +385,7 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
                 PageSize = pageSize
             };
 
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 // Total count for pager display / last-page bounds
                 string countSql = "SELECT COUNT(*) FROM tjc_cc_history" + where;

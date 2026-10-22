@@ -1,5 +1,8 @@
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Security;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net;
@@ -15,7 +18,13 @@ namespace tjc.Modules.EmployeeDB.Components.Api
     [ValidateAntiForgeryToken]
     public class JobClassesController : DnnApiController
     {
-        private readonly JobClassController _ctrl = new JobClassController();
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+        private readonly JobClassController _ctrl;
+
+        public JobClassesController()
+        {
+            _ctrl = new JobClassController(_hostSettings);
+        }
 
         [HttpGet]
         [ActionName("All")]

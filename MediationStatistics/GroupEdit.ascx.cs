@@ -10,8 +10,11 @@
 ' 
 */
 
+using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +40,17 @@ namespace tjc.Modules.MediationStatistics
     /// -----------------------------------------------------------------------------
     public partial class GroupEdit : MediationStatisticsModuleBase
     {
+        #region Members
+        private readonly IHostSettings _hostSettings;
 
+        #endregion
         #region Methods
+
+        public GroupEdit()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
 
         private void PopulateCaseTypeGroupLists(GroupController ctl)
         {
@@ -125,7 +137,7 @@ namespace tjc.Modules.MediationStatistics
 
                     if (GroupID > 0)
                     {
-                        var ctl = new GroupController();
+                        var ctl = new GroupController(_hostSettings);
                         Group group = ctl.GetGroup(GroupID);
                         ltInfo.Text = string.Format(ltInfo.Text, group.Description);
                         PopulateCaseTypeGroupLists(ctl);
@@ -141,7 +153,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             SortCaseTypeGroupList(ctl);
             SortAppearanceGroupList(ctl);
             SortIssueGroupList(ctl);
@@ -155,7 +167,7 @@ namespace tjc.Modules.MediationStatistics
 
         protected void cmdAddCaseType_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             foreach (ListItem item in lsAvailableCaseType.Items)
             {
                 if (item.Selected)
@@ -170,7 +182,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdRemoveCaseType_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             foreach (ListItem item in lsSelectedCaseType.Items)
             {
                 if (item.Selected)
@@ -188,7 +200,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdAddAppearance_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             foreach (ListItem item in lsAvailableAppearance.Items)
             {
                 if (item.Selected)
@@ -203,7 +215,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdRemoveAppearance_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             foreach (ListItem item in lsSelectedAppearance.Items)
             {
                 if (item.Selected)
@@ -221,7 +233,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdAddIssue_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             foreach (ListItem item in lsAvailableIssues.Items)
             {
                 if (item.Selected)
@@ -236,7 +248,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdRemoveIssue_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             foreach (ListItem item in lsSelectedAppearance.Items)
             {
                 if (item.Selected)
@@ -254,14 +266,14 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdMoveUpCaseType_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Helper.MoveSelectedItemUp(lsSelectedCaseType);
             SortCaseTypeGroupList(ctl);
             PopulateCaseTypeGroupLists(ctl);
         }
         protected void cmdMoveDownCaseType_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Helper.MoveSelectedItemDown(lsSelectedCaseType);
             SortCaseTypeGroupList(ctl);
             PopulateCaseTypeGroupLists(ctl);
@@ -269,7 +281,7 @@ namespace tjc.Modules.MediationStatistics
 
         protected void cmdMoveUpAppearance_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Helper.MoveSelectedItemUp(lsSelectedAppearance);
             SortCaseTypeGroupList(ctl);
             PopulateCaseTypeGroupLists(ctl);
@@ -277,7 +289,7 @@ namespace tjc.Modules.MediationStatistics
 
         protected void cmdMoveDownAppearance_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Helper.MoveSelectedItemDown(lsSelectedAppearance);
             SortCaseTypeGroupList(ctl);
             PopulateCaseTypeGroupLists(ctl);
@@ -285,7 +297,7 @@ namespace tjc.Modules.MediationStatistics
 
         protected void cmdMoveUpIssue_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Helper.MoveSelectedItemUp(lsSelectedIssues);
             SortCaseTypeGroupList(ctl);
             PopulateCaseTypeGroupLists(ctl);
@@ -293,7 +305,7 @@ namespace tjc.Modules.MediationStatistics
 
         protected void cmdMoveDownIssue_Click(object sender, EventArgs e)
         {
-            var ctl = new GroupController();
+            var ctl = new GroupController(_hostSettings);
             Helper.MoveSelectedItemDown(lsSelectedIssues);
             SortCaseTypeGroupList(ctl);
             PopulateCaseTypeGroupLists(ctl);

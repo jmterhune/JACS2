@@ -32,7 +32,7 @@ namespace tjc.Modules.CourtCounsel.Views
             {
                 _partyName = PartyName;
                 var caseNumberPartial = CaseNumber;
-                var ctrl = new HistoryController();
+                var ctrl = new HistoryController(_hostSettings);
 
                 if (!string.IsNullOrEmpty(caseNumberPartial))
                 {

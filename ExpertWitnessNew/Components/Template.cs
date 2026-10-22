@@ -1,4 +1,7 @@
-﻿using DotNetNuke.ComponentModel.DataAnnotations;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.ComponentModel.DataAnnotations;
+using DotNetNuke.Common.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Web.Caching;
 
@@ -21,7 +24,8 @@ namespace tjc.Modules.ExpertWitness.Components
             get
             {
                 string typesRequired = "";
-                var ctl = new TemplateController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new TemplateController(hostSettings);
                 IEnumerable<TemplateSequence> templateSequences = ctl.GetTemplateSequences(TemplateID);
                 foreach (TemplateSequence templateSequence in templateSequences)
                 {
@@ -52,7 +56,8 @@ namespace tjc.Modules.ExpertWitness.Components
             {
                 string headerTypes = string.Format("Requirement #{0}: ", Sequence);
                 headerTypes += string.Format("Select {0} of the following ( ", NumberRequired);
-                var ctl = new TemplateController();
+                var hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+                var ctl = new TemplateController(hostSettings);
                 IEnumerable<Type> types = ctl.GetTemplateTypeTypesBySequence(TemplateID, Sequence);
                 foreach (Type type in types)
                 {

@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,15 +41,17 @@ namespace tjc.Modules.MediationStatistics
     public partial class MediatorList : MediationStatisticsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #region Methods
         public MediatorList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         private void BindList()
         {
-            var ctl = new MediatorController();
+            var ctl = new MediatorController(_hostSettings);
             rptMediator.DataSource = ctl.GetMediators();
             rptMediator.DataBind();
         }
@@ -70,7 +73,7 @@ namespace tjc.Modules.MediationStatistics
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.jQuery);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.jQuery);
                     BindList();
                 }
             }
@@ -81,7 +84,7 @@ namespace tjc.Modules.MediationStatistics
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new MediatorController();
+            var ctl = new MediatorController(_hostSettings);
             Mediator mediator = new Mediator();
             bool isNew = true;
             if (hdMediatorId.Value != "")
@@ -118,7 +121,7 @@ namespace tjc.Modules.MediationStatistics
         protected void rptMediator_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int mediatorId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new MediatorController();
+            var ctl = new MediatorController(_hostSettings);
             if (e.CommandName == "delete")
             {
 

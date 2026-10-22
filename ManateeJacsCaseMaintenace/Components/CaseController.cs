@@ -9,6 +9,7 @@
 ' DEALINGS IN THE SOFTWARE.
 ' 
 */
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,17 @@ namespace tjc.Modules.JacsCaseMaint.Components
     internal class CaseController
     {
         private const string CONN_INTRANET = "jacsManatee"; 
+        private readonly IHostSettings _hostSettings;
+
+        public CaseController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
 
         public IEnumerable<Cases> GetCases(string year,string caseType, string sequence)
         {
             IEnumerable<Cases> t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 string caseNumber = string.Format("%{0}%{1}%{2}%", year, caseType, sequence);
                 var rep = ctx.GetRepository<Cases>();
@@ -34,7 +41,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
         public Cases GetCase(string caseNumber)
         {
             Cases t;
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<Cases>();
                 t = rep.Find("Where CASENUM = @0", caseNumber).FirstOrDefault();
@@ -49,7 +56,7 @@ namespace tjc.Modules.JacsCaseMaint.Components
 
         public void DeleteCase(Cases t)
         {
-            using (IDataContext ctx = DataContext.Instance(CONN_INTRANET))
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_INTRANET))
             {
                 var rep = ctx.GetRepository<Cases>();
                 rep.Delete(t);

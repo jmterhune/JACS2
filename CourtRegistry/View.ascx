@@ -5,7 +5,10 @@
 <div class="tabs">
     <ul class="nav nav-tabs">
         <li class="nav-item active">
-            <a class="nav-link" href="#applications" data-toggle="tab">Applications</a>
+            <a class="nav-link" href="#applications" data-bs-toggle="tab">Applications</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
@@ -188,7 +191,9 @@
                 },
                 {
                     data: "applicationid", render: function (data, type, row, meta) {
-                            return `<a class="delete confirm text-danger" aria-role="button" title="Delete Record" data-applicationid="${row.applicationid}" href="#"><i class="fas fa-trash"></i></a>`;
+                            var compareUrl = "<%=CompareUrl%>";
+                            return `<a class="compare-app text-primary" title="Compare JAC Codes to Previous Year" href="${compareUrl}/aid/${row.applicationid}"><i class="fas fa-exchange-alt"></i></a>`
+                                + `<a class="delete confirm text-danger" aria-role="button" title="Delete Record" data-applicationid="${row.applicationid}" href="#"><i class="fas fa-trash"></i></a>`;
                     }, className: "command-item", orderable: false
                 },
             ],
@@ -212,7 +217,7 @@
             }
         });
         appTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             /* Mark "Open in detail view" so we save context before navigation,
                and highlight the row that the user last opened. */
             var lastId = sessionStorage.getItem(LAST_VIEWED_KEY);
@@ -229,7 +234,7 @@
                 var applicationId = $(this).data("applicationid");
                 Registry.confirm({
                     title: 'Delete Application?',
-                    text: 'This action cannot be undone.',
+                    text: 'This also deletes the application\'s JAC code and registry records. This action cannot be undone.',
                     icon: 'warning',
                     confirmText: 'Yes, delete',
                     confirmColor: '#d33'

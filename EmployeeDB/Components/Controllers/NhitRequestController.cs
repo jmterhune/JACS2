@@ -1,3 +1,4 @@
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Data;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,18 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
     /// </summary>
     public class NhitRequestController
     {
-        private readonly NhitItemController _items = new NhitItemController();
+        private readonly IHostSettings _hostSettings;
+        private readonly NhitItemController _items;
+
+        public NhitRequestController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+            _items = new NhitItemController(_hostSettings);
+        }
 
         public NhitRequestInfo GetById(int id)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitRequestInfo>().GetById(id);
             }
@@ -26,7 +34,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<NhitRequestInfo> GetAll()
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitRequestInfo>()
                     .Find("ORDER BY SubmittedDate DESC");
@@ -35,7 +43,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
 
         public IEnumerable<NhitRequestItemInfo> GetItemsForRequest(int requestId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 return ctx.GetRepository<NhitRequestItemInfo>()
                     .Find("WHERE NhitRequestId = @0 ORDER BY ItemSnapshotCategory, ItemSnapshotName", requestId);
@@ -57,7 +65,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
                     .Where(i => item.SelectedItemIds.Contains(i.NhitItemId))
                     .ToDictionary(i => i.NhitItemId);
 
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitRequestInfo>().Insert(item);
 
@@ -92,7 +100,7 @@ namespace tjc.Modules.EmployeeDB.Components.Controllers
             existing.EmailSentDate = DateTime.Now;
             existing.EmailSuccess = success;
             existing.EmailErrorMessage = errorMessage;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.GetRepository<NhitRequestInfo>().Update(existing);
             }

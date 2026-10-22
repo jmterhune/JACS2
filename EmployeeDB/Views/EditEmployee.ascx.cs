@@ -14,19 +14,31 @@ namespace tjc.Modules.EmployeeDB.Views
 {
     public partial class EditEmployee : EmployeeDBModuleBase
     {
-        private readonly EmployeeController _employeeController = new EmployeeController();
-        private readonly RaceController _raceController = new RaceController();
-        private readonly OfficeLocationController _locationController = new OfficeLocationController();
-        private readonly CountyController _countyController = new CountyController();
-        private readonly JobGroupController _jobGroupController = new JobGroupController();
-        private readonly JobClassController _jobClassController = new JobClassController();
+        private readonly EmployeeController _employeeController;
+        private readonly RaceController _raceController;
+        private readonly OfficeLocationController _locationController;
+        private readonly CountyController _countyController;
+        private readonly JobGroupController _jobGroupController;
+        private readonly JobClassController _jobClassController;
         // _groupController stays — used for the Department dropdown bind +
         // the change-notification email body's Department lookup.
-        private readonly GroupController _groupController = new GroupController();
+        private readonly GroupController _groupController;
         // _phoneController is only used by the helpdesk-notification path to
         // snapshot + diff phones around a Save. The Phones tab itself is
         // driven by the Web API (Components/Api/PhonesController.cs).
-        private readonly PhoneController _phoneController = new PhoneController();
+        private readonly PhoneController _phoneController;
+
+        public EditEmployee()
+        {
+            _employeeController = new EmployeeController(_hostSettings);
+            _raceController = new RaceController(_hostSettings);
+            _locationController = new OfficeLocationController(_hostSettings);
+            _countyController = new CountyController(_hostSettings);
+            _jobGroupController = new JobGroupController(_hostSettings);
+            _jobClassController = new JobClassController(_hostSettings);
+            _groupController = new GroupController(_hostSettings);
+            _phoneController = new PhoneController(_hostSettings);
+        }
 
         /// <summary>Phone types HR is willing to share with the helpdesk in the
         /// employee-add / employee-update notification email. Anything outside
@@ -85,6 +97,7 @@ namespace tjc.Modules.EmployeeDB.Views
                     BindCounties();
                     BindLocations();
                     BindSupervisors();
+                    lblSupervisor.Attributes["for"] = drpSupervisor.ClientID;
                     BindDepartments();
                     BindJobGroups();
                     BindClasses();
@@ -97,6 +110,15 @@ namespace tjc.Modules.EmployeeDB.Views
                     {
                         LoadEmployee();
                         cmdDelete.Visible = true;
+                        // Jump straight to this employee's New Hire IT Worksheet
+                        // (same module, NewHireIT controlKey) with the EmployeeId
+                        // in the query string so the worksheet pre-populates.
+                        cmdWorksheet.NavigateUrl = _navigationManager.NavigateURL(
+                            TabId,
+                            "NewHireIT",
+                            "mid=" + ModuleId,
+                            "EmployeeId=" + EmployeeId);
+                        cmdWorksheet.Visible = true;
                     }
                     else
                     {
@@ -157,13 +179,16 @@ namespace tjc.Modules.EmployeeDB.Views
         private void BindSupervisors()
         {
             // Pull the roster from tjc_supervisor (managed via the
-            // Supervisors admin tab on EmployeeList). Each option is tagged
-            // with data-supgroup="active" or "inactive"; empdb-edit.js runs
-            // on page load and wraps each group in a native <optgroup
-            // label="Active|Inactive"> so the section headers render as
-            // proper grouped options. Inactive options get a disabled
-            // attribute too — they stay visible for already-assigned
-            // employees but can't be picked for new saves.
+            // Supervisors admin tab on EmployeeList). Active/Inactive
+            // grouping is based on the supervisor's own tjc_employee.IsActive
+            // status (GetSupervisors() aliases it into SupervisorRow.IsActive),
+            // not the separate tjc_supervisor.IsActive row flag used by the
+            // admin tab. Each option is tagged with data-supgroup="active" or
+            // "inactive"; empdb-edit.js runs on page load and wraps each
+            // group in a native <optgroup label="Active|Inactive"> so the
+            // section headers render as proper grouped options. Inactive
+            // options get a disabled attribute too — they stay visible for
+            // already-assigned employees but can't be picked for new saves.
             drpSupervisor.Items.Clear();
             drpSupervisor.Items.Add(new ListItem("", ""));
 
@@ -185,6 +210,27 @@ namespace tjc.Modules.EmployeeDB.Views
                 li.Attributes["class"]         = "text-muted";
                 drpSupervisor.Items.Add(li);
             }
+        }
+
+        /// <summary>Reddens the Supervisor label and dropdown border when the
+        /// employee's currently-assigned supervisor is inactive — a stale
+        /// assignment left over from before the supervisor was deactivated
+        /// (see the "active -> inactive" sync note on EmployeeController.
+        /// UpdateEmployee). The inactive options in the dropdown are already
+        /// disabled so it can't happen going forward via this form, but
+        /// existing records can carry one. Must run AFTER SelectItemByValue
+        /// has set drpSupervisor's selection, and AFTER BindSupervisors has
+        /// tagged each option with data-supgroup.</summary>
+        private void FlagInactiveSupervisor()
+        {
+            var selected = drpSupervisor.SelectedItem;
+            var isInactive = selected != null
+                && !string.IsNullOrEmpty(selected.Value)
+                && selected.Attributes["data-supgroup"] == "inactive";
+
+            lblSupervisor.Attributes["class"] = isInactive ? "text-danger" : "";
+            drpSupervisor.CssClass = isInactive ? "form-control border-danger text-danger" : "form-control";
+            drpSupervisor.ToolTip = isInactive ? "This supervisor is no longer an active employee." : string.Empty;
         }
 
         private void BindDepartments()
@@ -322,6 +368,7 @@ namespace tjc.Modules.EmployeeDB.Views
 
             SelectItemByValue(drpOfficeLocation, emp.OfficeLocationId?.ToString());
             SelectItemByValue(drpSupervisor, emp.SupervisorId?.ToString());
+            FlagInactiveSupervisor();
             SelectItemByValue(drpDepartment, emp.DepartmentId?.ToString());
             SelectItemByValue(drpJobGroup, emp.JobGroupId?.ToString());
             SelectItemByValue(drpClass, emp.ClassId?.ToString());
@@ -341,7 +388,6 @@ namespace tjc.Modules.EmployeeDB.Views
                 ? emp.AnnualLeaveBalance.Value.ToString("0.##") : string.Empty;
             txtSickLeave.Text = emp.SickLeaveBalance.HasValue
                 ? emp.SickLeaveBalance.Value.ToString("0.##") : string.Empty;
-            txtBadgeNumber.Text = emp.BadgeNumber ?? string.Empty;
 
             // DROP / Certification dates (Employee Reports module reads these).
             txtDropEntryDate.Text = emp.DropEntryDate.HasValue
@@ -436,7 +482,6 @@ namespace tjc.Modules.EmployeeDB.Views
 
                 emp.AnnualLeaveBalance = ParseDecimalOrNull(txtAnnualLeave.Text);
                 emp.SickLeaveBalance = ParseDecimalOrNull(txtSickLeave.Text);
-                emp.BadgeNumber = txtBadgeNumber.Text.Trim();
 
                 emp.DropEntryDate = ParseDate(txtDropEntryDate.Text);
                 emp.DropExitDate = ParseDate(txtDropExitDate.Text);
@@ -591,7 +636,6 @@ namespace tjc.Modules.EmployeeDB.Views
                 TerminationDate = src.TerminationDate,
                 AnnualLeaveBalance = src.AnnualLeaveBalance,
                 SickLeaveBalance = src.SickLeaveBalance,
-                BadgeNumber = src.BadgeNumber,
                 IsActive = src.IsActive,
                 IsEmployee = src.IsEmployee,
                 ManateeAccess = src.ManateeAccess,

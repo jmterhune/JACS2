@@ -1,0 +1,42 @@
+.white-space-pre {
+    white-space: pre-wrap;
+}
+
+/* Application detail (ApplicationDetail.ascx): read-only display fields */
+#TranscriptionistDetail .detail-label {
+    font-weight: bold;
+}
+
+#TranscriptionistDetail .detail-value {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 6px 10px;
+    min-height: 2.25rem;
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+}
+
+/* Readonly checkbox: keep the normal (non-disabled) look so the label stays legible, but block
+   toggling - it reflects what the applicant submitted. */
+#TranscriptionistDetail .readonly-checkbox input[type="checkbox"],
+#TranscriptionistDetail .readonly-checkbox label {
+    cursor: default;
+}
+
+/* Bootstrap form-check spacing for the detail and edit checkboxes (the DNN skin adds its own checkbox CSS). */
+#TranscriptionistDetail .form-check,
+#TranscriptionistEdit .form-check {
+    padding-left: 1.5rem;
+    margin-bottom: 0.25rem;
+    margin-right: 1.5rem;
+}
+
+#TranscriptionistDetail .form-check-input,
+#TranscriptionistEdit .form-check-input {
+    margin-left: -1.5rem;
+}
+
+#TranscriptionistDetail .form-check-label,
+#TranscriptionistEdit .form-check-label {
+    font-weight: normal;
+}

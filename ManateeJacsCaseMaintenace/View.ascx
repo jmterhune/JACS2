@@ -31,7 +31,7 @@
     <div class="card card-default">
 		<div class="card-header">
 			<h4 class="card-title">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#dataLists" href="#collapseMessage"> Clericus Interface Messages </a>
+				<a class="accordion-toggle" data-bs-toggle="collapse" data-bs-parent="#dataLists" href="#collapseMessage"> Clericus Interface Messages </a>
 			</h4>
 		</div>
 		<div id="collapseMessage" class="accordion-body collapse show">
@@ -78,7 +78,7 @@
     <div class="card card-default">
 		<div class="card-header">
 			<h4 class="card-title">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#dataLists" href="#collapseCases"> Matching JACS Case Table Records </a>
+				<a class="accordion-toggle" data-bs-toggle="collapse" data-bs-parent="#dataLists" href="#collapseCases"> Matching JACS Case Table Records </a>
 			</h4>
 		</div>
 		<div id="collapseCases" class="accordion-body collapse show">
@@ -124,7 +124,7 @@
     <div class="card card-default">
 		<div class="card-header">
 			<h4 class="card-title">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#dataLists" href="#collapseCycle"> Matching Case Cycle Records</a>
+				<a class="accordion-toggle" data-bs-toggle="collapse" data-bs-parent="#dataLists" href="#collapseCycle"> Matching Case Cycle Records</a>
 			</h4>
 		</div>
 		<div id="collapseCycle" class="accordion-body collapse show">

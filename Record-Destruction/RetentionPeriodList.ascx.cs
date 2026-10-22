@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,17 +42,19 @@ namespace tjc.Modules.RecordDestruction
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         #endregion
         #region Methods
         public RetentionPeriodList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         private void BindList()
         {
-            var ctl = new RetentionPeriodController();
+            var ctl = new RetentionPeriodController(_hostSettings);
             rptRetentionPeriods.DataSource = ctl.GetRetentionPeriods().OrderBy(x => x.Description); ;
             rptRetentionPeriods.DataBind();
         }
@@ -70,7 +73,7 @@ namespace tjc.Modules.RecordDestruction
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }
@@ -81,7 +84,7 @@ namespace tjc.Modules.RecordDestruction
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
-            var ctl = new RetentionPeriodController();
+            var ctl = new RetentionPeriodController(_hostSettings);
             RetentionPeriod retentionPeriod = new RetentionPeriod();
             bool isNew = true;
             if (hdRetentionPeriodId.Value != "")
@@ -114,7 +117,7 @@ namespace tjc.Modules.RecordDestruction
         protected void rptRetentionPeriods_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int retentionPeriodId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new RetentionPeriodController();
+            var ctl = new RetentionPeriodController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteRetentionPeriod(retentionPeriodId);

@@ -1,0 +1,15 @@
+<UserControl x:Class="CourtCounsel.Desktop.Views.NotConfiguredView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance vm:NotConfiguredViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008/design" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <StackPanel MaxWidth="500" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="Not Configured" FontSize="20" FontWeight="Bold" Margin="0,0,0,12" HorizontalAlignment="Center" />
+        <TextBlock TextWrapping="Wrap" TextAlignment="Center" Foreground="Gray">
+            This application hasn't been set up yet. Contact your system administrator
+            to configure the database connection.
+        </TextBlock>
+    </StackPanel>
+</UserControl>

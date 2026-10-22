@@ -34,6 +34,12 @@
     text-shadow: none;
     display: inline-block;
 }
+#cmdSaveWrap {
+    cursor: not-allowed;
+}
+    #cmdSave:disabled {
+        pointer-events: none;
+    }
 
 .attachments {
     margin-bottom: 0px;

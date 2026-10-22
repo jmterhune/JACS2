@@ -175,6 +175,14 @@
                 </asp:Repeater>
             </div>
 
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="<%=txtNotes.ClientID %>">Notes from Referral</label>
+                    <asp:TextBox ID="txtNotes" ReadOnly="true" Enabled="false" runat="server" CssClass="form-control"
+                        TextMode="MultiLine" Rows="4" />
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <label for="<%=txtComments.ClientID %>">Comments</label>

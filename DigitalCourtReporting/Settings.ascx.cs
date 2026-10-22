@@ -52,7 +52,7 @@ namespace tjc.Modules.DigitalCourtReporting
             {
                 if (Page.IsPostBack == false)
                 {
-                    DotNetNuke.Security.Roles.RoleController ctl = new DotNetNuke.Security.Roles.RoleController();
+                    var ctl = DotNetNuke.Security.Roles.RoleController.Instance;
                     var listroles = ctl.GetRoles(PortalId);
                     foreach (DotNetNuke.Security.Roles.RoleInfo r in listroles)
                     {
@@ -84,7 +84,7 @@ namespace tjc.Modules.DigitalCourtReporting
         {
             try
             {
-                var modules = new ModuleController();
+                var modules = ModuleController.Instance;
                 string AdminRole = drpAdminRole.SelectedValue;
                 if (!string.IsNullOrEmpty(AdminRole.Trim()))
                     modules.UpdateModuleSetting(ModuleId, "AdminRole", AdminRole.Trim());

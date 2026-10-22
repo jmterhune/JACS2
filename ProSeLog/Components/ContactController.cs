@@ -1,13 +1,21 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.ProSeLog.Components
 {
     internal class ContactController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public ContactController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateContact(Contact t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Contact>();
                 rep.Insert(t);
@@ -22,7 +30,7 @@ namespace tjc.Modules.ProSeLog.Components
 
         public void DeleteContact(Contact t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Contact>();
                 rep.Delete(t);
@@ -32,7 +40,7 @@ namespace tjc.Modules.ProSeLog.Components
         public IEnumerable<Contact> GetContacts()
         {
             IEnumerable<Contact> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Contact>();
                 t = rep.Get();
@@ -43,7 +51,7 @@ namespace tjc.Modules.ProSeLog.Components
         public Contact GetContact(int contactId)
         {
             Contact t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Contact>();
                 t = rep.GetById(contactId);
@@ -53,7 +61,7 @@ namespace tjc.Modules.ProSeLog.Components
 
         public void UpdateContact(Contact t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Contact>();
                 rep.Update(t);

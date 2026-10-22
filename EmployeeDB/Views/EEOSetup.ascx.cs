@@ -15,8 +15,14 @@ namespace tjc.Modules.EmployeeDB.Views
 {
     public partial class EEOSetup : EmployeeDBModuleBase
     {
-        private readonly EeoController _eeo = new EeoController();
-        private readonly JobGroupController _jobGroups = new JobGroupController();
+        private readonly EeoController _eeo;
+        private readonly JobGroupController _jobGroups;
+
+        public EEOSetup()
+        {
+            _eeo = new EeoController(_hostSettings);
+            _jobGroups = new JobGroupController(_hostSettings);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {

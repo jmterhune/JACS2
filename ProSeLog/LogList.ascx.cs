@@ -10,7 +10,9 @@
 ' 
 */
 
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Web.UI.WebControls;
 using tjc.Modules.ProSeLog.Components;
@@ -32,6 +34,13 @@ namespace tjc.Modules.ProSeLog
     /// -----------------------------------------------------------------------------
     public partial class LogList : ProSeLogModuleBase
     {
+        private readonly IHostSettings _hostSettings;
+
+        public LogList()
+        {
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+        }
+
         #region Events
 
 
@@ -45,7 +54,7 @@ namespace tjc.Modules.ProSeLog
                     {
                         lnkManage.Visible = true;
                         lnkManage.NavigateUrl = CaseTypeListUrl;
-                        var cCtl = new CountyController();
+                        var cCtl = new CountyController(_hostSettings);
                         drpCounty.DataValueField = "CountyID";
                         drpCounty.DataTextField = "CountyName";
                         drpCounty.DataSource = cCtl.GetCounties();
@@ -71,14 +80,14 @@ namespace tjc.Modules.ProSeLog
         }
         protected void cmdPetitioner_Click(object sender, EventArgs e)
         {
-            var ctl = new HistoryController();
+            var ctl = new HistoryController(_hostSettings);
             rptHistoryList.DataSource = ctl.GetHistoryListItemsByPetitioner(txtPetitioner.Text, Int32.Parse(drpCounty.SelectedValue));
             rptHistoryList.DataBind();
         }
 
         protected void cmdRespondent_Click(object sender, EventArgs e)
         {
-            var ctl = new HistoryController();
+            var ctl = new HistoryController(_hostSettings);
             rptHistoryList.DataSource = ctl.GetHistoryListItemsByRespondent(txtRespondent.Text, Int32.Parse(drpCounty.SelectedValue));
             rptHistoryList.DataBind();
 
@@ -86,14 +95,14 @@ namespace tjc.Modules.ProSeLog
 
         protected void cmdCaseName_Click(object sender, EventArgs e)
         {
-            var ctl = new HistoryController();
+            var ctl = new HistoryController(_hostSettings);
             rptHistoryList.DataSource = ctl.GetHistoryListItemsByCaseName(txtCaseName.Text, Int32.Parse(drpCounty.SelectedValue));
             rptHistoryList.DataBind();
         }
 
         protected void cmdCaseNumber_Click(object sender, EventArgs e)
         {
-            var ctl = new HistoryController();
+            var ctl = new HistoryController(_hostSettings);
             rptHistoryList.DataSource = ctl.GetHistoryListItemsByCaseNumber(txtCaseNumber.Text, Int32.Parse(drpCounty.SelectedValue));
             rptHistoryList.DataBind();
         }

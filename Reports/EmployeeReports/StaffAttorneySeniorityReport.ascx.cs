@@ -4,6 +4,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -17,10 +18,12 @@ namespace tjc.Modules.Reports.EmployeeReports
     public partial class StaffAttorneySeniorityReport : ReportsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
 
         public StaffAttorneySeniorityReport()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -46,7 +49,7 @@ namespace tjc.Modules.Reports.EmployeeReports
             // includeInactive=true so terminated staff attorneys are listed for
             // historical reference. They are color-tinted by the row-data-bound
             // handler below so they're visually distinct from active rows.
-            var data = new ReportController().GetStaffAttorneySeniority(includeInactive: true);
+            var data = new ReportController(_hostSettings).GetStaffAttorneySeniority(includeInactive: true);
             var sort = ViewState["SortExpression"] as string ?? "Status";
             var dir  = ViewState["SortDirection"]  as string ?? "ASC";
 

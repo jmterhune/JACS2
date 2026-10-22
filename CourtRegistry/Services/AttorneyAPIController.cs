@@ -1,6 +1,9 @@
-﻿using DotNetNuke.Security;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +15,8 @@ namespace tjc.Modules.CourtRegistry.Services
     [DnnAuthorize]
     public class AttorneyAPIController : DnnApiController
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         [HttpGet]
         public HttpResponseMessage GetAttorneyListItems(int count)
         {
@@ -52,7 +57,7 @@ namespace tjc.Modules.CourtRegistry.Services
             }
             try
             {
-                var ctl = new AttorneyController();
+                var ctl = new AttorneyController(_hostSettings);
                 filteredCount = ctl.GetAttorneyListCount(barNumber, firstName, lastName, email, lawFirm);
                 if (count == 0) { recordCount = filteredCount; }
                 attorneyListItems = ctl.GetAttorneyListPaged(barNumber, firstName, lastName, email, lawFirm, recordOffset, pageSize, sortColumn, sortDirection).Select(attorneyListItem => new AttorneyViewModel(attorneyListItem)).ToList();
@@ -70,7 +75,7 @@ namespace tjc.Modules.CourtRegistry.Services
         {
             try
             {
-                var ctl = new AttorneyController();
+                var ctl = new AttorneyController(_hostSettings);
                 ctl.DeleteAttorney(attorneyId);
                 return Request.CreateResponse(System.Net.HttpStatusCode.OK);
             }
@@ -86,7 +91,7 @@ namespace tjc.Modules.CourtRegistry.Services
         {
             try
             {
-                var ctl = new AttorneyController();
+                var ctl = new AttorneyController(_hostSettings);
                 AttorneyViewModel attorney = new AttorneyViewModel(ctl.GetAttorney(attorneyId));
                 return Request.CreateResponse(new AttorneyGetResult { attorney= attorney , error=null});
             }
@@ -101,7 +106,7 @@ namespace tjc.Modules.CourtRegistry.Services
         {
             try
             {
-                var ctl = new AttorneyController();
+                var ctl = new AttorneyController(_hostSettings);
                 if (attorney.AttorneyID == 0)
                 {
                     ctl.CreateAttorney(MapToEntity(attorney, new Attorney()));

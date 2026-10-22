@@ -1,7 +1,10 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
 using DotNetNuke.Common.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,10 +19,12 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
     /// </summary>
     public class WordDocHandler : IHttpHandler
     {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
         public void ProcessRequest(HttpContext context)
         {
             Designation designation;
-            DesignationController ctl = new DesignationController();
+            DesignationController ctl = new DesignationController(_hostSettings);
             DotNetNuke.Entities.Users.UserInfo currUser = DotNetNuke.Entities.Users.UserController.Instance.GetCurrentUserInfo();
             DocumentTypes formType = 0;
             string designationString = context.Request.Params["did"];
@@ -38,8 +43,8 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
                     DateTime extensionDate = Null.NullDate;
                     if (!string.IsNullOrEmpty(extensionDateString))
                         DateTime.TryParse(extensionDateString, out extensionDate);
-                    var aCtl = new AttorneyController();
-                    var fCtl = new FormController();
+                    var aCtl = new AttorneyController(_hostSettings);
+                    var fCtl = new FormController(_hostSettings);
                     IEnumerable<Attorney> attorneys = aCtl.GetAttorneysByDesignation(designation.DesignationID);
                     DocumentDataExport documentDataExport = new DocumentDataExport();
                     Components.Form documentForm = fCtl.GetFormByType(formType);
@@ -148,7 +153,7 @@ namespace tjc.Modules.TranscriptDatabase.Handlers
         }
         private string GetDeliveryType(int officeId)
         {
-            var ctl = new OfficeController();
+            var ctl = new OfficeController(_hostSettings);
             Components.Office office = ctl.GetOffice(officeId) ?? new Office();
             switch (office.DeliveryType)
             {

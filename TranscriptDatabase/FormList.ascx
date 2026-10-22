@@ -18,7 +18,7 @@
             <a class="nav-link" href="<%=OfficeListUrl%>">Offices</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#forms" data-toggle="tab">Forms</a>
+            <a class="nav-link" href="#forms" data-bs-toggle="tab">Forms</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=HearingListUrl%>">Hearing Types</a>
@@ -79,17 +79,17 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditFormModalLabel">Add / Edit Form</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="drpFileType" Text="Form Type" />
                                         <asp:DropDownList runat="server" ID="drpFileType" CssClass="form-control">
                                         </asp:DropDownList>
                                         <asp:RequiredFieldValidator Display="Dynamic" SetFocusOnError="true" ValidationGroup="Form" CssClass="label label-danger"
                                             ErrorMessage="Form Type Is Required" ControlToValidate="drpFileType" runat="server" />
                                     </div>
-                                    <div class="form-group clearfix">
+                                    <div class="clearfix mb-3">
                                         <asp:Label ID="lblupload" runat="server" AssociatedControlID="uplFile" Text="Upload Attachments<em>*</em>" />
                                         <div style="position: relative;">
                                             <div id="upload-overlay" class="overlay" style="display: none;">
@@ -101,7 +101,7 @@
                                                 ErrorMessage="Please select a file" OnServerValidate="valUpload_ServerValidate"></asp:CustomValidator>
                                             <span id="uploadInfo"></span>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <asp:Label ID="lblLink" runat="server" AssociatedControlID="lnkFormUrl" Text="" />
                                             <asp:HyperLink ID="lnkFormUrl" ClientIDMode="Static" runat="server" />
                                         </div>
@@ -197,9 +197,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditFormModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditFormModal')).show();
         } else {
-            $('#EditFormModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditFormModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

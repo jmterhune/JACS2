@@ -22,7 +22,7 @@
             <a class="nav-link" href="<%=RecordTypeListUrl %>">Record Types</a>
         </li>
         <li class="nav-item  active">
-            <a class="nav-link" href="#retentionPeriods" data-toggle="tab">Retention Periods</a>
+            <a class="nav-link" href="#retentionPeriods" data-bs-toggle="tab">Retention Periods</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=DestructionMethodListUrl %>">Destruction Methods</a>
@@ -76,10 +76,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditRetentionPeriodModalLabel">Add / Edit Retention Periods</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtRetentionPeriod" Text="Retention Period" />
                                         <asp:TextBox runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="100" ID="txtRetentionPeriod" />
                                     </div>
@@ -149,9 +149,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditRetentionPeriodModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditRetentionPeriodModal')).show();
         } else {
-            $('#EditRetentionPeriodModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditRetentionPeriodModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

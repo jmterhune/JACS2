@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Common.Lists;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -45,17 +46,19 @@ namespace tjc.Modules.TranscriptDatabase
     {
         #region Members
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         #endregion
         #region Methods
         public FormList()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
         private void BindList()
         {
             drpFileType.Items.Clear();
-            var ctl = new FormController();
+            var ctl = new FormController(_hostSettings);
             IEnumerable<Form> forms = ctl.GetForms();
             rptForm.DataSource = forms;
             rptForm.DataBind();
@@ -95,7 +98,7 @@ namespace tjc.Modules.TranscriptDatabase
                 {
                     if (!IsAdmin)
                         Response.Redirect(_navigationManager.NavigateURL());
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
                     BindList();
                 }
             }
@@ -118,7 +121,7 @@ namespace tjc.Modules.TranscriptDatabase
         protected void rptForms_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int formId = Convert.ToInt32(e.CommandArgument);
-            var ctl = new FormController();
+            var ctl = new FormController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteForm(formId);
@@ -148,7 +151,7 @@ namespace tjc.Modules.TranscriptDatabase
         {
             try
             {
-                var ctl = new FormController();
+                var ctl = new FormController(_hostSettings);
                 Form form = new Form();
                 bool isNew = true;
                 if (hdFormId.Value != "")

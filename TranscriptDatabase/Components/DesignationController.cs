@@ -1,4 +1,5 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 using System.Linq;
 using tjc.Modules.TranscriptDatabase.Services.ViewModels;
@@ -6,9 +7,16 @@ namespace tjc.Modules.TranscriptDatabase.Components
 {
     internal class DesignationController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public DesignationController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
         public void CreateDesignation(Designation t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 rep.Insert(t);
@@ -21,7 +29,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteDesignation(Designation t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 rep.Delete(t);
@@ -30,7 +38,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<Designation> GetDesignations()
         {
             IEnumerable<Designation> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 t = rep.Find("WHERE Archived <> 1 OR Archived IS NULL").OrderByDescending(x=>x.DesignationID);
@@ -40,7 +48,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<DesignationListItem> GetDesignationListPaged(string lastName, string firstName, string caseNumber, string county, bool archived, int rowOffset, int pageSize, string sortOrder, string sortDesc)
         {
             IEnumerable<DesignationListItem> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<DesignationListItem>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_designation_list_paged", firstName, lastName,caseNumber,county,archived, rowOffset, pageSize, sortOrder, sortDesc);
             }
@@ -49,7 +57,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public int GetDesignationListCount(string lastName, string firstName, string caseNumber, string county, bool archived)
         {
             int t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<int>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_designation_list_count",  lastName, firstName,  caseNumber,  county,  archived);
             }
@@ -58,7 +66,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public Designation GetDesignation(int designationId)
         {
             Designation t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 t = rep.GetById(designationId);
@@ -67,7 +75,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void UpdateDesignation(Designation t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 rep.Update(t);
@@ -76,7 +84,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public void ToggleArchiveStatus(int designationId)
         {
             Designation t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 t=rep.GetById(designationId);
@@ -87,7 +95,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public void ToggleAcknowledgmentStatus(int designationId)
         {
             Designation t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 var rep = ctx.GetRepository<Designation>();
                 t = rep.GetById(designationId);
@@ -98,7 +106,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         #region Designation Attorneys References
         public void CreateDesignationAttorney(int designationId, int attorneyId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_rec_add_designation_attorney", designationId, attorneyId);
             }
@@ -106,7 +114,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<DesignationAttorney> GetDesignationAttorneys(int designationId)
         {
             IEnumerable<DesignationAttorney> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<DesignationAttorney>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_designation_attorneys", designationId);
             }
@@ -115,7 +123,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public DesignationAttorney GetDesignationAttorney(int designationId, int attorneyId)
         {
             DesignationAttorney t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteScalar<DesignationAttorney>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_designation_attorney", designationId, attorneyId);
             }
@@ -124,7 +132,7 @@ namespace tjc.Modules.TranscriptDatabase.Components
         public IEnumerable<NameMatchViewModel> GetMatchingNames(string lastName)
         {
             IEnumerable<NameMatchViewModel> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 t = ctx.ExecuteQuery<NameMatchViewModel>(System.Data.CommandType.StoredProcedure, "tjc_rec_get_matching_names", lastName);
             }
@@ -132,14 +140,14 @@ namespace tjc.Modules.TranscriptDatabase.Components
         }
         public void DeleteDesignationAttorney(int designationId, int attorneyId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_rec_delete_designation_attorney", designationId, attorneyId);
             }
         }
         public void DeleteDesignationAttorneys(int designationId)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 ctx.Execute(System.Data.CommandType.StoredProcedure, "tjc_rec_delete_designation_attorney_all", designationId);
             }

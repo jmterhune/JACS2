@@ -1,13 +1,26 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.MediationStatistics.Components
 {
     internal class IssueController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public IssueController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        private IDataContext GetContext()
+        {
+            return DataContext.Instance(_hostSettings);
+        }
+
         public void CreateIssue(Issue t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Issue>();
                 rep.Insert(t);
@@ -22,7 +35,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteIssue(Issue t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Issue>();
                 rep.Delete(t);
@@ -32,7 +45,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Issue> GetIssues()
         {
             IEnumerable<Issue> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Issue>();
                 t = rep.Get();
@@ -43,7 +56,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public Issue GetIssue(int issueId)
         {
             Issue t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Issue>();
                 t = rep.GetById(issueId);
@@ -53,7 +66,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Issue> GetIssuesBySession(int sessionId)
         {
             IEnumerable<Issue> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 t = ctx.ExecuteQuery<Issue>(System.Data.CommandType.StoredProcedure, "tjc_med_get_issues_by_session", sessionId);
             }
@@ -61,7 +74,7 @@ namespace tjc.Modules.MediationStatistics.Components
         }
         public void UpdateIssue(Issue t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Issue>();
                 rep.Update(t);

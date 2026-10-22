@@ -11,6 +11,7 @@
 */
 
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Services.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -34,9 +35,11 @@ namespace tjc.Modules.Reports
     public partial class DataCardView : ReportsModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         public DataCardView()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -55,7 +58,7 @@ namespace tjc.Modules.Reports
 
         protected void cmdSearch_Click(object sender, EventArgs e)
         {
-            var ctl = new PhotoIDController();
+            var ctl = new PhotoIDController(_hostSettings);
             rptDataCard.DataSource = ctl.GetPhotoIDs(txtLastName.Text);
             rptDataCard.DataBind();
         }

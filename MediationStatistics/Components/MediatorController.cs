@@ -1,13 +1,26 @@
-﻿using DotNetNuke.Data;
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
 using System.Collections.Generic;
 
 namespace tjc.Modules.MediationStatistics.Components
 {
     internal class MediatorController
     {
+        private readonly IHostSettings _hostSettings;
+
+        public MediatorController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        private IDataContext GetContext()
+        {
+            return DataContext.Instance(_hostSettings);
+        }
+
         public void CreateMediator(Mediator t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Mediator>();
                 rep.Insert(t);
@@ -22,7 +35,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void DeleteMediator(Mediator t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Mediator>();
                 rep.Delete(t);
@@ -32,7 +45,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public IEnumerable<Mediator> GetMediators()
         {
             IEnumerable<Mediator> t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Mediator>();
                 t = rep.Get();
@@ -43,7 +56,7 @@ namespace tjc.Modules.MediationStatistics.Components
         public Mediator GetMediator(int mediatorId)
         {
             Mediator t;
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Mediator>();
                 t = rep.GetById(mediatorId);
@@ -53,7 +66,7 @@ namespace tjc.Modules.MediationStatistics.Components
 
         public void UpdateMediator(Mediator t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = GetContext())
             {
                 var rep = ctx.GetRepository<Mediator>();
                 rep.Update(t);

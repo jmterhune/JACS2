@@ -1,10 +1,19 @@
 ﻿using DotNetNuke.Entities.Modules;
+using DotNetNuke.Framework.JavaScriptLibraries;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace tjc.Modules.HearingLog
 {
     public class HearingsLogModuleBase : PortalModuleBase
     {
+        protected readonly IJavaScriptLibraryHelper _jsLibraryHelper;
+
+        public HearingsLogModuleBase()
+        {
+            _jsLibraryHelper = DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+        }
+
         public string ChiefJudgeRole
         {
             get

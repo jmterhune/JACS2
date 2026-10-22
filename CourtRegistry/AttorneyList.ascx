@@ -8,6 +8,9 @@
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
         </li>
         <li class="nav-item">
@@ -17,7 +20,7 @@
             <a class="nav-link" href="<%=BasicSettingsUrl%>">Basic Settings</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#attorneys" data-toggle="tab">Attorneys</a>
+            <a class="nav-link" href="#attorneys" data-bs-toggle="tab">Attorneys</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=JacCodeListUrl%>">JAC Codes</a>
@@ -80,10 +83,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="AttorneyModalLabel">Add / Edit Attorney</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="txtBarNumber">Bar Number</label>
                                 <input id="txtBarNumber" name="txtBarNumber" type="text" aria-describedby="txtBarNumberHelpBlock" required="required" class="form-control">
@@ -94,7 +97,7 @@
                                 <input id="txtLawFirm" name="txtLawFirm" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="txtLastName">Last Name</label>
                                 <input id="txtLastName" name="txtLastName" type="text" required="required" class="form-control">
@@ -104,7 +107,7 @@
                                 <input id="txtFirstName" name="txtFirstName" type="text" required="required" class="form-control">
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="txtEmail">Email</label>
                                 <input id="txtEmail" name="txtEmail" type="text" class="form-control" required="required">
@@ -114,7 +117,7 @@
                                 <input id="txtPhone" name="txtPhone" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="txtCell">Cell Phone</label>
                                 <input id="txtCell" name="txtCell" type="text" class="form-control">
@@ -124,13 +127,13 @@
                                 <input id="txtFax" name="txtFax" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-12">
                                 <label for="txtStreet">Steet Address</label>
                                 <input id="txtStreet" name="txtStreet" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-md-4">
                                 <label for="txtCity">City</label>
                                 <input id="txtCity" name="txtCity" type="text" class="form-control">
@@ -197,7 +200,7 @@
                                 <input id="txtZipCode" name="txtZipCode" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-12">
                                 <label for="txtLanguages">Languages</label>
                                 <input id="txtLanguages" name="txtLanguages" type="text" aria-describedby="txtLanguagesHelpBlock" class="form-control">
@@ -208,7 +211,7 @@
                     <div class="modal-footer justify-content-between">
                         <input type="hidden" id="hdAttorneyId" name="hdAttorneyId" />
                         <button type="button" id="cmdSave" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -327,13 +330,13 @@
         $(".dt-length").prepend('<button onclick="return ClearForm()" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#AttorneyModal"><i class="fa fa-plus"></i>&nbsp;Add Attorney</button>');
 
         appTable.on('draw', function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-bs-toggle="tooltip"]').each(function () { bootstrap.Tooltip.getOrCreateInstance(this); });
             $(".confirm").off("click.swalDelete").on("click.swalDelete", function (e) {
                 e.preventDefault();
                 var attorneyId = $(this).data("attorneyid");
                 Registry.confirm({
                     title: 'Delete Attorney?',
-                    text: 'This action cannot be undone.',
+                    text: 'This permanently deletes all of this attorney\'s information, along with all of their applications, JAC code records and registry records. This action cannot be undone.',
                     icon: 'warning',
                     confirmText: 'Yes, delete',
                     confirmColor: '#d33'
@@ -362,7 +365,7 @@
             var attyId = $(this).data("id");
             if (attyId > 0) {
                 GetAttorney(attyId);
-                $("#AttorneyModal").modal("show");
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('AttorneyModal')).show();
             }
         });
         $("#cmdSearch").on("click", function (e) {
@@ -441,7 +444,7 @@
             data: attorney,
             success: function (result) {
                 if (result) {
-                    $("#AttorneyModal").modal("hide");
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('AttorneyModal')).hide();
                     ClearForm();
                     $('#tblAttorneys').DataTable().draw(false);
                     Registry.notify(Number(attorney.AttorneyId) > 0
@@ -449,7 +452,7 @@
                 }
             },
             error: function (err) {
-                $("#AttorneyModal").modal("hide");
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('AttorneyModal')).hide();
                 Registry.notify('Save failed: ' + (err.statusText || ''), 'error');
             }
         });

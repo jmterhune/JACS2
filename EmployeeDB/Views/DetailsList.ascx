@@ -30,7 +30,7 @@
                         <th>Department</th>
                         <th>Class</th>
                         <th>Category</th>
-                        <th>Position</th>
+                        <th>Position Number</th>
                         <th>Agency</th>
                         <th>County</th>
                         <th>Location</th>

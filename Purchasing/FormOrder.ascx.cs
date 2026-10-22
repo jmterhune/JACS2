@@ -10,6 +10,7 @@
 ' 
 */
 using DotNetNuke.Abstractions;
+using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Services.Exceptions;
@@ -27,6 +28,7 @@ namespace tjc.Modules.Purchasing
     public partial class FormOrder : PurchasingModuleBase
     {
         private readonly INavigationManager _navigationManager;
+        private readonly IHostSettings _hostSettings;
         private string _currentProtocol;
         public string attachmentHandler = "";
 
@@ -47,6 +49,7 @@ namespace tjc.Modules.Purchasing
         public FormOrder()
         {
             _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+            _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
 
         }
         private void ClearForm()
@@ -77,7 +80,7 @@ namespace tjc.Modules.Purchasing
                 {
                     cmdCancel.NavigateUrl = _navigationManager.NavigateURL();
                     lnkCancelLine.NavigateUrl = _navigationManager.NavigateURL();
-                    JavaScript.RequestRegistration(CommonJs.DnnPlugins);
+                    _jsLibraryHelper.RequestRegistration(CommonJs.DnnPlugins);
 
                     if (UserInfo != null)
                     {
@@ -98,7 +101,7 @@ namespace tjc.Modules.Purchasing
                         {
                             hdFormId.Value = CurrentItemId.ToString();
                         }
-                        var ctl = new FormOrderController();
+                        var ctl = new FormOrderController(_hostSettings);
                         var order = ctl.GetFormOrder(OrderId);
                         if (order != null)
                         {
@@ -129,8 +132,8 @@ namespace tjc.Modules.Purchasing
         {
             if (OrderId > 0)
             {
-                var ctl = new FormOrderController();
-                var aCtl = new AttachmentController();
+                var ctl = new FormOrderController(_hostSettings);
+                var aCtl = new AttachmentController(_hostSettings);
                 DotNetNuke.Services.FileSystem.FileManager dCtl = (DotNetNuke.Services.FileSystem.FileManager)DotNetNuke.ComponentModel.ComponentBase<DotNetNuke.Services.FileSystem.IFileManager, DotNetNuke.Services.FileSystem.FileManager>.Instance;
                 var order = ctl.GetFormOrder(OrderId);
                 string fromAddress = "purchasing@jud12.flcourts.org";
@@ -179,7 +182,7 @@ namespace tjc.Modules.Purchasing
                             if (attach.FileID > 0)
                             {
                                 var fileInfo = dCtl.GetFile(attach.FileID);
-                                sb.Append(string.Format("<li><a target='_blank' title='Opens in new tab' href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, PortalAlias.HTTPAlias, PortalId, fileInfo.RelativePath, fileInfo.FileName));
+                                sb.Append(string.Format("<li><a target='_blank' title='Opens in new tab' href='{0}{1}/portals/{2}/{3}'>{4}</a></li>", _currentProtocol, ((IPortalAliasInfo)PortalAlias).HttpAlias, PortalId, fileInfo.RelativePath, fileInfo.FileName));
                             }
                         sb.Append("</ul></td></tr>");
                     }
@@ -209,7 +212,7 @@ namespace tjc.Modules.Purchasing
             {
                 orderId = int.Parse(hdOrderId.Value);
             }
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
             Components.FormOrder order = new Components.FormOrder();
 
             int formid = 0;
@@ -275,7 +278,7 @@ namespace tjc.Modules.Purchasing
         protected void rptForms_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
         {
             Int32.TryParse(e.CommandArgument.ToString(), out int formId);
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
             if (e.CommandName == "delete")
             {
                 ctl.DeleteFormOrderItem(formId);
@@ -306,7 +309,7 @@ namespace tjc.Modules.Purchasing
         #region Methods
         protected void BindFormsList(int orderId)
         {
-            var ctl = new FormOrderController();
+            var ctl = new FormOrderController(_hostSettings);
             rptForms.DataSource = ctl.GetFormOrderItemsByOrder(orderId);
             rptForms.DataBind();
 
@@ -314,7 +317,7 @@ namespace tjc.Modules.Purchasing
 
         protected void AddAttachments(int orderId, int formId)
         {
-            var ctl = new AttachmentController();
+            var ctl = new AttachmentController(_hostSettings);
             var fileIds = hdAttachmentIds.Value.Split(',');
             foreach (string fileId in fileIds)
             {

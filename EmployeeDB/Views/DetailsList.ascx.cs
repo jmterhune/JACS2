@@ -41,7 +41,7 @@ namespace tjc.Modules.EmployeeDB.Views
         {
             IEnumerable<EmployeeListItem> rows;
 
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 string sql = @"SELECT e.EmployeeId,
                                       e.FirstName,
@@ -89,7 +89,7 @@ namespace tjc.Modules.EmployeeDB.Views
             // Gather supplemental fields (Position, EmploymentType etc.) from the base table via a second fast lookup.
             // Same IsEmployee filter as the projection query above.
             var supplemental = new Dictionary<int, EmployeeInfo>();
-            using (IDataContext ctx = DataContext.Instance())
+            using (IDataContext ctx = DataContext.Instance(_hostSettings))
             {
                 foreach (var emp in ctx.ExecuteQuery<EmployeeInfo>(CommandType.Text, "SELECT * FROM tjc_employee WHERE IsEmployee = 1"))
                 {

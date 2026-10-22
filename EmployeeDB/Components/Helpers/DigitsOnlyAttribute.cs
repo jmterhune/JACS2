@@ -11,7 +11,8 @@ namespace tjc.Modules.EmployeeDB.Components.Helpers
     /// Use case: SSN and phone-number columns. The UI applies visual masks
     /// like <c>(999) 999-9999</c> or <c>999-99-9999</c> for user comfort,
     /// but the database should only ever contain the raw digits so callers
-    /// (search, joins, exports, SWN) don't have to deal with mask variation.
+    /// (search, joins, exports, the Crisis24 feed) don't have to deal with mask
+    /// variation.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
     public sealed class DigitsOnlyAttribute : Attribute { }

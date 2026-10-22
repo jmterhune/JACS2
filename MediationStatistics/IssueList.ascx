@@ -12,7 +12,7 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=MediatorListUrl %>">Mediators</a>
         </li>
-        <li class="nav-item ">
+        <li class="nav-item">
             <a class="nav-link" href="<%=RegionListUrl %>">Regions</a>
         </li>
         <li class="nav-item">
@@ -25,7 +25,7 @@
             <a class="nav-link" href="<%=AppearanceListUrl %>">Appearance Values</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#issues" data-toggle="tab">Issues</a>
+            <a class="nav-link" href="#issues" data-bs-toggle="tab">Issues</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="<%=ActionListUrl %>">Stage of Action Items</a>
@@ -79,10 +79,10 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title" id="EditIssueModalLabel">Add / Edit Issue</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <asp:Label runat="server" AssociatedControlID="txtIssue" Text="Issue" />
                                         <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtIssue" />
                                     </div>
@@ -155,9 +155,9 @@
     }
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditIssueModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditIssueModal')).show();
         } else {
-            $('#EditIssueModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditIssueModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

@@ -10,7 +10,7 @@
             <a class="nav-link" href="<%=FormUrl %>">Data Entry</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="#stats" data-toggle="tab">Search</a>
+            <a class="nav-link" href="#stats" data-bs-toggle="tab">Search</a>
         </li>
     </ul>
     <div class="tab-content">
@@ -18,7 +18,7 @@
              <div class="bg-light border rounded mb-3 p-3">
                 <div class="row">
                     <div class="col-6">
-                        <div class="row form-group">
+                        <div class="row mb-3">
                             <div class="col-auto">
                                 <asp:Label runat="server" AssociatedControlID="drpMonths" Text="Month / Year" />
                                 <div class="input-group">

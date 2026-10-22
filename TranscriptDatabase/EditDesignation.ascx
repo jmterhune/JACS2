@@ -86,7 +86,7 @@
                     </thead>
                 </table>
             </fieldset>
-            <div class="row form-group">
+            <div class="row mb-3">
                 <div class="col-md-4">
                     <label for="txtTribunalCaseNumber">Tribunal Case Number</label>
                     <asp:TextBox AutoCompleteType="Disabled" ID="txtTribunalCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
@@ -96,7 +96,7 @@
                     <asp:TextBox AutoCompleteType="Disabled" ID="txtAppellateCaseNumber" ClientIDMode="Static" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                 </div>
             </div>
-            <div class="row form-group">
+            <div class="row mb-3">
                 <div class="col-auto">
                     <label for="txtServiceDate">Service Date</label>
                     <asp:TextBox AutoCompleteType="Disabled" ID="txtServiceDate" ClientIDMode="Static" runat="server" CssClass="form-control date-picker" MaxLength="15"></asp:TextBox>
@@ -115,7 +115,7 @@
 
                 </div>
             </div>
-            <div class="row form-group mt-2 checkbox">
+            <div class="row mt-2 checkbox">
                 <div class="col-auto">
                     <asp:CheckBox ID="chkPublicDefender" Text="Has the Public Defender been appointed / Special-Appointed?" runat="server" />
                 </div>
@@ -134,10 +134,10 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="EditAttorneyModalLabel">Add Attorney</h4>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="row form-group">
+                            <div class="row mb-3">
                                 <div class="col-4">
                                     <asp:Label runat="server" AssociatedControlID="txtFirstNameAtty" Text="First Name" />
                                     <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="50" ID="txtFirstNameAtty" />
@@ -152,7 +152,7 @@
                                 </div>
 
                             </div>
-                            <div class="row form-group">
+                            <div class="row mb-3">
                                 <div class="col-12">
                                     <asp:Label runat="server" AssociatedControlID="drpOffice" Text="Office Location" />
                                     <asp:DropDownList runat="server" ID="drpOffice" CssClass="form-control" AppendDataBoundItems="true" ClientIDMode="Static">
@@ -160,21 +160,21 @@
                                     </asp:DropDownList>
                                 </div>
                             </div>
-                            <div class="row form-group">
+                            <div class="row mb-3">
 
                                 <div class="col-12">
                                     <label for="txtAddress" class="form-label">Address</label>
                                     <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress" placeholder="1234 Main St" />
                                 </div>
                             </div>
-                            <div class="row form-group">
+                            <div class="row mb-3">
 
                                 <div class="col-12">
                                     <label for="txtAddress2" class="form-label">Address 2</label>
                                     <asp:TextBox AutoCompleteType="Disabled" runat="server" ClientIDMode="Static" CssClass="form-control" MaxLength="150" ID="txtAddress2" placeholder="Apartment, studio, or floor" />
                                 </div>
                             </div>
-                            <div class="row form-group">
+                            <div class="row mb-3">
 
                                 <div class="col-md-5">
                                     <label for="txtCity" class="form-label">City</label>
@@ -261,8 +261,6 @@
                     btn.className = 'btn btn-dark';
                     btn.setAttribute('data-bs-toggle', 'modal');
                     btn.setAttribute('data-bs-target', '#EditAttorneyModal');
-                    btn.setAttribute('data-toggle', 'modal');
-                    btn.setAttribute('data-target', '#EditAttorneyModal');
                     btn.textContent = 'Add New Attorney';
                     return btn;
                 }
@@ -485,9 +483,9 @@
 
     function ToggleEditForm(toggleValue) {
         if (toggleValue) {
-            $('#EditNameModal').modal('show');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditNameModal')).show();
         } else {
-            $('#EditNameModal').modal('hide');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('EditNameModal')).hide();
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }

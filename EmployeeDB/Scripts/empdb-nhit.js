@@ -550,11 +550,15 @@
         return empdb.api.post("NhitRequests/Submit", dto).then(function (result) {
             if (result && result.EmailSuccess) {
                 empdb.notifySuccess(result.EmailMessage || ("Worksheet sent to " + (result.EmailSentTo || "helpdesk")));
-                return result;
+            } else {
+                // Server-side persisted but email layer failed — keep going
+                // (the request row was saved) but surface the failure.
+                empdb.notifyError("Saved, but email failed: " + (result && result.EmailMessage ? result.EmailMessage : "(unknown)"));
             }
-            // Server-side persisted but email layer failed — keep going
-            // (the request row was saved) but surface the failure.
-            empdb.notifyError("Saved, but email failed: " + (result && result.EmailMessage ? result.EmailMessage : "(unknown)"));
+            // Only present when "Add to supervisor drop-down" was checked.
+            if (result && result.SupervisorMessage) {
+                empdb.notifyInfo(result.SupervisorMessage);
+            }
             return result;
         }).catch(function (err) {
             empdb.notifyError("Submit failed: " + err.message);

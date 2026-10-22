@@ -1,0 +1,48 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="Tjc.ConfigEncryption" type="Library" version="01.00.00">
+      <friendlyName>Config Encryption</friendlyName>
+      <description>Persona Bar extension that encrypts and decrypts the connectionStrings and appSettings sections of web.config.</description>
+      <owner>
+        <name>Twelfth Judicial Circuit</name>
+        <organization>Twelfth Judicial Circuit</organization>
+        <url>https://www.jud12.flcourts.org</url>
+        <email>jterhune@jud12.flcourts.org</email>
+      </owner>
+      <dependencies>
+        <dependency type="CoreVersion">09.04.03</dependency>
+        <dependency type="ManagedPackage" version="01.00.00">Dnn.PersonaBar.UI</dependency>
+      </dependencies>
+      <components>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <path>bin</path>
+              <name>Tjc.Modules.ConfigEncryption.dll</name>
+            </assembly>
+          </assemblies>
+        </component>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/Admin/Dnn.PersonaBar/Modules/Tjc.ConfigEncryption</basePath>
+            <resourceFile>
+              <name>PersonaBarResources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+        <component type="PersonaBarMenu">
+          <menu>
+            <identifier>Tjc.ConfigEncryption</identifier>
+            <moduleName>ConfigProtection</moduleName>
+            <controller>Tjc.Modules.ConfigEncryption.Components.MenuController, Tjc.Modules.ConfigEncryption</controller>
+            <resourceKey>nav_ConfigProtection</resourceKey>
+            <path>ConfigProtection</path>
+            <parent>Settings</parent>
+            <mobileSupport>false</mobileSupport>
+            <order>90</order>
+          </menu>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

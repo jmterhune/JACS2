@@ -1,0 +1,76 @@
+<Application x:Class="CourtCounsel.Desktop.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:CourtCounsel.Desktop"
+             xmlns:vm="clr-namespace:CourtCounsel.Desktop.ViewModels"
+             xmlns:views="clr-namespace:CourtCounsel.Desktop.Views"
+             xmlns:conv="clr-namespace:CourtCounsel.Desktop.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <conv:EqualsToBooleanConverter x:Key="EqualsToBoolean" />
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <conv:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
+
+            <Style x:Key="NavButton" TargetType="Button">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="Margin" Value="0,0,4,0" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#495057" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <DataTemplate DataType="{x:Type vm:SearchViewModel}">
+                <views:SearchView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CaseListViewModel}">
+                <views:CaseListView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AttorneyCaseListViewModel}">
+                <views:AttorneyCaseListView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CaseHistoryViewModel}">
+                <views:CaseHistoryView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:EditHistoryViewModel}">
+                <views:EditHistoryView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
+                <views:ReportsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DataSheetViewModel}">
+                <views:DataSheetView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AdminViewModel}">
+                <views:AdminView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                <views:SettingsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:UpdateCaseNameViewModel}">
+                <views:UpdateCaseNameView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LookupTabViewModel}">
+                <views:LookupTabView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NotConfiguredViewModel}">
+                <views:NotConfiguredView />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
