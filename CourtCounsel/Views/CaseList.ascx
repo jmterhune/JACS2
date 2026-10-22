@@ -18,6 +18,8 @@
 
 <h2><asp:Literal ID="litResultsHeading" runat="server" Text="Case Search Results" /></h2>
 
+<div id="actionFilterHost" class="mb-3"></div>
+
 <div class="table-responsive">
     <table id="case-list" class="table table-striped table-bordered table-hover" style="width:100%">
         <thead>
@@ -27,11 +29,11 @@
                 <th>Case Type</th>
                 <th>Attorney</th>
                 <th>Status</th>
-                <th id="thAction" runat="server" visible="false">Action Taken</th>
+                <th data-action-col>Action Taken</th>
             </tr>
         </thead>
         <tbody>
-            <asp:Repeater ID="rptCaseList" runat="server" OnItemDataBound="rptCaseList_ItemDataBound">
+            <asp:Repeater ID="rptCaseList" runat="server">
                 <ItemTemplate>
                     <tr>
                         <td>
@@ -47,7 +49,7 @@
                         <td><%#Eval("CaseType") %></td>
                         <td><%#Eval("Responsible") %></td>
                         <td><%#GetStatusBadge((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
-                        <td id="tdAction" runat="server"><%#Eval("Action") %></td>
+                        <td><%#Eval("Action") %></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>
@@ -63,12 +65,14 @@
                     "order": [[0, "asc"]],
                     "pageLength": 25
                 });
+                if (window.CCActionFilter) CCActionFilter.init({ table: '#case-list', host: '#actionFilterHost' });
             }
         });
     }
     PageInit();
 </script>
 
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/CourtCounsel/Scripts/action-filter.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />

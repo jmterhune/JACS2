@@ -159,15 +159,22 @@ table.dataTable {
 }
 
 
-/* Search page: Action Type multi-select (Case Name searches) */
+/* Action Type filter on the search result lists */
 .action-dropdown { width: 260px; max-width: 100%; }
-.input-group > .action-dropdown > .form-select { border-radius: 0; margin-left: -1px; }
+/* Size the menu to its longest item so action names stay on one line. */
 .action-dropdown .dropdown-menu {
-    width: 320px;
+    width: max-content;
+    min-width: 100%;
     max-width: calc(100vw - 32px);
 }
+.action-dropdown .form-select {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .action-dropdown .action-checklist { display: block; max-height: 252px; overflow-y: auto; }
-.action-dropdown .action-checklist span { display: block; padding: 2px 4px; }
+.action-dropdown .action-checklist span { display: block; padding: 2px 4px; white-space: nowrap; }
+.action-dropdown .action-checklist .form-check { white-space: nowrap; }
 .action-dropdown .action-checklist input[type="checkbox"] { margin-right: 6px; }
 .action-dropdown .action-flag {
     float: right;

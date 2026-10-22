@@ -51,15 +51,6 @@ namespace tjc.Modules.CourtCounsel.Views
         protected global::System.Web.UI.WebControls.DropDownList swAttorney;
 
         /// <summary>
-        /// cblActions control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBoxList cblActions;
-
-        /// <summary>
         /// cmdSearch control.
         /// </summary>
         /// <remarks>

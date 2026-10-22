@@ -33,15 +33,6 @@ namespace tjc.Modules.CourtCounsel.Views
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl liAdmin;
 
         /// <summary>
-        /// thAction control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell thAction;
-
-        /// <summary>
         /// rptCaseList control.
         /// </summary>
         /// <remarks>

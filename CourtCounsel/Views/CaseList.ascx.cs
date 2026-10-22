@@ -14,9 +14,6 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 using tjc.Modules.CourtCounsel.Components.Controllers;
 using tjc.Modules.CourtCounsel.Components.Models;
 
@@ -25,9 +22,6 @@ namespace tjc.Modules.CourtCounsel.Views
     public partial class CaseList : CourtCounselModuleBase
     {
         private string _partyName;
-
-        // True only when the search was narrowed by Action Type, so the matching action is worth showing.
-        private bool _showActionColumn;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,36 +42,14 @@ namespace tjc.Modules.CourtCounsel.Views
                     rptCaseList.DataSource = results;
                     rptCaseList.DataBind();
                 }
-                else if (!string.IsNullOrEmpty(_partyName) || ActionIds.Count > 0)
+                else if (!string.IsNullOrEmpty(_partyName))
                 {
                     litResultsHeading.Text = "Case Name Search Results";
-
-                    var actionNames = new System.Collections.Generic.List<string>();
-                    if (ActionIds.Count > 0)
-                    {
-                        actionNames = new ActionTakenController(_hostSettings).GetActions()
-                            .Where(a => ActionIds.Contains(a.ActionId))
-                            .Select(a => a.Action)
-                            .OrderBy(a => a)
-                            .ToList();
-                        litResultsHeading.Text += " <small class=\"text-muted\">Action: " +
-                            HttpUtility.HtmlEncode(string.Join(", ", actionNames)) + "</small>";
-                        thAction.Visible = true;
-                    }
-
-                    _showActionColumn = actionNames.Count > 0;
-                    var results = ctrl.SearchByCaseName(_partyName, actionNames).ToList();
+                    var results = ctrl.SearchByCaseName(_partyName).ToList();
                     rptCaseList.DataSource = results;
                     rptCaseList.DataBind();
                 }
             }
-        }
-
-        protected void rptCaseList_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem) return;
-            var td = e.Item.FindControl("tdAction") as HtmlTableCell;
-            if (td != null) td.Visible = _showActionColumn;
         }
 
         protected string FormatLongName(string name)

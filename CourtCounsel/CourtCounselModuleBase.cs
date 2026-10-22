@@ -16,8 +16,6 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using tjc.Modules.CourtCounsel.Components.Models;
@@ -161,26 +159,6 @@ namespace tjc.Modules.CourtCounsel
             {
                 var qs = Request.QueryString["sf"];
                 return qs ?? string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// ActionIds picked in the Search page's Action Type dropdown, passed as "at=1-4-9".
-        /// Empty means all action types.
-        /// </summary>
-        public List<int> ActionIds
-        {
-            get
-            {
-                var ids = new List<int>();
-                var qs = Request.QueryString["at"];
-                if (string.IsNullOrEmpty(qs)) return ids;
-                foreach (var part in qs.Split('-'))
-                {
-                    int id;
-                    if (int.TryParse(part, out id)) ids.Add(id);
-                }
-                return ids;
             }
         }
 

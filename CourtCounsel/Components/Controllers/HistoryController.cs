@@ -79,41 +79,6 @@ namespace tjc.Modules.CourtCounsel.Components.Controllers
         }
 
         /// <summary>
-        /// Case name search narrowed to the given Action values. A blank partyName searches every name;
-        /// an empty actions list means all action types.
-        /// </summary>
-        public IEnumerable<HistoryInfo> SearchByCaseName(string partyName, IList<string> actions)
-        {
-            if (actions == null || actions.Count == 0)
-                return SearchByCaseName(partyName);
-
-            var conditions = new List<string>();
-            var args = new List<object>();
-
-            if (!string.IsNullOrEmpty(partyName))
-            {
-                conditions.Add("PartyName LIKE @" + args.Count);
-                args.Add("%" + partyName + "%");
-            }
-
-            var placeholders = new List<string>();
-            foreach (var a in actions)
-            {
-                placeholders.Add("@" + args.Count);
-                args.Add(a);
-            }
-            conditions.Add("Action IN (" + string.Join(",", placeholders) + ")");
-
-            using (IDataContext ctx = DataContext.Instance(_hostSettings))
-            {
-                return ctx.ExecuteQuery<HistoryInfo>(CommandType.Text,
-                    "SELECT DISTINCT CaseNumber, PartyName, CaseType, Responsible, logId, DateReceived, DateDue, RequestedBy, County, Description, Phase, Action, FollowUp, DateCompleted, TimeSpent, Comments, StatusName, MotionFiled, LastModifiedDate " +
-                    "FROM tjc_cc_history WHERE " + string.Join(" AND ", conditions) + " ORDER BY PartyName",
-                    args.ToArray()).ToList();
-            }
-        }
-
-        /// <summary>
         /// Substring search on CaseNumber. Returns one DISTINCT row per matching case/party combo so
         /// entering "4034" finds "S-2016-CF-004034" (or any other case number containing the substring).
         /// </summary>

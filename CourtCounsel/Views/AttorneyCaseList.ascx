@@ -18,6 +18,8 @@
 
 <h2><asp:Label ID="lblAttorneyName" runat="server" /></h2>
 
+<div id="actionFilterHost" class="mb-3"></div>
+
 <div class="table-responsive">
     <table id="attorney-case-list" class="table table-striped table-bordered table-hover" style="width:100%">
         <thead>
@@ -29,6 +31,7 @@
                 <th>Action Date</th>
                 <th>Status</th>
                 <th id="thCompleted" runat="server">Completed</th>
+                <th data-action-col>Action Taken</th>
             </tr>
         </thead>
         <tbody>
@@ -51,6 +54,7 @@
                         <td data-order='<%#FormatDateIso((DateTime?)Eval("DateReceived")) %>'><%#FormatDate((DateTime?)Eval("DateReceived")) %></td>
                         <td><%#GetStatusBadge((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
                         <td runat="server" ID="tdCompleted" data-order='<%#FormatDateIso((DateTime?)Eval("DateCompleted")) %>'><%#FormatDate((DateTime?)Eval("DateCompleted")) %></td>
+                        <td><%#Eval("Action") %></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>
@@ -66,12 +70,14 @@
                     "order": [[4, "asc"]],   // Action Date ascending; date-aware via data-order
                     "pageLength": 25
                 });
+                if (window.CCActionFilter) CCActionFilter.init({ table: '#attorney-case-list', host: '#actionFilterHost' });
             }
         });
     }
     PageInit();
 </script>
 
+<dnn:DnnJsInclude runat="server" FilePath="~/DesktopModules/tjc.modules/CourtCounsel/Scripts/action-filter.js" />
 <dnn:DnnCssInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />

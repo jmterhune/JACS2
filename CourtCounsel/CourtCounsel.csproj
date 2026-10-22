@@ -211,6 +211,7 @@
     <Content Include="BuildScripts\ModulePackage.targets" />
     <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
     <Content Include="module.css" />
+    <Content Include="Scripts\action-filter.js" />
     <Content Include="Scripts\module.js" />
     <Content Include="Scripts\session-monitor.js" />
     <Content Include="Documentation\Documentation.html" />
