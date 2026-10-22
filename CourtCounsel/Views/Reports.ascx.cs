@@ -174,6 +174,40 @@ namespace tjc.Modules.CourtCounsel.Views
             return sb.ToString();
         }
 
+        protected void cmdProhibitedFilers_Click(object sender, EventArgs e)
+        {
+            var ctrl = new HistoryController(_hostSettings);
+            ltResults.Text = BuildProhibitedFilersHtml(ctrl.GetProhibitedFilers().ToList());
+        }
+
+        private string BuildProhibitedFilersHtml(List<HistoryInfo> data)
+        {
+            if (!data.Any())
+            {
+                return "<div class='alert alert-info mt-3'>No cases found where the action was set to Enjoin Pro se filings or Declare vexatious litigant.</div>";
+            }
+
+            var sb = new StringBuilder();
+            sb.Append("<h4>Prohibited Filers List</h4>");
+            sb.Append("<table class='caseReport table table-bordered'>");
+            sb.Append("<tr class='caseHeader'><td>Case Name</td><td>Case Number</td><td>Action Taken</td><td>Date Completed</td><td>Completed By</td></tr>");
+
+            foreach (var item in data)
+            {
+                sb.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
+                    System.Web.HttpUtility.HtmlEncode(item.PartyName),
+                    System.Web.HttpUtility.HtmlEncode(item.CaseNumber),
+                    System.Web.HttpUtility.HtmlEncode(item.Action),
+                    item.DateCompleted.HasValue ? item.DateCompleted.Value.ToString("d") : "Not completed",
+                    System.Web.HttpUtility.HtmlEncode(item.Responsible));
+            }
+
+            sb.Append("</table>");
+            sb.AppendFormat("<p class='note'>Report generated {0:g}. Total records: {1}</p>", DateTime.Now, data.Count);
+
+            return sb.ToString();
+        }
+
         protected void cmdReset_Click(object sender, EventArgs e)
         {
             txtStartDate.Text = "";

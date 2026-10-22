@@ -85,25 +85,5 @@ namespace tjc.Modules.CourtCounsel.Views
             return longName.Length > 30 ? longName.Substring(0, 30) + " ..." : longName;
         }
 
-        /// <summary>
-        /// Mirrors legacy GetStatus(status, statusName):
-        ///   Active + non-empty StatusName -> show the saved StatusName text
-        ///   Everything else                -> show the bucket name (Active / Inactive / Complete)
-        /// </summary>
-        protected string GetStatus(HistoryInfo item)
-        {
-            if (item == null) return string.Empty;
-
-            if (item.Status == HistoryInfo.CurrentStatus.Active && !string.IsNullOrEmpty(item.StatusName))
-                return item.StatusName;
-
-            switch (item.Status)
-            {
-                case HistoryInfo.CurrentStatus.Active: return "Active";
-                case HistoryInfo.CurrentStatus.Inactive: return "Inactive";
-                case HistoryInfo.CurrentStatus.Complete: return "Complete";
-                default: return string.Empty;
-            }
-        }
     }
 }

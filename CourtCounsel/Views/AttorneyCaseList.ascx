@@ -49,7 +49,7 @@
                         <td><%#Eval("CaseType") %></td>
                         <td><%#Eval("Responsible") %></td>
                         <td data-order='<%#FormatDateIso((DateTime?)Eval("DateReceived")) %>'><%#FormatDate((DateTime?)Eval("DateReceived")) %></td>
-                        <td><%#GetStatus((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
+                        <td><%#GetStatusBadge((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
                         <td runat="server" ID="tdCompleted" data-order='<%#FormatDateIso((DateTime?)Eval("DateCompleted")) %>'><%#FormatDate((DateTime?)Eval("DateCompleted")) %></td>
                     </tr>
                 </ItemTemplate>

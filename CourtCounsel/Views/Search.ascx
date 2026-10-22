@@ -30,6 +30,23 @@
                 </ul>
                 <asp:TextBox ID="swSearchTerm" runat="server" CssClass="form-control" placeholder="Enter search term..." />
                 <asp:DropDownList ID="swAttorney" runat="server" CssClass="form-control" style="display:none;" />
+                <div class="dropdown action-dropdown" id="divActionTypes">
+                    <button type="button" id="actionToggle" class="form-select text-start" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Action type">
+                        <span id="actionSelectedLabel">All Action Types</span>
+                    </button>
+                    <div class="dropdown-menu p-2 action-dropdown-menu">
+                        <input type="text" class="form-control form-control-sm mb-2 action-filter" placeholder="Filter action types..." autocomplete="off" />
+                        <div class="form-check border-bottom pb-1 mb-1">
+                            <input type="checkbox" class="form-check-input action-select-all" id="chkActionAll" checked="checked" />
+                            <label class="form-check-label fw-bold" for="chkActionAll">All Action Types</label>
+                        </div>
+                        <asp:CheckBoxList ID="cblActions" runat="server" RepeatLayout="Flow" CssClass="action-checklist" />
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-1 small text-muted">
+                            <span id="actionCount">All selected</span>
+                            <button type="button" class="btn btn-link btn-sm p-0 action-reset">Reset to All</button>
+                        </div>
+                    </div>
+                </div>
                 <asp:Button ID="cmdSearch" runat="server" CssClass="btn btn-primary" Text="Search" OnClick="cmdSearch_Click" />
             </div>
         </div>
@@ -104,6 +121,7 @@
         var searchTerm = document.getElementById('<%= swSearchTerm.ClientID %>');
         var attorney = document.getElementById('<%= swAttorney.ClientID %>');
         var statusDiv = document.getElementById('divStatusFilters');
+        var actionDiv = document.getElementById('divActionTypes');
 
         if (type === 3) {
             searchTerm.style.display = 'none';
@@ -114,6 +132,68 @@
             attorney.style.display = 'none';
             statusDiv.style.display = 'none';
         }
+
+        // Action Type only applies to Case Name searches.
+        if (actionDiv) actionDiv.style.display = (type === 1) ? '' : 'none';
+    }
+
+    // Multi-select Action Type dropdown. Nothing ticked means "All Action Types".
+    function InitActionDropdown() {
+        var $ = jQuery;
+        var $root = $('.action-dropdown');
+        if (!$root.length) return;
+
+        var $label = $('#actionSelectedLabel');
+        var $count = $('#actionCount');
+        var $all = $root.find('.action-select-all');
+        var $filter = $root.find('.action-filter');
+        function $boxes() { return $root.find('.action-checklist input[type=checkbox]'); }
+
+        // Bootstrap 5 expects these classes; asp:CheckBoxList renders bare input/label pairs.
+        $boxes().addClass('form-check-input').next('label').addClass('form-check-label');
+        $root.find('.dropdown-menu').off('click.action').on('click.action', function (e) { e.stopPropagation(); });
+
+        // Flag the two designations the court wants to find quickly.
+        $root.find('.action-checklist label').each(function () {
+            var t = $(this).text();
+            if (/vexatious/i.test(t) || (/enjoin/i.test(t) && /pro se/i.test(t))) {
+                if (!$(this).find('.action-flag').length) $(this).append('<span class="action-flag">Prohibited filer</span>');
+            }
+        });
+
+        function UpdateLabel() {
+            var selected = $boxes().filter(':checked').map(function () {
+                return $(this).next('label').clone().children().remove().end().text().trim();
+            }).get();
+
+            $all.prop('checked', selected.length === 0);
+            if (selected.length === 0) {
+                $label.text('All Action Types');
+                $count.text('All selected');
+            } else {
+                $label.text(selected.length <= 3 ? selected.join(', ') : selected.length + ' action types selected');
+                $count.text(selected.length + ' of ' + $boxes().length + ' selected');
+            }
+        }
+
+        $all.off('click.action').on('click.action', function () {
+            $boxes().prop('checked', false);
+            this.checked = true;
+            UpdateLabel();
+        });
+        $boxes().off('change.action').on('change.action', UpdateLabel);
+        $root.find('.action-reset').off('click.action').on('click.action', function () {
+            $boxes().prop('checked', false);
+            UpdateLabel();
+        });
+        $filter.off('input.action').on('input.action', function () {
+            var term = $(this).val().toLowerCase();
+            $root.find('.action-checklist label').each(function () {
+                $(this).parent().toggle($(this).text().toLowerCase().indexOf(term) !== -1);
+            });
+        });
+
+        UpdateLabel();
     }
 
     function InitializeAttorneyDropDown() {
@@ -180,6 +260,7 @@
                 });
             }
             InitializeAttorneyDropDown();
+            InitActionDropdown();
             CookieFieldInitialization();
         });
     }

@@ -32,6 +32,17 @@ namespace tjc.Modules.CourtCounsel.Views
             if (!IsPostBack)
             {
                 BindAttorneyDropDown();
+                BindActionTypes();
+            }
+        }
+
+        private void BindActionTypes()
+        {
+            var ctrl = new ActionTakenController(_hostSettings);
+            cblActions.Items.Clear();
+            foreach (var a in ctrl.GetActions().OrderBy(a => a.Action))
+            {
+                cblActions.Items.Add(new ListItem(a.Action, a.ActionId.ToString()));
             }
         }
 
@@ -72,9 +83,24 @@ namespace tjc.Modules.CourtCounsel.Views
             {
                 case "1": // Case Name
                     var searchTerm = swSearchTerm.Text.Trim();
+
+                    // Nothing ticked in the Action Type dropdown means all action types.
+                    var actionIds = cblActions.Items.Cast<ListItem>()
+                        .Where(i => i.Selected)
+                        .Select(i => i.Value)
+                        .ToList();
+                    var actionParam = actionIds.Count > 0 ? "at=" + string.Join("-", actionIds) : null;
+
                     if (!string.IsNullOrEmpty(searchTerm))
                     {
-                        Response.Redirect(EditUrl("pn", searchTerm, "CaseList"));
+                        Response.Redirect(actionParam == null
+                            ? EditUrl("pn", searchTerm, "CaseList")
+                            : EditUrl("pn", searchTerm, "CaseList", actionParam));
+                    }
+                    else if (actionParam != null)
+                    {
+                        // No name entered: list every case with the chosen action types.
+                        Response.Redirect(EditUrl("at", string.Join("-", actionIds), "CaseList"));
                     }
                     break;
 

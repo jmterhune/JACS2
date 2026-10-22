@@ -14,6 +14,9 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using tjc.Modules.CourtCounsel.Components.Controllers;
 using tjc.Modules.CourtCounsel.Components.Models;
 
@@ -22,6 +25,9 @@ namespace tjc.Modules.CourtCounsel.Views
     public partial class CaseList : CourtCounselModuleBase
     {
         private string _partyName;
+
+        // True only when the search was narrowed by Action Type, so the matching action is worth showing.
+        private bool _showActionColumn;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -42,34 +48,36 @@ namespace tjc.Modules.CourtCounsel.Views
                     rptCaseList.DataSource = results;
                     rptCaseList.DataBind();
                 }
-                else if (!string.IsNullOrEmpty(_partyName))
+                else if (!string.IsNullOrEmpty(_partyName) || ActionIds.Count > 0)
                 {
                     litResultsHeading.Text = "Case Name Search Results";
-                    var results = ctrl.SearchByCaseName(_partyName).ToList();
+
+                    var actionNames = new System.Collections.Generic.List<string>();
+                    if (ActionIds.Count > 0)
+                    {
+                        actionNames = new ActionTakenController(_hostSettings).GetActions()
+                            .Where(a => ActionIds.Contains(a.ActionId))
+                            .Select(a => a.Action)
+                            .OrderBy(a => a)
+                            .ToList();
+                        litResultsHeading.Text += " <small class=\"text-muted\">Action: " +
+                            HttpUtility.HtmlEncode(string.Join(", ", actionNames)) + "</small>";
+                        thAction.Visible = true;
+                    }
+
+                    _showActionColumn = actionNames.Count > 0;
+                    var results = ctrl.SearchByCaseName(_partyName, actionNames).ToList();
                     rptCaseList.DataSource = results;
                     rptCaseList.DataBind();
                 }
             }
         }
 
-        /// <summary>
-        /// Same logic as AttorneyCaseList.GetStatus — Active + non-empty StatusName
-        /// shows the saved StatusName text; otherwise the bucket name.
-        /// </summary>
-        protected string GetStatus(HistoryInfo item)
+        protected void rptCaseList_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
-            if (item == null) return string.Empty;
-
-            if (item.Status == HistoryInfo.CurrentStatus.Active && !string.IsNullOrEmpty(item.StatusName))
-                return item.StatusName;
-
-            switch (item.Status)
-            {
-                case HistoryInfo.CurrentStatus.Active: return "Active";
-                case HistoryInfo.CurrentStatus.Inactive: return "Inactive";
-                case HistoryInfo.CurrentStatus.Complete: return "Complete";
-                default: return string.Empty;
-            }
+            if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem) return;
+            var td = e.Item.FindControl("tdAction") as HtmlTableCell;
+            if (td != null) td.Visible = _showActionColumn;
         }
 
         protected string FormatLongName(string name)

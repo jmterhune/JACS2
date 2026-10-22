@@ -158,3 +158,37 @@ table.dataTable {
     width: 100%;
 }
 
+
+/* Search page: Action Type multi-select (Case Name searches) */
+.action-dropdown { width: 260px; max-width: 100%; }
+.input-group > .action-dropdown > .form-select { border-radius: 0; margin-left: -1px; }
+.action-dropdown .dropdown-menu {
+    width: 320px;
+    max-width: calc(100vw - 32px);
+}
+.action-dropdown .action-checklist { display: block; max-height: 252px; overflow-y: auto; }
+.action-dropdown .action-checklist span { display: block; padding: 2px 4px; }
+.action-dropdown .action-checklist input[type="checkbox"] { margin-right: 6px; }
+.action-dropdown .action-flag {
+    float: right;
+    margin-left: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #b45309;
+}
+
+/* Status column pill (Case Name and Attorney result lists) */
+.cc-status {
+    display: inline-block;
+    padding: 1px 9px;
+    border: 1px solid currentColor;
+    border-radius: 10px;
+    font-size: .85em;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+.cc-status-complete { color: #198754; }
+.cc-status-active { color: #8a6d00; }
+.cc-status-inactive { color: #6c757d; }

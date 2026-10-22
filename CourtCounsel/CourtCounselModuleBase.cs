@@ -16,7 +16,11 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Web.UI;
+using tjc.Modules.CourtCounsel.Components.Models;
 
 namespace tjc.Modules.CourtCounsel
 {
@@ -158,6 +162,50 @@ namespace tjc.Modules.CourtCounsel
                 var qs = Request.QueryString["sf"];
                 return qs ?? string.Empty;
             }
+        }
+
+        /// <summary>
+        /// ActionIds picked in the Search page's Action Type dropdown, passed as "at=1-4-9".
+        /// Empty means all action types.
+        /// </summary>
+        public List<int> ActionIds
+        {
+            get
+            {
+                var ids = new List<int>();
+                var qs = Request.QueryString["at"];
+                if (string.IsNullOrEmpty(qs)) return ids;
+                foreach (var part in qs.Split('-'))
+                {
+                    int id;
+                    if (int.TryParse(part, out id)) ids.Add(id);
+                }
+                return ids;
+            }
+        }
+
+        /// <summary>
+        /// Status column cell content: the saved StatusName for an Active case that has one,
+        /// otherwise the bucket name (Active / Inactive / Complete), shown as a coloured pill.
+        /// </summary>
+        protected string GetStatusBadge(HistoryInfo item)
+        {
+            if (item == null) return string.Empty;
+
+            string text;
+            string css;
+            switch (item.Status)
+            {
+                case HistoryInfo.CurrentStatus.Complete:
+                    text = "Complete"; css = "cc-status-complete"; break;
+                case HistoryInfo.CurrentStatus.Inactive:
+                    text = "Inactive"; css = "cc-status-inactive"; break;
+                default:
+                    text = string.IsNullOrEmpty(item.StatusName) ? "Active" : item.StatusName;
+                    css = "cc-status-active";
+                    break;
+            }
+            return "<span class=\"cc-status " + css + "\">" + HttpUtility.HtmlEncode(text) + "</span>";
         }
 
         public bool IsFutureAction

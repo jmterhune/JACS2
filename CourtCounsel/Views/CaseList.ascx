@@ -27,10 +27,11 @@
                 <th>Case Type</th>
                 <th>Attorney</th>
                 <th>Status</th>
+                <th id="thAction" runat="server" visible="false">Action Taken</th>
             </tr>
         </thead>
         <tbody>
-            <asp:Repeater ID="rptCaseList" runat="server">
+            <asp:Repeater ID="rptCaseList" runat="server" OnItemDataBound="rptCaseList_ItemDataBound">
                 <ItemTemplate>
                     <tr>
                         <td>
@@ -45,7 +46,8 @@
                         </td>
                         <td><%#Eval("CaseType") %></td>
                         <td><%#Eval("Responsible") %></td>
-                        <td><%#GetStatus((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
+                        <td><%#GetStatusBadge((tjc.Modules.CourtCounsel.Components.Models.HistoryInfo)Container.DataItem) %></td>
+                        <td id="tdAction" runat="server"><%#Eval("Action") %></td>
                     </tr>
                 </ItemTemplate>
             </asp:Repeater>

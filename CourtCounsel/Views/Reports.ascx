@@ -111,6 +111,13 @@
     </div>
 </div>
 
+<div class="card mt-3">
+    <div class="card-body p-3 d-flex flex-wrap align-items-center gap-3">
+        <asp:Button ID="cmdProhibitedFilers" runat="server" CssClass="btn btn-warning" Text="Prohibited Filers List" OnClick="cmdProhibitedFilers_Click" />
+        <span class="text-muted small">All cases where the action was ever set to Enjoin Pro se filings or Declare vexatious litigant.</span>
+    </div>
+</div>
+
 <div class="mt-4">
     <asp:Literal ID="ltResults" runat="server" />
 </div>
