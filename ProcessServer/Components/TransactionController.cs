@@ -1,0 +1,83 @@
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Data;
+using System;
+using System.Collections.Generic;
+
+namespace tjc.Modules.ProcessServer.Components
+{
+    class TransactionController
+    {
+        // The payment table lives in the jud12 (public) site's database.
+        private const string CONN_JUD12 = "Jud12";
+
+        private readonly IHostSettings _hostSettings;
+
+        public TransactionController(IHostSettings hostSettings)
+        {
+            _hostSettings = hostSettings;
+        }
+
+        // private const string CONN_INTRANET = "UAT";
+        public void CreateTransaction(Transaction a)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<Transaction>();
+                rep.Insert(a);
+            }
+        }
+        public void DeleteTransaction(int transactionId)
+        {
+            var a = GetTransaction(transactionId);
+
+            DeleteTransaction(a);
+        }
+        public void DeleteTransaction(Transaction a)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<Transaction>();
+                rep.Delete(a);
+            }
+        }
+        public Transaction GetTransaction(int transactionId)
+        {
+            Transaction a;
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<Transaction>();
+                a = rep.GetById(transactionId);
+            }
+            return a;
+        }
+        public IEnumerable<Transaction> GetTransactions()
+        {
+            IEnumerable<Transaction> a;
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<Transaction>();
+                a = rep.Get();
+            }
+            return a;
+        }
+        public IEnumerable<Transaction> GetTransactionsByDateRange(DateTime start, DateTime end)
+        {
+            IEnumerable<Transaction> a;
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<Transaction>();
+                a = rep.Find("Where PaymentDate Between @0 And @1", start, end);
+
+            }
+            return a;
+        }
+        internal void UpdateTransaction(Transaction a)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<Transaction>();
+                rep.Update(a);
+            }
+        }
+    }
+}

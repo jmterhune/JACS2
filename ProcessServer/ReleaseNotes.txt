@@ -1,0 +1,30 @@
+<h3>Process Server Admin (intranet)</h3>
+<p class="Contributor">
+	jud12 <br />
+	<a href="mailto:webhelp@jud12.flcourts.org">webhelp@jud12.flcourts.org</a><br />
+	<a href=http://www.jud12.flcourts.org/>http://www.jud12.flcourts.org/</a>
+</p>
+<hr/>
+<div class="License">
+	<h3>About the Process Server Admin module</h3>
+	<p class="Owner">
+		<b>Version 1.0.0</b><br /><br />
+	</p>
+	<p>Management side of the Certified Process Server application. Moved here from the public (jud12) site, which keeps the applicant form, payment and public directory.</p>
+
+	<h4>Features</h4>
+	<ul>
+		<li>Applications list by year, with set-paid, set-renewal, set-criminal-history-complete and delete</li>
+		<li>Credit Card Payments list by date range</li>
+		<li>Review / approve application (Court Counsel and Chief Judge approval flow)</li>
+		<li>Edit application details, status and attachments</li>
+		<li>View uploaded attachments, streamed from the database</li>
+		<li>Approve / reject emails to the applicant</li>
+	</ul>
+
+	<h4>Notes</h4>
+	<ul>
+		<li>Reads and writes the jud12 site's database through the Jud12 connection string.</li>
+		<li>Uploaded attachments are stored in the database and streamed through FileViewer.ashx; list views never load the file bytes.</li>
+	</ul>
+</div>
