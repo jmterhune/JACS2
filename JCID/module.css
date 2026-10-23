@@ -1,0 +1,45 @@
+.dnnFormRadioButtons {
+    float: none !important;
+    border-radius: 4px;
+    background-color: #fff !important;
+    display: block;
+    width: 100%;
+    padding: 8px 10px !important;
+    margin: 0px !important;
+    border: 1px solid #ccc !important;
+}
+.checkbox {
+    padding-left: 8px !important;
+    padding-bottom:10px !important;
+}
+
+    .dnnFormRadioButtons input,.checkbox input {
+        margin-right: 4px !important;
+    }
+
+    .dnnFormRadioButtons td {
+        padding-right: 25px;
+        padding-bottom: 5px;
+    }
+
+label em, em.lbl {
+    color: red;
+    font-weight: inherit;
+}
+
+.italic {
+    font-style: italic;
+}
+.image-btn{
+    max-height:40px;
+    max-width:40px;
+    cursor:zoom-in
+}
+.image-zoom{
+    max-height:400px;
+}
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+.btn{cursor:pointer}
