@@ -266,6 +266,25 @@ namespace tjc.Modules.ProcessServer
             }
             return null;
         }
+
+        /// <summary>
+        /// The applicant's own application page on the public site, for the approve/reject email. The entry
+        /// control differs by application type - "new" (NewApplication.ascx) vs "renew" (RenewalApplication.ascx),
+        /// matching how the public module links applicants (EditUrl("new") / EditUrl("renew")). ExternalUrl is the
+        /// module's base page including "/mid/{moduleId}"; the control key is inserted before it as DNN renders it
+        /// (e.g. .../Process-Server-Application/ctl/new/mid/1398). Null when ExternalUrl is not set.
+        /// </summary>
+        public string ApplicantLink(bool isRenewal)
+        {
+            string baseUrl = ExternalUrl;
+            if (baseUrl == null) return null;
+
+            string ctl = isRenewal ? "renew" : "new";
+            int idx = baseUrl.IndexOf("/mid/", StringComparison.OrdinalIgnoreCase);
+            if (idx >= 0)
+                return baseUrl.Substring(0, idx) + "/ctl/" + ctl + baseUrl.Substring(idx);
+            return baseUrl.TrimEnd('/') + "/ctl/" + ctl;
+        }
     }
 
 }

@@ -28,6 +28,6 @@
         <asp:CustomValidator ID="valExternalUrl" runat="server" ControlToValidate="txtExternalUrl" ValidateEmptyText="false"
             OnServerValidate="valExternalUrl_ServerValidate" CssClass="dnnFormMessage dnnFormError" Display="Dynamic"
             ErrorMessage="Enter a full address starting with http:// or https://" />
-        <div class="dnnFormMessage">Address of the applicant's Process Server page on the public (jud12) site. Added as a "View your application" link in the approve / reject emails. Blank = no link.</div>
+        <div class="dnnFormMessage">Base address of the Process Server Application page on the public (jud12) site, including the module id, e.g. https://jud12.flcourts.org/Services/Certified-Process-Servers/Process-Server-Application/mid/1398. The approve / reject emails add a "View your application" link to it, using the new or renewal page automatically based on the application. Blank = no link.</div>
     </div>
 </fieldset>

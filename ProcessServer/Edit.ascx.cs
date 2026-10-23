@@ -202,7 +202,7 @@ namespace tjc.Modules.ProcessServer
             ltMessage1.Text = "<div class='alert alert-success alert-dismissible fade show' role=alert><i class='fas fa-thumbs-up'></i> <strong>Status Updated</strong><button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>";
         }
 
-        private void SendNotification(bool rejected, string UserEmail)
+        private void SendNotification(bool rejected, Components.ProcessServer p)
         {
             try
             {
@@ -219,10 +219,10 @@ namespace tjc.Modules.ProcessServer
                     subject += "Approved";
                     body = string.Format("<p>Your Application has been Approved.</p><p>{0}</p>", txtRejectionNotification.Text);
                 }
-                string link = ExternalUrl;
+                string link = ApplicantLink(p.IsRenewal);
                 if (!string.IsNullOrEmpty(link))
                     body += string.Format("<p><a href='{0}'>View your application</a></p>", link);
-                DotNetNuke.Services.Mail.Mail.SendEmail(NotificationEmail, UserEmail, subject, body);
+                DotNetNuke.Services.Mail.Mail.SendEmail(NotificationEmail, p.Email, subject, body);
             }
             catch (Exception exc)
             {
@@ -236,7 +236,7 @@ namespace tjc.Modules.ProcessServer
             ProcessServer.Components.ProcessServer p = ctl.GetItem(PID);
             p.Status = applicationStatus.Approved;
             ctl.UpdateItem(p);
-            SendNotification(false, p.Email);
+            SendNotification(false, p);
             ltMessage1.Text = "<div class='alert alert-success alert-dismissible fade show' role=alert><i class='fas fa-thumbs-up'></i> <strong>Application Approved. Email sent to User</strong><button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>";
         }
 
@@ -246,7 +246,7 @@ namespace tjc.Modules.ProcessServer
             ProcessServer.Components.ProcessServer p = ctl.GetItem(PID);
             p.Status = applicationStatus.Rejected;
             ctl.UpdateItem(p);
-            SendNotification(true, p.Email);
+            SendNotification(true, p);
             ltMessage1.Text = "<div class='alert alert-warning alert-dismissible fade show' role=alert><i class='fas fa-thumbs-down'></i> <strong>Application Rejected. Email sent to User</strong><button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>";
         }
 
