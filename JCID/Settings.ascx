@@ -3,12 +3,12 @@
 <h2 id="dnnSitePanel-JcidAdminSettings" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded">JCID Admin</a></h2>
 <fieldset>
     <div class="dnnFormItem">
-        <asp:Label ID="lblExternalUrl" runat="server" AssociatedControlID="txtExternalUrl" Text="Public JCID Application Page" />
+        <asp:Label ID="lblExternalUrl" runat="server" AssociatedControlID="txtExternalUrl" Text="Public JCID Form Page" />
         <asp:TextBox ID="txtExternalUrl" runat="server" MaxLength="500" />
         <asp:CustomValidator ID="valExternalUrl" runat="server" ControlToValidate="txtExternalUrl" ValidateEmptyText="false"
             OnServerValidate="valExternalUrl_ServerValidate" CssClass="dnnFormMessage dnnFormError" Display="Dynamic"
             ErrorMessage="Enter a full address starting with http:// or https://" />
-        <div class="dnnFormMessage">Address of the JCID application page on the public (jud12) site. The site part of this address links the applicant photos and builds the reject-correction link emailed to applicants. Blank = those links are hidden / omitted.</div>
+        <div class="dnnFormMessage">Full address of the JCID application form on the public (jud12) site, used for the reject-correction link emailed to applicants &mdash; the module appends the encrypted applicant id as an <strong>eid</strong> parameter, e.g. https://jud12.test.jud12.local/Attorney/JCID-Application/ctl/form/mid/395. Its site (host) is also used to display applicant photos. Blank = the reject link is omitted.</div>
     </div>
     <div class="dnnFormItem">
         <asp:Label ID="lblPaymentUrl" runat="server" AssociatedControlID="txtPaymentUrl" Text="Payment URL" />

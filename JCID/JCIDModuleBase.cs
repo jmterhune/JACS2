@@ -110,11 +110,15 @@ namespace tjc.Modules.JCID
             return template.Replace("{id}", requestId.ToString()).Replace("{ID}", requestId.ToString());
         }
 
-        /// <summary>The public form, pre-filled for a rejected applicant to correct, or null when ExternalUrl is not set.</summary>
+        /// <summary>
+        /// The public form, pre-filled for a rejected applicant to correct. ExternalUrl is expected to be the
+        /// full form page (e.g. .../Attorney/JCID-Application/ctl/form/mid/395); this only appends the encrypted
+        /// applicant id as the "eid" parameter. Null when ExternalUrl is not set.
+        /// </summary>
         public string ExternalFormFixUrl(int requestId)
         {
             string app = ExternalUrl;
-            return app == null ? null : AppendQuery(app, "ctl=form&eid=" + EncryptRequestId(requestId));
+            return app == null ? null : AppendQuery(app, "eid=" + EncryptRequestId(requestId));
         }
 
         private static string AppendQuery(string url, string query)
