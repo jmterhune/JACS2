@@ -12,9 +12,12 @@ namespace tjc.Modules.JCID
         {
             try
             {
-                if (!Page.IsPostBack && Settings.Contains(JCIDModuleBase.ExternalUrlSetting))
+                if (!Page.IsPostBack)
                 {
-                    txtExternalUrl.Text = Settings[JCIDModuleBase.ExternalUrlSetting].ToString();
+                    if (Settings.Contains(JCIDModuleBase.ExternalUrlSetting))
+                        txtExternalUrl.Text = Settings[JCIDModuleBase.ExternalUrlSetting].ToString();
+                    if (Settings.Contains(JCIDModuleBase.PaymentUrlSetting))
+                        txtPaymentUrl.Text = Settings[JCIDModuleBase.PaymentUrlSetting].ToString();
                 }
             }
             catch (Exception exc)
@@ -35,6 +38,17 @@ namespace tjc.Modules.JCID
                 else if (JCIDModuleBase.ValidExternalUrl(value) != null)
                 {
                     ModuleController.Instance.UpdateModuleSetting(ModuleId, JCIDModuleBase.ExternalUrlSetting, value);
+                }
+
+                // Payment URL is a template containing {id}, so it is stored as entered rather than URL-validated.
+                string payment = txtPaymentUrl.Text.Trim();
+                if (payment.Length == 0)
+                {
+                    ModuleController.Instance.DeleteModuleSetting(ModuleId, JCIDModuleBase.PaymentUrlSetting);
+                }
+                else
+                {
+                    ModuleController.Instance.UpdateModuleSetting(ModuleId, JCIDModuleBase.PaymentUrlSetting, payment);
                 }
             }
             catch (Exception exc)

@@ -20,6 +20,7 @@ namespace tjc.Modules.JCID
     public class JCIDModuleBase : PortalModuleBase
     {
         public const string ExternalUrlSetting = "ExternalUrl";
+        public const string PaymentUrlSetting = "PaymentUrl";
 
         protected readonly IHostSettings _hostSettings;
 
@@ -84,11 +85,29 @@ namespace tjc.Modules.JCID
             return new Uri(new Uri(app), "/" + path).AbsoluteUri;
         }
 
-        /// <summary>The public payment page for an application, or null when ExternalUrl is not set.</summary>
+        /// <summary>
+        /// The payment-page URL template on the public (jud12) site, from the PaymentUrl setting. The full
+        /// address is stored with "{id}" where the request id goes, e.g.
+        /// https://.../Attorney/JCID-Application/ctl/payment/mid/395/rid/{id}. Null when the setting is blank.
+        /// </summary>
+        public string PaymentUrlTemplate
+        {
+            get
+            {
+                string v = Settings.Contains(PaymentUrlSetting) ? Settings[PaymentUrlSetting] as string : null;
+                return string.IsNullOrWhiteSpace(v) ? null : v.Trim();
+            }
+        }
+
+        /// <summary>
+        /// The public payment page for an application, built from the PaymentUrl template with "{id}" replaced by
+        /// the request id. Null when the setting is blank, so the copy-payment link is hidden until it is set.
+        /// </summary>
         public string ExternalPaymentUrl(int requestId)
         {
-            string app = ExternalUrl;
-            return app == null ? null : AppendQuery(app, "ctl=payment&rid=" + requestId);
+            string template = PaymentUrlTemplate;
+            if (template == null) return null;
+            return template.Replace("{id}", requestId.ToString()).Replace("{ID}", requestId.ToString());
         }
 
         /// <summary>The public form, pre-filled for a rejected applicant to correct, or null when ExternalUrl is not set.</summary>
