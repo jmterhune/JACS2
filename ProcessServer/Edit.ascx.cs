@@ -72,8 +72,6 @@ namespace tjc.Modules.ProcessServer
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
-                    DateTime enrollmentEnd = EnrollmentEndDate;
-
                     if (DotNetNuke.Framework.AJAX.IsInstalled())
                     {
                         DotNetNuke.Framework.AJAX.RegisterScriptManager();
@@ -91,7 +89,7 @@ namespace tjc.Modules.ProcessServer
                     txtPhone.Text = p.HomePhone;
                     txtCity.Text = p.City;
                     ltPaymentType.Text = p.PaymentType;
-                    txtExpirationDate.Text = enrollmentEnd.AddYears(1).ToString("MM/dd/yyyy");
+                    txtExpirationDate.Text = DateTime.Today.AddYears(1).ToString("MM/dd/yyyy");
                     txtZip.Text = p.ZipCode;
                     drpStatus.SelectedValue = ((int)p.Status).ToString();
                     txtNotes.Text = p.Notes;
@@ -221,6 +219,9 @@ namespace tjc.Modules.ProcessServer
                     subject += "Approved";
                     body = string.Format("<p>Your Application has been Approved.</p><p>{0}</p>", txtRejectionNotification.Text);
                 }
+                string link = ExternalUrl;
+                if (!string.IsNullOrEmpty(link))
+                    body += string.Format("<p><a href='{0}'>View your application</a></p>", link);
                 DotNetNuke.Services.Mail.Mail.SendEmail(NotificationEmail, UserEmail, subject, body);
             }
             catch (Exception exc)

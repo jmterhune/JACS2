@@ -242,6 +242,30 @@ namespace tjc.Modules.ProcessServer
                 return false;
             }
         }
+
+        public const string ExternalUrlSetting = "ExternalUrl";
+
+        /// <summary>
+        /// The applicant-facing Process Server page on the public (jud12) site, from the ExternalUrl
+        /// setting. Null when the setting is blank or is not an absolute http(s) address, so a bad value
+        /// never becomes a link. Used for the "View your application" link in approve/reject emails.
+        /// </summary>
+        public string ExternalUrl
+        {
+            get { return ValidExternalUrl(Settings.Contains(ExternalUrlSetting) ? Settings[ExternalUrlSetting] as string : null); }
+        }
+
+        public static string ValidExternalUrl(string value)
+        {
+            Uri uri;
+            value = (value ?? "").Trim();
+            if (value.Length > 0 && Uri.TryCreate(value, UriKind.Absolute, out uri)
+                && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp))
+            {
+                return uri.AbsoluteUri;
+            }
+            return null;
+        }
     }
 
 }

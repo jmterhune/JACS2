@@ -20,9 +20,9 @@ namespace tjc.Modules.ProcessServer
         protected global::System.Web.UI.WebControls.Label lblAdminRole;
 
         /// <summary>
-        /// txtAdminRole control.
+        /// drpAdminRole control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtAdminRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpAdminRole;
 
         /// <summary>
         /// lblChiefJudgeRole control.
@@ -30,9 +30,9 @@ namespace tjc.Modules.ProcessServer
         protected global::System.Web.UI.WebControls.Label lblChiefJudgeRole;
 
         /// <summary>
-        /// txtChiefJudgeRole control.
+        /// drpChiefJudgeRole control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtChiefJudgeRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpChiefJudgeRole;
 
         /// <summary>
         /// lblCourtCounselRole control.
@@ -40,9 +40,9 @@ namespace tjc.Modules.ProcessServer
         protected global::System.Web.UI.WebControls.Label lblCourtCounselRole;
 
         /// <summary>
-        /// txtCourtCounselRole control.
+        /// drpCourtCounselRole control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtCourtCounselRole;
+        protected global::System.Web.UI.WebControls.DropDownList drpCourtCounselRole;
 
         /// <summary>
         /// lblNotificationEmail control.
@@ -55,23 +55,18 @@ namespace tjc.Modules.ProcessServer
         protected global::System.Web.UI.WebControls.TextBox txtNotificationEmail;
 
         /// <summary>
-        /// lblEnrollmentStart control.
+        /// lblExternalUrl control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.Label lblEnrollmentStart;
+        protected global::System.Web.UI.WebControls.Label lblExternalUrl;
 
         /// <summary>
-        /// txtEnrollmentStart control.
+        /// txtExternalUrl control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtEnrollmentStart;
+        protected global::System.Web.UI.WebControls.TextBox txtExternalUrl;
 
         /// <summary>
-        /// lblEnrollmentEnd control.
+        /// valExternalUrl control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.Label lblEnrollmentEnd;
-
-        /// <summary>
-        /// txtEnrollmentEnd control.
-        /// </summary>
-        protected global::System.Web.UI.WebControls.TextBox txtEnrollmentEnd;
+        protected global::System.Web.UI.WebControls.CustomValidator valExternalUrl;
     }
 }

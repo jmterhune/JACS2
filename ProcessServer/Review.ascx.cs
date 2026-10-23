@@ -41,8 +41,13 @@ namespace tjc.Modules.ProcessServer
         }
         private void BindUploadList()
         {
+            // Filter the attachments by the application's own enrollment year (stored on the record),
+            // rather than an enrollment window configured here - that window lives on the public module.
+            var psCtl = new ProcessServerController(_hostSettings);
+            Components.ProcessServer p = psCtl.GetItem(PID);
+            int year = p != null ? p.ApplicationYear : DateTime.Now.Year;
             var ctl = new FileUploadController(_hostSettings);
-            rptUploades.DataSource = ctl.GetFileUploadsByProcessServerIdYear(PID, ApplicationYear);
+            rptUploades.DataSource = ctl.GetFileUploadsByProcessServerIdYear(PID, year);
             rptUploades.DataBind();
         }
 
