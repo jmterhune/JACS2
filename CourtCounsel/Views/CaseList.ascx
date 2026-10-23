@@ -16,9 +16,10 @@
     </div>
 </nav>
 
-<h2><asp:Literal ID="litResultsHeading" runat="server" Text="Case Search Results" /></h2>
-
-<div id="actionFilterHost" class="mb-3"></div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0"><asp:Literal ID="litResultsHeading" runat="server" Text="Case Search Results" /></h2>
+    <div id="actionFilterHost" class="ms-auto d-flex align-items-center"></div>
+</div>
 
 <div class="table-responsive">
     <table id="case-list" class="table table-striped table-bordered table-hover" style="width:100%">

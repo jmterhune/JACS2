@@ -43,7 +43,7 @@
               '<button type="button" class="form-select text-start action-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Action type">' +
                 '<span class="action-label">All Action Types</span>' +
               '</button>' +
-              '<div class="dropdown-menu p-2">' +
+              '<div class="dropdown-menu dropdown-menu-end p-2">' +
                 '<input type="text" class="form-control form-control-sm mb-2 action-filter" placeholder="Filter action types..." autocomplete="off" />' +
                 '<div class="form-check border-bottom pb-1 mb-1">' +
                   '<input type="checkbox" class="form-check-input action-select-all" checked="checked" />' +
@@ -105,7 +105,7 @@
             return !!selected[cellText(s, rowIdx, col) || NONE];
         });
 
-        $host.empty().append('<label class="fw-bold me-2">Action Type:</label>').append($root);
+        $host.empty().append('<label class="fw-bold me-2 text-nowrap">Action Type:</label>').append($root);
     }
 
     window.CCActionFilter = { init: init };

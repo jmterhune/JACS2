@@ -16,9 +16,10 @@
     </div>
 </nav>
 
-<h2><asp:Label ID="lblAttorneyName" runat="server" /></h2>
-
-<div id="actionFilterHost" class="mb-3"></div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="mb-0"><asp:Label ID="lblAttorneyName" runat="server" /></h2>
+    <div id="actionFilterHost" class="ms-auto d-flex align-items-center"></div>
+</div>
 
 <div class="table-responsive">
     <table id="attorney-case-list" class="table table-striped table-bordered table-hover" style="width:100%">
