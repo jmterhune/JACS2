@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D2F8B5C3-1E94-4A2B-8F67-3C1B7E0D4A52}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>tjc.Modules.CourtCalendar</RootNamespace>
+    <AssemblyName>tjc.Modules.CourtCalendar</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DotNetNuke">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Abstractions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.DependencyInjection">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.WebUtility">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.WebUtility.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.Web">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\DotNetNuke.Web.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PetaPoco">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\PetaPoco.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CourtCalendarModuleBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\Judge.cs" />
+    <Compile Include="Components\Division.cs" />
+    <Compile Include="Components\Category.cs" />
+    <Compile Include="Components\Calendar.cs" />
+    <Compile Include="Components\WeekHeader.cs" />
+    <Compile Include="Components\CalendarEntry.cs" />
+    <Compile Include="Components\Subscription.cs" />
+    <Compile Include="Components\JudgeController.cs" />
+    <Compile Include="Components\CategoryController.cs" />
+    <Compile Include="Components\DivisionController.cs" />
+    <Compile Include="Components\CalendarController.cs" />
+    <Compile Include="Components\NotificationController.cs" />
+    <Compile Include="Views\View.ascx.cs">
+      <DependentUpon>View.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\View.ascx.designer.cs">
+      <DependentUpon>View.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ManageJudges.ascx.cs">
+      <DependentUpon>ManageJudges.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\ManageJudges.ascx.designer.cs">
+      <DependentUpon>ManageJudges.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ManageDivisions.ascx.cs">
+      <DependentUpon>ManageDivisions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\ManageDivisions.ascx.designer.cs">
+      <DependentUpon>ManageDivisions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ManageCategories.ascx.cs">
+      <DependentUpon>ManageCategories.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\ManageCategories.ascx.designer.cs">
+      <DependentUpon>ManageCategories.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditCalendar.ascx.cs">
+      <DependentUpon>EditCalendar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EditCalendar.ascx.designer.cs">
+      <DependentUpon>EditCalendar.ascx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\View.ascx" />
+    <Content Include="Views\ManageJudges.ascx" />
+    <Content Include="Views\ManageDivisions.ascx" />
+    <Content Include="Views\ManageCategories.ascx" />
+    <Content Include="Views\EditCalendar.ascx" />
+    <Content Include="module.css" />
+    <Content Include="License.txt" />
+    <Content Include="ReleaseNotes.txt" />
+    <Content Include="CourtCalendar.dnn" />
+    <Content Include="BuildScripts\ModulePackage.targets" />
+    <Content Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
+    <Content Include="web.config" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <PropertyGroup>
+    <Extension>zip</Extension>
+    <DNNFileName>CourtCalendar</DNNFileName>
+    <PackageName>CourtCalendarAdmin</PackageName>
+    <MSBuildCommunityTasksPath>$(SolutionDir)\BuildScripts</MSBuildCommunityTasksPath>
+    <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
+    <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\CourtCalendar</DeployModuleFolder>
+    <DeployToSite Condition="'$(DeployToSite)' == ''">true</DeployToSite>
+  </PropertyGroup>
+  <Import Project="BuildScripts\ModulePackage.Targets" />
+  <Target Name="AfterBuild" DependsOnTargets="PackageModule;DeployToSite">
+  </Target>
+  <Target Name="DeployToSite" Condition="'$(DeployToSite)' == 'true' And Exists('$(DeploySitePath)\bin')">
+    <Message Text="Deploying CourtCalendar (authoring) to $(DeploySitePath)" Importance="high" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(DeploySitePath)\bin" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+    <ItemGroup>
+      <DeployContent Include="Views\*.ascx" />
+      <DeployContent Include="*.css" />
+      <DeployContent Include="$(DNNFileName).dnn" />
+      <DeployContent Include="License.txt" />
+      <DeployContent Include="ReleaseNotes.txt" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeployContent)" DestinationFiles="@(DeployContent->'$(DeployModuleFolder)\%(RelativeDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

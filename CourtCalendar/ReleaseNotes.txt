@@ -1,0 +1,8 @@
+Court Calendar (intranet authoring) - Release Notes
+
+00.00.01
+- Initial release.
+- Admins manage the judge roster (assigning each judge's intranet user and JA user), divisions (name, county, layout type, assigned judge, Zoom/contact details, URL slug) and seeded/custom categories with colors.
+- Assigned judges and JAs manage their division's monthly calendars: add week-row headers; add/edit entries (timespan or all-day, short title, detail, category); strike/unstrike items; set title, notes and published state.
+- "Send update notification" emails calendar subscribers.
+- Reads and writes the public site's tjc_cc_* tables through the "Jud12" connection; the intranet site's root web.config must define that connection string.

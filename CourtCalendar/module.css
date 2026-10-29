@@ -1,0 +1,17 @@
+/* Court Calendar (intranet authoring) */
+
+.cc-admin .cc-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.cc-admin .cc-toolbar .btn:last-child { margin-left: auto; }
+.cc-admin .cc-h2 { margin-bottom: .75rem; }
+.cc-admin .cc-h3 { font-size: 1.15rem; }
+
+.cc-division-card .cc-division-head { display: flex; align-items: baseline; gap: .75rem; }
+.cc-division-card .cc-judge { color: #555; }
+.cc-cal-table td, .cc-cal-table th { vertical-align: middle; }
+
+.cc-edit-form, .cc-inline-form { background: #f7f8fa; border: 1px solid #e2e4e8; border-radius: 6px; padding: 1rem; }
+
+.cc-swatch { display: inline-block; width: 1.1rem; height: 1.1rem; border-radius: 3px; border: 1px solid #aaa; vertical-align: middle; }
+.cc-swatch-default { background: #f4f4f5; }
+
+.cc-entry-admin tr.cc-row-stricken td { text-decoration: line-through; color: #888; }
