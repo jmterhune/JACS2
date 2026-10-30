@@ -15,3 +15,10 @@
 .cc-swatch-default { background: #f4f4f5; }
 
 .cc-entry-admin tr.cc-row-stricken td { text-decoration: line-through; color: #888; }
+
+/* EditCalendar: give the settings / week-header / entry sections breathing room */
+.cc-editcal .card { margin-bottom: 1.5rem; border-color: #e2e4e8; }
+.cc-editcal .card-body { padding: 1.5rem; }
+.cc-editcal .card-body > .row { margin-bottom: .25rem; }
+.cc-editcal .cc-inline-form { margin-bottom: 1.25rem; }
+.cc-editcal .cc-repeat { margin-top: .5rem; }
