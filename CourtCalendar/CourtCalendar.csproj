@@ -138,6 +138,13 @@
     <Compile Include="Views\EditCalendar.ascx.designer.cs">
       <DependentUpon>EditCalendar.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings.ascx.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Settings.ascx.designer.cs">
+      <DependentUpon>Settings.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\View.ascx" />
@@ -145,6 +152,7 @@
     <Content Include="Views\ManageDivisions.ascx" />
     <Content Include="Views\ManageCategories.ascx" />
     <Content Include="Views\EditCalendar.ascx" />
+    <Content Include="Views\Settings.ascx" />
     <Content Include="module.css" />
     <Content Include="License.txt" />
     <Content Include="ReleaseNotes.txt" />

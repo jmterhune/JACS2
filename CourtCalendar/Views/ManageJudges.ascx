@@ -38,13 +38,20 @@
             <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control" />
         </div>
         <div class="mb-2">
-            <label class="form-label" for="<%= txtJudgeUsername.ClientID %>">Judge username (intranet account)</label>
-            <asp:TextBox ID="txtJudgeUsername" runat="server" CssClass="form-control" />
-            <small class="form-text text-muted">The judge signs in with this account to manage their calendars.</small>
+            <label class="form-label" for="<%= txtJudgeUser.ClientID %>">Judge (intranet account)</label>
+            <asp:TextBox ID="txtJudgeUser" runat="server" CssClass="form-control" autocomplete="off" placeholder="Type to search&hellip;" />
+            <datalist id="dlJudgeUsers_<%= ModuleId %>">
+                <asp:Literal ID="ltJudgeUsers" runat="server" EnableViewState="false" />
+            </datalist>
+            <small class="form-text text-muted">Pick a user in the configured Judge role. The judge signs in with this account.</small>
         </div>
         <div class="mb-2">
-            <label class="form-label" for="<%= txtJaUsername.ClientID %>">JA username (intranet account)</label>
-            <asp:TextBox ID="txtJaUsername" runat="server" CssClass="form-control" />
+            <label class="form-label" for="<%= txtJaUser.ClientID %>">Judicial assistant (intranet account)</label>
+            <asp:TextBox ID="txtJaUser" runat="server" CssClass="form-control" autocomplete="off" placeholder="Type to search&hellip;" />
+            <datalist id="dlJaUsers_<%= ModuleId %>">
+                <asp:Literal ID="ltJaUsers" runat="server" EnableViewState="false" />
+            </datalist>
+            <small class="form-text text-muted">Pick a user in the configured JA role.</small>
         </div>
         <div class="mb-2">
             <label class="form-label" for="<%= txtJaName.ClientID %>">JA display name</label>

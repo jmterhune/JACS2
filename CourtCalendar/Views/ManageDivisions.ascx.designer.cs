@@ -17,7 +17,7 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.Literal ltEditTitle;
         protected global::System.Web.UI.WebControls.HiddenField hfDivisionId;
         protected global::System.Web.UI.WebControls.TextBox txtName;
-        protected global::System.Web.UI.WebControls.TextBox txtCounty;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCounty;
         protected global::System.Web.UI.WebControls.DropDownList ddlJudge;
         protected global::System.Web.UI.WebControls.DropDownList ddlType;
         protected global::System.Web.UI.WebControls.TextBox txtCourtroom;

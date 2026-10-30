@@ -41,8 +41,14 @@
                 <asp:TextBox ID="txtName" runat="server" CssClass="form-control" />
             </div>
             <div class="col-md-6 mb-2">
-                <label class="form-label" for="<%= txtCounty.ClientID %>">County</label>
-                <asp:TextBox ID="txtCounty" runat="server" CssClass="form-control" />
+                <label class="form-label" for="<%= ddlCounty.ClientID %>">County</label>
+                <asp:DropDownList ID="ddlCounty" runat="server" CssClass="form-select">
+                    <asp:ListItem Value="">-- select --</asp:ListItem>
+                    <asp:ListItem Value="Sarasota">Sarasota</asp:ListItem>
+                    <asp:ListItem Value="Manatee">Manatee</asp:ListItem>
+                    <asp:ListItem Value="DeSoto">DeSoto</asp:ListItem>
+                    <asp:ListItem Value="South County">South County</asp:ListItem>
+                </asp:DropDownList>
             </div>
             <div class="col-md-6 mb-2">
                 <label class="form-label" for="<%= ddlJudge.ClientID %>">Assigned judge</label>

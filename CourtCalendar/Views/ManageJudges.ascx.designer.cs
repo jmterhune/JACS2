@@ -17,8 +17,10 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.Literal ltEditTitle;
         protected global::System.Web.UI.WebControls.HiddenField hfJudgeId;
         protected global::System.Web.UI.WebControls.TextBox txtFullName;
-        protected global::System.Web.UI.WebControls.TextBox txtJudgeUsername;
-        protected global::System.Web.UI.WebControls.TextBox txtJaUsername;
+        protected global::System.Web.UI.WebControls.TextBox txtJudgeUser;
+        protected global::System.Web.UI.WebControls.Literal ltJudgeUsers;
+        protected global::System.Web.UI.WebControls.TextBox txtJaUser;
+        protected global::System.Web.UI.WebControls.Literal ltJaUsers;
         protected global::System.Web.UI.WebControls.TextBox txtJaName;
         protected global::System.Web.UI.WebControls.TextBox txtPhone;
         protected global::System.Web.UI.WebControls.CheckBox chkActive;

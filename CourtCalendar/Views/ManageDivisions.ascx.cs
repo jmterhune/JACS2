@@ -82,6 +82,12 @@ namespace tjc.Modules.CourtCalendar
             if (sel != null) ddlJudge.SelectedValue = selectedJudgeId.ToString();
         }
 
+        private void SelectCounty(string county)
+        {
+            var item = ddlCounty.Items.FindByValue(county ?? string.Empty);
+            ddlCounty.SelectedValue = item != null ? (county ?? string.Empty) : string.Empty;
+        }
+
         private void ShowEdit(int divisionId)
         {
             pnlList.Visible = false;
@@ -95,7 +101,7 @@ namespace tjc.Modules.CourtCalendar
                 if (d == null) { BindList(); return; }
                 BindJudges(d.JudgeId);
                 txtName.Text = d.Name;
-                txtCounty.Text = d.County;
+                SelectCounty(d.County);
                 ddlType.SelectedValue = d.CalendarTypeId.ToString();
                 txtCourtroom.Text = d.Courtroom;
                 txtSlug.Text = d.Slug;
@@ -109,7 +115,8 @@ namespace tjc.Modules.CourtCalendar
             else
             {
                 BindJudges(0);
-                txtName.Text = txtCounty.Text = txtCourtroom.Text = txtSlug.Text = string.Empty;
+                txtName.Text = txtCourtroom.Text = txtSlug.Text = string.Empty;
+                SelectCounty(string.Empty);
                 txtZoomId.Text = txtZoomPwd.Text = txtJaPhone.Text = txtEmail.Text = string.Empty;
                 txtSortOrder.Text = "0";
                 ddlType.SelectedValue = "1";
@@ -136,7 +143,7 @@ namespace tjc.Modules.CourtCalendar
             var judge = judgeId > 0 ? Judges.GetJudge(judgeId) : null;
 
             d.Name = txtName.Text.Trim();
-            d.County = txtCounty.Text.Trim();
+            d.County = ddlCounty.SelectedValue;
             d.JudgeId = judgeId;
             d.JudgeName = judge != null ? judge.FullName : string.Empty;
             int typeId; int.TryParse(ddlType.SelectedValue, out typeId);

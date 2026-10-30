@@ -87,6 +87,16 @@
                     <helpUrl />
                     <viewOrder>0</viewOrder>
                   </moduleControl>
+                  <moduleControl>
+                    <controlKey>Settings</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/CourtCalendar/Views/Settings.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Court Calendar Settings</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
                 </moduleControls>
               </moduleDefinition>
             </moduleDefinitions>
