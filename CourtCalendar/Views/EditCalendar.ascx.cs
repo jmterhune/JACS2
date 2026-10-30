@@ -75,6 +75,9 @@ namespace tjc.Modules.CourtCalendar
                 return;
             }
 
+            // Week row headers only apply to the Weekday-headers layout.
+            pnlWeekHeaders.Visible = division.CalendarTypeId == (int)CalendarType.WeekdayHeader;
+
             LoadCategoryNames();
 
             if (!IsPostBack)

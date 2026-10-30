@@ -25,6 +25,7 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.Button btnSendNotification;
         protected global::System.Web.UI.WebControls.Button btnDeleteCalendar;
         protected global::System.Web.UI.WebControls.Panel pnlChildren;
+        protected global::System.Web.UI.WebControls.Panel pnlWeekHeaders;
         protected global::System.Web.UI.WebControls.Button btnAddWeek;
         protected global::System.Web.UI.WebControls.Panel pnlWeekForm;
         protected global::System.Web.UI.WebControls.HiddenField hfWeekId;

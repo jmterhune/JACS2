@@ -52,7 +52,8 @@
         </div></div>
 
         <asp:Panel ID="pnlChildren" runat="server">
-            <%-- Week headers --%>
+            <%-- Week headers (only for the Weekday-headers layout) --%>
+            <asp:Panel ID="pnlWeekHeaders" runat="server">
             <div class="card mb-3"><div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h3 class="cc-h3 mb-0">Week row headers</h3>
@@ -100,6 +101,7 @@
                     </tbody>
                 </table>
             </div></div>
+            </asp:Panel>
 
             <%-- Entries --%>
             <div class="card mb-3"><div class="card-body">
