@@ -316,7 +316,27 @@ namespace tjc.Modules.CourtCalendar
                         ltMessage.Text = Alert(entry.IsStricken ? "Entry restored." : "Entry struck.", "success");
                     }
                     break;
+                case "copynext":
+                    CopyEntryToNextDay(id);
+                    break;
             }
+        }
+
+        private void CopyEntryToNextDay(int entryId)
+        {
+            if (!CanManageDivision(CurrentDivision)) return;
+            var src = Calendars.GetEntry(entryId);
+            if (src == null) return;
+            var next = src.EntryDate.AddDays(1);
+            var cal = CurrentCalendar;
+            if (cal != null && (next.Year != cal.Year || next.Month != cal.Month))
+            {
+                ltMessage.Text = Alert("The next day falls in another month. Add it on that month's calendar instead.", "warning");
+                return;
+            }
+            Calendars.CopyEntryToNextDay(entryId, UserId);
+            BindEntries();
+            ltMessage.Text = Alert(string.Format("Copied to {0:MM/dd}.", next), "success");
         }
 
         private void ShowEntryForm(int entryId)
@@ -324,6 +344,10 @@ namespace tjc.Modules.CourtCalendar
             pnlEntryForm.Visible = true;
             BindCategoryDropdown();
             hfEntryId.Value = entryId.ToString();
+            txtRepeatThrough.Text = string.Empty;
+            chkRepeatWeekdaysOnly.Checked = true;
+            // Repeat-across-a-range only applies when adding a new entry.
+            pnlRepeat.Visible = entryId <= 0;
             if (entryId > 0)
             {
                 var en = Calendars.GetEntry(entryId);
@@ -375,9 +399,53 @@ namespace tjc.Modules.CourtCalendar
             en.CategoryId = ParseId(ddlCategory.SelectedValue);
             en.SortOrder = ParseId(txtEntrySort.Text);
             Calendars.SaveEntry(en);
+
+            int repeated = 0;
+            string rangeWarning = null;
+            if (entryId <= 0)
+                repeated = ReplicateAcrossRange(en, date, out rangeWarning);
+
             pnlEntryForm.Visible = false;
             BindEntries();
-            ltMessage.Text = Alert("Entry saved.", "success");
+            if (!string.IsNullOrEmpty(rangeWarning))
+                ltMessage.Text = Alert(rangeWarning, "warning");
+            else if (repeated > 0)
+                ltMessage.Text = Alert(string.Format("Entry saved and added to {0} more day(s).", repeated), "success");
+            else
+                ltMessage.Text = Alert("Entry saved.", "success");
+        }
+
+        /// <summary>
+        /// When a "repeat through" end date is set, copies the just-saved entry onto
+        /// each following day up to that date (optionally weekdays only), staying
+        /// within the calendar's own month. Returns how many copies were added and,
+        /// via <paramref name="warning"/>, any reason the range was rejected.
+        /// </summary>
+        private int ReplicateAcrossRange(CalendarEntry template, DateTime startDate, out string warning)
+        {
+            warning = null;
+            DateTime through;
+            if (!DateTime.TryParse(txtRepeatThrough.Text, out through)) return 0;
+            through = through.Date;
+            if (through <= startDate.Date) return 0;
+
+            var cal = CurrentCalendar;
+            if (cal != null && (through.Year != cal.Year || through.Month != cal.Month))
+            {
+                warning = "Entry saved. The repeat-through date is outside this month, so no extra days were added.";
+                return 0;
+            }
+
+            bool weekdaysOnly = chkRepeatWeekdaysOnly.Checked;
+            var dates = new List<DateTime>();
+            for (var d = startDate.Date.AddDays(1); d <= through; d = d.AddDays(1))
+            {
+                if (weekdaysOnly && (d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday))
+                    continue;
+                dates.Add(d);
+            }
+            if (dates.Count == 0) return 0;
+            return Calendars.ReplicateEntry(template, dates, UserId);
         }
 
         protected void btnCancelEntry_Click(object sender, EventArgs e)

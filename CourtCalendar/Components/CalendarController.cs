@@ -159,6 +159,63 @@ namespace tjc.Modules.CourtCalendar.Components
             }
         }
 
+        /// <summary>
+        /// Copies an existing entry onto the following day and returns the new
+        /// entry, or null when the source is missing. The copy is never stricken.
+        /// </summary>
+        public CalendarEntry CopyEntryToNextDay(int entryId, int userId)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<CalendarEntry>();
+                var src = rep.GetById(entryId);
+                if (src == null) return null;
+                var copy = CloneForDate(src, src.EntryDate.AddDays(1), userId);
+                rep.Insert(copy);
+                return copy;
+            }
+        }
+
+        /// <summary>
+        /// Inserts a copy of the template entry on each of the given dates (used to
+        /// replicate one entry across a day range). Returns the number inserted.
+        /// </summary>
+        public int ReplicateEntry(CalendarEntry template, IEnumerable<DateTime> dates, int userId)
+        {
+            if (template == null || dates == null) return 0;
+            int count = 0;
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<CalendarEntry>();
+                foreach (var d in dates)
+                {
+                    rep.Insert(CloneForDate(template, d.Date, userId));
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private static CalendarEntry CloneForDate(CalendarEntry src, DateTime date, int userId)
+        {
+            return new CalendarEntry
+            {
+                CalendarId = src.CalendarId,
+                EntryDate = date.Date,
+                Timespan = src.Timespan,
+                AllDay = src.AllDay,
+                ShortTitle = src.ShortTitle,
+                Detail = src.Detail,
+                CategoryId = src.CategoryId,
+                SortOrder = src.SortOrder,
+                IsStricken = false,
+                StrickenByUserId = 0,
+                StrickenOnDate = null,
+                CreatedByUserId = userId,
+                CreatedOnDate = DateTime.Now,
+            };
+        }
+
         /// <summary>Toggles the stricken state of an entry; returns the new state.</summary>
         public bool SetStricken(int entryId, bool stricken, int userId)
         {

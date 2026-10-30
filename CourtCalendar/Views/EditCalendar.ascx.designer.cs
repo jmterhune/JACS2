@@ -12,6 +12,7 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.HyperLink lnkHome;
         protected global::System.Web.UI.WebControls.Panel pnlDenied;
         protected global::System.Web.UI.WebControls.Panel pnlMain;
+        protected global::System.Web.UI.UpdatePanel upEdit;
         protected global::System.Web.UI.WebControls.Literal ltTitle;
         protected global::System.Web.UI.WebControls.HiddenField hfCalendarId;
         protected global::System.Web.UI.WebControls.Panel pnlNewPeriod;
@@ -44,6 +45,9 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.TextBox txtDetail;
         protected global::System.Web.UI.WebControls.DropDownList ddlCategory;
         protected global::System.Web.UI.WebControls.TextBox txtEntrySort;
+        protected global::System.Web.UI.WebControls.Panel pnlRepeat;
+        protected global::System.Web.UI.WebControls.TextBox txtRepeatThrough;
+        protected global::System.Web.UI.WebControls.CheckBox chkRepeatWeekdaysOnly;
         protected global::System.Web.UI.WebControls.Button btnSaveEntry;
         protected global::System.Web.UI.WebControls.Button btnCancelEntry;
         protected global::System.Web.UI.WebControls.Repeater rptEntries;

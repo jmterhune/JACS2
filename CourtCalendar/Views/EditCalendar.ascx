@@ -1,8 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditCalendar.ascx.cs" Inherits="tjc.Modules.CourtCalendar.EditCalendar" %>
 
 <div class="cc-admin cc-editcal">
-    <asp:Literal ID="ltMessage" runat="server" EnableViewState="false" />
-
     <div class="cc-toolbar mb-3">
         <asp:HyperLink ID="lnkHome" runat="server" CssClass="btn btn-link"><i class="fas fa-arrow-left" aria-hidden="true"></i>&nbsp;Back to calendars</asp:HyperLink>
     </div>
@@ -12,7 +10,10 @@
     </asp:Panel>
 
     <asp:Panel ID="pnlMain" runat="server">
-        <h2 class="cc-h2"><asp:Literal ID="ltTitle" runat="server" /></h2>
+        <asp:UpdatePanel ID="upEdit" runat="server" RenderMode="Block">
+            <ContentTemplate>
+                <asp:Literal ID="ltMessage" runat="server" EnableViewState="false" />
+                <h2 class="cc-h2"><asp:Literal ID="ltTitle" runat="server" /></h2>
 
         <%-- Calendar settings --%>
         <div class="card mb-3"><div class="card-body">
@@ -140,6 +141,21 @@
                             <asp:TextBox ID="txtEntrySort" runat="server" CssClass="form-control" Text="0" />
                         </div>
                     </div>
+                    <asp:Panel ID="pnlRepeat" runat="server" CssClass="cc-repeat border-top pt-2 mb-2">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label" for="<%= txtRepeatThrough.ClientID %>">Repeat through (optional)</label>
+                                <asp:TextBox ID="txtRepeatThrough" runat="server" CssClass="form-control" TextMode="Date" />
+                                <small class="form-text text-muted">Leave blank for a single day. Set a later date to add this entry to every day up to and including it.</small>
+                            </div>
+                            <div class="col-md-4 mb-2 d-flex align-items-center">
+                                <div class="form-check mt-3">
+                                    <asp:CheckBox ID="chkRepeatWeekdaysOnly" runat="server" CssClass="form-check-input" Checked="true" />
+                                    <label class="form-check-label" for="<%= chkRepeatWeekdaysOnly.ClientID %>">Weekdays only (skip Sat/Sun)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </asp:Panel>
                     <asp:Button ID="btnSaveEntry" runat="server" CssClass="btn btn-sm btn-primary" Text="Save" OnClick="btnSaveEntry_Click" />
                     <asp:Button ID="btnCancelEntry" runat="server" CssClass="btn btn-sm btn-secondary" Text="Cancel" CausesValidation="false" OnClick="btnCancelEntry_Click" />
                 </asp:Panel>
@@ -155,6 +171,7 @@
                                     <td><%# System.Web.HttpUtility.HtmlEncode((string)Eval("Detail")) %></td>
                                     <td><%# CategoryName((int)Eval("CategoryId")) %></td>
                                     <td class="text-end">
+                                        <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary" CommandName="copynext" CommandArgument='<%# Eval("EntryId") %>' ToolTip="Copy to next day"><i class="fas fa-copy" aria-hidden="true"></i></asp:LinkButton>
                                         <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-warning" CommandName="strike" CommandArgument='<%# Eval("EntryId") %>' ToolTip="Strike / unstrike"><i class="fas fa-strikethrough" aria-hidden="true"></i></asp:LinkButton>
                                         <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-primary" CommandName="edit" CommandArgument='<%# Eval("EntryId") %>'><i class="fas fa-pen" aria-hidden="true"></i></asp:LinkButton>
                                         <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-danger" CommandName="delete" CommandArgument='<%# Eval("EntryId") %>' OnClientClick="return confirm('Delete this entry?');"><i class="fas fa-trash" aria-hidden="true"></i></asp:LinkButton>
@@ -166,5 +183,11 @@
                 </table>
             </div></div>
         </asp:Panel>
+            </ContentTemplate>
+            <Triggers>
+                <asp:PostBackTrigger ControlID="btnSaveCalendar" />
+                <asp:PostBackTrigger ControlID="btnDeleteCalendar" />
+            </Triggers>
+        </asp:UpdatePanel>
     </asp:Panel>
 </div>
