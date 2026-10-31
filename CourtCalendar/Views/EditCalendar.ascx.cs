@@ -78,6 +78,24 @@ namespace tjc.Modules.CourtCalendar
             // Week row headers only apply to the "Include Row Headers" layout.
             pnlWeekHeaders.Visible = division.CalendarTypeId == (int)CalendarType.RowHeader;
 
+            // Offer the drag-and-drop grid view once the calendar exists.
+            if (CurrentCalendarId > 0)
+            {
+                lnkGridView.NavigateUrl = EditCalendarGridUrl(CurrentCalendarId);
+                lnkGridView.Visible = true;
+            }
+
+            // Link straight to this division's page on the public site, when the
+            // public calendar URL is configured (module setting) and the division
+            // has a slug. The public module selects a division via ?div={slug}.
+            var publicBase = (Settings["PublicCalendarUrl"] as string ?? string.Empty).Trim();
+            if (publicBase.Length > 0 && !string.IsNullOrWhiteSpace(division.Slug))
+            {
+                // Friendly-URL form: {page}/div/{slug}
+                lnkPublic.NavigateUrl = publicBase.TrimEnd('/') + "/div/" + division.Slug.Trim();
+                lnkPublic.Visible = true;
+            }
+
             LoadCategoryNames();
 
             if (!IsPostBack)
@@ -116,6 +134,17 @@ namespace tjc.Modules.CourtCalendar
             if (categoryId <= 0) return "Default";
             string name;
             return (_categoryNames != null && _categoryNames.TryGetValue(categoryId, out name)) ? name : "Default";
+        }
+
+        /// <summary>The short title encoded and wrapped with bold/italic markup when set.</summary>
+        protected string StyledTitle(object dataItem)
+        {
+            var en = dataItem as CalendarEntry;
+            if (en == null) return string.Empty;
+            var html = HttpUtility.HtmlEncode(en.ShortTitle ?? string.Empty);
+            if (en.TitleBold) html = "<strong>" + html + "</strong>";
+            if (en.TitleItalic) html = "<em>" + html + "</em>";
+            return html;
         }
 
         private void LoadCategoryNames()
@@ -359,6 +388,8 @@ namespace tjc.Modules.CourtCalendar
                 txtTimespan.Text = en.Timespan;
                 chkAllDay.Checked = en.AllDay;
                 txtShortTitle.Text = en.ShortTitle;
+                chkTitleBold.Checked = en.TitleBold;
+                chkTitleItalic.Checked = en.TitleItalic;
                 txtDetail.Text = en.Detail;
                 var sel = ddlCategory.Items.FindByValue(en.CategoryId.ToString());
                 ddlCategory.SelectedValue = sel != null ? en.CategoryId.ToString() : "0";
@@ -368,6 +399,8 @@ namespace tjc.Modules.CourtCalendar
             {
                 txtEntryDate.Text = txtTimespan.Text = txtShortTitle.Text = txtDetail.Text = string.Empty;
                 chkAllDay.Checked = false;
+                chkTitleBold.Checked = false;
+                chkTitleItalic.Checked = false;
                 ddlCategory.SelectedValue = "0";
                 txtEntrySort.Text = "0";
             }
@@ -398,6 +431,8 @@ namespace tjc.Modules.CourtCalendar
             en.AllDay = chkAllDay.Checked;
             en.Timespan = chkAllDay.Checked ? string.Empty : txtTimespan.Text.Trim();
             en.ShortTitle = txtShortTitle.Text.Trim();
+            en.TitleBold = chkTitleBold.Checked;
+            en.TitleItalic = chkTitleItalic.Checked;
             en.Detail = txtDetail.Text.Trim();
             en.CategoryId = ParseId(ddlCategory.SelectedValue);
             en.SortOrder = ParseId(txtEntrySort.Text);

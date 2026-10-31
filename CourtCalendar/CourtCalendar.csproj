@@ -82,6 +82,12 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Http">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\websites\apps.jud12.flcourts.org\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml.Linq" />
@@ -146,6 +152,15 @@
     <Compile Include="Views\Settings.ascx.designer.cs">
       <DependentUpon>Settings.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditCalendarGrid.ascx.cs">
+      <DependentUpon>EditCalendarGrid.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\EditCalendarGrid.ascx.designer.cs">
+      <DependentUpon>EditCalendarGrid.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ServiceRouteMapper.cs" />
+    <Compile Include="Services\CalendarAdminController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\View.ascx" />
@@ -153,6 +168,7 @@
     <Content Include="Views\ManageDivisions.ascx" />
     <Content Include="Views\ManageCategories.ascx" />
     <Content Include="Views\EditCalendar.ascx" />
+    <Content Include="Views\EditCalendarGrid.ascx" />
     <Content Include="Views\Settings.ascx" />
     <Content Include="module.css" />
     <Content Include="License.txt" />

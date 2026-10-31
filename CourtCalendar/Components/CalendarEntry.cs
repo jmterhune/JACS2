@@ -33,6 +33,12 @@ namespace tjc.Modules.CourtCalendar.Components
         /// <summary>e.g. "Pleas/Motions", "Trials (Backup)".</summary>
         public string ShortTitle { get; set; }
 
+        /// <summary>Render the short title bold.</summary>
+        public bool TitleBold { get; set; }
+
+        /// <summary>Render the short title italic.</summary>
+        public bool TitleItalic { get; set; }
+
         /// <summary>Popover detail (e.g. "SPECIAL SET", "BARTHOLOMEW", "(Ibarra/Callin)").</summary>
         public string Detail { get; set; }
 

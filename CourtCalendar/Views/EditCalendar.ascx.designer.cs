@@ -10,6 +10,8 @@ namespace tjc.Modules.CourtCalendar
     {
         protected global::System.Web.UI.WebControls.Literal ltMessage;
         protected global::System.Web.UI.WebControls.HyperLink lnkHome;
+        protected global::System.Web.UI.WebControls.HyperLink lnkGridView;
+        protected global::System.Web.UI.WebControls.HyperLink lnkPublic;
         protected global::System.Web.UI.WebControls.Panel pnlDenied;
         protected global::System.Web.UI.WebControls.Panel pnlMain;
         protected global::System.Web.UI.UpdatePanel upEdit;
@@ -43,6 +45,8 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.TextBox txtTimespan;
         protected global::System.Web.UI.WebControls.CheckBox chkAllDay;
         protected global::System.Web.UI.WebControls.TextBox txtShortTitle;
+        protected global::System.Web.UI.WebControls.CheckBox chkTitleBold;
+        protected global::System.Web.UI.WebControls.CheckBox chkTitleItalic;
         protected global::System.Web.UI.WebControls.TextBox txtDetail;
         protected global::System.Web.UI.WebControls.DropDownList ddlCategory;
         protected global::System.Web.UI.WebControls.TextBox txtEntrySort;

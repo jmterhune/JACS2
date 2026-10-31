@@ -205,6 +205,8 @@ namespace tjc.Modules.CourtCalendar.Components
                 Timespan = src.Timespan,
                 AllDay = src.AllDay,
                 ShortTitle = src.ShortTitle,
+                TitleBold = src.TitleBold,
+                TitleItalic = src.TitleItalic,
                 Detail = src.Detail,
                 CategoryId = src.CategoryId,
                 SortOrder = src.SortOrder,
@@ -214,6 +216,80 @@ namespace tjc.Modules.CourtCalendar.Components
                 CreatedByUserId = userId,
                 CreatedOnDate = DateTime.Now,
             };
+        }
+
+        /// <summary>
+        /// Moves an entry to a different date and position (drag-and-drop in the grid
+        /// view). Only the date and order change. Returns the updated entry or null.
+        /// </summary>
+        public CalendarEntry MoveEntry(int entryId, DateTime newDate, int newSortOrder)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<CalendarEntry>();
+                var en = rep.GetById(entryId);
+                if (en == null) return null;
+                en.EntryDate = newDate.Date;
+                en.SortOrder = newSortOrder;
+                rep.Update(en);
+                return en;
+            }
+        }
+
+        /// <summary>
+        /// Sets SortOrder on the given entries to match their position in the list,
+        /// after confirming each belongs to the calendar and date (grid reorder).
+        /// </summary>
+        public void ReorderDay(int calendarId, DateTime date, IList<int> orderedEntryIds)
+        {
+            if (orderedEntryIds == null || orderedEntryIds.Count == 0) return;
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<CalendarEntry>();
+                for (int i = 0; i < orderedEntryIds.Count; i++)
+                {
+                    var en = rep.GetById(orderedEntryIds[i]);
+                    if (en == null || en.CalendarId != calendarId || en.EntryDate.Date != date.Date) continue;
+                    if (en.SortOrder == i) continue;
+                    en.SortOrder = i;
+                    rep.Update(en);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copies an entry onto another date, changing only the date (Shift+drag in the
+        /// grid). Everything else - time, title, styling, detail, category, stricken
+        /// state - is preserved. Returns the new entry or null when the source is gone.
+        /// </summary>
+        public CalendarEntry CopyEntryToDate(int entryId, DateTime date, int newSortOrder, int userId)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<CalendarEntry>();
+                var src = rep.GetById(entryId);
+                if (src == null) return null;
+                var copy = new CalendarEntry
+                {
+                    CalendarId = src.CalendarId,
+                    EntryDate = date.Date,
+                    Timespan = src.Timespan,
+                    AllDay = src.AllDay,
+                    ShortTitle = src.ShortTitle,
+                    TitleBold = src.TitleBold,
+                    TitleItalic = src.TitleItalic,
+                    Detail = src.Detail,
+                    CategoryId = src.CategoryId,
+                    SortOrder = newSortOrder,
+                    IsStricken = src.IsStricken,
+                    StrickenByUserId = src.StrickenByUserId,
+                    StrickenOnDate = src.StrickenOnDate,
+                    CreatedByUserId = userId,
+                    CreatedOnDate = DateTime.Now,
+                };
+                rep.Insert(copy);
+                return copy;
+            }
         }
 
         /// <summary>Toggles the stricken state of an entry; returns the new state.</summary>

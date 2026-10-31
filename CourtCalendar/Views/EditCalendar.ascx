@@ -2,7 +2,9 @@
 
 <div class="cc-admin cc-editcal">
     <div class="cc-toolbar mb-3">
-        <asp:HyperLink ID="lnkHome" runat="server" CssClass="btn btn-link"><i class="fas fa-arrow-left" aria-hidden="true"></i>&nbsp;Back to calendars</asp:HyperLink>
+        <asp:HyperLink ID="lnkHome" runat="server" CssClass="btn btn-outline-secondary"><i class="fas fa-arrow-left" aria-hidden="true"></i>&nbsp;Back to calendars</asp:HyperLink>
+        <asp:HyperLink ID="lnkGridView" runat="server" CssClass="btn btn-outline-secondary" Visible="false"><i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;Calendar view</asp:HyperLink>
+        <asp:HyperLink ID="lnkPublic" runat="server" CssClass="btn btn-outline-secondary" Target="_blank" Visible="false"><i class="fas fa-external-link-alt" aria-hidden="true"></i>&nbsp;View on public site</asp:HyperLink>
     </div>
 
     <asp:Panel ID="pnlDenied" runat="server" Visible="false">
@@ -129,6 +131,17 @@
                         <div class="col-md-5 mb-2">
                             <label class="form-label" for="<%= txtShortTitle.ClientID %>">Short title</label>
                             <asp:TextBox ID="txtShortTitle" runat="server" CssClass="form-control" placeholder="Pleas/Motions" />
+                            <small class="form-text text-muted">Please avoid ALL CAPS &ndash; screen readers may read capitalized words letter by letter. Use the Bold option for emphasis.</small>
+                        </div>
+                        <div class="col-md-3 mb-2 d-flex align-items-end">
+                            <div class="form-check me-3">
+                                <asp:CheckBox ID="chkTitleBold" runat="server" CssClass="form-check-input" />
+                                <label class="form-check-label" for="<%= chkTitleBold.ClientID %>"><strong>Bold</strong></label>
+                            </div>
+                            <div class="form-check">
+                                <asp:CheckBox ID="chkTitleItalic" runat="server" CssClass="form-check-input" />
+                                <label class="form-check-label" for="<%= chkTitleItalic.ClientID %>"><em>Italic</em></label>
+                            </div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="<%= txtDetail.ClientID %>">Detail (shown in hover popover)</label>
@@ -169,7 +182,7 @@
                                 <tr class='<%# (bool)Eval("IsStricken") ? "cc-row-stricken" : "" %>'>
                                     <td><%# Eval("EntryDate", "{0:MM/dd}") %></td>
                                     <td><%# (bool)Eval("AllDay") ? "All day" : System.Web.HttpUtility.HtmlEncode((string)Eval("Timespan")) %></td>
-                                    <td><%# System.Web.HttpUtility.HtmlEncode((string)Eval("ShortTitle")) %></td>
+                                    <td><%# StyledTitle(Container.DataItem) %></td>
                                     <td><%# System.Web.HttpUtility.HtmlEncode((string)Eval("Detail")) %></td>
                                     <td><%# CategoryName((int)Eval("CategoryId")) %></td>
                                     <td class="text-end">

@@ -10,5 +10,6 @@ namespace tjc.Modules.CourtCalendar
     {
         protected global::System.Web.UI.WebControls.DropDownList ddlJudgeRole;
         protected global::System.Web.UI.WebControls.DropDownList ddlJaRole;
+        protected global::System.Web.UI.WebControls.TextBox txtPublicUrl;
     }
 }

@@ -11,4 +11,9 @@
         <asp:DropDownList ID="ddlJaRole" runat="server" CssClass="form-select" />
         <small class="form-text text-muted">Users in this role appear in the JA picker on the Manage Judges screen.</small>
     </div>
+    <div class="dnnFormItem mb-2">
+        <label class="form-label" for="<%= txtPublicUrl.ClientID %>">Public calendar page URL</label>
+        <asp:TextBox ID="txtPublicUrl" runat="server" CssClass="form-control" placeholder="https://www.jud12.flcourts.org/court-calendars" />
+        <small class="form-text text-muted">Address of the public calendar page. The edit screen adds <code>/div/{slug}</code> to link straight to a division's published calendar.</small>
+    </div>
 </div>

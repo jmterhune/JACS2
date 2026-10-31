@@ -70,5 +70,6 @@ namespace tjc.Modules.CourtCalendar
         public string ManageCategoriesUrl(int divisionId) { return _navigationManager.NavigateURL(TabId, "ManageCategories", "mid=" + ModuleId, "did=" + divisionId); }
         public string NewCalendarUrl(int divisionId) { return _navigationManager.NavigateURL(TabId, "EditCalendar", "mid=" + ModuleId, "did=" + divisionId); }
         public string EditCalendarUrl(int calendarId) { return _navigationManager.NavigateURL(TabId, "EditCalendar", "mid=" + ModuleId, "cid=" + calendarId); }
+        public string EditCalendarGridUrl(int calendarId) { return _navigationManager.NavigateURL(TabId, "EditCalendarGrid", "mid=" + ModuleId, "cid=" + calendarId); }
     }
 }

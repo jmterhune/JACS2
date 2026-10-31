@@ -36,3 +36,35 @@
 .cc-editcal .card-body > .row { margin-bottom: .25rem; }
 .cc-editcal .cc-inline-form { margin-bottom: 1.25rem; }
 .cc-editcal .cc-repeat { margin-top: .5rem; }
+
+/* ---- Calendar grid authoring view ---- */
+.cc-editgrid .cc-g-help { margin-bottom: .5rem; }
+.cc-editgrid .cc-g-message { min-height: 1.25rem; color: #1f3b57; font-size: .9em; margin-bottom: .5rem; }
+.cc-editgrid .cc-g-message.cc-g-error { color: #b00020; }
+.cc-g-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.cc-g-grid th { background: #1f3b57; color: #fff; text-align: center; padding: .4rem; font-weight: 600; font-size: .85em; }
+.cc-g-grid td { border: 1px solid #d0d0d5; vertical-align: top; width: 14.28%; height: 7rem; padding: .25rem; }
+.cc-g-grid td.cc-g-outmonth { background: #fafafa; }
+.cc-g-dayhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: .25rem; }
+.cc-g-daynum { font-weight: 700; font-size: .85em; color: #444; }
+.cc-g-add { border: none; background: transparent; color: #1f3b57; cursor: pointer; padding: 0 .25rem; line-height: 1; opacity: .45; }
+.cc-g-day:hover .cc-g-add, .cc-g-add:focus { opacity: 1; }
+.cc-g-list { list-style: none; margin: 0; padding: 0; min-height: 1.75rem; display: flex; flex-direction: column; gap: 3px; }
+.cc-g-entry { border-left: 4px solid #b9bcc2; background: #f4f4f5; border-radius: 3px; padding: 2px 5px; font-size: .82em; line-height: 1.2; cursor: grab; }
+.cc-g-entry .cc-g-time { font-weight: 700; margin-right: .2rem; white-space: nowrap; }
+.cc-g-entry.cc-g-stricken { opacity: .7; }
+.cc-g-entry.cc-g-stricken .cc-g-title { text-decoration: line-through; }
+.cc-g-ghost { opacity: .4; }
+
+/* Lightweight modal (no Bootstrap JS dependency) */
+.ccg-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.4); z-index: 1060; display: flex; align-items: flex-start; justify-content: center; padding: 3rem 1rem; }
+.ccg-modal-dialog { background: #fff; border-radius: 8px; width: 100%; max-width: 720px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+.ccg-modal-head { display: flex; justify-content: space-between; align-items: center; padding: .85rem 1.25rem; border-bottom: 1px solid #e2e4e8; }
+.ccg-modal-body { padding: 1.25rem; }
+.ccg-modal-foot { display: flex; gap: .5rem; padding: .85rem 1.25rem; border-top: 1px solid #e2e4e8; }
+.ccg-modal-foot .ccg-close { margin-left: auto; }
+
+@media (max-width: 640px) {
+    .cc-g-grid { min-width: 48rem; }
+    .cc-editgrid .cc-grid-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}

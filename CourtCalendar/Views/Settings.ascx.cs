@@ -20,6 +20,7 @@ namespace tjc.Modules.CourtCalendar
     {
         public const string JudgeRoleSetting = "JudgeRole";
         public const string JaRoleSetting = "JaRole";
+        public const string PublicCalendarUrlSetting = "PublicCalendarUrl";
 
         public override void LoadSettings()
         {
@@ -30,6 +31,7 @@ namespace tjc.Modules.CourtCalendar
                 BindRoles(ddlJaRole);
                 if (Settings.Contains(JudgeRoleSetting)) Select(ddlJudgeRole, Settings[JudgeRoleSetting].ToString());
                 if (Settings.Contains(JaRoleSetting)) Select(ddlJaRole, Settings[JaRoleSetting].ToString());
+                if (Settings.Contains(PublicCalendarUrlSetting)) txtPublicUrl.Text = Settings[PublicCalendarUrlSetting].ToString();
             }
             catch (Exception exc)
             {
@@ -44,6 +46,7 @@ namespace tjc.Modules.CourtCalendar
                 var modules = ModuleController.Instance;
                 modules.UpdateModuleSetting(ModuleId, JudgeRoleSetting, ddlJudgeRole.SelectedValue);
                 modules.UpdateModuleSetting(ModuleId, JaRoleSetting, ddlJaRole.SelectedValue);
+                modules.UpdateModuleSetting(ModuleId, PublicCalendarUrlSetting, (txtPublicUrl.Text ?? string.Empty).Trim());
             }
             catch (Exception exc)
             {
