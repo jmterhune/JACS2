@@ -57,8 +57,8 @@
             <div class="col-md-6 mb-2">
                 <label class="form-label" for="<%= ddlType.ClientID %>">Calendar layout</label>
                 <asp:DropDownList ID="ddlType" runat="server" CssClass="form-select">
-                    <asp:ListItem Value="1">Weekday headers (Mon&ndash;Fri across the top)</asp:ListItem>
-                    <asp:ListItem Value="2">Row headers (week labels in the first column)</asp:ListItem>
+                    <asp:ListItem Value="2">Include Row Headers (week labels in the first column)</asp:ListItem>
+                    <asp:ListItem Value="1">No Row Headers (Mon&ndash;Fri across the top)</asp:ListItem>
                 </asp:DropDownList>
             </div>
             <div class="col-md-6 mb-2">

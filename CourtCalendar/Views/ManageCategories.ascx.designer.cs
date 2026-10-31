@@ -16,6 +16,8 @@ namespace tjc.Modules.CourtCalendar
         protected global::System.Web.UI.WebControls.Panel pnlEdit;
         protected global::System.Web.UI.WebControls.HiddenField hfCategoryId;
         protected global::System.Web.UI.WebControls.TextBox txtName;
+        protected global::System.Web.UI.WebControls.Panel pnlPalette;
+        protected global::System.Web.UI.WebControls.Literal ltPalette;
         protected global::System.Web.UI.WebControls.TextBox txtColor;
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl defaultNote;
         protected global::System.Web.UI.WebControls.CheckBox chkActive;

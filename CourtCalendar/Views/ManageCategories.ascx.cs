@@ -4,7 +4,7 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Web;
 using System.Web.UI.WebControls;
 using tjc.Modules.CourtCalendar.Components;
@@ -13,7 +13,6 @@ namespace tjc.Modules.CourtCalendar
 {
     public partial class ManageCategories : CourtCalendarModuleBase
     {
-        private static readonly Regex HexColor = new Regex("^#[0-9a-fA-F]{6}$", RegexOptions.Compiled);
         private CategoryController Categories { get { return new CategoryController(_hostSettings); } }
 
         private Division _division;
@@ -38,7 +37,30 @@ namespace tjc.Modules.CourtCalendar
             }
             lnkHome.NavigateUrl = HomeUrl;
             ltDivision.Text = HttpUtility.HtmlEncode(division.Name);
+            RenderPalette();
+            // Keep the hex box non-typeable (chosen via the swatches) WITHOUT the
+            // server-side ReadOnly property, which would make ASP.NET discard the
+            // value the picker posts. The HTML readonly attribute still submits.
+            txtColor.Attributes["readonly"] = "readonly";
             if (!IsPostBack) BindList();
+        }
+
+        /// <summary>
+        /// Emits the swatch buttons for the accessible palette plus a "None"
+        /// option. The Literal has view state off, so re-render on every load.
+        /// </summary>
+        private void RenderPalette()
+        {
+            var sb = new StringBuilder();
+            sb.Append("<button type=\"button\" class=\"cc-pick cc-pick-none\" data-color=\"\" title=\"No color\" aria-label=\"No color\">None</button>");
+            foreach (var color in CategoryPalette.Colors)
+            {
+                var attr = HttpUtility.HtmlAttributeEncode(color);
+                sb.AppendFormat(
+                    "<button type=\"button\" class=\"cc-pick\" data-color=\"{0}\" style=\"background:{0}\" title=\"{0}\" aria-label=\"{0}\"></button>",
+                    attr);
+            }
+            ltPalette.Text = sb.ToString();
         }
 
         protected string ColorSwatch(string color, bool isDefault)
@@ -97,6 +119,7 @@ namespace tjc.Modules.CourtCalendar
                 chkActive.Checked = true;
             }
             txtColor.Enabled = !isDefault;
+            pnlPalette.Visible = !isDefault;
             defaultNote.Visible = isDefault;
         }
 
@@ -111,9 +134,9 @@ namespace tjc.Modules.CourtCalendar
             if (c == null) { BindList(); return; }
 
             var color = txtColor.Text.Trim();
-            if (!c.IsDefault && color.Length > 0 && !HexColor.IsMatch(color))
+            if (!c.IsDefault && color.Length > 0 && !CategoryPalette.PassesAaForBlackText(color))
             {
-                ltMessage.Text = Alert("Color must be a hex value like #cfe8ff.", "danger");
+                ltMessage.Text = Alert("Choose a color from the palette. A color must meet WCAG AA contrast for black text.", "danger");
                 ShowEdit(categoryId);
                 txtColor.Text = color;
                 return;

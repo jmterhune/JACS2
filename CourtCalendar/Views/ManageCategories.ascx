@@ -14,22 +14,29 @@
         <asp:Panel ID="pnlEdit" runat="server" Visible="false" CssClass="cc-edit-form mb-3">
             <asp:HiddenField ID="hfCategoryId" runat="server" />
             <div class="row">
-                <div class="col-md-5 mb-2">
+                <div class="col-md-8 mb-2">
                     <label class="form-label" for="<%= txtName.ClientID %>">Name</label>
                     <asp:TextBox ID="txtName" runat="server" CssClass="form-control" />
                 </div>
-                <div class="col-md-4 mb-2">
-                    <label class="form-label" for="<%= txtColor.ClientID %>">Color (hex, e.g. #cfe8ff)</label>
-                    <asp:TextBox ID="txtColor" runat="server" CssClass="form-control" placeholder="#rrggbb" />
-                    <small class="form-text text-muted" id="defaultNote" runat="server" visible="false">The Default category has no color.</small>
-                </div>
-                <div class="col-md-3 mb-2 d-flex align-items-end">
+                <div class="col-md-4 mb-2 d-flex align-items-end">
                     <div class="form-check">
                         <asp:CheckBox ID="chkActive" runat="server" CssClass="form-check-input" Checked="true" />
                         <label class="form-check-label" for="<%= chkActive.ClientID %>">Active</label>
                     </div>
                 </div>
             </div>
+            <asp:Panel ID="pnlPalette" runat="server" CssClass="cc-color-field mb-2">
+                <label class="form-label d-block">Color</label>
+                <div class="cc-palette" role="group" aria-label="Category color">
+                    <asp:Literal ID="ltPalette" runat="server" EnableViewState="false" />
+                </div>
+                <div class="cc-color-chosen">
+                    <span class="cc-swatch cc-color-preview"></span>
+                    <asp:TextBox ID="txtColor" runat="server" CssClass="form-control cc-color-hex" placeholder="No color" />
+                </div>
+                <small class="form-text text-muted">Only colors that meet WCAG AA contrast for black text are offered.</small>
+            </asp:Panel>
+            <small class="form-text text-muted d-block mb-2" id="defaultNote" runat="server" visible="false">The Default category has no color.</small>
             <asp:Button ID="btnSave" runat="server" CssClass="btn btn-primary" Text="Save" OnClick="btnSave_Click" />
             <asp:Button ID="btnCancel" runat="server" CssClass="btn btn-secondary" Text="Cancel" CausesValidation="false" OnClick="btnCancel_Click" />
         </asp:Panel>
@@ -56,3 +63,42 @@
         </table>
     </asp:Panel>
 </div>
+
+<script type="text/javascript">
+(function () {
+    function wire(scope) {
+        if (scope.getAttribute('data-cc-ready') === '1') return;
+        scope.setAttribute('data-cc-ready', '1');
+        var hex = scope.querySelector('.cc-color-hex');
+        var preview = scope.querySelector('.cc-color-preview');
+        var picks = scope.querySelectorAll('.cc-pick');
+        function apply(val) {
+            val = (val || '').trim();
+            if (hex) hex.value = val;
+            if (preview) {
+                preview.style.background = val;
+                if (val) preview.classList.remove('cc-swatch-default');
+                else preview.classList.add('cc-swatch-default');
+            }
+            for (var i = 0; i < picks.length; i++) {
+                var c = (picks[i].getAttribute('data-color') || '').toLowerCase();
+                if (c === val.toLowerCase()) picks[i].classList.add('cc-pick-selected');
+                else picks[i].classList.remove('cc-pick-selected');
+            }
+        }
+        for (var i = 0; i < picks.length; i++) {
+            picks[i].addEventListener('click', function () {
+                apply(this.getAttribute('data-color') || '');
+            });
+        }
+        apply(hex ? hex.value : '');
+    }
+    function init() {
+        var scopes = document.querySelectorAll('.cc-admin .cc-color-field');
+        for (var s = 0; s < scopes.length; s++) wire(scopes[s]);
+    }
+    if (document.readyState === 'loading')
+        document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+</script>

@@ -36,7 +36,7 @@ namespace tjc.Modules.CourtCalendar
 
         protected string LayoutName(int typeId)
         {
-            return typeId == (int)CalendarType.RowHeader ? "Row headers" : "Weekday headers";
+            return typeId == (int)CalendarType.RowHeader ? "Include Row Headers" : "No Row Headers";
         }
 
         private void BindList()

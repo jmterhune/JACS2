@@ -94,6 +94,7 @@
     <Compile Include="Components\Judge.cs" />
     <Compile Include="Components\Division.cs" />
     <Compile Include="Components\Category.cs" />
+    <Compile Include="Components\CategoryPalette.cs" />
     <Compile Include="Components\Calendar.cs" />
     <Compile Include="Components\WeekHeader.cs" />
     <Compile Include="Components\CalendarEntry.cs" />
