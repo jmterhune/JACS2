@@ -69,7 +69,30 @@ namespace tjc.Modules.Arbitrators
             }
         }
 
-        public string ListUrl { get { return _navigationManager.NavigateURL(); } }
+        /// <summary>
+        /// URL of the public-facing Arbitrators app on jud12.flcourts.org, from module settings.
+        /// Returns empty unless it is an absolute http(s) URL, so a bad value can't render a script link.
+        /// </summary>
+        public string ExternalAppUrl
+        {
+            get
+            {
+                if (!Settings.Contains("ExternalAppUrl"))
+                    return string.Empty;
+                string url = Settings["ExternalAppUrl"].ToString().Trim();
+                Uri parsed;
+                if (Uri.TryCreate(url, UriKind.Absolute, out parsed) &&
+                    (parsed.Scheme == Uri.UriSchemeHttp || parsed.Scheme == Uri.UriSchemeHttps))
+                    return parsed.AbsoluteUri;
+                return string.Empty;
+            }
+        }
+
+        /// <summary>The dashboard (the module's default view).</summary>
+        public string DashboardUrl { get { return _navigationManager.NavigateURL(); } }
+
+        /// <summary>The full application list (the "list" control).</summary>
+        public string ListUrl { get { return _navigationManager.NavigateURL(TabId, "list", "mid=" + ModuleId); } }
 
         /// <summary>True when the current user may edit this module's content (not tied to DNN's Edit mode).</summary>
         public bool CanEditRecords { get { return ModulePermissionController.CanEditModuleContent(ModuleConfiguration); } }

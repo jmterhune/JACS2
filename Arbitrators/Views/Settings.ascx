@@ -12,3 +12,14 @@
         <asp:TextBox ID="txtCcEmail" runat="server" />
     </div>
 </fieldset>
+
+<h2 id="dnnSitePanel-ExternalApp" class="dnnFormSectionHead"><a href="" class="dnnSectionExpanded">External Application</a></h2>
+<fieldset>
+    <div class="dnnFormItem">
+        <dnn:Label ID="lblExternalUrl" runat="server" Text="External App URL (optional)" />
+        <asp:TextBox ID="txtExternalUrl" runat="server" Width="400px" placeholder="https://www.jud12.flcourts.org/..." />
+        <asp:CustomValidator ID="valExternalUrl" runat="server" ControlToValidate="txtExternalUrl" Display="Dynamic" CssClass="dnnFormMessage dnnFormError"
+            ErrorMessage="Enter a full http:// or https:// URL." OnServerValidate="valExternalUrl_ServerValidate" />
+        <div class="dnnFormMessage">Address of the Arbitrators list page on the public (jud12) site. Shown as a link on the dashboard, list and review pages. Blank = no link.</div>
+    </div>
+</fieldset>

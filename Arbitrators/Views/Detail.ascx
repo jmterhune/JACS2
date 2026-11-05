@@ -106,6 +106,11 @@
             <asp:LinkButton ID="cmdApprove" runat="server" CssClass="btn btn-success" Text="Approve" OnClientClick="return Jud12ConfirmPostback(this, 'This will approve the application and email the applicant.', 'Approve Application?');" OnClick="cmdApprove_Click" />
             <asp:LinkButton ID="cmdDeny" runat="server" CssClass="btn btn-danger" Text="Deny" OnClientClick="return Jud12ConfirmPostback(this, 'This will deny the application and email the applicant.', 'Deny Application?');" OnClick="cmdDeny_Click" />
             <asp:HyperLink ID="lnkCancel" runat="server" CssClass="btn btn-secondary" Text="Return to List" />
+            <% if (!string.IsNullOrEmpty(ExternalAppUrl)) { %>
+            <a href="<%= Server.HtmlEncode(ExternalAppUrl) %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+                <i class="fas fa-external-link-alt"></i>&nbsp;Public Arbitrators List
+            </a>
+            <% } %>
         </div>
     </asp:Panel>
 </div>

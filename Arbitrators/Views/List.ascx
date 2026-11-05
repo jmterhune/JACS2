@@ -11,7 +11,17 @@
 <dnn:DnnJsInclude runat="server" FilePath="/Resources/Libraries/Noty/noty.min.js" />
 
 <div class="container-fluid arbitrators-list">
-    <h3><i class="fas fa-gavel"></i>&nbsp;Arbitrator Applications</h3>
+    <div class="d-flex justify-content-between align-items-center">
+        <h3><i class="fas fa-gavel"></i>&nbsp;Arbitrator Applications</h3>
+        <div>
+            <a href="<%= Server.HtmlEncode(DashboardUrl) %>" class="btn btn-outline-secondary">Back to Dashboard</a>
+            <% if (!string.IsNullOrEmpty(ExternalAppUrl)) { %>
+            <a href="<%= Server.HtmlEncode(ExternalAppUrl) %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+                <i class="fas fa-external-link-alt"></i>&nbsp;Public Arbitrators List
+            </a>
+            <% } %>
+        </div>
+    </div>
 
     <div class="bg-dark text-white border-dark rounded p-2 mb-2">
         <div class="row">

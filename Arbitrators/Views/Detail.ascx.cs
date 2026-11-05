@@ -55,7 +55,8 @@ namespace tjc.Modules.Arbitrators.Views
 
             // Approve/deny (which emails the applicant) only applies to a pending application; the record itself is edited from the list.
             bool pending = app.Status == ApplicationStatus.Pending;
-            bool canReview = IsEditable && pending;
+            // Access is controlled by the page permissions, so this does not depend on DNN's edit mode (IsEditable).
+            bool canReview = UserId > 0 && pending;
             cmdApprove.Visible = canReview;
             cmdDeny.Visible = canReview;
             txtStatusNotes.Enabled = canReview;
@@ -131,7 +132,7 @@ namespace tjc.Modules.Arbitrators.Views
 
         private void ReviewApplication(ApplicationStatus newStatus)
         {
-            if (!IsEditable) return;
+            if (UserId <= 0) return;
 
             var app = _appCtl.GetApplication(ArbitratorApplicationId);
             if (app == null || app.Status != ApplicationStatus.Pending) return;

@@ -39,13 +39,6 @@ namespace tjc.Modules.Arbitrators.Views
                     chk.LabelAttributes["class"] = "form-check-label";
                 }
 
-                if (!CanEditRecords)
-                {
-                    pnlEdit.Visible = false;
-                    pnlNotAuthorized.Visible = true;
-                    return;
-                }
-
                 if (!IsPostBack)
                     PopulateForm();
             }
@@ -92,7 +85,6 @@ namespace tjc.Modules.Arbitrators.Views
         {
             try
             {
-                if (!CanEditRecords) return;
 
                 var app = ArbitratorApplicationId > 0 ? _appCtl.GetApplication(ArbitratorApplicationId) : null;
                 if (app == null)

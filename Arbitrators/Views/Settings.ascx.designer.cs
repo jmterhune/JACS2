@@ -21,5 +21,11 @@ namespace tjc.Modules.Arbitrators.Views
         protected global::System.Web.UI.UserControl lblCcEmail;
 
         protected global::System.Web.UI.WebControls.TextBox txtCcEmail;
+
+        protected global::System.Web.UI.UserControl lblExternalUrl;
+
+        protected global::System.Web.UI.WebControls.TextBox txtExternalUrl;
+
+        protected global::System.Web.UI.WebControls.CustomValidator valExternalUrl;
     }
 }
