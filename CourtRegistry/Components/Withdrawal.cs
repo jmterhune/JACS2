@@ -113,9 +113,10 @@ namespace tjc.Modules.CourtRegistry.Components
     {
         public const string Caveat =
             "Removal from the registry applies to future appointments only. You are required to " +
-            "continue representation on every case you are currently appointed to until you file a " +
-            "motion to withdraw in that case, set the motion for hearing, and the motion is granted " +
-            "by the court. A case is not closed out by this request.";
+            "continue representation on every case you are currently appointed to until either the " +
+            "case ends or you file a motion to withdraw in that case, set the motion for hearing, " +
+            "and the motion is granted by the court. Your representation on a case you are already " +
+            "appointed to is not over by this request to be removed from the registry.";
     }
 
     public enum WithdrawalStatus

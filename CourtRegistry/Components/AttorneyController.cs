@@ -118,10 +118,11 @@ namespace tjc.Modules.CourtRegistry.Components
                       WHERE (@0 <= 0 OR ajac.LocationId = @0)
                         AND a.[Year] = @1
                         AND (ajac.Status = 1 OR ajac.Status = 4)
+                        AND ISNULL(a.Status, 0) <> @4
                         AND (@2 <= 0 OR jc.CaseTypeId = @2)
                         AND (@3 <= 0 OR ajac.JacCodeId = @3)
                       ORDER BY atty.LastName, atty.FirstName, atty.LawFirm",
-                    locationId, year, caseTypeId, jacCode);
+                    locationId, year, caseTypeId, jacCode, (int)ApplicationStatus.Archived);
             }
         }
         public IEnumerable<JacCode> GetAttorneyJacCode(int attorneyId, int locationId, int year)
@@ -138,8 +139,9 @@ namespace tjc.Modules.CourtRegistry.Components
                         AND (@1 <= 0 OR ajac.LocationId = @1)
                         AND a.[Year] = @2
                         AND (ajac.Status = 1 OR ajac.Status = 4)
+                        AND ISNULL(a.Status, 0) <> @3
                       ORDER BY jc.JacCodeId",
-                    attorneyId, locationId, year);
+                    attorneyId, locationId, year, (int)ApplicationStatus.Archived);
             }
         }
 
