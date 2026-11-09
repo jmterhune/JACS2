@@ -242,6 +242,8 @@
       <DependentUpon>Exceptions.ascx</DependentUpon>
     </Compile>
     <Compile Include="Components\Enumerations.cs" />
+    <Compile Include="Components\EmailTemplate.cs" />
+    <Compile Include="Components\EmailTemplateController.cs" />
     <Compile Include="Components\RegistryController.cs" />
     <Compile Include="Components\Registry.cs" />
     <Compile Include="Components\LocationController.cs" />
@@ -361,6 +363,13 @@
     <Compile Include="Withdrawals.ascx.designer.cs">
       <DependentUpon>Withdrawals.ascx</DependentUpon>
     </Compile>
+    <Compile Include="EmailTemplates.ascx.cs">
+      <DependentUpon>EmailTemplates.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmailTemplates.ascx.designer.cs">
+      <DependentUpon>EmailTemplates.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UpdateJacCodes.ascx.cs">
       <DependentUpon>UpdateJacCodes.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -387,6 +396,7 @@
     <Content Include="LocationList.ascx" />
     <Content Include="UpdateJacCodes.ascx" />
     <Content Include="Withdrawals.ascx" />
+    <Content Include="EmailTemplates.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CourtRegistry.dnn" />

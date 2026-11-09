@@ -7,6 +7,12 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=ApplicationListUrl%>">Applications</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=EmailTemplateListUrl%>">Email Templates</a>
+        </li>
         <li class="nav-item active">
             <a class="nav-link" href="#fiscal-years" data-bs-toggle="tab">Manage Fiscal Years</a>
         </li>

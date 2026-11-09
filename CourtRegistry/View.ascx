@@ -11,6 +11,9 @@
             <a class="nav-link" href="<%=WithdrawalListUrl%>">Withdrawals</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<%=EmailTemplateListUrl%>">Email Templates</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
         </li>
         <li class="nav-item">

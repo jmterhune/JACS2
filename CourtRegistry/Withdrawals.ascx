@@ -10,6 +10,9 @@
             <a class="nav-link" href="#withdrawals" data-bs-toggle="tab">Withdrawals</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="<%=EmailTemplateListUrl%>">Email Templates</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="<%=ManageYearsUrl%>">Manage Fiscal Years</a>
         </li>
         <li class="nav-item">

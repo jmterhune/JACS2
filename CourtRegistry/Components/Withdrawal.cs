@@ -1,4 +1,4 @@
-/*
+﻿/*
 ' Copyright (c) 2026 Joe Terhune
 '  All rights reserved.
 '
@@ -111,6 +111,8 @@ namespace tjc.Modules.CourtRegistry.Components
     /// </summary>
     internal static class WithdrawalText
     {
+        public const string Heading = "Removal applies to future appointments only";
+
         public const string Caveat =
             "Removal from the registry applies to future appointments only. You are required to " +
             "continue representation on every case you are currently appointed to until either the " +

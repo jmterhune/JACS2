@@ -1,4 +1,4 @@
-/*
+﻿/*
 ' Copyright (c) 2026  Joe Terhune
 '  All rights reserved.
 */
@@ -300,34 +300,67 @@ namespace tjc.Modules.CourtRegistry
             var setCtl = new SettingController(_hostSettings);
             Setting appSetting = setCtl.GetSettings().FirstOrDefault();
 
-            var sb = new StringBuilder();
-            sb.AppendFormat("<p>Dear {0} {1},</p>", HttpUtility.HtmlEncode(request.FirstName), HttpUtility.HtmlEncode(request.LastName));
-            if (approved)
+            string noteBlock = string.IsNullOrEmpty(note)
+                ? string.Empty
+                : string.Format("<p><strong>Note from Court Administration:</strong><br />{0}</p>", HttpUtility.HtmlEncode(note));
+
+            string subject;
+            string body;
+
+            var tplCtl = new EmailTemplateController(_hostSettings);
+            EmailTemplate template = tplCtl.GetTemplateByKey(approved
+                ? EmailTemplateKeys.WithdrawalApproved
+                : EmailTemplateKeys.WithdrawalDenied);
+
+            if (template != null)
             {
-                sb.AppendFormat("<p>Court Administration has approved your request to be removed from the 12<sup>th</sup> Circuit court appointed registry, effective {0}. You will not be considered for new appointments.</p>",
-                    (effective ?? DateTime.Today).ToShortDateString());
-                sb.AppendFormat("<p><strong>{0}</strong></p>", WithdrawalText.Caveat);
+                var tokens = EmailTokens.NewBag();
+                tokens["FullName"] = HttpUtility.HtmlEncode((request.FirstName + " " + request.LastName).Trim());
+                tokens["FirstName"] = HttpUtility.HtmlEncode(request.FirstName);
+                tokens["LastName"] = HttpUtility.HtmlEncode(request.LastName);
+                tokens["BarNumber"] = request.BarNumber.ToString();
+                tokens["Caveat"] = WithdrawalText.Caveat;
+                tokens["Heading"] = WithdrawalText.Heading;
+                tokens["DateReviewed"] = DateTime.Now.ToShortDateString();
+                tokens["EffectiveDate"] = (effective ?? DateTime.Today).ToShortDateString();
+                tokens["ReviewNote"] = HttpUtility.HtmlEncode(note ?? string.Empty);
+                tokens["NoteBlock"] = noteBlock;
+
+                subject = EmailTokens.Render(template.Subject, tokens);
+                body = EmailTokens.Render(template.Body, tokens);
             }
             else
             {
-                sb.Append("<p>Court Administration has denied your request to be removed from the 12<sup>th</sup> Circuit court appointed registry. You remain on the registry and will continue to receive appointments.</p>");
-            }
-            if (!string.IsNullOrEmpty(note))
-            {
-                sb.AppendFormat("<p><strong>Note from Court Administration:</strong><br />{0}</p>", HttpUtility.HtmlEncode(note));
+                // No template row, or it is switched off: send the wording built into the module.
+                var sb = new StringBuilder();
+                sb.AppendFormat("<p>Dear {0} {1},</p>", HttpUtility.HtmlEncode(request.FirstName), HttpUtility.HtmlEncode(request.LastName));
+                if (approved)
+                {
+                    sb.AppendFormat("<p>Court Administration has approved your request to be removed from the 12<sup>th</sup> Circuit court appointed registry, effective {0}. You will not be considered for new appointments.</p>",
+                        (effective ?? DateTime.Today).ToShortDateString());
+                    sb.AppendFormat("<p><strong>{0}</strong></p>", WithdrawalText.Caveat);
+                }
+                else
+                {
+                    sb.Append("<p>Court Administration has denied your request to be removed from the 12<sup>th</sup> Circuit court appointed registry. You remain on the registry and will continue to receive appointments.</p>");
+                }
+                sb.Append(noteBlock);
+
+                subject = approved
+                    ? "Your Court Registry Removal Request Has Been Approved"
+                    : "Your Court Registry Removal Request Has Been Denied";
+                body = sb.ToString();
             }
 
-            string subject = approved
-                ? "Your Court Registry Removal Request Has Been Approved"
-                : "Your Court Registry Removal Request Has Been Denied";
-            DotNetNuke.Services.Mail.Mail.SendEmail("cr.noreply@jud12.flcourts.org", request.Email, subject, sb.ToString());
+            DotNetNuke.Services.Mail.Mail.SendEmail("cr.noreply@jud12.flcourts.org", request.Email, subject, body);
 
             string copyTo = appSetting == null ? string.Empty : appSetting.ContactEmail;
             if (!string.IsNullOrEmpty(copyTo))
             {
-                sb.Insert(0, string.Format("<p><strong>The following notification was sent on {0}</strong></p><hr>", DateTime.Now.ToShortDateString()));
+                string copyBody = string.Format("<p><strong>The following notification was sent to {0} on {1}</strong></p><hr>{2}",
+                    HttpUtility.HtmlEncode(request.Email), DateTime.Now.ToShortDateString(), body);
                 DotNetNuke.Services.Mail.Mail.SendEmail("cr.noreply@jud12.flcourts.org", copyTo,
-                    "Registry Withdrawal Notification", sb.ToString());
+                    "Registry Withdrawal Notification", copyBody);
             }
         }
 
