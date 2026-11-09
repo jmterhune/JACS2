@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EmailTemplates.ascx.cs" Inherits="tjc.Modules.CourtRegistry.EmailTemplates" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EmailTemplates.ascx.cs" Inherits="tjc.Modules.CourtRegistry.EmailTemplates" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
 <%@ Register TagPrefix="dnn" TagName="TextEditor" Src="~/controls/TextEditor.ascx" %>
 <dnn:dnnjsinclude runat="server" filepath="~/DesktopModules/tjc.modules/CourtRegistry/Scripts/registry-ui.js" />
@@ -98,7 +98,7 @@
             <asp:Panel ID="pnlEdit" runat="server" Visible="false">
                 <asp:HiddenField ID="hdTemplateId" runat="server" />
 
-                <div class="card mb-3">
+                <div class="card mb-3 cr-template-edit">
                     <div class="card-header">
                         <h4 class="mb-0"><asp:Literal ID="ltEditTitle" runat="server" /></h4>
                     </div>

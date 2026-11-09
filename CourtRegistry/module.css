@@ -1,4 +1,4 @@
-.container:has(#attorneys) {
+﻿.container:has(#attorneys) {
     max-width: 100% !important
 }
 
@@ -481,4 +481,19 @@ table#tblApplications tbody tr.last-viewed {
 #prevYearJacModal .table.prevYearJac th,
 #prevYearJacModal .table.prevYearJac td {
     color: #212529;
+}
+
+/* Email Templates edit card: the skin zeroes Bootstrap's .card-header,
+   .card-body and .card-footer padding, so the form sits flush against the
+   border. Put a little back. */
+.cr-template-edit .card-header {
+    padding: 0.6rem 1rem;
+}
+
+.cr-template-edit .card-body {
+    padding: 0.9rem 1rem;
+}
+
+.cr-template-edit .card-footer {
+    padding: 0.6rem 1rem;
 }
