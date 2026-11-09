@@ -42,6 +42,15 @@ namespace tjc.Modules.Transcriptionist
         protected global::System.Web.UI.WebControls.Panel pnlEdit;
 
         /// <summary>
+        /// pnlRelated control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlRelated;
+
+        /// <summary>
         /// ltHeading control.
         /// </summary>
         /// <remarks>

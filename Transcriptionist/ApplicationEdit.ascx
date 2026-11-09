@@ -115,6 +115,7 @@
             <asp:CheckBox ID="chkJacsVendor" runat="server" Text="JACS Vendor" />
         </div>
 
+        <asp:Panel ID="pnlRelated" runat="server">
         <!-- Experience -->
         <h3>Experience</h3>
         <button type="button" class="btn btn-secondary mb-3" onclick="OpenExperienceModal(0, '', '', '', '')">
@@ -172,6 +173,7 @@
         </asp:Repeater>
         <asp:Label ID="lblNoAttachments" runat="server" Text="No files uploaded." Visible="false" CssClass="d-block text-muted mb-2" />
         <div class="text-muted small">Documents are uploaded and removed by the applicant on the public site.</div>
+        </asp:Panel>
 
         <!-- Status -->
         <hr />
@@ -217,8 +219,9 @@
         });
 
         $(document).ready(function () {
-            $(".page-top-info h1").html("Edit Transcriptionist Application");
-            refreshExperienceList();
+            $(".page-top-info h1").html("<%= PageTitle %>");
+            // A new applicant has no id yet, so there are no experience records to list or add to.
+            if (transcriptionistId > 0) refreshExperienceList();
         });
 
         // Experience: Save (guarded against double submission)

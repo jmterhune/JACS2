@@ -9,6 +9,8 @@ namespace tjc.Modules.Transcriptionist
 {
     /// <summary>
     /// Edits the content of an application (contact details, qualifications, experience records, status) or deletes it.
+    /// With no "tid" in the address it adds a new applicant instead (entered by staff, so it has no jud12 user and no
+    /// uploaded documents); experience records can be added once the applicant is saved.
     /// Approving or rejecting a pending application, which emails the applicant, stays on the detail page; this page
     /// sends no email. Experience records are handled by Handlers/ExperienceApi.ashx.
     /// </summary>
@@ -17,6 +19,11 @@ namespace tjc.Modules.Transcriptionist
         private static readonly Regex EmailPattern = new Regex(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$", RegexOptions.Compiled);
 
         private Application _app;
+
+        // No "tid" at all means a new applicant; a tid that is not a valid id is a missing application.
+        private bool IsNew => Request.QueryString["tid"] == null;
+
+        protected string PageTitle => IsNew ? "Add Transcriptionist Applicant" : "Edit Transcriptionist Application";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -32,7 +39,20 @@ namespace tjc.Modules.Transcriptionist
                 lnkList.NavigateUrl = EditUrl("list");
                 lnkNotFoundBack.NavigateUrl = EditUrl("list");
 
-                _app = TranscriptionistID > 0 ? new ApplicationController(_hostSettings).GetApplication(TranscriptionistID) : null;
+                if (IsNew)
+                {
+                    // CreatedByUserID stays IntranetUserId (0): the jud12 site finds an applicant's own application
+                    // by that column, and nobody on that site owns this one.
+                    _app = new Application
+                    {
+                        CreatedDate = DateTime.UtcNow,
+                        CreatedByUserID = IntranetUserId
+                    };
+                }
+                else
+                {
+                    _app = TranscriptionistID > 0 ? new ApplicationController(_hostSettings).GetApplication(TranscriptionistID) : null;
+                }
                 if (_app == null)
                 {
                     pnlEdit.Visible = false;
@@ -40,10 +60,13 @@ namespace tjc.Modules.Transcriptionist
                     return;
                 }
 
+                pnlRelated.Visible = !IsNew;
+                btnDelete.Visible = !IsNew;
+
                 if (!IsPostBack)
                 {
                     PopulateFields();
-                    BindAttachments();
+                    if (!IsNew) BindAttachments();
                 }
             }
             catch (Exception exc)
@@ -54,7 +77,9 @@ namespace tjc.Modules.Transcriptionist
 
         private void PopulateFields()
         {
-            ltHeading.Text = $"<h2>Edit Transcriptionist Application #{_app.TranscriptionistID} <span class=\"badge {StatusBadgeClass(_app.Status)}\">{_app.Status}</span></h2>";
+            ltHeading.Text = IsNew
+                ? "<h2>Add Transcriptionist Applicant</h2>"
+                : $"<h2>Edit Transcriptionist Application #{_app.TranscriptionistID} <span class=\"badge {StatusBadgeClass(_app.Status)}\">{_app.Status}</span></h2>";
 
             txtFirstName.Text = _app.FirstName;
             txtMiddleName.Text = _app.MiddleName;
@@ -106,7 +131,18 @@ namespace tjc.Modules.Transcriptionist
 
                 ApplyFields();
                 ApplyStatus();
-                new ApplicationController(_hostSettings).UpdateApplication(_app);
+                var controller = new ApplicationController(_hostSettings);
+                if (IsNew)
+                {
+                    controller.CreateApplication(_app);
+
+                    // Open the new applicant on the edit page so experience records can be added.
+                    long newId = _app.TranscriptionistID;
+                    Response.Redirect(newId > 0 ? EditUrl("tid", newId.ToString(), "edit") : EditUrl("list"), true);
+                    return;
+                }
+
+                controller.UpdateApplication(_app);
                 Response.Redirect(EditUrl("list"), true);
             }
             catch (System.Threading.ThreadAbortException)

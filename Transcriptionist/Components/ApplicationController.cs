@@ -16,6 +16,14 @@ namespace tjc.Modules.Transcriptionist.Components
             _hostSettings = hostSettings;
         }
 
+        public void CreateApplication(Application item)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                ctx.GetRepository<Application>().Insert(item);
+            }
+        }
+
         public void UpdateApplication(Application item)
         {
             using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))

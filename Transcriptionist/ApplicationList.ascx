@@ -4,8 +4,13 @@
 <dnn:dnnjsinclude runat="server" filepath="/resources/libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/resources/libraries/DataTables/dataTables.bootstrap5.min.js" />
 <div class="container-fluid dnn-admin-list">
+    <div class="d-flex justify-content-end mt-3">
+        <asp:HyperLink ID="lnkAdd" runat="server" CssClass="btn btn-primary">
+            <i class="fa fa-plus me-2" aria-hidden="true"></i>Add Applicant
+        </asp:HyperLink>
+    </div>
     <!-- Search Filters -->
-    <div class="row mt-4 mb-3">
+    <div class="row mt-2 mb-3">
         <div class="col-md-3">
             <asp:TextBox ID="txtSearchName" runat="server" CssClass="form-control" Placeholder="Search by Name" />
         </div>

@@ -17,6 +17,7 @@ namespace tjc.Modules.Transcriptionist
                 if (!IsPostBack)
                 {
                     lnkDashboard.NavigateUrl = EditUrl();
+                    lnkAdd.NavigateUrl = EditUrl("edit");
 
                     string external = ExternalAppUrl;
                     if (external != null)
