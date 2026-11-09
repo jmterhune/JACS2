@@ -319,8 +319,6 @@ namespace tjc.Modules.CourtRegistry
                 tokens["FirstName"] = HttpUtility.HtmlEncode(request.FirstName);
                 tokens["LastName"] = HttpUtility.HtmlEncode(request.LastName);
                 tokens["BarNumber"] = request.BarNumber.ToString();
-                tokens["Caveat"] = WithdrawalText.Caveat;
-                tokens["Heading"] = WithdrawalText.Heading;
                 tokens["DateReviewed"] = DateTime.Now.ToShortDateString();
                 tokens["EffectiveDate"] = (effective ?? DateTime.Today).ToShortDateString();
                 tokens["ReviewNote"] = HttpUtility.HtmlEncode(note ?? string.Empty);

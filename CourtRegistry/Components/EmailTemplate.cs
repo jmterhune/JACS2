@@ -1,4 +1,4 @@
-/*
+﻿/*
 ' Copyright (c) 2026 12th Judicial Circuit Court
 '  All rights reserved.
 '
@@ -65,6 +65,15 @@ namespace tjc.Modules.CourtRegistry.Components
     {
         private static readonly Regex TokenPattern = new Regex(@"\[([A-Za-z0-9_]+)\]", RegexOptions.Compiled);
 
+        /// <summary>
+        /// [if:Token] ... [/if] keeps what is between the markers only when that token
+        /// has a value, and drops the lot when it does not. It lets a template carry an
+        /// optional section - a reason or a note and its heading - without the wording
+        /// having to live in code. Blocks are not nested.
+        /// </summary>
+        private static readonly Regex ConditionPattern =
+            new Regex(@"\[if:([A-Za-z0-9_]+)\](.*?)\[/if\]", RegexOptions.Compiled | RegexOptions.Singleline);
+
         public static string Render(string text, IDictionary<string, string> values)
         {
             if (string.IsNullOrEmpty(text))
@@ -75,6 +84,16 @@ namespace tjc.Modules.CourtRegistry.Components
             {
                 values = new Dictionary<string, string>();
             }
+
+            // Conditional sections first, so a dropped block never leaves its tokens behind.
+            text = ConditionPattern.Replace(text, m =>
+            {
+                string key = m.Groups[1].Value;
+                string value;
+                bool hasValue = values.TryGetValue(key, out value) && !string.IsNullOrEmpty(value) && value.Trim().Length > 0;
+                return hasValue ? m.Groups[2].Value : string.Empty;
+            });
+
             return TokenPattern.Replace(text, m =>
             {
                 string key = m.Groups[1].Value;

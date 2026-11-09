@@ -1,4 +1,4 @@
-/*
+﻿/*
 ' Copyright (c) 2026  12th Judicial Circuit Court
 '  All rights reserved.
 */
@@ -227,17 +227,14 @@ namespace tjc.Modules.CourtRegistry
                 "FullName|the attorney's first and last name",
                 "FirstName|first name only",
                 "LastName|last name only",
-                "BarNumber|their Florida Bar number",
-                "Caveat|the required continuing-representation wording",
-                "Heading|the short heading above that wording"
+                "BarNumber|their Florida Bar number"
             };
 
             if (templateKey == EmailTemplateKeys.WithdrawalSubmitted)
             {
                 tokens.Add("DateRequested|when they submitted the request");
                 tokens.Add("Signature|the name they typed as their signature");
-                tokens.Add("Reason|the reason they gave, on its own");
-                tokens.Add("ReasonBlock|the reason wrapped in a labelled paragraph, or nothing when they gave none");
+                tokens.Add("Reason|the reason they gave, blank when they gave none");
                 tokens.Add("ApplicationId|their current application number");
                 tokens.Add("FiscalYear|the fiscal year of that application, e.g. 2026 - 2027");
             }
@@ -254,6 +251,8 @@ namespace tjc.Modules.CourtRegistry
             }
 
             var sb = new StringBuilder();
+            sb.Append("<p class=\"mb-0 mt-2\">Wrap an optional section in <code>[if:Token]</code> &hellip; <code>[/if]</code> ");
+            sb.Append("and it is left out entirely when that token has no value, instead of leaving a heading with nothing under it.</p>");
             sb.Append("<ul class=\"mb-0 mt-2\">");
             foreach (string token in tokens)
             {

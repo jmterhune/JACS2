@@ -1,4 +1,4 @@
-/*
+﻿/*
     Court Registry - editable attorney emails for the withdrawal process.
 
     RUN THIS AGAINST: the jud12.flcourts.org database (the one holding the other
@@ -68,8 +68,8 @@ BEGIN
             N'Your Court Registry Removal Request',
             N'<p>Dear [FullName],</p>
 <p>Court Administration has received your request to be removed from the 12<sup>th</sup> Circuit court appointed registry. The request is pending review. You will receive another email when it has been acted on, and you remain on the registry until then.</p>
-<p><strong>[Heading]</strong><br />[Caveat]</p>
-[ReasonBlock]
+<p><strong>Removal applies to future appointments only</strong><br />Removal from the registry applies to future appointments only. You are required to continue representation on every case you are currently appointed to until either the case ends or you file a motion to withdraw in that case, set the motion for hearing, and the motion is granted by the court. Your representation on a case you are already appointed to is not over by this request to be removed from the registry.</p>
+[if:Reason]<p><strong>Reason you gave:</strong><br />[Reason]</p>[/if]
 <p>Requested on [DateRequested] and signed [Signature].</p>',
             1)
     PRINT 'Seeded withdrawal.submitted.'
@@ -87,7 +87,7 @@ BEGIN
             N'Your Court Registry Removal Request Has Been Approved',
             N'<p>Dear [FullName],</p>
 <p>Court Administration has approved your request to be removed from the 12<sup>th</sup> Circuit court appointed registry, effective [EffectiveDate]. You will not be considered for new appointments.</p>
-<p><strong>[Caveat]</strong></p>
+<p><strong>Removal from the registry applies to future appointments only. You are required to continue representation on every case you are currently appointed to until either the case ends or you file a motion to withdraw in that case, set the motion for hearing, and the motion is granted by the court. Your representation on a case you are already appointed to is not over by this request to be removed from the registry.</strong></p>
 [NoteBlock]',
             1)
     PRINT 'Seeded withdrawal.approved.'
