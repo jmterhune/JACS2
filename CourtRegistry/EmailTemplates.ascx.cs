@@ -33,16 +33,6 @@ namespace tjc.Modules.CourtRegistry
             _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
         }
 
-        private bool IsApprover
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ApproverUsername) || UserId <= 0)
-                    return false;
-                return UserInfo.Username.IndexOf(ApproverUsername, StringComparison.OrdinalIgnoreCase) >= 0;
-            }
-        }
-
         #region Event Handlers
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -79,12 +69,6 @@ namespace tjc.Modules.CourtRegistry
             {
                 return;
             }
-            if (!IsApprover)
-            {
-                Notify("You do not have rights to change these emails.", "error");
-                return;
-            }
-
             int templateId;
             if (!int.TryParse(hdTemplateId.Value, out templateId) || templateId <= 0)
             {
@@ -204,12 +188,6 @@ namespace tjc.Modules.CourtRegistry
             if (editor != null)
             {
                 editor.Text = template.Body;
-            }
-
-            cmdSave.Enabled = IsApprover;
-            if (!IsApprover)
-            {
-                Notify("You can read these emails but not change them.", "warning");
             }
 
             pnlList.Visible = false;
