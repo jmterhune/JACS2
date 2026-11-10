@@ -1,3 +1,22 @@
+/* Row action icons (dashboard and list), spaced the way the Arbitrators list does it. */
+.command-item {
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Shrink the icon column to fit its icons. */
+.table th.command-col,
+.table td.command-item,
+.table th.id-col,
+.table td.id-col {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.command-item a + a {
+    margin-left: 0.75rem;
+}
+
 .white-space-pre {
     white-space: pre-wrap;
 }

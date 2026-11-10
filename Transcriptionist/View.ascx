@@ -57,26 +57,26 @@
             <h3>Recent Pending Applications</h3>
             <asp:Repeater ID="rptPendingApplications" runat="server">
                 <HeaderTemplate>
-                    <table id="pendingApplicationsTable" class="table table-striped table-hover">
+                    <table id="pendingApplicationsTable" class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th class="command-col">&nbsp;</th>
                                 <th>Name</th>
                                 <th>Submitted</th>
                                 <th>County</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <tr>
+                        <td class="command-item">
+                            <a href="<%# GetViewUrl(Container.DataItem) %>" title="Review Application" aria-label="Review Application"><i class="fas fa-search"></i></a>
+                            <a href="<%# GetEditUrl(Container.DataItem) %>" title="Edit Record" aria-label="Edit Record"><i class="fas fa-edit"></i></a>
+                        </td>
                         <td><%# Server.HtmlEncode(Convert.ToString(Eval("FirstName"))) %> <%# Server.HtmlEncode(Convert.ToString(Eval("LastName"))) %></td>
                         <td><%# Eval("CreatedDate", "{0:MM/dd/yyyy}") %></td>
                         <td><%# Server.HtmlEncode(Convert.ToString(Eval("County"))) %></td>
-                        <td>
-                            <a href="<%# GetEditUrl(Container.DataItem) %>" class="btn btn-sm btn-primary">Edit</a>
-                            <a href="<%# GetViewUrl(Container.DataItem) %>" class="btn btn-sm btn-info">View</a>
-                        </td>
                     </tr>
                 </ItemTemplate>
                 <FooterTemplate>
@@ -95,9 +95,9 @@
     $(document).ready(function () {
         if ($('#pendingApplicationsTable tbody tr').length && !$.fn.dataTable.isDataTable('#pendingApplicationsTable')) {
             $('#pendingApplicationsTable').DataTable({
-                order: [[1, 'desc']],
+                order: [[2, 'desc']],
                 columnDefs: [
-                    { targets: 3, orderable: false, searchable: false }
+                    { targets: 0, orderable: false, searchable: false }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 oLanguage: { sSearch: "Filter by Text" }

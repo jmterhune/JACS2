@@ -33,16 +33,21 @@
 
     <div class="row">
         <div class="col-12">
-            <asp:GridView ID="gvAllApplications" runat="server" ClientIDMode="Static" AutoGenerateColumns="false" CssClass="table table-striped table-hover">
+            <asp:GridView ID="gvAllApplications" runat="server" ClientIDMode="Static" AutoGenerateColumns="false" CssClass="table table-striped table-bordered table-hover">
                 <Columns>
-                    <asp:TemplateField HeaderText="Actions">
+                    <asp:TemplateField HeaderText="&nbsp;" HeaderStyle-CssClass="command-col" ItemStyle-CssClass="command-item">
                         <ItemTemplate>
-                            <a href="<%# GetViewUrl(Eval("TranscriptionistID").ToString()) %>" class="btn btn-sm btn-info module-icon-btn" title="View"><i class="fa fa-search" aria-hidden="true"></i></a>
-                            <a href="<%# GetEditUrl(Eval("TranscriptionistID").ToString()) %>" class="btn btn-sm btn-primary module-icon-btn" title="Edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            <a href="<%# GetViewUrl(Eval("TranscriptionistID").ToString()) %>" title="Review Application" aria-label="Review Application"><i class="fas fa-search"></i></a>
+                            <a href="<%# GetEditUrl(Eval("TranscriptionistID").ToString()) %>" title="Edit Record" aria-label="Edit Record"><i class="fas fa-edit"></i></a>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="FirstName" HeaderText="First Name" />
-                    <asp:BoundField DataField="LastName" HeaderText="Last Name" />
+                    <asp:BoundField DataField="TranscriptionistID" HeaderText="ID" HeaderStyle-CssClass="id-col" ItemStyle-CssClass="id-col" />
+                    <asp:TemplateField HeaderText="Name">
+                        <ItemTemplate>
+                            <%# FormatName(Eval("LastName"), Eval("FirstName")) %>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:BoundField DataField="EmailAddress" HeaderText="Email" />
                     <asp:BoundField DataField="CreatedDate" HeaderText="Submitted" DataFormatString="{0:MM/dd/yyyy}" />
                     <asp:BoundField DataField="County" HeaderText="County" />
                     <asp:TemplateField HeaderText="Status">
@@ -84,7 +89,7 @@
             }
 
             $table.DataTable({
-                order: [[3, 'desc']],
+                order: [[4, 'desc']],
                 columnDefs: [
                     { targets: 0, orderable: false, searchable: false }
                 ],

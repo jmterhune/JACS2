@@ -83,6 +83,15 @@ namespace tjc.Modules.Transcriptionist
             }
         }
 
+        /// <summary>"Last, First", HTML-encoded; either part may be missing.</summary>
+        protected string FormatName(object lastName, object firstName)
+        {
+            var parts = new[] { Convert.ToString(lastName), Convert.ToString(firstName) }
+                .Select(s => (s ?? "").Trim())
+                .Where(s => s.Length > 0);
+            return Server.HtmlEncode(string.Join(", ", parts));
+        }
+
         protected string GetEditUrl(string tid)
         {
             return EditUrl("tid", tid, "edit");
