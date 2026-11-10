@@ -87,6 +87,34 @@
         </div>
 
         <hr />
+        <h5>Documents</h5>
+        <asp:Repeater ID="rptAttachments" runat="server">
+            <HeaderTemplate><p class="mb-1">On file:</p><ul class="list-group mb-3"></HeaderTemplate>
+            <ItemTemplate>
+                <li class="list-group-item">
+                    <a href='<%# ResolveUrl("~/DesktopModules/tjc.modules/Arbitrators/Handlers/AttachmentViewer.ashx") %>?id=<%# Eval("AttachmentID") %>' target="_blank">
+                        <i class="fas fa-paperclip"></i>&nbsp;<%# Server.HtmlEncode(Convert.ToString(Eval("FileName"))) %>
+                        <small class="text-muted">(<%# Eval("AttachmentType") %>)</small>
+                    </a>
+                </li>
+            </ItemTemplate>
+            <FooterTemplate></ul></FooterTemplate>
+        </asp:Repeater>
+        <div class="row mb-3">
+            <div class="col-12 col-lg-6">
+                <label for="<%=fuTrainingCertificate.ClientID %>" class="form-label">Training Certificate</label>
+                <asp:FileUpload ID="fuTrainingCertificate" runat="server" CssClass="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+            </div>
+            <div class="col-12 col-lg-6">
+                <label for="<%=fuBarCard.ClientID %>" class="form-label">Florida Bar Card</label>
+                <asp:FileUpload ID="fuBarCard" runat="server" CssClass="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+            </div>
+            <div class="col-12">
+                <small class="text-muted">Optional. Scan of a paper submission: PDF, JPG or PNG, up to 10 MB each. A new file is added alongside any already on file. If the save reports a problem, choose the files again.</small>
+            </div>
+        </div>
+
+        <hr />
         <div class="row mb-3">
             <div class="col-12 col-lg-3">
                 <label for="<%=ddlStatus.ClientID %>" class="form-label">Status</label>

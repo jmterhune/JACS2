@@ -6,22 +6,29 @@
 using DotNetNuke.Services.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Mail;
 using tjc.Modules.Arbitrators.Components;
 
 namespace tjc.Modules.Arbitrators.Views
 {
     /// <summary>
-    /// Edits the content of an arbitrator record (contact details, areas, qualifications, status). Approving or
-    /// denying a pending application, which emails the applicant, stays on the Detail view; this page sends no email.
+    /// Edits the content of an arbitrator record (contact details, areas, qualifications, status), or adds one by hand
+    /// when opened with new=1. Approving or denying a pending application, which emails the applicant, stays on the
+    /// Detail view; this page sends no email.
     /// </summary>
     public partial class EditArbitrator : ArbitratorsModuleBase
     {
+        private const int MaxFileSizeBytes = 10 * 1024 * 1024; // 10MB, same limit as the public application form
+
         private readonly ArbitratorApplicationController _appCtl;
+        private readonly ArbitratorAttachmentController _attCtl;
 
         public EditArbitrator()
         {
             _appCtl = new ArbitratorApplicationController(_hostSettings);
+            _attCtl = new ArbitratorAttachmentController(_hostSettings);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -50,6 +57,17 @@ namespace tjc.Modules.Arbitrators.Views
 
         private void PopulateForm()
         {
+            foreach (ApplicationStatus status in Enum.GetValues(typeof(ApplicationStatus)))
+                ddlStatus.Items.Add(new System.Web.UI.WebControls.ListItem(status.ToString(), ((int)status).ToString()));
+
+            if (IsNewArbitrator)
+            {
+                // Adding a record by hand: blank form, starts as Pending so it still goes through review.
+                ltHeading.Text = "<h2>Add Arbitrator</h2>";
+                ddlStatus.SelectedValue = ((int)ApplicationStatus.Pending).ToString();
+                return;
+            }
+
             var app = ArbitratorApplicationId > 0 ? _appCtl.GetApplication(ArbitratorApplicationId) : null;
             if (app == null)
             {
@@ -59,9 +77,6 @@ namespace tjc.Modules.Arbitrators.Views
 
             ltHeading.Text = string.Format("<h2>Edit Arbitrator #{0} <span class=\"badge {1}\">{2}</span></h2>",
                 app.ArbitratorApplicationID, StatusBadgeClass(app.Status), app.Status);
-
-            foreach (ApplicationStatus status in Enum.GetValues(typeof(ApplicationStatus)))
-                ddlStatus.Items.Add(new System.Web.UI.WebControls.ListItem(status.ToString(), ((int)status).ToString()));
 
             txtFirstName.Text = app.FirstName;
             txtMiddleName.Text = app.MiddleName;
@@ -79,21 +94,49 @@ namespace tjc.Modules.Arbitrators.Views
             txtExperience.Text = app.ExperienceStatement;
             ddlStatus.SelectedValue = ((int)app.Status).ToString();
             txtStatusNotes.Text = app.StatusNotes;
+
+            rptAttachments.DataSource = _attCtl.GetAttachments(app.ArbitratorApplicationID).ToList();
+            rptAttachments.DataBind();
+            rptAttachments.Visible = rptAttachments.Items.Count > 0;
         }
 
         protected void cmdSave_Click(object sender, EventArgs e)
         {
             try
             {
-
-                var app = ArbitratorApplicationId > 0 ? _appCtl.GetApplication(ArbitratorApplicationId) : null;
-                if (app == null)
+                bool isNew = IsNewArbitrator;
+                ArbitratorApplication app;
+                if (isNew)
                 {
-                    ShowNotFound();
-                    return;
+                    // Entered by staff, not submitted through the public site: there is no applicant portal account
+                    // (UserId -1, same as the imported records) and no applicant signature.
+                    var now = DateTime.Now;
+                    string enteredBy = string.IsNullOrWhiteSpace(UserInfo.DisplayName) ? "staff" : UserInfo.DisplayName;
+                    string signedName = "Entered manually by " + enteredBy;
+                    app = new ArbitratorApplication
+                    {
+                        UserId = -1,
+                        CreatedByUserId = UserId,
+                        SignedName = signedName.Length > 200 ? signedName.Substring(0, 200) : signedName,
+                        SignatureDate = now,
+                        SubmittedIP = null,
+                        CreatedOnDate = now,
+                        Status = ApplicationStatus.Pending
+                    };
+                }
+                else
+                {
+                    app = ArbitratorApplicationId > 0 ? _appCtl.GetApplication(ArbitratorApplicationId) : null;
+                    if (app == null)
+                    {
+                        ShowNotFound();
+                        return;
+                    }
                 }
 
                 var errors = Validate();
+                if (isNew && errors.Count == 0 && EmailAlreadyOnFile(txtEmail.Text.Trim()))
+                    errors.Add("An application with this email address already exists. Edit that record instead of adding a new one.");
                 if (errors.Count > 0)
                 {
                     ltErrors.Text = "<ul class=\"mb-0\"><li>" + string.Join("</li><li>", errors) + "</li></ul>";
@@ -102,7 +145,8 @@ namespace tjc.Modules.Arbitrators.Views
                 }
 
                 var newStatus = (ApplicationStatus)int.Parse(ddlStatus.SelectedValue);
-                bool statusChanged = newStatus != app.Status;
+                // A new record that is saved as anything other than Pending counts as reviewed by the person adding it.
+                bool statusChanged = isNew ? newStatus != ApplicationStatus.Pending : newStatus != app.Status;
 
                 app.FirstName = txtFirstName.Text.Trim();
                 app.MiddleName = NullIfEmpty(txtMiddleName.Text);
@@ -129,7 +173,13 @@ namespace tjc.Modules.Arbitrators.Views
 
                 app.LastModifiedByUserId = UserId;
                 app.LastModifiedOnDate = DateTime.Now;
-                _appCtl.UpdateApplication(app);
+                if (isNew)
+                    _appCtl.AddApplication(app);
+                else
+                    _appCtl.UpdateApplication(app);
+
+                SaveUpload(app.ArbitratorApplicationID, fuTrainingCertificate, AttachmentType.TrainingCertificate);
+                SaveUpload(app.ArbitratorApplicationID, fuBarCard, AttachmentType.BarCard);
 
                 Response.Redirect(ListUrl, true);
             }
@@ -141,6 +191,13 @@ namespace tjc.Modules.Arbitrators.Views
             {
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
+        }
+
+        private bool EmailAlreadyOnFile(string email)
+        {
+            return _appCtl.GetApplications().Any(a =>
+                a.Status != ApplicationStatus.Removed &&
+                string.Equals((a.Email ?? string.Empty).Trim(), email, StringComparison.OrdinalIgnoreCase));
         }
 
         private List<string> Validate()
@@ -170,7 +227,59 @@ namespace tjc.Modules.Arbitrators.Views
             CheckLength(errors, txtEmail, 256, "Email");
             CheckLength(errors, txtWebsite, 300, "Website");
             CheckLength(errors, txtPreferredAreas, 500, "Preferred Areas");
+
+            CheckUpload(errors, fuTrainingCertificate, "Training Certificate");
+            CheckUpload(errors, fuBarCard, "Florida Bar Card");
             return errors;
+        }
+
+        /// <summary>An upload is optional, but if one is chosen it must be a PDF/JPG/PNG whose contents match its extension, 10MB or less.</summary>
+        private static void CheckUpload(List<string> errors, System.Web.UI.WebControls.FileUpload upload, string label)
+        {
+            if (!upload.HasFile) return;
+
+            if (upload.PostedFile.ContentLength <= 0 || upload.PostedFile.ContentLength > MaxFileSizeBytes)
+            {
+                errors.Add(label + " must be 10 MB or smaller.");
+                return;
+            }
+
+            string extension = Path.GetExtension(upload.FileName).ToLowerInvariant();
+            if (!FileSignature.MatchesExtension(upload.PostedFile.InputStream, extension))
+                errors.Add(label + " must be a PDF, JPG or PNG file.");
+        }
+
+        private void SaveUpload(int arbitratorApplicationId, System.Web.UI.WebControls.FileUpload upload, AttachmentType type)
+        {
+            if (!upload.HasFile) return;
+
+            var stream = upload.PostedFile.InputStream;
+            // The stored Content-Type comes from the file's own signature, not the browser-supplied header.
+            string contentType = FileSignature.Detect(stream) ?? upload.PostedFile.ContentType;
+
+            byte[] data;
+            using (var memory = new MemoryStream())
+            {
+                stream.Position = 0;
+                stream.CopyTo(memory);
+                data = memory.ToArray();
+            }
+
+            string fileName = Path.GetFileName(upload.FileName) ?? string.Empty;
+            foreach (char c in Path.GetInvalidFileNameChars())
+                fileName = fileName.Replace(c, '_');
+            if (fileName.Length > 260) fileName = fileName.Substring(fileName.Length - 260);
+
+            _attCtl.CreateAttachment(new ArbitratorAttachment
+            {
+                ArbitratorApplicationID = arbitratorApplicationId,
+                AttachmentType = type,
+                FileName = fileName,
+                ContentType = contentType,
+                FileSize = data.Length,
+                FileData = data,
+                UploadedOnDate = DateTime.Now
+            });
         }
 
         private static void RequireText(List<string> errors, System.Web.UI.WebControls.TextBox box, string label)

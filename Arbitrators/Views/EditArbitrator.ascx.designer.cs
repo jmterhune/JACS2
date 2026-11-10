@@ -58,6 +58,12 @@ namespace tjc.Modules.Arbitrators.Views
 
         protected global::System.Web.UI.WebControls.TextBox txtExperience;
 
+        protected global::System.Web.UI.WebControls.Repeater rptAttachments;
+
+        protected global::System.Web.UI.WebControls.FileUpload fuTrainingCertificate;
+
+        protected global::System.Web.UI.WebControls.FileUpload fuBarCard;
+
         protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
 
         protected global::System.Web.UI.WebControls.TextBox txtStatusNotes;

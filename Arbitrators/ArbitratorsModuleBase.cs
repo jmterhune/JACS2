@@ -94,14 +94,28 @@ namespace tjc.Modules.Arbitrators
         /// <summary>The full application list (the "list" control).</summary>
         public string ListUrl { get { return _navigationManager.NavigateURL(TabId, "list", "mid=" + ModuleId); } }
 
-        /// <summary>True when the current user may edit this module's content (not tied to DNN's Edit mode).</summary>
-        public bool CanEditRecords { get { return ModulePermissionController.CanEditModuleContent(ModuleConfiguration); } }
+        /// <summary>
+        /// True when the user may add and edit records. Access is controlled by the page permissions (the same
+        /// way Approve/Deny works), so any signed-in user who can open the page qualifies; it is not tied to
+        /// DNN's Edit mode or to module-level edit permission, which hid the Add and Edit buttons.
+        /// </summary>
+        public bool CanEditRecords { get { return UserId > 0; } }
 
         public string EditArbitratorUrl(int arbitratorApplicationId)
         {
             // A plain URL (not EditUrl, which can return a javascript popup call that breaks the list link's href).
             return _navigationManager.NavigateURL(TabId, "editarbitrator", "mid=" + ModuleId, "aid=" + arbitratorApplicationId);
         }
+
+        /// <summary>The Edit Arbitrator control in "add" mode (no existing record; "new=1" instead of an aid).</summary>
+        public string AddArbitratorUrl
+        {
+            get { return _navigationManager.NavigateURL(TabId, "editarbitrator", "mid=" + ModuleId, "new=1"); }
+        }
+
+        /// <summary>True when the Edit Arbitrator control was opened to add a record rather than edit one.</summary>
+        public bool IsNewArbitrator { get { return Request.QueryString["new"] == "1"; } }
+
         public string DetailUrl(int arbitratorApplicationId)
         {
             return EditUrl("aid", arbitratorApplicationId.ToString(), "detail");

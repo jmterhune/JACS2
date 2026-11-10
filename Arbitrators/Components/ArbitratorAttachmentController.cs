@@ -41,6 +41,15 @@ namespace tjc.Modules.Arbitrators.Components
             }
         }
 
+        public void CreateAttachment(ArbitratorAttachment attachment)
+        {
+            using (IDataContext ctx = GetContext())
+            {
+                var rep = ctx.GetRepository<ArbitratorAttachment>();
+                rep.Insert(attachment);
+            }
+        }
+
         /// <summary>
         /// Returns the attachment including its FileData blob, for streaming
         /// by AttachmentViewer.ashx. Callers that only need the list (name,

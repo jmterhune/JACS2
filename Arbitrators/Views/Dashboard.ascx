@@ -7,9 +7,16 @@
 <div class="container-fluid arbitrators-dashboard">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h2 class="mb-0">Arbitrator Admin Dashboard</h2>
-        <asp:HyperLink ID="lnkExternal" runat="server" Visible="false" Target="_blank" rel="noopener noreferrer" CssClass="btn btn-outline-primary">
-            <i class="fas fa-external-link-alt me-2" aria-hidden="true"></i>Public Arbitrators List
-        </asp:HyperLink>
+        <div>
+            <% if (CanEditRecords) { %>
+            <a href="<%= Server.HtmlEncode(AddArbitratorUrl) %>" class="btn btn-success text-white">
+                <i class="fas fa-plus me-2" aria-hidden="true"></i>Add Arbitrator
+            </a>
+            <% } %>
+            <asp:HyperLink ID="lnkExternal" runat="server" Visible="false" Target="_blank" rel="noopener noreferrer" CssClass="btn btn-outline-primary">
+                <i class="fas fa-external-link-alt me-2" aria-hidden="true"></i>Public Arbitrators List
+            </asp:HyperLink>
+        </div>
     </div>
 
     <div class="row mt-4">
@@ -65,7 +72,7 @@
                 </HeaderTemplate>
                 <ItemTemplate>
                     <tr>
-                        <td><%# Server.HtmlEncode(Convert.ToString(Eval("FullName"))) %></td>
+                        <td><%# Server.HtmlEncode(Convert.ToString(Eval("LastFirstName"))) %></td>
                         <td data-order='<%# Eval("CreatedOnDate", "{0:yyyyMMddHHmmss}") %>'><%# Eval("CreatedOnDate", "{0:MM/dd/yyyy}") %></td>
                         <td><%# Server.HtmlEncode(Convert.ToString(Eval("PreferredAreas"))) %></td>
                         <td>

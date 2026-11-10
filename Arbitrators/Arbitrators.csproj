@@ -105,6 +105,7 @@
     <Compile Include="Components\ArbitratorApplicationController.cs" />
     <Compile Include="Components\ArbitratorAttachment.cs" />
     <Compile Include="Components\ArbitratorAttachmentController.cs" />
+    <Compile Include="Components\FileSignature.cs" />
     <Compile Include="Handlers\AttachmentViewer.ashx.cs">
       <DependentUpon>AttachmentViewer.ashx</DependentUpon>
     </Compile>

@@ -47,6 +47,17 @@ namespace tjc.Modules.Arbitrators.Components
             }
         }
 
+        /// <summary>Inserts a new application and returns its generated ArbitratorApplicationID.</summary>
+        public int AddApplication(ArbitratorApplication application)
+        {
+            using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))
+            {
+                var rep = ctx.GetRepository<ArbitratorApplication>();
+                rep.Insert(application);
+                return application.ArbitratorApplicationID;
+            }
+        }
+
         public void UpdateApplication(ArbitratorApplication application)
         {
             using (IDataContext ctx = DataContext.Instance(_hostSettings, CONN_JUD12))

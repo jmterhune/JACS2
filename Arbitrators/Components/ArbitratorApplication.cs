@@ -80,5 +80,23 @@ namespace tjc.Modules.Arbitrators.Components
                 return name;
             }
         }
+
+        /// <summary>"Last, First Middle Suffix" for the review lists, so they read and sort by surname.</summary>
+        [IgnoreColumn]
+        public string LastFirstName
+        {
+            get
+            {
+                var given = new List<string>();
+                if (!string.IsNullOrWhiteSpace(FirstName)) given.Add(FirstName.Trim());
+                if (!string.IsNullOrWhiteSpace(MiddleName)) given.Add(MiddleName.Trim());
+                if (!string.IsNullOrWhiteSpace(Suffix)) given.Add(Suffix.Trim());
+
+                string last = (LastName ?? string.Empty).Trim();
+                string rest = string.Join(" ", given);
+                if (last.Length == 0) return rest;
+                return rest.Length == 0 ? last : last + ", " + rest;
+            }
+        }
     }
 }

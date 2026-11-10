@@ -14,6 +14,11 @@
     <div class="d-flex justify-content-between align-items-center">
         <h3><i class="fas fa-gavel"></i>&nbsp;Arbitrator Applications</h3>
         <div>
+            <% if (CanEditRecords) { %>
+            <a href="<%= Server.HtmlEncode(AddArbitratorUrl) %>" class="btn btn-success text-white">
+                <i class="fas fa-plus"></i>&nbsp;Add Arbitrator
+            </a>
+            <% } %>
             <a href="<%= Server.HtmlEncode(DashboardUrl) %>" class="btn btn-outline-secondary">Back to Dashboard</a>
             <% if (!string.IsNullOrEmpty(ExternalAppUrl)) { %>
             <a href="<%= Server.HtmlEncode(ExternalAppUrl) %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
@@ -57,13 +62,13 @@
         <ItemTemplate>
             <tr>
                 <td class="command-item">
-                    <a href='<%# DetailUrl((int)Eval("ArbitratorApplicationID")) %>' title="Review Application"><i class="fas fa-search"></i></a>
+                    <a href='<%# DetailUrl((int)Eval("ArbitratorApplicationID")) %>' title="Review Application" class="me-2"><i class="fas fa-search"></i></a>
                     <% if (CanEditRecords) { %>
                     <a href='<%# EditArbitratorUrl((int)Eval("ArbitratorApplicationID")) %>' title="Edit Record" aria-label="Edit Record"><i class="fas fa-edit"></i></a>
                     <% } %>
                 </td>
                 <td><%# Eval("ArbitratorApplicationID") %></td>
-                <td><a href='<%# DetailUrl((int)Eval("ArbitratorApplicationID")) %>'><%# Server.HtmlEncode(Convert.ToString(Eval("FullName"))) %></a></td>
+                <td><a href='<%# DetailUrl((int)Eval("ArbitratorApplicationID")) %>'><%# Server.HtmlEncode(Convert.ToString(Eval("LastFirstName"))) %></a></td>
                 <td><%# Server.HtmlEncode(Convert.ToString(Eval("Email"))) %></td>
                 <td data-order='<%# Eval("CreatedOnDate", "{0:yyyyMMddHHmmss}") %>'><%# Eval("CreatedOnDate", "{0:MM/dd/yyyy}") %></td>
                 <td><%# Eval("ReviewedOnDate", "{0:MM/dd/yyyy}") %></td>
