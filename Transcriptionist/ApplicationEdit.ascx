@@ -38,7 +38,7 @@
         <div class="row mb-2">
             <div class="col-md-6">
                 <label>Home Address <span class="text-danger">*</span></label>
-                <asp:TextBox ID="txtHomeAddress" TextMode="MultiLine" Rows="3" MaxLength="250" runat="server" CssClass="form-control" />
+                <asp:TextBox ID="txtHomeAddress" TextMode="MultiLine" Rows="3" MaxLength="4000" runat="server" CssClass="form-control" />
             </div>
             <div class="col-md-6">
                 <label>County <span class="text-danger">*</span></label>
@@ -48,29 +48,29 @@
         <div class="row mb-2">
             <div class="col-md-4">
                 <label>Email Address <span class="text-danger">*</span></label>
-                <asp:TextBox ID="txtEmailAddress" MaxLength="100" runat="server" CssClass="form-control" />
+                <asp:TextBox ID="txtEmailAddress" MaxLength="255" runat="server" CssClass="form-control" />
             </div>
             <div class="col-md-4">
                 <label>Residence Phone <span class="text-danger">*</span></label>
-                <asp:TextBox ID="txtResidencePhone" MaxLength="50" runat="server" CssClass="form-control phone-mask" />
+                <asp:TextBox ID="txtResidencePhone" MaxLength="20" runat="server" CssClass="form-control phone-mask" />
             </div>
             <div class="col-md-4">
                 <label>Cell Phone <span class="text-danger">*</span></label>
-                <asp:TextBox ID="txtCellPhone" MaxLength="50" runat="server" CssClass="form-control phone-mask" />
+                <asp:TextBox ID="txtCellPhone" MaxLength="20" runat="server" CssClass="form-control phone-mask" />
             </div>
         </div>
         <div class="row mb-2">
             <div class="col-md-4">
                 <label>Employer</label>
-                <asp:TextBox ID="txtEmployer" MaxLength="100" runat="server" CssClass="form-control" />
+                <asp:TextBox ID="txtEmployer" MaxLength="200" runat="server" CssClass="form-control" />
             </div>
             <div class="col-md-4">
                 <label>Office Phone</label>
-                <asp:TextBox ID="txtOfficePhone" MaxLength="50" runat="server" CssClass="form-control phone-mask" />
+                <asp:TextBox ID="txtOfficePhone" MaxLength="20" runat="server" CssClass="form-control phone-mask" />
             </div>
             <div class="col-md-4">
                 <label>Employer Address</label>
-                <asp:TextBox ID="txtEmployerAddress" MaxLength="250" TextMode="MultiLine" Rows="3" runat="server" CssClass="form-control" />
+                <asp:TextBox ID="txtEmployerAddress" MaxLength="4000" TextMode="MultiLine" Rows="3" runat="server" CssClass="form-control" />
             </div>
         </div>
 
