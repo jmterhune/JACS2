@@ -1,0 +1,9 @@
+LPP Complaint (intranet administration) - Release Notes
+
+00.00.01
+- Initial release.
+- Lists every Local Professionalism Panel complaint submitted on the public site, newest first, filterable by handling status and searchable in the table itself.
+- Opens a complaint in full: referring party, attorney being referred, the ticked nature-of-incident boxes, the alleged violation and the electronic signature.
+- Users with module edit permission set a handling status (New, Under Review, Resolved, Closed) with notes, and can delete a complaint.
+- Exports whatever the status filter is showing to CSV.
+- Reads and writes the public site's tjc_modules_lpp_complaints and tjc_modules_lpp_complaint_natures tables through the "Jud12" connection; the intranet site's root web.config must define that connection string.

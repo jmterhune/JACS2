@@ -1,0 +1,76 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="InterpreterRequestAdmin" type="Module" version="00.00.01">
+      <friendlyName>Interpreter Request Administration</friendlyName>
+      <description>Intranet administration for the public site's Interpreter Request form. Lists submitted requests, opens one in full, tracks a handling status with notes, deletes a request and exports to CSV. Reads and writes the public site's tjc_modules_interpreter_requests table through the Jud12 connection.</description>
+      <iconFile>~/Icons/Sigma/Comments_32X32_Standard.png</iconFile>
+      <owner>
+        <name>12th Judicial Circuit</name>
+        <organization>12th Judicial Circuit</organization>
+        <url>https://www.jud12.flcourts.org/</url>
+        <email>jterhune@jud12.flcourts.org</email>
+      </owner>
+      <license src="License.txt"></license>
+      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="CoreVersion">09.08.00</dependency>
+      </dependencies>
+      <components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/tjc.modules/InterpreterRequest</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>InterpreterRequestAdmin</moduleName>
+            <foldername>tjc.modules/InterpreterRequest</foldername>
+            <businessControllerClass />
+            <supportedFeatures />
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>Interpreter Request Administration</friendlyName>
+                <definitionName>InterpreterRequestAdmin</definitionName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/tjc.modules/InterpreterRequest/Views/View.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Interpreter Requests</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>ViewRequest</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/InterpreterRequest/Views/ViewRequest.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Interpreter Request</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <name>tjc.Modules.InterpreterRequest.dll</name>
+              <path>bin</path>
+            </assembly>
+          </assemblies>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

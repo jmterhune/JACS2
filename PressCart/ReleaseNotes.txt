@@ -1,0 +1,11 @@
+Press Cart (intranet administration) - Release Notes
+
+00.00.01
+- Initial release.
+- Lists every presentation cart request submitted on the public site, newest first, filterable by handling status and searchable in the table itself.
+- Opens a request in full: requestor, contact, hearing, courthouse/courtroom, cart type, training and special instructions.
+- Users with module edit permission set a handling status (New, Reserved, Completed, Cancelled) with notes, and can delete a request.
+- Exports whatever the status filter is showing to CSV.
+- Takes over the division, courtroom and courthouse lists that the public PressCart module used to manage behind its "Admin" link; those screens have been removed from the public module.
+- Deleting a courthouse that still has courtrooms is refused, because the public form reaches courtrooms through their courthouse.
+- Reads and writes the public site's tjc_PressCart, tjc_presscart_divisions, tjc_presscart_courthouses and tjc_presscart_courtrooms tables through the "Jud12" connection; the intranet site's root web.config must define that connection string.

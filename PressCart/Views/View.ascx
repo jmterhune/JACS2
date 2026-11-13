@@ -1,0 +1,98 @@
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="tjc.Modules.PressCart.View" %>
+<%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
+
+<div class="tjc-presscart-admin">
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item"><a class="nav-link active" href="<%=ListUrl%>">Requests</a></li>
+        <asp:PlaceHolder ID="phManageTabs" runat="server">
+            <li class="nav-item"><a class="nav-link" href="<%=DivisionUrl%>">Divisions</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%=CourtroomUrl%>">Courtrooms</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%=CourthouseUrl%>">Courthouses</a></li>
+        </asp:PlaceHolder>
+    </ul>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <asp:Label ID="lblStatusFilter" runat="server" AssociatedControlID="drpStatusFilter" Text="Status" />
+            <asp:DropDownList ID="drpStatusFilter" runat="server" CssClass="form-control" AutoPostBack="true"
+                OnSelectedIndexChanged="drpStatusFilter_SelectedIndexChanged" />
+        </div>
+        <div class="col-md-8 d-flex align-items-end justify-content-end">
+            <asp:LinkButton ID="cmdExport" runat="server" CssClass="btn btn-secondary text-white" CausesValidation="false"
+                OnClick="cmdExport_Click"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp;Export to CSV</asp:LinkButton>
+        </div>
+    </div>
+
+    <asp:Panel ID="pnlEmpty" runat="server" Visible="false" CssClass="alert alert-info">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;<asp:Literal ID="ltEmpty" runat="server" Text="No presentation cart requests have been submitted yet." />
+    </asp:Panel>
+
+    <asp:Repeater ID="rptRequests" runat="server">
+        <HeaderTemplate>
+            <table id="tblRequests" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Submitted</th>
+                        <th>Requested by</th>
+                        <th>County</th>
+                        <th>Division / Judge</th>
+                        <th>Courtroom</th>
+                        <th>Hearing</th>
+                        <th>Cart</th>
+                        <th>Status</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <tr>
+                <td data-order='<%# Eval("CreatedOnDate", "{0:yyyy-MM-dd HH:mm}") %>'><%# Eval("CreatedOnDate", "{0:MM/dd/yyyy h:mm tt}") %></td>
+                <td><%# Server.HtmlEncode(Eval("RequestorName").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("County").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("Judge").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("Courtroom").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("WhenNeeded").ToString()) %></td>
+                <td><%# Server.HtmlEncode(Eval("CartType").ToString()) %></td>
+                <td><span class="badge <%# StatusBadgeClass(Eval("Status")) %>"><%# Server.HtmlEncode(Eval("Status").ToString()) %></span></td>
+                <td class="command-icon">
+                    <a class="btn btn-primary btn-sm text-white" href='<%# RequestUrl((int)Eval("PressCartId")) %>'>
+                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;View</a>
+                </td>
+            </tr>
+        </ItemTemplate>
+        <FooterTemplate>
+                </tbody>
+            </table>
+        </FooterTemplate>
+    </asp:Repeater>
+</div>
+
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
+<dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
+
+<script type="text/javascript">
+    (function ($) {
+        $(document).ready(function () {
+            if (!$('#tblRequests').length) { return; }
+            $('#tblRequests').DataTable({
+                "bRetrieve": true,
+                "bStateSave": true,
+                "order": [[0, "desc"]],
+                "oLanguage": { "sSearch": "Filter by Text" },
+                "aoColumns": [
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": true },
+                    { "bSortable": false }
+                ]
+            });
+        });
+    }(jQuery));
+</script>

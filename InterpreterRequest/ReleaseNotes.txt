@@ -1,0 +1,9 @@
+Interpreter Request (intranet administration) - Release Notes
+
+00.00.01
+- Initial release.
+- Lists every interpreter request submitted on the public site, newest first, filterable by handling status and searchable in the table itself.
+- Opens a request in full: language, case, person needing the interpreter, date/time, location, presiding judge and requestor details.
+- Users with module edit permission set a handling status (New, In Progress, Completed, Cancelled) with notes, and can delete a request.
+- Exports whatever the status filter is showing to CSV.
+- Reads and writes the public site's tjc_modules_interpreter_requests table through the "Jud12" connection; the intranet site's root web.config must define that connection string.

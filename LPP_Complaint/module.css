@@ -1,0 +1,37 @@
+﻿/* LPP Complaint - intranet administration */
+
+.tjc-lpp-admin fieldset {
+    margin-bottom: 1.5rem;
+}
+
+.tjc-lpp-admin legend {
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: .25rem;
+}
+
+/* The detail view is a definition list; keep the labels readable against the values. */
+.tjc-lpp-admin dl.row dt {
+    font-weight: 600;
+}
+
+.tjc-lpp-admin dl.row dd {
+    margin-bottom: .5rem;
+}
+
+/* An empty value would otherwise collapse the row and misalign the pair. */
+.tjc-lpp-admin dl.row dd:empty::after {
+    content: "\2014";
+    color: #6c757d;
+}
+
+.tjc-lpp-admin .command-icon {
+    white-space: nowrap;
+    width: 1%;
+}
+
+.tjc-lpp-admin h2 .badge {
+    font-size: .5em;
+    vertical-align: middle;
+}
