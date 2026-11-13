@@ -3,7 +3,7 @@
     <package name="PressCartAdmin" type="Module" version="00.00.01">
       <friendlyName>Press Cart Administration</friendlyName>
       <description>Intranet administration for the public site's presentation cart request form. Lists submitted requests, opens one in full, tracks a handling status with notes, deletes a request and exports to CSV, and manages the division, courtroom and courthouse lists the public form picks from. Reads and writes the public site's tjc_PressCart and tjc_presscart_* tables through the Jud12 connection.</description>
-      <iconFile>~/Icons/Sigma/Monitor_32X32_Standard.png</iconFile>
+      <iconFile>~/Icons/Sigma/Console_32x32_Standard.png</iconFile>
       <owner>
         <name>12th Judicial Circuit</name>
         <organization>12th Judicial Circuit</organization>

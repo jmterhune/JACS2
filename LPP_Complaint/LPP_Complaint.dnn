@@ -3,7 +3,7 @@
     <package name="LPP_ComplaintAdmin" type="Module" version="00.00.01">
       <friendlyName>LPP Complaint Administration</friendlyName>
       <description>Intranet administration for the public site's Local Professionalism Panel complaint form. Lists submitted complaints, opens one in full, tracks a handling status with notes, deletes a complaint and exports to CSV. Reads and writes the public site's tjc_modules_lpp_complaints tables through the Jud12 connection.</description>
-      <iconFile>~/Icons/Sigma/Lock_32X32_Standard.png</iconFile>
+      <iconFile>~/Icons/Sigma/Lock_32x32_Standard.png</iconFile>
       <owner>
         <name>12th Judicial Circuit</name>
         <organization>12th Judicial Circuit</organization>

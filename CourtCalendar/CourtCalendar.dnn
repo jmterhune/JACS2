@@ -3,7 +3,7 @@
     <package name="CourtCalendarAdmin" type="Module" version="00.00.01">
       <friendlyName>Court Calendar Authoring</friendlyName>
       <description>Intranet authoring for the public Court Calendar. Admins manage judges, divisions and categories; assigned judges and JAs manage their division's monthly calendars (week headers, entries, strikes) and notify subscribers. Reads and writes the public site's tjc_cc_* tables through the Jud12 connection.</description>
-      <iconFile>~/Icons/Sigma/Calendar_32X32_Standard.png</iconFile>
+      <iconFile>~/Icons/Sigma/ScheduleHistory_32x32_Standard.png</iconFile>
       <owner>
         <name>12th Judicial Circuit</name>
         <organization>12th Judicial Circuit</organization>

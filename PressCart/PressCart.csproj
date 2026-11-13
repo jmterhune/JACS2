@@ -167,7 +167,8 @@
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>PressCart</DNNFileName>
-    <PackageName>PressCart</PackageName>
+    <PackageName>PressCartAdmin</PackageName>
+    <MSBuildDnnBinPath>$(MSBuildProjectDirectory)\bin</MSBuildDnnBinPath>
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
     <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
     <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\PressCart</DeployModuleFolder>

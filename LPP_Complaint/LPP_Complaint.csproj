@@ -138,7 +138,8 @@
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>LPP_Complaint</DNNFileName>
-    <PackageName>LPP_Complaint</PackageName>
+    <PackageName>LPP_ComplaintAdmin</PackageName>
+    <MSBuildDnnBinPath>$(MSBuildProjectDirectory)\bin</MSBuildDnnBinPath>
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
     <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
     <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\LPP_Complaint</DeployModuleFolder>

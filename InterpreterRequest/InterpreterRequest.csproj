@@ -137,7 +137,8 @@
   <PropertyGroup>
     <Extension>zip</Extension>
     <DNNFileName>InterpreterRequest</DNNFileName>
-    <PackageName>InterpreterRequest</PackageName>
+    <PackageName>InterpreterRequestAdmin</PackageName>
+    <MSBuildDnnBinPath>$(MSBuildProjectDirectory)\bin</MSBuildDnnBinPath>
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
     <DeploySitePath Condition="'$(DeploySitePath)' == ''">D:\websites\apps.jud12.flcourts.org</DeploySitePath>
     <DeployModuleFolder Condition="'$(DeployModuleFolder)' == ''">$(DeploySitePath)\DesktopModules\tjc.modules\InterpreterRequest</DeployModuleFolder>

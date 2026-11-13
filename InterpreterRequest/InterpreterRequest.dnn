@@ -3,7 +3,7 @@
     <package name="InterpreterRequestAdmin" type="Module" version="00.00.01">
       <friendlyName>Interpreter Request Administration</friendlyName>
       <description>Intranet administration for the public site's Interpreter Request form. Lists submitted requests, opens one in full, tracks a handling status with notes, deletes a request and exports to CSV. Reads and writes the public site's tjc_modules_interpreter_requests table through the Jud12 connection.</description>
-      <iconFile>~/Icons/Sigma/Comments_32X32_Standard.png</iconFile>
+      <iconFile>~/Icons/Sigma/Translate_32x32_Standard.png</iconFile>
       <owner>
         <name>12th Judicial Circuit</name>
         <organization>12th Judicial Circuit</organization>

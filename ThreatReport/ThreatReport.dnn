@@ -3,7 +3,7 @@
 		<package name="ThreatReport" type="Module" version="1.4.0">
 			<friendlyName>Threat Report</friendlyName>
 			<description>12th Judicial Circuit Court Threat module — intranet (incident list for the Incident Viewer role, and a separate submit-incident module)</description>
-			<iconFile>~/Icons/Sigma/Source_32X32_Standard.png</iconFile>
+			<iconFile>~/Icons/Sigma/SecurityRoles_32x32_Standard.png</iconFile>
 			<owner>
 				<name>12th Judicial Circuit Court</name>
 				<organization>12th Judicial Circuit Court</organization>
