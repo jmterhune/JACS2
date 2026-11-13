@@ -9,6 +9,8 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Security.Permissions;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Web;
 
 namespace tjc.Modules.PressCart
 {
@@ -39,6 +41,17 @@ namespace tjc.Modules.PressCart
         public bool CanManage
         {
             get { return ModulePermissionController.CanEditModuleContent(ModuleConfiguration); }
+        }
+
+        /// <summary>
+        /// Html-encodes a value bound in the markup. Nearly every text column on
+        /// tjc_pressCart is nullable and plenty of them really are null — CartType
+        /// alone is null on roughly 3,400 of the 4,900 rows — so Eval returns null
+        /// and calling ToString() on it in the markup throws.
+        /// </summary>
+        protected string Enc(object value)
+        {
+            return HttpUtility.HtmlEncode(Convert.ToString(value));
         }
 
         /// <summary>The request named by the "pid" query string parameter, or -1.</summary>

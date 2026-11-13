@@ -9,6 +9,8 @@ using DotNetNuke.Entities.Modules;
 using DotNetNuke.Framework.JavaScriptLibraries;
 using DotNetNuke.Security.Permissions;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Web;
 
 namespace tjc.Modules.LPP_Complaint
 {
@@ -36,6 +38,16 @@ namespace tjc.Modules.LPP_Complaint
         public bool CanManage
         {
             get { return ModulePermissionController.CanEditModuleContent(ModuleConfiguration); }
+        }
+
+        /// <summary>
+        /// Html-encodes a value bound in the markup. Every text column on the complaint
+        /// table is nullable, so Eval returns null for a blank one and calling
+        /// ToString() on it in the markup would throw.
+        /// </summary>
+        protected string Enc(object value)
+        {
+            return HttpUtility.HtmlEncode(Convert.ToString(value));
         }
 
         /// <summary>The complaint named by the "cid" query string parameter, or -1.</summary>

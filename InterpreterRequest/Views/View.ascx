@@ -38,12 +38,12 @@
         <ItemTemplate>
             <tr>
                 <td data-order='<%# Eval("CreatedOnDate", "{0:yyyy-MM-dd HH:mm}") %>'><%# Eval("CreatedOnDate", "{0:MM/dd/yyyy h:mm tt}") %></td>
-                <td><%# Server.HtmlEncode(Eval("RequestorName").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("InterpreterLanguage").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("CaseNumber").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("County").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("WhenNeeded").ToString()) %></td>
-                <td><span class="badge <%# StatusBadgeClass(Eval("Status")) %>"><%# Server.HtmlEncode(Eval("Status").ToString()) %></span></td>
+                <td><%# Enc(Eval("RequestorName")) %></td>
+                <td><%# Enc(Eval("InterpreterLanguage")) %></td>
+                <td><%# Enc(Eval("CaseNumber")) %></td>
+                <td><%# Enc(Eval("County")) %></td>
+                <td><%# Enc(Eval("WhenNeeded")) %></td>
+                <td><span class="badge <%# StatusBadgeClass(Eval("Status")) %>"><%# Enc(Eval("Status")) %></span></td>
                 <td class="command-icon">
                     <a class="btn btn-primary btn-sm text-white" href='<%# RequestUrl((int)Eval("InterpreterRequestId")) %>'>
                         <i class="fa fa-search" aria-hidden="true"></i>&nbsp;View</a>

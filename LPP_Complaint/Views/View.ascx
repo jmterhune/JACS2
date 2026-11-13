@@ -38,12 +38,12 @@
         <ItemTemplate>
             <tr>
                 <td data-order='<%# Eval("CreatedOnDate", "{0:yyyy-MM-dd HH:mm}") %>'><%# Eval("CreatedOnDate", "{0:MM/dd/yyyy h:mm tt}") %></td>
-                <td><%# Server.HtmlEncode(Eval("ReferrerName").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("AttorneyName").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("AttorneyBarNumber").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("County").ToString()) %></td>
-                <td><%# Server.HtmlEncode(Eval("ViolationDate").ToString()) %></td>
-                <td><span class="badge <%# StatusBadgeClass(Eval("Status")) %>"><%# Server.HtmlEncode(Eval("Status").ToString()) %></span></td>
+                <td><%# Enc(Eval("ReferrerName")) %></td>
+                <td><%# Enc(Eval("AttorneyName")) %></td>
+                <td><%# Enc(Eval("AttorneyBarNumber")) %></td>
+                <td><%# Enc(Eval("County")) %></td>
+                <td><%# Enc(Eval("ViolationDate")) %></td>
+                <td><span class="badge <%# StatusBadgeClass(Eval("Status")) %>"><%# Enc(Eval("Status")) %></span></td>
                 <td class="command-icon">
                     <a class="btn btn-primary btn-sm text-white" href='<%# ComplaintUrl((int)Eval("LppComplaintId")) %>'>
                         <i class="fa fa-search" aria-hidden="true"></i>&nbsp;View</a>

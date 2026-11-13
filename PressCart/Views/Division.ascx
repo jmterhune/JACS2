@@ -40,10 +40,10 @@
                                 <td class="command-icon">
                                     <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"DivisionId").ToString() %>'><i class="fa fa-pencil" aria-hidden="true"></i></asp:LinkButton>
                                 </td>
-                                <td><%#Server.HtmlEncode(DataBinder.Eval(Container.DataItem,"DivisionName").ToString()) %></td>
-                                <td><%#Server.HtmlEncode(DataBinder.Eval(Container.DataItem,"Judge").ToString()) %></td>
-                                <td><%#Server.HtmlEncode(DataBinder.Eval(Container.DataItem,"County").ToString()) %></td>
-                                <td><%#DataBinder.Eval(Container.DataItem,"IsCircuit").ToString()=="True"?"<i class=\"fas fa-check-square\"></i>":"<i class=\"fas fa-square\"></i>" %></td>
+                                <td><%#Enc(Eval("DivisionName")) %></td>
+                                <td><%#Enc(Eval("Judge")) %></td>
+                                <td><%#Enc(Eval("County")) %></td>
+                                <td><%#Convert.ToString(Eval("IsCircuit"))=="True"?"<i class=\"fas fa-check-square\"></i>":"<i class=\"fas fa-square\"></i>" %></td>
                                 <td class="command-icon">
                                     <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"DivisionId").ToString() %>'><i class="fa fa-trash" aria-hidden="true"></i></asp:LinkButton></td>
                             </tr>

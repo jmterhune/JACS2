@@ -38,8 +38,8 @@
                                 <td class="command-icon">
                                     <asp:LinkButton ID="cmdEdit" runat="server" CommandName="edit" CausesValidation="false" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"CourtroomId").ToString() %>'><i class="fa fa-pencil" aria-hidden="true"></i></asp:LinkButton>
                                 </td>
-                                <td><%#Server.HtmlEncode(DataBinder.Eval(Container.DataItem,"CourtroomName").ToString()) %></td>
-                                <td><%#Server.HtmlEncode(DataBinder.Eval(Container.DataItem,"CourthouseName").ToString()) %></td>
+                                <td><%#Enc(Eval("CourtroomName")) %></td>
+                                <td><%#Enc(Eval("CourthouseName")) %></td>
                                 <td class="command-icon">
                                     <asp:LinkButton ID="cmdDelete" CssClass="confirm" runat="server" CausesValidation="false" CommandName="delete" CommandArgument='<%#DataBinder.Eval(Container.DataItem,"CourtroomId").ToString() %>'><i class="fa fa-trash" aria-hidden="true"></i></asp:LinkButton></td>
                             </tr>
