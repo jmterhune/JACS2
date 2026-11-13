@@ -31,6 +31,18 @@
     width: 1%;
 }
 
+/* Narrow, centered column for the row's view icon, matching the CDSP
+   Submissions list so the two screens read the same way. */
+.tjc-lpp-admin .col-icon {
+    width: 2.5rem;
+    text-align: center;
+}
+
+.tjc-lpp-admin .icon-btn {
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
 .tjc-lpp-admin h2 .badge {
     font-size: .5em;
     vertical-align: middle;

@@ -23,6 +23,7 @@
             <table id="tblComplaints" class="table table-striped">
                 <thead>
                     <tr>
+                        <th class="col-icon"></th>
                         <th>Submitted</th>
                         <th>Referring party</th>
                         <th>Attorney referred</th>
@@ -30,13 +31,19 @@
                         <th>County</th>
                         <th>Violation date</th>
                         <th>Status</th>
-                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
         </HeaderTemplate>
         <ItemTemplate>
             <tr>
+                <td class="col-icon">
+                    <%-- "fa" is the Font Awesome 4 class the DnnBootster skin loads; "fas" is the
+                         Font Awesome 5+ one the CDSP Submissions list uses. Both are given so the
+                         magnifier renders whichever version the site is serving. --%>
+                    <a class="icon-btn text-primary" title="View details"
+                       href='<%# ComplaintUrl((int)Eval("LppComplaintId")) %>'><i class="fa fas fa-search" aria-hidden="true"></i></a>
+                </td>
                 <td data-order='<%# Eval("CreatedOnDate", "{0:yyyy-MM-dd HH:mm}") %>'><%# Eval("CreatedOnDate", "{0:MM/dd/yyyy h:mm tt}") %></td>
                 <td><%# Enc(Eval("ReferrerName")) %></td>
                 <td><%# Enc(Eval("AttorneyName")) %></td>
@@ -44,10 +51,6 @@
                 <td><%# Enc(Eval("County")) %></td>
                 <td><%# Enc(Eval("ViolationDate")) %></td>
                 <td><span class="badge <%# StatusBadgeClass(Eval("Status")) %>"><%# Enc(Eval("Status")) %></span></td>
-                <td class="command-icon">
-                    <a class="btn btn-primary btn-sm text-white" href='<%# ComplaintUrl((int)Eval("LppComplaintId")) %>'>
-                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;View</a>
-                </td>
             </tr>
         </ItemTemplate>
         <FooterTemplate>
@@ -68,17 +71,18 @@
             $('#tblComplaints').DataTable({
                 "bRetrieve": true,
                 "bStateSave": true,
-                "order": [[0, "desc"]],
+                /* Column 0 is the view icon, so the date is column 1. */
+                "order": [[1, "desc"]],
                 "oLanguage": { "sSearch": "Filter by Text" },
                 "aoColumns": [
+                    { "bSortable": false },
                     { "bSortable": true },
                     { "bSortable": true },
                     { "bSortable": true },
                     { "bSortable": true },
                     { "bSortable": true },
                     { "bSortable": true },
-                    { "bSortable": true },
-                    { "bSortable": false }
+                    { "bSortable": true }
                 ]
             });
         });
