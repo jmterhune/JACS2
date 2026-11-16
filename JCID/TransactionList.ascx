@@ -35,7 +35,7 @@
                         </HeaderTemplate>
                         <ItemTemplate>
                             <tr>
-                                <td><a href='<%#EditUrl("rid",Eval("RequestId").ToString(),"edit")%>'><%#Eval("RequestId")%></a></td>
+                                <td><a href='<%#EditUrl("rid",Eval("RequestId").ToString(),"detail")%>'><%#Eval("RequestId")%></a></td>
                                 <td><%#DataBinder.Eval(Container.DataItem, "FullName")%></td>
                                 <td><a href='<%#"mailto:" + DataBinder.Eval(Container.DataItem, "Email") %>'><%#DataBinder.Eval(Container.DataItem, "Email")%></a></td>
                                 <td><%#DataBinder.Eval(Container.DataItem, "DateSigned")%></td>

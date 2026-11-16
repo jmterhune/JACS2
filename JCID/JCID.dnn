@@ -37,7 +37,7 @@
 										<viewOrder>0</viewOrder>
 									</moduleControl>
 									<moduleControl>
-										<controlKey>edit</controlKey>
+										<controlKey>detail</controlKey>
 										<controlSrc>DesktopModules/tjc.Modules/JCID/Edit.ascx</controlSrc>
 										<supportsPartialRendering>False</supportsPartialRendering>
 										<controlTitle>Edit JCID Application</controlTitle>

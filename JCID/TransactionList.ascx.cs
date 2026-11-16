@@ -11,7 +11,6 @@
 */
 
 
-using DotNetNuke.Security;
 using DotNetNuke.Services.Exceptions;
 using System;
 using tjc.Modules.JCID.Components;
@@ -37,10 +36,6 @@ namespace tjc.Modules.JCID
                 {
                     txtStartDate.Text = startDate.ToShortDateString();
                     txtEndDate.Text = endDate.ToShortDateString();
-                    if (!DotNetNuke.Security.Permissions.ModulePermissionController.HasModuleAccess(SecurityAccessLevel.Edit, "EDIT", ModuleConfiguration))
-                    {
-                        Response.Redirect("/");
-                    }
 
                     var ctl = new TransactionController(_hostSettings);
                     rptTransactions.DataSource = ctl.GetTransactionsByDateRange(startDate, endDate.AddDays(1));
