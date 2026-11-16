@@ -1,0 +1,30 @@
+<h3>JCID Admin (intranet)</h3>
+<p class="Contributor">
+	jud12 <br />
+	<a href="mailto:webhelp@jud12.flcourts.org">webhelp@jud12.flcourts.org</a><br />
+	<a href=http://www.jud12.flcourts.org/>http://www.jud12.flcourts.org/</a>
+</p>
+<hr/>
+<div class="License">
+	<h3>About the JCID Admin module</h3>
+	<p class="Owner">
+		<b>Version 1.0.0</b><br /><br />
+	</p>
+	<p>Management side of the Judicial Center Identification (JCID) application. Moved here from the public (jud12) site, which keeps the applicant form, replacement form and payment pages.</p>
+
+	<h4>Features</h4>
+	<ul>
+		<li>List of all JCID applications and the credit-card payments (filterable by date range)</li>
+		<li>Review / edit an application: applicant details, workflow dates, mark picked up</li>
+		<li>Reject an application with a reason and email the applicant a correction link</li>
+		<li>Copy a payment link for an applicant who still owes payment</li>
+		<li>Link targets on the public site are built from the External URL module setting</li>
+	</ul>
+
+	<h4>Notes / prerequisites</h4>
+	<ul>
+		<li>Reads and writes the jud12 site's database through the <b>Jud12</b> connection string, which must be present in this site's web.config connectionStrings.</li>
+		<li>SSNs are stored encrypted. The <b>JCID_SSN_EncryptionKey</b> appSetting in this site's web.config must match the value on the public JCID site, or SSNs will not decrypt.</li>
+		<li>Applicant photos live on the jud12 site; set the External URL in the module settings so they display.</li>
+	</ul>
+</div>
