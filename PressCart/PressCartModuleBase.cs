@@ -40,7 +40,7 @@ namespace tjc.Modules.PressCart
         /// </summary>
         public bool CanManage
         {
-            get { return ModulePermissionController.CanEditModuleContent(ModuleConfiguration); }
+            get { return ModulePermissionController.CanViewModule(ModuleConfiguration); }
         }
 
         /// <summary>
