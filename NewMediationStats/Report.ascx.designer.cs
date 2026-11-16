@@ -357,6 +357,24 @@ namespace tjc.Modules.NewMediationStats
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl MediatorStats;
 
         /// <summary>
+        /// FeeTiers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl FeeTiers;
+
+        /// <summary>
+        /// rgFeeTiers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView rgFeeTiers;
+
+        /// <summary>
         /// lblMediatoryType control.
         /// </summary>
         /// <remarks>

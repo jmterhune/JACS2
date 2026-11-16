@@ -30,6 +30,9 @@
         <li class="nav-item">
             <a class="nav-link" href="<%=ActionListUrl %>">Stage of Action Items</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=FeeScheduleListUrl %>">Fee Schedules</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div id="groups" class="tab-pane active">

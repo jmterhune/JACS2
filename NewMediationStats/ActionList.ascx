@@ -30,6 +30,9 @@
         <li class="nav-item active">
             <a class="nav-link" href="#stageActions" data-bs-toggle="tab">Stage of Action Items</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%=FeeScheduleListUrl %>">Fee Schedules</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div id="stageActions" class="tab-pane active">

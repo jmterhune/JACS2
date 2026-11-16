@@ -429,6 +429,24 @@ namespace tjc.Modules.NewMediationStats
         protected global::System.Web.UI.WebControls.DropDownList drpFeeAmount;
 
         /// <summary>
+        /// ltFeeSchedule control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltFeeSchedule;
+
+        /// <summary>
+        /// hdFeeScheduleId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdFeeScheduleId;
+
+        /// <summary>
         /// drpPlaintiffFeesPaid control.
         /// </summary>
         /// <remarks>

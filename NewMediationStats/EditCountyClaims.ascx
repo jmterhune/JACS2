@@ -209,7 +209,7 @@
                     <div class="col-auto">
                         <div class="mb-3">
                             <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" MaxLength="15" ClientIDMode="Static" TextMode="Date" CssClass="form-control" AutoPostBack="true" OnTextChanged="txtMediationDate_TextChanged" />
                         </div>
                     </div>
                 </div>
@@ -278,13 +278,13 @@
                     <div class="col-auto">
                         <div class="mb-3">
                             <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Amount" />
+                            <%-- Items come from the fee schedule in effect on the mediation date (see BindFeeOptions). --%>
                             <asp:DropDownList runat="server" ID="drpFeeAmount" CssClass="form-control">
                                 <asp:ListItem Text="< Select Fee Amount >" Value="" />
-                                <asp:ListItem Text="$60" Value="$60" />
-                                <asp:ListItem Text="Indigent" Value="Indigent" />
-                                <asp:ListItem Text="Eviction" Value="Eviction" />
                             </asp:DropDownList>
                         </div>
+                        <div class="form-text small mb-3"><asp:Literal ID="ltFeeSchedule" runat="server" /></div>
+                        <asp:HiddenField ID="hdFeeScheduleId" runat="server" />
                     </div>
                     <div class="col-auto">
                         <fieldset class="outline-fieldset">

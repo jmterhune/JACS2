@@ -53,6 +53,10 @@ namespace tjc.Modules.NewMediationStats.Components
 
         public string FeeAmount { get; set; }  // nvarchar(50)
 
+        public string p1_IncomeRange { get; set; }  // nvarchar(50), revised family schedule
+
+        public string p2_IncomeRange { get; set; }  // nvarchar(50), revised family schedule
+
         public bool? FeeJudgement { get; set; }  // bit
 
         public bool? FeeAgreement { get; set; }  // bit

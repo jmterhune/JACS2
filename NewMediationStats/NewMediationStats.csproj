@@ -226,6 +226,18 @@
     <Compile Include="RegionList.ascx.designer.cs">
       <DependentUpon>RegionList.ascx</DependentUpon>
     </Compile>
+    <Compile Include="FeeScheduleList.ascx.cs">
+      <DependentUpon>FeeScheduleList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FeeScheduleList.ascx.designer.cs">
+      <DependentUpon>FeeScheduleList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\FeeOptions.cs" />
+    <Compile Include="Components\FeeSchedule.cs" />
+    <Compile Include="Components\FeeScheduleController.cs" />
+    <Compile Include="Components\FeeTier.cs" />
+    <Compile Include="Components\FeeTierReportRow.cs" />
     <Compile Include="Api\Components\AttorneyListItem.cs" />
     <Compile Include="Api\Components\AttorneyListItemController.cs" />
     <Compile Include="Api\Components\CaseListItem.cs" />
@@ -308,6 +320,7 @@
     <Content Include="ActionList.ascx" />
     <Content Include="IssueList.ascx" />
     <Content Include="RegionList.ascx" />
+    <Content Include="FeeScheduleList.ascx" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />

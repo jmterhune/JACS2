@@ -208,6 +208,7 @@ namespace tjc.Modules.NewMediationStats
             Checker.Visible = false;
             CollectedPaid.Visible = false;
             MediatorStats.Visible = false;
+            FeeTiers.Visible = false;
             DateTime.TryParse(txtStartDate.Text, out DateTime startDate);
             DateTime.TryParse(txtEndDate.Text, out DateTime endDate);
             switch (drpReport.SelectedIndex)
@@ -350,6 +351,19 @@ namespace tjc.Modules.NewMediationStats
                         MediatorStats.Visible = true;
                         break;
                     }
+                case 6:
+                    {
+                        FeeTiers.Visible = true;
+                        if (!string.IsNullOrEmpty(txtEndDate.Text) && !string.IsNullOrEmpty(txtStartDate.Text))
+                        {
+                            rgFeeTiers.DataSource = new FeeScheduleController(_hostSettings).GetFeeTierReport(startDate, endDate);
+                            rgFeeTiers.DataBind();
+                        }
+                        else
+                            ScriptManager.RegisterStartupScript(this, GetType(), "msg" + Guid.NewGuid().ToString("N"),
+                                "new Noty({ text: '" + System.Web.HttpUtility.JavaScriptStringEncode("You must select a start and end date") + "', type: 'error', timeout: 4500, layout: 'topRight', theme: 'mint' }).show();", true);
+                        break;
+                    }
             }
 
 
@@ -380,6 +394,17 @@ namespace tjc.Modules.NewMediationStats
                     linenumber += 1;
                     ltLineNumber.Text = linenumber.ToString();
                 }
+            }
+        }
+        protected void rgFeeTiers_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                // The Note column is not a data field: flag fee values that are not part of the schedule they were reported under.
+                FeeTierReportRow row = (FeeTierReportRow)e.Row.DataItem;
+                e.Row.Cells[e.Row.Cells.Count - 1].Text = row.NotInSchedule ? "not in schedule" : string.Empty;
+                if (row.NotInSchedule)
+                    e.Row.CssClass = "table-warning";
             }
         }
         protected void drpReport_SelectedIndexChanged(object sender, EventArgs e)

@@ -363,6 +363,143 @@ IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_
   ALTER TABLE dbo.[tjc_modules_med_events] ADD CONSTRAINT [FK_tjc_modules_med_events_tjc_modules_med_sessions] FOREIGN KEY ([SessionId]) REFERENCES dbo.[tjc_modules_med_sessions] ([SessionId]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
+/***** Fee schedules and tiers (driven by the mediation date) *****/
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_fee_schedules', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_fee_schedules]
+  (
+      [FeeScheduleId] int IDENTITY(1,1) NOT NULL,
+      [Name] nvarchar(100) NOT NULL,
+      [EffectiveDate] date NULL,
+      [Notes] nvarchar(500) NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_fee_schedules] PRIMARY KEY CLUSTERED ([FeeScheduleId])
+  )
+END
+GO
+
+SET QUOTED_IDENTIFIER ON;
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UX_tjc_modules_med_fee_schedules_EffectiveDate')
+  CREATE UNIQUE INDEX [UX_tjc_modules_med_fee_schedules_EffectiveDate] ON dbo.[tjc_modules_med_fee_schedules] ([EffectiveDate]) WHERE [EffectiveDate] IS NOT NULL
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_fee_tiers', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_fee_tiers]
+  (
+      [FeeTierId] int IDENTITY(1,1) NOT NULL,
+      [FeeScheduleId] int NOT NULL,
+      [GroupId] int NOT NULL,
+      [TierType] nvarchar(20) NOT NULL,
+      [Value] nvarchar(50) NOT NULL,
+      [Label] nvarchar(100) NOT NULL,
+      [Amount] decimal(9,2) NULL,
+      [SortOrder] int NOT NULL DEFAULT ((0)),
+      [Active] bit NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_fee_tiers] PRIMARY KEY CLUSTERED ([FeeTierId]),
+      CONSTRAINT [FK_tjc_modules_med_fee_tiers_fee_schedules] FOREIGN KEY ([FeeScheduleId]) REFERENCES dbo.[tjc_modules_med_fee_schedules] ([FeeScheduleId]) ON DELETE CASCADE,
+      CONSTRAINT [UQ_tjc_modules_med_fee_tiers] UNIQUE ([FeeScheduleId], [GroupId], [TierType], [Value])
+  )
+END
+GO
+
+IF COL_LENGTH(N'dbo.tjc_modules_med_sessions', N'p1_IncomeRange') IS NULL
+  ALTER TABLE dbo.[tjc_modules_med_sessions] ADD [p1_IncomeRange] nvarchar(50) NULL
+GO
+IF COL_LENGTH(N'dbo.tjc_modules_med_sessions', N'p2_IncomeRange') IS NULL
+  ALTER TABLE dbo.[tjc_modules_med_sessions] ADD [p2_IncomeRange] nvarchar(50) NULL
+GO
+
+/* Seed data. GroupId 4 = Family and 2 = County, the same ids the report procedures already use.
+   TierType: FeeAmount = the session's "Fee Range"/"Fee Amount" choice, PartyIncome = each party's own
+   income range (revised family schedule), FeePaid / FeeOwed = the per-party fee dropdowns.
+   Value is what is stored on the session; Label is what the user sees; Amount is the dollar fee.
+   The revised schedule has no effective date until the law passes: set it with the Fee Schedules page. */
+IF NOT EXISTS (SELECT 1 FROM dbo.tjc_modules_med_fee_schedules)
+BEGIN
+  INSERT INTO dbo.tjc_modules_med_fee_schedules ([Name], [EffectiveDate], [Notes]) VALUES
+    (N'Original fees', '19000101', N'Family: $60 or $120 per party by combined income. County: $60 per party per session.'),
+    (N'Revised fees (s. 44.108, F.S.)', NULL, N'Family: $80, $140 or $200 per party by that party''s own income, $320 for a party over $90,000 (combined income $180,000 or less). County: $90 up to a $15,000 claim, $150 up to $25,000. Set the effective date once the law passes.')
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.tjc_modules_med_fee_tiers)
+BEGIN
+  DECLARE @orig int = (SELECT FeeScheduleId FROM dbo.tjc_modules_med_fee_schedules WHERE EffectiveDate = '19000101');
+  DECLARE @rev int = (SELECT FeeScheduleId FROM dbo.tjc_modules_med_fee_schedules WHERE EffectiveDate IS NULL AND [Name] LIKE N'Revised%');
+  INSERT INTO dbo.tjc_modules_med_fee_tiers (FeeScheduleId, GroupId, TierType, [Value], [Label], Amount, SortOrder)
+  SELECT * FROM (VALUES
+    -- Original schedule, Family
+    (@orig, 4, N'FeeAmount', N'Indigent', N'Indigent', NULL, 1),
+    (@orig, 4, N'FeeAmount', N'$0-$50', N'$0-$50K combined income', NULL, 2),
+    (@orig, 4, N'FeeAmount', N'$50-$100', N'$50K-$100K combined income', NULL, 3),
+    (@orig, 4, N'FeePaid', N'Certificate of Indigency', N'Certificate of Indigency', NULL, 1),
+    (@orig, 4, N'FeePaid', N'$0', N'$0', 0, 2),
+    (@orig, 4, N'FeePaid', N'$60', N'$60', 60, 3),
+    (@orig, 4, N'FeePaid', N'$120', N'$120', 120, 4),
+    (@orig, 4, N'FeeOwed', N'Certificate of Indigency', N'Certificate of Indigency', NULL, 1),
+    (@orig, 4, N'FeeOwed', N'$0', N'$0', 0, 2),
+    (@orig, 4, N'FeeOwed', N'$60', N'$60', 60, 3),
+    (@orig, 4, N'FeeOwed', N'$120', N'$120', 120, 4),
+    -- Original schedule, County
+    (@orig, 2, N'FeeAmount', N'$60', N'$60 per party', 60, 1),
+    (@orig, 2, N'FeeAmount', N'Indigent', N'Indigent', NULL, 2),
+    (@orig, 2, N'FeeAmount', N'Eviction', N'Eviction (no fee)', NULL, 3),
+    (@orig, 2, N'FeePaid', N'$0', N'$0', 0, 1),
+    (@orig, 2, N'FeePaid', N'$60', N'$60', 60, 2),
+    (@orig, 2, N'FeePaid', N'Indigent', N'Indigent', NULL, 3),
+    (@orig, 2, N'FeeOwed', N'$0', N'$0', 0, 1),
+    (@orig, 2, N'FeeOwed', N'$60', N'$60', 60, 2),
+    (@orig, 2, N'FeeOwed', N'Certificate of Indigency', N'Certificate of Indigency', NULL, 3),
+    -- Revised schedule, Family: each party's own income range
+    (@rev, 4, N'PartyIncome', N'Indigent', N'Indigent', NULL, 1),
+    (@rev, 4, N'PartyIncome', N'$0-$50K', N'$0-$50K (fee $80)', 80, 2),
+    (@rev, 4, N'PartyIncome', N'$50K-$70K', N'Over $50K to $70K (fee $140)', 140, 3),
+    (@rev, 4, N'PartyIncome', N'$70K-$90K', N'Over $70K to $90K (fee $200)', 200, 4),
+    (@rev, 4, N'PartyIncome', N'Over $90K', N'Over $90K (fee $320)', 320, 5),
+    (@rev, 4, N'FeePaid', N'Certificate of Indigency', N'Certificate of Indigency', NULL, 1),
+    (@rev, 4, N'FeePaid', N'$0', N'$0', 0, 2),
+    (@rev, 4, N'FeePaid', N'$80', N'$80', 80, 3),
+    (@rev, 4, N'FeePaid', N'$140', N'$140', 140, 4),
+    (@rev, 4, N'FeePaid', N'$200', N'$200', 200, 5),
+    (@rev, 4, N'FeePaid', N'$320', N'$320', 320, 6),
+    (@rev, 4, N'FeeOwed', N'Certificate of Indigency', N'Certificate of Indigency', NULL, 1),
+    (@rev, 4, N'FeeOwed', N'$0', N'$0', 0, 2),
+    (@rev, 4, N'FeeOwed', N'$80', N'$80', 80, 3),
+    (@rev, 4, N'FeeOwed', N'$140', N'$140', 140, 4),
+    (@rev, 4, N'FeeOwed', N'$200', N'$200', 200, 5),
+    (@rev, 4, N'FeeOwed', N'$320', N'$320', 320, 6),
+    -- Revised schedule, County
+    (@rev, 2, N'FeeAmount', N'$90', N'$90 (claim up to $15,000)', 90, 1),
+    (@rev, 2, N'FeeAmount', N'$150', N'$150 (claim over $15,000 to $25,000)', 150, 2),
+    (@rev, 2, N'FeeAmount', N'Indigent', N'Indigent', NULL, 3),
+    (@rev, 2, N'FeeAmount', N'Eviction', N'Eviction (no fee)', NULL, 4),
+    (@rev, 2, N'FeePaid', N'$0', N'$0', 0, 1),
+    (@rev, 2, N'FeePaid', N'$90', N'$90', 90, 2),
+    (@rev, 2, N'FeePaid', N'$150', N'$150', 150, 3),
+    (@rev, 2, N'FeePaid', N'Indigent', N'Indigent', NULL, 4),
+    (@rev, 2, N'FeeOwed', N'$0', N'$0', 0, 1),
+    (@rev, 2, N'FeeOwed', N'$90', N'$90', 90, 2),
+    (@rev, 2, N'FeeOwed', N'$150', N'$150', 150, 3),
+    (@rev, 2, N'FeeOwed', N'Certificate of Indigency', N'Certificate of Indigency', NULL, 4)
+  ) AS v (FeeScheduleId, GroupId, TierType, [Value], [Label], Amount, SortOrder)
+END
+GO
+
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_fee_schedule_id] (@date datetime)
+RETURNS int
+AS
+BEGIN
+  -- The schedule in effect on a date: the latest one whose effective date is on or before it.
+  RETURN (SELECT TOP (1) [FeeScheduleId] FROM dbo.tjc_modules_med_fee_schedules
+          WHERE [EffectiveDate] <= CAST(@date AS date) ORDER BY [EffectiveDate] DESC)
+END
+GO
+
 /***** Functions *****/
 
 CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_agreement_reached]
@@ -574,7 +711,7 @@ SELECT        dbo.tjc_modules_med_regions.Description AS Region, dbo.tjc_modules
                          dbo.tjc_modules_med_cases.CDSPNumber) AS CaseNumber, dbo.tjc_modules_med_get_party_name(dbo.tjc_modules_med_cases.p1_FirstName, dbo.tjc_modules_med_cases.p1_LastName, dbo.tjc_modules_med_cases.p1_business) AS partyone, 
                          dbo.tjc_modules_med_get_party_name(dbo.tjc_modules_med_cases.p2_FirstName, dbo.tjc_modules_med_cases.p2_LastName, dbo.tjc_modules_med_cases.p2_business) AS partytwo, dbo.tjc_modules_med_sessions.FeeJudgement, dbo.tjc_modules_med_sessions.FeeAgreement, 
                          dbo.tjc_modules_med_sessions.p1_FTA, dbo.tjc_modules_med_sessions.p2_FTA, dbo.tjc_modules_med_sessions.OTS, dbo.tjc_modules_med_sessions.FeeWaiver, dbo.tjc_modules_med_sessions.ChildrenInvolved, dbo.tjc_modules_med_sessions.ParentsInvolved, 
-                         dbo.tjc_modules_med_sessions.Inmate, dbo.tjc_modules_med_sessions.Interpreter
+                         dbo.tjc_modules_med_sessions.Inmate, dbo.tjc_modules_med_sessions.Interpreter, dbo.tjc_modules_med_sessions.p1_IncomeRange, dbo.tjc_modules_med_sessions.p2_IncomeRange
 FROM            dbo.tjc_modules_med_cases INNER JOIN
                          dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId INNER JOIN
                          dbo.tjc_modules_med_sessions ON dbo.tjc_modules_med_cases.CaseId = dbo.tjc_modules_med_sessions.CaseId INNER JOIN
@@ -612,7 +749,7 @@ FROM            dbo.tjc_modules_med_sessions INNER JOIN
                          dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId INNER JOIN
                          dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId LEFT OUTER JOIN
                          dbo.tjc_modules_med_attorneys AS med_Attorneys_1 ON dbo.tjc_modules_med_sessions.p1_AttorneyId = med_Attorneys_1.AttorneyId
-WHERE        (dbo.tjc_modules_med_sessions.p1_FeesOwed IN ('$60', '$120'))
+WHERE        (dbo.tjc_modules_med_sessions.p1_FeesOwed LIKE '$[1-9]%')
 UNION
 SELECT        med_Attorneys_1.FirstName AS aFirstName, med_Attorneys_1.LastName AS aLastName, med_Attorneys_1.Phone, med_Attorneys_1.Extension, med_Attorneys_1.Address, med_Attorneys_1.City, med_Attorneys_1.State, 
                          med_Attorneys_1.Zip, dbo.tjc_modules_med_cases.p2_FirstName AS pFirstName, dbo.tjc_modules_med_cases.p2_LastName AS pLastName, dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.p2_FeesOwed AS FeeOwed, 
@@ -623,7 +760,7 @@ FROM            dbo.tjc_modules_med_sessions INNER JOIN
                          dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId INNER JOIN
                          dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId LEFT OUTER JOIN
                          dbo.tjc_modules_med_attorneys AS med_Attorneys_1 ON dbo.tjc_modules_med_sessions.p2_AttorneyId = med_Attorneys_1.AttorneyId
-WHERE        (dbo.tjc_modules_med_sessions.p2_FeesOwed IN ('$60', '$120'))
+WHERE        (dbo.tjc_modules_med_sessions.p2_FeesOwed LIKE '$[1-9]%')
 GO
 
 CREATE OR ALTER VIEW dbo.tjc_modules_med_mediator_type_no_name
@@ -3220,6 +3357,49 @@ BEGIN
 	SET @SouthCounty = 0
 	SET @NorthCounty = 0
 	
+-- Revised per-party family income tiers (only once the report range reaches the revised schedule)
+-- Counts PARTIES, not cases: the revised fees are set by each party's own income.
+-- ==============================================================================================================================
+	IF EXISTS (SELECT 1 FROM dbo.tjc_modules_med_fee_schedules sc INNER JOIN dbo.tjc_modules_med_fee_tiers t ON t.FeeScheduleId = sc.FeeScheduleId
+	           WHERE t.TierType = N'PartyIncome' AND t.GroupId = 4 AND sc.EffectiveDate IS NOT NULL AND sc.EffectiveDate <= @endDate)
+	BEGIN
+		DECLARE @incValue nvarchar(50)
+		DECLARE incCur CURSOR LOCAL FAST_FORWARD FOR
+			SELECT t.[Value] FROM dbo.tjc_modules_med_fee_tiers t INNER JOIN dbo.tjc_modules_med_fee_schedules sc ON sc.FeeScheduleId = t.FeeScheduleId
+			WHERE t.TierType = N'PartyIncome' AND t.GroupId = 4 AND sc.EffectiveDate IS NOT NULL AND sc.EffectiveDate <= @endDate
+			ORDER BY sc.EffectiveDate, t.SortOrder
+		OPEN incCur
+		FETCH NEXT FROM incCur INTO @incValue
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			INSERT INTO @tempData
+			SELECT 'Family', 'How many Family parties mediated had an individual income of ' + @incValue + '?',
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Sarasota%' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Manatee' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Desoto' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Sarasota - South County' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Sarasota - North County' THEN x.n ELSE 0 END), 0), 0, 0, 0
+			FROM (SELECT sc.Region, (CASE WHEN sc.p1_IncomeRange = @incValue THEN 1 ELSE 0 END) + (CASE WHEN sc.p2_IncomeRange = @incValue THEN 1 ELSE 0 END) AS n
+			      FROM tjc_modules_med_session_counts sc
+			      WHERE sc.MediationDate >= @startDate AND sc.MediationDate <= @endDate AND sc.CaseTypeGroup = 'Family' AND sc.MediationHeld = 1) x
+
+			INSERT INTO @tempData
+			SELECT 'Family', 'How many Family parties resolved had an individual income of ' + @incValue + '?',
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Sarasota%' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Manatee' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Desoto' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Sarasota - South County' THEN x.n ELSE 0 END), 0),
+				ISNULL(SUM(CASE WHEN x.Region LIKE 'Sarasota - North County' THEN x.n ELSE 0 END), 0), 0, 0, 0
+			FROM (SELECT sc.Region, (CASE WHEN sc.p1_IncomeRange = @incValue THEN 1 ELSE 0 END) + (CASE WHEN sc.p2_IncomeRange = @incValue THEN 1 ELSE 0 END) AS n
+			      FROM tjc_modules_med_session_counts sc
+			      WHERE sc.MediationDate >= @startDate AND sc.MediationDate <= @endDate AND sc.CaseTypeGroup = 'Family' AND sc.MediationHeld = 1 AND sc.AgreementReached = 1) x
+
+			FETCH NEXT FROM incCur INTO @incValue
+		END
+		CLOSE incCur
+		DEALLOCATE incCur
+	END
+
 -- How many  cases where mediated by phone 
 -- ==============================================================================================================================	
 
@@ -4179,3 +4359,47 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_fee_tier_report]
+	@startDate datetime,
+	@endDate datetime
+AS
+BEGIN
+	SET NOCOUNT ON;
+	-- Fees by schedule and tier for sessions mediated in the date range. Each schedule that was in effect
+	-- at any point in the range is listed, so a range that spans an effective date shows both side by side.
+	WITH sch AS (
+		SELECT FeeScheduleId, [Name], EffectiveDate, LEAD(EffectiveDate) OVER (ORDER BY EffectiveDate) AS NextDate
+		FROM dbo.tjc_modules_med_fee_schedules WHERE EffectiveDate IS NOT NULL
+	), inrange AS (
+		SELECT FeeScheduleId FROM sch WHERE EffectiveDate <= @endDate AND (NextDate IS NULL OR NextDate > @startDate)
+	), party AS (
+		SELECT c.GroupId, dbo.tjc_modules_med_fee_schedule_id(s.MediationDate) AS FeeScheduleId, v.Paid, v.Owed, v.FTA,
+		       dbo.tjc_modules_med_session_held(s.SessionId) AS Held
+		FROM dbo.tjc_modules_med_sessions s
+		INNER JOIN dbo.tjc_modules_med_cases c ON c.CaseId = s.CaseId
+		CROSS APPLY (VALUES (s.p1_FeesPaid, s.p1_FeesOwed, s.p1_FTA), (s.p2_FeesPaid, s.p2_FeesOwed, s.p2_FTA)) AS v (Paid, Owed, FTA)
+		WHERE s.MediationDate >= @startDate AND s.MediationDate <= @endDate AND c.GroupId IN (2, 4)
+	), vals AS (
+		SELECT FeeScheduleId, GroupId, Paid AS FeeValue, 1 AS PaidCount, 0 AS OwedHeldCount, 0 AS OwedFtaCount
+		FROM party WHERE ISNULL(Paid, N'') <> N''
+		UNION ALL
+		SELECT FeeScheduleId, GroupId, Owed, 0, CASE WHEN Held = 1 THEN 1 ELSE 0 END, CASE WHEN FTA = 1 THEN 1 ELSE 0 END
+		FROM party WHERE ISNULL(Owed, N'') <> N''
+		UNION ALL
+		SELECT t.FeeScheduleId, t.GroupId, t.[Value], 0, 0, 0
+		FROM dbo.tjc_modules_med_fee_tiers t INNER JOIN inrange r ON r.FeeScheduleId = t.FeeScheduleId
+		WHERE t.TierType IN (N'FeePaid', N'FeeOwed')
+	)
+	SELECT v.FeeScheduleId, sc.[Name] AS ScheduleName, sc.EffectiveDate, v.GroupId,
+	       CASE v.GroupId WHEN 4 THEN N'Family' ELSE N'County' END AS CaseTypeGroup,
+	       v.FeeValue, MAX(t.Amount) AS Amount,
+	       SUM(v.PaidCount) AS PaidCount, SUM(v.OwedHeldCount) AS OwedHeldCount, SUM(v.OwedFtaCount) AS OwedFtaCount,
+	       MIN(ISNULL(t.SortOrder, 99)) AS SortOrder
+	FROM vals v
+	INNER JOIN dbo.tjc_modules_med_fee_schedules sc ON sc.FeeScheduleId = v.FeeScheduleId
+	LEFT JOIN dbo.tjc_modules_med_fee_tiers t ON t.FeeScheduleId = v.FeeScheduleId AND t.GroupId = v.GroupId
+	     AND t.[Value] = v.FeeValue AND t.TierType IN (N'FeePaid', N'FeeOwed')
+	GROUP BY v.FeeScheduleId, sc.[Name], sc.EffectiveDate, v.GroupId, v.FeeValue
+	ORDER BY sc.EffectiveDate, v.GroupId DESC, MIN(ISNULL(t.SortOrder, 99)), v.FeeValue
+END
+GO

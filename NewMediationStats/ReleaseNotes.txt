@@ -11,21 +11,31 @@
 		<b>Version 00.00.01</b><br /><br />
 	</p>
 	<p>
-		Independent copy of the Mediation Statistics module, created ahead of the revised s. 44.108, F.S.
-		family and county mediation fee and income tiers. It has its own tables, views, functions and stored
-		procedures (prefix <b>tjc_modules_med_</b>), its own assembly, and its own Web API routes
-		(<b>tjc.Modules/NewMediationStats</b>), so it can run beside the original module without sharing any data.
+		Independent copy of the Mediation Statistics module with the revised s. 44.108, F.S. family and county
+		fee and income tiers. It has its own tables, views, functions and stored procedures (prefix
+		<b>tjc_modules_med_</b>), its own assembly, and its own Web API routes (<b>tjc.Modules/NewMediationStats</b>),
+		so it runs beside the original module without sharing any data.
 	</p>
 
-	<h4>What is in this version</h4>
+	<h4>Fee schedules</h4>
 	<ul>
-		<li>Same screens and reports as Mediation Statistics, pointed at the tjc_modules_med_ objects.</li>
-		<li>Install script creates the schema only. Existing data is copied, if wanted, with Migrations/copy-data-from-tjc_med.sql.</li>
-		<li>Uninstall removes code objects only. The tjc_modules_med_ tables are kept so no statistics are lost.</li>
+		<li>Two schedules are installed: <b>Original fees</b> (always in effect) and <b>Revised fees (s. 44.108, F.S.)</b>, which has no effective date yet.</li>
+		<li>An administrator sets the revised schedule's effective date on <b>Manage Lists &gt; Fee Schedules</b> once the law takes effect.</li>
+		<li>The schedule that applies to a session is picked by its <b>mediation date</b>: entry forms show that schedule's fee and income choices, and reports group by schedule.</li>
+		<li>Revised family fees: $80 (income to $50,000), $140 (over $50,000 to $70,000), $200 (over $70,000 to $90,000) per party, set by each party's own income; $320 for a party over $90,000 when combined income is $180,000 or less.</li>
+		<li>Revised county fees: $90 for a claim up to $15,000, $150 for a claim over $15,000 to $25,000.</li>
 	</ul>
 
-	<h4>Not yet done</h4>
+	<h4>Reports</h4>
 	<ul>
-		<li>New family income tiers and fee amounts, county fee amounts, and the pre/post effective date reporting split.</li>
+		<li><b>Compendium</b> keeps the original joint-income questions and adds party-income questions once the report range reaches the revised schedule.</li>
+		<li><b>Fee Tiers (by fee schedule)</b> lists fees paid and owed by tier. A range that spans the effective date lists both schedules.</li>
+		<li><b>Collected &amp; Paid</b> is unchanged and counts the original $60 and $120 amounts only.</li>
+	</ul>
+
+	<h4>Installing</h4>
+	<ul>
+		<li>The install script creates the schema only. To bring over existing data run Migrations/copy-data-from-tjc_med.sql once (lookup data always; case history only with @IncludeHistory = 1).</li>
+		<li>Uninstall removes code objects only. The tjc_modules_med_ tables are kept so no statistics are lost.</li>
 	</ul>
 </div>

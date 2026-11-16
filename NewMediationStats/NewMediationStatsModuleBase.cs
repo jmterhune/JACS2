@@ -116,6 +116,7 @@ namespace tjc.Modules.NewMediationStats
         public string AppearanceListUrl { get { return EditUrl("Appearance"); } }
         public string IssueListUrl { get { return EditUrl("Issue"); } }
         public string ActionListUrl { get { return EditUrl("Action"); } }
+        public string FeeScheduleListUrl { get { return EditUrl("FeeSchedule"); } }
         public string GroupRelationUrl { get { return EditUrl("GroupRelation"); } }
 
        

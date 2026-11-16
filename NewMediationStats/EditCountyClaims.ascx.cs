@@ -302,11 +302,12 @@ namespace tjc.Modules.NewMediationStats
                         txtDefendantExtension.Text = string.Empty;
                     }
                 }
-                drpFeeAmount.SelectedValue = session.FeeAmount;
-                drpDefendantFeesOwed.SelectedValue = session.p2_FeesOwed;
-                drpDefendantFeesPaid.SelectedValue = session.p2_FeesPaid;
-                drpPlaintiffFeesOwed.SelectedValue = session.p1_FeesOwed;
-                drpPlaintiffFeesPaid.SelectedValue = session.p1_FeesPaid;
+                BindFeeOptions();
+                FeeOptions.Select(drpFeeAmount, session.FeeAmount);
+                FeeOptions.Select(drpDefendantFeesOwed, session.p2_FeesOwed);
+                FeeOptions.Select(drpDefendantFeesPaid, session.p2_FeesPaid);
+                FeeOptions.Select(drpPlaintiffFeesOwed, session.p1_FeesOwed);
+                FeeOptions.Select(drpPlaintiffFeesPaid, session.p1_FeesPaid);
                 chkFeeAgreementEntered.Checked = false;
                 if (session.FeeAgreement.HasValue)
                     chkFeeAgreementEntered.Checked = session.FeeAgreement.Value;
@@ -348,6 +349,54 @@ namespace tjc.Modules.NewMediationStats
 
             rptEvent.DataBind();
         }
+        private const int FeeGroupId = FeeGroups.County;
+
+        /// <summary>
+        /// Fills the fee drop-downs from the fee schedule in effect on the mediation date
+        /// (today when no date is entered).
+        /// </summary>
+        private void BindFeeOptions()
+        {
+            var ctl = new FeeScheduleController(_hostSettings);
+            DateTime date = DateTime.Today;
+            if (DateTime.TryParse(txtMediationDate.Text, out DateTime parsed))
+                date = parsed;
+            int scheduleId = ctl.GetScheduleIdForDate(date);
+            hdFeeScheduleId.Value = scheduleId.ToString();
+            FeeSchedule schedule = ctl.GetSchedule(scheduleId);
+            ltFeeSchedule.Text = schedule == null ? string.Empty : "Fee schedule for this mediation date: <strong>" + System.Web.HttpUtility.HtmlEncode(schedule.Name) + "</strong>";
+            FeeOptions.Fill(drpFeeAmount, ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.FeeAmount), "< Select Fee Amount >");
+            List<FeeTier> paid = ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.FeePaid).ToList();
+            List<FeeTier> owed = ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.FeeOwed).ToList();
+            FeeOptions.Fill(drpPlaintiffFeesPaid, paid, "< Select Fee Paid >");
+            FeeOptions.Fill(drpDefendantFeesPaid, paid, "< Select Fee Paid >");
+            FeeOptions.Fill(drpPlaintiffFeesOwed, owed, "< Select Fee Owed >");
+            FeeOptions.Fill(drpDefendantFeesOwed, owed, "< Select Fee Owed >");
+        }
+
+        /// <summary>True when the mediation date now falls under a different fee schedule than the one the form was bound for.</summary>
+        private bool FeeScheduleChanged()
+        {
+            if (string.IsNullOrEmpty(hdFeeScheduleId.Value))
+                return false;
+            DateTime date = DateTime.Today;
+            if (DateTime.TryParse(txtMediationDate.Text, out DateTime parsed))
+                date = parsed;
+            return hdFeeScheduleId.Value != new FeeScheduleController(_hostSettings).GetScheduleIdForDate(date).ToString();
+        }
+
+        private void ShowFeeScheduleChanged()
+        {
+            BindFeeOptions();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CountyClaims", ""));
+            ltMessage.Text = string.Format(stringValue, "warning", "Fee schedule changed", "The mediation date falls under a different fee schedule. Review the fee fields, then save again.", "fas fa-exclamation-triangle");
+        }
+
+        protected void txtMediationDate_TextChanged(object sender, EventArgs e)
+        {
+            BindFeeOptions();
+        }
+
         private void InitializeDropDowns()
         {
             var ctlGroup = new GroupController(_hostSettings);
@@ -405,6 +454,7 @@ namespace tjc.Modules.NewMediationStats
             drpCaseType.SelectedIndex = 0;
             txtOrderReferral.Text = string.Empty;
             txtMediationDate.Text = string.Empty;
+            BindFeeOptions();
             drpFeeAmount.SelectedIndex = 0;
             drpPlaintiffFeesPaid.SelectedIndex = 0;
             drpDefendantFeesPaid.SelectedIndex = 0;
@@ -707,6 +757,11 @@ namespace tjc.Modules.NewMediationStats
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
+            if (FeeScheduleChanged())
+            {
+                ShowFeeScheduleChanged();
+                return;
+            }
             var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CountyClaims", ""));
             if (CaseID <= 0)
             {
@@ -819,6 +874,11 @@ namespace tjc.Modules.NewMediationStats
         }
         protected void cmdSaveEvent_Click(object sender, EventArgs e)
         {
+            if (FeeScheduleChanged())
+            {
+                ShowFeeScheduleChanged();
+                return;
+            }
             var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
             FillCase();
             var ctl = new EventController(_hostSettings);

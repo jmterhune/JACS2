@@ -223,7 +223,7 @@
                     <div class="col-auto">
                         <div class="mb-3">
                             <asp:Label runat="server" AssociatedControlID="txtMediationDate" Text="Mediation Date / Resolved" />
-                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" TextMode="Date" MaxLength="15" ClientIDMode="Static" CssClass="form-control" />
+                            <asp:TextBox AutoCompleteType="Disabled" runat="server" ID="txtMediationDate" TextMode="Date" MaxLength="15" ClientIDMode="Static" CssClass="form-control" AutoPostBack="true" OnTextChanged="txtMediationDate_TextChanged" />
                         </div>
                     </div>
                 </div>
@@ -290,15 +290,31 @@
                 <legend>Fee Information</legend>
                 <div class="row gx-2">
                     <div class="col">
-                        <div class="mb-3">
-                            <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Range" />
-                            <asp:DropDownList runat="server" ID="drpFeeAmount" CssClass="form-control">
-                                <asp:ListItem Text="< Select Fee Range >" Value="" />
-                                <asp:ListItem Text="Indigent" Value="Indigent" />
-                                <asp:ListItem Text="$0-$50" Value="$0-$50" />
-                                <asp:ListItem Text="$50-$100" Value="$50-$100" />
-                            </asp:DropDownList>
-                        </div>
+                        <%-- Items for these drop-downs come from the fee schedule in effect on the mediation date (see BindFeeOptions). --%>
+                        <asp:Panel ID="pnlCombinedIncome" runat="server">
+                            <div class="mb-3">
+                                <asp:Label runat="server" AssociatedControlID="drpFeeAmount" Text="Fee Range (combined income)" />
+                                <asp:DropDownList runat="server" ID="drpFeeAmount" CssClass="form-control">
+                                    <asp:ListItem Text="< Select Fee Range >" Value="" />
+                                </asp:DropDownList>
+                            </div>
+                        </asp:Panel>
+                        <asp:Panel ID="pnlPartyIncome" runat="server" Visible="false">
+                            <div class="mb-3">
+                                <asp:Label runat="server" AssociatedControlID="drpPetitionerIncome" Text="Petitioner Income" />
+                                <asp:DropDownList runat="server" ID="drpPetitionerIncome" CssClass="form-control">
+                                    <asp:ListItem Text="< Select Income Range >" Value="" />
+                                </asp:DropDownList>
+                            </div>
+                            <div class="mb-3">
+                                <asp:Label runat="server" AssociatedControlID="drpRespondentIncome" Text="Respondent Income" />
+                                <asp:DropDownList runat="server" ID="drpRespondentIncome" CssClass="form-control">
+                                    <asp:ListItem Text="< Select Income Range >" Value="" />
+                                </asp:DropDownList>
+                            </div>
+                        </asp:Panel>
+                        <div class="form-text small mb-3"><asp:Literal ID="ltFeeSchedule" runat="server" /></div>
+                        <asp:HiddenField ID="hdFeeScheduleId" runat="server" />
                     </div>
                     <div class="col-auto col-lg-4">
                         <fieldset class="outline-fieldset mt-0">

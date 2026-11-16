@@ -17,8 +17,9 @@
                 <asp:ListItem Text="Fees Owed" Value="1" />
                 <asp:ListItem Text="Referral Sources" Value="2" />
                 <asp:ListItem Text="Check Stats" Value="3" />
-                <asp:ListItem Text="Collected &amp; Paid" Value="4" />
+                <asp:ListItem Text="Collected &amp; Paid (original fees)" Value="4" />
                 <asp:ListItem Text="Mediator Stats" Value="5" />
+                <asp:ListItem Text="Fee Tiers (by fee schedule)" Value="6" />
             </asp:DropDownList>
         </div>
 
@@ -219,6 +220,25 @@
         <asp:Label ID="lblCountyOwedWaivedFTA" runat="server" />
         <br />
     </fieldset>
+</div>
+<div id="FeeTiers" runat="server" visible="false">
+    <p class="text-muted">Fees by fee schedule for sessions mediated in the date range. A range that spans a schedule's effective date lists both schedules. A row marked "not in schedule" is a fee amount that does not belong to the schedule in effect on that session's mediation date.</p>
+    <asp:GridView ID="rgFeeTiers" runat="server" CssClass="table table-striped rgFeeTiers" ClientIDMode="Static" AutoGenerateColumns="false" OnRowDataBound="rgFeeTiers_RowDataBound">
+        <Columns>
+            <asp:BoundField DataField="ScheduleName" HeaderText="Fee Schedule" ReadOnly="True" />
+            <asp:BoundField DataField="EffectiveDate" HeaderText="Effective" ReadOnly="True" DataFormatString="{0:MM/dd/yyyy}" />
+            <asp:BoundField DataField="CaseTypeGroup" HeaderText="Case Group" ReadOnly="True" />
+            <asp:BoundField DataField="FeeValue" HeaderText="Fee" ReadOnly="True" />
+            <asp:BoundField DataField="PaidCount" HeaderText="Paid" ReadOnly="True" />
+            <asp:BoundField DataField="PaidTotal" HeaderText="Paid $" ReadOnly="True" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="OwedHeldCount" HeaderText="Owed (held)" ReadOnly="True" />
+            <asp:BoundField DataField="OwedHeldTotal" HeaderText="Owed (held) $" ReadOnly="True" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="OwedFtaCount" HeaderText="Owed (FTA)" ReadOnly="True" />
+            <asp:BoundField DataField="OwedFtaTotal" HeaderText="Owed (FTA) $" ReadOnly="True" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="Note" HeaderText="" ReadOnly="True" />
+        </Columns>
+    </asp:GridView>
+    <button class="btn btn-primary" onclick="exportGridViewToExcel('rgFeeTiers')"><i class="fas fa-file-excel"></i>&nbsp;Export to Excel</button>
 </div>
 <div id="MediatorStats" runat="server" visible="false">
     <hr />

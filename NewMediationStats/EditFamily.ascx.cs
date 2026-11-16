@@ -290,11 +290,14 @@ namespace tjc.Modules.NewMediationStats
                     }
                 }
                 txtComments.Text = session.Comment;
-                drpFeeAmount.SelectedValue = session.FeeAmount;
-                drpRespondentFeesOwed.SelectedValue = session.p2_FeesOwed;
-                drpRespondentFeesPaid.SelectedValue = session.p2_FeesPaid;
-                drpPetitionerFeesOwed.SelectedValue = session.p1_FeesOwed;
-                drpPetitionerFeesPaid.SelectedValue = session.p1_FeesPaid;
+                BindFeeOptions();
+                FeeOptions.Select(drpFeeAmount, session.FeeAmount);
+                FeeOptions.Select(drpPetitionerIncome, session.p1_IncomeRange);
+                FeeOptions.Select(drpRespondentIncome, session.p2_IncomeRange);
+                FeeOptions.Select(drpRespondentFeesOwed, session.p2_FeesOwed);
+                FeeOptions.Select(drpRespondentFeesPaid, session.p2_FeesPaid);
+                FeeOptions.Select(drpPetitionerFeesOwed, session.p1_FeesOwed);
+                FeeOptions.Select(drpPetitionerFeesPaid, session.p1_FeesPaid);
                 chkProSePetitioner.Checked = session.p1_ProSe;
                 chkProSeRespondent.Checked = session.p2_ProSe;
                 chkTelephoneSession.Checked = session.HeldByPhone;
@@ -341,6 +344,59 @@ namespace tjc.Modules.NewMediationStats
 
             rptEvent.DataBind();
         }
+        private const int FeeGroupId = FeeGroups.Family;
+
+        /// <summary>
+        /// Fills the fee and income drop-downs from the fee schedule in effect on the mediation date
+        /// (today when no date is entered) and shows the income inputs that schedule uses.
+        /// </summary>
+        private void BindFeeOptions()
+        {
+            var ctl = new FeeScheduleController(_hostSettings);
+            DateTime date = DateTime.Today;
+            if (DateTime.TryParse(txtMediationDate.Text, out DateTime parsed))
+                date = parsed;
+            int scheduleId = ctl.GetScheduleIdForDate(date);
+            hdFeeScheduleId.Value = scheduleId.ToString();
+            FeeSchedule schedule = ctl.GetSchedule(scheduleId);
+            ltFeeSchedule.Text = schedule == null ? string.Empty : "Fee schedule for this mediation date: <strong>" + System.Web.HttpUtility.HtmlEncode(schedule.Name) + "</strong>";
+            List<FeeTier> income = ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.PartyIncome).ToList();
+            pnlPartyIncome.Visible = income.Count > 0;
+            pnlCombinedIncome.Visible = income.Count == 0;
+            FeeOptions.Fill(drpFeeAmount, ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.FeeAmount), "< Select Fee Range >");
+            FeeOptions.Fill(drpPetitionerIncome, income, "< Select Income Range >");
+            FeeOptions.Fill(drpRespondentIncome, income, "< Select Income Range >");
+            List<FeeTier> paid = ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.FeePaid).ToList();
+            List<FeeTier> owed = ctl.GetTiers(scheduleId, FeeGroupId, FeeTierTypes.FeeOwed).ToList();
+            FeeOptions.Fill(drpPetitionerFeesPaid, paid, "< Select Fee Paid >");
+            FeeOptions.Fill(drpRespondentFeesPaid, paid, "< Select Fee Paid >");
+            FeeOptions.Fill(drpPetitionerFeesOwed, owed, "< Select Fee Owed >");
+            FeeOptions.Fill(drpRespondentFeesOwed, owed, "< Select Fee Owed >");
+        }
+
+        /// <summary>True when the mediation date now falls under a different fee schedule than the one the form was bound for.</summary>
+        private bool FeeScheduleChanged()
+        {
+            if (string.IsNullOrEmpty(hdFeeScheduleId.Value))
+                return false;
+            DateTime date = DateTime.Today;
+            if (DateTime.TryParse(txtMediationDate.Text, out DateTime parsed))
+                date = parsed;
+            return hdFeeScheduleId.Value != new FeeScheduleController(_hostSettings).GetScheduleIdForDate(date).ToString();
+        }
+
+        private void ShowFeeScheduleChanged()
+        {
+            BindFeeOptions();
+            var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("Family", ""));
+            ltMessage.Text = string.Format(stringValue, "warning", "Fee schedule changed", "The mediation date falls under a different fee schedule. Review the income and fee fields, then save again.", "fas fa-exclamation-triangle");
+        }
+
+        protected void txtMediationDate_TextChanged(object sender, EventArgs e)
+        {
+            BindFeeOptions();
+        }
+
         private void InitializeDropDowns()
         {
             var ctlGroup = new GroupController(_hostSettings);
@@ -398,7 +454,10 @@ namespace tjc.Modules.NewMediationStats
             drpCaseType.SelectedIndex = 0;
             txtOrderReferral.Text = string.Empty;
             txtMediationDate.Text = string.Empty;
+            BindFeeOptions();
             drpFeeAmount.SelectedIndex = 0;
+            drpPetitionerIncome.SelectedIndex = 0;
+            drpRespondentIncome.SelectedIndex = 0;
             drpPetitionerFeesPaid.SelectedIndex = 0;
             drpRespondentFeesPaid.SelectedIndex = 0;
             drpPetitionerFeesOwed.SelectedIndex = 0;
@@ -506,7 +565,12 @@ namespace tjc.Modules.NewMediationStats
                 session.ArbitrationReferral = chkArbitrationReferral.Checked;
                 session.Interpreter = chkInterpreterRequested.Checked;
                 session.Inmate=chkInmate.Checked;
-                session.FeeAmount = drpFeeAmount.SelectedValue;
+                // A session belongs to one fee schedule: combined income range under the original,
+                // each party's own income range under the revised one. Clear the one that does not apply.
+                bool partyIncome = pnlPartyIncome.Visible;
+                session.FeeAmount = partyIncome ? null : drpFeeAmount.SelectedValue;
+                session.p1_IncomeRange = partyIncome ? FeeOptions.ValueOrNull(drpPetitionerIncome) : null;
+                session.p2_IncomeRange = partyIncome ? FeeOptions.ValueOrNull(drpRespondentIncome) : null;
                 session.p1_FeesOwed = drpPetitionerFeesOwed.SelectedValue;
                 session.p1_FeesPaid = drpPetitionerFeesPaid.SelectedValue;
                 session.p2_FeesOwed = drpRespondentFeesOwed.SelectedValue;
@@ -704,6 +768,11 @@ namespace tjc.Modules.NewMediationStats
         }
         protected void cmdSave_Click(object sender, EventArgs e)
         {
+            if (FeeScheduleChanged())
+            {
+                ShowFeeScheduleChanged();
+                return;
+            }
             var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("Family", ""));
             if (CaseID <= 0)
             {
@@ -811,6 +880,11 @@ namespace tjc.Modules.NewMediationStats
         }
         protected void cmdSaveEvent_Click(object sender, EventArgs e)
         {
+            if (FeeScheduleChanged())
+            {
+                ShowFeeScheduleChanged();
+                return;
+            }
             var stringValue = Localization.GetString("Alert.Text", LocalResourceFile.Replace("CDSP", ""));
 
             FillCase();
