@@ -1,0 +1,31 @@
+﻿<h3>New Mediation Statistics</h3>
+<p class="Contributor">
+	12th Judicial Circuit <br />
+	<a href="mailto:jterhune@jud12.flcourts.org">jterhune@jud12.flcourts.org</a><br />
+	<a href=https://www.jud12.flcourts.org>https://www.jud12.flcourts.org</a><br />
+</p>
+<hr/>
+<div class="License">
+	<h3>About New Mediation Statistics</h3>
+	<p class="Owner">
+		<b>Version 00.00.01</b><br /><br />
+	</p>
+	<p>
+		Independent copy of the Mediation Statistics module, created ahead of the revised s. 44.108, F.S.
+		family and county mediation fee and income tiers. It has its own tables, views, functions and stored
+		procedures (prefix <b>tjc_modules_med_</b>), its own assembly, and its own Web API routes
+		(<b>tjc.Modules/NewMediationStats</b>), so it can run beside the original module without sharing any data.
+	</p>
+
+	<h4>What is in this version</h4>
+	<ul>
+		<li>Same screens and reports as Mediation Statistics, pointed at the tjc_modules_med_ objects.</li>
+		<li>Install script creates the schema only. Existing data is copied, if wanted, with Migrations/copy-data-from-tjc_med.sql.</li>
+		<li>Uninstall removes code objects only. The tjc_modules_med_ tables are kept so no statistics are lost.</li>
+	</ul>
+
+	<h4>Not yet done</h4>
+	<ul>
+		<li>New family income tiers and fee amounts, county fee amounts, and the pre/post effective date reporting split.</li>
+	</ul>
+</div>

@@ -1,0 +1,4181 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****  New Mediation Statistics - tjc_modules_med_*    *****/
+/*****                                                  *****/
+/***** Independent copy of the tjc_med_* schema. Every  *****/
+/***** object is idempotent: tables are created only if *****/
+/***** missing; views, functions and procedures use     *****/
+/***** CREATE OR ALTER. No data is copied here - see    *****/
+/***** Migrations/copy-data-from-tjc_med.sql.           *****/
+/************************************************************/
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_appearances', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_appearances]
+  (
+      [AppearanceId] int IDENTITY(1,1) NOT NULL,
+      [Description] nvarchar(50) NOT NULL,
+      [Active] bit NOT NULL DEFAULT ((1)),
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_appearance_items] PRIMARY KEY CLUSTERED ([AppearanceId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_attorneys', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_attorneys]
+  (
+      [AttorneyId] int IDENTITY(1,1) NOT NULL,
+      [FirstName] nvarchar(50) NULL,
+      [LastName] nvarchar(50) NULL,
+      [Firm] nvarchar(50) NULL,
+      [Email] nvarchar(250) NULL,
+      [Phone] nvarchar(50) NULL,
+      [Extension] nvarchar(50) NULL,
+      [Address] nvarchar(150) NULL,
+      [City] nvarchar(50) NULL,
+      [State] nvarchar(50) NULL,
+      [Zip] nvarchar(50) NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_attorneys] PRIMARY KEY CLUSTERED ([AttorneyId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_cases', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_cases]
+  (
+      [CaseId] int IDENTITY(1,1) NOT NULL,
+      [RegionId] int NULL,
+      [GroupId] int NULL,
+      [CaseNumber] nvarchar(50) NULL,
+      [CDSPNumber] nvarchar(50) NULL,
+      [p1_FirstName] nvarchar(50) NULL,
+      [p1_LastName] nvarchar(50) NULL,
+      [p1_business] nvarchar(50) NULL,
+      [p2_FirstName] nvarchar(50) NULL,
+      [p2_LastName] nvarchar(50) NULL,
+      [p2_business] nvarchar(50) NULL,
+      [CreatedDate] datetime NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_cases] PRIMARY KEY CLUSTERED ([CaseId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_casetypes', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_casetypes]
+  (
+      [CaseTypeId] int IDENTITY(1,1) NOT NULL,
+      [Description] nvarchar(50) NOT NULL,
+      [Active] bit NOT NULL DEFAULT ((1)),
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_casetypes] PRIMARY KEY CLUSTERED ([CaseTypeId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_event_appearances', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_event_appearances]
+  (
+      [EventId] int NOT NULL,
+      [AppearanceId] int NOT NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_event_appearances] PRIMARY KEY CLUSTERED ([EventId],[AppearanceId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_groups', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_groups]
+  (
+      [GroupId] int IDENTITY(1,1) NOT NULL,
+      [Description] nvarchar(50) NOT NULL,
+      [CourtOrdered] bit NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_groups] PRIMARY KEY CLUSTERED ([GroupId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_issues', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_issues]
+  (
+      [IssueId] int IDENTITY(1,1) NOT NULL,
+      [Description] nvarchar(50) NOT NULL,
+      [Active] bit NOT NULL DEFAULT ((1)),
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_issues] PRIMARY KEY CLUSTERED ([IssueId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_mediators', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_mediators]
+  (
+      [MediatorId] int IDENTITY(1,1) NOT NULL,
+      [LastName] nvarchar(50) NULL,
+      [FirstName] nvarchar(50) NULL,
+      [Email] nvarchar(250) NULL,
+      [Phone] nvarchar(20) NULL,
+      [CreatedDate] datetime NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_mediators] PRIMARY KEY CLUSTERED ([MediatorId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_regions', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_regions]
+  (
+      [RegionId] int IDENTITY(1,1) NOT NULL,
+      [Description] nvarchar(50) NOT NULL,
+      [Active] bit NOT NULL DEFAULT ((1)),
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_regions] PRIMARY KEY CLUSTERED ([RegionId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_sessions', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_sessions]
+  (
+      [SessionId] int IDENTITY(1,1) NOT NULL,
+      [CaseId] int NULL,
+      [PrimaryCaseType] int NULL,
+      [StageOfAction] int NULL,
+      [p1_AttorneyId] int NULL,
+      [p1_ProSe] bit NOT NULL DEFAULT ((0)),
+      [p1_FeesPaid] nvarchar(50) NULL,
+      [p1_FeesOwed] nvarchar(50) NULL,
+      [p2_AttorneyId] int NULL,
+      [p2_ProSe] bit NOT NULL DEFAULT ((0)),
+      [p2_FeesPaid] nvarchar(50) NULL,
+      [p2_FeesOwed] nvarchar(50) NULL,
+      [p1_FTA] bit NULL,
+      [p2_FTA] bit NULL,
+      [MediationDate] datetime NULL,
+      [ReferralDate] datetime NULL,
+      [ProgramReferralSource] nvarchar(50) NULL,
+      [ArbitrationReferral] bit NOT NULL DEFAULT ((0)),
+      [CircuitCivilReferral] bit NOT NULL DEFAULT ((0)),
+      [FeeAmount] nvarchar(50) NULL,
+      [FeeJudgement] bit NULL,
+      [FeeAgreement] bit NULL,
+      [PTC_CourtOrdered] char(1) NULL,
+      [ChildrenInvolved] int NULL,
+      [ParentsInvolved] int NULL,
+      [HeldByPhone] bit NOT NULL DEFAULT ((0)),
+      [Comment] nvarchar(4000) NULL,
+      [OTS] bit NULL,
+      [FeeWaiver] bit NULL,
+      [Inmate] bit NULL,
+      [Interpreter] bit NULL,
+      [CreatedDate] datetime NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      [Mediator] nvarchar(50) NULL,
+      CONSTRAINT [PK_tjc_modules_med_sessions] PRIMARY KEY CLUSTERED ([SessionId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_stage_action', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_stage_action]
+  (
+      [StageOfActionId] int IDENTITY(1,1) NOT NULL,
+      [Description] nvarchar(50) NOT NULL,
+      [Active] bit NOT NULL DEFAULT ((1)),
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_stage_action] PRIMARY KEY CLUSTERED ([StageOfActionId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_appearance_by_group', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_appearance_by_group]
+  (
+      [AppearanceId] int NOT NULL,
+      [GroupId] int NOT NULL,
+      [SortOrder] int NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_appearance_item_casetype_group] PRIMARY KEY CLUSTERED ([AppearanceId],[GroupId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_casetype_by_group', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_casetype_by_group]
+  (
+      [GroupId] int NOT NULL,
+      [CaseTypeId] int NOT NULL,
+      [SortOrder] int NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_casetype_by_group] PRIMARY KEY CLUSTERED ([GroupId],[CaseTypeId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_events', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_events]
+  (
+      [EventId] int IDENTITY(1,1) NOT NULL,
+      [SessionId] int NOT NULL,
+      [MediationHeld] bit NULL DEFAULT ((0)),
+      [ReasonNotHeld] nvarchar(50) NULL,
+      [EventDate] smalldatetime NULL DEFAULT (getdate()),
+      [MediatorId] int NULL,
+      [MediatorType] nvarchar(50) NULL,
+      [Comments] nvarchar(2000) NULL,
+      [AgreementType] char(1) NULL DEFAULT ('N'),
+      [AgreementSubmittedParties] bit NULL DEFAULT ((0)),
+      [AgreementPreparedAttorney] bit NULL DEFAULT ((0)),
+      [AgreementSigned] bit NULL DEFAULT ((0)),
+      [AdjournedTimeRemaining] bit NULL DEFAULT ((0)),
+      [TimeRemaining] decimal(18,2) NULL DEFAULT ((0)),
+      [SignedCount1] int NULL,
+      [SignedCount2] int NULL,
+      [SignedCount3] int NULL,
+      [Signed1] bit NULL,
+      [Signed2] bit NULL,
+      [Signed3] bit NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_events] PRIMARY KEY CLUSTERED ([EventId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_issue_by_group', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_issue_by_group]
+  (
+      [GroupId] int NOT NULL,
+      [IssueId] int NOT NULL,
+      [SortOrder] int NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_issue_by_group] PRIMARY KEY CLUSTERED ([GroupId],[IssueId])
+  )
+END
+GO
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_issue_by_session', N'U') IS NULL
+BEGIN
+  CREATE TABLE dbo.[tjc_modules_med_issue_by_session]
+  (
+      [SessionId] int NOT NULL,
+      [IssueId] int NOT NULL,
+      [CreatedDate] datetime NOT NULL DEFAULT (getdate()),
+      [CreatedById] int NOT NULL DEFAULT ((1)),
+      [LastModifiedDate] datetime NOT NULL DEFAULT (getdate()),
+      [LastModifiedById] int NOT NULL DEFAULT ((1)),
+      CONSTRAINT [PK_tjc_modules_med_session_issues] PRIMARY KEY CLUSTERED ([SessionId],[IssueId])
+  )
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_appearance_item_by_group_tjc_modules_med_appearance_items')
+  ALTER TABLE dbo.[tjc_modules_med_appearance_by_group] ADD CONSTRAINT [FK_tjc_modules_med_appearance_item_by_group_tjc_modules_med_appearance_items] FOREIGN KEY ([AppearanceId]) REFERENCES dbo.[tjc_modules_med_appearances] ([AppearanceId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_casetype_by_group_tjc_modules_med_casetypes')
+  ALTER TABLE dbo.[tjc_modules_med_casetype_by_group] ADD CONSTRAINT [FK_tjc_modules_med_casetype_by_group_tjc_modules_med_casetypes] FOREIGN KEY ([CaseTypeId]) REFERENCES dbo.[tjc_modules_med_casetypes] ([CaseTypeId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_casetype_by_group_tjc_modules_med_groups')
+  ALTER TABLE dbo.[tjc_modules_med_casetype_by_group] ADD CONSTRAINT [FK_tjc_modules_med_casetype_by_group_tjc_modules_med_groups] FOREIGN KEY ([GroupId]) REFERENCES dbo.[tjc_modules_med_groups] ([GroupId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_event_appearances_tjc_modules_med_appearance_items')
+  ALTER TABLE dbo.[tjc_modules_med_event_appearances] ADD CONSTRAINT [FK_tjc_modules_med_event_appearances_tjc_modules_med_appearance_items] FOREIGN KEY ([AppearanceId]) REFERENCES dbo.[tjc_modules_med_appearances] ([AppearanceId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_issue_by_group_tjc_modules_med_groups')
+  ALTER TABLE dbo.[tjc_modules_med_issue_by_group] ADD CONSTRAINT [FK_tjc_modules_med_issue_by_group_tjc_modules_med_groups] FOREIGN KEY ([GroupId]) REFERENCES dbo.[tjc_modules_med_groups] ([GroupId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_issue_by_group_tjc_modules_med_issues')
+  ALTER TABLE dbo.[tjc_modules_med_issue_by_group] ADD CONSTRAINT [FK_tjc_modules_med_issue_by_group_tjc_modules_med_issues] FOREIGN KEY ([IssueId]) REFERENCES dbo.[tjc_modules_med_issues] ([IssueId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_session_issues_tjc_modules_med_sessions')
+  ALTER TABLE dbo.[tjc_modules_med_issue_by_session] ADD CONSTRAINT [FK_tjc_modules_med_session_issues_tjc_modules_med_sessions] FOREIGN KEY ([SessionId]) REFERENCES dbo.[tjc_modules_med_sessions] ([SessionId]) ON DELETE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_sessions_tjc_modules_med_cases')
+  ALTER TABLE dbo.[tjc_modules_med_sessions] ADD CONSTRAINT [FK_tjc_modules_med_sessions_tjc_modules_med_cases] FOREIGN KEY ([CaseId]) REFERENCES dbo.[tjc_modules_med_cases] ([CaseId]) ON DELETE CASCADE
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_tjc_modules_med_events_tjc_modules_med_sessions')
+  ALTER TABLE dbo.[tjc_modules_med_events] ADD CONSTRAINT [FK_tjc_modules_med_events_tjc_modules_med_sessions] FOREIGN KEY ([SessionId]) REFERENCES dbo.[tjc_modules_med_sessions] ([SessionId]) ON DELETE CASCADE ON UPDATE CASCADE
+GO
+
+/***** Functions *****/
+
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_agreement_reached]
+(
+	@sessionID int
+)
+RETURNS bit
+AS
+BEGIN
+	DECLARE @reached bit
+
+	IF EXISTS(Select eventId from tjc_modules_med_events where sessionId=@sessionId and agreementType<>'N' AND AgreementType is not null)
+		BEGIN
+		SET @reached=1
+		END
+	ELSE
+		BEGIN
+		SET @reached=0
+		END
+
+	RETURN @reached
+
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <6/21/2024>
+-- Description:	<Combines all session comments per case>
+-- =============================================
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_consolidate_session_comments]
+(
+	@caseId int
+)
+RETURNS nvarchar(MAX)
+AS
+BEGIN
+	-- Declare the return variable here
+	DECLARE @comments nvarchar(MAX)
+
+set @comments = ''
+
+select @comments = 
+	Case When @comments = ''
+		Then Comment
+		Else @comments + + coalesce('|' + Comment, '')
+	End   
+  from  tjc_modules_med_sessions
+  Where CaseId=@caseId and RTRIM(ISNULL(comment,''))<>''
+
+
+	-- Return the result of the function
+	RETURN @comments
+
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <1/27/2025>
+-- Description:	<Gets the case / cdsp number>
+-- =============================================
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_get_case_cdsp_number] 
+(
+	@case nvarchar(20),@cdsp nvarchar(20)
+)
+RETURNS nvarchar(50)
+AS
+BEGIN
+	DECLARE @listNumber nvarchar(50)
+	IF @case <> '' AND @cdsp <> ''
+		BEGIN
+			Set @listNumber= @case + ' | ' + @cdsp
+		END
+	ELSE IF @case <> ''
+		BEGIN
+			Set @listNumber= @case
+		END
+	ELSE
+		BEGIN
+		Set @listNumber= @cdsp
+		END
+
+	RETURN @listNumber
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/14/2023>
+-- Description:	<Get Mediation Party Name>
+-- =============================================
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_get_party_name] 
+(
+	-- Add the parameters for the function here
+	@partyFirst nvarchar(50),@partyLast nvarchar(50),@business nvarchar(50)
+)
+RETURNS nvarchar(150)
+AS
+BEGIN
+	DECLARE @result nvarchar(150);
+	DECLARE @lenFirst int = LEN(@partyFirst);
+	DECLARE	@lenLast int = LEN(@partyLast);
+
+	IF @lenFirst + @lenLast > 0
+		BEGIN
+			IF @lenFirst > 0 AND @lenLast > 0
+				BEGIN
+					SELECT @result = @partylast + ', ' + @partyFirst;
+				END
+			ELSE IF @lenFirst>0
+				BEGIN
+					SELECT @result = @partyFirst;
+				END
+			ELSE
+				BEGIN
+					SELECT @result = @partylast;
+				END
+		END
+	ELSE
+		BEGIN
+			SELECT @result =@business;
+		END
+
+	RETURN @result
+
+END
+GO
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date, ,>
+-- Description:	<Description, ,>
+-- =============================================
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_get_partyname]
+(
+	@firstname nvarchar(50),@lastname nvarchar(50),@business nvarchar(50)
+)
+RETURNS nvarchar(150)
+AS
+BEGIN
+	-- Declare the return variable here
+	DECLARE @partyName nvarchar(150)
+	
+	IF @firstname IS NULL SET @firstname = ''
+	IF @lastName IS NULL SET @lastname = ''
+	IF @business IS NULL SET @business = ''
+
+	IF @firstname <> '' AND @lastname <> ''
+		BEGIN
+			SET	@partyName=@lastname + ', ' + @firstname
+		END
+	ELSE
+		BEGIN
+			IF @business <> ''
+				SET @partyName = @business
+			ELSE
+				SET @partyName = @firstname + @lastname
+		END
+
+	-- Return the result of the function
+	RETURN @partyName
+
+END
+GO
+
+CREATE OR ALTER FUNCTION [dbo].[tjc_modules_med_session_held]
+(
+	@sessionID int
+)
+RETURNS bit
+AS
+BEGIN
+	DECLARE @held bit
+
+	IF EXISTS(Select eventId from tjc_modules_med_events where sessionId=@sessionId and mediationHeld=1)
+		BEGIN
+		SET @held=1
+		END
+	ELSE
+		BEGIN
+		SET @held=0
+		END
+
+	RETURN @held
+
+END
+GO
+
+/***** Views *****/
+
+CREATE OR ALTER VIEW dbo.tjc_modules_med_case_list
+AS
+SELECT        dbo.tjc_modules_med_get_case_cdsp_number(ISNULL(c.CaseNumber, N''), ISNULL(c.CDSPNumber, N'')) AS ListNumber, r.Description AS Region, g.Description AS [Group], ISNULL(c.p1_FirstName + ' ', '') + ISNULL(c.p1_LastName, '') 
+                         + ISNULL(c.p1_business, '') AS PartyOne, ISNULL(c.p2_FirstName + ' ', '') + ISNULL(c.p2_LastName, '') + ISNULL(c.p2_business, '') AS PartyTwo, c.CreatedDate, c.CaseId, c.p1_FirstName, c.p1_LastName, c.p1_business, 
+                         c.p2_FirstName, c.p2_LastName, c.p2_business, c.RegionId, c.GroupId, c.CreatedById, c.LastModifiedDate, c.LastModifiedById, c.CaseNumber, c.CDSPNumber, dbo.tjc_modules_med_consolidate_session_comments(c.CaseId) 
+                         AS Comment
+FROM            dbo.tjc_modules_med_cases AS c INNER JOIN
+                         dbo.tjc_modules_med_regions AS r ON c.RegionId = r.RegionId INNER JOIN
+                         dbo.tjc_modules_med_groups AS g ON c.GroupId = g.GroupId
+GO
+
+CREATE OR ALTER VIEW dbo.tjc_modules_med_session_counts
+AS
+SELECT        dbo.tjc_modules_med_regions.Description AS Region, dbo.tjc_modules_med_casetypes.Description AS CaseType, dbo.tjc_modules_med_groups.Description AS CaseTypeGroup, dbo.tjc_modules_med_stage_action.Description AS StageOfAction, 
+                         dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.Mediator, dbo.tjc_modules_med_sessions.ReferralDate, dbo.tjc_modules_med_sessions.ArbitrationReferral, dbo.tjc_modules_med_sessions.CircuitCivilReferral, 
+                         dbo.tjc_modules_med_sessions.FeeAmount, dbo.tjc_modules_med_sessions.HeldByPhone, dbo.tjc_modules_med_sessions.PTC_CourtOrdered, dbo.tjc_modules_med_sessions.CreatedDate, dbo.tjc_modules_med_session_held(dbo.tjc_modules_med_sessions.SessionId) 
+                         AS MediationHeld, dbo.tjc_modules_med_sessions.SessionId, dbo.tjc_modules_med_agreement_reached(dbo.tjc_modules_med_sessions.SessionId) AS AgreementReached, dbo.tjc_modules_med_get_case_cdsp_number(dbo.tjc_modules_med_cases.CaseNumber, 
+                         dbo.tjc_modules_med_cases.CDSPNumber) AS CaseNumber, dbo.tjc_modules_med_get_party_name(dbo.tjc_modules_med_cases.p1_FirstName, dbo.tjc_modules_med_cases.p1_LastName, dbo.tjc_modules_med_cases.p1_business) AS partyone, 
+                         dbo.tjc_modules_med_get_party_name(dbo.tjc_modules_med_cases.p2_FirstName, dbo.tjc_modules_med_cases.p2_LastName, dbo.tjc_modules_med_cases.p2_business) AS partytwo, dbo.tjc_modules_med_sessions.FeeJudgement, dbo.tjc_modules_med_sessions.FeeAgreement, 
+                         dbo.tjc_modules_med_sessions.p1_FTA, dbo.tjc_modules_med_sessions.p2_FTA, dbo.tjc_modules_med_sessions.OTS, dbo.tjc_modules_med_sessions.FeeWaiver, dbo.tjc_modules_med_sessions.ChildrenInvolved, dbo.tjc_modules_med_sessions.ParentsInvolved, 
+                         dbo.tjc_modules_med_sessions.Inmate, dbo.tjc_modules_med_sessions.Interpreter
+FROM            dbo.tjc_modules_med_cases INNER JOIN
+                         dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId INNER JOIN
+                         dbo.tjc_modules_med_sessions ON dbo.tjc_modules_med_cases.CaseId = dbo.tjc_modules_med_sessions.CaseId INNER JOIN
+                         dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_stage_action ON dbo.tjc_modules_med_sessions.StageOfAction = dbo.tjc_modules_med_stage_action.StageOfActionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_casetypes ON dbo.tjc_modules_med_sessions.PrimaryCaseType = dbo.tjc_modules_med_casetypes.CaseTypeId
+GO
+
+CREATE OR ALTER VIEW dbo.tjc_modules_med_event_counts
+AS
+SELECT        dbo.tjc_modules_med_session_counts.Region, dbo.tjc_modules_med_session_counts.CaseType, dbo.tjc_modules_med_session_counts.CaseTypeGroup, dbo.tjc_modules_med_events.MediationHeld, dbo.tjc_modules_med_events.EventDate, 
+                         dbo.tjc_modules_med_events.MediatorType, ISNULL(dbo.tjc_modules_med_mediators.FirstName + ' ', '') + ISNULL(dbo.tjc_modules_med_mediators.LastName, '') AS MediatorName, dbo.tjc_modules_med_events.AgreementSigned, dbo.tjc_modules_med_events.EventId, 
+                         dbo.tjc_modules_med_mediators.MediatorId, dbo.tjc_modules_med_agreement_reached(dbo.tjc_modules_med_session_counts.SessionId) AS AgreementReached
+FROM            dbo.tjc_modules_med_session_counts INNER JOIN
+                         dbo.tjc_modules_med_events ON dbo.tjc_modules_med_session_counts.SessionId = dbo.tjc_modules_med_events.SessionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_mediators ON dbo.tjc_modules_med_events.MediatorId = dbo.tjc_modules_med_mediators.MediatorId
+GO
+
+CREATE OR ALTER VIEW [dbo].[tjc_modules_med_fee_report_collected]
+AS
+SELECT        dbo.tjc_modules_med_cases.GroupId AS CaseTypeGroupId, dbo.tjc_modules_med_sessions.p1_FeesPaid, dbo.tjc_modules_med_sessions.p1_FeesOwed, dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.p2_FeesPaid, 
+                         dbo.tjc_modules_med_sessions.p2_FeesOwed, dbo.tjc_modules_med_sessions.SessionId, dbo.tjc_modules_med_sessions.p1_FTA, dbo.tjc_modules_med_sessions.p2_FTA, dbo.tjc_modules_med_sessions.FeeWaiver
+FROM            dbo.tjc_modules_med_cases INNER JOIN
+                         dbo.tjc_modules_med_sessions ON dbo.tjc_modules_med_cases.CaseId = dbo.tjc_modules_med_sessions.CaseId
+GO
+
+CREATE OR ALTER VIEW [dbo].[tjc_modules_med_fees_owed]
+AS
+SELECT        med_Attorneys_1.FirstName AS aFirstName, med_Attorneys_1.LastName AS aLastName, med_Attorneys_1.Phone, med_Attorneys_1.Extension, med_Attorneys_1.Address, med_Attorneys_1.City, med_Attorneys_1.State, 
+                         med_Attorneys_1.Zip, dbo.tjc_modules_med_cases.p1_FirstName AS pFirstName, dbo.tjc_modules_med_cases.p1_LastName AS pLastName, dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.p1_FeesOwed AS FeeOwed, 
+                         dbo.tjc_modules_med_cases.CaseNumber, dbo.tjc_modules_med_cases.RegionId, dbo.tjc_modules_med_cases.GroupId, dbo.tjc_modules_med_groups.Description AS CaseTypeGroup, dbo.tjc_modules_med_regions.Description AS Region, 
+                         dbo.tjc_modules_med_sessions.FeeJudgement, dbo.tjc_modules_med_sessions.FeeAgreement, dbo.tjc_modules_med_sessions.FeeWaiver, dbo.tjc_modules_med_sessions.OTS, dbo.tjc_modules_med_sessions.p1_FTA, dbo.tjc_modules_med_sessions.p2_FTA
+FROM            dbo.tjc_modules_med_sessions INNER JOIN
+                         dbo.tjc_modules_med_cases ON dbo.tjc_modules_med_sessions.CaseId = dbo.tjc_modules_med_cases.CaseId INNER JOIN
+                         dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId INNER JOIN
+                         dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_attorneys AS med_Attorneys_1 ON dbo.tjc_modules_med_sessions.p1_AttorneyId = med_Attorneys_1.AttorneyId
+WHERE        (dbo.tjc_modules_med_sessions.p1_FeesOwed IN ('$60', '$120'))
+UNION
+SELECT        med_Attorneys_1.FirstName AS aFirstName, med_Attorneys_1.LastName AS aLastName, med_Attorneys_1.Phone, med_Attorneys_1.Extension, med_Attorneys_1.Address, med_Attorneys_1.City, med_Attorneys_1.State, 
+                         med_Attorneys_1.Zip, dbo.tjc_modules_med_cases.p2_FirstName AS pFirstName, dbo.tjc_modules_med_cases.p2_LastName AS pLastName, dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.p2_FeesOwed AS FeeOwed, 
+                         dbo.tjc_modules_med_cases.CaseNumber, dbo.tjc_modules_med_cases.RegionId, dbo.tjc_modules_med_cases.GroupId, dbo.tjc_modules_med_groups.Description AS CaseTypeGroup, dbo.tjc_modules_med_regions.Description AS Region, 
+                         dbo.tjc_modules_med_sessions.FeeJudgement, dbo.tjc_modules_med_sessions.FeeAgreement, dbo.tjc_modules_med_sessions.FeeWaiver, dbo.tjc_modules_med_sessions.OTS, dbo.tjc_modules_med_sessions.p1_FTA, dbo.tjc_modules_med_sessions.p2_FTA
+FROM            dbo.tjc_modules_med_sessions INNER JOIN
+                         dbo.tjc_modules_med_cases ON dbo.tjc_modules_med_sessions.CaseId = dbo.tjc_modules_med_cases.CaseId INNER JOIN
+                         dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId INNER JOIN
+                         dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_attorneys AS med_Attorneys_1 ON dbo.tjc_modules_med_sessions.p2_AttorneyId = med_Attorneys_1.AttorneyId
+WHERE        (dbo.tjc_modules_med_sessions.p2_FeesOwed IN ('$60', '$120'))
+GO
+
+CREATE OR ALTER VIEW dbo.tjc_modules_med_mediator_type_no_name
+AS
+SELECT        c.CaseNumber, c.CDSPNumber, r.Description AS Region, e.CreatedDate AS EventDate, e.MediatorType
+FROM            dbo.tjc_modules_med_cases AS c INNER JOIN
+                         dbo.tjc_modules_med_sessions AS s ON c.CaseId = s.CaseId INNER JOIN
+                         dbo.tjc_modules_med_events AS e ON e.SessionId = s.SessionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_regions AS r ON c.RegionId = r.RegionId
+WHERE        (e.MediatorType IS NOT NULL) AND (e.MediatorId IS NULL OR
+                         e.MediatorId <= 0)
+GO
+
+CREATE OR ALTER VIEW [dbo].[tjc_modules_med_referral_sources]
+AS
+SELECT DISTINCT TOP (100) PERCENT ProgramReferralSource
+FROM            dbo.tjc_modules_med_sessions
+WHERE        (ProgramReferralSource IS NOT NULL) AND (ProgramReferralSource <> '')
+ORDER BY ProgramReferralSource
+GO
+
+CREATE OR ALTER VIEW [dbo].[tjc_modules_med_session_issues_count]
+AS
+SELECT        dbo.tjc_modules_med_regions.Description AS Region, dbo.tjc_modules_med_groups.Description AS CaseTypeGroup, dbo.tjc_modules_med_casetypes.Description AS CaseType, dbo.tjc_modules_med_issues.Description AS Issue, dbo.tjc_modules_med_issues.IssueId, 
+                         dbo.tjc_modules_med_sessions.SessionId, dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.ReferralDate, dbo.tjc_modules_med_session_held(dbo.tjc_modules_med_sessions.SessionId) AS MediationHeld, 
+                         dbo.tjc_modules_med_agreement_reached(dbo.tjc_modules_med_sessions.SessionId) AS AgreementReached
+FROM            dbo.tjc_modules_med_sessions INNER JOIN
+                         dbo.tjc_modules_med_cases ON dbo.tjc_modules_med_sessions.CaseId = dbo.tjc_modules_med_cases.CaseId INNER JOIN
+                         dbo.tjc_modules_med_issue_by_session ON dbo.tjc_modules_med_sessions.SessionId = dbo.tjc_modules_med_issue_by_session.SessionId INNER JOIN
+                         dbo.tjc_modules_med_issues ON dbo.tjc_modules_med_issue_by_session.IssueId = dbo.tjc_modules_med_issues.IssueId INNER JOIN
+                         dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId INNER JOIN
+                         dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_casetypes ON dbo.tjc_modules_med_sessions.PrimaryCaseType = dbo.tjc_modules_med_casetypes.CaseTypeId
+GO
+
+CREATE OR ALTER VIEW [dbo].[tjc_modules_med_stat_checker]
+AS
+SELECT DISTINCT 
+                         dbo.tjc_modules_med_regions.Description AS Region, dbo.tjc_modules_med_casetypes.Description AS CaseType, dbo.tjc_modules_med_groups.Description AS CaseTypeGroup, dbo.tjc_modules_med_stage_action.Description AS StageOfAction, 
+                         dbo.tjc_modules_med_sessions.MediationDate, dbo.tjc_modules_med_sessions.ReferralDate, dbo.tjc_modules_med_sessions.ArbitrationReferral, dbo.tjc_modules_med_sessions.CircuitCivilReferral, dbo.tjc_modules_med_sessions.FeeAmount, 
+                         dbo.tjc_modules_med_sessions.HeldByPhone, dbo.tjc_modules_med_sessions.PTC_CourtOrdered, dbo.tjc_modules_med_sessions.CreatedDate, dbo.tjc_modules_med_session_held(dbo.tjc_modules_med_sessions.SessionId) AS MediationHeld, 
+                         dbo.tjc_modules_med_sessions.SessionId, dbo.tjc_modules_med_agreement_reached(dbo.tjc_modules_med_sessions.SessionId) AS AgreementReached, ISNULL(dbo.tjc_modules_med_cases.CaseNumber, dbo.tjc_modules_med_cases.CDSPNumber) AS CaseNumber, 
+                         dbo.tjc_modules_med_get_party_name(dbo.tjc_modules_med_cases.p1_FirstName, dbo.tjc_modules_med_cases.p1_LastName, dbo.tjc_modules_med_cases.p1_business) AS partyone, dbo.tjc_modules_med_get_party_name(dbo.tjc_modules_med_cases.p2_FirstName, 
+                         dbo.tjc_modules_med_cases.p2_LastName, dbo.tjc_modules_med_cases.p2_business) AS partytwo, dbo.tjc_modules_med_sessions.FeeJudgement, dbo.tjc_modules_med_sessions.FeeAgreement, dbo.tjc_modules_med_sessions.p1_FTA, dbo.tjc_modules_med_sessions.p2_FTA, 
+                         dbo.tjc_modules_med_sessions.OTS, dbo.tjc_modules_med_sessions.FeeWaiver, dbo.tjc_modules_med_sessions.ChildrenInvolved, dbo.tjc_modules_med_sessions.ParentsInvolved, dbo.tjc_modules_med_sessions.Inmate, dbo.tjc_modules_med_sessions.Interpreter, 
+                         dbo.tjc_modules_med_events.MediatorType, ISNULL(dbo.tjc_modules_med_mediators.LastName + ', ' + dbo.tjc_modules_med_mediators.FirstName, '') AS MediatorName
+FROM            dbo.tjc_modules_med_mediators LEFT OUTER JOIN
+                         dbo.tjc_modules_med_events ON dbo.tjc_modules_med_mediators.MediatorId = dbo.tjc_modules_med_events.MediatorId RIGHT OUTER JOIN
+                         dbo.tjc_modules_med_cases INNER JOIN
+                         dbo.tjc_modules_med_groups ON dbo.tjc_modules_med_cases.GroupId = dbo.tjc_modules_med_groups.GroupId INNER JOIN
+                         dbo.tjc_modules_med_sessions ON dbo.tjc_modules_med_cases.CaseId = dbo.tjc_modules_med_sessions.CaseId INNER JOIN
+                         dbo.tjc_modules_med_regions ON dbo.tjc_modules_med_cases.RegionId = dbo.tjc_modules_med_regions.RegionId ON dbo.tjc_modules_med_events.SessionId = dbo.tjc_modules_med_sessions.SessionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_stage_action ON dbo.tjc_modules_med_sessions.StageOfAction = dbo.tjc_modules_med_stage_action.StageOfActionId LEFT OUTER JOIN
+                         dbo.tjc_modules_med_casetypes ON dbo.tjc_modules_med_sessions.PrimaryCaseType = dbo.tjc_modules_med_casetypes.CaseTypeId
+GO
+
+/***** Stored procedures *****/
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Event Appearances>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_add_event_appearance]
+	@eventId int, @appearanceId int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Insert into tjc_modules_med_event_appearances (EventId,AppearanceId,LastModifiedById,LastModifiedDate,CreatedById,CreatedDate)
+	Values(@eventId,@appearanceId,@userId,GetDate(),@userId,GetDate())
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Appearance to Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_add_group_appearance]
+	@groupId int, @appearanceId int,@SortOrder int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Insert into tjc_modules_med_appearance_by_group (GroupId,AppearanceId,SortOrder,LastModifiedById,LastModifiedDate,CreatedById,CreatedDate)
+	Values(@groupId,@appearanceId,@SortOrder,@userId,GetDate(),@userId,GetDate())
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Add Case Type to Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_add_group_case_type]
+	@groupId int, @caseTypeId int,@SortOrder int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Insert into tjc_modules_med_casetype_by_group (GroupId,CaseTypeId,SortOrder,LastModifiedById,LastModifiedDate,CreatedById,CreatedDate)
+	Values(@groupId,@caseTypeId,@SortOrder,@userId,GetDate(),@userId,GetDate())
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Add Case Type to Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_add_group_issue]
+	@groupId int, @issueId int,@SortOrder int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Insert into tjc_modules_med_issue_by_group (GroupId,IssueId,SortOrder,LastModifiedById,LastModifiedDate,CreatedById,CreatedDate)
+	Values(@groupId,@issueId,@SortOrder,@userId,GetDate(),@userId,GetDate())
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Session Issues>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_add_session_issue]
+	@sessionId int, @issueId int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Insert into tjc_modules_med_issue_by_session(SessionId,IssueId,LastModifiedById,LastModifiedDate,CreatedById,CreatedDate)
+	Values(@sessionId,@issueId,@userId,GetDate(),@userId,GetDate())
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_all_event_appearances]
+	@eventId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_event_appearances Where EventId=@eventId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_all_session_issues]
+	@sessionId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_issue_by_session Where SessionId=@sessionId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_case]
+	@caseId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_cases Where CaseId=@caseId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_event_appearance]
+	@eventId int, @appearanceId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_event_appearances Where EventId=@eventId And AppearanceId=@appearanceId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_group_appearance]
+	@groupId int, @appearanceId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_appearance_by_group Where GroupId=@groupId And AppearanceId=@appearanceId
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Delete Case Type by Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_group_case_type]
+	@groupId int, @caseTypeId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_casetype_by_group Where GroupId=@groupId And CaseTypeId=@caseTypeId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_group_issue]
+	@groupId int, @issueId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_issue_by_group Where GroupId=@groupId And IssueId=@issueId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_delete_session_issue]
+	@sessionId int, @issueId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	Delete from tjc_modules_med_issue_by_session Where SessionId=@sessionId And IssueId=@issueId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_fee_report_collected_owed] 
+@startDate datetime,@endDate datetime
+
+AS
+BEGIN
+	
+	SET NOCOUNT ON;
+	DECLARE @mediationCounty int, @mediationFamily int,@p1CountyPaid60 int,@p1CountyOwed60 int,
+		@p1familyOwed60 int,@p1familyOwed120 int,@p1familyPaid60 int,@p1familyPaid120 int,
+		@p2CountyPaid60 int,@p2CountyOwed60 int,@p2CountyOwedFTA60 int,@p1CountyOwedFTA60 int,
+		@p2familyOwed60 int,@p2familyOwed120 int,@p2familyPaid60 int,@p2familyPaid120 int,
+		@p2familyOwedFTA120 int,@p2familyOwedFTA60 int,@p1familyOwedFTA120 int,@p1familyOwedFTA60 int,
+		@p1familyPaidIndigent int,@p2familyPaidIndigent int,@p1CountyPaidIndigent int,@p2CountyPaidIndigent int,
+		@p1familyOwedIndigent int,@p2familyOwedIndigent int,@p1CountyOwedIndigent int,@p2CountyOwedIndigent int,
+		@p1familyOwedIndigentFTA int,@p2familyOwedIndigentFTA int,@p1CountyOwedIndigentFTA int,@p2CountyOwedIndigentFTA int,
+		@CountyPaidWaived int,@CountyOwedWaived int,@CountyOwedWaivedFTA int,
+		@FamilyPaidWaived int,@FamilyOwedWaived int,@FamilyOwedWaivedFTA int
+	
+	--Count of Meidations
+	SELECT @mediationCounty = COUNT(sessionId) from tjc_modules_med_fee_report_collected 
+	WHERE  CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate) AND sessionId IN (Select SessionId from tjc_modules_med_events Where MediationHeld=1)
+	
+	SELECT @mediationFamily = COUNT(sessionId) from tjc_modules_med_fee_report_collected 
+	WHERE  CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate) AND sessionId IN (Select SessionId from tjc_modules_med_events Where MediationHeld=1)
+	
+	--County Paid
+	SELECT @p1CountyPaid60 = COUNT(p1_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p1_feespaid='$60' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2CountyPaid60 = COUNT(p2_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p2_feespaid='$60' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p1CountyPaidIndigent = COUNT(p1_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p1_feespaid='Indigent' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p2CountyPaidIndigent = COUNT(p2_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p2_feespaid='Indigent' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @CountyPaidWaived = COUNT(sessionid) from tjc_modules_med_fee_report_collected 
+	WHERE FeeWaiver=1 AND CaseTypeGroupId=2 AND (p1_FeesPaid IN ('$60','Indigent') OR p2_FeesPaid IN ('$60','Indigent')) AND (MediationDate Between @startDate AND @endDate)
+				
+
+	--Family Paid
+	SELECT @p1FamilyPaid60 = COUNT(p1_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE  p1_feespaid='$60' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2FamilyPaid60 = COUNT(p2_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p2_feespaid='$60' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p1FamilyPaid120 = COUNT(p1_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p1_feespaid='$120' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2FamilyPaid120 = COUNT(p2_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p2_feespaid='$120' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p1familyPaidIndigent = COUNT(p1_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p1_feespaid='Indigent' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p2familyPaidIndigent = COUNT(p2_feespaid) from tjc_modules_med_fee_report_collected 
+	WHERE p2_feespaid='Indigent' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @FamilyPaidWaived = COUNT(sessionid) from tjc_modules_med_fee_report_collected 
+	WHERE FeeWaiver=1 AND CaseTypeGroupId=4 AND (p1_FeesPaid IN ('$60','Indigent','$120') OR p2_FeesPaid IN ('$60','Indigent','$120')) AND (MediationDate Between @startDate AND @endDate)
+
+		--County Owed
+	SELECT @p1CountyOwed60 = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p1_feesOwed='$60' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2CountyOwed60 = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p2_feesOwed='$60' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p1CountyOwedIndigent = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p1_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2CountyOwedIndigent = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p2_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @CountyOwedWaived = COUNT(sessionid) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND FeeWaiver=1 AND CaseTypeGroupId=2 AND (p1_feesOwed IN ('$60','Certificate of Indigency') OR p2_feesOwed IN ('$60','Certificate of Indigency')) AND (MediationDate Between @startDate AND @endDate)
+	
+	--Family Owed
+	SELECT @p1FamilyOwed60 = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p1_feesOwed='$60' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2FamilyOwed60 = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p2_feesOwed='$60' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p1FamilyOwed120 = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p1_feesOwed='$120' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2FamilyOwed120 = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p2_feesOwed='$120' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p1familyOwedIndigent = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p1_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p2familyOwedIndigent = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND p2_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @FamilyOwedWaived = COUNT(sessionid) from tjc_modules_med_fee_report_collected 
+	WHERE sessionid IN (Select sessionid from tjc_modules_med_events where MediationHeld=1) AND FeeWaiver=1 AND CaseTypeGroupId=4 AND (p1_feesOwed IN ('$60','Certificate of Indigency','$120') OR p2_feesOwed IN ('$60','Certificate of Indigency','$120')) AND (MediationDate Between @startDate AND @endDate)
+
+		
+		--County Owed FTA
+	SELECT @p1CountyOwedFTA60 = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p1_FTA=1 AND p1_feesOwed='$60' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2CountyOwedFTA60 = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p2_FTA=1 AND p2_feesOwed='$60' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p1CountyOwedIndigentFTA = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p1_FTA=1 AND p1_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p2CountyOwedIndigentFTA = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p2_FTA=1 AND p2_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=2 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @CountyOwedWaivedFTA = COUNT(sessionid) from tjc_modules_med_fee_report_collected 
+	WHERE (p1_FTA=1 OR p2_FTA=1) AND FeeWaiver=1 AND CaseTypeGroupId=2 AND (p1_feesOwed IN ('$60','Certificate of Indigency') OR p2_feesOwed IN ('$60','Certificate of Indigency')) AND (MediationDate Between @startDate AND @endDate)
+	
+	--Family Owed FTA
+	SELECT @p1FamilyOwedFTA60 = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p1_FTA=1 AND p1_feesOwed='$60' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2FamilyOwedFTA60 = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p2_FTA=1 AND p2_feesOwed='$60' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p1FamilyOwedFTA120 = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p1_FTA=1 AND p1_feesOwed='$120' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+	
+	SELECT @p2FamilyOwedFTA120 = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p2_FTA=1 AND p2_feesOwed='$120' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p1familyOwedIndigentFTA = COUNT(p1_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p1_FTA=1 AND p1_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @p2familyOwedIndigentFTA = COUNT(p2_feesOwed) from tjc_modules_med_fee_report_collected 
+	WHERE p2_FTA=1 AND p2_feesOwed='Certificate of Indigency' AND CaseTypeGroupId=4 AND (MediationDate Between @startDate AND @endDate)
+
+	SELECT @FamilyOwedWaivedFTA = COUNT(sessionid) from tjc_modules_med_fee_report_collected 
+	WHERE (p2_FTA=1 or p1_FTA=1) AND feewaiver=1 AND CaseTypeGroupId=4 AND (p1_feesOwed IN ('$60','Certificate of Indigency','$120') OR p2_feesOwed IN ('$60','Certificate of Indigency','$120')) AND (MediationDate Between @startDate AND @endDate)
+
+
+	--Results
+	SELECT @mediationCounty AS 'CountyCount',@mediationFamily AS 'FamilyCount',
+		(isnull(@p1CountyPaid60,0) + isnull(@p2CountyPaid60,0)) AS 'CountyPaid60',
+		(isnull(@p1familyPaid60,0) + isnull(@p2familyPaid60,0)) AS 'FamilyPaid60',
+		(isnull(@p1familyPaid120,0) + isnull(@p2familyPaid120,0)) AS 'FamilyPaid120',
+		(isnull(@p1CountyOwed60,0) + isnull(@p2CountyOwed60,0)) AS 'CountyOwed',	
+		(isnull(@p1FamilyOwed60,0) + isnull(@p2FamilyOwed60,0)) AS 'FamilyOwed60',
+		(isnull(@p1FamilyOwed120,0) + isnull(@p2FamilyOwed120,0)) AS 'FamilyOwed120',
+		(isnull(@p1FamilyOwedFTA60,0) + isnull(@p2FamilyOwedFTA60,0)) AS 'FamilyOwed60FTA',
+		(isnull(@p1FamilyOwedFTA120,0) + isnull(@p2FamilyOwedFTA120,0)) AS 'FamilyOwed120FTA',
+		(isnull(@p1CountyOwedFTA60,0) + isnull(@p2CountyOwedFTA60,0)) AS 'CountyOwedFTA',
+		(isnull(@p1familyPaidIndigent,0) + isnull(@p2familyPaidIndigent,0)) AS 'FamilyPaidIndigent',
+		(isnull(@p1CountyPaidIndigent,0) + isnull(@p2CountyPaidIndigent,0)) AS 'CountyPaidIndigent',
+		(isnull(@p1familyOwedIndigent,0) + isnull(@p2familyOwedIndigent,0)) AS 'FamilyOwedIndigent',
+		(isnull(@p1CountyOwedIndigent,0) + isnull(@p2CountyOwedIndigent,0)) AS 'CountyOwedIndigent',
+		(isnull(@p1familyOwedIndigentFTA,0) + isnull(@p2familyOwedIndigentFTA,0)) AS 'FamilyOwedIndigentFTA',
+		(isnull(@p1CountyOwedIndigentFTA,0) + isnull(@p2CountyOwedIndigentFTA,0)) AS 'CountyOwedIndigentFTA',
+		@FamilyOwedWaived AS 'FamilyOwedWaived',@FamilyOwedWaivedFTA as 'FamilyOwedWaivedFTA',@FamilyPaidWaived as 'FamilyPaidWaived',
+		@CountyOwedWaived as 'CountyOwedWaived',@CountyOwedWaivedFTA as 'CountyOwedWaivedFTA', @CountyPaidWaived as 'CountyPaidWaived'
+		
+
+		
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_appearances_by_group] 
+	@groupId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select a.* from tjc_modules_med_appearances a inner join tjc_modules_med_appearance_by_group ag on a.AppearanceId=ag.AppearanceId
+	Where ag.groupId=@groupId
+	Order by ag.SortOrder
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediation Case List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_attorney_list_count] 
+	@firstName nvarchar(50),@lastName nvarchar(50),@firm nvarchar(50)
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT Count(*) FROM tjc_modules_med_attorneys WHERE AttorneyId > 0';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@firstName nvarchar(50),@lastName nvarchar(50),@firm nvarchar(50)';
+							
+	SET NOCOUNT ON;
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (FirstName LIKE +''%''+ TRIM(@firstName) + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (LastName LIKE +''%''+ TRIM(@lastName) + ''%'')';
+		END
+	IF LEN(@firm) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (Firm LIKE +''%''+ TRIM(@firm) + ''%'')';
+		END
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef,@firstName=@firstName,@lastName=@lastName,@firm=@firm;
+
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediation Case List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_attorney_list_paged] 
+	@firstName nvarchar(50),@lastName nvarchar(50),@firm nvarchar(50),@offset int, @pageSize int,@sortOrder nvarchar(20),@direction nvarchar(6)
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT * FROM tjc_modules_med_attorneys WHERE AttorneyId > 0';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@firstName nvarchar(50),@lastName nvarchar(50),@firm nvarchar(50),@offset int,@pageSize int,@sortOrder nvarchar(20)';
+							
+	SET NOCOUNT ON;
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (FirstName LIKE +''%''+ TRIM(@firstName) + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (LastName LIKE +''%''+ TRIM(@lastName) + ''%'')';
+		END
+	IF LEN(@firm) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (Firm LIKE +''%''+ TRIM(@firm) + ''%'')';
+		END
+	SET	@sql = @sql + ' ORDER BY ' + @sortOrder + ' ' +@direction;
+	SET	@sql = @sql + ' OFFSET @offset ROWS FETCH NEXT @pagesize ROWS ONLY';
+	print @sql;
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef, @firstName=@firstName,@lastName=@lastName,@firm=@firm,@offset=@offset,@pageSize=@pageSize,@sortOrder=@sortOrder;
+ 
+	
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediation Case List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_case_list] 
+	@groupId int,@regionId int,@caseNumber nvarchar(50),@cdspNumber nvarchar(50),@firstName nvarchar(50),@lastName nvarchar(50),@startDate datetime,@endDate datetime
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT c.*, r.Description as ''Region'',g.Description as ''Group'' from tjc_modules_med_cases c inner join tjc_modules_med_regions r on c.RegionId=r.RegionId inner join tjc_modules_med_groups g on c.GroupId=g.GroupId Where (c.CreatedDate Between @startDate AND @endDate)';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@groupId int, @regionId int, @caseNumber nvarchar(50),@cdspNumber nvarchar(50),@firstName nvarchar(50),@lastName nvarchar(50),@startDate datetime,@endDate datetime';
+							
+	SET NOCOUNT ON;
+	IF @groupId>0
+		BEGIN
+			SET	@sql = @sql + ' And g.GroupId =  @groupId';
+		END
+	IF @regionId>0
+		BEGIN
+			SET	@sql = @sql + ' And r.RegionId =  @regionId';
+		END
+	IF LEN(@caseNumber) > 0
+		BEGIN
+			SET	@sql = @sql +' And CaseNumber like @caseNumber +''%''';
+		END
+	IF LEN(@cdspNumber) > 0
+		BEGIN
+			SET	@sql = @sql +' And CDSPNumber like @cdspNumber +''%''';
+		END
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' And (p1_FirstName like @firstName + ''%'' OR p2_FirstName like @firstName + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' And (p1_LastName like @lastName + ''%'' OR p2_LastName like @lastName + ''%'')';
+		END
+		SET	@sql = @sql + ' Order by c.CreatedDate DESC';
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef, @groupId=@groupId,@regionId=@regionId,@caseNumber=@caseNumber,@cdspNumber=@cdspNumber,@firstName=@firstName,@lastName=@lastName,@startDate=@startDate,@endDate=@endDate;
+ 
+	
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediation Case List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_case_list_count] 
+	@groupId int,@regionId int,@caseNumber nvarchar(50),@cdspNumber nvarchar(50),@firstName nvarchar(50),@lastName nvarchar(50),@businessName nvarchar(50)
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT Count(*) FROM tjc_modules_med_case_list WHERE CaseId > 0';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@groupId int, @regionId int, @caseNumber nvarchar(50),@cdspNumber nvarchar(50),@firstName nvarchar(50),@lastName nvarchar(50),@businessName nvarchar(50)';
+							
+	SET NOCOUNT ON;
+	IF @groupId>0
+		BEGIN
+			SET	@sql = @sql + ' AND GroupId =  @groupId';
+		END
+	IF @regionId>0
+		BEGIN
+			SET	@sql = @sql + ' AND RegionId =  @regionId';
+		END
+	IF LEN(@caseNumber) > 0
+		BEGIN
+			SET	@sql = @sql +' AND CaseNumber LIKE TRIM(@caseNumber) +''%''';
+		END
+	IF LEN(@cdspNumber) > 0
+		BEGIN
+			SET	@sql = @sql +' AND CDSPNumber LIKE TRIM(@cdspNumber) +''%''';
+		END
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (p1_FirstName LIKE TRIM(@firstName) + ''%'' OR p2_FirstName like TRIM(@firstName) + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (p1_LastName LIKE TRIM(@lastName) + ''%'' OR p2_LastName like TRIM(@lastName) + ''%'')';
+		END
+	IF LEN(@businessName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (p1_BusinessName LIKE TRIM(@businessName) + ''%'' OR p2_BusinessName like TRIM(@businessName) + ''%'')';
+		END
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef, @groupId=@groupId,@regionId=@regionId,@caseNumber=@caseNumber,@cdspNumber=@cdspNumber,@firstName=@firstName,@lastName=@lastName,@businessName=@businessName;
+ 
+	
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediation Case List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_case_list_paged] 
+	@groupId int,@regionId int,@caseNumber nvarchar(50),@cdspNumber nvarchar(50),@firstName nvarchar(50),@lastName nvarchar(50),@businessName nvarchar(50),@offset int, @pageSize int,@sortOrder nvarchar(20),@direction nvarchar(6)
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT * FROM tjc_modules_med_case_list WHERE CaseId>0';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@groupId int, @regionId int, @caseNumber nvarchar(50),@cdspNumber nvarchar(50),@firstName nvarchar(50),@lastName nvarchar(50),@businessName nvarchar(50),@offset int,@pageSize int,@sortOrder nvarchar(20)';
+							
+	SET NOCOUNT ON;
+	IF @groupId>0
+		BEGIN
+			SET	@sql = @sql + ' AND GroupId =  @groupId';
+		END
+	IF @regionId>0
+		BEGIN
+			SET	@sql = @sql + ' AND RegionId =  @regionId';
+		END
+	IF LEN(@caseNumber) > 0
+		BEGIN
+			SET	@sql = @sql +' AND CaseNumber LIKE TRIM(@caseNumber) +''%''';
+		END
+	IF LEN(@cdspNumber) > 0
+		BEGIN
+			SET	@sql = @sql +' AND CDSPNumber LIKE TRIM(@cdspNumber) +''%''';
+		END
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (p1_FirstName LIKE TRIM(@firstName) + ''%'' OR p2_FirstName like TRIM(@firstName) + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (p1_LastName LIKE TRIM(@lastName) + ''%'' OR p2_LastName like TRIM(@lastName) + ''%'')';
+		END
+	IF LEN(@businessName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (p1_BusinessName LIKE TRIM(@businessName) + ''%'' OR p2_BusinessName like TRIM(@businessName) + ''%'')';
+		END
+	SET	@sql = @sql + ' ORDER BY ' + @sortOrder + ' ' +@direction;
+	SET	@sql = @sql + ' OFFSET @offset ROWS FETCH NEXT @pagesize ROWS ONLY';
+	print @sql;
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef, @groupId=@groupId,@regionId=@regionId,@caseNumber=@caseNumber,@cdspNumber=@cdspNumber,@firstName=@firstName,@lastName=@lastName,@businessName=@businessName,@offset=@offset,@pageSize=@pageSize,@sortOrder=@sortOrder;
+ 
+	
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_case_types_by_group] 
+	@groupId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select c.* from tjc_modules_med_casetypes c inner join tjc_modules_med_casetype_by_group cg on c.CaseTypeId=cg.CaseTypeId
+	Where cg.GroupId=@groupId
+	Order by cg.SortOrder
+END
+GO
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_event_appearances] 
+	@eventId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select a.* from tjc_modules_med_appearances a inner join tjc_modules_med_event_appearances ea on a.AppearanceId=ea.AppearanceId
+	Where ea.EventId=@eventId;
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_group_appearances_excluded] 
+	@groupId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select * from tjc_modules_med_appearances
+	Where AppearanceId not in (
+		select AppearanceId 
+		from tjc_modules_med_appearance_by_group 
+		where groupId=@groupId
+	)
+	Order by Description
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_group_case_types_excluded] 
+	@groupId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select * from tjc_modules_med_casetypes 
+	Where CaseTypeId not in (
+		select CaseTypeId 
+		from tjc_modules_med_casetype_by_group 
+		where groupId=@groupId
+	)
+	Order by Description
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_group_issues_excluded] 
+	@groupId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select * from tjc_modules_med_issues
+	Where IssueId not in (
+		select IssueId 
+		from tjc_modules_med_issue_by_group 
+		where groupId=@groupId
+	)
+	Order by Description
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_issues_by_group] 
+	@groupId int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select i.* from tjc_modules_med_issues i Inner join tjc_modules_med_issue_by_group ig on i.IssueId=ig.IssueId
+	Where ig.groupId=@groupId and i.Active=1 
+	Order by ig.SortOrder
+END
+GO
+
+-- =============================================
+-- Author:		<Joe terhune>
+-- Create date: <8/3/2023>
+-- Description:	<Retrieve Issues by Session>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_issues_by_session] 
+	@sessionId int
+AS
+BEGIN
+	
+	SET NOCOUNT ON;
+Select i.* from tjc_modules_med_issues i inner join tjc_modules_med_issue_by_session s on i.IssueId = s.IssueId
+Where s.SessionId=@sessionId And i.Active=1
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediator List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_mediator_list_count] 
+	@firstName nvarchar(50),@lastName nvarchar(50)
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT Count(*) FROM tjc_modules_med_mediators WHERE MediatorId > 0';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@firstName nvarchar(50),@lastName nvarchar(50)';
+							
+	SET NOCOUNT ON;
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (FirstName LIKE +''%''+ TRIM(@firstName) + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (LastName LIKE +''%''+ TRIM(@lastName) + ''%'')';
+		END
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef,@firstName=@firstName,@lastName=@lastName;
+
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/3/2023>
+-- Description:	<Parameratized Dynamic Sql for Mediator List Filtering>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_get_mediator_list_paged] 
+	@firstName nvarchar(50),@lastName nvarchar(50),@offset int, @pageSize int,@sortOrder nvarchar(20),@direction nvarchar(6)
+AS
+
+BEGIN
+	DECLARE @sql nvarchar(MAX)='SELECT * FROM tjc_modules_med_mediators WHERE MediatorId > 0';
+	DECLARE @ParameterDef nvarchar(MAX)
+ 
+    SET @ParameterDef = '@firstName nvarchar(50),@lastName nvarchar(50),@offset int,@pageSize int,@sortOrder nvarchar(20)';
+							
+	SET NOCOUNT ON;
+	IF LEN(@firstName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (FirstName LIKE +''%''+ TRIM(@firstName) + ''%'')';
+		END
+	IF LEN(@lastName) > 0
+		BEGIN
+			SET	@sql = @sql +' AND (LastName LIKE +''%''+ TRIM(@lastName) + ''%'')';
+		END
+	SET	@sql = @sql + ' ORDER BY ' + @sortOrder + ' ' +@direction;
+	SET	@sql = @sql + ' OFFSET @offset ROWS FETCH NEXT @pagesize ROWS ONLY';
+	print @sql;
+    -- Execute parameratized SQL
+	EXEC sp_Executesql  @sql,  @ParameterDef, @firstName=@firstName,@lastName=@lastName,@offset=@offset,@pageSize=@pageSize,@sortOrder=@sortOrder;
+ 
+	
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <1/7/2025>
+-- Description:	<Mediator Stats>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_mediator_stats]
+	@startDate datetime, @endDate datetime
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+   SELECT [Region]
+      ,mediatorName
+      ,[Mediatorid]
+     ,SUM(CAST(ISNULL(AgreementReached,0) AS INT)) as Signed,
+	 Sum(CAST(ISNULL(MediationHeld,0) AS INT)) as Held
+  FROM [tjc_modules_med_event_counts]
+  Where  (eventdate between @startDate and @endDate) and Mediatorid is not null
+  group by region,mediatorName,[Mediatorid]
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <1/7/2025>
+-- Description:	<Mediator Type Stats>
+-- =============================================
+CREATE OR ALTER PROCEDURE tjc_modules_med_mediator_type_stats
+	@startDate datetime, @endDate datetime
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+  SELECT [Region]
+      
+      ,[MediatorType]
+     ,SUM(CAST(ISNULL(AgreementSigned,0) AS INT)) as Signed,
+	 Sum(CAST(ISNULL(MediationHeld,0) AS INT)) as Held
+  FROM [tjc_modules_med_event_counts]
+  Where  (eventdate between @startDate and @endDate) and mediatorType <>'' and mediatorType is not null
+  group by region, mediatorType
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_statistical_report]
+	@startDate datetime,@endDate datetime
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	-- Setup Temp tables for processing data
+	DECLARE @tempData TABLE
+	(
+	questionaire varchar(100),
+	question varchar(100),
+	sarasota int,
+	manatee int,
+	desoto int,
+	southCounty int,
+	northCounty int,
+	sPercent float,
+	mPercent float,
+	dPercent float
+	)
+	DECLARE @RegionCounts TABLE
+	(
+	Region varchar(100),
+	caseType varchar(100),
+	counts int
+	)
+	--Variables for holding item counts by region
+	DECLARE @sarasota int,@desoto int,@manatee int,@SouthCounty int,@NorthCounty int
+	--Variables for holding item counts by region for percentages by Case type
+	DECLARE @region varchar(100),@CaseType varchar(100),@SessionCount float,@issue varchar(100),@stageofAction varchar(50),@mediatorType varchar(50),@mediatorName varchar(100)
+
+-- ==============================================================================================================================	
+-- Start CDSP Questionaire-----------------------------------------------------------------------------------------------------
+-- ==============================================================================================================================
+
+-- ******************************************************************************************************************************	
+
+-- Start How Many Cases Referred
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='Citizen Dispute Settlement Program')
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','How many CDSP cases were referred to your program?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	
+-- Start How many CDS cases where mediated
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='Citizen Dispute Settlement Program') and MediationHeld=1
+	Group By region
+	DECLARE @SarasotaTotalMediation float,@ManateeTotalMediation float,@DesotoTotalMediation float,@sarasotaT float,@desotoT float,@manateeT float
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @SarasotaTotalMediation=@sarasota
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @ManateeTotalMediation=@manatee
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @DesotoTotalMediation=@desoto
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','How many CDSP cases were mediated?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- Start How many CDS cases where mediated by phone
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='Citizen Dispute Settlement Program') and MediationHeld=1 and heldbyphone=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','How many CDSP cases were mediated by virtual session?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- Start How many CDS cases where settled prior
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='Citizen Dispute Settlement Program') 
+	and sessionId IN (Select sessionId from tjc_modules_med_events where SessionId=tjc_modules_med_session_counts.sessionid and ReasonNotHeld='Settled Prior')
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','How many CDSP cases were settled prior?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- Start How many CDS cases reached full or partial agreement
+-- ==============================================================================================================================
+	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='Citizen Dispute Settlement Program')  and AgreementReached=1
+	Group By region
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','How many CDSP mediated cases reached full or partial agreement?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+--Start Percentage by Case Type	
+-- ==============================================================================================================================	
+
+	DECLARE caseType_cursor CURSOR FOR 
+	--Get CaseType list CDSP 
+	SELECT DISTINCT    tjc_modules_med_casetypes.Description as CaseTypeName
+	FROM         tjc_modules_med_casetypes INNER JOIN
+	  tjc_modules_med_casetype_by_group ON tjc_modules_med_casetypes.CaseTypeid = tjc_modules_med_casetype_by_group.CaseTypeid INNER JOIN
+	  tjc_modules_med_groups ON tjc_modules_med_casetype_by_group.Groupid = tjc_modules_med_groups.Groupid
+	WHERE tjc_modules_med_groups.Description='Citizen Dispute Settlement Program' 
+
+	OPEN caseType_cursor
+
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	--Populate regions by casetype
+	INSERT INTO @RegionCounts
+	Select region,casetype, COUNT(SessionID) from tjc_modules_med_session_counts where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='Citizen Dispute Settlement Program') and mediationheld=1 and CaseType=@caseType
+	Group By region,casetype
+	
+	--Set Values
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','What percent of CDSP mediations were ' + @CaseType + ' type cases?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),
+	ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	END
+
+	CLOSE caseType_cursor;
+	DEALLOCATE caseType_cursor;
+	--End Percentage by Case Type
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @SarasotaTotalMediation = 0
+	SET @ManateeTotalMediation = 0
+	SET @DesotoTotalMediation = 0
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--- *****************************************************************************************************************************
+--Start How Many CDSP Cases Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as Region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='Citizen Dispute Settlement Program')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'CDSP','How many CDSP cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	
+-- ==============================================================================================================================	
+-- Start Family Pre-filing Questionaire------------------------------------------------------------------------------------------
+-- ==============================================================================================================================	
+
+
+-- Start How Many Cases Referred 
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where ReferralDate>=@startDate and ReferralDate<=@endDate 
+	and (CaseTypeGroup ='Family Pre-filing')
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family Pre-filing','How many Family Pre-filing cases were referred to your program?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- Start How many family pre-filing cases where mediated
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) from tjc_modules_med_session_counts where MediationDate>=@startDate 
+	and MediationDate<=@endDate and (CaseTypeGroup ='Family Pre-filing') and mediationheld=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @SarasotaTotalMediation=@sarasota
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @ManateeTotalMediation=@manatee
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @DesotoTotalMediation=@desoto
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family Pre-filing','How many Family Pre-filing cases were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- Start How many Family Pre-filing cases where mediated by phone
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='Family Pre-filing') and heldbyphone=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family Pre-filing','How many Family Pre-filing cases were mediated by virtual session?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	
+-- Start How many Family Pre-filing cases reached full or partial agreement
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='Family Pre-filing')  and AgreementReached=1
+	Group By region
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family Pre-filing','How many mediated Family Pre-filing cases reached full or partial agreement?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+--Start Percentage by Secondary Issues Family Pre-filing
+-- ==============================================================================================================================	
+
+	--Clear RegionCount variables
+	SET @region = ''
+	SET @CaseType = ''
+	SET @SessionCount = 0
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	DECLARE caseType_cursor CURSOR FOR 
+	SELECT DISTINCT i.Description as Issue
+	FROM         tjc_modules_med_issue_by_group ic 
+	INNER JOIN tjc_modules_med_groups g on ic.GroupId=g.GroupId INNER JOIN tjc_modules_med_issues i on i.issueId = ic.issueId
+	WHERE g.Description='Family Pre-filing'
+	
+
+	OPEN caseType_cursor
+
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	INSERT INTO @RegionCounts
+	Select region,issue, COUNT(SessionID) 
+	from tjc_modules_med_session_issues_count 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family Pre-filing' 
+	and mediationheld=1 and issue=@caseType
+	Group By region,issue
+	
+	--Set values
+	SET @sarasota = (select  ISNULL(Sum(Isnull(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family Pre-filing','What percent of Family Pre-filing mediation were ' + @CaseType + ' issues?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	END
+
+	CLOSE caseType_cursor;
+	DEALLOCATE caseType_cursor;
+	--End Percentage by Secondary Issues Family	Pre-filing
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @SarasotaTotalMediation = 0
+	SET @ManateeTotalMediation = 0
+	SET @DesotoTotalMediation = 0
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--- *****************************************************************************************************************************
+--Start How Many Family Pre-filing Cases Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='Family Pre-filing')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family Pre-filing','How many CDSP cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	
+-- END Family Pre-filing Questionaire
+
+
+-- ==============================================================================================================================	
+-- Start Juvenile Restitution Questionaire---------------------------------------------------------------------------------------
+-- ==============================================================================================================================	
+-- ******************************************************************************************************************************
+
+-- Start How Many Cases Referred  	
+-- ==============================================================================================================================
+	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='Juvenile Restitution')
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Juvenile Restitution','How many Juvenile Restitution cases were referred to your program?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- Start How many Juvenile Restitution cases where mediated
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='Juvenile Restitution') and mediationheld=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @SarasotaTotalMediation = @sarasota
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @ManateeTotalMediation = @manatee
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @DesotoTotalMediation = @desoto
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Juvenile Restitution','How many Juvenile Restitution cases were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- Start How many Juvenile Restitution cases where mediated by phone
+-- ==============================================================================================================================	
+	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='Juvenile Restitution') and heldbyphone=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Juvenile Restitution','How many Juvenile Restitution cases were mediated by virtual session?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	
+-- Start How Juvenile Restitution cases reached full or partial agreement
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='Juvenile Restitution') 
+	and mediationheld=1  and AgreementReached=1
+	Group By region
+
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Juvenile Restitution','How many Juvenile Restitution mediated cases reached full or partial agreement?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	-- End How many Juvenile Restitution cases reached full or partial agreement
+	
+--Start Percentage by Case Type	
+-- ==============================================================================================================================	
+
+	DECLARE issue_cursor CURSOR FOR 
+	--Get CaseType list Juvenile Restitution
+
+	SELECT DISTINCT i.Description as Issue
+	FROM         tjc_modules_med_issue_by_group ic 
+	INNER JOIN tjc_modules_med_groups g on ic.GroupId=g.GroupId 
+	INNER JOIN tjc_modules_med_issues i on i.issueId = ic.issueId
+	WHERE g.Description='Juvenile Restitution'
+
+	OPEN issue_cursor
+
+	FETCH NEXT FROM issue_cursor 
+	INTO @issue
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	--Populate regions by casetype
+	INSERT INTO @RegionCounts
+	Select region,issue, COUNT(SessionID) 
+	from tjc_modules_med_session_issues_count 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Juvenile Restitution' 
+	and mediationheld=1 and issue=@issue
+	Group By region,issue
+	
+	--Set Values
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Juvenile Restitution','What percent of Juvenile Restitution mediations were ' + @issue + ' type cases?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	FETCH NEXT FROM issue_cursor 
+	INTO @issue
+	END
+
+	CLOSE issue_cursor;
+	DEALLOCATE issue_cursor;
+	--End Percentage by Case Type
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @SarasotaTotalMediation = 0
+	SET @ManateeTotalMediation = 0
+	SET @DesotoTotalMediation = 0
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--- *****************************************************************************************************************************
+--Start How Many Juvenile Restitution Cases Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as Region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='Juvenile Restitution')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Juvenile Restitution','How many Juvenile Restitution cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- END Juvenile Questionaire
+	
+-- ==============================================================================================================================	
+-- Start County/Small Claims Questionaire ---------------------------------------------------------------------------------------
+-- ==============================================================================================================================	
+-- ******************************************************************************************************************************
+
+-- How Many Cases Referred Small Claims & County 	
+-- ==============================================================================================================================	
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate 
+	and (CaseTypeGroup ='County' OR CaseTypeGroup ='Small Claims')
+	Group By region,CaseTypeGroup
+	
+	--Set Values Small Claims
+	SET @sarasota = (select Sum(ISNULL(counts,0)) from @RegionCounts where Region like 'Sarasota%' and caseType='Small Claims')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee'  and caseType='Small Claims')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto'  and caseType='Small Claims')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Small Claims')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Small Claims')
+	
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were referred to your program?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Values
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='County')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='County')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='County')
+
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court (above Small Claims) cases were referred to your program?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+--How many County/Small Claims cases where mediated
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='County' OR CaseTypeGroup ='Small Claims') and mediationheld=1
+	Group By region,CaseTypeGroup
+	
+	--Set Values Small Claims
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Small Claims')
+	SET @SarasotaTotalMediation = ISNULL(@sarasota,0)
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee' and caseType='Small Claims')
+	SET @ManateeTotalMediation = ISNULL(@manatee,0)
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto' and caseType='Small Claims')
+	SET @DesotoTotalMediation = ISNULL(@desoto,0)
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Small Claims')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Small Claims')
+	 
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	-- clear variables
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @SarasotaTotalMediation = ISNULL(@SarasotaTotalMediation,0) + ISNULL(@sarasota,0)
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='County')
+	SET @ManateeTotalMediation = ISNULL(@ManateeTotalMediation,0) + ISNULL(@manatee,0)
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='County')	
+	SET @DesotoTotalMediation = ISNULL(@DesotoTotalMediation,0) + ISNULL(@desoto,0)
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County'  and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County'  and caseType='County')
+
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court (above Small Claims) cases were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many County/Small Claims cases where mediated by phone
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='County' OR CaseTypeGroup ='Small Claims') and heldbyphone=1
+	Group By region,CaseTypeGroup
+	
+	--Set Values Small Claims
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Small Claims')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee' and caseType='Small Claims')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto' and caseType='Small Claims')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Small Claims')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Small Claims')
+	 
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were mediated by virtual session?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	-- clear variables
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='County')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='County')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County'  and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County'  and caseType='County')
+
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court (above Small Claims) cases were mediated by virtual session?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many County cases reached full or partial agreement
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='County' OR CaseTypeGroup ='Small Claims') and mediationheld=1  and AgreementReached=1
+	Group By region,CaseTypeGroup
+	
+	--Set Values Small Claims
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Small Claims')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee' and caseType='Small Claims')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto' and caseType='Small Claims')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Small Claims')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Small Claims')
+	
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were resolved (reached full or partial agreement)?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	--Set values County
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee' and caseType='County')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto' and caseType='County')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court (above Small Claims) cases were resolved (reached full or partial agreement)?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many County cases were CircuitCivil Referrals
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='County') and circuitcivilreferral=1
+	Group By region,CaseTypeGroup
+	
+	--Set values County
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee' and caseType='County')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto' and caseType='County')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases were circuit civil referrals?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many County cases were CircuitCivil Referrals and Mediated
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='County') 
+	and circuitcivilreferral=1 and MediationHeld=1
+	Group By region,CaseTypeGroup
+	
+	--Set values County
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee' and caseType='County')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto' and caseType='County')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court circuit civil referrals were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many County cases were CircuitCivil Referrals & Agreement Reached
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and (CaseTypeGroup ='County') 
+	and circuitcivilreferral=1  and AgreementReached=1
+	Group By region,CaseTypeGroup
+	
+	--Set values County
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='County')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee' and caseType='County')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto' and caseType='County')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases were circuit civil referrals and reached full or partial agreement?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+-- How many County cases where Arbitration Referrals
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate 
+	and CaseTypeGroup ='County' and arbitrationreferral=1
+	Group By region
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases were arbitration referrals?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many County cases where OTS
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='County'  and OTS=1
+	Group By region
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases were OTSC?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many County cases where Fee Agreements
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='County'  and FeeAgreement=1
+	Group By region
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases were Fee Agreements?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+-- How many County cases where Fee Judgments
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='County'  and FeeJudgement=1
+	Group By region,CaseTypeGroup
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases were Fee Judgments?',	
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How many County cases had fee Waivers
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='County'  and FeeWaiver=1
+	Group By region,CaseTypeGroup
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'County','How many County Court cases had Fee Waivers?',	
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many Small Claims cases where arbitration referrals
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate 
+	and CaseTypeGroup ='Small Claims' and arbitrationreferral=1
+	Group By region
+
+	
+	--Set Values Small Claims
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	 
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were arbitration referrals?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	-- clear variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many Small Claims cases where PTC
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and CaseTypeGroup ='Small Claims' and PTC_CourtOrdered='P'
+	Group By region
+	
+	--Set Values Small Claims
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	 
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were at PTC?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	-- clear variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many Small Claims cases where Court Ordered
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and CaseTypeGroup ='Small Claims' and PTC_CourtOrdered='C'
+	Group By region,CaseTypeGroup
+
+	--Set Values Small Claims
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	 
+	--Insert Values Small Claims
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were court ordered?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	-- clear variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- Start Percentage by Case Type for All County
+-- ==============================================================================================================================	
+
+	SET @region = ''
+	SET @CaseType = ''
+	SET @SessionCount = 0
+	
+	--Get list of case types for Small Claims and County
+	DECLARE caseType_cursor CURSOR FOR 
+	SELECT DISTINCT     tjc_modules_med_casetypes.Description
+	FROM         tjc_modules_med_casetypes INNER JOIN
+	  tjc_modules_med_casetype_by_group ON tjc_modules_med_casetypes.CaseTypeid = tjc_modules_med_casetype_by_group.CaseTypeid INNER JOIN
+	  tjc_modules_med_groups ON tjc_modules_med_casetype_by_group.Groupid = tjc_modules_med_groups.Groupid
+	WHERE tjc_modules_med_groups.Description='Small Claims' OR tjc_modules_med_groups.Description='County'
+
+	OPEN caseType_cursor
+
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	INSERT INTO @RegionCounts
+	Select region,casetype, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate 
+	and (CaseTypeGroup ='County' OR CaseTypeGroup ='Small Claims') and mediationheld=1 and CaseType=@caseType
+	Group By region,casetype
+	
+	--Set values 
+	SET @sarasota = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'County','What percent of County mediation cases were ' + @CaseType + ' cases?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	END
+
+	CLOSE caseType_cursor;
+	DEALLOCATE caseType_cursor;
+
+
+--- *****************************************************************************************************************************
+--Start How Many County Cases Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='County')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'County','How many County cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--- *****************************************************************************************************************************
+--Start How Many Small Claims Cases Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='Small Claims')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'County','How many Small Claims cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--End  County/Small Claims Questionaire	
+
+-- ==============================================================================================================================	
+-- Start Family Questionaire ----------------------------------------------------------------------------------------------------
+-- ==============================================================================================================================	
+-- ******************************************************************************************************************************
+
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How Many Cases Referred 
+-- ==============================================================================================================================	
+ 	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='Family')
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were referred to your program?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many  cases where mediated Total
+-- ==============================================================================================================================	
+	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and mediationheld=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many  cases where resolved Total
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and mediationheld=1 and AgreementReached=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were resolved?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many  cases where full agreements
+-- ==============================================================================================================================
+	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where CaseTypeGroup ='Family' and MediationDate>=@startDate and MediationDate<=@endDate 
+	and SessionID IN (Select SessionID from tjc_modules_med_events where AgreementType='F')
+	Group By region
+
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases reached a full agreement?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many  cases where partial agreements
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where CaseTypeGroup ='Family' and MediationDate>=@startDate and MediationDate<=@endDate 
+	and sessionId in (Select sessionid from tjc_modules_med_events where AgreementType='C')
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases reached a temporary / partial agreement?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many  cases where mediated Indigent
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and mediationheld=1 and feeamount='Indigent'
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases mediated were joint income indigent cases?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many  cases where resolved Indigent
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and mediationheld=1 and AgreementReached=1 and feeamount='Indigent'
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases resolved were joint income indigent cases?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many  cases where mediated 0-50
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and mediationheld=1 and feeamount='$0-$50'
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases mediated were joint income between indigent to $50K?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many  cases where resolved 0-50
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and mediationheld=1 and AgreementReached=1 and feeamount='$0-$50'
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases resolved were joint income between indigent to $50K?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many  cases where mediated 50-100
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and MediationHeld=1 and feeamount='$50-$100'
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases mediated were joint income between $50K to $100K?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many  cases where resolved 50-100
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and mediationheld=1 and AgreementReached=1 and feeamount='$50-$100'
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases resolved were joint income between $50K and $100K?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How many  cases where mediated by phone 
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and heldbyphone=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases mediated by virtual session?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How many  cases had Interpreter requested 
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and Interpreter=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases had Interpreter Requested?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How many  cases invloved Inmates 
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and Inmate=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases involved inmates?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- Mediation Totals
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and mediationheld=1
+	Group By region
+	
+	--Set Total Values
+	SET @SarasotaTotalMediation = (select  ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @ManateeTotalMediation = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @DesotoTotalMediation = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')
+	
+	Delete from @RegionCounts
+
+-- How Many Cases were  arbitration referral 
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='Family') and arbitrationreferral=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were arbitration referrals?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many cases where OTSC
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family'  and OTS=1
+	Group By region,CaseTypeGroup
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Family')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='Family')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='Family')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Family')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Family')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were OTSC?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How many cases where Fee Agreements
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family'  and FeeAgreement=1
+	Group By region,CaseTypeGroup
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Family')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='Family')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='Family')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Family')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Family')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were Fee Agreements?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+-- How many County cases where Fee Judgments
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family'  and FeeJudgement=1
+	Group By region,CaseTypeGroup
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Family')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='Family')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='Family')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Family')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Family')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were Fee Judgments?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How many Family cases had Fee waivers
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,CaseTypeGroup, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family'  and FeeWaiver=1
+	Group By region,CaseTypeGroup
+
+	--Set Values County
+	SET @sarasota = (select ISNULL(Sum(ISNULL(counts,0)),0) from @RegionCounts where Region like 'Sarasota%' and caseType='Family')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee'  and caseType='Family')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto'  and caseType='Family')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County' and caseType='Family')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County' and caseType='Family')
+	
+	--Insert Values County
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases had Fee Waivers?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+
+
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+--Start Percentage by Case Type Family
+-- ==============================================================================================================================	
+	
+	--Clear RegionCount variables
+	SET @region = ''
+	SET @CaseType = ''
+	SET @SessionCount = 0
+	DECLARE caseType_cursor CURSOR FOR 
+	SELECT DISTINCT     tjc_modules_med_casetypes.Description as CaseType
+	FROM         tjc_modules_med_casetypes INNER JOIN
+	  tjc_modules_med_casetype_by_group ON tjc_modules_med_casetypes.CaseTypeid = tjc_modules_med_casetype_by_group.CaseTypeid INNER JOIN
+	  tjc_modules_med_groups ON tjc_modules_med_casetype_by_group.GroupId = tjc_modules_med_groups.GroupId
+	WHERE tjc_modules_med_groups.Description='Family'
+	
+
+	OPEN caseType_cursor
+
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	INSERT INTO @RegionCounts
+	Select region,casetype, COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' 
+	and mediationheld=1 and CaseType=@caseType
+	Group By region,casetype
+	
+	--Set values
+	SET @sarasota = (select  ISNULL(Sum(Isnull(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','What percent of Family mediation were ' + @CaseType + ' cases?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	FETCH NEXT FROM caseType_cursor 
+	INTO @CaseType
+	END
+
+	CLOSE caseType_cursor;
+	DEALLOCATE caseType_cursor;
+	--End Percentage by Case Type Family
+	
+-- Start Percentage by Secondary Issues Family
+-- ==============================================================================================================================
+	
+	--Clear RegionCount variables
+	SET @region = ''
+	SET @Issue = ''
+	SET @SessionCount = 0
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	DECLARE issue_cursor CURSOR FOR 
+	
+	SELECT DISTINCT i.Description as Issue
+	FROM         tjc_modules_med_issue_by_group ic 
+	INNER JOIN tjc_modules_med_groups g on ic.GroupId=g.GroupId INNER JOIN tjc_modules_med_issues i on i.issueId = ic.issueId
+	WHERE g.Description='Family'
+
+	OPEN issue_cursor
+
+	FETCH NEXT FROM issue_cursor 
+	INTO @Issue
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	INSERT INTO @RegionCounts
+	Select region,issue, COUNT(SessionID) 
+	from tjc_modules_med_session_issues_count 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Family' and mediationheld=1 and issue=@Issue
+	Group By region,issue
+	
+	--Set values
+	SET @sarasota = (select  ISNULL(Sum(Isnull(counts,0)),0) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select ISNULL(counts,0) from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select ISNULL(counts,0) from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','What percent of Family mediation were ' + @Issue + ' issues?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),
+	ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	FETCH NEXT FROM issue_cursor 
+	INTO @Issue
+	END
+
+	CLOSE issue_cursor;
+	DEALLOCATE issue_cursor;
+	--End Percentage by Secondary Issues Family	
+--- *****************************************************************************************************************************
+--Start How Many Family Cases Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='Family')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Family','How many Family cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- ==============================================================================================================================	
+-- Start dependency Questionaire ----------------------------------------------------------------------------------------------
+-- ==============================================================================================================================	
+-- ******************************************************************************************************************************
+
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How Many Cases Referred 
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where ReferralDate>=@startDate and ReferralDate<=@endDate and (CaseTypeGroup ='dependency')
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases were referred to your program?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- How Many Mediated
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency' and mediationheld=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SEt @SarasotaTotalMediation = @sarasota
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @ManateeTotalMediation = @manatee
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @DesotoTotalMediation = @desoto
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases were mediated?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+-- How Many Mediated by Phone
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency' and heldbyphone=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases were mediated by virtual session?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How Many Had Interpreter requested
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency' and Interpreter=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases had Interpreter Requested?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+		-- How Many were Inmates
+-- ==============================================================================================================================	
+
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency' and Inmate=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases Involved Inmates?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+-- How Many Resolved
+-- ==============================================================================================================================	
+	
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency' and mediationheld=1 and AgreementReached=1
+	Group By region
+
+	--Set values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where region like 'Sarasota - South County')
+	SET @NorthCounty = (select counts from @RegionCounts where region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases were resolved?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How Many Parents
+-- ==============================================================================================================================	
+	
+	INSERT INTO @RegionCounts
+	Select region,'', sum(ParentsInvolved) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency'
+	Group By region
+
+	--Set values
+	SET @sarasota = (select  sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where region like 'Sarasota - South County')
+	SET @NorthCounty = (select counts from @RegionCounts where region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Parents Involved?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	-- How Many Children
+-- ==============================================================================================================================	
+	
+	INSERT INTO @RegionCounts
+	Select region,'', sum(ChildrenInvolved) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency'
+	Group By region
+
+	--Set values
+	SET @sarasota = (select  sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where region like 'Sarasota - South County')
+	SET @NorthCounty = (select counts from @RegionCounts where region like 'Sarasota - North County')
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Children Involved?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+-- Percentanges signed 
+--=============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select s.region,'T',sum(coalesce(e.SignedCount1,0)+coalesce(e.SignedCount2,0)+coalesce(e.SignedCount3,0))
+	from tjc_modules_med_session_counts s inner join tjc_modules_med_events e on s.SessionId=e.SessionId 
+	where s.MediationDate>=@startDate and s.MediationDate<=@endDate and s.CaseTypeGroup ='Dependency' and (e.Signed1=1 or e.signed2=1 or e.signed3=1)
+	Group By region
+
+	--Set Values
+	SET @sarasotaT = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manateeT = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desotoT = (select counts from @RegionCounts where region like 'Desoto')
+
+	Delete from @RegionCounts
+
+-- What percentage of Dependency mediation cases signed agreement at mediation?	
+	INSERT INTO @RegionCounts
+	Select s.region,'S1',sum(coalesce(e.SignedCount1,0))
+	from tjc_modules_med_session_counts s inner join tjc_modules_med_events e on s.SessionId=e.SessionId 
+	where s.MediationDate>=@startDate and s.MediationDate<=@endDate and s.CaseTypeGroup ='Dependency' and e.Signed1=1
+	Group By region
+
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','What percentage of parties signed agreement at mediation?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@sarasotaT,0),0),ISNULL(@manatee/NULLIF(@manateeT,0),0),ISNULL(@desoto/NULLIF(@desotoT,0),0)
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--What percentage of Dependency mediation cases signed agreement after mediation but before trial?
+	INSERT INTO @RegionCounts
+	Select s.region,'S2',sum(coalesce(e.SignedCount2,0))
+	from tjc_modules_med_session_counts s inner join tjc_modules_med_events e on s.SessionId=e.SessionId 
+	where s.MediationDate>=@startDate and s.MediationDate<=@endDate and s.CaseTypeGroup ='Dependency' and e.Signed2=1
+	Group By region
+
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','What percentage of parties signed agreement after mediation but before trial?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@sarasotaT,0),0),ISNULL(@manatee/NULLIF(@manateeT,0),0),ISNULL(@desoto/NULLIF(@desotoT,0),0)
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+--What percentage of Dependency mediation cases signed agreement at trial?
+
+	INSERT INTO @RegionCounts
+	Select s.Region,'S3',sum(coalesce(e.SignedCount3,0))
+	from tjc_modules_med_session_counts s inner join tjc_modules_med_events e on s.SessionId=e.SessionId 
+	where s.MediationDate>=@startDate and s.MediationDate<=@endDate and s.CaseTypeGroup ='Dependency' and e.Signed3=1
+	Group By region
+	
+	--Set Values
+	SET @sarasota = (select  Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','What percentage of parties signed agreement at trial?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@sarasotaT,0),0),ISNULL(@manatee/NULLIF(@manateeT,0),0),ISNULL(@desoto/NULLIF(@desotoT,0),0)
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+--Start Percentage by Case Type Dependency
+-- ==============================================================================================================================	
+
+	SET @region = ''
+	SET @stageofAction = ''
+	SET @SessionCount = 0
+	
+	DECLARE stageofAction_cursor CURSOR FOR 
+	SELECT DISTINCT Description as StageOfAction
+	FROM  tjc_modules_med_stage_action 
+	
+	OPEN stageofAction_cursor
+
+	FETCH NEXT FROM stageofAction_cursor 
+	INTO @stageofAction
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(SessionID) 
+	from tjc_modules_med_session_counts 
+	where MediationDate>=@startDate and MediationDate<=@endDate and CaseTypeGroup ='Dependency' 
+	and mediationheld=1 and StageOfAction=@stageofAction
+	Group By region,StageOfAction
+	SET @sarasota = (select  Sum(ISNULL(counts,0)) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','What percentage of Dependency mediation cases were ' + @stageofAction + '?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),
+	ISNULL(@sarasota/NULLIF(@SarasotaTotalMediation,0),0),ISNULL(@manatee/NULLIF(@ManateeTotalMediation,0),0) ,
+	ISNULL(@desoto/NULLIF(@DesotoTotalMediation,0),0)	
+	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	FETCH NEXT FROM stageofAction_cursor 
+	INTO @stageofAction
+	END
+
+	CLOSE stageofAction_cursor;
+	DEALLOCATE stageofAction_cursor;	
+
+--End Percentage by Case Type Dependency
+--- *****************************************************************************************************************************
+--Start How Many Dependency Adjorned
+--===============================================================================================================================
+	INSERT INTO @RegionCounts
+	Select region,'',Count(SessionId) from (SELECT  Distinct   tjc_modules_med_Regions.Description as region, tjc_modules_med_Sessions.SessionId
+	FROM            tjc_modules_med_cases INNER JOIN
+					tjc_modules_med_Sessions ON tjc_modules_med_cases.CaseId = tjc_modules_med_Sessions.CaseId INNER JOIN
+					tjc_modules_med_Regions ON tjc_modules_med_cases.RegionId = tjc_modules_med_Regions.RegionId INNER JOIN
+					tjc_modules_med_events ON tjc_modules_med_Sessions.SessionId = tjc_modules_med_events.SessionId INNER JOIN
+					tjc_modules_med_groups ON tjc_modules_med_cases.GroupId = tjc_modules_med_groups.GroupId
+	WHERE        (tjc_modules_med_events.AdjournedTimeRemaining = 1)  And ReferralDate>=@startDate and ReferralDate<=@endDate and (tjc_modules_med_groups.Description ='Dependency')) t
+	Group By region
+	
+	--Set Values
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+	SET @sarasota = (select Sum(counts) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')	
+	
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Dependency','How many Dependency cases were Adjourned?',ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0
+	
+	--Clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+
+--End Dependency Questionaire
+
+
+-- ==============================================================================================================================	
+-- Start Mediator Report
+-- ==============================================================================================================================	
+-- ******************************************************************************************************************************
+
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+
+	SET @region = ''
+	SET @mediatorType = ''
+	Set @mediatorName = ''
+	SET @SessionCount = 0
+	
+	DECLARE mediator_cursor CURSOR FOR 
+	SELECT DISTINCT MediatorType
+	FROM  tjc_modules_med_event_counts 
+	where MediatorType is not NULL and MediatorType <>'' 
+	Group By MediatorType 
+	
+	OPEN mediator_cursor
+
+	FETCH NEXT FROM mediator_cursor 
+	INTO @mediatorType
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+	INSERT INTO @RegionCounts
+	Select region,'', COUNT(EventID) 
+	from tjc_modules_med_event_counts 
+	where EventDate>=@startDate and EventDate<=@endDate and mediationheld=1 and MediatorType=@mediatorType
+	Group By region,MediatorType
+	SET @sarasota = (select  Sum(ISNULL(counts,0)) from @RegionCounts where Region like 'Sarasota%')
+	SET @manatee = (select counts from @RegionCounts where region like 'Manatee')
+	SET @desoto = (select counts from @RegionCounts where region like 'Desoto')
+	SET @SouthCounty = (select counts from @RegionCounts where Region like 'Sarasota - South County')
+	SET @NorthCounty =(select counts from @RegionCounts where Region like 'Sarasota - North County')
+
+	--Insert Values
+	INSERT INTO @tempData
+	Select 'Mediator','How many cases where mediated by ' + @mediatorType + '?',
+	ISNULL(@sarasota,0),ISNULL(@manatee,0),ISNULL(@desoto,0),ISNULL(@SouthCounty,0),ISNULL(@NorthCounty,0),0,0,0	
+	--clear Variables
+	Delete from @RegionCounts
+	SET @sarasota = 0
+	SET @manatee = 0
+	SET @desoto = 0
+	SET @SouthCounty = 0
+	SET @NorthCounty = 0
+	
+	FETCH NEXT FROM mediator_cursor 
+	INTO @mediatorType
+	END
+
+	CLOSE mediator_cursor;
+	DEALLOCATE mediator_cursor;	
+--End Mediator Report
+
+--Return Record Set
+	Select * from @tempData
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Add Case Type to Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_update_group_appearance]
+	@groupId int, @AppearanceId int,@SortOrder int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update tjc_modules_med_appearance_by_group Set SortOrder=@SortOrder,LastModifiedById=@userId,LastModifiedDate=GetDate() 
+	Where GroupId=@groupId and AppearanceId=@AppearanceId
+	
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Add Case Type to Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_update_group_case_type]
+	@groupId int, @caseTypeId int,@SortOrder int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update tjc_modules_med_casetype_by_group Set SortOrder=@SortOrder,LastModifiedById=@userId,LastModifiedDate=GetDate() 
+	Where GroupId=@groupId and CaseTypeId=@caseTypeId
+	
+END
+GO
+
+-- =============================================
+-- Author:		<Joe Terhune>
+-- Create date: <7/11/2023>
+-- Description:	<Add Case Type to Case Type Group>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[tjc_modules_med_update_group_issue]
+	@groupId int, @IssueId int,@SortOrder int, @userId int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update tjc_modules_med_issue_by_group Set SortOrder=@SortOrder,LastModifiedById=@userId,LastModifiedDate=GetDate() 
+	Where GroupId=@groupId and IssueId=@IssueId
+	
+END
+GO
+

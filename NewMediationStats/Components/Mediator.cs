@@ -1,0 +1,50 @@
+﻿/*
+' Copyright (c) 2023 12th Judicial Circuit
+'  All rights reserved.
+' 
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+' TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+' THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+' CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+' DEALINGS IN THE SOFTWARE.
+' 
+*/
+
+using DotNetNuke.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Caching;
+
+namespace tjc.Modules.NewMediationStats.Components
+{
+    [TableName("tjc_modules_med_mediators")]
+    //setup the primary key for table
+    [PrimaryKey("MediatorId", AutoIncrement = true)]
+    internal class Mediator : EntityBase
+    {
+        public int MediatorId { get; set; }  // int (identity PK)
+
+        public string FirstName { get; set; }  // nvarchar(50)
+
+        public string LastName { get; set; }  // nvarchar(50)
+
+        public string Phone { get; set; }  // nvarchar(20)
+
+        public string Email { get; set; }  // nvarchar(250)
+        [IgnoreColumn]
+        public string MediatorName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(FirstName) & string.IsNullOrEmpty(LastName)) { return ""; }
+                if (string.IsNullOrEmpty(FirstName) & !string.IsNullOrEmpty(LastName))
+                    return LastName;
+                if (!string.IsNullOrEmpty(FirstName) & string.IsNullOrEmpty(LastName))
+                    return FirstName;
+
+                return string.Format("{1}, {0}", FirstName, LastName);
+            }
+        }
+    }
+}

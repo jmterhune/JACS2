@@ -1,0 +1,120 @@
+﻿using DotNetNuke.Abstractions.Application;
+using DotNetNuke.Common.Extensions;
+using DotNetNuke.Services.Exceptions;
+using DotNetNuke.Web.Api;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using tjc.Modules.NewMediationStats.Api.Components;
+using tjc.Modules.NewMediationStats.Api.ViewModels;
+
+namespace tjc.Modules.NewMediationStats.Api.Services
+{
+    [DnnAuthorize]
+    public class CaseListItemController : DnnApiController
+    {
+        private readonly IHostSettings _hostSettings = System.Web.HttpContext.Current.GetScope().ServiceProvider.GetRequiredService<IHostSettings>();
+
+        [HttpGet]
+        public HttpResponseMessage GetCaseListItems(int count)
+        {
+            List<CaseListItemViewModel> caselistItems = new List<CaseListItemViewModel>();
+            int recordCount = count;
+            int filteredCount = 0;
+            var query = Request.GetQueryNameValuePairs()
+                   .ToDictionary(kv => kv.Key, kv => kv.Value,
+                        StringComparer.OrdinalIgnoreCase);
+            Int32.TryParse(query.ContainsKey("region") ? query["region"] : null, out int regionId);
+            Int32.TryParse(query.ContainsKey("group") ? query["group"] : null, out int groupId);
+            string firstName = query.ContainsKey("firstName") ? query["firstName"] ?? "" : "";
+            string lastName = query.ContainsKey("lastName") ? query["lastName"] ?? "" : "";
+            string businessName = query.ContainsKey("businessName") ? query["businessName"] ?? "" : "";
+            string cdspNumber = query.ContainsKey("cdspNumber") ? query["cdspNumber"] ?? "" : "";
+            string caseNumber = query.ContainsKey("caseNumber") ? query["caseNumber"] ?? "" : "";
+            Int32.TryParse(query["length"], out int pageSize);
+            Int32.TryParse(query["start"], out int recordOffset);
+            Int32.TryParse(query["draw"], out int draw);
+            string sortColumn = "ListNumber"; // Default sort column
+            string sortDirection = "asc"; // Default sort direction
+            if (query.ContainsKey("order[0].column") && query.ContainsKey("order[0].dir"))
+            {
+                Int32.TryParse(query["order[0].column"], out int sortIndex);
+                sortColumn = GetSortColumn(sortIndex);
+                sortDirection = query["order[0].dir"];
+            }
+            try
+            {
+                var ctl = new tjc.Modules.NewMediationStats.Api.Components.CaseListItemController(_hostSettings);
+                filteredCount = ctl.GetCaseListCount(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName);
+                if (count == 0) { recordCount = filteredCount; }
+                caselistItems = ctl.GetCaseListPaged(groupId, regionId, caseNumber, cdspNumber, firstName, lastName, businessName, recordOffset, pageSize, sortColumn, sortDirection).Select(caselistItem => new CaseListItemViewModel(caselistItem)).ToList();
+                return Request.CreateResponse(new CaseSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = null });
+            }
+            catch (System.Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return Request.CreateResponse(new CaseSearchResult { data = caselistItems, draw = draw, recordsFiltered = filteredCount, recordsTotal = recordCount, error = ex.Message });
+            }
+        }
+        [HttpDelete]
+        [DnnAuthorize(StaticRoles = "Mediation")]
+        public HttpResponseMessage DeleteCase(int caseId)
+        {
+            try
+            {
+                var ctl = new tjc.Modules.NewMediationStats.Api.Components.CaseListItemController(_hostSettings);
+                ctl.DeleteCase(caseId);
+                return Request.CreateResponse(HttpStatusCode.OK, "");
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        public class CaseSearchResult
+        {
+            public List<CaseListItemViewModel> data { get; set; }
+            public int recordsTotal { get; set; }
+            public int recordsFiltered { get; set; }
+            public int draw { get; set; }
+            public string error { get; set; }
+
+        }
+        private string GetSortColumn(int columnIndex)
+        {
+            string name = "ListNumber";
+            switch (columnIndex)
+            {
+                case 1:
+                    name = "ListNumber";
+                    break;
+                case 2: 
+                    name = "Region"; 
+                    break;
+                case 3: 
+                    name = "[Group]";
+                    break;
+                case 4:
+                    name = "PartyOne";
+                    break;
+                case 5:
+                    name = "PartyTwo";
+                    break;
+                case 6:
+                    name = "CreatedDate";
+                    break;
+                default:
+                    name = "ListNumber";
+                    break;
+            }
+            return name;
+        }
+
+    }
+}

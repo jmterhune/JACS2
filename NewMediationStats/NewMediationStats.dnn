@@ -1,0 +1,262 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="NewMediationStats" type="Module" version="00.00.01">
+      <friendlyName>New Mediation Statistics</friendlyName>
+      <description>12th Judicial Circuit mediation statistics, rebuilt from the Mediation Statistics module for the revised s. 44.108, F.S. fee and income tiers. Uses its own tjc_modules_med_ tables so it runs alongside the original module without sharing any data.</description>
+      <iconFile>~/Icons/Sigma/Source_32X32_Standard.png</iconFile>
+      <owner>
+        <name>12th Judicial Circuit</name>
+        <organization>12th Judicial Circuit</organization>
+        <url>https://www.jud12.flcourts.org</url>
+        <email>jterhune@jud12.flcourts.org</email>
+      </owner>
+      <license src="License.txt"></license>
+      <releaseNotes src="ReleaseNotes.txt"></releaseNotes>
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="CoreVersion">09.08.00</dependency>
+      </dependencies>
+      <components>
+        <component type="Script">
+          <scripts>
+            <basePath>DesktopModules\tjc.modules\NewMediationStats</basePath>
+            <script type="Install">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>00.00.01.SqlDataProvider</name>
+              <version>00.00.01</version>
+            </script>
+            <script type="UnInstall">
+              <path>Providers\DataProviders\SqlDataProvider</path>
+              <name>Uninstall.SqlDataProvider</name>
+              <version>00.00.01</version>
+            </script>
+          </scripts>
+        </component>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/tjc.modules/NewMediationStats</basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+        <component type="Module">
+          <desktopModule>
+            <moduleName>NewMediationStats</moduleName>
+            <foldername>tjc.modules/NewMediationStats</foldername>
+            <businessControllerClass />
+            <supportedFeatures />
+            <moduleDefinitions>
+              <moduleDefinition>
+                <friendlyName>New Mediation Statistics</friendlyName>
+                <definitionName>NewMediationStats</definitionName>
+                <defaultCacheTime>0</defaultCacheTime>
+                <moduleControls>
+                  <moduleControl>
+                    <controlKey />
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/View.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Mediation Statistics Cases</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Report</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/Report.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Report Form</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Action</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/ActionList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Stage of Action Items</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Appearance</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/AppearanceList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Appearance Items</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Attorney</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/AttorneyList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Attorneys</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>CaseType</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/CaseTypeList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Case Types</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>CDSP</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditCDSP.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>CountyClaims</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditCountyClaims.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Dependency</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditDependency.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Family</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditFamily.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>FamilyPreFile</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditFamilyPreFile.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Group</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/GroupList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Case Type Groups</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>GroupRelation</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/GroupEdit.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Case Type Group Associations</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                    <supportsPopUps>True</supportsPopUps>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Issue</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/IssueList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Issue Items</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Juvenile</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditJuvenile.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Mediator</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/MediatorList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Mediators</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Region</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/RegionList.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Manage Regions</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>SmallClaims</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/EditSmallClaims.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>Add / Edit Case</controlTitle>
+                    <controlType>View</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                  <moduleControl>
+                    <controlKey>Settings</controlKey>
+                    <controlSrc>DesktopModules/tjc.modules/NewMediationStats/Settings.ascx</controlSrc>
+                    <supportsPartialRendering>False</supportsPartialRendering>
+                    <controlTitle>New Mediation Statistics Settings</controlTitle>
+                    <controlType>Edit</controlType>
+                    <iconFile />
+                    <helpUrl />
+                    <viewOrder>0</viewOrder>
+                  </moduleControl>
+                </moduleControls>
+              </moduleDefinition>
+            </moduleDefinitions>
+          </desktopModule>
+        </component>
+        <component type="Assembly">
+          <assemblies>
+            <assembly>
+              <name>tjc.Modules.NewMediationStats.dll</name>
+              <path>bin</path>
+            </assembly>
+          </assemblies>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

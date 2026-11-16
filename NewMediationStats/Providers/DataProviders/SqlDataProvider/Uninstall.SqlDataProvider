@@ -1,0 +1,103 @@
+﻿/* Removes the New Mediation Statistics code objects. The tjc_modules_med_* TABLES are deliberately
+   left in place so uninstalling the module can never delete mediation statistics data. */
+
+IF OBJECT_ID(N'dbo.tjc_modules_med_update_group_issue') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_update_group_issue]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_update_group_case_type') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_update_group_case_type]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_update_group_appearance') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_update_group_appearance]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_statistical_report') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_statistical_report]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_mediator_type_stats') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_mediator_type_stats]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_mediator_stats') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_mediator_stats]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_mediator_list_paged') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_mediator_list_paged]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_mediator_list_count') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_mediator_list_count]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_issues_by_session') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_issues_by_session]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_issues_by_group') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_issues_by_group]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_group_issues_excluded') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_group_issues_excluded]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_group_case_types_excluded') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_group_case_types_excluded]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_group_appearances_excluded') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_group_appearances_excluded]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_event_appearances') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_event_appearances]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_case_types_by_group') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_case_types_by_group]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_case_list_paged') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_case_list_paged]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_case_list_count') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_case_list_count]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_case_list') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_case_list]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_attorney_list_paged') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_attorney_list_paged]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_attorney_list_count') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_attorney_list_count]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_appearances_by_group') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_get_appearances_by_group]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_fee_report_collected_owed') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_fee_report_collected_owed]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_session_issue') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_session_issue]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_group_issue') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_group_issue]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_group_case_type') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_group_case_type]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_group_appearance') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_group_appearance]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_event_appearance') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_event_appearance]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_case') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_case]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_all_session_issues') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_all_session_issues]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_delete_all_event_appearances') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_delete_all_event_appearances]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_add_session_issue') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_add_session_issue]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_add_group_issue') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_add_group_issue]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_add_group_case_type') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_add_group_case_type]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_add_group_appearance') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_add_group_appearance]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_add_event_appearance') IS NOT NULL DROP PROCEDURE dbo.[tjc_modules_med_add_event_appearance]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_stat_checker') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_stat_checker]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_session_issues_count') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_session_issues_count]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_referral_sources') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_referral_sources]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_mediator_type_no_name') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_mediator_type_no_name]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_fees_owed') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_fees_owed]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_fee_report_collected') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_fee_report_collected]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_event_counts') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_event_counts]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_session_counts') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_session_counts]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_case_list') IS NOT NULL DROP VIEW dbo.[tjc_modules_med_case_list]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_session_held') IS NOT NULL DROP FUNCTION dbo.[tjc_modules_med_session_held]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_partyname') IS NOT NULL DROP FUNCTION dbo.[tjc_modules_med_get_partyname]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_party_name') IS NOT NULL DROP FUNCTION dbo.[tjc_modules_med_get_party_name]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_get_case_cdsp_number') IS NOT NULL DROP FUNCTION dbo.[tjc_modules_med_get_case_cdsp_number]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_consolidate_session_comments') IS NOT NULL DROP FUNCTION dbo.[tjc_modules_med_consolidate_session_comments]
+GO
+IF OBJECT_ID(N'dbo.tjc_modules_med_agreement_reached') IS NOT NULL DROP FUNCTION dbo.[tjc_modules_med_agreement_reached]
+GO

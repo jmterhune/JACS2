@@ -32,6 +32,7 @@ $folderMap = @{
     "JudicialReferral"          = "JudicialReferral"
     "ManateeJacsCaseMaintenace" = "JacsMaintenance"
     "MediationStatistics"       = "Mediation"
+    "NewMediationStats"         = "NewMediationStats"
     "PretrialServices"          = "PretrialServices"
     "PretrialServicesSarasota"  = "PretrialServicesSarasota"
     "ProSeLog"                  = "ProSeLog"

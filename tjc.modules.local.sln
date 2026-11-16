@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZoomConnector", "ZoomConnec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediationStatistics", "MediationStatistics\MediationStatistics.csproj", "{406093C8-126A-41F4-9983-75947209A425}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewMediationStats", "NewMediationStats\NewMediationStats.csproj", "{6A26FF06-5BC6-4103-B59E-485AC7346ACB}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AxionDataUpload", "Axiom File Merge\AxionDataUpload\AxionDataUpload.csproj", "{253578C7-2790-4271-834E-F766073EF98C}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Axiom Setup", "Axiom Setup\Axiom Setup.vdproj", "{0222C6AD-B51E-45D1-996F-F7A830F85275}"
@@ -211,6 +213,18 @@ Global
 		{406093C8-126A-41F4-9983-75947209A425}.Release|x64.Build.0 = Release|Any CPU
 		{406093C8-126A-41F4-9983-75947209A425}.Release|x86.ActiveCfg = Release|Any CPU
 		{406093C8-126A-41F4-9983-75947209A425}.Release|x86.Build.0 = Release|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Debug|x64.Build.0 = Debug|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Debug|x86.Build.0 = Debug|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Release|x64.ActiveCfg = Release|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Release|x64.Build.0 = Release|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Release|x86.ActiveCfg = Release|Any CPU
+		{6A26FF06-5BC6-4103-B59E-485AC7346ACB}.Release|x86.Build.0 = Release|Any CPU
 		{253578C7-2790-4271-834E-F766073EF98C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{253578C7-2790-4271-834E-F766073EF98C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{253578C7-2790-4271-834E-F766073EF98C}.Debug|x64.ActiveCfg = Debug|Any CPU
