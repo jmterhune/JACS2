@@ -197,11 +197,7 @@ namespace tjc.Modules.ProcessServer
         }
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            if (UserInfo.IsInRole(AdminRole))
-            {
-                Response.Redirect(EditUrl("list"), true);
-            }
-            Response.Redirect(_navigationManager.NavigateURL());
+            Response.Redirect(_navigationManager.NavigateURL(), true);
 
         }
         protected void btnSubmit_Click(object sender, EventArgs e)

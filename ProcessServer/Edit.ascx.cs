@@ -134,12 +134,12 @@ namespace tjc.Modules.ProcessServer
             if (!string.IsNullOrEmpty(txtExpirationDate.Text))
                 p.ExpirationDate = DateTime.Parse(txtExpirationDate.Text);
             ctl.UpdateItem(p);
-            Response.Redirect(EditUrl("list"));
+            Response.Redirect(_navigationManager.NavigateURL(), true);
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            Response.Redirect(EditUrl("list"));
+            Response.Redirect(_navigationManager.NavigateURL(), true);
         }
         private void CheckImagePath(string imagePath)
         {
