@@ -35,7 +35,6 @@
                                         <th>Name
                                         </th>
                                         <th>Email</th>
-                                        <th>Username</th>
                                         <th>Modified</th>
                                         <th>Expiration</th>
                                         <th data-bs-toggle="tooltip" class="command-icon" title="Is Renewal Application">RN</th>
@@ -69,7 +68,6 @@
                                     <a href='mailto:<%#DataBinder.Eval(Container.DataItem, "Email")%>'>
                                         <%#DataBinder.Eval(Container.DataItem, "Email")%></a>
                                 </td>
-                                <td><%#GetUserName(DataBinder.Eval(Container.DataItem, "UserID").ToString())%></td>
                                 <td><%#DataBinder.Eval(Container.DataItem, "LastModifiedOnDate","{0:MM/dd/yyyy}")%></td>
                                 <td>
                                     <asp:Literal ID="ltExpirationDate" runat="server"></asp:Literal>
@@ -191,27 +189,25 @@
         $.fn.dataTable.moment('MM/DD/YYYY');
         var table = $('#processServers').DataTable({
             "aoColumns": [
-                { "bSortable": false },
-                { "bSortable": false },
-                { "bSortable": false },
-                null,
-                null,
-                null,
-                { "bSortable": false },
-                null,
-                null,
-                { "bSortable": false },
-                { "bSortable": false },
-                { "bSortable": false },
-                { "bSortable": false },
-                { "bSortable": false },
-
+                { "bSortable": false },   /* 0  view   */
+                { "bSortable": false },   /* 1  edit   */
+                { "bSortable": false },   /* 2  #      */
+                null,                     /* 3  Year   */
+                null,                     /* 4  Name   */
+                null,                     /* 5  Email  */
+                null,                     /* 6  Modified   */
+                null,                     /* 7  Expiration */
+                { "bSortable": false },   /* 8  RN     */
+                { "bSortable": false },   /* 9  $      */
+                { "bSortable": false },   /* 10 CH     */
+                { "bSortable": false },   /* 11 Stat   */
+                { "bSortable": false },   /* 12 delete */
             ],
             "oLanguage": {
                 "sSearch": "Filter by Text"
             }, columnDefs: [
                 {
-                    targets: [7, 8],
+                    targets: [6, 7],
                     render: function (data, type, row) {
                         if (type === 'sort') {
                             return data.replace(/.*? /, '');
