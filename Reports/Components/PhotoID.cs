@@ -14,16 +14,16 @@ using DotNetNuke.Common.Utilities;
 using DotNetNuke.ComponentModel.DataAnnotations;
 using DotNetNuke.Entities.Content;
 using System;
-using System.Web.Caching;
 
 namespace tjc.Modules.Reports.Components
 {
     [TableName("PhotoID")]
     //setup the primary key for table
     [PrimaryKey("ID", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("DataCards", CacheItemPriority.Default, 20)]
-    //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
+    // Deliberately not [Cacheable]. This table lives in the DataCard database, which
+    // the badge system writes outside DNN, and the public site's Process Server reads
+    // it as well. Nothing here can invalidate a cache when a badge changes elsewhere,
+    // and twenty minutes of staleness buys very little on a reporting screen.
     internal class PhotoID
     {
         public int ID { get; set; }

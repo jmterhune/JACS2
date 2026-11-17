@@ -2,15 +2,17 @@
 using DotNetNuke.ComponentModel.DataAnnotations;
 using DotNetNuke.Entities.Content;
 using System;
-using System.Web.Caching;
 
 namespace tjc.Modules.DeSoto.Probation.Components
 {
     [TableName("tjc_desoto_probation_payments")]
     //setup the primary key for table
     [PrimaryKey("TransactionID", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("Transactions", CacheItemPriority.Default, 20)]
+    // Deliberately not [Cacheable]. The public jud12 site's DeSotoCaseManagement
+    // module inserts, updates and deletes rows in this same table, and its writes
+    // cannot invalidate a cache held by this application. A cached collection here
+    // went stale for up to twenty minutes, and GetById returned null for payments
+    // that Find() could still see.
     internal class TransactionLog
     {
         public int TransactionID { get; set; }
