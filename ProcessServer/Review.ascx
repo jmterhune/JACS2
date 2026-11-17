@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Review.ascx.cs" Inherits="tjc.Modules.ProcessServer.Review" %>
-<asp:Panel ID="pnlView" runat="server">
+<asp:Panel ID="pnlView" runat="server" CssClass="ps-admin">
     <h3>Certified Process Server Application</h3>
     <p class="alert alert-info">
         <strong>Payment Type:</strong>
@@ -372,12 +372,21 @@
             <div class="mb-3">
                 <div class="row">
                     <div class="col-md-9">
-                        <asp:Label ID="lblCountyServed" runat="server" AssociatedControlID="chkDeSoto" Text="In which counties in the Twelfth Judicial Circuit are you willing to serve?<em>*</em>" />
+                        <asp:Label ID="lblCountyServed" runat="server" Text="In which counties in the Twelfth Judicial Circuit are you willing to serve?<em>*</em>" />
                     </div>
                     <div class="col-md-3 county-served">
-                        <asp:CheckBox ID="chkDeSoto" runat="server"  Enabled="false" Text="DeSoto" />
-                        <asp:CheckBox ID="chkManatee" runat="server"  Enabled="false" Text="Manatee" />
-                        <asp:CheckBox ID="chkSarasota" runat="server"  Enabled="false" Text="Sarasota" />
+                        <div class="form-check form-check-inline">
+                            <asp:CheckBox ID="chkDeSoto" runat="server" Enabled="false" />
+                            <asp:Label ID="lblDeSoto" runat="server" CssClass="form-check-label" AssociatedControlID="chkDeSoto" Text="DeSoto" />
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <asp:CheckBox ID="chkManatee" runat="server" Enabled="false" />
+                            <asp:Label ID="lblManatee" runat="server" CssClass="form-check-label" AssociatedControlID="chkManatee" Text="Manatee" />
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <asp:CheckBox ID="chkSarasota" runat="server" Enabled="false" />
+                            <asp:Label ID="lblSarasota" runat="server" CssClass="form-check-label" AssociatedControlID="chkSarasota" Text="Sarasota" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -385,15 +394,17 @@
 
     </ol>
 
-    <h3>
-        <asp:CheckBox ID="chkPolicy" CssClass="policy-agreement" Enabled="false" runat="server" Text="Statement of Policy and Certificate of Good Conduct of Certified Process Servers" /></h3>
-
-
-    <h3>
-        <asp:CheckBox ID="chkAcknowledge" Enabled="false" CssClass="acknowledge-agreement" runat="server" Text="Acknowledgement and Verification" />
+    <h3 class="form-check">
+        <asp:CheckBox ID="chkPolicy" runat="server" Enabled="false" />
+        <asp:Label ID="lblPolicy" runat="server" CssClass="form-check-label" AssociatedControlID="chkPolicy" Text="Statement of Policy and Certificate of Good Conduct of Certified Process Servers" />
     </h3>
-    <h3>
-        <asp:CheckBox ID="chkAuthorize" Enabled="false" CssClass="authorize-agreement" runat="server" Text="Authorization and Consent for Release of Personal Information and Criminal Background Check" />
+    <h3 class="form-check">
+        <asp:CheckBox ID="chkAcknowledge" runat="server" Enabled="false" />
+        <asp:Label ID="lblAcknowledge" runat="server" CssClass="form-check-label" AssociatedControlID="chkAcknowledge" Text="Acknowledgement and Verification" />
+    </h3>
+    <h3 class="form-check">
+        <asp:CheckBox ID="chkAuthorize" runat="server" Enabled="false" />
+        <asp:Label ID="lblAuthorize" runat="server" CssClass="form-check-label" AssociatedControlID="chkAuthorize" Text="Authorization and Consent for Release of Personal Information and Criminal Background Check" />
     </h3>
     <asp:Repeater ID="rptUploades" runat="server" OnItemDataBound="rptUploades_ItemDataBound">
         <HeaderTemplate>
@@ -443,6 +454,6 @@
     </div>
     <p>
         <asp:Button ID="btnSubmit" runat="server" OnClick="btnSubmit_Click" Text="Submit" CssClass="btn btn-primary" />
-        <asp:Button ID="btnCancel" runat="server" CausesValidation="false" OnClick="btnCancel_Click" Text="Cancel" CssClass="btn btn-default" />
+        <asp:Button ID="btnCancel" runat="server" CausesValidation="false" OnClick="btnCancel_Click" Text="Cancel" CssClass="btn btn-dark" />
     </p>
 </asp:Panel>

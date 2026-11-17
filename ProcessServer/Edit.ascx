@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Edit.ascx.cs" Inherits="tjc.Modules.ProcessServer.Edit" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<div class="tabs">
+<div class="tabs ps-admin">
     <ul class="nav nav-tabs">
         <li class="active">
             <a class="nav-link active" href="#Personal" data-bs-toggle="tab">Application Details</a>
@@ -39,7 +39,10 @@
                             <div class="col-md-3">
                                 <asp:Label ID="lblCell" runat="server" AssociatedControlID="txtCell" Text="Primary Phone" />
                                 <asp:TextBox ID="txtCell" runat="server" MaxLength="15" CssClass="form-control phone-us" placeholder="(555) 555-5555" AutoCompleteType="Cellular" />
-                                <asp:CheckBox ID="chkShowPhone" runat="server" Text="Show Internet" CssClass="dnnFormRadioButtons" />
+                                <div class="form-check">
+                                    <asp:CheckBox ID="chkShowPhone" runat="server" />
+                                    <asp:Label ID="lblShowPhone" runat="server" CssClass="form-check-label" AssociatedControlID="chkShowPhone" Text="Show Internet" />
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <asp:Label ID="lblPhone" runat="server" AssociatedControlID="txtPhone" Text="Secondary Phone" />
@@ -196,7 +199,10 @@
                                     <asp:FileUpload ID="fuUpload" runat="server" AllowMultiple="true" />
                                 </div>
                                 <div class="col-md-4">
-                                    <asp:CheckBox ID="chkHide" runat="server" CssClass="dnnFormRadioButtons" Text="Hide from Applicant" />
+                                    <div class="form-check">
+                                        <asp:CheckBox ID="chkHide" runat="server" />
+                                        <asp:Label ID="lblHide" runat="server" CssClass="form-check-label" AssociatedControlID="chkHide" Text="Hide from Applicant" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -213,7 +219,7 @@
     </div>
 </div>
 <p class="text-center">
-    <asp:LinkButton ID="btnCancel" runat="server" OnClick="btnCancel_Click" Text="Return to List" CssClass="btn btn-default" />
+    <asp:LinkButton ID="btnCancel" runat="server" OnClick="btnCancel_Click" Text="Return to List" CssClass="btn btn-dark text-white" />
 </p>
 <dnn:dnncssinclude runat="server" filepath="~/Resources/Shared/components/TimePicker/Themes/jquery-ui.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jQuery/jquery.mask.js" />

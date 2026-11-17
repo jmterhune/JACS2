@@ -37,16 +37,48 @@ label em, em.lbl {
 .questions li label {
     vertical-align: top !important;
 }
-.policy-agreement label, .acknowledge-agreement label, .authorize-agreement label {
+/* Bootstrap 5 form-check spacing. The DNN skin ships no .form-check rules and
+   overrides margins on bare checkbox inputs, so the module supplies them
+   itself (same approach as the Arbitrators module). Scoped to .ps-admin so it
+   cannot affect other modules sharing the page. */
+.ps-admin .form-check {
     display: block;
-    text-indent: 1.5rem;
-    margin-top: -1.5rem;
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.25rem;
+    min-height: 1.5rem;
 }
-.policy-agreement input, .acknowledge-agreement input, .authorize-agreement input {
+.ps-admin .form-check-inline {
+    display: inline-block;
+    margin-right: 1.5rem;
+}
+/* asp:CheckBox wraps its <input> in a <span> whenever CssClass is set or
+   Enabled="false", so target the input itself and neutralise the wrapper. */
+.ps-admin .form-check > span {
+    position: static;
+}
+.ps-admin .form-check input[type="checkbox"] {
+    float: none;
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
     width: 1rem;
     height: 1rem;
-    padding: 0;
+    margin: 0 !important;
+    vertical-align: top;
+}
+.ps-admin .form-check-label {
+    display: inline-block;
     margin: 0;
+    font-weight: normal;
+    vertical-align: top;
+}
+/* The agreement headings keep their h3 size, so nudge the box onto the cap line. */
+.ps-admin h3.form-check {
+    padding-left: 2rem;
+}
+.ps-admin h3.form-check input[type="checkbox"] {
+    top: 0.5rem;
 }
 .border legend{
     font-size:1rem !important
