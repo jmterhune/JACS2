@@ -169,7 +169,7 @@
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />
-<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/jQuery/moment.min.js" />
+<dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/moment/moment.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/datetime-moment.js" />
 
 
