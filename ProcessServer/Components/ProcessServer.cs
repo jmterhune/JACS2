@@ -14,15 +14,17 @@ using DotNetNuke.Abstractions.Portals;
 using DotNetNuke.ComponentModel.DataAnnotations;
 using DotNetNuke.Entities.Portals;
 using System;
-using System.Web.Caching;
 
 namespace tjc.Modules.ProcessServer.Components
 {
     [TableName("tjc_process_servers")]
     //setup the primary key for table
     [PrimaryKey("ProcessServerID", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("ProcessServers", CacheItemPriority.Default, 20)]
+    // Deliberately not [Cacheable]. Applications are written by the public module on the
+    // jud12 site and read here on the intranet, so each site cached its own copy and
+    // neither invalidated the other. GetById was served from that stale collection and
+    // returned null for records created minutes earlier, while Find() goes straight to
+    // SQL -- so the list showed rows the review page then crashed trying to load.
     class ProcessServer
     {
         public int ProcessServerID { get; set; }
