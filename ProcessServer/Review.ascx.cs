@@ -51,11 +51,19 @@ namespace tjc.Modules.ProcessServer
             rptUploades.DataBind();
         }
 
-        private void PopulateFields()
+        /// <summary>
+        /// Fills the form from the application named by the pid on the query string.
+        /// Returns false when there is no such application, which happens for a stale
+        /// bookmark, an old notification email, a deleted application, or a review URL
+        /// that reaches this control without a pid at all (PID is then -1).
+        /// </summary>
+        private bool PopulateFields()
         {
 
             var ctl = new ProcessServerController(_hostSettings);
             Components.ProcessServer p = ctl.GetItem(PID);
+            if (p == null)
+                return false;
             ltPaymentType.Text = p.PaymentType;
             txtFirstName.Text = p.FirstName;
             txtMiddleInitial.Text = p.MiddelInitial;
@@ -148,7 +156,7 @@ namespace tjc.Modules.ProcessServer
                 btnSubmit.Enabled = false;
             }
 
-
+            return true;
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -162,8 +170,15 @@ namespace tjc.Modules.ProcessServer
                     {
                         if (UserInfo.IsInRole(CourtCounselRole) | UserInfo.IsInRole(ChiefJudgeRole) | UserInfo.IsInRole(AdminRole))
                         {
-                            PopulateFields();
-                            BindUploadList();
+                            if (PopulateFields())
+                            {
+                                BindUploadList();
+                            }
+                            else
+                            {
+                                pnlView.Visible = false;
+                                DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "<i class='fa fa-warning'></i> That application could not be found. It may have been deleted, or the link you followed may be out of date.", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.YellowWarning);
+                            }
                         }
                         else
                         {
