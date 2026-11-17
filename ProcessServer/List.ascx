@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="List.ascx.cs" Inherits="tjc.Modules.ProcessServer.List" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.Client.ClientResourceManagement" Assembly="DotNetNuke.Web.Client" %>
-<div class="tabs">
+<asp:Panel ID="pnlView" runat="server" CssClass="tabs">
     <ul class="nav nav-tabs">
         <li class="active">
             <a class="nav-link active" href="#Apps" data-bs-toggle="tab">Applications</a>
@@ -165,7 +165,7 @@
 
         </div>
     </div>
-</div>
+</asp:Panel>
 <dnn:dnncssinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.css" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.min.js" />
 <dnn:dnnjsinclude runat="server" filepath="/Resources/Libraries/DataTables/dataTables.bootstrap5.min.js" />

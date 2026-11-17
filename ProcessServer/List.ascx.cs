@@ -79,9 +79,21 @@ namespace tjc.Modules.ProcessServer
                 //Implement your edit logic for your module
                 if (!Page.IsPostBack)
                 {
+                    // This control IS the module's default view, so redirecting an
+                    // unauthorised visitor to NavigateURL() sent them straight back
+                    // here and looped until the browser gave up. Show a message
+                    // instead, the way the review screen does.
+                    if (UserId <= 0)
+                    {
+                        pnlView.Visible = false;
+                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "<i class='fa fa-info-circle'></i> You must be logged in to use this application", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.BlueInfo);
+                        return;
+                    }
                     if (!UserInfo.IsInRole(AdminRole))
                     {
-                        Response.Redirect(_navigationManager.NavigateURL());
+                        pnlView.Visible = false;
+                        DotNetNuke.UI.Skins.Skin.AddModuleMessage(this, "<i class='fa fa-warning'></i> You do not have permission to use this application", DotNetNuke.UI.Skins.Controls.ModuleMessage.ModuleMessageType.RedError);
+                        return;
                     }
 
                     txtStartDate.Text = startDate.ToShortDateString();
