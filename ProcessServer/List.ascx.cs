@@ -61,14 +61,6 @@ namespace tjc.Modules.ProcessServer
             drpYear.DataSource=ctl.GetApplicationYears();
             drpYear.DataBind();
         }
-        public string GetUserName(string userId)
-        {
-            Int32.TryParse(userId, out int userID);
-            var user = UserController.Instance.GetUserById(PortalId, userID);
-            if (user != null)
-                return string.Format("<span  data-bs-toggle=\"tooltip\" title=\"{0}\">{1}</span>", user.Email,user.Username);
-            return string.Empty;
-        }
         #endregion
 
         #region Event Handlers     
