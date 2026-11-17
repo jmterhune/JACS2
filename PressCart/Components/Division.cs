@@ -12,15 +12,12 @@
 
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
-using System.Web.Caching;
 
 namespace tjc.Modules.PressCart.Components
 {
     [TableName("tjc_presscart_divisions")]
     //setup the primary key for table
     [PrimaryKey("DivisionId", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("Divisions", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     public class Division
     {

@@ -12,15 +12,12 @@
 
 using DotNetNuke.ComponentModel.DataAnnotations;
 using System;
-using System.Web.Caching;
 
 namespace tjc.Modules.PressCart.Components
 {
     [TableName("tjc_presscart_courtrooms")]
     //setup the primary key for table
     [PrimaryKey("CourtroomId", AutoIncrement = true)]
-    //configure caching using PetaPoco
-    [Cacheable("Courtrooms", CacheItemPriority.Default, 20)]
     public class Courtroom
     {
         public int CourtroomId { get; set; }
@@ -31,7 +28,6 @@ namespace tjc.Modules.PressCart.Components
     [TableName("tjc_presscart_courtrooms_by_courthouse")]
     //setup the primary key for table
     [PrimaryKey("CourtroomId", AutoIncrement = true)]
-    //configure caching using PetaPoco
     public class CourtroomList
     {
         public int CourtroomId { get; set; }
