@@ -36,8 +36,8 @@ namespace tjc.Modules.Transcriptionist
 
                 if (RedirectIfNoAccess()) return;
 
-                lnkList.NavigateUrl = EditUrl("list");
-                lnkNotFoundBack.NavigateUrl = EditUrl("list");
+                lnkList.NavigateUrl = ListUrl;
+                lnkNotFoundBack.NavigateUrl = ListUrl;
 
                 if (IsNew)
                 {
@@ -138,12 +138,12 @@ namespace tjc.Modules.Transcriptionist
 
                     // Open the new applicant on the edit page so experience records can be added.
                     long newId = _app.TranscriptionistID;
-                    Response.Redirect(newId > 0 ? EditUrl("tid", newId.ToString(), "edit") : EditUrl("list"), true);
+                    Response.Redirect(newId > 0 ? EditApplicationUrl(newId.ToString()) : ListUrl, true);
                     return;
                 }
 
                 controller.UpdateApplication(_app);
-                Response.Redirect(EditUrl("list"), true);
+                Response.Redirect(ListUrl, true);
             }
             catch (System.Threading.ThreadAbortException)
             {
@@ -158,7 +158,7 @@ namespace tjc.Modules.Transcriptionist
         protected void btnDelete_Click(object sender, EventArgs e)
         {
             new ApplicationController(_hostSettings).DeleteApplication(TranscriptionistID);
-            Response.Redirect(EditUrl("list"), true);
+            Response.Redirect(ListUrl, true);
         }
 
         private List<string> Validate()

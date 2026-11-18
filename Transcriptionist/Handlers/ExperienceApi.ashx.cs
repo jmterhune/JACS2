@@ -13,7 +13,7 @@ using tjc.Modules.Transcriptionist.Components;
 namespace tjc.Modules.Transcriptionist.Handlers
 {
     // JSON API for the experience records on ApplicationEdit.ascx, so they can be managed without postbacks.
-    // Only staff with Admin or Manage permission on a Transcriptionist module may call it.
+    // Only users who can view a Transcriptionist module (set by its page's View permission) may call it.
     public class ExperienceApi : IHttpHandler
     {
         // The *ByUserID columns are shared with the jud12 site; 0 marks "changed on the intranet".
@@ -92,7 +92,7 @@ namespace tjc.Modules.Transcriptionist.Handlers
         }
 
         // The caller names the module instance it is on ("mid"/"tabid"); it must be a Transcriptionist module
-        // on which the user has ADMIN or MANAGE permission.
+        // the user can view. The module is on its own page, so the page's View permission decides who may use it.
         private static bool HasStaffAccess(HttpContext context, UserInfo user)
         {
             if (user.IsSuperUser) return true;
@@ -107,8 +107,7 @@ namespace tjc.Modules.Transcriptionist.Handlers
             string folder = module.DesktopModule?.FolderName ?? "";
             if (!folder.EndsWith("Transcriptionist", StringComparison.OrdinalIgnoreCase)) return false;
 
-            return ModulePermissionController.HasModulePermission(module.ModulePermissions, "ADMIN")
-                || ModulePermissionController.HasModulePermission(module.ModulePermissions, "MANAGE");
+            return ModulePermissionController.CanViewModule(module);
         }
 
         private void ListExperience(HttpContext context, JavaScriptSerializer serializer, long tid)

@@ -20,8 +20,8 @@ namespace tjc.Modules.Transcriptionist
             {
                 if (RedirectIfNoAccess()) return;
 
-                lnkList.NavigateUrl = EditUrl("list");
-                lnkNotFoundBack.NavigateUrl = EditUrl("list");
+                lnkList.NavigateUrl = ListUrl;
+                lnkNotFoundBack.NavigateUrl = ListUrl;
 
                 // asp:CheckBox renders <span class="form-check"><input/><label/></span>; Bootstrap 5 needs these on the
                 // inner elements. The box reflects what the applicant submitted, so it can't be toggled here.
@@ -71,7 +71,7 @@ namespace tjc.Modules.Transcriptionist
             cmdReject.Visible = pending;
             pnlAlreadyReviewed.Visible = !pending;
 
-            lnkEdit.NavigateUrl = EditUrl("tid", app.TranscriptionistID.ToString(), "edit");
+            lnkEdit.NavigateUrl = EditApplicationUrl(app.TranscriptionistID.ToString());
             ltHeading.Text = $"<h2>{Enc(app.FullName)} Transcriptionist Application #{app.TranscriptionistID} <span class=\"badge {StatusBadgeClass(app.Status)}\">{app.Status}</span></h2>";
 
             ltFirstName.Text = Enc(app.FirstName);
@@ -171,7 +171,7 @@ namespace tjc.Modules.Transcriptionist
                 new ApplicationController(_hostSettings).UpdateApplication(app);
 
                 SendStatusEmail(app, approve, notes);
-                Response.Redirect(EditUrl("list"), true);
+                Response.Redirect(ListUrl, true);
             }
             catch (System.Threading.ThreadAbortException)
             {

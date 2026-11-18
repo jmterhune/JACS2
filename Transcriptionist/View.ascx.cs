@@ -16,8 +16,8 @@ namespace tjc.Modules.Transcriptionist
 
                 if (!IsPostBack)
                 {
-                    lnkList.NavigateUrl = EditUrl("list");
-                    lnkAdd.NavigateUrl = EditUrl("edit");
+                    lnkList.NavigateUrl = ListUrl;
+                    lnkAdd.NavigateUrl = AddUrl;
 
                     string external = ExternalAppUrl;
                     if (external != null)
@@ -59,12 +59,12 @@ namespace tjc.Modules.Transcriptionist
 
         protected string GetEditUrl(object dataItem)
         {
-            return EditUrl("tid", ((Application)dataItem).TranscriptionistID.ToString(), "edit");
+            return EditApplicationUrl(((Application)dataItem).TranscriptionistID.ToString());
         }
 
         protected string GetViewUrl(object dataItem)
         {
-            return EditUrl("tid", ((Application)dataItem).TranscriptionistID.ToString(), "detail");
+            return DetailUrl(((Application)dataItem).TranscriptionistID.ToString());
         }
     }
 }

@@ -16,8 +16,8 @@ namespace tjc.Modules.Transcriptionist
 
                 if (!IsPostBack)
                 {
-                    lnkDashboard.NavigateUrl = EditUrl();
-                    lnkAdd.NavigateUrl = EditUrl("edit");
+                    lnkDashboard.NavigateUrl = DashboardUrl;
+                    lnkAdd.NavigateUrl = AddUrl;
 
                     string external = ExternalAppUrl;
                     if (external != null)
@@ -94,12 +94,12 @@ namespace tjc.Modules.Transcriptionist
 
         protected string GetEditUrl(string tid)
         {
-            return EditUrl("tid", tid, "edit");
+            return EditApplicationUrl(tid);
         }
 
         protected string GetViewUrl(string tid)
         {
-            return EditUrl("tid", tid, "detail");
+            return DetailUrl(tid);
         }
     }
 }

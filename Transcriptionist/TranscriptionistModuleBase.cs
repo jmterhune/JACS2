@@ -1,7 +1,6 @@
 using DotNetNuke.Abstractions;
 using DotNetNuke.Abstractions.Application;
 using DotNetNuke.Entities.Modules;
-using DotNetNuke.Security.Permissions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -18,11 +17,36 @@ namespace tjc.Modules.Transcriptionist
         // this site's, so the staff user's id is not written. 0 marks "changed on the intranet".
         protected const int IntranetUserId = 0;
 
+        protected readonly INavigationManager _navigationManager;
+
         protected readonly IHostSettings _hostSettings;
 
         public TranscriptionistModuleBase()
         {
             _hostSettings = DependencyProvider.GetRequiredService<IHostSettings>();
+            _navigationManager = DependencyProvider.GetRequiredService<INavigationManager>();
+        }
+
+        // Plain URLs from the navigation manager rather than EditUrl: EditUrl() with no key resolves to the "edit"
+        // control (here the add-applicant page), and for some controls it returns a popup javascript call.
+
+        /// <summary>The dashboard (the module's default view).</summary>
+        public string DashboardUrl { get { return _navigationManager.NavigateURL(); } }
+
+        /// <summary>The full application list (the "list" control).</summary>
+        public string ListUrl { get { return _navigationManager.NavigateURL(TabId, "list", "mid=" + ModuleId); } }
+
+        /// <summary>The edit control with no "tid": the add-applicant form.</summary>
+        public string AddUrl { get { return _navigationManager.NavigateURL(TabId, "edit", "mid=" + ModuleId); } }
+
+        public string EditApplicationUrl(string transcriptionistId)
+        {
+            return _navigationManager.NavigateURL(TabId, "edit", "mid=" + ModuleId, "tid=" + transcriptionistId);
+        }
+
+        public string DetailUrl(string transcriptionistId)
+        {
+            return _navigationManager.NavigateURL(TabId, "detail", "mid=" + ModuleId, "tid=" + transcriptionistId);
         }
 
         /// <summary>The application being worked on, from the "tid" query string. 0 when absent or invalid.</summary>
@@ -91,18 +115,19 @@ namespace tjc.Modules.Transcriptionist
 
         #region Permission Checks
 
-        // The dashboard, list, detail and edit controls are staff screens: module Admin or Manage permission.
+        // Who may open these screens is set by the page's View permission (the module is on its own page), the
+        // same as the other intranet admin modules, so the module's own Edit/Admin permissions are not used.
+        // This only turns away anyone who is not signed in.
         protected bool HasAccess()
         {
-            return ModulePermissionController.HasModulePermission(ModuleConfiguration.ModulePermissions, "ADMIN")
-                || ModulePermissionController.HasModulePermission(ModuleConfiguration.ModulePermissions, "MANAGE");
+            return UserId > 0;
         }
 
         /// <summary>Sends anyone without access to the page's default view. True when the caller should stop.</summary>
         protected bool RedirectIfNoAccess()
         {
             if (HasAccess()) return false;
-            Response.Redirect(DependencyProvider.GetRequiredService<INavigationManager>().NavigateURL(), true);
+            Response.Redirect(DashboardUrl, true);
             return true;
         }
 
